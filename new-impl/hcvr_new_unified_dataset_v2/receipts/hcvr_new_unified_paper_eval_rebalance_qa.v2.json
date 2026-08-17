@@ -1,0 +1,127 @@
+{
+  "added_count": 22,
+  "added_identities": [
+    "94fzb__zrlog::CVE-2020-19005",
+    "anthropics__anthropic-sdk-python::CVE-2026-34450",
+    "asynchttpclient__async-http-client::CVE-2024-53990",
+    "authguard__authguard::CVE-2021-45890",
+    "eclipse__milo::CVE-2022-25897",
+    "googleapis__google-oauth-java-client::CVE-2020-7692",
+    "jeecgboot__jeecgboot::CVE-2025-14909",
+    "jupyterhub__oauthenticator::CVE-2026-33175",
+    "netty__netty::CVE-2021-21290",
+    "openclaw__openclaw::CVE-2026-28471",
+    "openclaw__openclaw::CVE-2026-33572",
+    "openclaw__openclaw::CVE-2026-41366",
+    "parisneo__lollms::CVE-2026-0558",
+    "parse-community__parse-server::CVE-2026-33409",
+    "pgjdbc__pgjdbc::CVE-2025-49146",
+    "pilinux__gorest::CVE-2026-48154",
+    "wevm__mppx::CVE-2026-34210",
+    "xwiki-contrib__oidc::CVE-2022-39387",
+    "xwiki__xwiki-platform::CVE-2022-23615",
+    "xwiki__xwiki-platform::CVE-2022-23617",
+    "xwiki__xwiki_platform::CVE-2022-23621",
+    "xwiki__xwiki_platform::CVE-2022-36090"
+  ],
+  "anchor_qa": {
+    "bad_public_provenance_count": 0,
+    "case_anchor_id_count": 2571,
+    "cases_below_10_unique_locations": 0,
+    "exact_duplicate_count": 0,
+    "extra_flat_count": 0,
+    "flat_anchor_id_count_for_v2": 2571,
+    "low_cases": [],
+    "max_unique_locations": 71,
+    "min_unique_locations": 10,
+    "missing_flat_count": 0,
+    "same_location_duplicate_count": 0,
+    "wrong_runner_count": 0
+  },
+  "case_count": 143,
+  "composition_buckets": {
+    "IRIS-derived": 45,
+    "non-IRIS no-fixed-source/sink proxy": 68,
+    "non-IRIS source-sink/contrast/other": 30
+  },
+  "errors": [],
+  "files": {
+    "anchors": {
+      "path": "/data/lhq/workspace/route-hacker-lineage-integration-20260803/output/hcvr_new_unified_dataset_v1/new_unified_anchors.v1.jsonl",
+      "sha256": "63daed556aeb59e3127229a3082de5725403a73515759852f3fa85ceacd0bb80"
+    },
+    "cases": {
+      "path": "/data/lhq/workspace/route-hacker-lineage-integration-20260803/output/hcvr_new_unified_dataset_v1/new_unified_cases.v1.jsonl",
+      "sha256": "f687641e6a47fd291fe402e7bac8cbb9aa16b38e2456bc85b2b174017fa7047d"
+    },
+    "first_batch_summary": {
+      "path": "assets/hcvr_new_unified_anchor_supplement_auto_batch_summary.v2.json",
+      "sha256": "9392d11a33c83fb951b3674f8cf43504cd3f5896effb6362104aee7e4bf94bde"
+    },
+    "probe_batch_summary": {
+      "path": "assets/hcvr_new_unified_anchor_supplement_auto_batch_probe_summary.v2.json",
+      "sha256": "34471add95677a36b08d3001586c4999fb1dd7ef678156261b692b65dfe564e9"
+    },
+    "qa": {
+      "path": "/data/lhq/workspace/route-hacker-lineage-integration-20260803/assets/hcvr_new_unified_paper_eval_rebalance_qa.v2.json",
+      "sha256": "83b9632c5a9e661ee1fd4f585fa21f1fd0e91760a1469cca52dafcb8c3938c0c"
+    },
+    "rebalance_plan": {
+      "path": "assets/hcvr_new_unified_paper_eval_rebalance_plan.v2.json",
+      "sha256": "e44d20af82a31fef782f66522763a9840472cec0852342cb8bfa420ee5177885"
+    },
+    "summary": {
+      "path": "/data/lhq/workspace/route-hacker-lineage-integration-20260803/output/hcvr_new_unified_dataset_v1/summary.v1.json",
+      "sha256": "978c8541f83d728cda430db88afae4d3223e3a578a501cb2781005aa7cf92568"
+    },
+    "v1_allowlist": {
+      "path": "/data/lhq/workspace/route-hacker-lineage-integration-20260803/assets/hcvr_new_unified_fix_revision_paper_eval_review.v1.jsonl",
+      "sha256": "5630e79d9ce15082f452880cebad97328900b35ce7a950addfc4c65261b418f9"
+    },
+    "v2_allowlist": {
+      "path": "/data/lhq/workspace/route-hacker-lineage-integration-20260803/assets/hcvr_new_unified_fix_revision_paper_eval_review.v2.jsonl",
+      "sha256": "3b3f452cc603b30992b9d2517afecb671207b2673692813197a4add0dd8502d0"
+    }
+  },
+  "generated_at": "2026-08-16T00:00:00+08:00",
+  "notes": [
+    "IRIS-derived uses hard join against IRIS source tables, not only hcvr_types tag.",
+    "Second-swap replacement rows use existing new_unified checkout/fix revisions but do not assert strict direct parent alignment.",
+    "Removed duplicate anchor anchor::ec95c1eef7dd39d9aa11 from eclipse__milo::CVE-2022-25897 during final QA."
+  ],
+  "paper_eval_decisions": {
+    "blocked_for_fix_revision_eval": 2,
+    "paper_ready_aux_fix_only": 47,
+    "paper_ready_direct_pair": 94
+  },
+  "removed_count": 22,
+  "removed_identities": [
+    "aces__loris::CVE-2026-39985",
+    "angular__angular-cli::CVE-2026-27738",
+    "atjiu__pybbs::CVE-2025-8813",
+    "authlib__authlib::CVE-2026-41479",
+    "bergskenop__blender-mcp::CVE-2026-10662",
+    "bigsk1__openai-realtime-ui::CVE-2026-5803",
+    "bugsink__bugsink::CVE-2026-44502",
+    "chamilo__chamilo-lms::CVE-2025-66447",
+    "dchester__jsonpath::CVE-2026-1615",
+    "dgtlmoon__changedetection.io::CVE-2026-29039",
+    "dspace__dspace::CVE-2022-31193",
+    "ethereum__web3.py::CVE-2026-40072",
+    "flowintel__flowintel::CVE-2026-9813",
+    "handlebars-lang__handlebars.js::CVE-2026-33938",
+    "horilla-opensource__horilla-crm::CVE-2026-3049",
+    "horilla__horilla-hr::CVE-2026-41513",
+    "miniflux__v2::CVE-2026-55185",
+    "nuxt__nuxt::CVE-2026-56326",
+    "nyariv__sandboxjs::CVE-2026-43898",
+    "op-engineering__link-preview-js::CVE-2026-43897",
+    "pylons__webob::CVE-2026-44889",
+    "shd101wyy__crossnote::CVE-2026-11422"
+  ],
+  "schema_version": "hcvr_new_unified_paper_eval_rebalance_qa.v2",
+  "status": "passed",
+  "strict_direct_parent_pair_count": 94,
+  "unique_identity_count": 143,
+  "usable_for_fix_revision_evidence_count": 141
+}

@@ -1,0 +1,243 @@
+{
+  "added_count": 22,
+  "after_buckets": {
+    "IRIS-derived": 45,
+    "non-IRIS no-fixed-source-sink proxy": 68,
+    "non-IRIS source-sink/contrast/other": 30
+  },
+  "before_buckets": {
+    "IRIS-derived": 45,
+    "non-IRIS no-fixed-source-sink proxy": 46,
+    "non-IRIS source-sink/contrast/other": 52
+  },
+  "below_10_unique_locations_before_supplement": [
+    {
+      "anchor_total": 7,
+      "bucket": "non-IRIS no-fixed-source-sink proxy",
+      "hcvr_types": [
+        "authorization_bypass"
+      ],
+      "identity_key": "dspace__dspace::CVE-2021-41189",
+      "unique_locations": 7
+    },
+    {
+      "anchor_total": 5,
+      "bucket": "non-IRIS no-fixed-source-sink proxy",
+      "hcvr_types": [
+        "authorization_bypass"
+      ],
+      "identity_key": "ree6_applications__ree6::CVE-2022-39302",
+      "unique_locations": 5
+    },
+    {
+      "anchor_total": 4,
+      "bucket": "non-IRIS no-fixed-source-sink proxy",
+      "hcvr_types": [
+        "toctou_check_use_race"
+      ],
+      "identity_key": "ansible__ansible-runner::CVE-2021-3701",
+      "unique_locations": 4
+    },
+    {
+      "anchor_total": 4,
+      "bucket": "non-IRIS no-fixed-source-sink proxy",
+      "hcvr_types": [
+        "authorization_bypass"
+      ],
+      "identity_key": "jenkinsci__jenkins::CVE-2017-2599",
+      "unique_locations": 4
+    },
+    {
+      "anchor_total": 4,
+      "bucket": "non-IRIS no-fixed-source-sink proxy",
+      "hcvr_types": [
+        "authorization_bypass"
+      ],
+      "identity_key": "opencast__opencast::CVE-2020-5206",
+      "unique_locations": 4
+    },
+    {
+      "anchor_total": 4,
+      "bucket": "non-IRIS no-fixed-source-sink proxy",
+      "hcvr_types": [
+        "concurrent_object_lifecycle"
+      ],
+      "identity_key": "pilinux__gorest::CVE-2026-48154",
+      "unique_locations": 4
+    },
+    {
+      "anchor_total": 4,
+      "bucket": "non-IRIS no-fixed-source-sink proxy",
+      "hcvr_types": [
+        "authorization_bypass"
+      ],
+      "identity_key": "xwiki__xwiki-platform::CVE-2022-23615",
+      "unique_locations": 4
+    },
+    {
+      "anchor_total": 4,
+      "bucket": "non-IRIS no-fixed-source-sink proxy",
+      "hcvr_types": [
+        "authentication_session_token_validation"
+      ],
+      "identity_key": "jdhwpgmbca__pcapture::CVE-2021-39196",
+      "unique_locations": 3
+    },
+    {
+      "anchor_total": 3,
+      "bucket": "non-IRIS no-fixed-source-sink proxy",
+      "hcvr_types": [
+        "file_permission_temp_resource"
+      ],
+      "identity_key": "anthropics__anthropic-sdk-python::CVE-2026-34450",
+      "unique_locations": 3
+    },
+    {
+      "anchor_total": 3,
+      "bucket": "non-IRIS no-fixed-source-sink proxy",
+      "hcvr_types": [
+        "authentication_session_token_validation"
+      ],
+      "identity_key": "asynchttpclient__async-http-client::CVE-2024-53990",
+      "unique_locations": 3
+    },
+    {
+      "anchor_total": 3,
+      "bucket": "non-IRIS no-fixed-source-sink proxy",
+      "hcvr_types": [
+        "authentication_session_token_validation"
+      ],
+      "identity_key": "enonic__xp::CVE-2024-23679",
+      "unique_locations": 3
+    },
+    {
+      "anchor_total": 3,
+      "bucket": "non-IRIS no-fixed-source-sink proxy",
+      "hcvr_types": [
+        "authorization_bypass"
+      ],
+      "identity_key": "f__prompts.chat::CVE-2026-22663",
+      "unique_locations": 3
+    },
+    {
+      "anchor_total": 3,
+      "bucket": "non-IRIS no-fixed-source-sink proxy",
+      "hcvr_types": [
+        "toctou_check_use_race"
+      ],
+      "identity_key": "fusesource__hawtjni::CVE-2013-2035",
+      "unique_locations": 3
+    },
+    {
+      "anchor_total": 3,
+      "bucket": "non-IRIS no-fixed-source-sink proxy",
+      "hcvr_types": [
+        "authentication_session_token_validation"
+      ],
+      "identity_key": "grassrootza__grassroot-platform::CVE-2021-29455",
+      "unique_locations": 3
+    },
+    {
+      "anchor_total": 3,
+      "bucket": "non-IRIS no-fixed-source-sink proxy",
+      "hcvr_types": [
+        "authorization_bypass"
+      ],
+      "identity_key": "jeecgboot__jeecgboot::CVE-2025-14909",
+      "unique_locations": 3
+    },
+    {
+      "anchor_total": 3,
+      "bucket": "non-IRIS no-fixed-source-sink proxy",
+      "hcvr_types": [
+        "authentication_session_token_validation"
+      ],
+      "identity_key": "jupyterhub__oauthenticator::CVE-2026-33175",
+      "unique_locations": 3
+    },
+    {
+      "anchor_total": 3,
+      "bucket": "non-IRIS no-fixed-source-sink proxy",
+      "hcvr_types": [
+        "authentication_session_token_validation"
+      ],
+      "identity_key": "manydesigns__portofino::CVE-2021-29451",
+      "unique_locations": 3
+    }
+  ],
+  "final_buckets": {
+    "IRIS-derived": 45,
+    "non-IRIS no-fixed-source/sink proxy": 68,
+    "non-IRIS source-sink/contrast/other": 30
+  },
+  "final_cases_below_10_unique_locations": 0,
+  "final_low_unique_locations": [],
+  "final_outputs": {
+    "v2_allowlist": {
+      "path": "/data/lhq/workspace/route-hacker-lineage-integration-20260803/assets/hcvr_new_unified_fix_revision_paper_eval_review.v2.jsonl",
+      "sha256": "3b3f452cc603b30992b9d2517afecb671207b2673692813197a4add0dd8502d0"
+    }
+  },
+  "generated_at": "2026-08-16T00:00:00+08:00",
+  "inputs": {
+    "cases": {
+      "path": "/data/lhq/workspace/route-hacker-lineage-integration-20260803/output/hcvr_new_unified_dataset_v1/new_unified_cases.v1.jsonl",
+      "sha256": "ebe85e59e673c6f76b9b4bae7a6d16f09b5e7d54c4767a2e05642e30902620a0"
+    },
+    "v1_allowlist": {
+      "path": "/data/lhq/workspace/route-hacker-lineage-integration-20260803/assets/hcvr_new_unified_fix_revision_paper_eval_review.v1.jsonl",
+      "sha256": "5630e79d9ce15082f452880cebad97328900b35ce7a950addfc4c65261b418f9"
+    }
+  },
+  "objective": "Keep 143 total cases while reducing non-IRIS source-sink/contrast/other from 52 to 30 by replacing 22 cases with non-IRIS no-fixed-source/sink candidates.",
+  "outputs": {
+    "additions": {
+      "path": "/data/lhq/workspace/route-hacker-lineage-integration-20260803/assets/hcvr_new_unified_paper_eval_rebalance_additions.v2.jsonl",
+      "sha256": "06380da118b9b9a1294414f11ca08d2d313d4b7a5564f32b0a5f320ea34baa37"
+    },
+    "removals": {
+      "path": "/data/lhq/workspace/route-hacker-lineage-integration-20260803/assets/hcvr_new_unified_paper_eval_rebalance_removals.v2.jsonl",
+      "sha256": "3f9fc01cdaa2c282c516a23ea5c91d3c6070543c958dda1a61330c33d5d6cf42"
+    },
+    "v2_allowlist": {
+      "path": "/data/lhq/workspace/route-hacker-lineage-integration-20260803/assets/hcvr_new_unified_fix_revision_paper_eval_review.v2.jsonl",
+      "sha256": "1add596ffcd53a6a7fbb48cf1defa98de5bdcecea54ae0a80df8da9bc11bbcf1"
+    }
+  },
+  "policy": {
+    "added_first": "non-IRIS no-fixed-source/sink candidates with existing checkout_revision and fix_revision, sorted by unique anchor locations",
+    "iris_precedence": "hard IRIS source-table join takes precedence over hcvr type labels",
+    "no_fixed_types": [
+      "authentication_session_token_validation",
+      "authorization_bypass",
+      "business_state_precondition",
+      "concurrent_object_lifecycle",
+      "file_permission_temp_resource",
+      "toctou_check_use_race"
+    ],
+    "removed_first": "source/sink-friendly types, then M9 contrast, then tag-only iris misses"
+  },
+  "removed_count": 22,
+  "schema_version": "hcvr_new_unified_paper_eval_rebalance_plan.v2",
+  "second_swap": {
+    "blocked_identities": [
+      "ansible__ansible-runner::CVE-2021-3701",
+      "dspace__dspace::CVE-2021-41189",
+      "enonic__xp::CVE-2024-23679",
+      "f__prompts.chat::CVE-2026-22663",
+      "fusesource__hawtjni::CVE-2013-2035",
+      "grassrootza__grassroot-platform::CVE-2021-29455",
+      "jdhwpgmbca__pcapture::CVE-2021-39196",
+      "jenkinsci__jenkins::CVE-2017-2599",
+      "manydesigns__portofino::CVE-2021-29451",
+      "opencast__opencast::CVE-2020-5206",
+      "ree6_applications__ree6::CVE-2022-39302"
+    ],
+    "blocked_replaced_count": 11,
+    "candidate_source": "assets/hcvr_new_unified_paper_eval_rebalance_candidate_probe.v2.jsonl plus probe supplement results",
+    "swap_path": "/data/lhq/workspace/route-hacker-lineage-integration-20260803/assets/hcvr_new_unified_paper_eval_rebalance_second_swap.v2.jsonl",
+    "swap_sha256": "a8a12c761622991235b934961f6184c79518d420604ab49fe79b41113f6833b7"
+  },
+  "v2_case_count": 143,
+  "v2_cases_below_10_unique_locations_before_supplement": 17
+}

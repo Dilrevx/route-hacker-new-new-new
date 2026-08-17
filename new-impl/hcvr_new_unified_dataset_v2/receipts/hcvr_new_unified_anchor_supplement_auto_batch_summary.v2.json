@@ -1,0 +1,29 @@
+{
+  "blocked_count": 11,
+  "blocked_identities": [
+    "ansible__ansible-runner::CVE-2021-3701",
+    "dspace__dspace::CVE-2021-41189",
+    "enonic__xp::CVE-2024-23679",
+    "f__prompts.chat::CVE-2026-22663",
+    "fusesource__hawtjni::CVE-2013-2035",
+    "grassrootza__grassroot-platform::CVE-2021-29455",
+    "jdhwpgmbca__pcapture::CVE-2021-39196",
+    "jenkinsci__jenkins::CVE-2017-2599",
+    "manydesigns__portofino::CVE-2021-29451",
+    "opencast__opencast::CVE-2020-5206",
+    "ree6_applications__ree6::CVE-2022-39302"
+  ],
+  "case_allowlist": "assets/hcvr_new_unified_fix_revision_paper_eval_review.v2.jsonl",
+  "case_count": 143,
+  "cases_below_target": 11,
+  "cases_meeting_target": 132,
+  "done": false,
+  "generated_at": "2026-08-15T23:50:23+00:00",
+  "iterations_executed": 17,
+  "max_anchor_count": 71,
+  "max_iterations": 80,
+  "min_anchor_count": 3,
+  "schema_version": "hcvr_new_unified_anchor_supplement_auto_batch_summary.v1",
+  "target_min_anchors": 10,
+  "updated_iterations": 6
+}

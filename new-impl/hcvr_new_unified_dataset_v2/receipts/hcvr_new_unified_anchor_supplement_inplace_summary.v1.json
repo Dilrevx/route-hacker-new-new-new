@@ -1,0 +1,92 @@
+{
+  "allowlist_count": 30,
+  "anchor_count": 5452,
+  "anchor_count_histogram": {
+    "10": 1,
+    "11": 2,
+    "12": 1,
+    "13": 3,
+    "14": 2,
+    "15": 2,
+    "16": 1,
+    "17": 2,
+    "19": 1,
+    "20": 3,
+    "21": 2,
+    "22": 4,
+    "23": 6
+  },
+  "avg_anchors_per_case": 17.933333333333334,
+  "backup_dir": "output/hcvr_new_unified_dataset_v1.backup-before-anchor-supplement-20260813",
+  "case_count": 30,
+  "cases_below_target": 0,
+  "cases_meeting_target": 30,
+  "dataset_dir": "output/hcvr_new_unified_dataset_v1",
+  "generated_at": "2026-08-15T23:55:14+00:00",
+  "input_files": {
+    "new_unified_anchors": {
+      "path": "output/hcvr_new_unified_dataset_v1/new_unified_anchors.v1.jsonl",
+      "sha256": "0a289f44eb92ebd5cc9833c8cf07f30f583b344bb164ce54992a2c1db6daf8ab"
+    },
+    "new_unified_cases": {
+      "path": "output/hcvr_new_unified_dataset_v1/new_unified_cases.v1.jsonl",
+      "sha256": "5c0ffb07dcbcb58a23ba0baf25a1c493289dc6a3305aef8ecddbcc20a972cf8b"
+    }
+  },
+  "last_ledger_row": {
+    "accepted_anchor_ids": [
+      "anchor::330116208507ef37698b",
+      "anchor::cece5772bdbaf75aee82",
+      "anchor::ae112b90ec269e2ba942",
+      "anchor::d27d239387a6beb63c4e",
+      "anchor::906dd8a4b2aaca48fefa",
+      "anchor::4649ad6feba1b1e06def",
+      "anchor::07ff929e2dab872a37ef",
+      "anchor::b6eafa91cd26e71a4938",
+      "anchor::4e563f73db6b21f1e8a0",
+      "anchor::e62e0059c09382ce741c",
+      "anchor::e76a73200da83126c884",
+      "anchor::36082eadec234f2ea1c7",
+      "anchor::097dfc9382bbf1f7c909",
+      "anchor::4d00fcb688162e2ccb04",
+      "anchor::72a5a6e9ba1c1ce1edf8",
+      "anchor::6e9b63be43efb58b3647",
+      "anchor::9f86f302cbde982eb6eb",
+      "anchor::705b1732c4fc597f445f",
+      "anchor::fe9eb85cb29edd50782f",
+      "anchor::8299a164a5179fa9f9d8"
+    ],
+    "accepted_count": 20,
+    "after_anchor_count": 23,
+    "backup": {
+      "backup_dir": "output/hcvr_new_unified_dataset_v1.backup-before-anchor-supplement-20260813",
+      "created": false,
+      "status": "exists"
+    },
+    "before_anchor_count": 3,
+    "generated_at": "2026-08-15T23:55:14+00:00",
+    "identity_key": "xwiki-contrib__oidc::CVE-2022-39387",
+    "new_unified_case_id": "case::17ea61364c2fdf1bd070",
+    "packet_path": "output/hcvr_new_unified_anchor_supplement_inplace_one_v1/packets/xwiki-contrib__oidc__CVE-2022-39387.json",
+    "parse": {
+      "blocked_reason": "",
+      "candidate_path": "output/hcvr_new_unified_anchor_supplement_inplace_one_v1/auto_source_window_candidates/xwiki-contrib__oidc__CVE-2022-39387.json",
+      "parse_error": "",
+      "parse_status": "parsed"
+    },
+    "rejected": [],
+    "rejected_count": 0,
+    "run": null,
+    "schema_version": "hcvr_new_unified_anchor_supplement_inplace_ledger.v1",
+    "status": "updated_in_place",
+    "target_min_anchors": 10
+  },
+  "ledger_path": "assets/hcvr_new_unified_anchor_supplement_inplace_ledger.v1.jsonl",
+  "max_anchors_per_case": 23,
+  "min_anchors_per_case": 10,
+  "output_dir": "output/hcvr_new_unified_anchor_supplement_inplace_one_v1",
+  "schema_version": "hcvr_new_unified_anchor_supplement_inplace_summary.v1",
+  "scope": "allowlist",
+  "status": "updated_in_place",
+  "target_min_anchors": 10
+}
