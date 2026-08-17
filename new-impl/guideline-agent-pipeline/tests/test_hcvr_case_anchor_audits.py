@@ -107,10 +107,35 @@ def test_load_selected_cases_uses_added_identity_order(tmp_path: Path):
         ),
         encoding="utf-8",
     )
-    selected = module.load_selected_cases(qa_path, limit=2, skip=0)
+    selected = module.load_selected_cases(qa_path, limit=2, skip=0, selection="added")
     assert [row["identity_key"] for row in selected] == [
         "owner__repo::CVE-2099-0001",
         "owner__repo::CVE-2099-0002",
+    ]
+
+
+def test_load_selected_cases_all_uses_accepted_cases_with_anchors(tmp_path: Path):
+    module = load_module()
+    cases_path = tmp_path / "cases.jsonl"
+    accepted = sample_case()
+    skipped = sample_case() | {
+        "identity_key": "owner__repo::CVE-2099-0002",
+        "quality": {"dataset_status": "rejected"},
+    }
+    accepted2 = sample_case() | {"identity_key": "owner__repo::CVE-2099-0003"}
+    cases_path.write_text(
+        "".join(json.dumps(row) + "\n" for row in [skipped, accepted, accepted2]),
+        encoding="utf-8",
+    )
+    qa_path = tmp_path / "qa.json"
+    qa_path.write_text(
+        json.dumps({"files": {"cases": {"path": str(cases_path)}}}),
+        encoding="utf-8",
+    )
+    selected = module.load_selected_cases(qa_path, limit=2, skip=0, selection="all")
+    assert [row["identity_key"] for row in selected] == [
+        "owner__repo::CVE-2099-0001",
+        "owner__repo::CVE-2099-0003",
     ]
 
 

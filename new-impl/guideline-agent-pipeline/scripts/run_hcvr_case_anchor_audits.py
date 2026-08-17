@@ -57,6 +57,59 @@ GUIDELINES = {
         "read/write/delete/execute effect through weak permissions, unsafe "
         "temporary locations, path confusion, or non-stable resource binding."
     ),
+    "open_redirect": (
+        "Audit whether attacker-controlled input can influence a redirect, "
+        "forward, callback, return URL, Location header, or navigation target "
+        "without constraining it to trusted same-origin or allowlisted "
+        "destinations."
+    ),
+    "path_archive_traversal": (
+        "Audit whether attacker-controlled path, archive entry, filename, or "
+        "resource name can escape the intended base directory, overwrite an "
+        "unexpected file, read an unauthorized file, or confuse canonical path "
+        "validation."
+    ),
+    "toctou_check_use_race": (
+        "Audit whether the code checks a mutable file, path, object, identity, "
+        "or state and later performs a sensitive operation on a value that can "
+        "change between check and use without a stable handle, lock, transaction, "
+        "or atomic operation."
+    ),
+    "iris": (
+        "Audit whether the anchor participates in a known security-relevant "
+        "code path such as access control, unsafe deserialization, path or file "
+        "handling, command/control operation, request parsing, or untrusted data "
+        "flow that can reach a sensitive effect without the required guard."
+    ),
+    "m9_wave4": (
+        "Audit whether the anchor participates in a guideline-derived semantic "
+        "security pattern where attacker-influenced input, resource identity, "
+        "or execution context reaches a sensitive effect without the required "
+        "validation, authorization, isolation, or state precondition."
+    ),
+}
+
+CWE_GUIDELINES = {
+    "CWE-79": (
+        "Audit whether attacker-controlled text, markup, attributes, URLs, or "
+        "template data can reach browser-rendered output without context-correct "
+        "escaping, sanitization, or safe rendering APIs."
+    ),
+    "CWE-502": (
+        "Audit whether untrusted serialized data, pickles, object streams, "
+        "marshaled payloads, or serializer type metadata can instantiate or "
+        "execute attacker-controlled classes, functions, or object graphs."
+    ),
+    "CWE-264": (
+        "Audit whether permissions, privileges, or access-control decisions are "
+        "missing, too broad, checked for the wrong principal, or not bound to the "
+        "specific resource affected by the sensitive operation."
+    ),
+    "CWE-276": (
+        "Audit whether files, directories, sockets, temporary resources, or "
+        "generated artifacts are created with overly permissive permissions or "
+        "are exposed to unintended users."
+    ),
 }
 
 
@@ -151,19 +204,43 @@ def safe_slug(text: str) -> str:
     return re.sub(r"[^A-Za-z0-9_.-]+", "_", text).strip("_")[:120]
 
 
-def load_selected_cases(qa_path: Path, limit: int, skip: int) -> list[dict[str, Any]]:
+def load_selected_cases(
+    qa_path: Path,
+    limit: int,
+    skip: int,
+    selection: str,
+) -> list[dict[str, Any]]:
     qa = read_json(qa_path)
-    identities = list(qa["added_identities"])[skip : skip + limit]
     case_path = Path(qa["files"]["cases"]["path"])
-    cases_by_identity = {
-        row["identity_key"]: row
-        for row in read_jsonl(case_path)
-        if row.get("identity_key") in set(identities)
-    }
-    missing = [identity for identity in identities if identity not in cases_by_identity]
-    if missing:
-        raise ValueError(f"selected identities missing from cases file: {missing}")
-    return [cases_by_identity[identity] for identity in identities]
+    if selection == "added":
+        identities = list(qa["added_identities"])[skip : skip + limit]
+        cases_by_identity = {
+            row["identity_key"]: row
+            for row in read_jsonl(case_path)
+            if row.get("identity_key") in set(identities)
+        }
+        missing = [identity for identity in identities if identity not in cases_by_identity]
+        if missing:
+            raise ValueError(f"selected identities missing from cases file: {missing}")
+        return [cases_by_identity[identity] for identity in identities]
+    if selection == "all":
+        selected: list[dict[str, Any]] = []
+        for row in read_jsonl(case_path):
+            quality = row.get("quality") or {}
+            if quality.get("dataset_status") != "accepted":
+                continue
+            if not row.get("recall_anchors"):
+                continue
+            if skip:
+                skip -= 1
+                continue
+            selected.append(row)
+            if len(selected) >= limit:
+                break
+        if len(selected) != limit:
+            raise ValueError(f"only selected {len(selected)} case(s), wanted {limit}")
+        return selected
+    raise ValueError(f"unsupported selection: {selection}")
 
 
 def pick_anchor(case: dict[str, Any], anchor_index: int) -> dict[str, Any]:
@@ -231,18 +308,28 @@ def ensure_snapshot(case: dict[str, Any], repo_cache: Path, snapshots: Path) -> 
 
 def build_guideline(case: dict[str, Any]) -> str:
     classification = case.get("classification") or {}
-    typ = classification.get("primary_hcvr_type") or "unknown"
+    typ = classification.get("primary_hcvr_type") or ""
     base = GUIDELINES.get(
         typ,
-        "Audit whether the anchor participates in the vulnerability pattern "
-        "described by the case metadata and whether a sensitive operation is "
-        "reachable without the required security condition.",
+        "",
     )
+    cwe_ids = classification.get("cwe_ids") or []
+    if not base:
+        for cwe_id in cwe_ids:
+            if cwe_id in CWE_GUIDELINES:
+                base = CWE_GUIDELINES[cwe_id]
+                break
+    if not base:
+        base = (
+            "Audit whether the anchor participates in the vulnerability pattern "
+            "described by the case metadata and whether a sensitive operation is "
+            "reachable without the required security condition."
+        )
     vuln = case.get("vulnerability") or {}
-    cwes = ", ".join(classification.get("cwe_ids") or [])
+    cwes = ", ".join(cwe_ids)
     description = vuln.get("description") or ""
     parts = [
-        f"HCVR type: {typ}",
+        f"HCVR type: {typ or 'unspecified'}",
         f"Guideline: {base}",
     ]
     if cwes:
@@ -477,6 +564,7 @@ def main() -> None:
     parser.add_argument("--temp-root", type=Path, required=True)
     parser.add_argument("--limit", type=int, default=20)
     parser.add_argument("--skip", type=int, default=0)
+    parser.add_argument("--selection", choices=("added", "all"), default="added")
     parser.add_argument("--anchor-index", type=int, default=0)
     parser.add_argument("--model", default="qwen3-coder:30b")
     parser.add_argument("--codex", default="codex")
@@ -507,7 +595,12 @@ def main() -> None:
     repo_cache.mkdir(parents=True, exist_ok=True)
     snapshots.mkdir(parents=True, exist_ok=True)
 
-    cases = load_selected_cases(args.qa.resolve(), args.limit, args.skip)
+    cases = load_selected_cases(
+        args.qa.resolve(),
+        args.limit,
+        args.skip,
+        args.selection,
+    )
     output.mkdir(parents=True)
     (output / "reports").mkdir()
     selected_rows: list[dict[str, Any]] = []
@@ -555,6 +648,7 @@ def main() -> None:
             "qa": str(args.qa.resolve()),
             "limit": args.limit,
             "skip": args.skip,
+            "selection": args.selection,
             "anchor_index": args.anchor_index,
             "case_count": len(prepared_rows),
             "completed_count": 0,
@@ -600,6 +694,7 @@ def main() -> None:
         "model": args.model,
         "limit": args.limit,
         "skip": args.skip,
+        "selection": args.selection,
         "anchor_index": args.anchor_index,
         "case_count": len(results),
         "completed_count": sum(row["state"] == "completed" for row in results),
