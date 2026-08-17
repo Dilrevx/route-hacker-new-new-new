@@ -15,6 +15,12 @@ copy receives two transport-only model aliases, `gpt-traex-flash` and
 `gpt-traex-pro`, which resolve to the local TraeX models. It does not classify
 cases, generate CodeQL rules, or replace any IRIS stage.
 
+When started with `--metrics-log`, the bridge records one JSONL row per completed
+or failed local TraeX call. Each row includes the model, IRIS case/run attribution,
+elapsed seconds, response digest, and `traex_reported_total_tokens` when the CLI
+prints a token count. This is the CLI's reported total, not an inferred
+input/output-token split.
+
 ## Inputs
 
 The scripts expect:
@@ -34,8 +40,9 @@ On the local machine, start the bridge:
 ```bash
 python3 scripts/serve_traex_openai.py \
   --port 18888 \
-  --model DeepSeek-V4-Flash \
-  --max-concurrency 1
+  --model DeepSeek-V4-Pro \
+  --max-concurrency 2 \
+  --metrics-log /path/to/traex_calls.jsonl
 ```
 
 Expose it to the remote IRIS host with a reverse SSH tunnel:
@@ -75,4 +82,20 @@ cases with an updated environment.
 
 ```bash
 python3 scripts/run_native_iris_batch.py --attempt-id flash-a1 --max-workers 2 --resume ...
+```
+
+Each batch receipt stores IRIS candidate, labelling, vanilla-path, posthoc-path,
+method-overlap, elapsed-time, artifact-gate, and label-response fields. The
+dispatcher updates `summary.json` after each completed case.
+
+After a batch, merge the receipt and bridge JSONL files into a paper-facing
+report. It carries per-case output paths and aggregate candidate/path metrics,
+bridge-call status, and TraeX-reported total tokens without inventing an
+input/output split:
+
+```bash
+python3 scripts/summarize_native_iris_metrics.py \
+  --receipt-ledger /path/results/receipts.jsonl \
+  --bridge-metrics /path/traex_calls.jsonl \
+  --output /path/results/paper_metrics.json
 ```

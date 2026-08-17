@@ -79,11 +79,26 @@ def add_traex_model_aliases(gpt_model_path: Path) -> dict[str, str]:
         if marker not in source:
             raise RuntimeError(f"cannot find GPT model registry marker in {gpt_model_path}")
         source = source.replace(marker, aliases + "}\n_OPENAI_DEFAULT_PARAMS", 1)
-        gpt_model_path.write_text(source, encoding="utf-8")
+    client_marker = "self.client = OpenAI(api_key=api_key)"
+    client_replacement = (
+        'self.client = OpenAI(\n'
+        '            api_key=api_key,\n'
+        '            default_headers={\n'
+        '                "X-Iris-Run-Id": os.getenv("IRIS_TRAEX_RUN_ID", ""),\n'
+        '                "X-Iris-Case-Id": os.getenv("IRIS_TRAEX_CASE_ID", ""),\n'
+        '            },\n'
+        '        )'
+    )
+    if client_marker in source:
+        source = source.replace(client_marker, client_replacement, 1)
+    elif "X-Iris-Run-Id" not in source:
+        raise RuntimeError(f"cannot add bridge attribution headers to {gpt_model_path}")
+    gpt_model_path.write_text(source, encoding="utf-8")
     return {
         "path": str(gpt_model_path),
         "kind": "copied_iris_gpt_transport_aliases",
         "aliases": "gpt-traex-flash,gpt-traex-pro",
+        "bridge_attribution_headers": "X-Iris-Run-Id,X-Iris-Case-Id",
         "sha256": sha256_path(gpt_model_path),
     }
 

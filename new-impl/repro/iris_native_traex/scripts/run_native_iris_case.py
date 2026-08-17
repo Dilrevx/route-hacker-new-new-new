@@ -111,6 +111,41 @@ def audit_label_responses(workspace: Path, slug: str, run_id: str, query: str) -
     return {"total_dispatched_prompt_count": total, "all_valid": all_valid, "phases": phases}
 
 
+def iris_result_statistics(workspace: Path, slug: str, run_id: str, query: str) -> dict[str, Any]:
+    root = workspace / "output" / slug / run_id
+    final_path = root / f"{query}-final" / "results.json"
+    posthoc_path = root / f"{query}-posthoc-filter" / "stats.json"
+    statistics: dict[str, Any] = {}
+    final_result: dict[str, Any] = {}
+    posthoc_statistics: dict[str, Any] = {}
+    if final_path.is_file():
+        final_result = read_json(final_path)
+        statistics = final_result.get("statistics") if isinstance(final_result.get("statistics"), dict) else {}
+    if posthoc_path.is_file():
+        posthoc_statistics = read_json(posthoc_path)
+    vanilla = final_result.get("vanilla_result") if isinstance(final_result.get("vanilla_result"), dict) else {}
+    posthoc = final_result.get("posthoc_filter_result") if isinstance(final_result.get("posthoc_filter_result"), dict) else {}
+    return {
+        "candidate_api_calls": statistics.get("num_external_api_calls"),
+        "candidate_apis": statistics.get("num_api_candidates"),
+        "labelled_sources": statistics.get("num_labelled_sources"),
+        "labelled_taint_propagators": statistics.get("num_labelled_taint_propagators"),
+        "labelled_sinks": statistics.get("num_labelled_sinks"),
+        "public_function_candidates": statistics.get("num_public_func_candidates"),
+        "labelled_function_parameter_sources": statistics.get("num_labelled_func_param_sources"),
+        "vanilla_results": vanilla.get("num_results"),
+        "vanilla_paths": vanilla.get("num_paths"),
+        "vanilla_tp_paths_method": vanilla.get("num_tp_paths_method"),
+        "vanilla_recall_method": vanilla.get("recall_method"),
+        "posthoc_results": posthoc.get("num_results"),
+        "posthoc_paths": posthoc.get("num_paths"),
+        "posthoc_tp_paths_method": posthoc.get("num_tp_paths_method"),
+        "posthoc_recall_method": posthoc.get("recall_method"),
+        "posthoc_llm_calls": posthoc_statistics.get("num_gpt_calls"),
+        "posthoc_llm_failures": posthoc_statistics.get("num_failure"),
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--workspace", type=Path, required=True)
@@ -160,6 +195,8 @@ def main() -> int:
             "OPENAI_API_KEY": "traex-local-bridge",
             "OPENAI_BASE_URL": args.bridge_url.rstrip("/") + "/v1",
             "IRIS_LLM_MAX_ATTEMPTS": env.get("IRIS_LLM_MAX_ATTEMPTS", "2"),
+            "IRIS_TRAEX_RUN_ID": args.run_id,
+            "IRIS_TRAEX_CASE_ID": str(case.get("case_id") or slug),
         }
     )
     started = time.monotonic()
@@ -204,6 +241,7 @@ def main() -> int:
         },
         "artifact_gate": {"all_required_artifacts_present": all(artifacts.values()), "artifacts": artifacts},
         "label_response_audit": label_audit,
+        "iris_statistics": iris_result_statistics(workspace, slug, args.run_id, query),
         "verified_completion": verified,
         "stdio": {
             "stdout_path": str(output_dir / "stdout.txt"),

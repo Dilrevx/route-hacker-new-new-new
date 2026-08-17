@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import collections
 import json
 import subprocess
 import sys
@@ -24,6 +25,40 @@ def append_jsonl(path: Path, row: dict[str, Any]) -> None:
 
 def safe_name(value: str) -> str:
     return "".join(char if char.isalnum() or char in "._-" else "_" for char in value)
+
+
+def summarize_receipts(path: Path) -> dict[str, Any]:
+    rows = read_jsonl(path) if path.is_file() else []
+    statuses = collections.Counter(str(row.get("status")) for row in rows)
+    verified = [row for row in rows if row.get("status") == "completed_verified"]
+    numeric_fields = (
+        "candidate_apis",
+        "labelled_sources",
+        "labelled_taint_propagators",
+        "labelled_sinks",
+        "vanilla_paths",
+        "posthoc_paths",
+        "vanilla_tp_paths_method",
+        "posthoc_tp_paths_method",
+    )
+    totals = {
+        field: sum(
+            value for row in verified
+            if isinstance((value := (row.get("iris_statistics") or {}).get(field)), (int, float))
+        )
+        for field in numeric_fields
+    }
+    totals["elapsed_seconds"] = sum(
+        value for row in verified if isinstance((value := row.get("elapsed_seconds")), (int, float))
+    )
+    return {
+        "schema_version": "iris_native_traex_batch_summary.v1",
+        "generated_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
+        "receipt_count": len(rows),
+        "status_counts": dict(sorted(statuses.items())),
+        "completed_verified_count": len(verified),
+        "verified_totals": totals,
+    }
 
 
 def main() -> int:
@@ -53,6 +88,7 @@ def main() -> int:
     output_dir = args.output_dir.resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
     ledger = output_dir / "receipts.jsonl"
+    queue_path = output_dir / "queue.jsonl"
     completed: set[str] = set()
     if args.resume and ledger.is_file():
         completed = {
@@ -64,6 +100,19 @@ def main() -> int:
     selected = [row for row in ready if str(row.get("case_id")) not in completed]
     if args.limit is not None:
         selected = selected[: args.limit]
+    if not queue_path.exists():
+        with queue_path.open("w", encoding="utf-8") as handle:
+            for row in selected:
+                handle.write(json.dumps({
+                    "case_id": row.get("case_id"),
+                    "case_index": row.get("case_index"),
+                    "project_slug": row.get("project_slug"),
+                    "cve_id": row.get("cve_id"),
+                    "cwe_id_normalized": row.get("cwe_id_normalized"),
+                    "iris_query": row.get("iris_query"),
+                    "dispatch_state": "queued",
+                    "attempt_id": args.attempt_id,
+                }, sort_keys=True) + "\n")
 
     def run_case(row: dict[str, Any]) -> dict[str, Any]:
         slug = str(row["project_slug"])
@@ -97,6 +146,13 @@ def main() -> int:
             "runner_returncode": executed.returncode,
             "summary_path": str(summary_path) if summary_path.is_file() else None,
             "verified_completion": summary.get("verified_completion"),
+            "elapsed_seconds": summary.get("elapsed_seconds"),
+            "iris_statistics": summary.get("iris_statistics") or {},
+            "label_response_audit": {
+                "total_dispatched_prompt_count": (summary.get("label_response_audit") or {}).get("total_dispatched_prompt_count"),
+                "all_valid": (summary.get("label_response_audit") or {}).get("all_valid"),
+            },
+            "artifact_gate": summary.get("artifact_gate") or {},
         }
 
     with ThreadPoolExecutor(max_workers=args.max_workers) as pool:
@@ -104,7 +160,15 @@ def main() -> int:
         for future in as_completed(futures):
             receipt = future.result()
             append_jsonl(ledger, receipt)
+            (output_dir / "summary.json").write_text(
+                json.dumps(summarize_receipts(ledger), indent=2, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
             print(json.dumps(receipt, sort_keys=True), flush=True)
+    (output_dir / "summary.json").write_text(
+        json.dumps(summarize_receipts(ledger), indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
     return 0
 
 
