@@ -1,0 +1,8 @@
+[project]
+name = "compile-builder-v2"
+version = "0.1.0"
+description = "Bounded LLM-assisted CodeQL database build repair"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
