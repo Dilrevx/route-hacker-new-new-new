@@ -1,0 +1,97 @@
+[project]
+name = "route-hacker"
+version = "0.1.0"
+description = "Automated security analysis tool for discovering routes and analyzing vulnerabilities"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "typer[all]>=0.9.0",
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
+    "platformdirs>=4.0.0",
+    "pyyaml>=6.0",
+    "rich>=13.0.0",
+    "openai>=1.0.0",
+    "anthropic>=0.18.0",
+    "werkzeug>=3.0.0",
+    "langchain>=0.1.0",
+    "langchain-openai>=0.0.1",
+    "langchain-anthropic>=0.1.0",
+    "langchain-deepseek>=0.1.4",
+    "httpx[socks]>=0.28.1",
+    "beautifulsoup4>=4.12.0",
+    "crewai>=0.80.0",
+    "tree-sitter>=0.23.0",
+    "tree-sitter-java>=0.23.0",
+    "networkx>=3.0",
+    "neo4j>=5.0",
+    "langgraph>=1.0.1",
+    "fastapi>=0.115.0",
+    "uvicorn>=0.32.0",
+    "jinja2>=3.1.0",
+    "scikit-learn>=1.3.0",
+    "umap-learn>=0.5.5",
+    "hdbscan>=0.8.33",
+    "numpy>=1.24.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-mock>=3.10.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0.0",
+    "types-pyyaml",
+]
+observability = ["langsmith>=0.1.0", "arize-phoenix>=4.3.0"]
+instrumentation = ["frida>=17.9.10"]
+
+[project.scripts]
+route-hacker = "cli.main:app"
+runtime-v2 = "route_hacker.runtime_v2.cli:main"
+
+[[tool.uv.index]]
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+default = true
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "pytest-timeout>=2.4.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/route_hacker", "src/route_hacker/runtime", "src/route_hacker/runtime/api", "src/route_hacker/runtime_v2", "src/cli", "src/trace_tagger", "src/trace_ranking", "src/evaluate", "src/evaluate/trace_ranking", "src/evaluate/rh_iris", "src/trace_api", "src/patch_tracer", "src/cve_clustering", "src/guideline_manager"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"assets/route_hacker" = "route_hacker/assets"
+"assets/trace_tagger" = "trace_tagger/assets"
+
+[tool.hatch.build.targets.sdist]
+include = ["src/", "assets/", "README.md", "LICENSE"]
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+markers = [
+    "integration: integration-style tests requiring prepared local artifacts",
+]
