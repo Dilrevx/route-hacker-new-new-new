@@ -28,6 +28,9 @@ full-repository blind audit.
   blind queue format.
 - `run_blind_batch.sh` executes the queue, tracks state markers, and appends
   `run_records.jsonl`.
+- `summarize_blind_batch.py` joins the queue to the latest per-case record and
+  produces a portable result snapshot without credentials, logs, source trees,
+  or absolute artifact paths.
 
 ## Build a Queue
 
@@ -136,6 +139,35 @@ CODEX_SECURITY_RUN_ROOT=/path/to/run \
 CODEX_SECURITY_QUEUE=/path/to/run/control/queue.jsonl \
 bash new-impl/codex_security_batch/run_blind_batch.sh
 ```
+
+## Export a Result Snapshot
+
+The runner may append multiple records for retried cases. The summarizer keeps
+the latest record for each `case_id`, preserves the scheduler's terminal state,
+and extracts finding metadata from the canonical Codex Security artifacts.
+
+```bash
+python new-impl/codex_security_batch/summarize_blind_batch.py \
+  --queue /path/to/run/control/queue.jsonl \
+  --records /path/to/run/control/run_records.jsonl \
+  --state-dir /path/to/run/control/state \
+  --log-dir /path/to/run/control/logs \
+  --out-dir /path/to/result-snapshot
+```
+
+The output contains:
+
+- `summary.json`: aggregate counts and integrity hashes.
+- `summary.md`: concise human-readable report.
+- `cases.csv`: the ordered full queue with terminal status, model, coverage,
+  findings, producer, and artifact-presence metadata.
+- `findings.csv`: one row per Codex Security finding candidate.
+
+Dataset vulnerability IDs and types in these exports are evaluation joins. They
+are not passed into the repository-level blind audit prompt.
+
+The current checked-in snapshot is under
+`results/native-blind-batch-20260817/`.
 
 ## Guards
 
