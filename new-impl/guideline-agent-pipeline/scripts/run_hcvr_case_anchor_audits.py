@@ -13,6 +13,7 @@ import signal
 import shutil
 import subprocess
 import tarfile
+import threading
 import time
 from pathlib import Path
 from typing import Any, Iterable
@@ -261,6 +262,7 @@ def run_command(
     env: dict[str, str],
     input_text: str,
     timeout: int,
+    stream_output_path: Path | None = None,
 ) -> tuple[int | None, str, str]:
     process = subprocess.Popen(
         command,
@@ -272,27 +274,60 @@ def run_command(
         env=env,
         start_new_session=True,
     )
+    output_parts: list[str] = []
+    output_lock = threading.Lock()
+
+    def append_output(text: str) -> None:
+        with output_lock:
+            output_parts.append(text)
+
+    def read_stdout() -> None:
+        stream_handle = None
+        try:
+            if stream_output_path is not None:
+                stream_output_path.parent.mkdir(parents=True, exist_ok=True)
+                stream_handle = stream_output_path.open("w", encoding="utf-8")
+            if process.stdout is None:
+                return
+            for chunk in process.stdout:
+                append_output(chunk)
+                if stream_handle is not None:
+                    stream_handle.write(chunk)
+                    stream_handle.flush()
+        finally:
+            if stream_handle is not None:
+                stream_handle.close()
+
+    reader = threading.Thread(target=read_stdout, daemon=True)
+    reader.start()
     try:
-        output, _ = process.communicate(input=input_text, timeout=timeout)
-        return process.returncode, output or "", "completed"
-    except subprocess.TimeoutExpired as error:
-        output = error.stdout or ""
-        if isinstance(output, bytes):
-            output = output.decode("utf-8", errors="replace")
+        if process.stdin is not None:
+            try:
+                process.stdin.write(input_text)
+                process.stdin.close()
+            except BrokenPipeError:
+                pass
+        process.wait(timeout=timeout)
+        reader.join(timeout=5)
+        with output_lock:
+            output = "".join(output_parts)
+        return process.returncode, output, "completed"
+    except subprocess.TimeoutExpired:
         try:
             os.killpg(process.pid, signal.SIGTERM)
         except ProcessLookupError:
             pass
         try:
-            more_output, _ = process.communicate(timeout=5)
-            output += more_output or ""
+            process.wait(timeout=5)
         except subprocess.TimeoutExpired:
             try:
                 os.killpg(process.pid, signal.SIGKILL)
             except ProcessLookupError:
                 pass
-            more_output, _ = process.communicate()
-            output += more_output or ""
+            process.wait()
+        reader.join(timeout=5)
+        with output_lock:
+            output = "".join(output_parts)
         return process.returncode, output, "timeout"
 
 
@@ -713,6 +748,7 @@ def run_case(
             env=environment,
             input_text=prompt,
             timeout=timeout,
+            stream_output_path=attempt_events,
         )
         attempt_events.write_text(output, encoding="utf-8")
         if attempt_state == "completed" and attempt_returncode != 0:
