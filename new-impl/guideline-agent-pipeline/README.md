@@ -140,7 +140,7 @@ Run real guideline-conditioned anchor recall:
 
 ```bash
 RUN_ROOT=/path/to/run/hcvr-guideline-recall-top200-30
-python new-impl/guideline-agent-pipeline/scripts/recall_guideline_anchors.py \
+python new-impl/guideline-agent-pipeline/scripts/run_guideline_recall_queue.py \
   --qa new-impl/hcvr_new_unified_dataset_v2/receipts/hcvr_new_unified_paper_eval_rebalance_qa.v2.json \
   --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
   --output-dir "$RUN_ROOT/recall" \
@@ -148,7 +148,9 @@ python new-impl/guideline-agent-pipeline/scripts/recall_guideline_anchors.py \
   --snapshot-root "$RUN_ROOT/snapshots" \
   --selection all \
   --limit 30 \
-  --case-workers 8 \
+  --concurrency 8 \
+  --case-timeout 1800 \
+  --heartbeat-interval 30 \
   --embedding-backend openai \
   --embedding-base-url http://127.0.0.1:18001/v1 \
   --embedding-model Qwen/Qwen3-Embedding-0.6B \
@@ -158,6 +160,13 @@ python new-impl/guideline-agent-pipeline/scripts/recall_guideline_anchors.py \
   --embedding-retry-sleep 5 \
   --top-k 200
 ```
+
+`run_guideline_recall_queue.py` is the preferred batch entrypoint. It runs one
+case per subprocess, keeps cases from the same repository from running at the
+same time, writes `events.jsonl` heartbeat records, and fails only the timed-out
+case when `--case-timeout` is reached. If a shell is stuck in `WAIT`, inspect
+`events.jsonl` and the per-case log under `logs/` to identify the active case
+instead of treating the whole batch as hung.
 
 Use `--limit 30` for the first smoke run. Use the full QA size only after the
 30-case run has produced a `summary.json` and no repository materialization
