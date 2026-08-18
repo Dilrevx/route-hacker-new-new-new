@@ -1,0 +1,12 @@
+{
+  "verdict": "CONFIRMED",
+  "finding_id": "csf_9a500c80d16b1d82e4d630a3",
+  "case_id": "case_010",
+  "vulnerability_id": "CVE-2020-11998",
+  "reproduce_command": "cd /mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/03-case_010-apache__activemq-CVE-2020-11998-csf_9a500c80d16b1d82e4d630a3 && ./reproduce.sh",
+  "artifact_path": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/03-case_010-apache__activemq-CVE-2020-11998-csf_9a500c80d16b1d82e4d630a3",
+  "evidence_summary": "The executable PoC separately generates a 51-byte attacker OpenWire ExceptionResponse frame naming MarkerThrowable. A real loopback TcpTransport from the immutable ActiveMQ checkout cebbd7fdea0633e6a0cbbef427f9b753949fa531 unmarshals that received frame. Its OpenWire Throwable decoder reflects into the peer-selected public String constructor, which creates evidence/marker.txt containing MARKER_CONSTRUCTOR_INVOKED message=NETWORK_PAYLOAD. The listener also receives org.apache.activemq.command.ExceptionResponse. The EOF recorded afterwards happens only because the one-frame test peer closes its socket after delivery.",
+  "reason": "Confirmed on a faithful network harness using the exact vulnerable source checkout and its locally built activemq-all-5.15.12.jar. The originally named runtime image had been pruned from Docker, but the immutable exact-revision build directory remained available and was verified by reproduce.sh before execution.",
+  "source_revision": "cebbd7fdea0633e6a0cbbef427f9b753949fa531",
+  "evidence_paths": ["evidence/run.log", "evidence/marker.txt", "evidence/attacker-frame.bin", "evidence/source-identity.txt"]
+}

@@ -1,0 +1,10 @@
+{
+  "verdict": "CONFIRMED",
+  "finding_id": "csf_3accd0683d0328e8b3502bd6",
+  "case_id": "case_022",
+  "vulnerability_id": "CVE-2025-26864",
+  "reproduce_command": "cd /mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/08-case_022-apache__iotdb-CVE-2025-26864-csf_3accd0683d0328e8b3502bd6 && ./reproduce.sh",
+  "artifact_path": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/08-case_022-apache__iotdb-CVE-2025-26864-csf_3accd0683d0328e8b3502bd6",
+  "evidence_summary": "The no-credential Thrift client called legacy handshake with a new database name and received TSStatus code=200. A separately authenticated root/root CLI query then listed root.poc_unauth_case022. Server logs recorded the legacy handshake followed by Execute SetDatabase with TSStatus(code:200).",
+  "reason": "The supplied vulnerable IoTDB 1.3.3 image accepts unauthenticated legacy-sync handshakes and auto-registers the attacker-chosen database through a superuser session, yielding a schema mutation without an IoTDB login."
+}

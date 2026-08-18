@@ -1,0 +1,10 @@
+{
+  "verdict": "CONFIRMED",
+  "finding_id": "csf_bba673819bc9682cd890b837",
+  "cve": "CVE-2022-42889",
+  "reproduce_command": "./reproduce_http.sh",
+  "artifact_path": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/04-case_016-apache__commons-text-CVE-2022-42889-csf_bba673819bc9682cd890b837",
+  "evidence_summary": "The exact prepared commons-text-1.9.jar evaluates the request payload script:javascript expression. Both the direct harness and copied prepared HTTP endpoint returned before-11.0.32-after, derived by Java.type('java.lang.System').getProperty('java.version').",
+  "reason": "The prepared image tag was absent, so validation used the preserved exact Commons Text 1.9 JAR, Commons Lang dependency, compiled endpoint, and endpoint source from the runtime attempt workspace.",
+  "logs": ["logs/final-run.log", "logs/http-response.log", "logs/http-server.log"]
+}

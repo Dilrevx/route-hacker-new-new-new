@@ -1,0 +1,22 @@
+{
+  "verdict": "CONFIRMED",
+  "finding_id": "csf_db9638924c805482bc2ebdea",
+  "case_id": "case_018",
+  "vulnerability_id": "CVE-2025-25247",
+  "title": "Web Console accepts enabled admin/admin fallback credentials",
+  "reproduce_command": "cd /mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/05-case_018-apache__felix-dev-CVE-2025-25247-csf_db9638924c805482bc2ebdea && ./reproduce.sh",
+  "artifact_path": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/05-case_018-apache__felix-dev-CVE-2025-25247-csf_db9638924c805482bc2ebdea/reproduce.sh",
+  "evidence_summary": {
+    "target": "Unchanged runtime rebuilt from the supplied attempt Docker context",
+    "runtime_image": "poc-case018-felix-default-admin:c9df371",
+    "runtime_image_id": "sha256:eb238bc3ec4ee052b831ba86bb900391e9d620b4e87a6615156cc7c9049f054b",
+    "endpoint": "http://127.0.0.1:29120/system/console/bundles",
+    "no_credentials_status": 401,
+    "wrong_credentials_status": 401,
+    "default_admin_status": 200,
+    "default_response_bytes": 16494,
+    "console_marker": true,
+    "evidence_path": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/05-case_018-apache__felix-dev-CVE-2025-25247-csf_db9638924c805482bc2ebdea/evidence/run-summary.txt"
+  },
+  "reason": "The target's protected management-console bundles endpoint challenges requests without credentials and with deliberately invalid credentials (both HTTP 401), then grants HTTP 200 access and returns a rendered Apache Felix Web Console response for predictable admin:admin. The runner starts a newly rebuilt image from the supplied runtime Docker context without changing target source, bundles, credentials, or configuration."
+}

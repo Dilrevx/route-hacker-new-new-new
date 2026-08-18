@@ -1,0 +1,28 @@
+{
+  "verdict": "REJECTED",
+  "finding_id": "csf_6635096ea0a669db757e59e6",
+  "case_id": "case_020",
+  "cve": "CVE-2025-27531",
+  "source_revision": "1183e43b442558139169ab981a7d35c60860d859",
+  "runtime": "runtime-v2/u143-019-apache-inlong-cve-2025-27531:vulnerable-1183e43 at http://127.0.0.1:18195/inlong/manager",
+  "reproduce_command": "cd /mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/07-case_020-apache__inlong-CVE-2025-27531-csf_6635096ea0a669db757e59e6 && ./reproduce.sh",
+  "artifact_path": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/07-case_020-apache__inlong-CVE-2025-27531-csf_6635096ea0a669db757e59e6",
+  "evidence_summary": {
+    "anonymous_module_save": {
+      "http_status": 403,
+      "response_file": "evidence/anonymous-module-save.json",
+      "meaning": "The lifecycle write endpoint rejects the unauthenticated marker-command request."
+    },
+    "authenticated_administrator_write": {
+      "login_file": "evidence/admin-login.json",
+      "module_file": "evidence/admin-module-get.json",
+      "meaning": "The marker command is stored only after a valid administrator session is established."
+    },
+    "faithful_agent_execution_harness": {
+      "output_file": "evidence/agent-execution-marker.txt",
+      "observed_marker": "CASE020_AGENT_EXECUTED",
+      "meaning": "The revision's agent helper executes lifecycle strings through /bin/sh -c, as intended for agent installation operations."
+    }
+  },
+  "reason": "The reported security effect requires an unauthorized party to store a lifecycle command that an agent executes. The prepared vulnerable runtime returned HTTP 403 for the complete unauthenticated module-save request. The only successful persistence used the seeded INLONG_ADMIN account, and the compose runtime has no agent-installer service. The faithful source harness confirms the privileged lifecycle execution primitive but does not bridge the denied unauthenticated write boundary. Therefore this reproduction rejects the finding as an externally reachable authorization/RCE vulnerability."
+}

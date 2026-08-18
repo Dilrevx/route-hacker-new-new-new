@@ -1,0 +1,20 @@
+{
+  "verdict": "CONFIRMED",
+  "finding_id": "csf_f85d4f81e47f9bb74317f6fe",
+  "case_id": "case_057",
+  "repository": "ethyca__fides",
+  "vulnerability_id": "CVE-2026-42303",
+  "source_revision": "0e320b20934eb5af3a3d5127dba2691605d7ff37",
+  "reproduce_command": "ssh bobo5090 'cd /mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/13-case_057-ethyca__fides-CVE-2026-42303-csf_f85d4f81e47f9bb74317f6fe && ./reproduce.sh'",
+  "artifact_path": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/13-case_057-ethyca__fides-CVE-2026-42303-csf_f85d4f81e47f9bb74317f6fe",
+  "evidence_path": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/13-case_057-ethyca__fides-CVE-2026-42303-csf_f85d4f81e47f9bb74317f6fe/poc-output.json",
+  "evidence_summary": {
+    "attacker_scope": ["client:update"],
+    "victim_credential_before_rotation": "HTTP 200",
+    "cross_client_rotation_response": "HTTP 200; returned client_id equaled the separately created victim client id",
+    "victim_old_credential_after_rotation": "HTTP 401",
+    "attacker_received_victim_replacement_credential": "HTTP 200",
+    "secret_handling": "Only SHA-256 prefixes of test secrets are persisted; bearer tokens and cleartext secrets are excluded."
+  },
+  "reason": "The vulnerable endpoint authorizes the operation solely with the global client:update scope. A separate attacker OAuth client with that single scope successfully called POST /api/v1/oauth/client/{victim_id}/secret, invalidated the victim credential, and received a usable replacement credential for the victim client."
+}

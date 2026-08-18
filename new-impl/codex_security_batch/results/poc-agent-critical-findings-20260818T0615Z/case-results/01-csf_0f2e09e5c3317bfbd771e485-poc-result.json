@@ -1,0 +1,18 @@
+{
+  "verdict": "CONFIRMED",
+  "finding_id": "csf_0f2e09e5c3317bfbd771e485",
+  "case_id": "case_009",
+  "vulnerability_id": "CVE-2014-3576",
+  "reproduce_command": "cd /mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/01-case_009-apache__activemq-CVE-2014-3576-csf_0f2e09e5c3317bfbd771e485 && ./reproduce-instrumented.sh",
+  "artifact_path": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/01-case_009-apache__activemq-CVE-2014-3576-csf_0f2e09e5c3317bfbd771e485",
+  "evidence_summary": "The faithful unmodified ActiveMQ 5.11.0 broker accepted an unauthenticated STOMP SEND with transformation:jms-object-xml and no content-length header. The JmsFrameTranslator instantiated XStream and deserialized an attacker-selected dynamic proxy. During TreeSet reconstruction, its compareTo invoked the test-only marker handler loaded solely by the harness classpath, which wrote XSTREAM_STOMP_POC_EXECUTED to the broker-mounted evidence directory. The STOMP client received RECEIPT, while confirmed-marker.txt contains the broker-created marker.",
+  "reason": "CWE-502 is dynamically demonstrated: untrusted STOMP XML reaches unrestricted XStream deserialization and can execute attacker-controlled invocation logic. The harness modifies no ActiveMQ product code; its only addition is a test-only gadget JAR that supplies an observable, non-destructive execution sink.",
+  "runtime": "ActiveMQ 5.11.0 rebuilt from the supplied preserved Docker context; eclipse-temurin:8-jre",
+  "evidence_files": [
+    "evidence/confirmed-run-summary.txt",
+    "evidence/confirmed-stomp-client.log",
+    "evidence/confirmed-marker.txt",
+    "evidence/confirmed-broker.log",
+    "evidence/artifact-sha256.txt"
+  ]
+}

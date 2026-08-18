@@ -1,0 +1,14 @@
+{
+  "verdict": "CONFIRMED",
+  "finding_id": "csf_1011bb63c96314324bb32853",
+  "reproduce_command": "ssh bobo5090 'cd /mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/10-case_040-chartbrew__chartbrew-CVE-2026-32252-csf_1011bb63c96314324bb32853 && ./reproduce.sh'",
+  "artifact_path": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/10-case_040-chartbrew__chartbrew-CVE-2026-32252-csf_1011bb63c96314324bb32853",
+  "evidence_summary": "Live isolated ChartBrew compose runtime at http://127.0.0.1:34319. The 20260817T230452Z run created separate attacker Team 3 and victim Team 4. Control GET /team/3/datasets/1 returned HTTP 404. With the attacker token, GET /team/3/datasets/1/dataRequests returned HTTP 200 and leaked the victim-only Authorization value. PUT /team/3/datasets/1/dataRequests/1 returned HTTP 200 and changed the request route; victim-authenticated GET confirmed the attacker-controlled route. Raw responses and summary are in runs/20260817T230452Z/.",
+  "reason": "DataRequestRoute authorizes membership for the URL team_id but does not verify that the routed dataset_id or data-request id belongs to that team. This allows a member of one tenant to read and modify another tenant's data request by substituting an authorized team ID in the route.",
+  "runtime": {
+    "compose_project": "poccase040",
+    "base_url": "http://127.0.0.1:34319",
+    "source_revision": "1be2be66443ad73b2009f20e554328c98edd2751"
+  },
+  "evidence_path": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/10-case_040-chartbrew__chartbrew-CVE-2026-32252-csf_1011bb63c96314324bb32853/runs/20260817T230452Z/summary.json"
+}

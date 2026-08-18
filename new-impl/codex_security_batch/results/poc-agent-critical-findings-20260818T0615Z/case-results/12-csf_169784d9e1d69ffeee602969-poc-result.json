@@ -1,0 +1,21 @@
+{
+  "verdict": "REJECTED",
+  "finding_id": "csf_169784d9e1d69ffeee602969",
+  "case_id": "case_045",
+  "vulnerability_id": "CVE-2026-54778",
+  "reproduce_command": "cd /mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/12-case_045-corewcf__corewcf-CVE-2026-54778-csf_169784d9e1d69ffeee602969 && ./reproduce.sh",
+  "artifact_path": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/12-case_045-corewcf__corewcf-CVE-2026-54778-csf_169784d9e1d69ffeee602969",
+  "target_revision": "8ed9c780c7c6fb22fa215c5771dee0c1e49596b7",
+  "harness": "CoreWCF WSHttpBinding(SecurityMode.TransportWithMessageCredential) with X.509 message credentials and local TLS",
+  "evidence_summary": "The final reproducible run captured a valid 3,850-byte WS-Security request. Its valid control returned PROTECTED-OPERATION-REACHED:VALID-CONTROL. The PoC then changed only the first Base64 character of the captured ds:SignatureValue and replayed the same SOAP request. The runtime returned HTTP/1.1 500 Internal Server Error with a WS-Security InvalidSecurity fault, and PROTECTED_OPERATION_REACHED=False.",
+  "reason": "The claimed effect is not dynamically reproducible: a tampered primary WS-Security SignatureValue is rejected before the protected service operation is invoked. The static report location contains commented verification calls, but the executable transport-with-message-credential configuration performed cryptographic rejection through the active runtime path.",
+  "evidence_files": [
+    "evidence/final-reproduction.log",
+    "evidence/reproduce-valid-client.log",
+    "evidence/reproduce-forged-replay.log",
+    "evidence/valid-request.raw",
+    "evidence/forged-request.raw",
+    "evidence/forged-response.raw",
+    "evidence/reproduce-server.log"
+  ]
+}

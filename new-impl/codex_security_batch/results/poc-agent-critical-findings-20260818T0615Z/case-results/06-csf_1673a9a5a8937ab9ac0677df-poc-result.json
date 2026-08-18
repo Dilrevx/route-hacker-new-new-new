@@ -1,0 +1,21 @@
+{
+  "verdict": "CONFIRMED",
+  "finding_id": "csf_1673a9a5a8937ab9ac0677df",
+  "reproduce_command": "cd /mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/06-case_020-apache__inlong-CVE-2025-27531-csf_1673a9a5a8937ab9ac0677df && mkdir -p evidence && ./reproduce.sh http://127.0.0.1:18195/inlong/manager | tee evidence/final-run.log",
+  "artifact_path": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/06-case_020-apache__inlong-CVE-2025-27531-csf_1673a9a5a8937ab9ac0677df/reproduce.sh",
+  "evidence_summary": "Against a fresh supplied compose runtime at 127.0.0.1:18195, unauthenticated POST /api/tenant/list returned HTTP 403, while a request with no cookie, Authorization header, secret ID, or secret key to POST /openapi/tenant/save returned HTTP 200 and success=true. An unauthenticated GET /openapi/tenant/get/{generated-name} returned the created tenant with creator=admin and modifier=admin. The PoC then deleted the temporary tenant successfully.",
+  "reason": "The runtime configuration has openapi.auth.enabled=false. The executable proof demonstrates an anonymous caller performing state-changing tenant creation that the application attributes to the seeded administrator, while the normal UI route denies the same anonymous caller.",
+  "target": "runtime-v2/u143-019-apache-inlong-cve-2025-27531:vulnerable-1183e43 via supplied compose package",
+  "runtime_base_url": "http://127.0.0.1:18195/inlong/manager",
+  "evidence_paths": [
+    "evidence/final-run.log",
+    "evidence/ui_control.headers",
+    "evidence/ui_control.body",
+    "evidence/anonymous_create.headers",
+    "evidence/anonymous_create.body",
+    "evidence/anonymous_read.headers",
+    "evidence/anonymous_read.body",
+    "evidence/cleanup.headers",
+    "evidence/cleanup.body"
+  ]
+}

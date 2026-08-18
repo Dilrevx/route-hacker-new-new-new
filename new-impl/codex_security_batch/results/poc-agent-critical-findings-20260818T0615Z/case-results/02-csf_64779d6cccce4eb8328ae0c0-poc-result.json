@@ -1,0 +1,23 @@
+{
+  "verdict": "CONFIRMED",
+  "finding_id": "csf_64779d6cccce4eb8328ae0c0",
+  "case_id": "case_009",
+  "vulnerability_id": "CVE-2014-3576",
+  "target": "Apache ActiveMQ 5.11.0 rebuilt unchanged from the supplied runtime Docker context",
+  "reproduce_command": "cd /mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/02-case_009-apache__activemq-CVE-2014-3576-csf_64779d6cccce4eb8328ae0c0 && ./reproduce.sh",
+  "artifact_path": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/02-case_009-apache__activemq-CVE-2014-3576-csf_64779d6cccce4eb8328ae0c0/reproduce.sh",
+  "evidence_paths": [
+    "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/02-case_009-apache__activemq-CVE-2014-3576-csf_64779d6cccce4eb8328ae0c0/final-execution.log",
+    "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/02-case_009-apache__activemq-CVE-2014-3576-csf_64779d6cccce4eb8328ae0c0/final-put.headers",
+    "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/02-case_009-apache__activemq-CVE-2014-3576-csf_64779d6cccce4eb8328ae0c0/final-move.headers",
+    "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/02-case_009-apache__activemq-CVE-2014-3576-csf_64779d6cccce4eb8328ae0c0/final-delete.headers"
+  ],
+  "evidence_summary": "The final guest-only run received HTTP 204 for PUT /fileserver/<marker>, HTTP 204 for MOVE with Destination: file:///tmp/csf_64779d6cccce4eb8328ae0c0-arbitrary-write.txt, and confirmed that the exact controlled payload was created at that absolute path outside /opt/activemq/webapps/fileserver. The source file was removed after MOVE. A guest-only DELETE control also returned HTTP 204 and a subsequent GET returned HTTP 404.",
+  "reason": "The fileserver web.xml leaves RestFilter write-permission-role unset. RestFilter therefore permits unauthenticated PUT, MOVE, and DELETE. Its MOVE handler trusts the Destination HTTP header and copies to new File(destinationUrl.getFile()), allowing an absolute file: URI to select a filesystem path outside the web application.",
+  "iterations": [
+    "The originally named runtime image was absent from the Docker daemon; the complete preserved 5.11.0 distribution and supplied Dockerfile were found in the runtime task workspace and rebuilt unchanged.",
+    "Direct unauthenticated PUT and GET confirmed the live fileserver behavior.",
+    "Simple traversal-path variants were blocked or errored, so testing pivoted to the separate unvalidated Destination header consumed by MOVE.",
+    "The final from-scratch reproduce.sh run confirmed the arbitrary absolute-path write and unauthenticated delete control."
+  ]
+}

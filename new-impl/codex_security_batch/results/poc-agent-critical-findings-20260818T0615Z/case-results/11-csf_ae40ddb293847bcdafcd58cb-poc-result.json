@@ -1,0 +1,20 @@
+{
+  "verdict": "CONFIRMED",
+  "finding_id": "csf_ae40ddb293847bcdafcd58cb",
+  "reproduce_command": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/11-case_044-conductor-oss__conductor-CVE-2025-26074-csf_ae40ddb293847bcdafcd58cb/reproduce.sh",
+  "artifact_path": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/11-case_044-conductor-oss__conductor-CVE-2025-26074-csf_ae40ddb293847bcdafcd58cb",
+  "evidence_summary": "POST /api/workflow/test accepted a caller-defined INLINE workflow. The supplied JavaScript invoked Java.type(java.io.File), created /tmp/poc044-cve-2025-26074.marker inside the target container, and returned exists=true plus Java 17.0.19 in a COMPLETED task response. reproduce.sh removes the marker before each request and asserts both the target-container marker and the API response.",
+  "reason": "The vulnerable server image built from the preserved runtime JAR executes caller-supplied INLINE JavaScript with Nashorn Java interoperation enabled; this is the exact capability restricted by the CVE fix's --no-java option.",
+  "target": {
+    "runtime_image": "runtime-v2/u143-047-conductor-cve-2025-26074:vulnerable-5976cad",
+    "image_id": "sha256:d10d47c6f3dcb1104005c6db437fc2f1c35eecc81b04042de469708c388e7d74",
+    "vulnerable_revision": "5976cad67bab4204e3ec4b2edd6f6831623c7c9a"
+  },
+  "evidence_files": [
+    "payload.json",
+    "response.json",
+    "response-assertion.json",
+    "reproduction.log",
+    "health.json"
+  ]
+}
