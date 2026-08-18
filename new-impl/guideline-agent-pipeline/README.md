@@ -92,7 +92,8 @@ python /Users/bytedance/workspace/route-hacker-w2-reconcile-d538b56/scripts/embe
   --model Qwen/Qwen3-Embedding-0.6B \
   --host 127.0.0.1 \
   --port 8001 \
-  --device cuda
+  --device cuda \
+  --server-batch-size 32
 ```
 
 When the embedding service is on `bobo5090`, keep an SSH tunnel open in a
@@ -105,6 +106,34 @@ curl -sS http://127.0.0.1:18001/health
 
 The health response should name `Qwen3-Embedding-0.6B` and `cuda:0`. The recall
 stage uses this embedding model, not the later audit LLM.
+
+For higher throughput on `bobo5090`, run one embedding server per GPU and open
+one local tunnel per server:
+
+```bash
+for spec in 8001:0 8011:1 8002:2 8003:3 8004:4 8005:5 8006:6 8007:7; do
+  port=${spec%:*}
+  gpu=${spec#*:}
+  nohup python scripts/embedding_server.py \
+    --model /data/lhq/workspace/hcvr-embedding-service/models/Qwen3-Embedding-0.6B \
+    --host 127.0.0.1 \
+    --port "$port" \
+    --device "cuda:$gpu" \
+    --server-batch-size 32 \
+    > "logs/embedding_server_${port}.log" 2>&1 &
+done
+
+ssh -f -N -L 18001:127.0.0.1:8001 bobo5090
+ssh -f -N -L 18011:127.0.0.1:8011 bobo5090
+ssh -f -N -L 18002:127.0.0.1:8002 bobo5090
+```
+
+The embedding server should serialize `model.encode()` per process. Running
+multiple executor threads against one SentenceTransformer instance on one GPU
+can leave clients waiting on long-lived HTTP connections even when GPU
+utilization has dropped. The recall client retries transient HTTP 5xx,
+connection-refused, and timeout failures; keep `--embedding-batch-size` modest
+when the service is shared.
 
 Run real guideline-conditioned anchor recall:
 
@@ -124,6 +153,8 @@ python new-impl/guideline-agent-pipeline/scripts/recall_guideline_anchors.py \
   --embedding-model Qwen/Qwen3-Embedding-0.6B \
   --embedding-batch-size 128 \
   --embedding-timeout 600 \
+  --embedding-max-retries 3 \
+  --embedding-retry-sleep 5 \
   --top-k 200
 ```
 

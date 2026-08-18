@@ -115,11 +115,15 @@ class OpenAICompatibleEmbedder:
         model: str,
         api_key: str | None,
         timeout: int,
+        max_retries: int,
+        retry_sleep: float,
     ) -> None:
         self._base_url = base_url.rstrip("/")
         self._model = model
         self._api_key = api_key
         self._timeout = timeout
+        self._max_retries = max(1, max_retries)
+        self._retry_sleep = max(0.0, retry_sleep)
 
     @property
     def model_id(self) -> str:
@@ -129,20 +133,32 @@ class OpenAICompatibleEmbedder:
         if not texts:
             return []
         payload = json.dumps({"model": self._model, "input": texts}).encode("utf-8")
-        request = urllib.request.Request(
-            f"{self._base_url}/embeddings",
-            data=payload,
-            headers={"Content-Type": "application/json"},
-            method="POST",
-        )
-        if self._api_key:
-            request.add_header("Authorization", f"Bearer {self._api_key}")
-        try:
-            with urllib.request.urlopen(request, timeout=self._timeout) as response:
-                body = response.read().decode("utf-8")
-        except urllib.error.HTTPError as error:
-            detail = error.read().decode("utf-8", errors="replace")
-            raise RuntimeError(f"embedding service HTTP {error.code}: {detail[:1000]}") from error
+        last_error: Exception | None = None
+        for attempt in range(1, self._max_retries + 1):
+            request = urllib.request.Request(
+                f"{self._base_url}/embeddings",
+                data=payload,
+                headers={"Content-Type": "application/json"},
+                method="POST",
+            )
+            if self._api_key:
+                request.add_header("Authorization", f"Bearer {self._api_key}")
+            try:
+                with urllib.request.urlopen(request, timeout=self._timeout) as response:
+                    body = response.read().decode("utf-8")
+                break
+            except urllib.error.HTTPError as error:
+                detail = error.read().decode("utf-8", errors="replace")
+                last_error = RuntimeError(f"embedding service HTTP {error.code}: {detail[:1000]}")
+                if error.code < 500 or attempt >= self._max_retries:
+                    raise last_error from error
+            except (TimeoutError, urllib.error.URLError) as error:
+                last_error = error
+                if attempt >= self._max_retries:
+                    raise RuntimeError(f"embedding service request failed after {attempt} attempt(s): {error}") from error
+            time.sleep(self._retry_sleep * attempt)
+        else:
+            raise RuntimeError(f"embedding service request failed: {last_error}")
         data = json.loads(body)
         items = sorted(data.get("data") or [], key=lambda item: int(item.get("index", 0)))
         if len(items) != len(texts):
@@ -181,6 +197,8 @@ def make_embedder(args: argparse.Namespace) -> Embedder:
             model=args.embedding_model,
             api_key=api_key,
             timeout=args.embedding_timeout,
+            max_retries=args.embedding_max_retries,
+            retry_sleep=args.embedding_retry_sleep,
         )
     return SentenceTransformersEmbedder(
         model=args.embedding_model,
@@ -473,6 +491,8 @@ def main() -> None:
     parser.add_argument("--embedding-device", default="cpu")
     parser.add_argument("--embedding-batch-size", type=int, default=64)
     parser.add_argument("--embedding-timeout", type=int, default=300)
+    parser.add_argument("--embedding-max-retries", type=int, default=3)
+    parser.add_argument("--embedding-retry-sleep", type=float, default=5.0)
     parser.add_argument("--max-seq-length", type=int, default=512)
     args = parser.parse_args()
 
