@@ -299,3 +299,56 @@ def test_prepare_packet_writes_prompt_and_handoff_fields(tmp_path: Path):
     prompt = Path(row["prompt"]).read_text(encoding="utf-8")
     assert "Decision value must be either risk or no-risk" in prompt
     assert "Confidence value must be a decimal" in prompt
+
+
+def test_selected_anchor_file_overrides_dataset_anchor(tmp_path: Path):
+    module = load_module()
+    selected_path = tmp_path / "selected.jsonl"
+    selected_path.write_text(
+        json.dumps(
+            {
+                "identity_key": "owner__repo::CVE-2099-0001",
+                "anchor_id": "recalled_anchor::1",
+                "file": "src/Recalled.java",
+                "start_line": 30,
+                "end_line": 40,
+                "symbol": "Recalled.run",
+                "span_kind": "sliding_window",
+                "rank": 1,
+                "score": 0.42,
+                "retrieval_source": "mechanical_slice_embedding_recall",
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    identities, anchors = module.load_selected_anchor_file(selected_path)
+    case = sample_case()
+    chosen = module.choose_anchor(case, anchor_index=0, selected_anchors=anchors)
+    assert identities == ["owner__repo::CVE-2099-0001"]
+    assert chosen["anchor_id"] == "recalled_anchor::1"
+    assert chosen["file"] == "src/Recalled.java"
+    assert chosen["rank"] == 1
+    assert module.pick_anchor(case, 0)["file"] == "src/App.java"
+
+
+def test_selected_case_row_preserves_retrieval_metadata(tmp_path: Path):
+    module = load_module()
+    case = sample_case()
+    anchor = {
+        "anchor_id": "recalled_anchor::1",
+        "file": "src/Recalled.java",
+        "start_line": 30,
+        "end_line": 40,
+        "symbol": "Recalled.run",
+        "span_kind": "sliding_window",
+        "rank": 1,
+        "score": 0.42,
+        "retrieval_source": "mechanical_slice_embedding_recall",
+        "known_anchor_overlap": False,
+    }
+    row = module.selected_case_row(case, anchor, tmp_path)
+    assert row["anchor_id"] == "recalled_anchor::1"
+    assert row["rank"] == 1
+    assert row["score"] == 0.42
+    assert row["retrieval_source"] == "mechanical_slice_embedding_recall"

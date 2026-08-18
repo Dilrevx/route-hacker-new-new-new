@@ -388,6 +388,51 @@ def pick_anchor(case: dict[str, Any], anchor_index: int) -> dict[str, Any]:
     return anchors[anchor_index]
 
 
+def load_selected_anchor_file(path: Path) -> tuple[list[str], dict[str, dict[str, Any]]]:
+    identities: list[str] = []
+    anchors: dict[str, dict[str, Any]] = {}
+    for row in read_jsonl(path):
+        identity = row.get("identity_key")
+        if not identity:
+            continue
+        if identity in anchors:
+            raise ValueError(f"duplicate selected anchor identity: {identity}")
+        for field in ("anchor_id", "file", "start_line", "end_line"):
+            if field not in row:
+                raise ValueError(f"selected anchor row missing {field}: {identity}")
+        identities.append(identity)
+        anchors[identity] = {
+            "anchor_id": row["anchor_id"],
+            "file": row["file"],
+            "start_line": row["start_line"],
+            "end_line": row["end_line"],
+            "symbol": row.get("symbol", ""),
+            "span_kind": row.get("span_kind", "recalled_window"),
+            "rank": row.get("rank"),
+            "score": row.get("score"),
+            "retrieval_source": row.get("retrieval_source"),
+            "known_anchor_overlap": row.get("known_anchor_overlap"),
+        }
+    if not identities:
+        raise ValueError(f"selected anchor file has no usable rows: {path}")
+    return identities, anchors
+
+
+def choose_anchor(
+    case: dict[str, Any],
+    *,
+    anchor_index: int,
+    selected_anchors: dict[str, dict[str, Any]] | None,
+) -> dict[str, Any]:
+    if selected_anchors is not None:
+        identity = case["identity_key"]
+        try:
+            return selected_anchors[identity]
+        except KeyError as error:
+            raise ValueError(f"selected anchor missing for {identity}") from error
+    return pick_anchor(case, anchor_index)
+
+
 def run_git(command: list[str], timeout: int) -> None:
     subprocess.run(command, check=True, timeout=timeout)
 
@@ -773,7 +818,7 @@ def selected_case_row(
     anchor: dict[str, Any],
     snapshot: Path | None,
 ) -> dict[str, Any]:
-    return {
+    row = {
         "identity_key": case["identity_key"],
         "case_id": case.get("new_unified_case_id"),
         "repo_url": case["repository"]["repo_url"],
@@ -785,6 +830,17 @@ def selected_case_row(
         "end_line": anchor["end_line"],
         "snapshot": str(snapshot) if snapshot is not None else None,
     }
+    for field in (
+        "rank",
+        "score",
+        "symbol",
+        "span_kind",
+        "retrieval_source",
+        "known_anchor_overlap",
+    ):
+        if field in anchor:
+            row[field] = anchor[field]
+    return row
 
 
 def main() -> None:
@@ -792,6 +848,7 @@ def main() -> None:
     parser.add_argument("--qa", type=Path, required=True)
     parser.add_argument("--cases-file", type=Path)
     parser.add_argument("--identity-file", type=Path)
+    parser.add_argument("--selected-anchor-file", type=Path)
     parser.add_argument("--exclude-audit-index", type=Path)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--repo-cache", type=Path, required=True)
@@ -822,8 +879,9 @@ def main() -> None:
     output = args.output_dir.resolve()
     if output.exists():
         raise FileExistsError(f"refusing existing audit output: {output}")
-    codex = shutil.which(args.codex)
-    if codex is None:
+    output.mkdir(parents=True)
+    codex = None if args.prepare_only else shutil.which(args.codex)
+    if codex is None and not args.prepare_only:
         raise FileNotFoundError(f"Codex executable not found: {args.codex}")
     codex_home = args.codex_home.resolve()
     if not codex_home.is_dir():
@@ -835,16 +893,30 @@ def main() -> None:
     repo_cache.mkdir(parents=True, exist_ok=True)
     snapshots.mkdir(parents=True, exist_ok=True)
 
+    selected_anchor_identities: list[str] | None = None
+    selected_anchors: dict[str, dict[str, Any]] | None = None
+    identity_file = args.identity_file.resolve() if args.identity_file else None
+    if args.selected_anchor_file is not None:
+        selected_anchor_identities, selected_anchors = load_selected_anchor_file(
+            args.selected_anchor_file.resolve()
+        )
+        if identity_file is None:
+            inferred_identity_file = output / ".selected_anchor_identities.jsonl"
+            write_jsonl(
+                inferred_identity_file,
+                ({"identity_key": identity} for identity in selected_anchor_identities),
+            )
+            identity_file = inferred_identity_file
+
     cases = load_selected_cases(
         args.qa.resolve(),
         args.limit,
         args.skip,
         args.selection,
         args.cases_file.resolve() if args.cases_file else None,
-        args.identity_file.resolve() if args.identity_file else None,
+        identity_file,
         args.exclude_audit_index.resolve() if args.exclude_audit_index else None,
     )
-    output.mkdir(parents=True)
     (output / "reports").mkdir()
     selected_cases_path = output / "selected_cases.jsonl"
     audit_index_path = output / "audit_index.jsonl"
@@ -855,7 +927,11 @@ def main() -> None:
     materialize_failures: list[dict[str, Any]] = []
     if args.prepare_only:
         for case in cases:
-            anchor = pick_anchor(case, args.anchor_index)
+            anchor = choose_anchor(
+                case,
+                anchor_index=args.anchor_index,
+                selected_anchors=selected_anchors,
+            )
             snapshot = None
             materialize_failed = False
             if not args.no_materialize:
@@ -950,7 +1026,11 @@ def main() -> None:
                 print(json.dumps(result, ensure_ascii=False, sort_keys=True), flush=True)
 
         for case in cases:
-            anchor = pick_anchor(case, args.anchor_index)
+            anchor = choose_anchor(
+                case,
+                anchor_index=args.anchor_index,
+                selected_anchors=selected_anchors,
+            )
             try:
                 snapshot = ensure_snapshot(
                     case,

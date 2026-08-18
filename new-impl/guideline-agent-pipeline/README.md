@@ -19,10 +19,17 @@ contract in the audit report, not a hidden reducer or schema-heavy verifier.
 - `scripts/run_hcvr_case_anchor_audits.py`
   - Reads an HCVR QA receipt.
   - Selects cases from `added_identities`.
-  - Uses each case's existing `recall_anchors` as the recall output.
+  - Consumes either dataset-provided oracle anchors or a `selected_cases.jsonl`
+    produced by online guideline recall.
   - Materializes the exact source checkout in a read-only snapshot.
   - Runs one Codex audit per selected anchor.
   - Writes free-form reports plus `audit_index.jsonl` and `summary.json`.
+- `scripts/recall_guideline_anchors.py`
+  - Materializes exact source snapshots.
+  - Mechanically cuts generic sliding-window anchor candidates from source files.
+  - Embeds the guideline and candidate anchors through a real embedding backend.
+  - Ranks candidates by cosine similarity and writes Top-K recall results.
+  - Uses dataset anchors only after ranking to compute known-anchor Hit@K.
 - `scripts/derive_guideline_from_audit.py`
   - Converts a successful risk audit report into a generalized guideline track.
   - Emits both `guideline_tracks.yaml` and a cve_clustering-style guideline
@@ -61,6 +68,79 @@ For `risk`, the body should include:
 - exact `file:line` locations for the sensitive effect;
 - runtime conditions, variables, branch predicates, and state that a later PoC
   agent should observe or instrument to eliminate false positives.
+
+## Full Guideline Recall Then Audit
+
+Start a local OpenAI-compatible embedding service when using the bundled server
+from the historical route-hacker implementation:
+
+```bash
+python /Users/bytedance/workspace/route-hacker-w2-reconcile-d538b56/scripts/embedding_server.py \
+  --model Qwen/Qwen3-Embedding-0.6B \
+  --host 127.0.0.1 \
+  --port 8001 \
+  --device cuda
+```
+
+Run real guideline-conditioned anchor recall:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/recall_guideline_anchors.py \
+  --qa new-impl/hcvr_new_unified_dataset_v2/receipts/hcvr_new_unified_paper_eval_rebalance_qa.v2.json \
+  --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
+  --output-dir /path/to/run/recall142 \
+  --repo-cache /path/to/run/repo-cache \
+  --snapshot-root /path/to/run/snapshots \
+  --selection all \
+  --limit 142 \
+  --case-workers 16 \
+  --embedding-backend openai \
+  --embedding-base-url http://127.0.0.1:8001/v1 \
+  --embedding-model Qwen/Qwen3-Embedding-0.6B \
+  --embedding-batch-size 128 \
+  --top-k 30
+```
+
+Then audit the recalled Top-1 anchor for each case:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/run_hcvr_case_anchor_audits.py \
+  --qa new-impl/hcvr_new_unified_dataset_v2/receipts/hcvr_new_unified_paper_eval_rebalance_qa.v2.json \
+  --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
+  --selected-anchor-file /path/to/run/recall142/selected_cases.jsonl \
+  --output-dir /path/to/run/audit142-recalled \
+  --repo-cache /path/to/run/repo-cache \
+  --snapshot-root /path/to/run/snapshots \
+  --codex-home ~/.trae \
+  --temp-root /path/to/tmp \
+  --selection all \
+  --limit 142 \
+  --codex traex \
+  --model DeepSeek-V4-Flash \
+  --concurrency 16 \
+  --timeout 1500 \
+  --max-attempts 1 \
+  --clone-timeout 180 \
+  --skip-materialize-failures
+```
+
+This is the paper-main chain:
+
+```text
+mechanical source slicing
+  -> guideline embedding recall
+  -> selected Top-K anchors
+  -> per-anchor agent audit
+```
+
+`recall_guideline_anchors.py` does not use dataset anchors as ranking input.
+Known anchors are used only for post-hoc Hit@K evaluation.
+
+## Oracle Anchor Baseline
+
+The audit runner without `--selected-anchor-file` uses each case's existing
+`recall_anchors[--anchor-index]`. That mode is an oracle/preselected-anchor
+audit baseline, not online guideline recall.
 
 ## Prepare 20 QA Cases
 
