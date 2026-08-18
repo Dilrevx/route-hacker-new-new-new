@@ -1,0 +1,361 @@
+{
+  "by_hcvr_type": {
+    "authentication_session_token_validation": {
+      "decision_counts": {
+        "None": 4,
+        "risk": 5
+      },
+      "risk_over_all": 0.5555555555555556,
+      "risk_over_decided": 1.0,
+      "state_counts": {
+        "completed": 5,
+        "invalid_report_footer": 1,
+        "timeout": 3
+      },
+      "total": 9
+    },
+    "authorization_bypass": {
+      "decision_counts": {
+        "None": 1,
+        "no-risk": 1,
+        "risk": 13
+      },
+      "risk_over_all": 0.8666666666666667,
+      "risk_over_decided": 0.9285714285714286,
+      "state_counts": {
+        "completed": 14,
+        "timeout": 1
+      },
+      "total": 15
+    },
+    "business_state_precondition": {
+      "decision_counts": {
+        "None": 2,
+        "no-risk": 8,
+        "risk": 4
+      },
+      "risk_over_all": 0.2857142857142857,
+      "risk_over_decided": 0.3333333333333333,
+      "state_counts": {
+        "completed": 12,
+        "timeout": 2
+      },
+      "total": 14
+    },
+    "concurrent_object_lifecycle": {
+      "decision_counts": {
+        "None": 3,
+        "no-risk": 8,
+        "risk": 1
+      },
+      "risk_over_all": 0.08333333333333333,
+      "risk_over_decided": 0.1111111111111111,
+      "state_counts": {
+        "completed": 9,
+        "timeout": 3
+      },
+      "total": 12
+    },
+    "cve_2026_50279": {
+      "decision_counts": {
+        "None": 1
+      },
+      "risk_over_all": 0.0,
+      "risk_over_decided": null,
+      "state_counts": {
+        "timeout": 1
+      },
+      "total": 1
+    },
+    "file_permission_temp_resource": {
+      "decision_counts": {
+        "no-risk": 2,
+        "risk": 7
+      },
+      "risk_over_all": 0.7777777777777778,
+      "risk_over_decided": 0.7777777777777778,
+      "state_counts": {
+        "completed": 9
+      },
+      "total": 9
+    },
+    "ghsa_7rx3_5wx3_5v76": {
+      "decision_counts": {
+        "risk": 1
+      },
+      "risk_over_all": 1.0,
+      "risk_over_decided": 1.0,
+      "state_counts": {
+        "completed": 1
+      },
+      "total": 1
+    },
+    "iris": {
+      "decision_counts": {
+        "None": 15,
+        "no-risk": 12,
+        "risk": 20
+      },
+      "risk_over_all": 0.425531914893617,
+      "risk_over_decided": 0.625,
+      "state_counts": {
+        "completed": 32,
+        "invalid_report_footer": 1,
+        "timeout": 14
+      },
+      "total": 47
+    },
+    "m9_expansion": {
+      "decision_counts": {
+        "None": 1,
+        "risk": 2
+      },
+      "risk_over_all": 0.6666666666666666,
+      "risk_over_decided": 1.0,
+      "state_counts": {
+        "completed": 2,
+        "timeout": 1
+      },
+      "total": 3
+    },
+    "m9_wave2": {
+      "decision_counts": {
+        "None": 1,
+        "no-risk": 2,
+        "risk": 2
+      },
+      "risk_over_all": 0.4,
+      "risk_over_decided": 0.5,
+      "state_counts": {
+        "completed": 4,
+        "timeout": 1
+      },
+      "total": 5
+    },
+    "m9_wave4": {
+      "decision_counts": {
+        "no-risk": 4,
+        "risk": 2
+      },
+      "risk_over_all": 0.3333333333333333,
+      "risk_over_decided": 0.3333333333333333,
+      "state_counts": {
+        "completed": 6
+      },
+      "total": 6
+    },
+    "open_redirect": {
+      "decision_counts": {
+        "None": 1,
+        "no-risk": 2,
+        "risk": 1
+      },
+      "risk_over_all": 0.25,
+      "risk_over_decided": 0.3333333333333333,
+      "state_counts": {
+        "completed": 3,
+        "invalid_report_footer": 1
+      },
+      "total": 4
+    },
+    "ssrf": {
+      "decision_counts": {
+        "no-risk": 1,
+        "risk": 3
+      },
+      "risk_over_all": 0.75,
+      "risk_over_decided": 0.75,
+      "state_counts": {
+        "completed": 4
+      },
+      "total": 4
+    },
+    "template_expression_injection": {
+      "decision_counts": {
+        "None": 1,
+        "risk": 1
+      },
+      "risk_over_all": 0.5,
+      "risk_over_decided": 1.0,
+      "state_counts": {
+        "completed": 1,
+        "timeout": 1
+      },
+      "total": 2
+    },
+    "toctou_check_use_race": {
+      "decision_counts": {
+        "None": 3,
+        "no-risk": 5,
+        "risk": 2
+      },
+      "risk_over_all": 0.2,
+      "risk_over_decided": 0.2857142857142857,
+      "state_counts": {
+        "completed": 7,
+        "timeout": 3
+      },
+      "total": 10
+    }
+  },
+  "by_paper_eval_decision": {
+    "blocked_for_fix_revision_eval": {
+      "decision_counts": {
+        "risk": 2
+      },
+      "risk_over_all": 1.0,
+      "risk_over_decided": 1.0,
+      "state_counts": {
+        "completed": 2
+      },
+      "total": 2
+    },
+    "paper_ready_aux_fix_only": {
+      "decision_counts": {
+        "None": 12,
+        "no-risk": 11,
+        "risk": 23
+      },
+      "risk_over_all": 0.5,
+      "risk_over_decided": 0.6764705882352942,
+      "state_counts": {
+        "completed": 34,
+        "invalid_report_footer": 1,
+        "timeout": 11
+      },
+      "total": 46
+    },
+    "paper_ready_direct_pair": {
+      "decision_counts": {
+        "None": 21,
+        "no-risk": 34,
+        "risk": 39
+      },
+      "risk_over_all": 0.4148936170212766,
+      "risk_over_decided": 0.5342465753424658,
+      "state_counts": {
+        "completed": 73,
+        "invalid_report_footer": 2,
+        "timeout": 19
+      },
+      "total": 94
+    }
+  },
+  "by_strict_direct_parent_pair": {
+    "False": {
+      "decision_counts": {
+        "None": 12,
+        "no-risk": 11,
+        "risk": 25
+      },
+      "risk_over_all": 0.5208333333333334,
+      "risk_over_decided": 0.6944444444444444,
+      "state_counts": {
+        "completed": 36,
+        "invalid_report_footer": 1,
+        "timeout": 11
+      },
+      "total": 48
+    },
+    "True": {
+      "decision_counts": {
+        "None": 21,
+        "no-risk": 34,
+        "risk": 39
+      },
+      "risk_over_all": 0.4148936170212766,
+      "risk_over_decided": 0.5342465753424658,
+      "state_counts": {
+        "completed": 73,
+        "invalid_report_footer": 2,
+        "timeout": 19
+      },
+      "total": 94
+    }
+  },
+  "decision_counts": {
+    "None": 33,
+    "no-risk": 45,
+    "risk": 64
+  },
+  "model": "DeepSeek-V4-Flash",
+  "oracle_anchor_metrics": {
+    "decidable_rate": 0.7676056338028169,
+    "decided_count": 109,
+    "invalid_footer_rate": 0.02112676056338028,
+    "risk_over_all": 0.4507042253521127,
+    "risk_over_decided": 0.5871559633027523,
+    "timeout_rate": 0.2112676056338028
+  },
+  "schema_version": "oracle_anchor_audit_142_summary.v1",
+  "scope": "dataset-provided recall_anchors[0] -> TraeX/DeepSeek audit; not online guideline recall",
+  "selection": {
+    "anchor_index": 0,
+    "anchor_source": "new_unified_cases.v1.jsonl recall_anchors[0]",
+    "case_count": 142,
+    "cases_file": "new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl",
+    "qa_receipt": "new-impl/hcvr_new_unified_dataset_v2/receipts/hcvr_new_unified_paper_eval_rebalance_qa.v2.json"
+  },
+  "state_counts": {
+    "completed": 109,
+    "invalid_report_footer": 3,
+    "timeout": 30
+  },
+  "usage": {
+    "average_billable_tokens_per_case": 182822.60563380283,
+    "average_cached_input_tokens_per_case": 1345554.028169014,
+    "average_input_tokens_per_case": 1456367.2394366197,
+    "average_output_tokens_per_case": 72009.39436619719,
+    "combined": {
+      "artifact_mtime_span_seconds": 16647.984,
+      "audited": 142,
+      "billable_input_tokens_est": 15735476,
+      "cached_input_tokens": 191068672,
+      "completed": 109,
+      "input_tokens": 206804148,
+      "invalid_report_footer": 3,
+      "no_risk": 45,
+      "none": 33,
+      "output_tokens": 10225334,
+      "reasoning_output_tokens": 9079998,
+      "risk": 64,
+      "timeout": 30,
+      "total_tokens_billable_est": 25960810,
+      "total_tokens_including_cached": 217029482
+    },
+    "new_remaining116": {
+      "artifact_mtime_span_seconds": 6494.663,
+      "audited": 116,
+      "billable_input_tokens_est": 12671028,
+      "cached_input_tokens": 147835392,
+      "completed": 90,
+      "input_tokens": 160506420,
+      "invalid_report_footer": 3,
+      "no_risk": 37,
+      "none": 26,
+      "output_tokens": 8581866,
+      "reasoning_output_tokens": 7631440,
+      "risk": 53,
+      "timeout": 23,
+      "total_tokens_billable_est": 21252894,
+      "total_tokens_including_cached": 169088286
+    },
+    "old_first26": {
+      "artifact_mtime_span_seconds": 10153.321,
+      "audited": 26,
+      "billable_input_tokens_est": 3064448,
+      "cached_input_tokens": 43233280,
+      "completed": 19,
+      "input_tokens": 46297728,
+      "invalid_report_footer": 0,
+      "no_risk": 8,
+      "none": 7,
+      "output_tokens": 1643468,
+      "reasoning_output_tokens": 1448558,
+      "risk": 11,
+      "timeout": 7,
+      "total_tokens_billable_est": 4707916,
+      "total_tokens_including_cached": 47941196
+    }
+  }
+}
