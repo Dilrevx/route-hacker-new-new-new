@@ -185,6 +185,13 @@ direct provider paths are not a supported audit execution surface and can fail
 because provider credentials, subscriptions, or outbound model connectivity are
 unavailable. This is independent of the remote embedding service being healthy.
 
+Current operational status: treat all AI provider paths on `bobo5090` as
+unavailable for audit. In the 30-case smoke run, both
+`codex exec --model DeepSeek-V4-Pro` and
+`codex exec --model DeepSeek-V4-Flash` repeatedly failed with request timeouts,
+including single-case, concurrency-1 probes. This is a provider/connectivity
+failure, not a recall or snapshot materialization failure.
+
 Run the audit from the local development machine, where the working Codex/TraeX
 login and provider configuration live. Mount the remote run root so the local
 harness consumes the exact recall output and immutable source snapshots created
@@ -213,6 +220,11 @@ python new-impl/guideline-agent-pipeline/scripts/run_hcvr_case_anchor_audits.py 
   --concurrency 8 --timeout 1500 --max-attempts 1 --clone-timeout 180 \
   --skip-materialize-failures
 ```
+
+Use a locally configured model such as `DeepSeek-V4-Pro`, `GPT-5.5`, or another
+known-good Codex/TraeX model. If a model is unproven, run a single-case probe
+first with `--limit 1 --concurrency 1`; only scale to 30 cases after that probe
+produces a valid report with the required `Decision:` and `Confidence:` footer.
 
 When the audit ends, unmount the local mount with `umount "$LOCAL_RUN"`
 (macOS) or `fusermount -u "$LOCAL_RUN"` (Linux). Keep the remote `recall/`,
