@@ -131,9 +131,10 @@ ssh -f -N -L 18002:127.0.0.1:8002 bobo5090
 The embedding server should serialize `model.encode()` per process. Running
 multiple executor threads against one SentenceTransformer instance on one GPU
 can leave clients waiting on long-lived HTTP connections even when GPU
-utilization has dropped. The recall client retries transient HTTP 5xx,
-connection-refused, and timeout failures; keep `--embedding-batch-size` modest
-when the service is shared.
+utilization has dropped. The recall client sends `Connection: close` and
+retries transient HTTP 5xx, connection-refused, and timeout failures; keep
+`--embedding-batch-size` modest when the service is shared. Use 32 or 64 for
+large repositories before increasing the batch size.
 
 Run real guideline-conditioned anchor recall:
 
@@ -151,8 +152,8 @@ python new-impl/guideline-agent-pipeline/scripts/recall_guideline_anchors.py \
   --embedding-backend openai \
   --embedding-base-url http://127.0.0.1:18001/v1 \
   --embedding-model Qwen/Qwen3-Embedding-0.6B \
-  --embedding-batch-size 128 \
-  --embedding-timeout 600 \
+  --embedding-batch-size 64 \
+  --embedding-timeout 180 \
   --embedding-max-retries 3 \
   --embedding-retry-sleep 5 \
   --top-k 200

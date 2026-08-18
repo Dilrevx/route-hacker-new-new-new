@@ -138,7 +138,7 @@ class OpenAICompatibleEmbedder:
             request = urllib.request.Request(
                 f"{self._base_url}/embeddings",
                 data=payload,
-                headers={"Content-Type": "application/json"},
+                headers={"Content-Type": "application/json", "Connection": "close"},
                 method="POST",
             )
             if self._api_key:
