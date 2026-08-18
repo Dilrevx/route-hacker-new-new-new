@@ -11,6 +11,7 @@ import math
 import os
 import re
 import subprocess
+import threading
 import time
 import urllib.error
 import urllib.request
@@ -344,6 +345,7 @@ def recall_case(
     embedder: Embedder,
     repo_cache: Path,
     snapshot_root: Path,
+    snapshot_lock: threading.Lock | None,
     clone_timeout: int,
     suffixes: set[str],
     window_lines: int,
@@ -356,7 +358,11 @@ def recall_case(
     top_k: int,
 ) -> dict[str, Any]:
     started = time.time()
-    snapshot = ensure_snapshot(case, repo_cache, snapshot_root, clone_timeout)
+    if snapshot_lock is None:
+        snapshot = ensure_snapshot(case, repo_cache, snapshot_root, clone_timeout)
+    else:
+        with snapshot_lock:
+            snapshot = ensure_snapshot(case, repo_cache, snapshot_root, clone_timeout)
     candidates = slice_snapshot(
         case=case,
         snapshot=snapshot,
@@ -451,7 +457,7 @@ def main() -> None:
     parser.add_argument("--skip", type=int, default=0)
     parser.add_argument("--clone-timeout", type=int, default=600)
     parser.add_argument("--case-workers", type=int, default=4)
-    parser.add_argument("--top-k", type=int, default=30)
+    parser.add_argument("--top-k", type=int, default=200)
     parser.add_argument("--audit-anchor-rank", type=int, default=1)
     parser.add_argument("--window-lines", type=int, default=80)
     parser.add_argument("--stride-lines", type=int, default=40)
@@ -501,6 +507,17 @@ def main() -> None:
     selected_path = output / "selected_cases.jsonl"
     recall_path.write_text("", encoding="utf-8")
     selected_path.write_text("", encoding="utf-8")
+    repo_locks_guard = threading.Lock()
+    repo_locks: dict[str, threading.Lock] = {}
+
+    def repo_lock_for(case: dict[str, Any]) -> threading.Lock:
+        repo_key = str(case["repository"]["repo_key"])
+        with repo_locks_guard:
+            lock = repo_locks.get(repo_key)
+            if lock is None:
+                lock = threading.Lock()
+                repo_locks[repo_key] = lock
+            return lock
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.case_workers) as pool:
         future_to_case = {
@@ -510,6 +527,7 @@ def main() -> None:
                 embedder=embedder,
                 repo_cache=repo_cache,
                 snapshot_root=snapshot_root,
+                snapshot_lock=repo_lock_for(case),
                 clone_timeout=args.clone_timeout,
                 suffixes=suffixes,
                 window_lines=args.window_lines,

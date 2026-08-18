@@ -71,6 +71,19 @@ For `risk`, the body should include:
 
 ## Full Guideline Recall Then Audit
 
+This is the paper-main chain:
+
+```text
+mechanical source slicing
+  -> guideline embedding recall
+  -> Top-200 candidate anchors
+  -> selected/reranked audit anchors
+  -> per-anchor agent audit
+```
+
+`recall_guideline_anchors.py` does not use dataset anchors as ranking input.
+Known anchors are used only for post-hoc Hit@K evaluation.
+
 Start a local OpenAI-compatible embedding service when using the bundled server
 from the historical route-hacker implementation:
 
@@ -82,59 +95,112 @@ python /Users/bytedance/workspace/route-hacker-w2-reconcile-d538b56/scripts/embe
   --device cuda
 ```
 
+When the embedding service is on `bobo5090`, keep an SSH tunnel open in a
+separate shell:
+
+```bash
+ssh -N -L 18001:127.0.0.1:8001 bobo5090
+curl -sS http://127.0.0.1:18001/health
+```
+
+The health response should name `Qwen3-Embedding-0.6B` and `cuda:0`. The recall
+stage uses this embedding model, not the later audit LLM.
+
 Run real guideline-conditioned anchor recall:
 
 ```bash
+RUN_ROOT=/path/to/run/hcvr-guideline-recall-top200-30
 python new-impl/guideline-agent-pipeline/scripts/recall_guideline_anchors.py \
   --qa new-impl/hcvr_new_unified_dataset_v2/receipts/hcvr_new_unified_paper_eval_rebalance_qa.v2.json \
   --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
-  --output-dir /path/to/run/recall142 \
-  --repo-cache /path/to/run/repo-cache \
-  --snapshot-root /path/to/run/snapshots \
+  --output-dir "$RUN_ROOT/recall" \
+  --repo-cache "$RUN_ROOT/repo-cache" \
+  --snapshot-root "$RUN_ROOT/snapshots" \
   --selection all \
-  --limit 142 \
-  --case-workers 16 \
+  --limit 30 \
+  --case-workers 8 \
   --embedding-backend openai \
-  --embedding-base-url http://127.0.0.1:8001/v1 \
+  --embedding-base-url http://127.0.0.1:18001/v1 \
   --embedding-model Qwen/Qwen3-Embedding-0.6B \
   --embedding-batch-size 128 \
-  --top-k 30
+  --embedding-timeout 600 \
+  --top-k 200
 ```
 
-Then audit the recalled Top-1 anchor for each case:
+Use `--limit 30` for the first smoke run. Use the full QA size only after the
+30-case run has produced a `summary.json` and no repository materialization
+errors remain.
+
+Then audit the selected recalled anchor for each case. By default the recall
+stage stores Top-200 candidates for evaluation and writes rank-1 into
+`selected_cases.jsonl` as the audit entry point; a reranker can later consume
+the Top-200 list and reduce it to a smaller Top-20/50 audit budget.
 
 ```bash
 python new-impl/guideline-agent-pipeline/scripts/run_hcvr_case_anchor_audits.py \
   --qa new-impl/hcvr_new_unified_dataset_v2/receipts/hcvr_new_unified_paper_eval_rebalance_qa.v2.json \
   --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
-  --selected-anchor-file /path/to/run/recall142/selected_cases.jsonl \
-  --output-dir /path/to/run/audit142-recalled \
-  --repo-cache /path/to/run/repo-cache \
-  --snapshot-root /path/to/run/snapshots \
+  --selected-anchor-file "$RUN_ROOT/recall/selected_cases.jsonl" \
+  --output-dir "$RUN_ROOT/audit" \
+  --repo-cache "$RUN_ROOT/repo-cache" \
+  --snapshot-root "$RUN_ROOT/snapshots" \
   --codex-home ~/.trae \
-  --temp-root /path/to/tmp \
+  --temp-root "$RUN_ROOT/tmp" \
   --selection all \
-  --limit 142 \
+  --limit 30 \
   --codex traex \
-  --model DeepSeek-V4-Flash \
-  --concurrency 16 \
+  --model DeepSeek-V4-Pro \
+  --concurrency 8 \
   --timeout 1500 \
   --max-attempts 1 \
   --clone-timeout 180 \
   --skip-materialize-failures
 ```
 
-This is the paper-main chain:
+### Recall Outputs
+
+The recall directory contains:
 
 ```text
-mechanical source slicing
-  -> guideline embedding recall
-  -> selected Top-K anchors
-  -> per-anchor agent audit
+$RUN_ROOT/recall/
+  recall_results.jsonl   # one row per case, including Top-200 anchors
+  selected_cases.jsonl   # rank-N anchor rows consumed by the audit runner
+  summary.json           # Hit@K, failures, candidate counts, elapsed time
+  README.md              # short run summary
 ```
 
-`recall_guideline_anchors.py` does not use dataset anchors as ranking input.
-Known anchors are used only for post-hoc Hit@K evaluation.
+`selected_cases.jsonl` is only an audit entry-point file. It is not the full
+retrieval result. Use `recall_results.jsonl` for Hit@K analysis and reranking.
+
+### Concurrency and Repository Locks
+
+The recall runner allows high case-level concurrency. Some QA receipts contain
+multiple CVEs from the same repository, so concurrent workers can otherwise
+fetch into the same `repo-cache/<repo_key>/.git` directory and collide on files
+such as `.git/shallow.lock`. The runner therefore serializes only the
+`ensure_snapshot()` step per `repo_key`; slicing and embedding still run in
+parallel across cases.
+
+If a previous interrupted run left a broken cache, start the next run with a
+fresh `RUN_ROOT`. Do not reuse a repo cache that already reported
+`.git/shallow.lock`, partial fetch, or `invalid index-pack output` errors unless
+you have manually verified and repaired that repository cache.
+
+### Common Run Modes
+
+30-case smoke run:
+
+```bash
+RUN_ROOT=/Users/bytedance/tmp/hcvr-guideline-recall-top200-30-$(date +%Y%m%dT%H%M%S)
+# run the recall command above, then the audit command above
+```
+
+Full QA receipt run:
+
+```bash
+# Same commands, but set --limit 142 or the exact intended QA count.
+# Keep --top-k 200 for recall. Treat smaller budgets as rerank/audit budgets.
+```
 
 ## Oracle Anchor Baseline
 
@@ -245,3 +311,11 @@ python -m pytest -q new-impl/guideline-agent-pipeline/tests
   code, credentials, or auth state.
 - Use the QA receipt and source snapshots as inputs, not training data or
   hidden truth during audit.
+- Recall Top-K and audit concurrency are separate knobs. The recommended first
+  pass is recall `--top-k 200` and audit `--concurrency 8`.
+- The recall stage uses the embedding service endpoint. The audit stage uses
+  the `--model` passed to `run_hcvr_case_anchor_audits.py`, for example
+  `DeepSeek-V4-Pro`.
+- The local macOS system Python may not have `pytest`. In that case,
+  `python3 -m py_compile scripts/recall_guideline_anchors.py` is still a quick
+  syntax check, but full tests require an environment with `pytest` installed.
