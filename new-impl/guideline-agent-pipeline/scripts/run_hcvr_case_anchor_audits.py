@@ -22,9 +22,21 @@ DECISION_RE = re.compile(
     r"(?im)^\s*(?:[-*]\s*)?(?:\*\*)?Decision(?:\*\*)?\s*:\s*"
     r"(?:\*\*)?(risk|no-risk)(?:\*\*)?\s*$"
 )
+DECISION_MARKDOWN_RE = re.compile(
+    r"(?im)^\s*(?:#{1,6}\s*)?(?:\*\*)?Decision(?:\*\*)?\s*:?\s*$"
+    r"\s*^\s*(?:[-*]\s*)?(?:\*\*)?(risk|no-risk)(?:\*\*)?\s*$"
+)
 CONFIDENCE_RE = re.compile(
     r"(?im)^\s*(?:[-*]\s*)?(?:\*\*)?Confidence(?:\*\*)?\s*:\s*"
     r"(?:\*\*)?(0(?:\.\d+)?|1(?:\.0+)?)(?:\*\*)?\s*$"
+)
+CONFIDENCE_MARKDOWN_RE = re.compile(
+    r"(?im)^\s*(?:[-*]\s*)?(?:\*\*)?Confidence\s*:\s*(?:\*\*)?\s*"
+    r"(?:\*\*)?(0(?:\.\d+)?|1(?:\.0+)?)(?:\*\*)?\s*$"
+)
+DECISION_BLOCK_RE = re.compile(
+    r"(?ims)^\s*(?:#{1,6}\s*)?(?:\*\*)?Decision(?:\*\*)?\s*:?\s*$"
+    r"(?P<body>.*?)(?=^\s*(?:#{1,6}\s*)?(?:\*\*)?[A-Z][A-Za-z /-]+(?:\*\*)?\s*:?\s*$|\Z)"
 )
 
 GUIDELINES = {
@@ -130,6 +142,12 @@ def write_jsonl(path: Path, rows: Iterable[dict[str, Any]]) -> None:
             handle.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n")
 
 
+def append_jsonl(path: Path, row: dict[str, Any]) -> None:
+    with path.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n")
+        handle.flush()
+
+
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -139,11 +157,89 @@ def sha256_file(path: Path) -> str:
 
 
 def parse_report(text: str) -> tuple[str | None, float | None]:
-    decisions = DECISION_RE.findall(text)
-    confidences = CONFIDENCE_RE.findall(text)
+    decisions = DECISION_RE.findall(text) + DECISION_MARKDOWN_RE.findall(text)
+    confidences = CONFIDENCE_RE.findall(text) + CONFIDENCE_MARKDOWN_RE.findall(text)
+    last_heading = ""
+    for line in text.splitlines():
+        normalized = line.strip()
+        if normalized.startswith((("- ", "* "))):
+            normalized = normalized[2:].strip()
+        normalized = normalized.lstrip("#").strip()
+        normalized = normalized.replace("**", "").strip()
+        lowered = normalized.lower()
+        if lowered in {"decision", "confidence"}:
+            last_heading = lowered
+            continue
+        if lowered.startswith("decision:"):
+            value = lowered.split(":", 1)[1].strip()
+            if value in {"risk", "no-risk"}:
+                decisions.append(value)
+            last_heading = "decision"
+            continue
+        if lowered.startswith("confidence:"):
+            value = lowered.split(":", 1)[1].strip()
+            if re.fullmatch(r"0(?:\.\d+)?|1(?:\.0+)?", value):
+                confidences.append(value)
+            last_heading = "confidence"
+            continue
+        if lowered in {"risk", "no-risk"} and last_heading == "decision":
+            decisions.append(lowered)
+            continue
+        if re.fullmatch(r"0(?:\.\d+)?|1(?:\.0+)?", lowered) and last_heading in {
+            "decision",
+            "confidence",
+        }:
+            confidences.append(lowered)
+            continue
+    for match in DECISION_BLOCK_RE.finditer(text):
+        for line in match.group("body").splitlines():
+            normalized = line.strip()
+            if normalized.startswith(("- ", "* ")):
+                normalized = normalized[2:].strip()
+            if normalized.startswith("**") and normalized.endswith("**"):
+                normalized = normalized[2:-2].strip()
+            if normalized in {"risk", "no-risk"}:
+                decisions.append(normalized)
+                continue
+            if re.fullmatch(r"0(?:\.\d+)?|1(?:\.0+)?", normalized):
+                confidences.append(normalized)
     decision = decisions[-1].lower() if decisions else None
     confidence = float(confidences[-1]) if confidences else None
     return decision, confidence
+
+
+def agent_messages_from_events(events: str) -> Iterable[str]:
+    for line in events.splitlines():
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        item = event.get("item") or {}
+        if item.get("type") != "agent_message":
+            continue
+        text = item.get("text")
+        if isinstance(text, str) and text.strip():
+            yield text
+
+
+def select_report_text(report: str, events: str) -> tuple[str, str | None, float | None, str]:
+    decision, confidence = parse_report(report)
+    if decision is not None and confidence is not None:
+        return report, decision, confidence, "output_last_message"
+
+    selected_text = report
+    selected_decision = decision
+    selected_confidence = confidence
+    selected_source = "output_last_message"
+    for text in agent_messages_from_events(events):
+        event_decision, event_confidence = parse_report(text)
+        if event_decision is None or event_confidence is None:
+            continue
+        selected_text = text
+        selected_decision = event_decision
+        selected_confidence = event_confidence
+        selected_source = "events_agent_message"
+    return selected_text, selected_decision, selected_confidence, selected_source
 
 
 def has_command_execution(events: str) -> bool:
@@ -209,11 +305,47 @@ def load_selected_cases(
     limit: int,
     skip: int,
     selection: str,
+    cases_file: Path | None = None,
+    identity_file: Path | None = None,
+    exclude_audit_index: Path | None = None,
 ) -> list[dict[str, Any]]:
     qa = read_json(qa_path)
-    case_path = Path(qa["files"]["cases"]["path"])
+    case_path = cases_file or Path(qa["files"]["cases"]["path"])
+    excluded_identities: set[str] = set()
+    if exclude_audit_index is not None:
+        excluded_identities = {
+            row["identity_key"]
+            for row in read_jsonl(exclude_audit_index)
+            if row.get("identity_key")
+        }
+    if identity_file is not None:
+        identities = [
+            row["identity_key"]
+            for row in read_jsonl(identity_file)
+            if row.get("identity_key")
+        ]
+        identities = [
+            identity
+            for identity in identities
+            if identity not in excluded_identities
+        ][skip : skip + limit]
+        if len(identities) != limit:
+            raise ValueError(f"only selected {len(identities)} identity file rows, wanted {limit}")
+        cases_by_identity = {
+            row["identity_key"]: row
+            for row in read_jsonl(case_path)
+            if row.get("identity_key") in set(identities)
+        }
+        missing = [identity for identity in identities if identity not in cases_by_identity]
+        if missing:
+            raise ValueError(f"identity file rows missing from cases file: {missing}")
+        return [cases_by_identity[identity] for identity in identities]
     if selection == "added":
-        identities = list(qa["added_identities"])[skip : skip + limit]
+        identities = [
+            identity
+            for identity in qa["added_identities"]
+            if identity not in excluded_identities
+        ][skip : skip + limit]
         cases_by_identity = {
             row["identity_key"]: row
             for row in read_jsonl(case_path)
@@ -226,6 +358,8 @@ def load_selected_cases(
     if selection == "all":
         selected: list[dict[str, Any]] = []
         for row in read_jsonl(case_path):
+            if row.get("identity_key") in excluded_identities:
+                continue
             quality = row.get("quality") or {}
             if quality.get("dataset_status") != "accepted":
                 continue
@@ -254,12 +388,47 @@ def pick_anchor(case: dict[str, Any], anchor_index: int) -> dict[str, Any]:
     return anchors[anchor_index]
 
 
-def clone_or_fetch(repo_url: str, repo_dir: Path) -> None:
-    if repo_dir.exists():
-        subprocess.run(["git", "-C", str(repo_dir), "fetch", "--all", "--tags"], check=True)
-        return
+def run_git(command: list[str], timeout: int) -> None:
+    subprocess.run(command, check=True, timeout=timeout)
+
+
+def commit_exists(repo_dir: Path, commit: str) -> bool:
+    return (
+        subprocess.run(
+            ["git", "-C", str(repo_dir), "cat-file", "-e", f"{commit}^{{commit}}"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        ).returncode
+        == 0
+    )
+
+
+def clone_or_fetch(repo_url: str, repo_dir: Path, commit: str, timeout: int) -> None:
     repo_dir.parent.mkdir(parents=True, exist_ok=True)
-    subprocess.run(["git", "clone", "--no-checkout", repo_url, str(repo_dir)], check=True)
+    if not (repo_dir / ".git").is_dir():
+        if repo_dir.exists():
+            shutil.rmtree(repo_dir)
+        repo_dir.mkdir(parents=True)
+        run_git(["git", "-C", str(repo_dir), "init"], timeout)
+        run_git(["git", "-C", str(repo_dir), "remote", "add", "origin", repo_url], timeout)
+    if commit_exists(repo_dir, commit):
+        return
+    try:
+        run_git(
+            [
+                "git",
+                "-C",
+                str(repo_dir),
+                "fetch",
+                "--depth=1",
+                "--filter=blob:none",
+                "origin",
+                commit,
+            ],
+            timeout,
+        )
+    except subprocess.CalledProcessError:
+        run_git(["git", "-C", str(repo_dir), "fetch", "--depth=1", "origin", commit], timeout)
 
 
 def materialize_snapshot(repo_dir: Path, commit: str, snapshot: Path) -> None:
@@ -287,12 +456,20 @@ def materialize_snapshot(repo_dir: Path, commit: str, snapshot: Path) -> None:
             check=True,
         )
         with tarfile.open(archive) as handle:
-            handle.extractall(snapshot, filter="data")
+            try:
+                handle.extractall(snapshot, filter="data")
+            except TypeError:
+                handle.extractall(snapshot)
     finally:
         archive.unlink(missing_ok=True)
 
 
-def ensure_snapshot(case: dict[str, Any], repo_cache: Path, snapshots: Path) -> Path:
+def ensure_snapshot(
+    case: dict[str, Any],
+    repo_cache: Path,
+    snapshots: Path,
+    clone_timeout: int,
+) -> Path:
     repo = case["repository"]
     revisions = case["revisions"]
     repo_key = repo["repo_key"]
@@ -301,9 +478,40 @@ def ensure_snapshot(case: dict[str, Any], repo_cache: Path, snapshots: Path) -> 
     snapshot = snapshots / f"{safe_slug(repo_key)}__{commit[:12]}"
     if snapshot.is_dir():
         return snapshot
-    clone_or_fetch(repo["repo_url"], repo_dir)
+    clone_or_fetch(repo["repo_url"], repo_dir, commit, clone_timeout)
     materialize_snapshot(repo_dir, commit, snapshot)
     return snapshot
+
+
+def materialize_failure_row(
+    case: dict[str, Any],
+    anchor: dict[str, Any],
+    error: BaseException,
+) -> dict[str, Any]:
+    classification = case.get("classification") or {}
+    return {
+        "identity_key": case["identity_key"],
+        "case_id": case.get("new_unified_case_id"),
+        "hcvr_type": classification.get("primary_hcvr_type"),
+        "repo_url": case["repository"]["repo_url"],
+        "checkout_revision": case["revisions"]["checkout_revision"],
+        "anchor_id": anchor["anchor_id"],
+        "file": anchor["file"],
+        "start_line": anchor["start_line"],
+        "end_line": anchor["end_line"],
+        "state": "materialize_failed",
+        "decision": None,
+        "confidence": None,
+        "duration_seconds": 0,
+        "returncode": getattr(error, "returncode", None),
+        "attempt_count": 0,
+        "attempts": [],
+        "report": None,
+        "report_sha256": None,
+        "prompt": None,
+        "events": None,
+        "error": f"{type(error).__name__}: {error}",
+    }
 
 
 def build_guideline(case: dict[str, Any]) -> str:
@@ -368,13 +576,13 @@ Investigation anchor:
 Start at the anchor, read that source range, and inspect the smallest relevant
 callers, callees, data flow, security checks, state transitions, and sensitive
 effects needed to decide whether this anchor leads to the guideline risk. The
-anchor is an investigation entry, not proof and not a boundary on repository
-reading. Keep the audit bounded and finish in this single response. Prefer
-focused line-range reads and search commands over printing entire large files.
+anchor is an investigation entry, not proof and not a boundary on repository reading.
+Keep the audit bounded and finish in this single response. Prefer focused
+line-range reads and search commands over printing entire large files.
 
 Return a free-form audit report. Explain the relevant code path and why the risk
-does or does not exist. Choose risk only when you can identify a concrete
-sensitive operation reachable from this anchor and explain the missing,
+does or does not exist. Choose risk only when you can identify a concrete sensitive operation
+reachable from this anchor and explain the missing,
 incorrect, stale, confused, or unpropagated security condition. Otherwise choose
 no-risk, using confidence to express remaining uncertainty.
 
@@ -385,8 +593,8 @@ positives. Do not modify the repository, run tests, read patches, use historical
 PoCs, or search external vulnerability information.
 
 You must make a binary decision. End the report with exactly two machine-readable
-lines. The Decision value must be either risk or no-risk. The Confidence value
-must be a decimal from 0.00 to 1.00. Do not return unknown or any third decision.
+lines. The Decision value must be either risk or no-risk. The Confidence value must be a decimal
+from 0.00 to 1.00. Do not return unknown or any third decision.
 """
 
 
@@ -448,6 +656,7 @@ def run_case(
     for attempt in range(1, max_attempts + 1):
         attempt_report = reports_dir / f"{slug}.attempt-{attempt:02d}.md"
         attempt_events = reports_dir / f"{slug}.attempt-{attempt:02d}.events.jsonl"
+        attempt_report_source = "missing"
         attempt_command = command.copy()
         attempt_command[attempt_command.index(str(report_path))] = str(attempt_report)
         attempt_started = time.time()
@@ -465,8 +674,12 @@ def run_case(
             attempt_state = "codex_failed"
 
         report = attempt_report.read_text(encoding="utf-8") if attempt_report.is_file() else ""
-        attempt_decision, attempt_confidence = parse_report(report)
         events = attempt_events.read_text(encoding="utf-8")
+        report, attempt_decision, attempt_confidence, attempt_report_source = (
+            select_report_text(report, events)
+        )
+        if report:
+            attempt_report.write_text(report, encoding="utf-8")
         if attempt_state == "completed" and not has_command_execution(events):
             attempt_state = "no_tool_execution"
         if attempt_state == "completed" and (
@@ -479,6 +692,7 @@ def run_case(
                 "duration_seconds": round(time.time() - attempt_started, 3),
                 "events": str(attempt_events),
                 "report": str(attempt_report),
+                "report_source": attempt_report_source,
                 "returncode": attempt_returncode,
                 "state": attempt_state,
             }
@@ -554,9 +768,31 @@ def write_prepare_packet(
     }
 
 
+def selected_case_row(
+    case: dict[str, Any],
+    anchor: dict[str, Any],
+    snapshot: Path | None,
+) -> dict[str, Any]:
+    return {
+        "identity_key": case["identity_key"],
+        "case_id": case.get("new_unified_case_id"),
+        "repo_url": case["repository"]["repo_url"],
+        "checkout_revision": case["revisions"]["checkout_revision"],
+        "hcvr_type": (case.get("classification") or {}).get("primary_hcvr_type"),
+        "anchor_id": anchor["anchor_id"],
+        "file": anchor["file"],
+        "start_line": anchor["start_line"],
+        "end_line": anchor["end_line"],
+        "snapshot": str(snapshot) if snapshot is not None else None,
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--qa", type=Path, required=True)
+    parser.add_argument("--cases-file", type=Path)
+    parser.add_argument("--identity-file", type=Path)
+    parser.add_argument("--exclude-audit-index", type=Path)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--repo-cache", type=Path, required=True)
     parser.add_argument("--snapshot-root", type=Path, required=True)
@@ -569,16 +805,20 @@ def main() -> None:
     parser.add_argument("--model", default="qwen3-coder:30b")
     parser.add_argument("--codex", default="codex")
     parser.add_argument("--timeout", type=int, default=1200)
+    parser.add_argument("--clone-timeout", type=int, default=600)
     parser.add_argument("--max-attempts", type=int, default=2)
     parser.add_argument("--concurrency", type=int, default=1)
     parser.add_argument("--prepare-only", action="store_true")
     parser.add_argument("--no-materialize", action="store_true")
+    parser.add_argument("--skip-materialize-failures", action="store_true")
     args = parser.parse_args()
 
     if args.limit < 1 or args.skip < 0 or args.anchor_index < 0:
         raise ValueError("limit must be positive; skip and anchor-index non-negative")
     if args.concurrency < 1 or args.max_attempts < 1:
         raise ValueError("concurrency and max-attempts must be positive")
+    if args.no_materialize and not args.prepare_only:
+        raise ValueError("cannot run audits with --no-materialize")
     output = args.output_dir.resolve()
     if output.exists():
         raise FileExistsError(f"refusing existing audit output: {output}")
@@ -600,49 +840,61 @@ def main() -> None:
         args.limit,
         args.skip,
         args.selection,
+        args.cases_file.resolve() if args.cases_file else None,
+        args.identity_file.resolve() if args.identity_file else None,
+        args.exclude_audit_index.resolve() if args.exclude_audit_index else None,
     )
     output.mkdir(parents=True)
     (output / "reports").mkdir()
+    selected_cases_path = output / "selected_cases.jsonl"
+    audit_index_path = output / "audit_index.jsonl"
+    selected_cases_path.write_text("", encoding="utf-8")
+    audit_index_path.write_text("", encoding="utf-8")
     selected_rows: list[dict[str, Any]] = []
-    run_items: list[tuple[dict[str, Any], dict[str, Any], Path]] = []
     prepared_rows: list[dict[str, Any]] = []
-    for case in cases:
-        anchor = pick_anchor(case, args.anchor_index)
-        snapshot = (
-            None
-            if args.no_materialize
-            else ensure_snapshot(case, repo_cache, snapshots)
-        )
-        selected_rows.append(
-            {
-                "identity_key": case["identity_key"],
-                "case_id": case.get("new_unified_case_id"),
-                "repo_url": case["repository"]["repo_url"],
-                "checkout_revision": case["revisions"]["checkout_revision"],
-                "hcvr_type": (case.get("classification") or {}).get("primary_hcvr_type"),
-                "anchor_id": anchor["anchor_id"],
-                "file": anchor["file"],
-                "start_line": anchor["start_line"],
-                "end_line": anchor["end_line"],
-                "snapshot": str(snapshot) if snapshot is not None else None,
-            }
-        )
-        if args.prepare_only:
-            prepared_rows.append(
-                write_prepare_packet(
-                    output=output,
-                    case=case,
-                    anchor=anchor,
-                    snapshot=snapshot,
-                )
-            )
-        else:
-            if snapshot is None:
-                raise ValueError("cannot run audits with --no-materialize")
-            run_items.append((case, anchor, snapshot))
-    write_jsonl(output / "selected_cases.jsonl", selected_rows)
+    materialize_failures: list[dict[str, Any]] = []
     if args.prepare_only:
-        write_jsonl(output / "audit_index.jsonl", prepared_rows)
+        for case in cases:
+            anchor = pick_anchor(case, args.anchor_index)
+            snapshot = None
+            materialize_failed = False
+            if not args.no_materialize:
+                try:
+                    snapshot = ensure_snapshot(
+                        case,
+                        repo_cache,
+                        snapshots,
+                        args.clone_timeout,
+                    )
+                except (
+                    subprocess.CalledProcessError,
+                    subprocess.TimeoutExpired,
+                    FileExistsError,
+                    ValueError,
+                    OSError,
+                ) as error:
+                    if not args.skip_materialize_failures:
+                        raise
+                    row = materialize_failure_row(case, anchor, error)
+                    materialize_failures.append(row)
+                    append_jsonl(audit_index_path, row)
+                    materialize_failed = True
+            row = selected_case_row(case, anchor, snapshot)
+            selected_rows.append(row)
+            append_jsonl(selected_cases_path, row)
+            if materialize_failed:
+                continue
+            prepared = write_prepare_packet(
+                output=output,
+                case=case,
+                anchor=anchor,
+                snapshot=snapshot,
+            )
+            prepared_rows.append(prepared)
+            append_jsonl(audit_index_path, prepared)
+        write_jsonl(selected_cases_path, selected_rows)
+        write_jsonl(audit_index_path, prepared_rows + materialize_failures)
+        write_jsonl(output / "audit_index.jsonl", prepared_rows + materialize_failures)
         summary = {
             "schema_version": "hcvr_case_anchor_audit_run.v1",
             "qa": str(args.qa.resolve()),
@@ -656,6 +908,7 @@ def main() -> None:
             "no_risk_count": 0,
             "failed_count": 0,
             "prepared_count": len(prepared_rows),
+            "materialize_failed_count": len(materialize_failures),
             "prepare_only": True,
             "snapshots_materialized": not args.no_materialize,
         }
@@ -675,19 +928,73 @@ def main() -> None:
         "timeout": args.timeout,
         "max_attempts": args.max_attempts,
     }
-    results: list[dict[str, Any]] = []
+    results: list[dict[str, Any]] = list(materialize_failures)
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.concurrency) as pool:
-        futures = [
-            pool.submit(run_case, case=case, anchor=anchor, snapshot=snapshot, **worker_args)
-            for case, anchor, snapshot in run_items
-        ]
-        for future in concurrent.futures.as_completed(futures):
-            result = future.result()
-            results.append(result)
-            print(json.dumps(result, ensure_ascii=False, sort_keys=True), flush=True)
+        futures: set[concurrent.futures.Future[dict[str, Any]]] = set()
+
+        def drain_done(*, block: bool = False) -> None:
+            if not futures:
+                return
+            if block:
+                done, _ = concurrent.futures.wait(
+                    futures,
+                    return_when=concurrent.futures.FIRST_COMPLETED,
+                )
+            else:
+                done = {future for future in futures if future.done()}
+            for future in done:
+                futures.remove(future)
+                result = future.result()
+                results.append(result)
+                append_jsonl(audit_index_path, result)
+                print(json.dumps(result, ensure_ascii=False, sort_keys=True), flush=True)
+
+        for case in cases:
+            anchor = pick_anchor(case, args.anchor_index)
+            try:
+                snapshot = ensure_snapshot(
+                    case,
+                    repo_cache,
+                    snapshots,
+                    args.clone_timeout,
+                )
+            except (
+                subprocess.CalledProcessError,
+                subprocess.TimeoutExpired,
+                FileExistsError,
+                ValueError,
+                OSError,
+            ) as error:
+                if not args.skip_materialize_failures:
+                    raise
+                result = materialize_failure_row(case, anchor, error)
+                results.append(result)
+                append_jsonl(audit_index_path, result)
+                row = selected_case_row(case, anchor, None)
+                selected_rows.append(row)
+                append_jsonl(selected_cases_path, row)
+                print(json.dumps(result, ensure_ascii=False, sort_keys=True), flush=True)
+                drain_done()
+                continue
+            row = selected_case_row(case, anchor, snapshot)
+            selected_rows.append(row)
+            append_jsonl(selected_cases_path, row)
+            futures.add(
+                pool.submit(
+                    run_case,
+                    case=case,
+                    anchor=anchor,
+                    snapshot=snapshot,
+                    **worker_args,
+                )
+            )
+            drain_done()
+        while futures:
+            drain_done(block=True)
     order = {case["identity_key"]: index for index, case in enumerate(cases)}
     results.sort(key=lambda row: order[row["identity_key"]])
-    write_jsonl(output / "audit_index.jsonl", results)
+    write_jsonl(selected_cases_path, selected_rows)
+    write_jsonl(audit_index_path, results)
     summary = {
         "schema_version": "hcvr_case_anchor_audit_run.v1",
         "qa": str(args.qa.resolve()),
@@ -701,6 +1008,7 @@ def main() -> None:
         "risk_count": sum(row["decision"] == "risk" for row in results),
         "no_risk_count": sum(row["decision"] == "no-risk" for row in results),
         "failed_count": sum(row["state"] != "completed" for row in results),
+        "materialize_failed_count": sum(row["state"] == "materialize_failed" for row in results),
     }
     (output / "summary.json").write_text(
         json.dumps(summary, ensure_ascii=False, indent=2, sort_keys=True) + "\n",

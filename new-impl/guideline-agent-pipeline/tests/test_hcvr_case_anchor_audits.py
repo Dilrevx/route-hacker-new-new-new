@@ -61,6 +61,14 @@ def test_parse_report_uses_last_binary_footer():
         "risk",
         0.85,
     )
+    assert module.parse_report("### Decision\n\n**risk**\n**Confidence:** 1.00") == (
+        "risk",
+        1.0,
+    )
+    assert module.parse_report("### Decision\n\n**risk**\n\n**0.95**") == (
+        "risk",
+        0.95,
+    )
     assert module.parse_report("No required footer.") == (None, None)
 
 
@@ -83,6 +91,46 @@ def test_has_command_execution_requires_real_event():
     )
     assert not module.has_command_execution(fake_xml)
     assert module.has_command_execution(f"{fake_xml}\nnot-json\n{real_event}\n")
+
+
+def test_select_report_text_prefers_footer_bearing_agent_message():
+    module = load_module()
+    stale_last_message = "The background tasks completed after the report."
+    event_report = (
+        "Audit report body.\n\n"
+        "Decision: risk\n"
+        "Confidence: 0.91\n"
+    )
+    events = "\n".join(
+        [
+            json.dumps(
+                {
+                    "type": "item.completed",
+                    "item": {
+                        "type": "agent_message",
+                        "text": event_report,
+                    },
+                }
+            ),
+            json.dumps(
+                {
+                    "type": "item.completed",
+                    "item": {
+                        "type": "agent_message",
+                        "text": stale_last_message,
+                    },
+                }
+            ),
+        ]
+    )
+    selected, decision, confidence, source = module.select_report_text(
+        stale_last_message,
+        events,
+    )
+    assert selected == event_report
+    assert decision == "risk"
+    assert confidence == 0.91
+    assert source == "events_agent_message"
 
 
 def test_load_selected_cases_uses_added_identity_order(tmp_path: Path):
@@ -114,15 +162,92 @@ def test_load_selected_cases_uses_added_identity_order(tmp_path: Path):
     ]
 
 
+def test_load_selected_cases_can_use_identity_file_order(tmp_path: Path):
+    module = load_module()
+    cases_path = tmp_path / "cases.jsonl"
+    case_a = sample_case()
+    case_b = sample_case() | {"identity_key": "owner__repo::CVE-2099-0002"}
+    cases_path.write_text(
+        json.dumps(case_a) + "\n" + json.dumps(case_b) + "\n",
+        encoding="utf-8",
+    )
+    identity_path = tmp_path / "identity.jsonl"
+    identity_path.write_text(
+        json.dumps({"identity_key": "owner__repo::CVE-2099-0002"}) + "\n"
+        + json.dumps({"identity_key": "owner__repo::CVE-2099-0001"}) + "\n",
+        encoding="utf-8",
+    )
+    qa_path = tmp_path / "qa.json"
+    qa_path.write_text(
+        json.dumps({"files": {"cases": {"path": str(cases_path)}}}),
+        encoding="utf-8",
+    )
+    selected = module.load_selected_cases(
+        qa_path,
+        limit=2,
+        skip=0,
+        selection="all",
+        identity_file=identity_path,
+    )
+    assert [row["identity_key"] for row in selected] == [
+        "owner__repo::CVE-2099-0002",
+        "owner__repo::CVE-2099-0001",
+    ]
+
+
+def test_load_selected_cases_can_exclude_previous_audit_index(tmp_path: Path):
+    module = load_module()
+    cases_path = tmp_path / "cases.jsonl"
+    case_a = sample_case()
+    case_b = sample_case() | {"identity_key": "owner__repo::CVE-2099-0002"}
+    case_c = sample_case() | {"identity_key": "owner__repo::CVE-2099-0003"}
+    cases_path.write_text(
+        "".join(json.dumps(row) + "\n" for row in [case_a, case_b, case_c]),
+        encoding="utf-8",
+    )
+    identity_path = tmp_path / "identity.jsonl"
+    identity_path.write_text(
+        "".join(
+            json.dumps({"identity_key": row["identity_key"]}) + "\n"
+            for row in [case_a, case_b, case_c]
+        ),
+        encoding="utf-8",
+    )
+    audit_index = tmp_path / "audit_index.jsonl"
+    audit_index.write_text(
+        json.dumps({"identity_key": "owner__repo::CVE-2099-0001"}) + "\n",
+        encoding="utf-8",
+    )
+    qa_path = tmp_path / "qa.json"
+    qa_path.write_text(
+        json.dumps({"files": {"cases": {"path": str(cases_path)}}}),
+        encoding="utf-8",
+    )
+    selected = module.load_selected_cases(
+        qa_path,
+        limit=2,
+        skip=0,
+        selection="all",
+        identity_file=identity_path,
+        exclude_audit_index=audit_index,
+    )
+    assert [row["identity_key"] for row in selected] == [
+        "owner__repo::CVE-2099-0002",
+        "owner__repo::CVE-2099-0003",
+    ]
+
+
 def test_load_selected_cases_all_uses_accepted_cases_with_anchors(tmp_path: Path):
     module = load_module()
     cases_path = tmp_path / "cases.jsonl"
     accepted = sample_case()
+    accepted["quality"] = {"dataset_status": "accepted"}
     skipped = sample_case() | {
         "identity_key": "owner__repo::CVE-2099-0002",
         "quality": {"dataset_status": "rejected"},
     }
     accepted2 = sample_case() | {"identity_key": "owner__repo::CVE-2099-0003"}
+    accepted2["quality"] = {"dataset_status": "accepted"}
     cases_path.write_text(
         "".join(json.dumps(row) + "\n" for row in [skipped, accepted, accepted2]),
         encoding="utf-8",
