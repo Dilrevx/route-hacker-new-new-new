@@ -177,26 +177,47 @@ stage stores Top-200 candidates for evaluation and writes rank-1 into
 `selected_cases.jsonl` as the audit entry point; a reranker can later consume
 the Top-200 list and reduce it to a smaller Top-20/50 audit budget.
 
+### Audit Execution Topology: Local LLM, Remote Recall
+
+`bobo5090` is the GPU execution host for source materialization and embedding
+recall. Do **not** run the LLM audit harness on that host: its Codex/TraeX and
+direct provider paths are not a supported audit execution surface and can fail
+because provider credentials, subscriptions, or outbound model connectivity are
+unavailable. This is independent of the remote embedding service being healthy.
+
+Run the audit from the local development machine, where the working Codex/TraeX
+login and provider configuration live. Mount the remote run root so the local
+harness consumes the exact recall output and immutable source snapshots created
+on `bobo5090`; write audit outputs back into that mounted run root. For example:
+
 ```bash
+# Local machine: expose the remote recall artifacts and snapshots at one path.
+REMOTE_RUN=/data/lhq/workspace/hcvr-guideline-recall-top200-30
+LOCAL_RUN="$HOME/tmp/hcvr-guideline-recall-top200-30"
+mkdir -p "$LOCAL_RUN"
+sshfs bobo5090:"$REMOTE_RUN" "$LOCAL_RUN" -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3
+
+# Run this command locally, not through ssh bobo5090.
+LOCAL_REPO=/Users/bytedance/workspace/route-hacker-new-new
+cd "$LOCAL_REPO"
 python new-impl/guideline-agent-pipeline/scripts/run_hcvr_case_anchor_audits.py \
   --qa new-impl/hcvr_new_unified_dataset_v2/receipts/hcvr_new_unified_paper_eval_rebalance_qa.v2.json \
   --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
-  --selected-anchor-file "$RUN_ROOT/recall/selected_cases.jsonl" \
-  --output-dir "$RUN_ROOT/audit" \
-  --repo-cache "$RUN_ROOT/repo-cache" \
-  --snapshot-root "$RUN_ROOT/snapshots" \
-  --codex-home ~/.trae \
-  --temp-root "$RUN_ROOT/tmp" \
-  --selection all \
-  --limit 30 \
-  --codex traex \
-  --model DeepSeek-V4-Pro \
-  --concurrency 8 \
-  --timeout 1500 \
-  --max-attempts 1 \
-  --clone-timeout 180 \
+  --selected-anchor-file "$LOCAL_RUN/recall/selected_cases.jsonl" \
+  --output-dir "$LOCAL_RUN/audit" \
+  --repo-cache "$LOCAL_RUN/repo-cache" \
+  --snapshot-root "$LOCAL_RUN/snapshots" \
+  --codex-home "$HOME/.trae" \
+  --temp-root "$LOCAL_RUN/tmp-local-traex" \
+  --selection all --limit 30 --codex traex --model DeepSeek-V4-Pro \
+  --concurrency 8 --timeout 1500 --max-attempts 1 --clone-timeout 180 \
   --skip-materialize-failures
 ```
+
+When the audit ends, unmount the local mount with `umount "$LOCAL_RUN"`
+(macOS) or `fusermount -u "$LOCAL_RUN"` (Linux). Keep the remote `recall/`,
+`snapshots/`, per-case logs, and locally produced `audit/` outputs together
+under the same run root for reproducibility.
 
 ### Recall Outputs
 
@@ -271,7 +292,10 @@ and do not want to clone repositories yet.
 ## Run Codex Harness Audits
 
 The default model is `qwen3-coder:30b`, matching the successful OpenMeetings
-pilot harness.
+pilot harness. Run this section from the local machine with a working
+Codex/TraeX provider configuration. If snapshots and recall outputs were built
+on `bobo5090`, mount their run root as described above; do not rely on LLM
+provider configuration on `bobo5090`.
 
 ```bash
 python new-impl/guideline-agent-pipeline/scripts/run_hcvr_case_anchor_audits.py \
@@ -355,8 +379,9 @@ python -m pytest -q new-impl/guideline-agent-pipeline/tests
 - Recall Top-K and audit concurrency are separate knobs. The recommended first
   pass is recall `--top-k 200` and audit `--concurrency 8`.
 - The recall stage uses the embedding service endpoint. The audit stage uses
-  the `--model` passed to `run_hcvr_case_anchor_audits.py`, for example
-  `DeepSeek-V4-Pro`.
+  the locally configured `--model` passed to
+  `run_hcvr_case_anchor_audits.py`, for example `DeepSeek-V4-Pro`. The remote
+  host is not an LLM provider fallback.
 - The local macOS system Python may not have `pytest`. In that case,
   `python3 -m py_compile scripts/recall_guideline_anchors.py` is still a quick
   syntax check, but full tests require an environment with `pytest` installed.
