@@ -54,6 +54,26 @@ def input_path_errors(row: dict[str, Any]) -> list[str]:
     return errors
 
 
+def codeql_database_errors(row: dict[str, Any]) -> list[str]:
+    """Reject interrupted CodeQL creation directories before consuming LLM budget."""
+
+    inputs = row.get("input_paths")
+    if not isinstance(inputs, dict) or not inputs.get("codeql_db"):
+        return []
+    database = Path(str(inputs["codeql_db"]))
+    if not database.is_dir():
+        return []
+    errors = []
+    if not (database / "codeql-database.yml").is_file():
+        errors.append(f"input_paths.codeql_db is missing codeql-database.yml: {database}")
+    if not (database / "db-java").is_dir():
+        errors.append(
+            "input_paths.codeql_db is missing db-java; likely an interrupted CodeQL database creation: "
+            f"{database}"
+        )
+    return errors
+
+
 def validate_iris_manifest(
     rows: list[dict[str, Any]],
     allowlist_rows: list[dict[str, Any]],
@@ -236,7 +256,7 @@ def main() -> int:
             "workspace": str(workspace),
             "output_dir": str(case_dir),
         }
-        path_errors = input_path_errors(row)
+        path_errors = input_path_errors(row) + codeql_database_errors(row)
         if path_errors:
             return {
                 **base_receipt,

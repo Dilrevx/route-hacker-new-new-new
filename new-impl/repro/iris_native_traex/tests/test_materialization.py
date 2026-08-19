@@ -31,6 +31,18 @@ def test_manifest_input_path_validation_reports_missing_paths(tmp_path):
     assert "source" in errors[0]
 
 
+def test_batch_rejects_partial_codeql_database(tmp_path):
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "run_native_iris_batch.py"))
+    database = tmp_path / "db"
+    database.mkdir()
+    (database / "codeql-database.yml").write_text("primaryLanguage: java\n")
+    errors = module["codeql_database_errors"]({"input_paths": {"codeql_db": str(database)}})
+    assert len(errors) == 1
+    assert "db-java" in errors[0]
+    (database / "db-java").mkdir()
+    assert module["codeql_database_errors"]({"input_paths": {"codeql_db": str(database)}}) == []
+
+
 def test_manifest_materialization_path_validation_requires_revision(tmp_path):
     module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "materialize_iris_case.py"))
     row = {
