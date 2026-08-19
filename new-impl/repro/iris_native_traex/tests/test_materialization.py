@@ -34,6 +34,25 @@ def test_batch_attempt_id_is_namespaced():
     assert module["safe_name"]("v8:case") == "v8_case"
 
 
+def test_batch_single_case_command_forwards_label_batch_sizes(tmp_path):
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "run_native_iris_batch.py"))
+    command = module["single_case_command"](
+        python="python3",
+        runner=tmp_path / "runner.py",
+        workspace=tmp_path / "workspace",
+        run_id="qa-a8-case",
+        bridge_url="http://127.0.0.1:18889",
+        llm="gpt-traex-pro",
+        num_threads=1,
+        label_api_batch_size=30,
+        label_func_param_batch_size=20,
+        timeout_seconds=7200,
+        output_dir=tmp_path / "output",
+    )
+    assert command[command.index("--label-api-batch-size") + 1] == "30"
+    assert command[command.index("--label-func-param-batch-size") + 1] == "20"
+
+
 def test_batch_rejects_overcommitted_llm_concurrency(tmp_path):
     module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "run_native_iris_batch.py"))
     manifest = tmp_path / "manifest.jsonl"

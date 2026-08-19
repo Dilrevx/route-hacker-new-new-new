@@ -159,6 +159,46 @@ def summarize_receipts(path: Path) -> dict[str, Any]:
     }
 
 
+def single_case_command(
+    *,
+    python: str,
+    runner: Path,
+    workspace: Path,
+    run_id: str,
+    bridge_url: str,
+    llm: str,
+    num_threads: int,
+    label_api_batch_size: int,
+    label_func_param_batch_size: int,
+    timeout_seconds: int,
+    output_dir: Path,
+) -> list[str]:
+    """Build the exact native-IRIS runner command recorded by a batch attempt."""
+
+    return [
+        python,
+        str(runner),
+        "--workspace",
+        str(workspace),
+        "--run-id",
+        run_id,
+        "--bridge-url",
+        bridge_url,
+        "--llm",
+        llm,
+        "--num-threads",
+        str(num_threads),
+        "--label-api-batch-size",
+        str(label_api_batch_size),
+        "--label-func-param-batch-size",
+        str(label_func_param_batch_size),
+        "--timeout-seconds",
+        str(timeout_seconds),
+        "--output-dir",
+        str(output_dir),
+    ]
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--iris-manifest", type=Path, required=True)
@@ -178,6 +218,8 @@ def main() -> int:
     parser.add_argument("--attempt-id", default="attempt-1")
     parser.add_argument("--llm", choices=("gpt-traex-flash", "gpt-traex-pro"), default="gpt-traex-flash")
     parser.add_argument("--num-threads", type=int, default=1)
+    parser.add_argument("--label-api-batch-size", type=int, default=30)
+    parser.add_argument("--label-func-param-batch-size", type=int, default=20)
     parser.add_argument(
         "--bridge-max-concurrency",
         type=int,
@@ -190,6 +232,10 @@ def main() -> int:
         raise SystemExit("--max-workers must be in [1, 8]")
     if args.num_threads < 1:
         raise SystemExit("--num-threads must be positive")
+    if args.label_api_batch_size < 1:
+        raise SystemExit("--label-api-batch-size must be positive")
+    if args.label_func_param_batch_size < 1:
+        raise SystemExit("--label-func-param-batch-size must be positive")
     if args.bridge_max_concurrency < 1:
         raise SystemExit("--bridge-max-concurrency must be positive")
     max_inflight_llm_requests = args.max_workers * args.num_threads
@@ -307,12 +353,19 @@ def main() -> int:
                 "stderr": materialized.stderr[-2000:],
                 "stdout": materialized.stdout[-2000:],
             }
-        run = [
-            args.python, str(args.single_case_runner), "--workspace", str(workspace),
-            "--run-id", run_id, "--bridge-url", args.bridge_url, "--llm", args.llm,
-            "--num-threads", str(args.num_threads), "--timeout-seconds", str(args.timeout_seconds),
-            "--output-dir", str(case_dir),
-        ]
+        run = single_case_command(
+            python=args.python,
+            runner=args.single_case_runner,
+            workspace=workspace,
+            run_id=run_id,
+            bridge_url=args.bridge_url,
+            llm=args.llm,
+            num_threads=args.num_threads,
+            label_api_batch_size=args.label_api_batch_size,
+            label_func_param_batch_size=args.label_func_param_batch_size,
+            timeout_seconds=args.timeout_seconds,
+            output_dir=case_dir,
+        )
         try:
             executed = subprocess.run(run, text=True, capture_output=True, check=False)
         except OSError as exc:
