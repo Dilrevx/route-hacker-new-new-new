@@ -474,12 +474,20 @@ def rank_candidates(
     batch_size: int,
     text_max_chars: int,
     top_k: int,
-) -> list[dict[str, Any]]:
+) -> tuple[list[dict[str, Any]], dict[str, float]]:
+    timings: dict[str, float] = {}
     if not candidates:
-        return []
+        return [], timings
+    step_started = time.time()
     query_vector = embedder.embed_queries([query_text])[0]
+    timings["query_embedding_seconds"] = round(time.time() - step_started, 3)
+    step_started = time.time()
     texts = [candidate_text(candidate, text_max_chars) for candidate in candidates]
+    timings["candidate_text_seconds"] = round(time.time() - step_started, 3)
+    step_started = time.time()
     vectors = embed_documents(embedder, texts, batch_size)
+    timings["code_embedding_seconds"] = round(time.time() - step_started, 3)
+    step_started = time.time()
     scored = []
     for candidate, vector in zip(candidates, vectors):
         row = {key: value for key, value in candidate.items() if key != "text"}
@@ -488,7 +496,8 @@ def rank_candidates(
     scored.sort(key=lambda row: (-float(row["score"]), str(row["anchor_id"])))
     for rank, row in enumerate(scored[:top_k], start=1):
         row["rank"] = rank
-    return scored[:top_k]
+    timings["score_sort_seconds"] = round(time.time() - step_started, 3)
+    return scored[:top_k], timings
 
 
 def recall_case(
@@ -510,11 +519,15 @@ def recall_case(
     top_k: int,
 ) -> dict[str, Any]:
     started = time.time()
+    timings: dict[str, float] = {}
+    step_started = time.time()
     if snapshot_lock is None:
         snapshot = ensure_snapshot(case, repo_cache, snapshot_root, clone_timeout)
     else:
         with snapshot_lock:
             snapshot = ensure_snapshot(case, repo_cache, snapshot_root, clone_timeout)
+    timings["snapshot_seconds"] = round(time.time() - step_started, 3)
+    step_started = time.time()
     candidates = slice_snapshot(
         case=case,
         snapshot=snapshot,
@@ -525,8 +538,11 @@ def recall_case(
         max_files=max_files,
         max_candidates=max_candidates,
     )
+    timings["slice_seconds"] = round(time.time() - step_started, 3)
+    step_started = time.time()
     guideline = build_guideline(case)
-    top = rank_candidates(
+    timings["guideline_seconds"] = round(time.time() - step_started, 3)
+    top, rank_timings = rank_candidates(
         embedder=embedder,
         query_text=guideline,
         candidates=candidates,
@@ -534,11 +550,14 @@ def recall_case(
         text_max_chars=text_max_chars,
         top_k=top_k,
     )
+    timings.update(rank_timings)
     truth_anchors = list(case.get("recall_anchors") or [])
     for row in top:
         row["known_anchor_overlap"] = anchor_hit(row, truth_anchors)
         row["retrieval_source"] = "mechanical_slice_embedding_recall"
     best_hit_rank = next((int(row["rank"]) for row in top if row.get("known_anchor_overlap")), None)
+    duration_seconds = round(time.time() - started, 3)
+    timings["total_seconds"] = duration_seconds
     return {
         "identity_key": case["identity_key"],
         "case_id": case.get("new_unified_case_id"),
@@ -553,7 +572,8 @@ def recall_case(
         "known_anchor_count": len(truth_anchors),
         "best_known_anchor_rank": best_hit_rank,
         "hit_at_top_k": best_hit_rank is not None,
-        "duration_seconds": round(time.time() - started, 3),
+        "duration_seconds": duration_seconds,
+        "timings": timings,
         "top_anchors": top,
     }
 
@@ -576,6 +596,17 @@ def selected_anchor_row(case_result: dict[str, Any], rank: int) -> dict[str, Any
 def summarize(results: list[dict[str, Any]], budgets: list[int]) -> dict[str, Any]:
     completed = [row for row in results if row.get("state", "completed") == "completed"]
     ranks = [int(row["best_known_anchor_rank"]) for row in completed if row.get("best_known_anchor_rank")]
+    timing_keys = sorted(
+        {
+            key
+            for row in completed
+            for key in (row.get("timings") or {}).keys()
+        }
+    )
+    timing_totals = {
+        key: round(sum(float((row.get("timings") or {}).get(key) or 0.0) for row in completed), 3)
+        for key in timing_keys
+    }
     summary: dict[str, Any] = {
         "case_count": len(results),
         "completed_count": len(completed),
@@ -588,6 +619,11 @@ def summarize(results: list[dict[str, Any]], budgets: list[int]) -> dict[str, An
         ),
         "hit_cases": len(ranks),
         "mrr": sum(1.0 / rank for rank in ranks) / len(results) if results else 0.0,
+        "timing_seconds_total": timing_totals,
+        "timing_seconds_mean": {
+            key: round(value / len(completed), 3) if completed else 0.0
+            for key, value in timing_totals.items()
+        },
     }
     for budget in budgets:
         summary[f"known_anchor_hit_at_{budget}"] = (
