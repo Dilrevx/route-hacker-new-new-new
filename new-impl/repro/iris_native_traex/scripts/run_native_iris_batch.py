@@ -178,10 +178,27 @@ def main() -> int:
     parser.add_argument("--attempt-id", default="attempt-1")
     parser.add_argument("--llm", choices=("gpt-traex-flash", "gpt-traex-pro"), default="gpt-traex-flash")
     parser.add_argument("--num-threads", type=int, default=1)
+    parser.add_argument(
+        "--bridge-max-concurrency",
+        type=int,
+        default=8,
+        help="maximum simultaneous bridge completions; prevents remote requests queueing past client timeouts",
+    )
     parser.add_argument("--timeout-seconds", type=int, default=3600)
     args = parser.parse_args()
     if args.max_workers < 1 or args.max_workers > 8:
         raise SystemExit("--max-workers must be in [1, 8]")
+    if args.num_threads < 1:
+        raise SystemExit("--num-threads must be positive")
+    if args.bridge_max_concurrency < 1:
+        raise SystemExit("--bridge-max-concurrency must be positive")
+    max_inflight_llm_requests = args.max_workers * args.num_threads
+    if max_inflight_llm_requests > args.bridge_max_concurrency:
+        raise SystemExit(
+            "max-workers * num-threads exceeds bridge capacity "
+            f"({args.max_workers} * {args.num_threads} > {args.bridge_max_concurrency}); "
+            "reduce project or per-project IRIS concurrency to prevent queued requests timing out"
+        )
     if not safe_name(args.attempt_id) or safe_name(args.attempt_id) != args.attempt_id:
         raise SystemExit("--attempt-id may contain only letters, numbers, '.', '_' and '-'")
 

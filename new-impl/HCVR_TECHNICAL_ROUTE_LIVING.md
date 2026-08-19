@@ -226,6 +226,42 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Commit and push only the native IRIS package, frozen manifest, validation tests, README, and living route document. Run the native batch only after the execution host has the referenced inputs.
 
+### Round 6 - Stabilize Native IRIS Transport and Retry Runnable QA Cases
+
+**Goal:** Recover native IRIS execution for the frozen 45-case v2 QA manifest after the first remote batch reached real LLM labelling but lost the local TraeX bridge connection.
+
+**Scope:** The immutable QA manifest remains the 45-case source of truth with hash `320790700c5a41a311003635f2973e50f0085ca6939ed91057bd9835d96db0cd`. A live filesystem admission on the execution host found 20 rows with directory/file paths present and 25 rows with missing source inputs. The 20-path count is only a provisional runnable count: a CodeQL directory can still be an interrupted database creation.
+
+**Action:**
+
+- Audited the completed `qa-iris-v2-45-a2` receipts and a representative Retrofit stderr trace.
+- Confirmed that the previous generated-adapter syntax failure was fixed, then identified the second failure as `httpx.ConnectError: [Errno 111] Connection refused` during IRIS's first native API-labelling batch.
+- Kept the original copied `src/iris.py` stages intact and added only bounded OpenAI-transport retries to the copied `src/models/gpt.py` adapter. The adapter retries transient completion failures using `IRIS_LLM_MAX_ATTEMPTS` and `IRIS_LLM_RETRY_DELAY_SECONDS`.
+- Moved the local TraeX bridge and SSH reverse tunnel into persistent tmux sessions with SSH keepalive settings. Both endpoints expose and repeatedly pass `/healthz`.
+- Added a DB completion gate in the batch dispatcher. Admission now requires a CodeQL database directory to contain both `codeql-database.yml` and `db-java`; interrupted creation directories are recorded as input failures before any model call.
+- Pushed the transport retry change as `712161a` and the partial-DB admission gate as `c2bca99`.
+
+**Verification:**
+
+- Direct native-IRIS regression tests and `py_compile` passed after each change.
+- The fresh Pro smoke case `square__retrofit::CVE-2018-1000850` completed as `completed_verified` in 321.963 seconds.
+- The smoke used the original IRIS entrypoint `src/iris.py`, generated 6 native API-labelling prompts, stored 6 valid JSON-list responses, and completed all required extraction, query, postprocessing, posthoc, and evaluation artifacts.
+- The smoke artifact gate verified `results.csv`, `results.sarif`, `results_pp.sarif`, posthoc SARIF/JSON/stats, and final JSON.
+- The `a3` bridge recorded 6/6 successful Pro calls for this smoke. Token values remain `null` when the TraeX CLI does not print a reported total; no token split is inferred.
+- Axis `CVE-2023-51441` demonstrated why directory-only admission is insufficient: its path contains an interrupted DB creation without `db-java`, so IRIS correctly rejected it before LLM labelling.
+
+**Current Execution State:**
+
+- The verified Retrofit smoke is retained separately at:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a3-smoke/`.
+- A derived retry manifest contains the remaining 19 path-present candidates after excluding the verified Retrofit smoke. It is hashed as `0411905bf1cfd537ccc9b625340867eeefefd8828c9b41917379dc50cd22e4ec`.
+- The persistent retry dispatcher uses attempt ID `qa-iris-v2-45-a3-retry`, eight project workers, eight IRIS label threads per project, a bridge concurrency cap of eight, and a 7,200-second per-case timeout.
+- The first partial-DB case produced one explicit non-verified receipt. Remaining cases continue independently in the dispatcher; completion must still be determined only from each per-case artifact gate.
+
+**Decision:** Native IRIS transport is now verified end-to-end with the real Pro backend. The experiment separates completed CodeQL databases, partial DB artifacts, missing inputs, and artifact-gated IRIS results. It does not promote path-present rows to successful runs.
+
+**Next:** Let the retry dispatcher finish, classify every receipt by verified completion or evidenced failure, apply the DB completion gate to any future queue rebuild, merge bridge and receipt metrics, and update the v2 QA alignment ledger.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.

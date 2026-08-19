@@ -1,5 +1,6 @@
 from pathlib import Path
 import runpy
+from unittest.mock import patch
 
 
 def test_scripts_are_present():
@@ -15,6 +16,48 @@ def test_batch_attempt_id_is_namespaced():
     module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "run_native_iris_batch.py"))
     assert module["safe_name"]("flash-a1") == "flash-a1"
     assert module["safe_name"]("v8:case") == "v8_case"
+
+
+def test_batch_rejects_overcommitted_llm_concurrency(tmp_path):
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "run_native_iris_batch.py"))
+    manifest = tmp_path / "manifest.jsonl"
+    allowlist = tmp_path / "allowlist.jsonl"
+    row = {
+        "identity_key": "repo::CVE-1",
+        "project_slug": "repo_CVE-1",
+        "iris_query": "cwe-022wLLM",
+        "input_paths": {"source": "source", "codeql_db": "db", "package_names": "packages.txt"},
+        "revisions": {"v2_checkout_revision": "abc123"},
+        "source_provenance": [{"source_family": "test"}],
+        "input_status": {"codeql_db_status": "codeql_db_created"},
+    }
+    manifest.write_text(__import__("json").dumps(row) + "\n")
+    allowlist.write_text(__import__("json").dumps(row) + "\n")
+    with patch(
+        "sys.argv",
+        [
+            "run_native_iris_batch.py",
+            "--iris-manifest", str(manifest),
+            "--allowlist", str(allowlist),
+            "--expected-manifest-count", "1",
+            "--workspace-root", str(tmp_path / "workspaces"),
+            "--clean-iris-root", str(tmp_path),
+            "--codeql-dir", str(tmp_path),
+            "--bridge-url", "http://127.0.0.1:18888",
+            "--output-dir", str(tmp_path / "output"),
+            "--materializer", str(tmp_path / "materialize.py"),
+            "--single-case-runner", str(tmp_path / "runner.py"),
+            "--max-workers", "8",
+            "--num-threads", "8",
+            "--bridge-max-concurrency", "8",
+        ],
+    ):
+        try:
+            module["main"]()
+        except SystemExit as exc:
+            assert "exceeds bridge capacity" in str(exc)
+        else:
+            raise AssertionError("overcommitted dispatch must be rejected")
 
 
 def test_manifest_input_path_validation_reports_missing_paths(tmp_path):
