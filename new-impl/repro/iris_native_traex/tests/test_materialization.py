@@ -1,5 +1,7 @@
 from pathlib import Path
 import runpy
+import sys
+import types
 from unittest.mock import patch
 
 
@@ -130,7 +132,9 @@ def test_traex_alias_injection_preserves_valid_python(tmp_path):
         '    def __init__(self, api_key):\n'
         '        self.client = OpenAI(api_key=api_key)\n'
         '    def _predict(self, main_prompt, expect_json=False):\n'
-        '        return self.client.chat.completions.create(model="gpt-4", messages=main_prompt)\n'
+        '        response = self.client.chat.completions.create(model="gpt-4", messages=main_prompt)\n'
+        '        response=response.choices[0].message.content\n'
+        '        return response\n'
     )
     module["add_traex_model_aliases"](gpt)
     source = gpt.read_text()
@@ -138,7 +142,119 @@ def test_traex_alias_injection_preserves_valid_python(tmp_path):
     assert '"gpt-traex-pro": "DeepSeek-V4-Pro",' in source
     assert "def _create_completion_with_retry" in source
     assert "IRIS_LLM_MAX_ATTEMPTS" in source
+    assert "def _retry_json_list_format" in source
+    assert "IRIS_JSON_LIST_FORMAT_ATTEMPTS" in source
     compile(source, str(gpt), "exec")
+
+
+def test_traex_alias_injection_retries_invalid_json_list_with_original_prompt(tmp_path, monkeypatch):
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "materialize_iris_case.py"))
+    gpt = tmp_path / "gpt.py"
+    gpt.write_text(
+        'import os\n'
+        'from tqdm.contrib.concurrent import thread_map\n'
+        'from openai import OpenAI\n'
+        'import src.models.config as config\n'
+        'from src.utils.mylogger import MyLogger\n'
+        'from src.models.llm import LLM\n'
+        '_model_name_map = {\n'
+        '    "gpt-4": "gpt-4-preview"\n'
+        '}\n'
+        '_OPENAI_DEFAULT_PARAMS = {}\n'
+        'class GPTModel(LLM):\n'
+        '    def __init__(self, model_name, logger, **kwargs):\n'
+        '        super().__init__(model_name, logger, _model_name_map, **kwargs)\n'
+        '        api_key = "test"\n'
+        '        self.client = OpenAI(api_key=api_key)\n'
+        '        self.logprobs = None\n'
+        '    def _predict(self, main_prompt, expect_json=False):\n'
+        '        prompt = main_prompt\n'
+        '        response = self.client.chat.completions.create(model=self.model_id, messages=prompt)\n'
+        '        if response.choices[0].logprobs != None:\n'
+        '            self.logprobs = response.choices[0].logprobs.content\n'
+        '        else:\n'
+        '            self.logprobs = None\n'
+        '        response = response.choices[0].message.content\n'
+        '        return response\n'
+    )
+    module["add_traex_model_aliases"](gpt)
+
+    calls = []
+
+    class DummyCompletion:
+        def __init__(self, text):
+            self.choices = [
+                types.SimpleNamespace(
+                    logprobs=None,
+                    message=types.SimpleNamespace(content=text),
+                )
+            ]
+
+    class DummyClient:
+        def __init__(self):
+            self.chat = types.SimpleNamespace(
+                completions=types.SimpleNamespace(create=self.create)
+            )
+
+        def create(self, **kwargs):
+            calls.append(kwargs)
+            return DummyCompletion("explanation before JSON" if len(calls) == 1 else "[]")
+
+    class DummyOpenAI:
+        def __init__(self, **kwargs):
+            self._client = DummyClient()
+
+        @property
+        def chat(self):
+            return self._client.chat
+
+    class DummyLLM:
+        def __init__(self, model_name, logger, model_name_map, **kwargs):
+            self.model_id = model_name_map[model_name]
+            self.kwargs = kwargs
+
+    openai_module = types.ModuleType("openai")
+    openai_module.OpenAI = DummyOpenAI
+    src_module = types.ModuleType("src")
+    models_module = types.ModuleType("src.models")
+    config_module = types.ModuleType("src.models.config")
+    llm_module = types.ModuleType("src.models.llm")
+    llm_module.LLM = DummyLLM
+    utils_module = types.ModuleType("src.utils")
+    logger_module = types.ModuleType("src.utils.mylogger")
+    logger_module.MyLogger = object
+    tqdm_module = types.ModuleType("tqdm")
+    tqdm_contrib_module = types.ModuleType("tqdm.contrib")
+    tqdm_concurrent_module = types.ModuleType("tqdm.contrib.concurrent")
+    tqdm_concurrent_module.thread_map = lambda function, values, **kwargs: [function(value) for value in values]
+    with patch.dict(
+        sys.modules,
+        {
+            "openai": openai_module,
+            "src": src_module,
+            "src.models": models_module,
+            "src.models.config": config_module,
+            "src.models.llm": llm_module,
+            "src.utils": utils_module,
+            "src.utils.mylogger": logger_module,
+            "tqdm": tqdm_module,
+            "tqdm.contrib": tqdm_contrib_module,
+            "tqdm.contrib.concurrent": tqdm_concurrent_module,
+        },
+    ):
+        namespace = runpy.run_path(str(gpt))
+        model = namespace["GPTModel"]("gpt-traex-pro", None)
+        prompt = [
+            {"role": "system", "content": "Return the result as a json list."},
+            {"role": "user", "content": "Classify the APIs."},
+        ]
+        assert model._predict(prompt) == "[]"
+
+    assert len(calls) == 2
+    assert calls[0]["messages"] == prompt
+    assert calls[1]["messages"][:2] == prompt
+    assert calls[1]["messages"][2]["role"] == "user"
+    assert "valid JSON array" in calls[1]["messages"][2]["content"]
 
 
 def test_batch_manifest_accepts_v2_checkout_revision(tmp_path):

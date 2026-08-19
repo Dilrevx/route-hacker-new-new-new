@@ -134,6 +134,8 @@ def add_traex_model_aliases(gpt_model_path: Path) -> dict[str, str]:
     elif "X-Iris-Run-Id" not in source:
         raise RuntimeError(f"cannot add bridge attribution headers to {gpt_model_path}")
     if "def _create_completion_with_retry" not in source:
+        if "import json\n" not in source:
+            source = source.replace("import os\n", "import json\nimport os\n", 1)
         if "import time\n" not in source:
             source = source.replace("import os\n", "import os\nimport time\n", 1)
         source = source.replace(
@@ -152,10 +154,73 @@ def add_traex_model_aliases(gpt_model_path: Path) -> dict[str, str]:
                     raise
                 time.sleep(retry_delay_seconds * attempt)
 
+    @staticmethod
+    def _requires_json_list_response(main_prompt):
+        prompt_text = "\\n".join(
+            str(message.get("content", ""))
+            for message in main_prompt
+            if isinstance(message, dict)
+        ).lower()
+        return (
+            "return the result as a json list" in prompt_text
+            or "return the result as a json array" in prompt_text
+        )
+
+    @staticmethod
+    def _is_json_list_response(response_text):
+        if not isinstance(response_text, str):
+            return False
+        try:
+            return isinstance(json.loads(response_text), list)
+        except (json.JSONDecodeError, TypeError):
+            return False
+
+    def _retry_json_list_format(self, request_kwargs, first_response):
+        max_attempts = max(1, int(os.getenv("IRIS_JSON_LIST_FORMAT_ATTEMPTS", "2")))
+        response = first_response
+        response_text = response.choices[0].message.content
+        if self._is_json_list_response(response_text):
+            return response
+        correction = {
+            "role": "user",
+            "content": (
+                "Format correction: return only a valid JSON array for the original task. "
+                "Do not include Markdown fences, explanation, or any surrounding text."
+            ),
+        }
+        retry_kwargs = dict(request_kwargs)
+        retry_kwargs["messages"] = list(request_kwargs["messages"]) + [correction]
+        for _ in range(1, max_attempts):
+            response = self._create_completion_with_retry(**retry_kwargs)
+            response_text = response.choices[0].message.content
+            if self._is_json_list_response(response_text):
+                break
+        return response
+
 """
         if predict_marker not in source:
             raise RuntimeError(f"cannot add retrying completion transport to {gpt_model_path}")
         source = source.replace(predict_marker, retry_method + predict_marker, 1)
+        json_list_retry = """        if self._requires_json_list_response(main_prompt):
+            request_kwargs = {
+                "model": self.model_id,
+                "messages": prompt,
+                **_OPENAI_DEFAULT_PARAMS,
+            }
+            response = self._retry_json_list_format(request_kwargs, response)
+"""
+        response_markers = (
+            "        if response.choices[0].logprobs != None:\n",
+            "        response=response.choices[0].message.content\n",
+            "        return response.choices[0].message.content\n",
+        )
+        response_assignment = next(
+            (marker for marker in response_markers if marker in source),
+            None,
+        )
+        if response_assignment is None:
+            raise RuntimeError(f"cannot add JSON-list retry to {gpt_model_path}")
+        source = source.replace(response_assignment, json_list_retry + response_assignment, 1)
     try:
         ast.parse(source, filename=str(gpt_model_path))
     except SyntaxError as exc:
@@ -167,6 +232,7 @@ def add_traex_model_aliases(gpt_model_path: Path) -> dict[str, str]:
         "aliases": "gpt-traex-flash,gpt-traex-pro",
         "bridge_attribution_headers": "X-Iris-Run-Id,X-Iris-Case-Id",
         "bounded_transport_retries": "IRIS_LLM_MAX_ATTEMPTS,IRIS_LLM_RETRY_DELAY_SECONDS",
+        "bounded_json_list_format_retries": "IRIS_JSON_LIST_FORMAT_ATTEMPTS",
         "sha256": sha256_path(gpt_model_path),
     }
 
