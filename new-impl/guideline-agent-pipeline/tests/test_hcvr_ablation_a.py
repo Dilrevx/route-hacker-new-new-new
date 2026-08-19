@@ -104,6 +104,14 @@ def test_group_prompt_is_bounded_and_allows_local_agentic_exploration(tmp_path: 
     assert "CVE-2099-0001" not in prompt
 
 
+def test_type_guideline_override_replaces_only_matching_type():
+    module = load_module()
+    override = {"sql_like_pattern_misuse": "Audit SQL LIKE pattern construction only."}
+    rendered = module.build_type_guideline(sample_case(), override)
+    assert "Audit SQL LIKE pattern construction only." in rendered
+    assert "CVE-2099-0001" not in rendered
+
+
 def test_normalize_findings_preserves_all_valid_findings():
     module = load_module()
     findings = module.normalize_findings(

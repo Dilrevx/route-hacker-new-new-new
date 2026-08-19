@@ -1,0 +1,7 @@
+{
+  "schema_version": "manual_audit_guideline_overrides.v1",
+  "purpose": "Narrow audit-stage obligations for observed over-broad HCVR types without changing recall inputs or using case-specific truth.",
+  "overrides": {
+    "m9_wave4": "Audit capability- and authority-boundary failures in extensible agent, workflow, plugin, or tool-execution code. Determine whether a request-controlled tool invocation, workflow step, delegated action, or propagated execution context can execute with authority that is not bound to the requesting principal, approved action, and target resource. A risk requires a concrete path where the effective capability or approval can be reused, substituted, widened, or bypassed at execution. Ignore generic input validation, SQL or command injection, output rendering, unsafe deserialization, and ordinary error handling unless the flaw is specifically an authority or approval binding failure."
+  }
+}

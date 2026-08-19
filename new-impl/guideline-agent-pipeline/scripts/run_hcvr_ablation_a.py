@@ -89,6 +89,25 @@ def write_json(path: Path, value: Any) -> None:
     )
 
 
+def load_guideline_overrides(path: Path | None) -> dict[str, str]:
+    """Load a versioned type-to-obligation mapping for audit stage only.
+
+    Overrides deliberately do not affect recall.  They are an explicit,
+    hash-recorded experimental input rather than a hidden case-level prompt
+    adjustment.
+    """
+    if path is None:
+        return {}
+    payload = read_json(path)
+    values = payload.get("overrides") or {}
+    if not isinstance(values, dict) or not all(
+        isinstance(key, str) and isinstance(value, str) and value.strip()
+        for key, value in values.items()
+    ):
+        raise ValueError(f"invalid guideline overrides: {path}")
+    return {key: value.strip() for key, value in values.items()}
+
+
 def append_jsonl(path: Path, row: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8") as handle:
@@ -280,7 +299,14 @@ def select_unranked_anchors(
     ]
 
 
-def build_type_guideline(case: dict[str, Any]) -> str:
+def build_type_guideline(
+    case: dict[str, Any],
+    guideline_overrides: dict[str, str] | None = None,
+) -> str:
+    typ = str((case.get("classification") or {}).get("primary_hcvr_type") or "")
+    override = (guideline_overrides or {}).get(typ)
+    if override:
+        return f"HCVR type: {typ}\nGuideline: {override}"
     raw = build_guideline(case)
     kept = [
         line
@@ -427,6 +453,7 @@ def build_group_prompt(
     model_budget_note: str,
     source_context: str | None = None,
     include_case_metadata: bool = False,
+    guideline_overrides: dict[str, str] | None = None,
 ) -> str:
     vuln = case.get("vulnerability") or {}
     revisions = case.get("revisions") or {}
@@ -434,7 +461,7 @@ def build_group_prompt(
     if variant == "minus_guideline":
         guideline = GENERIC_AUDIT_PROMPT
     else:
-        guideline = build_type_guideline(case)
+        guideline = build_type_guideline(case, guideline_overrides)
     ranked_note = (
         "The candidate anchors are ranked by guideline-conditioned trace recall."
         if variant != "minus_rank"
@@ -688,6 +715,7 @@ def run_anchor_group_audit(
     model_budget_note: str,
     source_context: str | None,
     include_case_metadata: bool,
+    guideline_overrides: dict[str, str] | None,
 ) -> dict[str, Any]:
     identity = case["identity_key"]
     slug = safe_slug(identity)
@@ -708,6 +736,7 @@ def run_anchor_group_audit(
         model_budget_note=model_budget_note,
         source_context=source_context,
         include_case_metadata=include_case_metadata,
+        guideline_overrides=guideline_overrides,
     )
     prompt_path.write_text(prompt, encoding="utf-8")
     environment = os.environ.copy()
@@ -833,6 +862,7 @@ def run_case_grouped_audit(
     inline_context_lines: int,
     inline_context_max_chars: int,
     include_case_metadata: bool,
+    guideline_overrides: dict[str, str] | None,
 ) -> dict[str, Any]:
     """Audit all selected Top-K candidates via independent local groups.
 
@@ -872,6 +902,7 @@ def run_case_grouped_audit(
                 model_budget_note=model_budget_note,
                 source_context=source_context,
                 include_case_metadata=include_case_metadata,
+                guideline_overrides=guideline_overrides,
             )
         )
     findings = [finding for row in rows for finding in row.get("findings") or []]
@@ -1115,6 +1146,7 @@ def run_variant(
                 inline_context_lines=args.inline_context_lines,
                 inline_context_max_chars=args.inline_context_max_chars,
                 include_case_metadata=args.include_case_metadata,
+                guideline_overrides=args.guideline_overrides_map,
             )
         except BaseException as error:  # record per-case failures and keep the batch moving
             return {
@@ -1241,6 +1273,7 @@ def write_run_report(
 - Concurrency: `{args.concurrency}`
 - Optional inline source context: `{args.inline_source_context}`; anchors `{args.inline_context_anchors}`, context lines `{args.inline_context_lines}`, max chars `{args.inline_context_max_chars}`. It is supplementary and does not restrict agentic checkout exploration.
 - Candidate protocol: consume Top-K `{args.anchor_budget}` candidates through directory-local groups of `{args.anchor_group_size}`. Every candidate is owned by exactly one group. Each group has an independent read-only harness session, log, and `{args.group_timeout}`-second timeout; a case completes after all of its groups have been attempted.
+- Audit-stage guideline overrides: `{args.guideline_overrides}` (SHA-256 `{sha256_file(args.guideline_overrides)}`; types `{sorted(args.guideline_overrides_map)}`). They replace only the matching type's audit obligation and do not alter the frozen recall result file.
 - Randomness control: deterministic case allowlist order, deterministic source slicing order, deterministic unranked candidate order; no sampling parameter is set by the harness.
 
 ## 3. 方法与配置
@@ -1350,6 +1383,12 @@ def main() -> None:
     parser.add_argument("--allowlist", type=Path, default=root / "hcvr_new_unified_dataset_v2/receipts/hcvr_new_unified_fix_revision_paper_eval_review.v2.jsonl")
     parser.add_argument("--summary", type=Path, default=root / "hcvr_new_unified_dataset_v2/dataset/summary.v1.json")
     parser.add_argument("--recall-results", type=Path, required=True)
+    parser.add_argument(
+        "--guideline-overrides",
+        type=Path,
+        default=root / "guideline-agent-pipeline/configs/manual_audit_guideline_overrides.v1.json",
+        help="Versioned audit-stage type overrides; use --guideline-overrides '' is not supported, pass a JSON file or omit after editing defaults.",
+    )
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--repo-cache", type=Path, required=True)
     parser.add_argument("--snapshot-root", type=Path, required=True)
@@ -1411,6 +1450,8 @@ def main() -> None:
     if args.skip < 0 or (args.limit is not None and args.limit < 1):
         raise SystemExit("skip must be non-negative and limit must be positive when set")
     args.output_dir = args.output_dir.resolve()
+    args.guideline_overrides = args.guideline_overrides.resolve()
+    args.guideline_overrides_map = load_guideline_overrides(args.guideline_overrides)
     if args.output_dir.exists() and not args.resume:
         raise FileExistsError(f"refusing existing output dir without --resume: {args.output_dir}")
     args.output_dir.mkdir(parents=True, exist_ok=True)
@@ -1459,6 +1500,9 @@ def main() -> None:
         "inline_context_lines": args.inline_context_lines,
         "inline_context_max_chars": args.inline_context_max_chars,
         "include_case_metadata": args.include_case_metadata,
+        "guideline_overrides_path": str(args.guideline_overrides),
+        "guideline_overrides_sha256": sha256_file(args.guideline_overrides),
+        "guideline_override_types": sorted(args.guideline_overrides_map),
         "recall_results": str(args.recall_results.resolve()),
         "git_branch": args.git_branch,
         "git_commit": args.git_commit,
