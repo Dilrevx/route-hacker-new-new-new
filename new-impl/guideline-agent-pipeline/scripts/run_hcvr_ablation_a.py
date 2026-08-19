@@ -1,0 +1,1305 @@
+#!/usr/bin/env python3
+"""Run and score Unified V2 Experiment A ablations.
+
+The script is intentionally scoped to the paper-eval 143-case ablation run:
+it verifies the frozen dataset receipts, runs a case-level bounded audit prompt
+for each variant, and scores emitted findings against the case vulnerability
+trace locations with one comparable scorer.
+"""
+
+from __future__ import annotations
+
+import argparse
+import collections
+import concurrent.futures
+import hashlib
+import json
+import os
+import re
+import shutil
+import signal
+import subprocess
+import time
+from pathlib import Path
+from typing import Any, Iterable
+
+from recall_guideline_anchors import (
+    DEFAULT_SUFFIXES,
+    slice_snapshot,
+)
+from run_hcvr_case_anchor_audits import (
+    build_guideline,
+    ensure_snapshot,
+    parse_report,
+    safe_slug,
+)
+
+
+EXPECTED_CASE_COUNT = 143
+EXPECTED_COMPOSITION = {
+    "IRIS-derived": 45,
+    "non-IRIS no-fixed-source/sink proxy": 68,
+    "non-IRIS source-sink/contrast/other": 30,
+}
+GENERIC_AUDIT_PROMPT = """Perform a bounded vulnerability audit of the target repository.
+
+Focus on whether attacker-controlled input, principal identity, resource identity,
+request state, file/path data, serialized data, template data, network data, or
+other externally influenced values can reach a sensitive operation without the
+required validation, authorization, isolation, lifecycle precondition, or stable
+check-use binding.
+
+Use the supplied candidate trace anchors only as starting points. Inspect the
+smallest relevant callers, callees, data flow, state transitions, guards, and
+sensitive effects needed to localize the most likely vulnerable method. Do not
+use external vulnerability writeups, patches, historical PoCs, or internet
+search. Do not modify the repository.
+"""
+
+FILE_LINE_RE = re.compile(
+    r"(?P<file>[A-Za-z0-9_./@+-]+\.(?:java|kt|scala|py|go|ts|tsx|js|jsx|c|cc|cpp|h|hpp|rs|rb|php|xml|yaml|yml|properties|conf|cfg))"
+    r"(?::|#L| line )(?P<line>[1-9][0-9]*)"
+)
+
+
+VARIANT_LABELS = {
+    "full": "GCA(full)",
+    "minus_rank": "-Rank",
+    "minus_guideline": "-Guideline",
+    "minus_poc": "-PoC",
+}
+
+
+def read_json(path: Path) -> dict[str, Any]:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def read_jsonl(path: Path) -> Iterable[dict[str, Any]]:
+    with path.open(encoding="utf-8") as handle:
+        for line in handle:
+            if line.strip():
+                yield json.loads(line)
+
+
+def write_json(path: Path, value: Any) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+
+def append_jsonl(path: Path, row: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n")
+        handle.flush()
+
+
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def run_command(
+    command: list[str],
+    *,
+    cwd: Path,
+    env: dict[str, str],
+    input_text: str,
+    timeout: int,
+) -> tuple[int | None, str, str]:
+    process = subprocess.Popen(
+        command,
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        cwd=cwd,
+        env=env,
+        start_new_session=True,
+    )
+    try:
+        output, _ = process.communicate(input=input_text, timeout=timeout)
+        return process.returncode, output or "", "completed"
+    except subprocess.TimeoutExpired as error:
+        output = error.stdout or ""
+        if isinstance(output, bytes):
+            output = output.decode("utf-8", errors="replace")
+        try:
+            os.killpg(process.pid, signal.SIGTERM)
+        except ProcessLookupError:
+            pass
+        try:
+            more_output, _ = process.communicate(timeout=5)
+            output += more_output or ""
+        except subprocess.TimeoutExpired:
+            try:
+                os.killpg(process.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+            more_output, _ = process.communicate()
+            output += more_output or ""
+        return process.returncode, output, "timeout"
+
+
+def load_paper_eval_cases(
+    cases_file: Path,
+    allowlist: Path,
+    *,
+    limit: int | None = None,
+    skip: int = 0,
+) -> list[dict[str, Any]]:
+    identities = [row["identity_key"] for row in read_jsonl(allowlist)]
+    if skip < 0:
+        raise ValueError("skip must be non-negative")
+    if limit is not None and limit < 1:
+        raise ValueError("limit must be positive when set")
+    selected_identities = identities[skip : skip + limit if limit is not None else None]
+    order = {identity: index for index, identity in enumerate(selected_identities)}
+    cases = [
+        row
+        for row in read_jsonl(cases_file)
+        if row.get("identity_key") in order
+    ]
+    cases.sort(key=lambda row: order[row["identity_key"]])
+    missing = [
+        identity
+        for identity in selected_identities
+        if identity not in {row["identity_key"] for row in cases}
+    ]
+    if missing:
+        raise ValueError(f"allowlist identities missing from cases file: {missing[:10]}")
+    return cases
+
+
+def verify_dataset(qa_path: Path, cases_file: Path, allowlist: Path, summary_path: Path) -> dict[str, Any]:
+    qa = read_json(qa_path)
+    errors: list[str] = []
+    if qa.get("case_count") != EXPECTED_CASE_COUNT:
+        errors.append(f"case_count={qa.get('case_count')} expected {EXPECTED_CASE_COUNT}")
+    if qa.get("unique_identity_count") != EXPECTED_CASE_COUNT:
+        errors.append(
+            f"unique_identity_count={qa.get('unique_identity_count')} expected {EXPECTED_CASE_COUNT}"
+        )
+    if qa.get("composition_buckets") != EXPECTED_COMPOSITION:
+        errors.append(
+            f"composition={qa.get('composition_buckets')} expected {EXPECTED_COMPOSITION}"
+        )
+    anchor_qa = qa.get("anchor_qa") or {}
+    if anchor_qa.get("cases_below_10_unique_locations") != 0:
+        errors.append(
+            "cases_below_10_unique_locations="
+            f"{anchor_qa.get('cases_below_10_unique_locations')}"
+        )
+    if int(anchor_qa.get("min_unique_locations") or 0) < 10:
+        errors.append(f"min_unique_locations={anchor_qa.get('min_unique_locations')} < 10")
+    allow_count = sum(1 for _ in read_jsonl(allowlist))
+    if allow_count != EXPECTED_CASE_COUNT:
+        errors.append(f"allowlist_count={allow_count} expected {EXPECTED_CASE_COUNT}")
+    if errors:
+        raise ValueError("; ".join(errors))
+    return {
+        "qa_path": str(qa_path.resolve()),
+        "qa_sha256": sha256_file(qa_path),
+        "cases_path": str(cases_file.resolve()),
+        "cases_sha256": sha256_file(cases_file),
+        "allowlist_path": str(allowlist.resolve()),
+        "allowlist_sha256": sha256_file(allowlist),
+        "summary_path": str(summary_path.resolve()),
+        "summary_sha256": sha256_file(summary_path),
+        "case_count": qa.get("case_count"),
+        "unique_identity_count": qa.get("unique_identity_count"),
+        "composition_buckets": qa.get("composition_buckets"),
+        "anchor_qa": anchor_qa,
+        "qa_status": qa.get("status"),
+        "qa_errors": qa.get("errors") or [],
+    }
+
+
+def load_recall_results(path: Path | None) -> dict[str, dict[str, Any]]:
+    if path is None:
+        return {}
+    return {row["identity_key"]: row for row in read_jsonl(path)}
+
+
+def normalize_anchor(row: dict[str, Any], rank: int) -> dict[str, Any]:
+    return {
+        "anchor_id": row.get("anchor_id") or f"anchor::{rank}",
+        "file": row.get("file") or "",
+        "start_line": int(row.get("start_line") or 0),
+        "end_line": int(row.get("end_line") or row.get("start_line") or 0),
+        "symbol": row.get("symbol") or "",
+        "span_kind": row.get("span_kind") or "",
+        "rank": rank,
+        "score": row.get("score"),
+        "retrieval_source": row.get("retrieval_source"),
+    }
+
+
+def select_ranked_anchors(
+    case: dict[str, Any],
+    recall_results: dict[str, dict[str, Any]],
+    budget: int,
+) -> list[dict[str, Any]]:
+    recall = recall_results.get(case["identity_key"])
+    if not recall:
+        raise ValueError(f"missing recall result for {case['identity_key']}")
+    anchors = list(recall.get("top_anchors") or [])[:budget]
+    return [normalize_anchor(anchor, index) for index, anchor in enumerate(anchors, start=1)]
+
+
+def select_unranked_anchors(
+    case: dict[str, Any],
+    snapshot: Path,
+    budget: int,
+    *,
+    window_lines: int,
+    stride_lines: int,
+    max_file_bytes: int,
+    max_files: int,
+    max_candidates: int,
+    include_ext: set[str],
+) -> list[dict[str, Any]]:
+    candidates = slice_snapshot(
+        case=case,
+        snapshot=snapshot,
+        suffixes=include_ext,
+        window_lines=window_lines,
+        stride_lines=stride_lines,
+        max_file_bytes=max_file_bytes,
+        max_files=max_files,
+        max_candidates=max_candidates,
+    )
+    return [
+        normalize_anchor(candidate, index)
+        for index, candidate in enumerate(candidates[:budget], start=1)
+    ]
+
+
+def build_type_guideline(case: dict[str, Any]) -> str:
+    raw = build_guideline(case)
+    kept = [
+        line
+        for line in raw.splitlines()
+        if line.startswith("HCVR type:") or line.startswith("Guideline:") or line.startswith("CWE:")
+    ]
+    return "\n".join(kept) or GENERIC_AUDIT_PROMPT
+
+
+def build_source_context(
+    snapshot: Path,
+    anchors: list[dict[str, Any]],
+    *,
+    max_anchors: int,
+    context_lines: int,
+    max_chars: int,
+) -> str:
+    chunks: list[str] = []
+    used = 0
+    for anchor in anchors[:max_anchors]:
+        rel_file = str(anchor.get("file") or "")
+        if not rel_file:
+            continue
+        file_path = (snapshot / rel_file).resolve()
+        try:
+            file_path.relative_to(snapshot.resolve())
+        except ValueError:
+            continue
+        if not file_path.is_file():
+            continue
+        try:
+            lines = file_path.read_text(encoding="utf-8", errors="replace").splitlines()
+        except OSError:
+            continue
+        start_line = max(1, int(anchor.get("start_line") or 1))
+        end_line = max(start_line, int(anchor.get("end_line") or start_line))
+        start = max(1, start_line - context_lines)
+        end = min(len(lines), end_line + context_lines)
+        numbered = "\n".join(
+            f"{line_no:05d}| {lines[line_no - 1]}"
+            for line_no in range(start, end + 1)
+        )
+        chunk = (
+            f"--- anchor rank={anchor.get('rank')} file={rel_file} "
+            f"lines={start_line}-{end_line} symbol={anchor.get('symbol') or ''} ---\n"
+            f"{numbered}\n"
+        )
+        if used + len(chunk) > max_chars:
+            remaining = max_chars - used
+            if remaining > 500:
+                chunks.append(chunk[:remaining] + "\n[truncated]\n")
+            break
+        chunks.append(chunk)
+        used += len(chunk)
+    return "\n".join(chunks) if chunks else "(no inline source context available)"
+
+
+def format_anchor_batches(anchors: list[dict[str, Any]], batch_size: int) -> str:
+    """Render every Top-K candidate while making a large K navigable to an agent.
+
+    Batches are prompt organization only. They do not launch one harness per
+    anchor and they do not truncate the candidate list.
+    """
+    if batch_size < 1:
+        raise ValueError("anchor batch size must be positive")
+    if not anchors:
+        return "(no candidate anchors available)"
+    chunks: list[str] = []
+    total_batches = (len(anchors) + batch_size - 1) // batch_size
+    for offset in range(0, len(anchors), batch_size):
+        batch = anchors[offset : offset + batch_size]
+        batch_number = offset // batch_size + 1
+        lines = [f"Candidate batch {batch_number}/{total_batches}:"]
+        for anchor in batch:
+            lines.append(
+                f"{anchor['rank']}. id={anchor['anchor_id']} file={anchor['file']} "
+                f"lines={anchor['start_line']}-{anchor['end_line']} "
+                f"symbol={anchor.get('symbol') or ''} "
+                f"span={anchor.get('span_kind') or ''}"
+            )
+        chunks.append("\n".join(lines))
+    return "\n\n".join(chunks)
+
+
+def build_case_prompt(
+    *,
+    case: dict[str, Any],
+    snapshot: Path,
+    variant: str,
+    anchors: list[dict[str, Any]],
+    anchor_batch_size: int,
+    model_budget_note: str,
+    source_context: str | None = None,
+    include_case_metadata: bool = False,
+) -> str:
+    vuln = case.get("vulnerability") or {}
+    revisions = case.get("revisions") or {}
+    classification = case.get("classification") or {}
+    if variant == "minus_guideline":
+        guideline = GENERIC_AUDIT_PROMPT
+    else:
+        guideline = build_type_guideline(case)
+    ranked_note = (
+        "The candidate anchors are ranked by guideline-conditioned trace recall."
+        if variant != "minus_rank"
+        else "The candidate anchors are deliberately unsorted; do not assume earlier anchors are more important."
+    )
+    anchors_text = format_anchor_batches(anchors, anchor_batch_size)
+    case_metadata = ""
+    if include_case_metadata:
+        case_metadata = (
+            "Case identity (bookkeeping only; do not use it as vulnerability knowledge): "
+            f"{case['identity_key']}\n"
+            "Vulnerability ID (bookkeeping only; do not use external knowledge): "
+            f"{vuln.get('id', '')}\n"
+        )
+    source_section = ""
+    if source_context is not None:
+        source_section = f"""
+Optional inline source context:
+These excerpts are a convenience only. They are not a boundary on repository
+reading: inspect the checkout agentically as needed, beginning with candidates.
+
+```text
+{source_context}
+```
+"""
+    return f"""You are the bounded audit harness for the HCVR ablation experiment.
+
+Repository: {snapshot}
+Exact vulnerable checkout: {revisions.get("checkout_revision", "")}
+{case_metadata}HCVR vulnerability family: {classification.get("primary_hcvr_type") or "unspecified"}
+Budget: {model_budget_note}
+
+Audit obligation:
+{guideline}
+
+Candidate trace anchors:
+{ranked_note}
+{anchors_text}
+{source_section}
+
+Instructions:
+- The guideline defines the vulnerability family in scope. Do not substitute a
+  different, more familiar vulnerability class merely because it is nearby.
+- Consume every candidate batch in rank order. Start from each candidate as an
+  investigation entry, then use read-only agentic repository exploration to
+  inspect callers, callees, guards, data flow, state transitions, and sensitive
+  effects needed to resolve that candidate.
+- Do not read patches, external advisories, historical PoCs, internet search results, or files outside the repository.
+- Do not modify files or run destructive commands.
+- Emit one structured finding for every distinct, concrete in-scope risk you
+  can localize. Emit zero findings when no candidate yields a concrete risk.
+- A finding must name the vulnerable method or closest enclosing code region and cite exact source file and line range.
+- Prefer a narrow vulnerable method range over a broad file range.
+
+Return exactly one JSON object with this shape:
+{{
+  "variant": "{variant}",
+  "findings": [
+    {{
+      "title": "short title",
+      "file": "relative/path/File.java",
+      "start_line": 1,
+      "end_line": 1,
+      "symbol": "methodOrFunctionName",
+      "confidence": 0.0,
+      "rationale": "why this method is vulnerable",
+      "missing_or_incorrect_condition": "guard, authorization, validation, state precondition, or check-use binding issue",
+      "sensitive_effect": "sensitive operation reached by the flaw",
+      "poc_observation": "runtime condition or value a PoC agent should observe"
+    }}
+  ],
+  "no_finding_reason": "filled only when findings is empty"
+}}
+"""
+
+
+def extract_json_object(text: str) -> dict[str, Any] | None:
+    stripped = text.strip()
+    # TraeX/Codex can prepend a short natural-language summary even when the
+    # prompt asks for exactly one JSON object. Prefer a fenced JSON payload
+    # before falling back to whole-output parsing, so a valid emitted finding
+    # is not discarded solely because of that presentation wrapper.
+    for match in re.finditer(r"```(?:json)?\s*(\{.*?\})\s*```", stripped, re.DOTALL | re.IGNORECASE):
+        try:
+            value = json.loads(match.group(1))
+            if isinstance(value, dict):
+                return value
+        except json.JSONDecodeError:
+            continue
+    if stripped.startswith("```"):
+        stripped = re.sub(r"^```(?:json)?\s*", "", stripped)
+        stripped = re.sub(r"\s*```$", "", stripped)
+    try:
+        value = json.loads(stripped)
+        return value if isinstance(value, dict) else None
+    except json.JSONDecodeError:
+        pass
+    start = stripped.find("{")
+    end = stripped.rfind("}")
+    if start == -1 or end <= start:
+        return None
+    try:
+        value = json.loads(stripped[start : end + 1])
+        return value if isinstance(value, dict) else None
+    except json.JSONDecodeError:
+        return None
+
+
+def fallback_findings_from_report(text: str) -> list[dict[str, Any]]:
+    decision, confidence = parse_report(text)
+    if decision != "risk":
+        return []
+    locations = []
+    seen: set[tuple[str, int]] = set()
+    for match in FILE_LINE_RE.finditer(text):
+        file = match.group("file")
+        line = int(match.group("line"))
+        key = (file, line)
+        if key in seen:
+            continue
+        seen.add(key)
+        locations.append((file, line))
+    if not locations:
+        return []
+    file, line = locations[0]
+    return [
+        {
+            "title": "fallback risk location",
+            "file": file,
+            "start_line": line,
+            "end_line": line,
+            "symbol": "",
+            "confidence": confidence,
+            "rationale": "fallback location extracted from a non-JSON risk report",
+            "missing_or_incorrect_condition": "",
+            "sensitive_effect": "",
+            "poc_observation": "",
+        }
+    ]
+
+
+def normalize_findings(value: Any, report_text: str) -> list[dict[str, Any]]:
+    if not isinstance(value, dict):
+        return fallback_findings_from_report(report_text)
+    raw_findings = value.get("findings")
+    if not isinstance(raw_findings, list):
+        return fallback_findings_from_report(report_text)
+    findings: list[dict[str, Any]] = []
+    for item in raw_findings:
+        if not isinstance(item, dict):
+            continue
+        file = item.get("file")
+        if not isinstance(file, str) or not file.strip():
+            continue
+        try:
+            start = int(item.get("start_line"))
+            end = int(item.get("end_line") or start)
+        except (TypeError, ValueError):
+            continue
+        if start < 1:
+            continue
+        if end < start:
+            end = start
+        findings.append(
+            {
+                "title": str(item.get("title") or ""),
+                "file": file.strip(),
+                "start_line": start,
+                "end_line": end,
+                "symbol": str(item.get("symbol") or ""),
+                "confidence": item.get("confidence"),
+                "rationale": str(item.get("rationale") or ""),
+                "missing_or_incorrect_condition": str(item.get("missing_or_incorrect_condition") or ""),
+                "sensitive_effect": str(item.get("sensitive_effect") or ""),
+                "poc_observation": str(item.get("poc_observation") or ""),
+            }
+        )
+    return findings
+
+
+def parse_opencode_events(text: str) -> tuple[str, dict[str, Any]]:
+    final_text = ""
+    usage = {
+        "input": 0,
+        "output": 0,
+        "reasoning": 0,
+        "cache_read": 0,
+        "cache_write": 0,
+        "step_finish_count": 0,
+    }
+    for line in text.splitlines():
+        if not line.strip():
+            continue
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        part = event.get("part") or {}
+        if event.get("type") == "text":
+            final_text = str(part.get("text") or "")
+        if event.get("type") == "step_finish":
+            tokens = part.get("tokens") or {}
+            cache = tokens.get("cache") or {}
+            usage["input"] += int(tokens.get("input") or 0)
+            usage["output"] += int(tokens.get("output") or 0)
+            usage["reasoning"] += int(tokens.get("reasoning") or 0)
+            usage["cache_read"] += int(cache.get("read") or 0)
+            usage["cache_write"] += int(cache.get("write") or 0)
+            usage["step_finish_count"] += 1
+    return final_text, usage
+
+
+def run_case_audit(
+    *,
+    audit_runner: str,
+    codex: str,
+    opencode: str,
+    model: str,
+    codex_home: Path,
+    temp_root: Path,
+    output: Path,
+    variant: str,
+    case: dict[str, Any],
+    snapshot: Path,
+    anchors: list[dict[str, Any]],
+    timeout: int,
+    model_budget_note: str,
+    source_context: str | None,
+    anchor_batch_size: int,
+    include_case_metadata: bool,
+) -> dict[str, Any]:
+    identity = case["identity_key"]
+    slug = safe_slug(identity)
+    variant_dir = output / variant
+    reports_dir = variant_dir / "reports"
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    report_path = reports_dir / f"{slug}.json"
+    events_path = reports_dir / f"{slug}.events.jsonl"
+    prompt_path = reports_dir / f"{slug}.prompt.txt"
+    prompt = build_case_prompt(
+        case=case,
+        snapshot=snapshot,
+        variant=variant,
+        anchors=anchors,
+        anchor_batch_size=anchor_batch_size,
+        model_budget_note=model_budget_note,
+        source_context=source_context,
+        include_case_metadata=include_case_metadata,
+    )
+    prompt_path.write_text(prompt, encoding="utf-8")
+    environment = os.environ.copy()
+    environment["CODEX_HOME"] = str(codex_home)
+    environment["TMPDIR"] = str(temp_root)
+    started = time.time()
+    token_usage: dict[str, Any] = {}
+    if audit_runner == "opencode":
+        command = [
+            opencode,
+            "run",
+            "--format",
+            "json",
+            "--model",
+            model,
+            prompt,
+        ]
+        returncode, output_text, state = run_command(
+            command,
+            cwd=snapshot,
+            env=environment,
+            input_text="",
+            timeout=timeout,
+        )
+        events_path.write_text(output_text, encoding="utf-8")
+        report_text, token_usage = parse_opencode_events(output_text)
+        report_path.write_text(report_text, encoding="utf-8")
+        if state == "completed" and returncode != 0:
+            state = "opencode_failed"
+    else:
+        command = [
+            codex,
+            "exec",
+            "--ignore-rules",
+            "--ephemeral",
+            "--sandbox",
+            "read-only",
+            "--skip-git-repo-check",
+            "--cd",
+            str(snapshot),
+            "--model",
+            model,
+            "--output-last-message",
+            str(report_path),
+            "--json",
+            "--color",
+            "never",
+            "-",
+        ]
+        returncode, output_text, state = run_command(
+            command,
+            cwd=snapshot,
+            env=environment,
+            input_text=prompt,
+            timeout=timeout,
+        )
+        events_path.write_text(output_text, encoding="utf-8")
+        if state == "completed" and returncode != 0:
+            state = "codex_failed"
+        report_text = report_path.read_text(encoding="utf-8") if report_path.is_file() else ""
+    parsed = extract_json_object(report_text)
+    findings = normalize_findings(parsed, report_text)
+    if state == "completed" and parsed is None:
+        state = "invalid_json_report" if not findings else "fallback_parsed"
+    classification = case.get("classification") or {}
+    return {
+        "schema_version": "hcvr_ablation_a_case_audit.v1",
+        "variant": variant,
+        "variant_label": VARIANT_LABELS[variant],
+        "identity_key": identity,
+        "case_id": case.get("new_unified_case_id"),
+        "hcvr_type": classification.get("primary_hcvr_type"),
+        "cwe_ids": classification.get("cwe_ids") or [],
+        "repo_url": case["repository"]["repo_url"],
+        "checkout_revision": case["revisions"]["checkout_revision"],
+        "state": state,
+        "audit_runner": audit_runner,
+        "returncode": returncode,
+        "duration_seconds": round(time.time() - started, 3),
+        "token_usage": token_usage,
+        "anchor_budget": len(anchors),
+        "anchors": anchors,
+        "finding_count": len(findings),
+        "findings": findings,
+        "report": str(report_path),
+        "report_sha256": sha256_file(report_path) if report_path.is_file() else None,
+        "events": str(events_path),
+        "prompt": str(prompt_path),
+    }
+
+
+def line_overlap(a_start: int, a_end: int, b_start: int, b_end: int) -> bool:
+    return max(a_start, b_start) <= min(a_end, b_end)
+
+
+def truth_methods(case: dict[str, Any]) -> list[dict[str, Any]]:
+    methods: list[dict[str, Any]] = []
+    for node in (case.get("vulnerability_trace") or {}).get("nodes") or []:
+        file = node.get("file")
+        if not file:
+            continue
+        try:
+            start = int(node.get("start_line"))
+            end = int(node.get("end_line") or start)
+        except (TypeError, ValueError):
+            continue
+        if start < 1:
+            continue
+        if end < start:
+            end = start
+        methods.append(
+            {
+                "file": file,
+                "start_line": start,
+                "end_line": end,
+                "symbol": node.get("symbol") or "",
+                "span_kind": node.get("span_kind") or "",
+                "trace_node_id": node.get("trace_node_id"),
+            }
+        )
+    return methods
+
+
+def finding_hits_truth(finding: dict[str, Any], truth: list[dict[str, Any]]) -> dict[str, Any] | None:
+    file = finding.get("file")
+    try:
+        start = int(finding.get("start_line"))
+        end = int(finding.get("end_line") or start)
+    except (TypeError, ValueError):
+        return None
+    symbol = str(finding.get("symbol") or "").strip()
+    for method in truth:
+        if file != method["file"]:
+            continue
+        method_symbol = str(method.get("symbol") or "").strip()
+        if symbol and method_symbol and symbol == method_symbol:
+            return method
+        if line_overlap(start, end, int(method["start_line"]), int(method["end_line"])):
+            return method
+    return None
+
+
+def score_variant(
+    variant_dir: Path,
+    cases_by_identity: dict[str, dict[str, Any]],
+    *,
+    denominator: int,
+) -> dict[str, Any]:
+    rows = list(read_jsonl(variant_dir / "case_results.jsonl")) if (variant_dir / "case_results.jsonl").is_file() else []
+    rows_by_identity = {row["identity_key"]: row for row in rows}
+    case_scores: list[dict[str, Any]] = []
+    tp = 0
+    fp = 0
+    fn = 0
+    alarms = 0
+    for identity, case in cases_by_identity.items():
+        row = rows_by_identity.get(identity)
+        truth = truth_methods(case)
+        findings = list((row or {}).get("findings") or [])
+        case_alarms = len(findings)
+        alarms += case_alarms
+        matched_finding_indexes: set[int] = set()
+        hit_methods: list[dict[str, Any]] = []
+        for index, finding in enumerate(findings):
+            hit_method = finding_hits_truth(finding, truth)
+            if hit_method is None:
+                continue
+            matched_finding_indexes.add(index)
+            if hit_method not in hit_methods:
+                hit_methods.append(hit_method)
+        # Recall/FN are case-level by the experiment contract: one or more
+        # truth-matching findings make this case a TP, regardless of how many
+        # vulnerable methods or duplicate findings it contains.
+        case_tp = 1 if hit_methods else 0
+        case_fp = case_alarms - len(matched_finding_indexes)
+        case_fn = 1 if not hit_methods else 0
+        tp += case_tp
+        fp += case_fp
+        fn += case_fn
+        case_scores.append(
+            {
+                "identity_key": identity,
+                "state": (row or {}).get("state", "not_run"),
+                "alarm_count": case_alarms,
+                "tp": case_tp,
+                "fp": case_fp,
+                "fn": case_fn,
+                "hit_truth": hit_methods,
+                "findings": findings,
+                "matched_finding_count": len(matched_finding_indexes),
+                "truth_method_count": len(truth),
+            }
+        )
+    recall = tp / denominator if denominator else 0.0
+    precision = tp / alarms if alarms else 0.0
+    f1 = (2 * tp) / (2 * tp + fp + fn) if (2 * tp + fp + fn) else 0.0
+    states = collections.Counter((row.get("state") or "unknown") for row in rows)
+    score = {
+        "schema_version": "hcvr_ablation_a_score.v1",
+        "variant": variant_dir.name,
+        "variant_label": VARIANT_LABELS.get(variant_dir.name, variant_dir.name),
+        "case_count": denominator,
+        "completed_or_fallback_count": sum(
+            states[state] for state in ("completed", "fallback_parsed")
+        ),
+        "state_counts": dict(states),
+        "tp": tp,
+        "fp": fp,
+        "fn": fn,
+        "recall": recall,
+        "precision": precision,
+        "f1": f1,
+        "alarms": alarms,
+        "confirmed": "N/A",
+        "case_scores": case_scores,
+    }
+    write_json(variant_dir / "score_summary.json", score)
+    with (variant_dir / "case_scores.jsonl").open("w", encoding="utf-8") as handle:
+        for row in case_scores:
+            handle.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n")
+    return score
+
+
+def load_done_identities(path: Path) -> set[str]:
+    if not path.is_file():
+        return set()
+    return {row["identity_key"] for row in read_jsonl(path) if row.get("identity_key")}
+
+
+def run_variant(
+    *,
+    args: argparse.Namespace,
+    variant: str,
+    cases: list[dict[str, Any]],
+    recall_results: dict[str, dict[str, Any]],
+) -> dict[str, Any]:
+    variant_dir = args.output_dir / variant
+    variant_dir.mkdir(parents=True, exist_ok=True)
+    result_path = variant_dir / "case_results.jsonl"
+    done = load_done_identities(result_path) if args.resume else set()
+    codex_path = shutil.which(args.codex) or args.codex
+    opencode_path = shutil.which(args.opencode) or args.opencode
+    if args.audit_runner == "codex" and shutil.which(args.codex) is None:
+        raise FileNotFoundError(f"codex executable not found: {args.codex}")
+    if args.audit_runner == "opencode" and shutil.which(args.opencode) is None:
+        raise FileNotFoundError(f"opencode executable not found: {args.opencode}")
+    temp_root = args.temp_root.resolve()
+    temp_root.mkdir(parents=True, exist_ok=True)
+    include_ext = {value.strip().lower() for value in args.include_ext.split(",") if value.strip()}
+
+    def handle_case(case: dict[str, Any]) -> dict[str, Any]:
+        if case["identity_key"] in done:
+            return {"identity_key": case["identity_key"], "state": "skipped_existing"}
+        try:
+            snapshot = ensure_snapshot(
+                case,
+                args.repo_cache.resolve(),
+                args.snapshot_root.resolve(),
+                args.clone_timeout,
+            )
+            if variant == "minus_rank":
+                anchors = select_unranked_anchors(
+                    case,
+                    snapshot,
+                    args.anchor_budget,
+                    window_lines=args.window_lines,
+                    stride_lines=args.stride_lines,
+                    max_file_bytes=args.max_file_bytes,
+                    max_files=args.max_files_per_repo,
+                    max_candidates=args.max_candidates_per_case,
+                    include_ext=include_ext,
+                )
+            else:
+                anchors = select_ranked_anchors(case, recall_results, args.anchor_budget)
+            source_context = None
+            if args.inline_source_context:
+                source_context = build_source_context(
+                    snapshot,
+                    anchors,
+                    max_anchors=args.inline_context_anchors,
+                    context_lines=args.inline_context_lines,
+                    max_chars=args.inline_context_max_chars,
+                )
+            return run_case_audit(
+                audit_runner=args.audit_runner,
+                codex=codex_path,
+                opencode=opencode_path,
+                model=args.model,
+                codex_home=args.codex_home.resolve(),
+                temp_root=temp_root,
+                output=args.output_dir.resolve(),
+                variant=variant,
+                case=case,
+                snapshot=snapshot,
+                anchors=anchors,
+                timeout=args.timeout,
+                model_budget_note=args.model_budget_note,
+                source_context=source_context,
+                anchor_batch_size=args.anchor_batch_size,
+                include_case_metadata=args.include_case_metadata,
+            )
+        except BaseException as error:  # record per-case failures and keep the batch moving
+            return {
+                "schema_version": "hcvr_ablation_a_case_audit.v1",
+                "variant": variant,
+                "variant_label": VARIANT_LABELS[variant],
+                "identity_key": case["identity_key"],
+                "case_id": case.get("new_unified_case_id"),
+                "repo_url": case["repository"]["repo_url"],
+                "checkout_revision": case["revisions"]["checkout_revision"],
+                "state": "case_failed",
+                "error": f"{type(error).__name__}: {error}",
+                "finding_count": 0,
+                "findings": [],
+            }
+
+    pending = [case for case in cases if case["identity_key"] not in done]
+    if args.concurrency == 1:
+        for case in pending:
+            row = handle_case(case)
+            append_jsonl(result_path, row)
+            print(
+                json.dumps(
+                    {
+                        "variant": variant,
+                        "identity_key": row["identity_key"],
+                        "state": row["state"],
+                        "finding_count": row.get("finding_count"),
+                    },
+                    ensure_ascii=False,
+                    sort_keys=True,
+                ),
+                flush=True,
+            )
+    else:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=args.concurrency) as pool:
+            future_to_case = {pool.submit(handle_case, case): case for case in pending}
+            for future in concurrent.futures.as_completed(future_to_case):
+                row = future.result()
+                append_jsonl(result_path, row)
+                print(
+                    json.dumps(
+                        {
+                            "variant": variant,
+                            "identity_key": row["identity_key"],
+                            "state": row["state"],
+                            "finding_count": row.get("finding_count"),
+                        },
+                        ensure_ascii=False,
+                        sort_keys=True,
+                    ),
+                    flush=True,
+                )
+    cases_by_identity = {case["identity_key"]: case for case in cases}
+    return score_variant(variant_dir, cases_by_identity, denominator=len(cases))
+
+
+def format_rate(value: float) -> str:
+    return f"{value:.3f}"
+
+
+def write_run_report(
+    *,
+    output_dir: Path,
+    dataset_receipt: dict[str, Any],
+    scores: list[dict[str, Any]],
+    args: argparse.Namespace,
+) -> None:
+    by_variant = {score["variant"]: score for score in scores}
+    rows = []
+    for variant in ("full", "minus_rank", "minus_guideline", "minus_poc"):
+        score = by_variant.get(variant)
+        if score is None:
+            rows.append(f"{VARIANT_LABELS[variant]} | PENDING | PENDING | PENDING | PENDING | N/A")
+            continue
+        rows.append(
+            " | ".join(
+                [
+                    score["variant_label"],
+                    format_rate(score["recall"]),
+                    format_rate(score["precision"]),
+                    format_rate(score["f1"]),
+                    str(score["alarms"]),
+                    str(score.get("confirmed", "N/A")),
+                ]
+            )
+        )
+    count_rows = []
+    for variant in ("full", "minus_rank", "minus_guideline", "minus_poc"):
+        score = by_variant.get(variant)
+        if score is None:
+            continue
+        count_rows.append(
+            f"{score['variant_label']} | TP={score['tp']} | FP={score['fp']} | FN={score['fn']} | states={score['state_counts']}"
+        )
+    flips = build_flip_notes(by_variant)
+    report = f"""# Unified V2 Experiment A Ablation Report
+
+## 1. 背景与目标
+
+本报告覆盖 Experiment A（三项消融）。目标是用同一 143-case paper-eval 集合、同一审计后端、同一候选 anchor budget 和同一 scorer，比较完整 GCA 链路与三个消融项：关闭 trace 排序、清空 guideline 约束、以及去掉 PoC 确认阶段。消融解释的 claim 是：召回排序、guideline 义务约束、以及后续确认阶段分别贡献定位效率、审计约束和 false-alarm 削减证据。
+
+当前脚本真实运行 stage-2 bounded audit，并对模型 emitted finding 做统一 TP/FP/FN 评分。PoC confirmation 子系统在本仓库 README 中仍是 handoff contract，因此本次自动报告把 Confirmed 记录为 N/A，并在异常与缺口中列明，避免把未运行的动态确认写成论文数字。
+
+## 2. 数据集与环境
+
+- QA receipt: `{dataset_receipt['qa_path']}`
+- QA SHA-256: `{dataset_receipt['qa_sha256']}`
+- Allowlist: `{dataset_receipt['allowlist_path']}`
+- Allowlist SHA-256: `{dataset_receipt['allowlist_sha256']}`
+- Cases file: `{dataset_receipt['cases_path']}`
+- Cases SHA-256: `{dataset_receipt['cases_sha256']}`
+- Summary file: `{dataset_receipt['summary_path']}`
+- Summary SHA-256: `{dataset_receipt['summary_sha256']}`
+- Case count: `{dataset_receipt['case_count']}`
+- Unique identity count: `{dataset_receipt['unique_identity_count']}`
+- Composition: `{dataset_receipt['composition_buckets']}`
+- Anchor QA: min unique locations `{dataset_receipt['anchor_qa'].get('min_unique_locations')}`, max unique locations `{dataset_receipt['anchor_qa'].get('max_unique_locations')}`, cases below 10 `{dataset_receipt['anchor_qa'].get('cases_below_10_unique_locations')}`
+- Branch/commit: `{args.git_branch}` / `{args.git_commit}`
+- Audit runner: `{args.audit_runner}`
+- Audit backend model: `{args.model}`
+- Anchor budget: `{args.anchor_budget}`
+- Audit timeout per case: `{args.timeout}` seconds
+- Concurrency: `{args.concurrency}`
+- Optional inline source context: `{args.inline_source_context}`; anchors `{args.inline_context_anchors}`, context lines `{args.inline_context_lines}`, max chars `{args.inline_context_max_chars}`. It is supplementary and does not restrict agentic checkout exploration.
+- Candidate protocol: consume Top-K `{args.anchor_budget}` candidates in prompt batches of `{args.anchor_batch_size}`; one harness session per case, not one session per anchor.
+- Randomness control: deterministic case allowlist order, deterministic source slicing order, deterministic unranked candidate order; no sampling parameter is set by the harness.
+
+## 3. 方法与配置
+
+固定部分：143-case allowlist、vulnerable checkout、repository snapshot materialization、source slicing parameters, Top-K candidate budget, audit backend model, timeout, and scorer are shared across all rows. Ranked variants consume the same recall result file: `{args.recall_results}`. The scorer treats the case vulnerability trace nodes as the frozen vulnerable-method proxy. Each case may emit multiple findings; case-level TP/FN follow the paper definition (a case is TP when any finding overlaps a truth method), while each emitted non-overlapping finding is an FP and Alarms is the raw finding total.
+
+GCA(full): uses guideline-conditioned ranked anchors and the case-specific guideline generated by `build_guideline`. The stage-2 emitted finding is scored here; dynamic confirmation is not available in this script and is recorded as N/A.
+
+-Rank: replaces ranked anchors with the first unsorted mechanical source-slice anchors under the same anchor budget. The audit prompt explicitly says the anchors are unsorted and lets the harness choose the entry point within the same budget.
+
+-Guideline: keeps the ranked anchors and audit budget fixed but replaces the case-specific guideline with the generic prompt below.
+
+```text
+{GENERIC_AUDIT_PROMPT}
+```
+
+-PoC: uses the same ranked anchors and guideline as GCA(full), reports only stage-2 bounded-audit findings, and does not run the confirmation handoff.
+
+## 4. 结果
+
+Variant | Recall | Precision | F1 | Alarms | Confirmed
+{chr(10).join(rows)}
+
+Raw TP/FP/FN counts:
+{chr(10).join(count_rows) if count_rows else 'No completed rows yet.'}
+
+Representative hit/miss flips:
+{flips}
+
+## 5. 异常与缺口
+
+PoC confirmation was not executed because the current `guideline-agent-pipeline` README defines the PoC stage as a handoff contract (`extract_poc_handoff_from_audit.py`) rather than an integrated 143-case instrumented confirmation reducer. Therefore Confirmed is N/A for rows produced by this script. Any per-case materialization, model, timeout, or JSON-format failures are preserved in each variant's `case_results.jsonl` and summarized in `state_counts` above.
+
+## 6. 复现入口
+
+Run root: `{output_dir}`
+
+One-command rerun for the same A scope:
+
+```bash
+python {Path(__file__).resolve()} --output-dir {output_dir} --qa {dataset_receipt['qa_path']} --cases-file {dataset_receipt['cases_path']} --allowlist {dataset_receipt['allowlist_path']} --summary {dataset_receipt['summary_path']} --recall-results {args.recall_results} --repo-cache {args.repo_cache} --snapshot-root {args.snapshot_root} --codex-home {args.codex_home} --temp-root {args.temp_root} --audit-runner {args.audit_runner} --model {args.model} --anchor-budget {args.anchor_budget} --variants {','.join(args.variants)} --resume
+```
+
+Primary output files:
+- `{output_dir}/dataset_receipt.json`
+- `{output_dir}/ablation_config.json`
+- `{output_dir}/<variant>/case_results.jsonl`
+- `{output_dir}/<variant>/score_summary.json`
+- `{output_dir}/<variant>/case_scores.jsonl`
+
+Pure-text table for LaTeX:
+
+Variant | Recall | Precision | F1 | Alarms | Confirmed
+{chr(10).join(rows)}
+"""
+    (output_dir / "experiment_a_report.md").write_text(report, encoding="utf-8")
+
+
+def build_flip_notes(by_variant: dict[str, dict[str, Any]]) -> str:
+    full = by_variant.get("full")
+    if full is None:
+        return "GCA(full) has not completed, so flip analysis is pending."
+    full_scores = {row["identity_key"]: row for row in full.get("case_scores") or []}
+    notes: list[str] = []
+    for variant in ("minus_rank", "minus_guideline", "minus_poc"):
+        score = by_variant.get(variant)
+        if score is None:
+            continue
+        current = {row["identity_key"]: row for row in score.get("case_scores") or []}
+        lost = [
+            identity
+            for identity, row in full_scores.items()
+            if row.get("tp") == 1 and current.get(identity, {}).get("tp") != 1
+        ][:3]
+        gained = [
+            identity
+            for identity, row in current.items()
+            if row.get("tp") == 1 and full_scores.get(identity, {}).get("tp") != 1
+        ][:3]
+        notes.append(
+            f"{VARIANT_LABELS[variant]}: full-hit to miss examples={lost or []}; miss to hit examples={gained or []}."
+        )
+    return "\n".join(notes) if notes else "Flip analysis is pending until at least one ablation row completes."
+
+
+def parse_variants(value: str) -> list[str]:
+    variants = [item.strip() for item in value.split(",") if item.strip()]
+    allowed = set(VARIANT_LABELS)
+    bad = [variant for variant in variants if variant not in allowed]
+    if bad:
+        raise argparse.ArgumentTypeError(f"unknown variants: {bad}; allowed={sorted(allowed)}")
+    return variants
+
+
+def git_value(command: list[str], cwd: Path) -> str:
+    try:
+        return subprocess.check_output(command, cwd=cwd, text=True).strip()
+    except Exception:
+        return "unknown"
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    root = Path(__file__).resolve().parents[2]
+    parser.add_argument("--qa", type=Path, default=root / "hcvr_new_unified_dataset_v2/receipts/hcvr_new_unified_paper_eval_rebalance_qa.v2.json")
+    parser.add_argument("--cases-file", type=Path, default=root / "hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl")
+    parser.add_argument("--allowlist", type=Path, default=root / "hcvr_new_unified_dataset_v2/receipts/hcvr_new_unified_fix_revision_paper_eval_review.v2.jsonl")
+    parser.add_argument("--summary", type=Path, default=root / "hcvr_new_unified_dataset_v2/dataset/summary.v1.json")
+    parser.add_argument("--recall-results", type=Path, required=True)
+    parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--repo-cache", type=Path, required=True)
+    parser.add_argument("--snapshot-root", type=Path, required=True)
+    parser.add_argument("--codex-home", type=Path, default=Path.home() / ".trae")
+    parser.add_argument("--temp-root", type=Path, required=True)
+    parser.add_argument("--audit-runner", choices=("codex", "opencode"), default="codex")
+    parser.add_argument("--codex", default="codex")
+    parser.add_argument("--opencode", default="opencode")
+    parser.add_argument("--model", default="DeepSeek-V4-Pro")
+    parser.add_argument("--variants", type=parse_variants, default=["full", "minus_rank", "minus_guideline", "minus_poc"])
+    parser.add_argument("--limit", type=int)
+    parser.add_argument("--skip", type=int, default=0)
+    parser.add_argument(
+        "--anchor-budget",
+        type=int,
+        default=200,
+        help="Consume this many Top-K candidates in the single case-level audit prompt.",
+    )
+    parser.add_argument(
+        "--anchor-batch-size",
+        type=int,
+        default=30,
+        help="Candidates per labelled prompt batch; this does not truncate Top-K.",
+    )
+    parser.add_argument("--timeout", type=int, default=1500)
+    parser.add_argument("--clone-timeout", type=int, default=600)
+    parser.add_argument("--concurrency", type=int, default=4)
+    parser.add_argument("--resume", action="store_true")
+    parser.add_argument("--model-budget-note", default="single bounded audit response; inspect only the minimal relevant source path")
+    parser.add_argument("--window-lines", type=int, default=80)
+    parser.add_argument("--stride-lines", type=int, default=40)
+    parser.add_argument("--include-ext", default=",".join(DEFAULT_SUFFIXES))
+    parser.add_argument("--max-file-bytes", type=int, default=1_000_000)
+    parser.add_argument("--max-files-per-repo", type=int, default=20_000)
+    parser.add_argument("--max-candidates-per-case", type=int, default=50_000)
+    parser.add_argument("--inline-source-context", action="store_true")
+    parser.add_argument("--inline-context-anchors", type=int, default=8)
+    parser.add_argument("--inline-context-lines", type=int, default=20)
+    parser.add_argument("--inline-context-max-chars", type=int, default=60_000)
+    parser.add_argument(
+        "--include-case-metadata",
+        action="store_true",
+        help="Include case/CVE identifiers as bookkeeping metadata, not audit knowledge.",
+    )
+    args = parser.parse_args()
+
+    if args.anchor_budget < 1 or args.anchor_batch_size < 1 or args.concurrency < 1:
+        raise SystemExit("anchor-budget, anchor-batch-size, and concurrency must be positive")
+    if args.skip < 0 or (args.limit is not None and args.limit < 1):
+        raise SystemExit("skip must be non-negative and limit must be positive when set")
+    args.output_dir = args.output_dir.resolve()
+    if args.output_dir.exists() and not args.resume:
+        raise FileExistsError(f"refusing existing output dir without --resume: {args.output_dir}")
+    args.output_dir.mkdir(parents=True, exist_ok=True)
+    args.repo_cache.mkdir(parents=True, exist_ok=True)
+    args.snapshot_root.mkdir(parents=True, exist_ok=True)
+    dataset_receipt = verify_dataset(
+        args.qa.resolve(),
+        args.cases_file.resolve(),
+        args.allowlist.resolve(),
+        args.summary.resolve(),
+    )
+    write_json(args.output_dir / "dataset_receipt.json", dataset_receipt)
+    cases = load_paper_eval_cases(
+        args.cases_file.resolve(),
+        args.allowlist.resolve(),
+        limit=args.limit,
+        skip=args.skip,
+    )
+    recall_results = load_recall_results(args.recall_results.resolve())
+    expected_run_cases = len(cases)
+    needed_identities = {case["identity_key"] for case in cases}
+    present_needed = len(needed_identities.intersection(recall_results))
+    if present_needed < expected_run_cases and any(v != "minus_rank" for v in args.variants):
+        raise ValueError(
+            f"recall results cover {present_needed}/{expected_run_cases} selected cases"
+        )
+    repo_root = root.parent
+    args.git_branch = git_value(["git", "rev-parse", "--abbrev-ref", "HEAD"], repo_root)
+    args.git_commit = git_value(["git", "rev-parse", "HEAD"], repo_root)
+    config = {
+        "schema_version": "hcvr_ablation_a_config.v1",
+        "variants": args.variants,
+        "audit_runner": args.audit_runner,
+        "model": args.model,
+        "anchor_budget": args.anchor_budget,
+        "anchor_batch_size": args.anchor_batch_size,
+        "case_count": expected_run_cases,
+        "full_dataset_case_count": EXPECTED_CASE_COUNT,
+        "feasibility_subset": expected_run_cases != EXPECTED_CASE_COUNT,
+        "limit": args.limit,
+        "skip": args.skip,
+        "timeout": args.timeout,
+        "concurrency": args.concurrency,
+        "inline_source_context": args.inline_source_context,
+        "inline_context_anchors": args.inline_context_anchors,
+        "inline_context_lines": args.inline_context_lines,
+        "inline_context_max_chars": args.inline_context_max_chars,
+        "include_case_metadata": args.include_case_metadata,
+        "recall_results": str(args.recall_results.resolve()),
+        "git_branch": args.git_branch,
+        "git_commit": args.git_commit,
+        "scoring": {
+            "tp": "one case with one or more emitted findings overlapping a vulnerability_trace node",
+            "fp": "each emitted finding that does not overlap any case vulnerability_trace node",
+            "fn": "case has no emitted finding overlapping any vulnerability_trace node",
+            "recall_denominator": expected_run_cases,
+            "f1": "2*TP/(2*TP+FP+FN)",
+        },
+    }
+    write_json(args.output_dir / "ablation_config.json", config)
+    scores = []
+    for variant in args.variants:
+        score = run_variant(
+            args=args,
+            variant=variant,
+            cases=cases,
+            recall_results=recall_results,
+        )
+        scores.append(score)
+        write_run_report(
+            output_dir=args.output_dir,
+            dataset_receipt=dataset_receipt,
+            scores=scores,
+            args=args,
+        )
+    write_json(args.output_dir / "all_scores.json", {score["variant"]: score for score in scores})
+    write_run_report(
+        output_dir=args.output_dir,
+        dataset_receipt=dataset_receipt,
+        scores=scores,
+        args=args,
+    )
+
+
+if __name__ == "__main__":
+    main()
