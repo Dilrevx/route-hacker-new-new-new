@@ -178,8 +178,8 @@ class TraeXRuntimeAuditor:
         if not isinstance(value, dict):
             raise ValueError("audit result must be a JSON object")
         verdict = value.get("verdict")
-        if verdict not in {"pass", "reject"}:
-            raise ValueError("verdict must be pass or reject")
+        if verdict not in {"pass", "reject", "inconclusive"}:
+            raise ValueError("verdict must be pass, reject, or inconclusive")
         reproduction_commands = value.get("reproduction_commands", [])
         observations = value.get("observations", [])
         evidence_paths = value.get("evidence_paths", [])
@@ -209,17 +209,24 @@ class TraeXRuntimeAuditor:
             )
             for item in evidence_paths
         ]
-        if verdict == "reject":
+        if verdict in {"reject", "inconclusive"}:
             if not reproduction_commands or not observations or not resolved_evidence:
                 raise ValueError(
-                    "reject requires reproduction_commands, observations, and evidence_paths"
+                    f"{verdict} requires reproduction_commands, observations, and evidence_paths"
                 )
             message = value.get("message")
             if not isinstance(message, str) or not message.strip():
-                raise ValueError("reject requires a non-empty message")
+                raise ValueError(f"{verdict} requires a non-empty message")
             reason = FailureReason(
                 stage="audit",
-                code=str(value.get("code") or "runtime_claim_rejected"),
+                code=str(
+                    value.get("code")
+                    or (
+                        "runtime_claim_rejected"
+                        if verdict == "reject"
+                        else "audit_inconclusive"
+                    )
+                ),
                 message=message.strip(),
                 evidence_path=resolved_evidence[0],
             )
@@ -309,7 +316,9 @@ class TraeXRuntimeAuditor:
             str(final_message_path),
             *self.extra_args,
         ]
-        if executable == "codex":
+        if executable in {"traex", "traecli"}:
+            command[2:2] = ["--ignore-user-config", "--ignore-rules"]
+        if executable in {"codex", "traex", "traecli"}:
             command.append("-")
         return command
 
@@ -325,11 +334,23 @@ class TraeXRuntimeAuditor:
         verification_path = attempt_dir / "verification.json"
         return "\n".join(
             [
-                "Independently audit a runtime-ready claim after mechanical launch and probes passed.",
+                "Independently audit a runtime-ready or PoC-ready claim after mechanical launch and probes passed.",
                 "Do not modify files, containers, images, services, or the submitted runtime.",
-                "Use only read-only diagnostic commands. Default to pass when the evidence supports",
-                "the claimed main application runtime. Reject only with a concrete reproducible",
+                "Use only read-only diagnostic commands.",
+                "",
+                "If this is only a runtime build task, pass when the evidence supports the",
+                "claimed main application runtime. Reject only with a concrete reproducible",
                 "counterexample, not speculation or a preference for stronger probes.",
+                "",
+                "If the task, submitted result, or evidence describes a vulnerability PoC,",
+                "audit whether the observed PoC effect actually demonstrates the vulnerability",
+                "described by the task. Compare the vulnerability id/description, target files,",
+                "patch or trace evidence in the task, the PoC's claimed effect, and the runtime",
+                "observations. Do not pass only because the PoC produced a security-looking",
+                "signal. A PoC that triggers a different bug, a generic dangerous behavior, or",
+                "only proves the runtime is reachable must be reject or inconclusive.",
+                "Use inconclusive when the PoC ran but the available evidence is insufficient",
+                "to prove it matches the described vulnerability.",
                 "",
                 f"Task: {task.task_id}",
                 f"Attempt directory: {attempt_dir}",
@@ -349,6 +370,10 @@ class TraeXRuntimeAuditor:
                 'Pass: {"verdict":"pass","reproduction_commands":[],"observations":[],',
                 '       "evidence_paths":["verification.json"]}',
                 'Reject: {"verdict":"reject","code":"stable_code","message":"reason",',
+                '         "reproduction_commands":[["command","arg"]],',
+                '         "observations":["actual observed fact"],',
+                '         "evidence_paths":["path under attempt directory"]}',
+                'Inconclusive: {"verdict":"inconclusive","code":"stable_code","message":"reason",',
                 '         "reproduction_commands":[["command","arg"]],',
                 '         "observations":["actual observed fact"],',
                 '         "evidence_paths":["path under attempt directory"]}',

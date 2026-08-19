@@ -102,6 +102,35 @@ def test_auditor_requires_reproducible_reject_evidence(tmp_path: Path) -> None:
     assert result.reason.code == "wrong_service"
 
 
+def test_auditor_accepts_inconclusive_result_with_evidence(tmp_path: Path) -> None:
+    attempt_dir = _attempt(tmp_path)
+    auditor = StubAuditor(
+        [
+            {
+                "verdict": "inconclusive",
+                "code": "poc_equivalence_not_established",
+                "message": "PoC demonstrates a different security effect than the CVE description.",
+                "reproduction_commands": [["cat", "verification.json"]],
+                "observations": ["observed effect does not match the described vulnerability"],
+                "evidence_paths": ["verification.json"],
+            }
+        ]
+    )
+
+    result = auditor.audit(
+        task=RuntimeTask(task_id="case-1", prompt="Build runtime and validate PoC"),
+        attempt_dir=attempt_dir,
+        result_path=attempt_dir / "result.json",
+        verification=_verification(),
+    )
+
+    assert result.status == "failed"
+    assert result.verdict == "inconclusive"
+    assert result.reason is not None
+    assert result.reason.stage == "audit"
+    assert result.reason.code == "poc_equivalence_not_established"
+
+
 def test_auditor_retries_invalid_reject_then_reports_infrastructure_failure(
     tmp_path: Path,
 ) -> None:

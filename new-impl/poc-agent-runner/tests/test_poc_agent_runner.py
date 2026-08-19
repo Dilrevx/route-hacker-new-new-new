@@ -67,8 +67,9 @@ def test_run_poc_agent_preserves_session_prompt_usage_and_artifacts(tmp_path: Pa
     prompt = (tmp_path / "captured-prompt.txt").read_text(encoding="utf-8")
     assert "Risk at FileWebService.java:123" in prompt
     assert "/remote/poc-output" in prompt
-    assert "write a PoC, execute" in prompt
+    assert "write a PoC or negative test" in prompt
     assert "budget of 1000 uncached input plus output" in prompt
+    assert "CONFIRMED, NOT_VULNERABLE, INCONCLUSIVE, or BLOCKED" in prompt
 
     run = json.loads((tmp_path / "run" / "run.json").read_text(encoding="utf-8"))
     assert run["session_id"] == "session-test-123"

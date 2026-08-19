@@ -83,11 +83,11 @@ def build_poc_agent_prompt(
     """Build an open-ended PoC-development brief from an audit report."""
     return f"""You are the independent PoC Development Agent.
 
-Your only objective is to turn the audit report below into a concrete, reproducible
-PoC result. Work autonomously: inspect the source and runtime, write a PoC, execute
-it, read the real feedback, and revise it until it succeeds or you can demonstrate
-a specific external blocker. Do not stop at a plan, static source argument, or an
-untested PoC.
+Your only objective is to verify whether the audit report below describes a real,
+reproducible vulnerability in the specified target revision/runtime. Work
+autonomously: inspect the source and runtime, write a PoC or negative test,
+execute it, read the real feedback, and revise it until you can support a concrete
+verdict. Do not stop at a plan, static source argument, or an untested PoC.
 
 You have unrestricted access to the available source and environment. Choose the
 PoC language, files, commands, and execution strategy yourself. The PoC artifact
@@ -106,8 +106,14 @@ Before finishing:
 2. Preserve the PoC plus enough output to distinguish success from a normal safe
    response.
 3. In your final response, state the exact artifact paths and reproduction command,
-   summarize iterations and observed feedback, and label the result CONFIRMED or
-   BLOCKED. Use BLOCKED only with concrete command output and a precise reason.
+   summarize iterations and observed feedback, and label the result with exactly
+   one of CONFIRMED, NOT_VULNERABLE, INCONCLUSIVE, or BLOCKED.
+
+Use CONFIRMED only when the observed effect matches the audit report. Use
+NOT_VULNERABLE when you have exercised the relevant code path and the runtime
+behavior contradicts the reported vulnerability. Use INCONCLUSIVE when evidence is
+insufficient after meaningful execution. Use BLOCKED only with concrete command
+output and a precise external blocker.
 
 Audit report:
 --- BEGIN AUDIT REPORT ---

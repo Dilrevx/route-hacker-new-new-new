@@ -6,11 +6,13 @@ from __future__ import annotations
 import argparse
 import concurrent.futures
 import hashlib
+import importlib.util
 import json
 import math
 import os
 import re
 import subprocess
+import sys
 import threading
 import time
 import urllib.error
@@ -79,6 +81,10 @@ class Embedder(Protocol):
     def model_id(self) -> str: ...
 
     def embed_texts(self, texts: list[str]) -> list[list[float]]: ...
+
+    def embed_queries(self, texts: list[str]) -> list[list[float]]: ...
+
+    def embed_codes(self, texts: list[str]) -> list[list[float]]: ...
 
 
 def read_jsonl(path: Path) -> Iterable[dict[str, Any]]:
@@ -165,6 +171,12 @@ class OpenAICompatibleEmbedder:
             raise RuntimeError(f"embedding service returned {len(items)} vectors for {len(texts)} texts")
         return [l2_normalize(item["embedding"]) for item in items]
 
+    def embed_queries(self, texts: list[str]) -> list[list[float]]:
+        return self.embed_texts(texts)
+
+    def embed_codes(self, texts: list[str]) -> list[list[float]]:
+        return self.embed_texts(texts)
+
 
 class SentenceTransformersEmbedder:
     def __init__(self, *, model: str, device: str, max_seq_length: int) -> None:
@@ -188,6 +200,235 @@ class SentenceTransformersEmbedder:
         )
         return [l2_normalize(vector) for vector in vectors]
 
+    def embed_queries(self, texts: list[str]) -> list[list[float]]:
+        return self.embed_texts(texts)
+
+    def embed_codes(self, texts: list[str]) -> list[list[float]]:
+        return self.embed_texts(texts)
+
+
+class P3C64QueryResidualEmbedder:
+    """Frozen Qwen code bank geometry with the P3C64 query-only residual MLP."""
+
+    def __init__(
+        self,
+        *,
+        model: str,
+        state_path: Path,
+        device: str,
+        max_seq_length: int,
+        hidden_dimension: int,
+        residual_scale: float,
+    ) -> None:
+        import torch
+        import torch.nn.functional as F
+        from sentence_transformers import SentenceTransformer
+
+        self._torch = torch
+        self._F = F
+        self._state_path = state_path.resolve()
+        self._hidden_dimension = hidden_dimension
+        self._residual_scale = float(residual_scale)
+        self._model_id = (
+            f"p3c64-query-residual:{self._state_path}:"
+            f"base={model}:hidden={hidden_dimension}:scale={self._residual_scale}"
+        )
+        self._model = SentenceTransformer(model, device=device)
+        if max_seq_length > 0:
+            self._model.max_seq_length = max_seq_length
+        try:
+            state = torch.load(self._state_path, map_location="cpu", weights_only=True)
+        except TypeError:
+            state = torch.load(self._state_path, map_location="cpu")
+        required = {
+            "query_projection.first.weight",
+            "query_projection.first.bias",
+            "query_projection.output.weight",
+            "query_projection.output.bias",
+        }
+        if set(state) != required:
+            raise ValueError(f"unexpected P3C64 state keys: {sorted(state)}")
+        first_weight = state["query_projection.first.weight"].float()
+        first_bias = state["query_projection.first.bias"].float()
+        output_weight = state["query_projection.output.weight"].float()
+        output_bias = state["query_projection.output.bias"].float()
+        if tuple(first_weight.shape) != (hidden_dimension, 1024):
+            raise ValueError(f"unexpected P3C64 first weight shape: {tuple(first_weight.shape)}")
+        if tuple(first_bias.shape) != (hidden_dimension,):
+            raise ValueError(f"unexpected P3C64 first bias shape: {tuple(first_bias.shape)}")
+        if tuple(output_weight.shape) != (1024, hidden_dimension):
+            raise ValueError(f"unexpected P3C64 output weight shape: {tuple(output_weight.shape)}")
+        if tuple(output_bias.shape) != (1024,):
+            raise ValueError(f"unexpected P3C64 output bias shape: {tuple(output_bias.shape)}")
+        self._state = {
+            "first_weight": first_weight,
+            "first_bias": first_bias,
+            "output_weight": output_weight,
+            "output_bias": output_bias,
+        }
+
+    @property
+    def model_id(self) -> str:
+        return self._model_id
+
+    def embed_texts(self, texts: list[str]) -> list[list[float]]:
+        if not texts:
+            return []
+        vectors = self._model.encode(
+            texts,
+            normalize_embeddings=True,
+            show_progress_bar=False,
+            convert_to_numpy=True,
+        )
+        if len(vectors.shape) != 2 or vectors.shape[1] != 1024:
+            raise ValueError(f"P3C64 base embedding dimension must be 1024, got {vectors.shape}")
+        return [l2_normalize(vector) for vector in vectors]
+
+    def embed_queries(self, texts: list[str]) -> list[list[float]]:
+        base_vectors = self.embed_texts(texts)
+        if not base_vectors:
+            return []
+        torch = self._torch
+        with torch.inference_mode():
+            vectors = torch.as_tensor(base_vectors, dtype=torch.float32)
+            hidden = self._F.gelu(
+                self._F.linear(
+                    vectors,
+                    self._state["first_weight"],
+                    self._state["first_bias"],
+                )
+            )
+            delta = self._F.linear(
+                hidden,
+                self._state["output_weight"],
+                self._state["output_bias"],
+            )
+            adapted = self._F.normalize(
+                vectors + self._residual_scale * delta,
+                p=2,
+                dim=-1,
+            )
+        return [l2_normalize(vector) for vector in adapted.tolist()]
+
+    def embed_codes(self, texts: list[str]) -> list[list[float]]:
+        return self.embed_texts(texts)
+
+
+def load_python_module(name: str, path: Path) -> Any:
+    spec = importlib.util.spec_from_file_location(name, path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"cannot import Python helper module: {path}")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+class HCVRDualLoRAEmbedder:
+    """Guideline-query/code-anchor dual-LoRA encoder from the HCVR M1 checkpoint."""
+
+    def __init__(
+        self,
+        *,
+        checkpoint_dir: Path,
+        train_helper: Path,
+        base_model: Path | None,
+        device: str,
+        batch_size: int,
+    ) -> None:
+        import torch
+        import torch.nn.functional as F
+        from transformers import AutoModel, AutoTokenizer
+
+        self._torch = torch
+        self._F = F
+        self._batch_size = batch_size
+        self._checkpoint_dir = checkpoint_dir.resolve()
+        self._train = load_python_module("hcvr_m1_train_dual_lora", train_helper.resolve())
+        config_path = self._checkpoint_dir / "adapter_config.json"
+        self._adapter_config = json.loads(config_path.read_text(encoding="utf-8"))
+        self._device = torch.device(device)
+        model_path = (base_model or Path(str(self._adapter_config["base_model"]))).resolve()
+        self._model_id = f"hcvr-dual-lora:{self._checkpoint_dir}:base={model_path}"
+        if not model_path.exists():
+            raise ValueError(f"HCVR base model is unavailable: {model_path}")
+        expected_config = self._adapter_config.get("base_model_config_sha256")
+        if expected_config and sha256_file(model_path / "config.json") != expected_config:
+            raise ValueError(
+                f"HCVR base model config hash differs from adapter config: {model_path / 'config.json'}"
+            )
+        if self._device.type == "cuda" and not torch.cuda.is_available():
+            raise ValueError(f"CUDA device requested but unavailable: {device}")
+        dtype = torch.bfloat16 if self._device.type == "cuda" else torch.float32
+        self._tokenizer = AutoTokenizer.from_pretrained(
+            model_path, trust_remote_code=True, local_files_only=True
+        )
+        if self._tokenizer.pad_token_id is None:
+            self._tokenizer.pad_token = self._tokenizer.eos_token
+        self._model = AutoModel.from_pretrained(
+            model_path, trust_remote_code=True, local_files_only=True, torch_dtype=dtype
+        )
+        self._model.config.use_cache = False
+        for parameter in self._model.parameters():
+            parameter.requires_grad_(False)
+        replaced = self._train.apply_dual_lora(
+            self._model,
+            list(self._adapter_config["target_modules"]),
+            int(self._adapter_config["lora_rank"]),
+            float(self._adapter_config["lora_alpha"]),
+            float(self._adapter_config["lora_dropout"]),
+        )
+        if not replaced:
+            raise RuntimeError("HCVR dual-LoRA checkpoint matched no model modules")
+        self._model.to(self._device)
+        self._train.load_adapter_state(self._model, "query", self._checkpoint_dir / "query_adapter.pt")
+        self._train.load_adapter_state(self._model, "code", self._checkpoint_dir / "code_adapter.pt")
+        self._model.eval()
+        self._max_query_length = int(self._adapter_config["max_query_length"])
+        self._max_code_length = int(self._adapter_config["max_code_length"])
+
+    @property
+    def model_id(self) -> str:
+        return self._model_id
+
+    def _mean_pool(self, last_hidden: Any, attention_mask: Any) -> Any:
+        mask = attention_mask.unsqueeze(-1).to(last_hidden.dtype)
+        return (last_hidden * mask).sum(dim=1) / mask.sum(dim=1).clamp(min=1)
+
+    def _encode_side(self, texts: list[str], *, side: str) -> list[list[float]]:
+        if not texts:
+            return []
+        max_length = self._max_query_length if side == "query" else self._max_code_length
+        self._train.set_active_adapter(self._model, side)
+        vectors: list[list[float]] = []
+        with self._torch.inference_mode():
+            for start in range(0, len(texts), self._batch_size):
+                batch = self._tokenizer(
+                    texts[start : start + self._batch_size],
+                    padding=True,
+                    truncation=True,
+                    max_length=max_length,
+                    return_tensors="pt",
+                )
+                batch = {key: value.to(self._device) for key, value in batch.items()}
+                output = self._model(**batch)
+                embeddings = self._F.normalize(
+                    self._mean_pool(output.last_hidden_state, batch["attention_mask"]),
+                    p=2,
+                    dim=-1,
+                )
+                vectors.extend(embeddings.float().cpu().tolist())
+        return [l2_normalize(vector) for vector in vectors]
+
+    def embed_texts(self, texts: list[str]) -> list[list[float]]:
+        return self.embed_codes(texts)
+
+    def embed_queries(self, texts: list[str]) -> list[list[float]]:
+        return self._encode_side(texts, side="query")
+
+    def embed_codes(self, texts: list[str]) -> list[list[float]]:
+        return self._encode_side(texts, side="code")
+
 
 def make_embedder(args: argparse.Namespace) -> Embedder:
     if args.embedding_backend == "openai":
@@ -200,10 +441,27 @@ def make_embedder(args: argparse.Namespace) -> Embedder:
             max_retries=args.embedding_max_retries,
             retry_sleep=args.embedding_retry_sleep,
         )
-    return SentenceTransformersEmbedder(
-        model=args.embedding_model,
+    if args.embedding_backend == "sentence-transformers":
+        return SentenceTransformersEmbedder(
+            model=args.embedding_model,
+            device=args.embedding_device,
+            max_seq_length=args.max_seq_length,
+        )
+    if args.embedding_backend == "p3c64-query-residual":
+        return P3C64QueryResidualEmbedder(
+            model=args.embedding_model,
+            state_path=args.p3c64_state,
+            device=args.embedding_device,
+            max_seq_length=args.max_seq_length,
+            hidden_dimension=args.p3c64_hidden_dimension,
+            residual_scale=args.p3c64_residual_scale,
+        )
+    return HCVRDualLoRAEmbedder(
+        checkpoint_dir=args.hcvr_checkpoint_dir,
+        train_helper=args.hcvr_train_helper,
+        base_model=args.hcvr_base_model,
         device=args.embedding_device,
-        max_seq_length=args.max_seq_length,
+        batch_size=args.embedding_batch_size,
     )
 
 
@@ -328,7 +586,7 @@ def batched(values: list[str], size: int) -> Iterable[list[str]]:
 def embed_documents(embedder: Embedder, texts: list[str], batch_size: int) -> list[list[float]]:
     vectors: list[list[float]] = []
     for batch in batched(texts, batch_size):
-        vectors.extend(embedder.embed_texts(batch))
+        vectors.extend(embedder.embed_codes(batch))
     return vectors
 
 
@@ -343,7 +601,7 @@ def rank_candidates(
 ) -> list[dict[str, Any]]:
     if not candidates:
         return []
-    query_vector = embedder.embed_texts([query_text])[0]
+    query_vector = embedder.embed_queries([query_text])[0]
     texts = [candidate_text(candidate, text_max_chars) for candidate in candidates]
     vectors = embed_documents(embedder, texts, batch_size)
     scored = []
@@ -484,7 +742,11 @@ def main() -> None:
     parser.add_argument("--max-files-per-repo", type=int, default=20_000)
     parser.add_argument("--max-candidates-per-case", type=int, default=50_000)
     parser.add_argument("--text-max-chars", type=int, default=4000)
-    parser.add_argument("--embedding-backend", choices=("openai", "sentence-transformers"), default="openai")
+    parser.add_argument(
+        "--embedding-backend",
+        choices=("openai", "sentence-transformers", "hcvr-dual-lora", "p3c64-query-residual"),
+        default="openai",
+    )
     parser.add_argument("--embedding-base-url", default=os.environ.get("EMBEDDING_BASE_URL", "http://127.0.0.1:8001/v1"))
     parser.add_argument("--embedding-api-key-env", default="EMBEDDING_API_KEY")
     parser.add_argument("--embedding-model", default=os.environ.get("EMBEDDING_MODEL", "Qwen/Qwen3-Embedding-0.6B"))
@@ -494,12 +756,35 @@ def main() -> None:
     parser.add_argument("--embedding-max-retries", type=int, default=3)
     parser.add_argument("--embedding-retry-sleep", type=float, default=5.0)
     parser.add_argument("--max-seq-length", type=int, default=512)
+    parser.add_argument("--hcvr-checkpoint-dir", type=Path)
+    parser.add_argument(
+        "--hcvr-base-model",
+        type=Path,
+        help="Override the stale base_model path recorded in HCVR adapter_config.json; config SHA256 is still verified.",
+    )
+    parser.add_argument(
+        "--hcvr-train-helper",
+        type=Path,
+        default=Path("/data/lhq/workspace/route-hacker/scripts/train_guideline_chunk_dual_encoder_v1.py"),
+    )
+    parser.add_argument(
+        "--p3c64-state",
+        type=Path,
+        default=Path("/data/lhq/workspace/p3-hard-competition-query-adapter-v1/selection_run_v1/p3c64_state.pt"),
+        help="P3C64 query-only residual MLP state; code embeddings remain frozen base embeddings.",
+    )
+    parser.add_argument("--p3c64-hidden-dimension", type=int, default=128)
+    parser.add_argument("--p3c64-residual-scale", type=float, default=0.1)
     args = parser.parse_args()
 
     if args.limit < 1 or args.case_workers < 1 or args.top_k < 1 or args.audit_anchor_rank < 1:
         raise SystemExit("limit, case-workers, top-k, and audit-anchor-rank must be positive")
     if args.audit_anchor_rank > args.top_k:
         raise SystemExit("--audit-anchor-rank cannot exceed --top-k")
+    if args.embedding_backend == "hcvr-dual-lora" and args.hcvr_checkpoint_dir is None:
+        raise SystemExit("--hcvr-checkpoint-dir is required when --embedding-backend=hcvr-dual-lora")
+    if args.embedding_backend == "p3c64-query-residual" and not args.p3c64_state.is_file():
+        raise SystemExit(f"--p3c64-state is unavailable: {args.p3c64_state}")
 
     output = args.output_dir.resolve()
     if output.exists():
@@ -615,6 +900,16 @@ def main() -> None:
         "embedding_backend": args.embedding_backend,
         "embedding_model": embedder.model_id,
         "embedding_base_url": args.embedding_base_url if args.embedding_backend == "openai" else None,
+        "hcvr_checkpoint_dir": str(args.hcvr_checkpoint_dir.resolve()) if args.hcvr_checkpoint_dir else None,
+        "hcvr_train_helper": str(args.hcvr_train_helper.resolve()) if args.embedding_backend == "hcvr-dual-lora" else None,
+        "p3c64_state": str(args.p3c64_state.resolve()) if args.embedding_backend == "p3c64-query-residual" else None,
+        "p3c64_state_sha256": sha256_file(args.p3c64_state.resolve()) if args.embedding_backend == "p3c64-query-residual" else None,
+        "p3c64_method_boundary": (
+            "query-only identity-initialized residual MLP over frozen base Qwen embeddings; "
+            "code candidate embeddings are not adapted"
+            if args.embedding_backend == "p3c64-query-residual"
+            else None
+        ),
         "case_workers": args.case_workers,
         "embedding_batch_size": args.embedding_batch_size,
         "window_lines": args.window_lines,

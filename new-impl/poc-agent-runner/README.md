@@ -1,45 +1,10 @@
-# PoC Agent Runner
+# CVE-2026-32252 live PoC
 
-This module contains the autonomous PoC-development runner and independent
-verifier runner that were used for the 2026-08-17 PoC ground-truth evaluation.
-
-It is intentionally separate from `runtime-v2-verifier-redesign`:
-
-- `runtime-v2-verifier-redesign` builds and verifies runnable application
-  environments.
-- `poc-agent-runner` launches an AI PoC development session from an audit report,
-  then launches a fresh verifier session against the final PoC artifact.
-
-## Core Files
-
-- `src/route_hacker/poc_agent/runner.py`
-  - `run_poc_agent`
-  - `run_poc_verifier`
-  - prompt builders, token accounting, timeout/process-group handling, and run
-    evidence persistence.
-- `src/cli/commands/poc.py`
-  - Typer commands for `poc run` and `poc verify`.
-- `docs/poc-agent-technical-architecture-plan.md`
-  - Living architecture record for the PoC subsystem.
-
-## Expected Flow
-
-```text
-audit report
-  -> poc run
-  -> PoC artifact + reproduction command
-  -> poc verify
-  -> CONFIRMED / REJECTED / INVALID_POC / BLOCKED / INCONCLUSIVE
-```
-
-The runner records prompts, JSONL event streams, stderr, final messages, token
-usage, wall time, and command metadata. It does not hard-code vulnerability
-semantics or mechanically decide whether a vulnerability exists.
-
-## Test
+Run this from `bobo5090` while the isolated `poccase040` compose runtime is up:
 
 ```bash
-PYTHONPATH=src python3 -m pytest -q tests
+cd /mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq-runtime-v2/poc-agent-critical-findings-20260818T0615Z/poc-workspaces/10-case_040-chartbrew__chartbrew-CVE-2026-32252-csf_1011bb63c96314324bb32853
+./reproduce.sh
 ```
 
-The tests use a fake TraeX executable and do not call a real model.
+The program creates two unrelated users and teams, puts a secret-bearing data request in the victim team, and uses the attacker token together with the attacker's team ID in the data-request route. It verifies: (1) the correctly scoped dataset endpoint returns `404`, (2) the unscoped data-request endpoint returns the victim's `Authorization` secret with `200`, and (3) the attacker can update the victim request, which the victim read then confirms. Each run creates a timestamped directory below `runs/` containing raw HTTP response bodies, status codes, and `summary.json`.
