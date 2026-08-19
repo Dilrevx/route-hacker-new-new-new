@@ -12,6 +12,20 @@ def test_scripts_are_present():
     assert (root / "summarize_native_iris_metrics.py").is_file()
 
 
+def test_bridge_json_mode_preserves_the_callers_requested_json_shape():
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "serve_traex_openai.py"))
+    prompt = module["render_prompt"](
+        [
+            {"role": "system", "content": "Classify APIs."},
+            {"role": "user", "content": "Return one JSON list, such as []."},
+        ],
+        require_json=True,
+    )
+    assert "one valid JSON value" in prompt
+    assert "exactly the JSON shape requested" in prompt
+    assert "valid JSON object" not in prompt
+
+
 def test_batch_attempt_id_is_namespaced():
     module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "run_native_iris_batch.py"))
     assert module["safe_name"]("flash-a1") == "flash-a1"

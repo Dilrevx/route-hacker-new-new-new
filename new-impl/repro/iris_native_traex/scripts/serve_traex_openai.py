@@ -23,7 +23,7 @@ from pathlib import Path
 from typing import Any
 
 
-def render_prompt(messages: list[dict[str, Any]], require_json_object: bool) -> str:
+def render_prompt(messages: list[dict[str, Any]], require_json: bool) -> str:
     """Preserve IRIS's system and user roles in one TraeX prompt."""
 
     parts = [
@@ -38,10 +38,11 @@ def render_prompt(messages: list[dict[str, Any]], require_json_object: bool) -> 
         if not isinstance(content, str):
             raise ValueError("chat message content must be a string")
         parts.extend((f"[{role}]", content, ""))
-    if require_json_object:
+    if require_json:
         parts.extend(
             (
-                "The caller requires one valid JSON object and nothing else.",
+                "The caller requires one valid JSON value and nothing else.",
+                "Return exactly the JSON shape requested in the caller's prompt.",
                 "Do not wrap it in Markdown fences.",
             )
         )
@@ -105,8 +106,8 @@ class TraexBackend:
         }:
             raise ValueError(f"bridge only serves {self.model}, got {request_model}")
         response_format = request.get("response_format")
-        require_json_object = isinstance(response_format, dict) and response_format.get("type") == "json_object"
-        prompt = render_prompt(messages, require_json_object=require_json_object)
+        require_json = isinstance(response_format, dict) and response_format.get("type") == "json_object"
+        prompt = render_prompt(messages, require_json=require_json)
         prompt_digest = hashlib.sha256(prompt.encode("utf-8")).hexdigest()[:16]
         request_id = f"traex-{uuid.uuid4().hex}"
         run_id = str(headers.get("X-Iris-Run-Id", ""))
