@@ -35,6 +35,7 @@ def sample_case() -> dict:
             "id": "CVE-2099-0001",
             "description": "A sensitive object update misses object-scoped authorization.",
         },
+        "quality": {"dataset_status": "accepted"},
         "recall_anchors": [
             {
                 "anchor_id": "anchor::1",
@@ -139,6 +140,73 @@ def test_load_selected_cases_all_uses_accepted_cases_with_anchors(tmp_path: Path
     ]
 
 
+def test_load_selected_cases_can_follow_identity_file(tmp_path: Path):
+    module = load_module()
+    cases_path = tmp_path / "cases.jsonl"
+    case_a = sample_case()
+    case_b = sample_case() | {"identity_key": "owner__repo::CVE-2099-0002"}
+    cases_path.write_text(
+        "".join(json.dumps(row) + "\n" for row in [case_a, case_b]),
+        encoding="utf-8",
+    )
+    identities_path = tmp_path / "identities.jsonl"
+    identities_path.write_text(
+        json.dumps({"identity_key": "owner__repo::CVE-2099-0002"}) + "\n",
+        encoding="utf-8",
+    )
+    qa_path = tmp_path / "qa.json"
+    qa_path.write_text(
+        json.dumps({"files": {"cases": {"path": str(cases_path)}}}),
+        encoding="utf-8",
+    )
+
+    selected = module.load_selected_cases(
+        qa_path,
+        limit=1,
+        skip=0,
+        selection="all",
+        identity_file=identities_path,
+    )
+
+    assert [row["identity_key"] for row in selected] == ["owner__repo::CVE-2099-0002"]
+
+
+def test_selected_anchor_file_overrides_dataset_anchor(tmp_path: Path):
+    module = load_module()
+    selected_path = tmp_path / "selected_cases.jsonl"
+    selected_path.write_text(
+        json.dumps(
+            {
+                "identity_key": "owner__repo::CVE-2099-0001",
+                "anchor_id": "recalled::1",
+                "file": "src/Recalled.java",
+                "start_line": 31,
+                "end_line": 80,
+                "symbol": "Recalled.audit",
+                "span_kind": "sliding_window",
+                "rank": 1,
+                "score": 0.42,
+                "retrieval_source": "mechanical_slice_embedding_recall",
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    identities, anchors = module.load_selected_anchor_file(selected_path)
+    anchor = module.choose_anchor(
+        sample_case(),
+        anchor_index=0,
+        selected_anchors=anchors,
+    )
+
+    assert identities == ["owner__repo::CVE-2099-0001"]
+    assert anchor["anchor_id"] == "recalled::1"
+    assert anchor["file"] == "src/Recalled.java"
+    assert anchor["rank"] == 1
+    assert anchor["retrieval_source"] == "mechanical_slice_embedding_recall"
+
+
 def test_prompt_treats_anchor_as_entry_not_reading_boundary(tmp_path: Path):
     module = load_module()
     case = sample_case()
@@ -150,12 +218,13 @@ def test_prompt_treats_anchor_as_entry_not_reading_boundary(tmp_path: Path):
         snapshot=tmp_path,
         guideline=guideline,
     )
-    assert "investigation entry, not proof" in prompt
-    assert "not a boundary on repository reading" in prompt
-    assert "concrete sensitive operation" in prompt
-    assert "PoC agent should observe or instrument" in prompt
-    assert "exact file:line locations" in prompt
-    assert "Do not return unknown" in prompt
+    normalized_prompt = " ".join(prompt.split())
+    assert "investigation entry, not proof" in normalized_prompt
+    assert "not a boundary on repository reading" in normalized_prompt
+    assert "concrete sensitive operation" in normalized_prompt
+    assert "PoC agent should observe or instrument" in normalized_prompt
+    assert "exact file:line locations" in normalized_prompt
+    assert "Do not return unknown" in normalized_prompt
 
 
 def test_prepare_packet_writes_prompt_and_handoff_fields(tmp_path: Path):
@@ -172,5 +241,6 @@ def test_prepare_packet_writes_prompt_and_handoff_fields(tmp_path: Path):
     )
     assert row["state"] == "prepared"
     prompt = Path(row["prompt"]).read_text(encoding="utf-8")
-    assert "Decision value must be either risk or no-risk" in prompt
-    assert "Confidence value must be a decimal" in prompt
+    normalized_prompt = " ".join(prompt.split())
+    assert "Decision value must be either risk or no-risk" in normalized_prompt
+    assert "The Confidence value" in normalized_prompt

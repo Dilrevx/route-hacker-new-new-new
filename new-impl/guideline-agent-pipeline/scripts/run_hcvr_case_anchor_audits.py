@@ -209,11 +209,47 @@ def load_selected_cases(
     limit: int,
     skip: int,
     selection: str,
+    cases_file: Path | None = None,
+    identity_file: Path | None = None,
+    exclude_audit_index: Path | None = None,
 ) -> list[dict[str, Any]]:
     qa = read_json(qa_path)
-    case_path = Path(qa["files"]["cases"]["path"])
+    case_path = cases_file or Path(qa["files"]["cases"]["path"])
+    excluded_identities: set[str] = set()
+    if exclude_audit_index is not None:
+        excluded_identities = {
+            row["identity_key"]
+            for row in read_jsonl(exclude_audit_index)
+            if row.get("identity_key")
+        }
+    if identity_file is not None:
+        identities = [
+            row["identity_key"]
+            for row in read_jsonl(identity_file)
+            if row.get("identity_key")
+        ]
+        identities = [
+            identity
+            for identity in identities
+            if identity not in excluded_identities
+        ][skip : skip + limit]
+        if len(identities) != limit:
+            raise ValueError(f"only selected {len(identities)} identity file rows, wanted {limit}")
+        cases_by_identity = {
+            row["identity_key"]: row
+            for row in read_jsonl(case_path)
+            if row.get("identity_key") in set(identities)
+        }
+        missing = [identity for identity in identities if identity not in cases_by_identity]
+        if missing:
+            raise ValueError(f"identity file rows missing from cases file: {missing}")
+        return [cases_by_identity[identity] for identity in identities]
     if selection == "added":
-        identities = list(qa["added_identities"])[skip : skip + limit]
+        identities = [
+            identity
+            for identity in qa["added_identities"]
+            if identity not in excluded_identities
+        ][skip : skip + limit]
         cases_by_identity = {
             row["identity_key"]: row
             for row in read_jsonl(case_path)
@@ -226,6 +262,8 @@ def load_selected_cases(
     if selection == "all":
         selected: list[dict[str, Any]] = []
         for row in read_jsonl(case_path):
+            if row.get("identity_key") in excluded_identities:
+                continue
             quality = row.get("quality") or {}
             if quality.get("dataset_status") != "accepted":
                 continue
@@ -254,12 +292,57 @@ def pick_anchor(case: dict[str, Any], anchor_index: int) -> dict[str, Any]:
     return anchors[anchor_index]
 
 
-def clone_or_fetch(repo_url: str, repo_dir: Path) -> None:
+def load_selected_anchor_file(path: Path) -> tuple[list[str], dict[str, dict[str, Any]]]:
+    identities: list[str] = []
+    anchors: dict[str, dict[str, Any]] = {}
+    for row in read_jsonl(path):
+        identity = row.get("identity_key")
+        if not identity:
+            continue
+        if identity in anchors:
+            raise ValueError(f"duplicate selected anchor identity: {identity}")
+        for field in ("anchor_id", "file", "start_line", "end_line"):
+            if field not in row:
+                raise ValueError(f"selected anchor row missing {field}: {identity}")
+        identities.append(identity)
+        anchors[identity] = {
+            "anchor_id": row["anchor_id"],
+            "file": row["file"],
+            "start_line": row["start_line"],
+            "end_line": row["end_line"],
+            "symbol": row.get("symbol", ""),
+            "span_kind": row.get("span_kind", "recalled_window"),
+            "rank": row.get("rank"),
+            "score": row.get("score"),
+            "retrieval_source": row.get("retrieval_source"),
+            "known_anchor_overlap": row.get("known_anchor_overlap"),
+        }
+    if not identities:
+        raise ValueError(f"selected anchor file has no usable rows: {path}")
+    return identities, anchors
+
+
+def choose_anchor(
+    case: dict[str, Any],
+    *,
+    anchor_index: int,
+    selected_anchors: dict[str, dict[str, Any]] | None,
+) -> dict[str, Any]:
+    if selected_anchors is not None:
+        identity = case["identity_key"]
+        try:
+            return selected_anchors[identity]
+        except KeyError as error:
+            raise ValueError(f"selected anchor missing for {identity}") from error
+    return pick_anchor(case, anchor_index)
+
+
+def clone_or_fetch(repo_url: str, repo_dir: Path, timeout: int | None = None) -> None:
     if repo_dir.exists():
-        subprocess.run(["git", "-C", str(repo_dir), "fetch", "--all", "--tags"], check=True)
+        subprocess.run(["git", "-C", str(repo_dir), "fetch", "--all", "--tags"], check=True, timeout=timeout)
         return
     repo_dir.parent.mkdir(parents=True, exist_ok=True)
-    subprocess.run(["git", "clone", "--no-checkout", repo_url, str(repo_dir)], check=True)
+    subprocess.run(["git", "clone", "--no-checkout", repo_url, str(repo_dir)], check=True, timeout=timeout)
 
 
 def materialize_snapshot(repo_dir: Path, commit: str, snapshot: Path) -> None:
@@ -292,7 +375,7 @@ def materialize_snapshot(repo_dir: Path, commit: str, snapshot: Path) -> None:
         archive.unlink(missing_ok=True)
 
 
-def ensure_snapshot(case: dict[str, Any], repo_cache: Path, snapshots: Path) -> Path:
+def ensure_snapshot(case: dict[str, Any], repo_cache: Path, snapshots: Path, clone_timeout: int = 600) -> Path:
     repo = case["repository"]
     revisions = case["revisions"]
     repo_key = repo["repo_key"]
@@ -301,7 +384,7 @@ def ensure_snapshot(case: dict[str, Any], repo_cache: Path, snapshots: Path) -> 
     snapshot = snapshots / f"{safe_slug(repo_key)}__{commit[:12]}"
     if snapshot.is_dir():
         return snapshot
-    clone_or_fetch(repo["repo_url"], repo_dir)
+    clone_or_fetch(repo["repo_url"], repo_dir, clone_timeout)
     materialize_snapshot(repo_dir, commit, snapshot)
     return snapshot
 
@@ -554,9 +637,32 @@ def write_prepare_packet(
     }
 
 
+def selected_case_row(case: dict[str, Any], anchor: dict[str, Any], snapshot: Path | None) -> dict[str, Any]:
+    row = {
+        "identity_key": case["identity_key"],
+        "case_id": case.get("new_unified_case_id"),
+        "repo_url": case["repository"]["repo_url"],
+        "checkout_revision": case["revisions"]["checkout_revision"],
+        "hcvr_type": (case.get("classification") or {}).get("primary_hcvr_type"),
+        "anchor_id": anchor["anchor_id"],
+        "file": anchor["file"],
+        "start_line": anchor["start_line"],
+        "end_line": anchor["end_line"],
+        "snapshot": str(snapshot) if snapshot is not None else None,
+    }
+    for field in ("symbol", "span_kind", "rank", "score", "retrieval_source", "known_anchor_overlap"):
+        if field in anchor:
+            row[field] = anchor[field]
+    return row
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--qa", type=Path, required=True)
+    parser.add_argument("--cases-file", type=Path)
+    parser.add_argument("--identity-file", type=Path)
+    parser.add_argument("--selected-anchor-file", type=Path)
+    parser.add_argument("--exclude-audit-index", type=Path)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--repo-cache", type=Path, required=True)
     parser.add_argument("--snapshot-root", type=Path, required=True)
@@ -569,6 +675,7 @@ def main() -> None:
     parser.add_argument("--model", default="qwen3-coder:30b")
     parser.add_argument("--codex", default="codex")
     parser.add_argument("--timeout", type=int, default=1200)
+    parser.add_argument("--clone-timeout", type=int, default=600)
     parser.add_argument("--max-attempts", type=int, default=2)
     parser.add_argument("--concurrency", type=int, default=1)
     parser.add_argument("--prepare-only", action="store_true")
@@ -582,8 +689,9 @@ def main() -> None:
     output = args.output_dir.resolve()
     if output.exists():
         raise FileExistsError(f"refusing existing audit output: {output}")
-    codex = shutil.which(args.codex)
-    if codex is None:
+    output.mkdir(parents=True)
+    codex = None if args.prepare_only else shutil.which(args.codex)
+    if codex is None and not args.prepare_only:
         raise FileNotFoundError(f"Codex executable not found: {args.codex}")
     codex_home = args.codex_home.resolve()
     if not codex_home.is_dir():
@@ -595,38 +703,46 @@ def main() -> None:
     repo_cache.mkdir(parents=True, exist_ok=True)
     snapshots.mkdir(parents=True, exist_ok=True)
 
+    selected_anchor_identities: list[str] | None = None
+    selected_anchors: dict[str, dict[str, Any]] | None = None
+    identity_file = args.identity_file.resolve() if args.identity_file else None
+    if args.selected_anchor_file is not None:
+        selected_anchor_identities, selected_anchors = load_selected_anchor_file(
+            args.selected_anchor_file.resolve()
+        )
+        if identity_file is None:
+            inferred_identity_file = output / ".selected_anchor_identities.jsonl"
+            write_jsonl(
+                inferred_identity_file,
+                ({"identity_key": identity} for identity in selected_anchor_identities),
+            )
+            identity_file = inferred_identity_file
+
     cases = load_selected_cases(
         args.qa.resolve(),
         args.limit,
         args.skip,
         args.selection,
+        args.cases_file.resolve() if args.cases_file else None,
+        identity_file,
+        args.exclude_audit_index.resolve() if args.exclude_audit_index else None,
     )
-    output.mkdir(parents=True)
     (output / "reports").mkdir()
     selected_rows: list[dict[str, Any]] = []
     run_items: list[tuple[dict[str, Any], dict[str, Any], Path]] = []
     prepared_rows: list[dict[str, Any]] = []
     for case in cases:
-        anchor = pick_anchor(case, args.anchor_index)
+        anchor = choose_anchor(
+            case,
+            anchor_index=args.anchor_index,
+            selected_anchors=selected_anchors,
+        )
         snapshot = (
             None
             if args.no_materialize
-            else ensure_snapshot(case, repo_cache, snapshots)
+            else ensure_snapshot(case, repo_cache, snapshots, args.clone_timeout)
         )
-        selected_rows.append(
-            {
-                "identity_key": case["identity_key"],
-                "case_id": case.get("new_unified_case_id"),
-                "repo_url": case["repository"]["repo_url"],
-                "checkout_revision": case["revisions"]["checkout_revision"],
-                "hcvr_type": (case.get("classification") or {}).get("primary_hcvr_type"),
-                "anchor_id": anchor["anchor_id"],
-                "file": anchor["file"],
-                "start_line": anchor["start_line"],
-                "end_line": anchor["end_line"],
-                "snapshot": str(snapshot) if snapshot is not None else None,
-            }
-        )
+        selected_rows.append(selected_case_row(case, anchor, snapshot))
         if args.prepare_only:
             prepared_rows.append(
                 write_prepare_packet(

@@ -19,10 +19,19 @@ contract in the audit report, not a hidden reducer or schema-heavy verifier.
 - `scripts/run_hcvr_case_anchor_audits.py`
   - Reads an HCVR QA receipt.
   - Selects cases from `added_identities`.
-  - Uses each case's existing `recall_anchors` as the recall output.
+  - Consumes selected anchors from a recall run, or uses each case's existing
+    `recall_anchors` for audit-only compatibility runs.
   - Materializes the exact source checkout in a read-only snapshot.
   - Runs one Codex audit per selected anchor.
   - Writes free-form reports plus `audit_index.jsonl` and `summary.json`.
+- `scripts/recall_guideline_anchors.py`
+  - Materializes the exact source checkout in a read-only snapshot.
+  - Mechanically slices source files into overlapping candidate anchors.
+  - Builds the case guideline from the QA receipt.
+  - Ranks candidates by guideline-conditioned embedding similarity.
+  - Supports `openai`, `sentence-transformers`, and the recovered
+    `p3c64-query-residual` backend.
+  - Uses known anchors only after ranking to compute Hit@K and MRR.
 - `scripts/derive_guideline_from_audit.py`
   - Converts a successful risk audit report into a generalized guideline track.
   - Emits both `guideline_tracks.yaml` and a cve_clustering-style guideline
@@ -61,6 +70,70 @@ For `risk`, the body should include:
 - exact `file:line` locations for the sensitive effect;
 - runtime conditions, variables, branch predicates, and state that a later PoC
   agent should observe or instrument to eliminate false positives.
+
+## Recall Guideline Anchors
+
+Use this stage when evaluating the full online retrieval path:
+
+```text
+QA case guideline -> source snapshot -> mechanical candidate slices
+  -> embedding recall Top-K -> selected audit anchors
+```
+
+P3C64 is the current recovered HCVR method with positive recall evidence. It
+keeps candidate code vectors as frozen Qwen3-Embedding-0.6B vectors and adapts
+only the query/guideline vector with a residual MLP.
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python new-impl/guideline-agent-pipeline/scripts/recall_guideline_anchors.py \
+  --qa new-impl/hcvr_new_unified_dataset_v2/receipts/hcvr_new_unified_paper_eval_rebalance_qa.v2.json \
+  --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
+  --output-dir /path/to/run/p3c64-recall30 \
+  --repo-cache /path/to/run/repo-cache \
+  --snapshot-root /path/to/run/snapshots \
+  --selection all \
+  --limit 30 \
+  --top-k 200 \
+  --audit-anchor-rank 1 \
+  --case-workers 2 \
+  --embedding-backend p3c64-query-residual \
+  --embedding-model /data/lhq/workspace/hcvr-embedding-service/models/Qwen3-Embedding-0.6B \
+  --embedding-device cuda:0 \
+  --embedding-batch-size 128 \
+  --max-seq-length 512 \
+  --p3c64-state /data/lhq/workspace/p3-hard-competition-query-adapter-v1/selection_run_v1/p3c64_state.pt
+```
+
+Outputs:
+
+```text
+/path/to/run/p3c64-recall30/
+  recall_results.jsonl
+  selected_cases.jsonl
+  summary.json
+  README.md
+```
+
+Feed `selected_cases.jsonl` to the audit runner with `--selected-anchor-file`
+when you want the next stage to audit recalled anchors instead of
+dataset-provided anchors.
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/run_hcvr_case_anchor_audits.py \
+  --qa new-impl/hcvr_new_unified_dataset_v2/receipts/hcvr_new_unified_paper_eval_rebalance_qa.v2.json \
+  --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
+  --selected-anchor-file /path/to/run/p3c64-recall30/selected_cases.jsonl \
+  --output-dir /path/to/run/audit-recalled30 \
+  --repo-cache /path/to/run/repo-cache \
+  --snapshot-root /path/to/run/snapshots \
+  --codex-home ~/.codex \
+  --temp-root /path/to/tmp \
+  --selection all \
+  --limit 30 \
+  --concurrency 1 \
+  --timeout 1200 \
+  --max-attempts 1
+```
 
 ## Prepare 20 QA Cases
 
