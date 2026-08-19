@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import hashlib
 import json
 import os
+import re
 import shutil
 from datetime import datetime, timezone
 from pathlib import Path
@@ -109,10 +111,13 @@ def add_traex_model_aliases(gpt_model_path: Path) -> dict[str, str]:
         '    "gpt-traex-pro": "DeepSeek-V4-Pro",\n'
     )
     if '"gpt-traex-flash"' not in source:
-        marker = "}\n_OPENAI_DEFAULT_PARAMS"
-        if marker not in source:
+        match = re.search(r"(?ms)^_model_name_map = \{(?P<body>.*?)^\}\n_OPENAI_DEFAULT_PARAMS", source)
+        if not match:
             raise RuntimeError(f"cannot find GPT model registry marker in {gpt_model_path}")
-        source = source.replace(marker, aliases + "}\n_OPENAI_DEFAULT_PARAMS", 1)
+        body = match.group("body")
+        if body and not body.rstrip().endswith(","):
+            body = body.rstrip() + ",\n"
+        source = source[: match.start("body")] + body + aliases + source[match.end("body") :]
     client_marker = "self.client = OpenAI(api_key=api_key)"
     client_replacement = (
         'self.client = OpenAI(\n'
@@ -127,6 +132,10 @@ def add_traex_model_aliases(gpt_model_path: Path) -> dict[str, str]:
         source = source.replace(client_marker, client_replacement, 1)
     elif "X-Iris-Run-Id" not in source:
         raise RuntimeError(f"cannot add bridge attribution headers to {gpt_model_path}")
+    try:
+        ast.parse(source, filename=str(gpt_model_path))
+    except SyntaxError as exc:
+        raise RuntimeError(f"generated GPT transport adapter is invalid Python: {exc}") from exc
     gpt_model_path.write_text(source, encoding="utf-8")
     return {
         "path": str(gpt_model_path),

@@ -47,6 +47,27 @@ def test_manifest_materialization_path_validation_requires_revision(tmp_path):
         raise AssertionError("missing revision must be rejected")
 
 
+def test_traex_alias_injection_preserves_valid_python(tmp_path):
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "materialize_iris_case.py"))
+    gpt = tmp_path / "gpt.py"
+    gpt.write_text(
+        'import os\n'
+        'from openai import OpenAI\n'
+        '_model_name_map = {\n'
+        '    "gpt-4": "gpt-4-preview"\n'
+        '}\n'
+        '_OPENAI_DEFAULT_PARAMS = {}\n'
+        'class GPTModel:\n'
+        '    def __init__(self, api_key):\n'
+        '        self.client = OpenAI(api_key=api_key)\n'
+    )
+    module["add_traex_model_aliases"](gpt)
+    source = gpt.read_text()
+    assert '"gpt-4": "gpt-4-preview",' in source
+    assert '"gpt-traex-pro": "DeepSeek-V4-Pro",' in source
+    compile(source, str(gpt), "exec")
+
+
 def test_batch_manifest_accepts_v2_checkout_revision(tmp_path):
     module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "run_native_iris_batch.py"))
     row = {
