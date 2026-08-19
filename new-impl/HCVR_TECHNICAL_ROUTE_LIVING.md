@@ -290,6 +290,34 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Let the active a6/a7/Hutool runs finish, then re-materialize the remaining JSON-format-only failures with this adapter under the bridge concurrency cap and merge only `completed_verified` receipts.
 
+### Round 8 - Native IRIS Admission Audit and Bounded Format-Retry Queue
+
+**Goal:** Continue improving runnable v2 QA coverage without treating an available source tree or an incomplete CodeQL directory as evidence that native IRIS can run.
+
+**Scope:** The frozen v2 QA manifest contains 45 identities. The original dispatcher recorded 25 `input_unavailable` rows and 20 initially runnable rows. The audit distinguishes native-IRIS input compatibility from the separate ability to build a CodeQL database.
+
+**Action:**
+
+- Audited every original `input_unavailable` receipt against its frozen manifest paths and blockers.
+- Found that 24 of the 25 rows also lack one or more native IRIS prerequisites: package-name metadata, official IRIS project/fix-table identity, or a supported IRIS query name. Rebuilding only a CodeQL DB cannot make those rows valid native IRIS executions, so they remain explicit out-of-scope/input-unavailable evidence.
+- The remaining input-unavailable row has a complete CodeQL DB but lacks the package-name input required by original IRIS; it also remains unadmitted.
+- Rechecked Compile Builder v2 inputs. Four exact-source DB-failed cases were eligible for the constrained repair dispatcher: Tika produced a fresh valid CodeQL DB and a verified native IRIS run; Axis and Spring Cloud Config had no safe action; Keycloak's proposal was rejected by the approved-environment validator.
+- Added explicit forwarding of `--label-api-batch-size` and `--label-func-param-batch-size` from the batch dispatcher to every single-case runner. The change is tested and pushed as `a709855`.
+- Created a derived eight-case manifest containing only cases whose original native IRIS execution produced all final artifacts but failed only the strict JSON-label audit. The already verified One Java Agent case is excluded.
+- Started a one-worker a8 retry only for two cases not already active or queued by older dispatchers. Its concurrency contract is one local IRIS thread plus seven existing native workers, capped at the eight-slot bridge capacity.
+
+**Verification:**
+
+- The a8 admission receipt and derived manifest are stored at:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a8-jsonlist-admission/`.
+- The active a8 subset and launch contract are stored at:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a8-jsonlist-retry/`.
+- The first a8 workspace was materialized from the current adapter, compiled successfully, and reached the original IRIS CodeQL extraction stages with explicit label batch sizes `30` and `20`.
+
+**Decision:** Native IRIS coverage is expanded only where original IRIS metadata, exact source, a complete CodeQL database, and a package-name file all exist. Cases missing official IRIS inputs are retained in the v2 denominator as documented input failures rather than being transformed into a different benchmark.
+
+**Next:** Continue monitoring a6/a7/Hutool/a8. When an existing worker exits, admit the next non-overlapping JSON-label retry from the frozen eight-case queue; merge only strict `completed_verified` receipts.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.
