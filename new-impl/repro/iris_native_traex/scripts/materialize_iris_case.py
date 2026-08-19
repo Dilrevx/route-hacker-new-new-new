@@ -56,14 +56,48 @@ def find_case(rows: list[dict[str, Any]], case_selector: str) -> dict[str, Any]:
     matches = [
         row
         for row in rows
-        if row.get("case_id") == case_selector or row.get("project_slug") == case_selector
+        if row.get("case_id") == case_selector
+        or row.get("identity_key") == case_selector
+        or row.get("project_slug") == case_selector
     ]
     if len(matches) != 1:
         raise ValueError(f"expected exactly one receipt for {case_selector}, found {len(matches)}")
-    row = matches[0]
-    if row.get("status") != "iris_shadow_root_ready":
-        raise ValueError(f"case is not IRIS-ready: {row.get('status')} blockers={row.get('blockers')}")
+    return matches[0]
+
+
+def validate_manifest_row(row: dict[str, Any]) -> dict[str, Any]:
+    required = ("identity_key", "project_slug", "iris_query", "input_paths")
+    missing = [key for key in required if not row.get(key)]
+    if missing:
+        raise ValueError(f"manifest row is missing required fields: {', '.join(missing)}")
+    inputs = row["input_paths"]
+    if not isinstance(inputs, dict):
+        raise ValueError("manifest input_paths must be an object")
+    input_missing = [key for key in ("source", "codeql_db", "package_names") if not inputs.get(key)]
+    if input_missing:
+        raise ValueError(
+            "manifest input_paths is missing required fields: " + ", ".join(input_missing)
+        )
+    revisions = row.get("revisions")
+    if not isinstance(revisions, dict) or not revisions.get("v2_checkout_revision"):
+        raise ValueError("manifest revisions.v2_checkout_revision is required")
     return row
+
+
+def validate_input_paths(case: dict[str, Any]) -> dict[str, str]:
+    inputs = case["input_paths"]
+    paths = {
+        "source": Path(str(inputs["source"])).resolve(),
+        "codeql_db": Path(str(inputs["codeql_db"])).resolve(),
+        "package_names": Path(str(inputs["package_names"])).resolve(),
+    }
+    if not paths["source"].is_dir():
+        raise FileNotFoundError(f"source directory does not exist: {paths['source']}")
+    if not paths["codeql_db"].is_dir():
+        raise FileNotFoundError(f"CodeQL database directory does not exist: {paths['codeql_db']}")
+    if not paths["package_names"].is_file():
+        raise FileNotFoundError(f"package-name file does not exist: {paths['package_names']}")
+    return {key: str(value) for key, value in paths.items()}
 
 
 def add_traex_model_aliases(gpt_model_path: Path) -> dict[str, str]:
@@ -105,7 +139,9 @@ def add_traex_model_aliases(gpt_model_path: Path) -> dict[str, str]:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--receipts", type=Path, required=True)
+    inputs = parser.add_mutually_exclusive_group(required=True)
+    inputs.add_argument("--receipts", type=Path)
+    inputs.add_argument("--manifest", type=Path)
     parser.add_argument("--case-id", required=True)
     parser.add_argument("--clean-iris-root", type=Path, required=True)
     parser.add_argument("--codeql-dir", type=Path, required=True)
@@ -113,8 +149,12 @@ def main() -> int:
     parser.add_argument("--overwrite-empty-workspace", action="store_true")
     args = parser.parse_args()
 
-    rows = read_jsonl(args.receipts)
+    input_path = args.manifest or args.receipts
+    rows = read_jsonl(input_path)
     case = find_case(rows, args.case_id)
+    if args.manifest:
+        case = validate_manifest_row(case)
+        validate_input_paths(case)
     workspace = args.workspace.resolve()
     if workspace.exists():
         if not args.overwrite_empty_workspace:
@@ -158,9 +198,9 @@ def main() -> int:
             actions.append(symlink_exact(source, workspace / name))
 
     inputs = case.get("input_paths") or {}
-    source_dir = Path(str(inputs.get("source") or inputs.get("source_dir") or ""))
-    db_dir = Path(str(inputs.get("codeql_db") or inputs.get("codeql_db_dir") or ""))
-    package_file = Path(str(inputs.get("package_names") or inputs.get("package_names_file") or ""))
+    source_dir = Path(str(inputs.get("source") or inputs.get("source_dir") or "")).resolve()
+    db_dir = Path(str(inputs.get("codeql_db") or inputs.get("codeql_db_dir") or "")).resolve()
+    package_file = Path(str(inputs.get("package_names") or inputs.get("package_names_file") or "")).resolve()
     slug = str(case["project_slug"])
     actions.extend(
         (
@@ -183,14 +223,16 @@ def main() -> int:
         "clean_iris_root": str(clean_root),
         "clean_iris_src_sha256": sha256_path(workspace / "src" / "iris.py"),
         "codeql_dir": str(codeql_dir),
-        "receipt_path": str(args.receipts.resolve()),
-        "receipt_sha256": sha256_path(args.receipts),
+        "receipt_path": str(input_path.resolve()),
+        "receipt_sha256": sha256_path(input_path),
+        "manifest_input": bool(args.manifest),
         "actions": actions,
         "contract": {
             "isolated_workspace": True,
             "clean_iris_src_copied": True,
             "only_local_source_change_is_gpt_transport_aliases": True,
             "case_source_and_db_linked_from_receipt": True,
+            "input_paths_validated_before_materialization": bool(args.manifest),
             "no_iris_execution": True,
             "no_llm_call": True,
         },

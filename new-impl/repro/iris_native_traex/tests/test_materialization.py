@@ -17,6 +17,55 @@ def test_batch_attempt_id_is_namespaced():
     assert module["safe_name"]("v8:case") == "v8_case"
 
 
+def test_manifest_input_path_validation_reports_missing_paths(tmp_path):
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "run_native_iris_batch.py"))
+    row = {
+        "input_paths": {
+            "source": str(tmp_path / "source"),
+            "codeql_db": str(tmp_path / "db"),
+            "package_names": str(tmp_path / "packages.txt"),
+        }
+    }
+    errors = module["input_path_errors"](row)
+    assert len(errors) == 3
+    assert "source" in errors[0]
+
+
+def test_manifest_materialization_path_validation_requires_revision(tmp_path):
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "materialize_iris_case.py"))
+    row = {
+        "identity_key": "repo::CVE-1",
+        "project_slug": "repo_CVE-1",
+        "iris_query": "cwe-022wLLM",
+        "input_paths": {"source": "a", "codeql_db": "b", "package_names": "c"},
+    }
+    try:
+        module["validate_manifest_row"](row)
+    except ValueError as exc:
+        assert "v2_checkout_revision" in str(exc)
+    else:
+        raise AssertionError("missing revision must be rejected")
+
+
+def test_batch_manifest_accepts_v2_checkout_revision(tmp_path):
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "run_native_iris_batch.py"))
+    row = {
+        "identity_key": "repo::CVE-1",
+        "project_slug": "repo_CVE-1",
+        "iris_query": "cwe-022wLLM",
+        "input_paths": {
+            "source": str(tmp_path / "source"),
+            "codeql_db": str(tmp_path / "db"),
+            "package_names": str(tmp_path / "packages.txt"),
+        },
+        "revisions": {"v2_checkout_revision": "abc123"},
+        "source_provenance": [{"source_family": "test"}],
+        "input_status": {"codeql_db_status": "codeql_db_created"},
+    }
+    validated = module["validate_iris_manifest"]([row], [row], expected_count=1)
+    assert validated == [row]
+
+
 def test_batch_summary_counts_verified_statistics(tmp_path):
     module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "run_native_iris_batch.py"))
     ledger = tmp_path / "receipts.jsonl"

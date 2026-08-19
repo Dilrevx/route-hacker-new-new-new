@@ -1,0 +1,60 @@
+{
+  "case_count": 45,
+  "codeql_db_status_counts": {
+    "codeql_db_created": 17,
+    "codeql_db_failed": 28
+  },
+  "created_at": "2026-08-19T07:30:28+00:00",
+  "inputs": {
+    "allowlist": {
+      "path": "/Users/bytedance/workspace/route-hacker-new-new/new-impl/hcvr_new_unified_dataset_v2/receipts/hcvr_new_unified_fix_revision_paper_eval_review.v2.jsonl",
+      "sha256": "3b3f452cc603b30992b9d2517afecb671207b2673692813197a4add0dd8502d0"
+    },
+    "cases": {
+      "path": "/Users/bytedance/workspace/route-hacker-new-new/new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl",
+      "sha256": "f687641e6a47fd291fe402e7bac8cbb9aa16b38e2456bc85b2b174017fa7047d"
+    },
+    "fix_info": {
+      "path": "/private/tmp/iris-history/fix_info.m11b.csv",
+      "sha256": "34d3206141c8b271edcb536b59f8e88a953e22703c2f4c795392c42b92806a45"
+    },
+    "fix_info_source_sink": {
+      "path": "/private/tmp/iris-history/fix_info_source_sink.m11b.csv",
+      "sha256": "0bc6e9660490248ad9fa8e03e4c958e5efeb87e02eba99c69feccf5f1cd6942d"
+    },
+    "preflight": {
+      "path": "/private/tmp/iris-history/clean_iris_preflight_cases.v1.jsonl",
+      "sha256": "656f04ab0d778de943650e1a6eb28219e614344e54c2941894a83e9d3c9b5f11"
+    },
+    "project_info": {
+      "path": "/private/tmp/iris-history/project_info.m11b.csv",
+      "sha256": "be336f049dfce90e82f010113342f92719a0d1f41a7d4655b056213d637122da"
+    }
+  },
+  "manifest": {
+    "path": "/Users/bytedance/workspace/route-hacker-new-new/new-impl/repro/iris_native_traex/manifests/qa_iris_manifest.v1.jsonl",
+    "sha256": "320790700c5a41a311003635f2973e50f0085ca6939ed91057bd9835d96db0cd"
+  },
+  "official_table_counts": {
+    "fix_info": 1163,
+    "fix_info_source_sink": 50,
+    "project_info": 213
+  },
+  "preflight_status_counts": {
+    "iris_input_unavailable": 29,
+    "iris_preflight_ready_needs_wrapper_layout": 16
+  },
+  "schema_version": "hcvr_v2_qa_iris_manifest_summary.v1",
+  "selection_rule": "v2 allowlist ∩ official project_info ∩ (official fix_info ∪ official fix_info_source_sink)",
+  "selection_source_counts": {
+    "fix_info": 21,
+    "fix_info_source_sink": 24,
+    "union": 45
+  },
+  "tag_only_excluded": [
+    "apache__activemq-artemis::CVE-2025-27427",
+    "apache__felix-dev::CVE-2025-25247",
+    "apache__tomcat::CVE-2025-24813",
+    "jenkinsci__oic-auth-plugin::CVE-2025-24399"
+  ]
+}
