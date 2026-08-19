@@ -67,20 +67,38 @@ def anchors(count: int) -> list[dict]:
     ]
 
 
-def test_prompt_keeps_all_top_k_and_allows_agentic_exploration(tmp_path: Path):
+def test_directory_groups_cover_all_top_k_once_and_keep_nearby_files(tmp_path: Path):
     module = load_module()
-    prompt = module.build_case_prompt(
+    grouped = module.group_anchors_by_directory(
+        [
+            {**anchor, "file": f"src/near/{index}.java"} if index <= 10
+            else {**anchor, "file": f"src/far/{index}.java"}
+            for index, anchor in enumerate(anchors(12), start=1)
+        ],
+        10,
+    )
+    assert [anchor["rank"] for group in grouped for anchor in group] == list(range(1, 13))
+    assert len(grouped) == 2
+    assert all(anchor["file"].startswith("src/near/") for anchor in grouped[0])
+
+
+def test_group_prompt_is_bounded_and_allows_local_agentic_exploration(tmp_path: Path):
+    module = load_module()
+    prompt = module.build_group_prompt(
         case=sample_case(),
         snapshot=tmp_path,
         variant="full",
-        anchors=anchors(65),
-        anchor_batch_size=30,
+        anchors=anchors(10),
+        group_index=1,
+        group_count=20,
         model_budget_note="test",
     )
-    assert "Candidate batch 1/3" in prompt
-    assert "Candidate batch 3/3" in prompt
-    assert "65. id=anchor::65" in prompt
+    assert "Candidate group 1/20 (10 anchors" in prompt
+    assert "rank=10 id=anchor::10" in prompt
     assert "agentic repository exploration" in prompt
+    assert "repository-wide generic vulnerability search" in prompt
+    assert "Finish this group promptly" in prompt
+    assert "candidate_dispositions" in prompt
     assert "one structured finding for every distinct" in prompt
     assert "Emit at most one primary finding" not in prompt
     assert "CVE-2099-0001" not in prompt

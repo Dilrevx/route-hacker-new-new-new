@@ -338,40 +338,92 @@ def build_source_context(
     return "\n".join(chunks) if chunks else "(no inline source context available)"
 
 
-def format_anchor_batches(anchors: list[dict[str, Any]], batch_size: int) -> str:
-    """Render every Top-K candidate while making a large K navigable to an agent.
+def anchor_directory(anchor: dict[str, Any]) -> tuple[str, ...]:
+    """Return the repository-relative parent directory of an anchor."""
+    file = str(anchor.get("file") or "").replace("\\", "/")
+    parts = tuple(part for part in file.split("/")[:-1] if part and part != ".")
+    return parts
 
-    Batches are prompt organization only. They do not launch one harness per
-    anchor and they do not truncate the candidate list.
+
+def directory_distance(left: dict[str, Any], right: dict[str, Any]) -> int:
+    """Tree distance between two anchor parent directories.
+
+    A smaller value means the candidates are likely to share local callers,
+    helper methods, or invariants.  It is used only to compose audit groups;
+    retrieval rank remains attached to every candidate.
     """
-    if batch_size < 1:
-        raise ValueError("anchor batch size must be positive")
-    if not anchors:
-        return "(no candidate anchors available)"
-    chunks: list[str] = []
-    total_batches = (len(anchors) + batch_size - 1) // batch_size
-    for offset in range(0, len(anchors), batch_size):
-        batch = anchors[offset : offset + batch_size]
-        batch_number = offset // batch_size + 1
-        lines = [f"Candidate batch {batch_number}/{total_batches}:"]
-        for anchor in batch:
-            lines.append(
-                f"{anchor['rank']}. id={anchor['anchor_id']} file={anchor['file']} "
-                f"lines={anchor['start_line']}-{anchor['end_line']} "
-                f"symbol={anchor.get('symbol') or ''} "
-                f"span={anchor.get('span_kind') or ''}"
+    left_parts = anchor_directory(left)
+    right_parts = anchor_directory(right)
+    common = 0
+    for left_part, right_part in zip(left_parts, right_parts):
+        if left_part != right_part:
+            break
+        common += 1
+    return len(left_parts) + len(right_parts) - 2 * common
+
+
+def group_anchors_by_directory(
+    anchors: list[dict[str, Any]],
+    group_size: int,
+) -> list[list[dict[str, Any]]]:
+    """Partition every selected anchor into directory-local bounded groups.
+
+    The first unassigned (therefore lowest-rank) anchor seeds a group.  The
+    nearest remaining anchors in the repository directory tree fill that group,
+    with retrieval rank resolving ties.  This deterministic greedy clustering
+    keeps all Top-K anchors while giving one audit invocation a coherent local
+    exploration surface.
+    """
+    if group_size < 1:
+        raise ValueError("anchor group size must be positive")
+    remaining = sorted(anchors, key=lambda anchor: int(anchor.get("rank") or 0))
+    groups: list[list[dict[str, Any]]] = []
+    while remaining:
+        seed = remaining.pop(0)
+        group = [seed]
+        while remaining and len(group) < group_size:
+            # Use the closest current member so a chain of nearby directories
+            # remains together; rank makes the result stable.
+            best_index = min(
+                range(len(remaining)),
+                key=lambda index: (
+                    min(directory_distance(remaining[index], member) for member in group),
+                    int(remaining[index].get("rank") or 0),
+                    str(remaining[index].get("file") or ""),
+                ),
             )
-        chunks.append("\n".join(lines))
-    return "\n\n".join(chunks)
+            group.append(remaining.pop(best_index))
+        groups.append(group)
+    return groups
 
 
-def build_case_prompt(
+def format_anchor_group(
+    anchors: list[dict[str, Any]],
+    *,
+    group_index: int,
+    group_count: int,
+) -> str:
+    lines = [
+        f"Candidate group {group_index}/{group_count} ({len(anchors)} anchors; directory-local grouping):"
+    ]
+    for anchor in anchors:
+        lines.append(
+            f"- rank={anchor['rank']} id={anchor['anchor_id']} file={anchor['file']} "
+            f"lines={anchor['start_line']}-{anchor['end_line']} "
+            f"symbol={anchor.get('symbol') or ''} "
+            f"span={anchor.get('span_kind') or ''}"
+        )
+    return "\n".join(lines)
+
+
+def build_group_prompt(
     *,
     case: dict[str, Any],
     snapshot: Path,
     variant: str,
     anchors: list[dict[str, Any]],
-    anchor_batch_size: int,
+    group_index: int,
+    group_count: int,
     model_budget_note: str,
     source_context: str | None = None,
     include_case_metadata: bool = False,
@@ -388,7 +440,11 @@ def build_case_prompt(
         if variant != "minus_rank"
         else "The candidate anchors are deliberately unsorted; do not assume earlier anchors are more important."
     )
-    anchors_text = format_anchor_batches(anchors, anchor_batch_size)
+    anchors_text = format_anchor_group(
+        anchors,
+        group_index=group_index,
+        group_count=group_count,
+    )
     case_metadata = ""
     if include_case_metadata:
         case_metadata = (
@@ -408,7 +464,7 @@ reading: inspect the checkout agentically as needed, beginning with candidates.
 {source_context}
 ```
 """
-    return f"""You are the bounded audit harness for the HCVR ablation experiment.
+    return f"""You are one bounded audit worker in the HCVR ablation experiment.
 
 Repository: {snapshot}
 Exact vulnerable checkout: {revisions.get("checkout_revision", "")}
@@ -426,10 +482,21 @@ Candidate trace anchors:
 Instructions:
 - The guideline defines the vulnerability family in scope. Do not substitute a
   different, more familiar vulnerability class merely because it is nearby.
-- Consume every candidate batch in rank order. Start from each candidate as an
-  investigation entry, then use read-only agentic repository exploration to
-  inspect callers, callees, guards, data flow, state transitions, and sensitive
-  effects needed to resolve that candidate.
+- This worker owns exactly the {len(anchors)} listed anchors. Consider every
+  listed anchor, but triage quickly: if a candidate cannot plausibly implement
+  the guideline family, mark it dismissed and move on. Do not broaden into a
+  repository-wide generic vulnerability search.
+- For a plausible candidate, use read-only agentic repository exploration only
+  for the smallest local path needed to decide it: the enclosing method and, if
+  necessary, direct callers/callees, local guards, data flow, state transitions,
+  and sensitive effects. Repository reading is allowed; exhaustive browsing is
+  not the task.
+- Finish this group promptly after all {len(anchors)} candidates have a
+  disposition. A concrete, localized in-scope finding is required before
+  reporting risk; otherwise emit no findings.
+- Return exactly {len(anchors)} candidate_dispositions: one for each listed
+  anchor_id. This is the completeness receipt for the group, not a request to
+  produce a finding for every anchor.
 - Do not read patches, external advisories, historical PoCs, internet search results, or files outside the repository.
 - Do not modify files or run destructive commands.
 - Emit one structured finding for every distinct, concrete in-scope risk you
@@ -452,6 +519,13 @@ Return exactly one JSON object with this shape:
       "missing_or_incorrect_condition": "guard, authorization, validation, state precondition, or check-use binding issue",
       "sensitive_effect": "sensitive operation reached by the flaw",
       "poc_observation": "runtime condition or value a PoC agent should observe"
+    }}
+  ],
+  "candidate_dispositions": [
+    {{
+      "anchor_id": "candidate id from this group",
+      "status": "risk|dismissed|insufficient_evidence",
+      "reason": "one short guideline-specific reason"
     }}
   ],
   "no_finding_reason": "filled only when findings is empty"
@@ -595,7 +669,7 @@ def parse_opencode_events(text: str) -> tuple[str, dict[str, Any]]:
     return final_text, usage
 
 
-def run_case_audit(
+def run_anchor_group_audit(
     *,
     audit_runner: str,
     codex: str,
@@ -608,10 +682,11 @@ def run_case_audit(
     case: dict[str, Any],
     snapshot: Path,
     anchors: list[dict[str, Any]],
+    group_index: int,
+    group_count: int,
     timeout: int,
     model_budget_note: str,
     source_context: str | None,
-    anchor_batch_size: int,
     include_case_metadata: bool,
 ) -> dict[str, Any]:
     identity = case["identity_key"]
@@ -619,15 +694,17 @@ def run_case_audit(
     variant_dir = output / variant
     reports_dir = variant_dir / "reports"
     reports_dir.mkdir(parents=True, exist_ok=True)
-    report_path = reports_dir / f"{slug}.json"
-    events_path = reports_dir / f"{slug}.events.jsonl"
-    prompt_path = reports_dir / f"{slug}.prompt.txt"
-    prompt = build_case_prompt(
+    group_slug = f"{slug}.group-{group_index:03d}-of-{group_count:03d}"
+    report_path = reports_dir / f"{group_slug}.json"
+    events_path = reports_dir / f"{group_slug}.events.jsonl"
+    prompt_path = reports_dir / f"{group_slug}.prompt.txt"
+    prompt = build_group_prompt(
         case=case,
         snapshot=snapshot,
         variant=variant,
         anchors=anchors,
-        anchor_batch_size=anchor_batch_size,
+        group_index=group_index,
+        group_count=group_count,
         model_budget_note=model_budget_note,
         source_context=source_context,
         include_case_metadata=include_case_metadata,
@@ -713,12 +790,125 @@ def run_case_audit(
         "token_usage": token_usage,
         "anchor_budget": len(anchors),
         "anchors": anchors,
+        "group_index": group_index,
+        "group_count": group_count,
         "finding_count": len(findings),
         "findings": findings,
+        "candidate_dispositions": (parsed or {}).get("candidate_dispositions")
+        if isinstance(parsed, dict)
+        else [],
         "report": str(report_path),
         "report_sha256": sha256_file(report_path) if report_path.is_file() else None,
         "events": str(events_path),
         "prompt": str(prompt_path),
+    }
+
+
+def merge_group_token_usage(group_rows: list[dict[str, Any]]) -> dict[str, int]:
+    keys = ("input", "output", "reasoning", "cache_read", "cache_write", "step_finish_count")
+    return {
+        key: sum(int((row.get("token_usage") or {}).get(key) or 0) for row in group_rows)
+        for key in keys
+    }
+
+
+def run_case_grouped_audit(
+    *,
+    audit_runner: str,
+    codex: str,
+    opencode: str,
+    model: str,
+    codex_home: Path,
+    temp_root: Path,
+    output: Path,
+    variant: str,
+    case: dict[str, Any],
+    snapshot: Path,
+    anchors: list[dict[str, Any]],
+    anchor_group_size: int,
+    group_timeout: int,
+    model_budget_note: str,
+    inline_source_context: bool,
+    inline_context_anchors: int,
+    inline_context_lines: int,
+    inline_context_max_chars: int,
+    include_case_metadata: bool,
+) -> dict[str, Any]:
+    """Audit all selected Top-K candidates via independent local groups.
+
+    Groups execute sequentially within a case so that top-level concurrency is
+    the only provider load control.  Every group has its own prompt, events,
+    final report, timeout, and finding list; the case receipt is their lossless
+    aggregate.
+    """
+    groups = group_anchors_by_directory(anchors, anchor_group_size)
+    rows: list[dict[str, Any]] = []
+    for group_index, group in enumerate(groups, start=1):
+        source_context = None
+        if inline_source_context:
+            source_context = build_source_context(
+                snapshot,
+                group,
+                max_anchors=inline_context_anchors,
+                context_lines=inline_context_lines,
+                max_chars=inline_context_max_chars,
+            )
+        rows.append(
+            run_anchor_group_audit(
+                audit_runner=audit_runner,
+                codex=codex,
+                opencode=opencode,
+                model=model,
+                codex_home=codex_home,
+                temp_root=temp_root,
+                output=output,
+                variant=variant,
+                case=case,
+                snapshot=snapshot,
+                anchors=group,
+                group_index=group_index,
+                group_count=len(groups),
+                timeout=group_timeout,
+                model_budget_note=model_budget_note,
+                source_context=source_context,
+                include_case_metadata=include_case_metadata,
+            )
+        )
+    findings = [finding for row in rows for finding in row.get("findings") or []]
+    group_states = collections.Counter(str(row.get("state") or "unknown") for row in rows)
+    states = set(group_states)
+    if states <= {"completed", "fallback_parsed"}:
+        state = "completed"
+    elif "timeout" in states:
+        state = "partial_timeout"
+    elif len(states) == 1:
+        state = next(iter(states))
+    else:
+        state = "partial_group_failure"
+    identity = case["identity_key"]
+    classification = case.get("classification") or {}
+    return {
+        "schema_version": "hcvr_ablation_a_case_audit.v2",
+        "variant": variant,
+        "variant_label": VARIANT_LABELS[variant],
+        "identity_key": identity,
+        "case_id": case.get("new_unified_case_id"),
+        "hcvr_type": classification.get("primary_hcvr_type"),
+        "cwe_ids": classification.get("cwe_ids") or [],
+        "repo_url": case["repository"]["repo_url"],
+        "checkout_revision": case["revisions"]["checkout_revision"],
+        "state": state,
+        "audit_runner": audit_runner,
+        "anchor_budget": len(anchors),
+        "anchor_group_size": anchor_group_size,
+        "group_count": len(groups),
+        "group_state_counts": dict(group_states),
+        "groups": rows,
+        "anchors": anchors,
+        "finding_count": len(findings),
+        "findings": findings,
+        "token_usage": merge_group_token_usage(rows),
+        "duration_seconds": round(sum(float(row.get("duration_seconds") or 0) for row in rows), 3),
     }
 
 
@@ -905,16 +1095,7 @@ def run_variant(
                 )
             else:
                 anchors = select_ranked_anchors(case, recall_results, args.anchor_budget)
-            source_context = None
-            if args.inline_source_context:
-                source_context = build_source_context(
-                    snapshot,
-                    anchors,
-                    max_anchors=args.inline_context_anchors,
-                    context_lines=args.inline_context_lines,
-                    max_chars=args.inline_context_max_chars,
-                )
-            return run_case_audit(
+            return run_case_grouped_audit(
                 audit_runner=args.audit_runner,
                 codex=codex_path,
                 opencode=opencode_path,
@@ -926,10 +1107,13 @@ def run_variant(
                 case=case,
                 snapshot=snapshot,
                 anchors=anchors,
-                timeout=args.timeout,
+                anchor_group_size=args.anchor_group_size,
+                group_timeout=args.group_timeout,
                 model_budget_note=args.model_budget_note,
-                source_context=source_context,
-                anchor_batch_size=args.anchor_batch_size,
+                inline_source_context=args.inline_source_context,
+                inline_context_anchors=args.inline_context_anchors,
+                inline_context_lines=args.inline_context_lines,
+                inline_context_max_chars=args.inline_context_max_chars,
                 include_case_metadata=args.include_case_metadata,
             )
         except BaseException as error:  # record per-case failures and keep the batch moving
@@ -1053,10 +1237,10 @@ def write_run_report(
 - Audit runner: `{args.audit_runner}`
 - Audit backend model: `{args.model}`
 - Anchor budget: `{args.anchor_budget}`
-- Audit timeout per case: `{args.timeout}` seconds
+- Audit timeout per 10-anchor group: `{args.group_timeout}` seconds
 - Concurrency: `{args.concurrency}`
 - Optional inline source context: `{args.inline_source_context}`; anchors `{args.inline_context_anchors}`, context lines `{args.inline_context_lines}`, max chars `{args.inline_context_max_chars}`. It is supplementary and does not restrict agentic checkout exploration.
-- Candidate protocol: consume Top-K `{args.anchor_budget}` candidates in prompt batches of `{args.anchor_batch_size}`; one harness session per case, not one session per anchor.
+- Candidate protocol: consume Top-K `{args.anchor_budget}` candidates through directory-local groups of `{args.anchor_group_size}`. Every candidate is owned by exactly one group. Each group has an independent read-only harness session, log, and `{args.group_timeout}`-second timeout; a case completes after all of its groups have been attempted.
 - Randomness control: deterministic case allowlist order, deterministic source slicing order, deterministic unranked candidate order; no sampling parameter is set by the harness.
 
 ## 3. 方法与配置
@@ -1185,12 +1369,17 @@ def main() -> None:
         help="Consume this many Top-K candidates in the single case-level audit prompt.",
     )
     parser.add_argument(
-        "--anchor-batch-size",
+        "--anchor-group-size",
         type=int,
-        default=30,
-        help="Candidates per labelled prompt batch; this does not truncate Top-K.",
+        default=10,
+        help="Candidates per independent directory-local audit group; this does not truncate Top-K.",
     )
-    parser.add_argument("--timeout", type=int, default=1500)
+    parser.add_argument(
+        "--group-timeout",
+        type=int,
+        default=300,
+        help="Maximum seconds for one independent anchor-group audit session.",
+    )
     parser.add_argument("--clone-timeout", type=int, default=600)
     parser.add_argument("--concurrency", type=int, default=4)
     parser.add_argument("--resume", action="store_true")
@@ -1212,8 +1401,13 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    if args.anchor_budget < 1 or args.anchor_batch_size < 1 or args.concurrency < 1:
-        raise SystemExit("anchor-budget, anchor-batch-size, and concurrency must be positive")
+    if (
+        args.anchor_budget < 1
+        or args.anchor_group_size < 1
+        or args.group_timeout < 1
+        or args.concurrency < 1
+    ):
+        raise SystemExit("anchor-budget, anchor-group-size, group-timeout, and concurrency must be positive")
     if args.skip < 0 or (args.limit is not None and args.limit < 1):
         raise SystemExit("skip must be non-negative and limit must be positive when set")
     args.output_dir = args.output_dir.resolve()
@@ -1247,18 +1441,18 @@ def main() -> None:
     args.git_branch = git_value(["git", "rev-parse", "--abbrev-ref", "HEAD"], repo_root)
     args.git_commit = git_value(["git", "rev-parse", "HEAD"], repo_root)
     config = {
-        "schema_version": "hcvr_ablation_a_config.v1",
+        "schema_version": "hcvr_ablation_a_config.v2",
         "variants": args.variants,
         "audit_runner": args.audit_runner,
         "model": args.model,
         "anchor_budget": args.anchor_budget,
-        "anchor_batch_size": args.anchor_batch_size,
+        "anchor_group_size": args.anchor_group_size,
         "case_count": expected_run_cases,
         "full_dataset_case_count": EXPECTED_CASE_COUNT,
         "feasibility_subset": expected_run_cases != EXPECTED_CASE_COUNT,
         "limit": args.limit,
         "skip": args.skip,
-        "timeout": args.timeout,
+        "group_timeout": args.group_timeout,
         "concurrency": args.concurrency,
         "inline_source_context": args.inline_source_context,
         "inline_context_anchors": args.inline_context_anchors,
