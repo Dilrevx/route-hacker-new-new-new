@@ -7,6 +7,8 @@ import stat
 import subprocess
 import sys
 import time
+import threading
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 import pytest
@@ -16,6 +18,7 @@ from scripts.run_codeql_llm_repair_dispatch import (
     build_repair_prompt,
     command_for_claude,
     extract_structured_output,
+    invoke_openai_bridge_model,
     repair_json_schema,
     validate_prior_completion_binding,
 )
@@ -162,6 +165,66 @@ def test_extract_structured_output_uses_terminal_result_only() -> None:
         ]
     )
     assert extract_structured_output(stream)["actions"] == [{"kind": "no_safe_action"}]
+
+
+def test_openai_bridge_transport_wraps_validated_structured_output(tmp_path: Path) -> None:
+    class BridgeHandler(BaseHTTPRequestHandler):
+        request_payload: dict | None = None
+
+        def log_message(self, _format: str, *args: object) -> None:
+            return
+
+        def do_POST(self) -> None:
+            BridgeHandler.request_payload = json.loads(
+                self.rfile.read(int(self.headers["Content-Length"])).decode("utf-8")
+            )
+            payload = {
+                "choices": [
+                    {
+                        "message": {
+                            "content": json.dumps(
+                                {
+                                    "actions": [{"kind": "no_safe_action"}],
+                                    "rationale": "No approved action is justified.",
+                                }
+                            )
+                        }
+                    }
+                ],
+                "usage": {"total_tokens": 7},
+            }
+            body = json.dumps(payload).encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+    server = ThreadingHTTPServer(("127.0.0.1", 0), BridgeHandler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        result = invoke_openai_bridge_model(
+            bridge_url=f"http://127.0.0.1:{server.server_port}",
+            model="DeepSeek-V4-Pro",
+            prompt="Return strict JSON.",
+            output_path=tmp_path / "model-output.txt",
+            timeout_seconds=5,
+            case_id="case::bridge",
+        )
+    finally:
+        server.shutdown()
+        thread.join(timeout=5)
+        server.server_close()
+
+    assert result["bounded_process"]["returncode"] == 0
+    assert result["bridge"]["model"] == "DeepSeek-V4-Pro"
+    assert BridgeHandler.request_payload is not None
+    assert BridgeHandler.request_payload["response_format"] == {"type": "json_object"}
+    assert extract_structured_output(result["raw_text"]) == {
+        "actions": [{"kind": "no_safe_action"}],
+        "rationale": "No approved action is justified.",
+    }
 
 
 def test_prior_completion_binding_rejects_receipt_mismatch(tmp_path: Path) -> None:

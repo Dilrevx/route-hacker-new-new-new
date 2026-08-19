@@ -18,6 +18,8 @@ import subprocess
 import sys
 import threading
 import time
+import urllib.error
+import urllib.request
 from collections import Counter, defaultdict
 from concurrent.futures import FIRST_COMPLETED, Future, ThreadPoolExecutor, wait
 from datetime import datetime, timezone
@@ -65,6 +67,7 @@ TERMINAL_STATUSES = frozenset(
 )
 DEFAULT_CLAUDE_COMMAND = "/data/lhq/.local/bin/claude"
 MAX_MODEL_OUTPUT_CHARACTERS = 16_000
+DEFAULT_OPENAI_MODEL = "DeepSeek-V4-Pro"
 
 
 def utc_now() -> str:
@@ -373,12 +376,26 @@ def extract_structured_output(stream_text: str) -> dict[str, Any]:
 
 def invoke_model(
     *,
-    claude_command: str,
+    claude_command: str | None,
+    openai_bridge_url: str | None,
+    openai_model: str,
     prompt: str,
     packet: Mapping[str, Any],
     output_path: Path,
     timeout_seconds: float,
+    case_id: str,
 ) -> dict[str, Any]:
+    if openai_bridge_url:
+        return invoke_openai_bridge_model(
+            bridge_url=openai_bridge_url,
+            model=openai_model,
+            prompt=prompt,
+            output_path=output_path,
+            timeout_seconds=timeout_seconds,
+            case_id=case_id,
+        )
+    if not claude_command:
+        raise RepairValidationError("model transport is missing")
     input_path = output_path.with_name("model-input.jsonl")
     write_text(
         input_path,
@@ -409,6 +426,141 @@ def invoke_model(
     }
 
 
+def invoke_openai_bridge_model(
+    *,
+    bridge_url: str,
+    model: str,
+    prompt: str,
+    output_path: Path,
+    timeout_seconds: float,
+    case_id: str,
+) -> dict[str, Any]:
+    """Invoke an OpenAI-compatible bridge while retaining the repair contract.
+
+    The bridge replaces only Claude CLI transport.  It receives the same
+    constrained prompt and has no tool or filesystem access.  Its returned
+    text is wrapped in the existing terminal-result envelope, so decision
+    parsing and local validation remain identical to the Claude transport.
+    """
+
+    input_path = output_path.with_name("model-input.json")
+    payload = {
+        "model": model,
+        "messages": [
+            {
+                "role": "system",
+                "content": (
+                    "You are a bounded structured-output decision component. "
+                    "You cannot use tools, inspect files, or execute commands. "
+                    "Return only the JSON object requested by the user."
+                ),
+            },
+            {"role": "user", "content": prompt},
+        ],
+        "response_format": {"type": "json_object"},
+        "temperature": 0,
+    }
+    write_json(input_path, payload)
+    endpoint = f"{bridge_url.rstrip('/')}/v1/chat/completions"
+    request = urllib.request.Request(
+        endpoint,
+        data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+        headers={
+            "Content-Type": "application/json",
+            "X-Iris-Run-Id": "compile-builder-v2",
+            "X-Iris-Case-Id": case_id,
+        },
+        method="POST",
+    )
+    started = time.monotonic()
+    response_payload: dict[str, Any] | None = None
+    transport_error: str | None = None
+    status_code: int | None = None
+    try:
+        with urllib.request.urlopen(request, timeout=timeout_seconds) as response:
+            status_code = response.status
+            loaded = json.loads(response.read().decode("utf-8"))
+            if not isinstance(loaded, dict):
+                raise RepairValidationError("OpenAI bridge response must be a JSON object")
+            response_payload = loaded
+    except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, json.JSONDecodeError, ValueError) as error:
+        transport_error = f"{type(error).__name__}: {error}"
+    elapsed_seconds = round(time.monotonic() - started, 3)
+    if response_payload is None:
+        raw_text = json.dumps(
+            {
+                "type": "result",
+                "is_error": True,
+                "result": transport_error or "OpenAI bridge returned no response",
+            },
+            sort_keys=True,
+        )
+        write_text(output_path, redact_text(raw_text))
+        return {
+            "command": ["openai-compatible-bridge", endpoint],
+            "bounded_process": {
+                "returncode": 1,
+                "timed_out": isinstance(transport_error, str)
+                and "timed out" in transport_error.lower(),
+                "elapsed_seconds": elapsed_seconds,
+                "http_status": status_code,
+                "transport_error": transport_error,
+            },
+            "input_path": stable_path(input_path),
+            "input_sha256": sha256_file(input_path),
+            "output_path": stable_path(output_path),
+            "output_sha256": sha256_file(output_path),
+            "raw_text": redact_text(raw_text),
+        }
+    try:
+        choices = response_payload.get("choices")
+        if not isinstance(choices, list) or not choices:
+            raise RepairValidationError("OpenAI bridge response has no choices")
+        message = choices[0].get("message")
+        content = message.get("content") if isinstance(message, Mapping) else None
+        if not isinstance(content, str) or not content.strip():
+            raise RepairValidationError("OpenAI bridge response has empty content")
+        decision = parse_repair_decision_text(content)
+        raw_text = json.dumps(
+            {"type": "result", "structured_output": decision},
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+        returncode = 0
+        transport_error = None
+    except RepairValidationError as error:
+        raw_text = json.dumps(
+            {"type": "result", "is_error": True, "result": str(error)},
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+        returncode = 1
+        transport_error = f"{type(error).__name__}: {error}"
+    sanitized = redact_text(raw_text[-MAX_MODEL_OUTPUT_CHARACTERS:])
+    write_text(output_path, sanitized)
+    usage = response_payload.get("usage")
+    return {
+        "command": ["openai-compatible-bridge", endpoint],
+        "bounded_process": {
+            "returncode": returncode,
+            "timed_out": False,
+            "elapsed_seconds": elapsed_seconds,
+            "http_status": status_code,
+            "transport_error": transport_error,
+        },
+        "input_path": stable_path(input_path),
+        "input_sha256": sha256_file(input_path),
+        "output_path": stable_path(output_path),
+        "output_sha256": sha256_file(output_path),
+        "raw_text": sanitized,
+        "bridge": {
+            "url": bridge_url,
+            "model": model,
+            "usage": usage if isinstance(usage, Mapping) else None,
+        },
+    }
+
+
 def run_case(
     *,
     failed_receipt: dict[str, Any],
@@ -417,6 +569,8 @@ def run_case(
     output_dir: Path,
     attempt_number: int,
     claude_command: str | None,
+    openai_bridge_url: str | None,
+    openai_model: str,
     model_timeout_seconds: float,
     codeql_timeout_seconds: float,
     approved_java_homes: list[str],
@@ -485,14 +639,17 @@ def run_case(
         }
     if dry_run:
         return {**base, "status": "llm_repair_dry_run"}
-    if not claude_command:
+    if not claude_command and not openai_bridge_url:
         raise RepairValidationError("claude command is required unless --dry-run is set")
     model = invoke_model(
         claude_command=claude_command,
+        openai_bridge_url=openai_bridge_url,
+        openai_model=openai_model,
         prompt=prompt,
         packet=packet,
         output_path=case_dir / "model-output.txt",
         timeout_seconds=model_timeout_seconds,
+        case_id=case_id,
     )
     model_receipt = {key: value for key, value in model.items() if key != "raw_text"}
     if model["bounded_process"]["returncode"] != 0 or model["bounded_process"]["timed_out"]:
@@ -587,6 +744,15 @@ def parse_args() -> argparse.Namespace:
         default=DEFAULT_CLAUDE_COMMAND,
         help="Executable for the constrained structured-output model call.",
     )
+    parser.add_argument(
+        "--openai-bridge-url",
+        help="OpenAI-compatible endpoint root for the constrained model transport.",
+    )
+    parser.add_argument(
+        "--openai-model",
+        default=DEFAULT_OPENAI_MODEL,
+        help="Model name sent to --openai-bridge-url.",
+    )
     parser.add_argument("--max-workers", type=int, default=2)
     parser.add_argument("--model-timeout-seconds", type=float, default=300)
     parser.add_argument("--codeql-timeout-seconds", type=float, default=3600)
@@ -620,7 +786,11 @@ def main() -> int:
     for path in [*failed_paths, *source_paths, prior_ledger]:
         if not path.is_file():
             raise SystemExit(f"missing input: {path}")
-    if not args.dry_run and not Path(args.claude_command).is_file():
+    if (
+        not args.dry_run
+        and not args.openai_bridge_url
+        and not Path(args.claude_command).is_file()
+    ):
         raise SystemExit(f"missing --claude-command: {args.claude_command}")
 
     failed_by_case = receipt_by_case(read_jsonl(failed_paths), "failed receipt")
@@ -783,7 +953,13 @@ def main() -> int:
                     prior_completion=completion,
                     output_dir=output_dir,
                     attempt_number=attempt_number,
-                    claude_command=None if args.dry_run else args.claude_command,
+                    claude_command=(
+                        None
+                        if args.dry_run or args.openai_bridge_url
+                        else args.claude_command
+                    ),
+                    openai_bridge_url=None if args.dry_run else args.openai_bridge_url,
+                    openai_model=args.openai_model,
                     model_timeout_seconds=args.model_timeout_seconds,
                     codeql_timeout_seconds=args.codeql_timeout_seconds,
                     approved_java_homes=approved_java_homes,
