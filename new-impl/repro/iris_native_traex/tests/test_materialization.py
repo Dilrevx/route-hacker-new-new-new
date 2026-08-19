@@ -60,11 +60,15 @@ def test_traex_alias_injection_preserves_valid_python(tmp_path):
         'class GPTModel:\n'
         '    def __init__(self, api_key):\n'
         '        self.client = OpenAI(api_key=api_key)\n'
+        '    def _predict(self, main_prompt, expect_json=False):\n'
+        '        return self.client.chat.completions.create(model="gpt-4", messages=main_prompt)\n'
     )
     module["add_traex_model_aliases"](gpt)
     source = gpt.read_text()
     assert '"gpt-4": "gpt-4-preview",' in source
     assert '"gpt-traex-pro": "DeepSeek-V4-Pro",' in source
+    assert "def _create_completion_with_retry" in source
+    assert "IRIS_LLM_MAX_ATTEMPTS" in source
     compile(source, str(gpt), "exec")
 
 

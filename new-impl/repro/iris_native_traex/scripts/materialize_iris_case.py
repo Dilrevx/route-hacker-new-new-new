@@ -9,6 +9,7 @@ import json
 import os
 import re
 import shutil
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -103,7 +104,7 @@ def validate_input_paths(case: dict[str, Any]) -> dict[str, str]:
 
 
 def add_traex_model_aliases(gpt_model_path: Path) -> dict[str, str]:
-    """Add transport aliases to the copied IRIS GPT adapter, never shared inputs."""
+    """Add fault-tolerant TraeX transport to the copied IRIS GPT adapter."""
 
     source = gpt_model_path.read_text(encoding="utf-8")
     aliases = (
@@ -132,6 +133,29 @@ def add_traex_model_aliases(gpt_model_path: Path) -> dict[str, str]:
         source = source.replace(client_marker, client_replacement, 1)
     elif "X-Iris-Run-Id" not in source:
         raise RuntimeError(f"cannot add bridge attribution headers to {gpt_model_path}")
+    if "def _create_completion_with_retry" not in source:
+        if "import time\n" not in source:
+            source = source.replace("import os\n", "import os\nimport time\n", 1)
+        source = source.replace(
+            "self.client.chat.completions.create(",
+            "self._create_completion_with_retry(",
+        )
+        predict_marker = "    def _predict(self, main_prompt, expect_json=False):\n"
+        retry_method = """    def _create_completion_with_retry(self, **request_kwargs):
+        max_attempts = max(1, int(os.getenv("IRIS_LLM_MAX_ATTEMPTS", "4")))
+        retry_delay_seconds = max(0.0, float(os.getenv("IRIS_LLM_RETRY_DELAY_SECONDS", "5")))
+        for attempt in range(1, max_attempts + 1):
+            try:
+                return self.client.chat.completions.create(**request_kwargs)
+            except Exception:
+                if attempt == max_attempts:
+                    raise
+                time.sleep(retry_delay_seconds * attempt)
+
+"""
+        if predict_marker not in source:
+            raise RuntimeError(f"cannot add retrying completion transport to {gpt_model_path}")
+        source = source.replace(predict_marker, retry_method + predict_marker, 1)
     try:
         ast.parse(source, filename=str(gpt_model_path))
     except SyntaxError as exc:
@@ -139,9 +163,10 @@ def add_traex_model_aliases(gpt_model_path: Path) -> dict[str, str]:
     gpt_model_path.write_text(source, encoding="utf-8")
     return {
         "path": str(gpt_model_path),
-        "kind": "copied_iris_gpt_transport_aliases",
+        "kind": "copied_iris_gpt_transport_adapter",
         "aliases": "gpt-traex-flash,gpt-traex-pro",
         "bridge_attribution_headers": "X-Iris-Run-Id,X-Iris-Case-Id",
+        "bounded_transport_retries": "IRIS_LLM_MAX_ATTEMPTS,IRIS_LLM_RETRY_DELAY_SECONDS",
         "sha256": sha256_path(gpt_model_path),
     }
 

@@ -194,7 +194,8 @@ def main() -> int:
         {
             "OPENAI_API_KEY": "traex-local-bridge",
             "OPENAI_BASE_URL": args.bridge_url.rstrip("/") + "/v1",
-            "IRIS_LLM_MAX_ATTEMPTS": env.get("IRIS_LLM_MAX_ATTEMPTS", "2"),
+            "IRIS_LLM_MAX_ATTEMPTS": env.get("IRIS_LLM_MAX_ATTEMPTS", "4"),
+            "IRIS_LLM_RETRY_DELAY_SECONDS": env.get("IRIS_LLM_RETRY_DELAY_SECONDS", "5"),
             "IRIS_TRAEX_RUN_ID": args.run_id,
             "IRIS_TRAEX_CASE_ID": str(case.get("case_id") or slug),
         }
