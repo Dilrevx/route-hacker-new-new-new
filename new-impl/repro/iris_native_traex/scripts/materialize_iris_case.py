@@ -170,8 +170,11 @@ def add_traex_model_aliases(gpt_model_path: Path) -> dict[str, str]:
     def _is_json_list_response(response_text):
         if not isinstance(response_text, str):
             return False
+        payload = response_text.strip()
+        if payload.startswith("```json\\n") and payload.endswith("\\n```"):
+            payload = payload[len("```json\\n") : -len("\\n```")]
         try:
-            return isinstance(json.loads(response_text), list)
+            return isinstance(json.loads(payload), list)
         except (json.JSONDecodeError, TypeError):
             return False
 

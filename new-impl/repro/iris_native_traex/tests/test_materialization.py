@@ -257,6 +257,35 @@ def test_traex_alias_injection_retries_invalid_json_list_with_original_prompt(tm
     assert "valid JSON array" in calls[1]["messages"][2]["content"]
 
 
+def test_traex_alias_injection_accepts_complete_fenced_json_list_without_retry(tmp_path):
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "materialize_iris_case.py"))
+    gpt = tmp_path / "gpt.py"
+    gpt.write_text(
+        'import os\n'
+        'from openai import OpenAI\n'
+        '_model_name_map = {\n'
+        '    "gpt-4": "gpt-4-preview"\n'
+        '}\n'
+        '_OPENAI_DEFAULT_PARAMS = {}\n'
+        'class GPTModel:\n'
+        '    def __init__(self):\n'
+        '        api_key = "test"\n'
+        '        self.client = OpenAI(api_key=api_key)\n'
+        '    def _predict(self, main_prompt, expect_json=False):\n'
+        '        response = self.client.chat.completions.create(model="gpt-4", messages=main_prompt)\n'
+        '        response=response.choices[0].message.content\n'
+        '        return response\n'
+    )
+    module["add_traex_model_aliases"](gpt)
+    source = gpt.read_text()
+    namespace = {"json": __import__("json")}
+    class_start = source.index("    @staticmethod\n    def _is_json_list_response")
+    class_end = source.index("    def _retry_json_list_format", class_start)
+    method_source = source[class_start:class_end]
+    exec("class ValidationOnly:\n" + method_source, namespace)
+    assert namespace["ValidationOnly"]._is_json_list_response("```json\n[]\n```")
+
+
 def test_batch_manifest_accepts_v2_checkout_revision(tmp_path):
     module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "run_native_iris_batch.py"))
     row = {
