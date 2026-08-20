@@ -526,6 +526,34 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Let a5 settle, validate any complete Keycloak/Spring database, run original native IRIS only for a newly valid complete DB with official IRIS inputs, then audit a12/a6 receipts and merge only `completed_verified` outcomes into the coverage ledger.
 
+### Round 17 - Repaired-DB Native IRIS Admission
+
+**Goal:** Admit only newly complete, exact-source CodeQL databases produced by the constrained Compile Builder v2 lane into a fresh native-IRIS execution boundary.
+
+**Scope:** The four DB-only repair candidates remain fixed. Tika was already complete before this round. a5 completed Keycloak and a6 completed Axis; Spring remains a failed repair because its Maven Checkstyle configuration could not retrieve a remote suppression file. The old a5 Axis attempt is retained as a controller-failure receipt and is not reused.
+
+**Action:**
+
+- a5 completed Keycloak as `codeql_db_repaired` using the locally approved Maven `3.9.9` selection. Its database creation exited `0` and the resulting directory contains both `codeql-database.yml` and `db-java`.
+- After a5 released its build slots, the scheduled a6 invocation reran only Axis through the same generic LLM dispatcher and corrected Maven-safe validator. The model selected approved Java 8 plus the allow-listed `-Dmaven.javadoc.skip=true` and `-Dmaven.source.skip=true` build options; CodeQL database creation exited `0` with a complete database layout.
+- Constructed a two-row derived manifest from the frozen 45-row manifest. The only changed input for Axis and Keycloak is `input_paths.codeql_db`; each row records the producing repair ledger, validated decision hash, exact-source evidence, database path, and a derived-manifest hash.
+- Independently revalidated the derived rows against the original 143-case allowlist, official IRIS identity admission, source/package paths, and full CodeQL layout before starting any model call.
+- Launched fresh native attempt `qa-iris-v2-45-a13-repaired-db` for the two rows using copied original `src/iris.py`, `DeepSeek-V4-Pro`, two project workers, one original-IRIS label thread per project, and bridge capacity eight.
+
+**Verification:**
+
+- Derived manifest SHA-256:
+  `140355f47be83b23303890682968190b12348d42fb1d2ef64d60f9cafad5d724`.
+- Binding receipt:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a13-repaired-db-native-iris/a13-db-binding-receipt.json`.
+- Both derived rows passed the native batch's path and full-CodeQL preflight before dispatch.
+- Axis and Keycloak both entered copied original `src/iris.py`; the local bridge recorded the first successful Axis completion. a12 remains active independently for Commons IO and Hutool.
+- With a12 and a13 together, four projects each use one native label thread. The bridge semaphore remains the authoritative cap of eight actual model completions.
+
+**Decision:** Compile Builder success is now a separately evidenced prerequisite that can feed native IRIS without overwriting the frozen evaluation manifest or silently reusing an invalid database. a13 is active execution only; no case is counted until its strict receipt records original IRIS success, every required artifact, and valid prompt-mapped JSON-list responses.
+
+**Next:** Monitor a12 and a13 receipts to completion, independently audit all strict gates, and merge only `completed_verified` outcomes into the 45-case coverage ledger. Retain Spring as a constrained-repair failure until a future generic controller capability addresses its documented Maven quality-gate failure.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.
