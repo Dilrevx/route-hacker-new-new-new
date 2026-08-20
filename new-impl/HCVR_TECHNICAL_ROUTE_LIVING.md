@@ -369,6 +369,30 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Continue MyFaces a9 until it emits its independent strict receipt; then apply the same return-code, artifact, and dispatched-label audit before merging it into coverage metrics.
 
+### Round 11 - Verified MyFaces Native IRIS Retry Completion
+
+**Goal:** Independently close the interruption-recovered MyFaces retry using the same strict native-IRIS completion contract as Sling.
+
+**Scope:** This round covers `apache__myfaces::CVE-2011-4367` (`case::49c75f67f869cd0420fd`) in the fresh attempt `qa-iris-v2-45-a9-myfaces-jsonlist-retry`. It does not reuse the interrupted a8 workspace or its stale materialization receipt.
+
+**Action:**
+
+- Let the newly materialized copied original `src/iris.py` finish its 52-prompt API-label phase, CodeQL analysis, posthoc-filter model calls, and final evaluation without case-specific intervention.
+- Verified the final receipt against the runner's exact prompt-to-response audit mapping. This deliberately excludes old IRIS empty placeholder files whose names do not correspond to a dispatched prompt and excludes posthoc responses, which have their own native schema.
+
+**Verification:**
+
+- The a9 receipt is `completed_verified` with `runner_returncode: 0`, `verified_completion: true`, and elapsed time `3713.433` seconds.
+- The artifact gate confirms primary CSV/SARIF/postprocessed SARIF, final JSON, and posthoc SARIF/JSON/statistics are all present.
+- The strict runner audit independently rechecked all 52 dispatched API-label prompt/response pairs: 52 prompts, 0 invalid JSON-list responses.
+- Native IRIS recorded 1,547 candidate APIs, 38 labelled sources, 10 labelled sinks, 160 taint propagators, 20 vanilla paths, 3 posthoc paths, and 15 successful posthoc LLM calls.
+- Evidence root:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a9-myfaces-jsonlist-retry/`.
+
+**Decision:** Count MyFaces as a second independently verified native-IRIS result recovered through the general interruption-safe dispatcher and bounded JSON-list transport retry. The a8 stale MyFaces receipt remains retained provenance only and is not a competing result.
+
+**Next:** Merge a8 Sling and a9 MyFaces into the v2 QA native-IRIS coverage ledger, while remaining in-flight historical a6/a7 cases continue under the bridge-level eight-request cap.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.
