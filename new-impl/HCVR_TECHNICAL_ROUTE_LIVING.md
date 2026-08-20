@@ -642,6 +642,62 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Monitor both first-batch receipts. For every `codeql_db_repaired` result, independently verify `codeql-database.yml`, `db-java/default`, relation files, archive/revision evidence, and source-integrity evidence before constructing a derived native IRIS manifest. Review the next two rows from the 47-case strict queue only after this batch reaches terminal receipts.
 
+### Round 21 - JStachio Repaired-DB Admission on the 213-Case IRIS Track
+
+**Goal:** Convert one fully verified Compile Builder v2 recovery into a copied-original native IRIS execution while preserving the boundary between the frozen 45-case v2 evaluation cohort and the broader 213-case IRIS runnability track.
+
+**Scope:** This round admits only `iris213::4706c69734a04621c9d1` / JStachio `CVE-2023-33962` to the standalone 213-case native-IRIS track. JStachio is not a member of the frozen 45-row v2 manifest, so its result is recorded as IRIS runnability/reproduction evidence and is not added to 45-case comparative metrics. Graylog remains a recorded Compile Builder failure: its Maven/CodeQL run stopped at `frontend-maven-plugin` `yarn install`; it produced no valid database.
+
+**Action:**
+
+- Investigated both terminal first-batch receipts rather than accepting their status labels. JStachio had CodeQL exit `0`, a valid database, and a successful Maven reactor, but the initial source-integrity gate incorrectly treated Maven Shade's generated `dependency-reduced-pom.xml` as a source edit.
+- Generalized the integrity gate to ignore the fixed generated metadata filename `dependency-reduced-pom.xml` while retaining rejection for Java source, `pom.xml`, and any other non-generated path change. This is a build-system-wide rule, not a JStachio-specific recipe. Compile Builder focused regressions passed remotely (`82 passed` before this run).
+- Rebuilt JStachio in a new output namespace from its archive-verified exact source. The constrained model used the existing approved toolchain/action interface and one bounded build-feedback replan; no benchmark source, revision, official query, package file, or target evidence was changed.
+- Added `build_repaired_db_native_iris_manifest.py`, a generic derived-manifest builder. It requires strict official admission, an exact archive-source receipt, a `codeql_db_repaired` receipt, verified source integrity, verified source revision, `codeql-database.yml`, `db-java/default`, and at least one Java relation file before it emits a native-IRIS manifest and binding receipt.
+- Generated a standalone one-row 213-case derived manifest, materialized a fresh copied-original IRIS workspace, and launched the copied `src/iris.py` with `DeepSeek-V4-Pro`, one project worker, and one IRIS label thread.
+
+**Verification:**
+
+- Fresh JStachio repair receipt:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/compile-repair-run-jstachio-rerun-v4/w1_llm_repair_receipts.jsonl`.
+  It records `codeql_db_repaired`, CodeQL exit `0`, `database_valid: true`, and exact-source integrity `verified: true` with `changed_path_count: 0`.
+- The repaired database is finalised and contains `codeql-database.yml`, `db-java/default`, and `98` Java `.rel` files.
+- Derived-manifest binding receipt:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/native-iris-jstachio-r1/jstachio-db-binding-receipt.json`.
+  Its manifest SHA-256 is `757ac610126b9c7c1da4a9beada9ab050f3d6979247369e7949e4162c642f63c`.
+- The materialization receipt records copied clean IRIS `src`, the bounded transport adapter only, and exact symlinks to the official package-name file, verified source, and repaired database. The native process uses `src/iris.py --query cwe-079wLLM`.
+- New manifest-builder regressions and the existing native-materialization tests passed remotely: `15 passed in 0.09s`. The local host lacks `pytest`; its direct standard-library regression and `py_compile` passed.
+
+**Decision:** JStachio is an active native-IRIS execution in the explicit 213-case extension lane. Its successful database is necessary but is not an IRIS finding or completion. It enters reporting only if the copied original IRIS process exits `0`, every required artifact is present, and every dispatched label response parses as a JSON list. Graylog remains a non-success with its `yarn install` failure preserved for later generic controller investigation.
+
+**Next:** Monitor the JStachio native receipt to strict completion, then examine the next strictly eligible 213-case repair candidate one at a time. Keep all 45-case comparative aggregates isolated from this extension lane unless a separately frozen cohort rule admits the same identity.
+
+### Round 22 - Native IRIS CodeQL Action-Bundle Gate
+
+**Goal:** Make the copied original IRIS executable only when its documented CodeQL Action bundle is actually present, so a missing or incompatible query-pack dependency is rejected before it consumes native-IRIS or LLM budget.
+
+**Scope:** This is a generic IRIS materialization guard. It does not modify original IRIS queries, candidate extraction, model prompts, benchmark source, or CodeQL databases. It applies to every isolated copied-IRIS workspace, including both the frozen 45-case cohort and the 213-case extension lane.
+
+**Action:**
+
+- Audited the JStachio native failure. It exited in Stage 1 before any label prompt or model call because the bare local CodeQL CLI `2.23.2` attempted to resolve a current `codeql/java-all@9.2.3` pack whose OCI manifest requires CLI `2.26.3`.
+- Checked the pinned official IRIS README and configuration. The copied implementation explicitly targets CodeQL `2.23.2` and `CODEQL_QUERY_VERSION = 1.8.1`, which require the matching CodeQL Action bundle qlpacks rather than a standalone CLI plus an uncontrolled latest package lookup.
+- Added a generic `validate_codeql_bundle` materialization gate. It probes the CLI release, reads the pinned IRIS query-pack version, requires `qlpacks/codeql/java-queries/<required-version>/qlpack.yml`, and requires at least one bundled `codeql/java-all` pack whose `buildMetadata.cliVersion` matches the CLI. The materialization receipt now records this bundle evidence.
+- Added a regression that rejects a bare CLI, then accepts a minimal matching Action-bundle layout. Remote native-manifest/materialization tests now pass `16 passed in 0.09s`; local `py_compile` and direct standard-library regression passed.
+- Started recovery of the official `codeql-bundle-v2.23.2` dependency. The current network can retrieve only about `1.3 MiB` of an `8 MiB` range in `90` seconds, and the older exact-pack download stalled after materializing only `java-all@7.7.1`, without `java-queries@1.8.1` or its dependencies. These partial directories are not admitted by the new gate.
+
+**Verification:**
+
+- JStachio's original native receipt is retained at:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/native-iris-jstachio-r1/cases/iris213__4706c69734a04621c9d1/summary.json`.
+  It records `failed_or_incomplete`, exit `1`, zero dispatched label prompts, and no final artifacts; it is an environment dependency failure, not an LLM result.
+- The exact upstream dependency requirement is documented in the pinned IRIS README: CodeQL `2.23.2` with query version `1.8.1`.
+- The new preflight prevents a rerun against the incompatible CLI-only directory and preserves the same strict rule for every future case.
+
+**Decision:** JStachio remains a verified Compile Builder database success and a native-IRIS environment-blocked case. It is not counted as a completed IRIS run, failed model audit, or 45-case metric. Native IRIS retry resumes only after the complete official `2.23.2` Action bundle (or an equivalently provenance-verified complete bundle) passes the new gate.
+
+**Next:** Complete or locate a verified full `codeql-bundle-v2.23.2` Action bundle, preflight it with the new gate, then materialize JStachio in a fresh workspace and rerun copied original `src/iris.py`. Continue selecting the next 213-case Compile Builder candidate only after preserving this dependency boundary.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.

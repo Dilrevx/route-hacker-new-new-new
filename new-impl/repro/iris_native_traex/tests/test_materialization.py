@@ -151,6 +151,40 @@ def test_manifest_materialization_path_validation_requires_revision(tmp_path):
         raise AssertionError("missing revision must be rejected")
 
 
+def test_codeql_bundle_validation_requires_matching_action_packs(tmp_path):
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "materialize_iris_case.py"))
+    clean = tmp_path / "iris"
+    (clean / "src").mkdir(parents=True)
+    (clean / "src" / "config.py").write_text('CODEQL_QUERY_VERSION = "1.8.1"\n')
+    codeql = tmp_path / "codeql"
+    codeql.mkdir()
+    executable = codeql / "codeql"
+    executable.write_text("#!/bin/sh\necho 'CodeQL command-line toolchain release 2.23.2.'\n")
+    executable.chmod(0o755)
+
+    try:
+        module["validate_codeql_bundle"](clean, codeql)
+    except RuntimeError as exc:
+        assert "java-queries@1.8.1" in str(exc)
+    else:
+        raise AssertionError("missing official query pack must reject materialization")
+
+    query_pack = codeql / "qlpacks" / "codeql" / "java-queries" / "1.8.1"
+    query_pack.mkdir(parents=True)
+    (query_pack / "qlpack.yml").write_text("name: codeql/java-queries\nversion: 1.8.1\n")
+    java_all = codeql / "qlpacks" / "codeql" / "java-all" / "7.7.1"
+    java_all.mkdir(parents=True)
+    (java_all / "qlpack.yml").write_text(
+        "name: codeql/java-all\nversion: 7.7.1\nbuildMetadata:\n  cliVersion: 2.23.2\n"
+    )
+
+    result = module["validate_codeql_bundle"](clean, codeql)
+
+    assert result["codeql_cli_version"] == "2.23.2"
+    assert result["iris_codeql_query_version"] == "1.8.1"
+    assert result["compatible_java_all_packs"][0]["version"] == "7.7.1"
+
+
 def test_traex_alias_injection_preserves_valid_python(tmp_path):
     module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "materialize_iris_case.py"))
     gpt = tmp_path / "gpt.py"

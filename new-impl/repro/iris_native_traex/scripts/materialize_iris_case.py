@@ -9,6 +9,7 @@ import json
 import os
 import re
 import shutil
+import subprocess
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -101,6 +102,79 @@ def validate_input_paths(case: dict[str, Any]) -> dict[str, str]:
     if not paths["package_names"].is_file():
         raise FileNotFoundError(f"package-name file does not exist: {paths['package_names']}")
     return {key: str(value) for key, value in paths.items()}
+
+
+def codeql_cli_version(codeql_dir: Path) -> str:
+    command = [str(codeql_dir / "codeql"), "version"]
+    completed = subprocess.run(command, text=True, capture_output=True, check=False)
+    if completed.returncode != 0:
+        raise RuntimeError(
+            f"CodeQL version probe failed ({completed.returncode}): "
+            f"{completed.stderr.strip()[-500:]}"
+        )
+    match = re.search(r"release\s+([0-9]+(?:\.[0-9]+){1,2})", completed.stdout)
+    if not match:
+        raise RuntimeError(f"cannot parse CodeQL release from: {completed.stdout!r}")
+    return match.group(1)
+
+
+def query_pack_version(clean_root: Path) -> str:
+    config = (clean_root / "src" / "config.py").read_text(encoding="utf-8")
+    match = re.search(r'^CODEQL_QUERY_VERSION\s*=\s*"([^"]+)"', config, flags=re.MULTILINE)
+    if not match:
+        raise RuntimeError("cannot find CODEQL_QUERY_VERSION in clean IRIS src/config.py")
+    return match.group(1)
+
+
+def qlpack_value(path: Path, key: str) -> str | None:
+    match = re.search(
+        rf"^\s*{re.escape(key)}:\s*([^\s#]+)",
+        path.read_text(encoding="utf-8"),
+        flags=re.MULTILINE,
+    )
+    return match.group(1) if match else None
+
+
+def validate_codeql_bundle(clean_root: Path, codeql_dir: Path) -> dict[str, Any]:
+    """Require the Action bundle packs that the copied official IRIS expects."""
+
+    executable = codeql_dir / "codeql"
+    if not executable.is_file():
+        raise FileNotFoundError(f"missing CodeQL executable: {executable}")
+    cli_version = codeql_cli_version(codeql_dir)
+    required_query_version = query_pack_version(clean_root)
+    query_pack = codeql_dir / "qlpacks" / "codeql" / "java-queries" / required_query_version
+    query_pack_file = query_pack / "qlpack.yml"
+    if not query_pack_file.is_file():
+        raise RuntimeError(
+            "CodeQL Action bundle is missing the IRIS-required java-queries pack "
+            f"codeql/java-queries@{required_query_version}: {query_pack_file}"
+        )
+    compatible_java_all = []
+    java_all_root = codeql_dir / "qlpacks" / "codeql" / "java-all"
+    if java_all_root.is_dir():
+        for pack_file in sorted(java_all_root.glob("*/qlpack.yml")):
+            if qlpack_value(pack_file, "cliVersion") == cli_version:
+                compatible_java_all.append(
+                    {
+                        "version": qlpack_value(pack_file, "version"),
+                        "path": str(pack_file.parent),
+                    }
+                )
+    if not compatible_java_all:
+        raise RuntimeError(
+            "CodeQL Action bundle lacks a codeql/java-all pack compatible with "
+            f"CLI {cli_version}; expected a qlpack buildMetadata.cliVersion match"
+        )
+    return {
+        "codeql_cli_version": cli_version,
+        "iris_codeql_query_version": required_query_version,
+        "java_queries_pack": {
+            "version": qlpack_value(query_pack_file, "version"),
+            "path": str(query_pack),
+        },
+        "compatible_java_all_packs": compatible_java_all,
+    }
 
 
 def add_traex_model_aliases(gpt_model_path: Path) -> dict[str, str]:
@@ -272,8 +346,7 @@ def main() -> int:
     if not src_source.is_dir():
         raise SystemExit(f"missing clean IRIS src: {src_source}")
     codeql_dir = args.codeql_dir.resolve()
-    if not (codeql_dir / "codeql").is_file():
-        raise SystemExit(f"missing CodeQL executable: {codeql_dir / 'codeql'}")
+    codeql_bundle = validate_codeql_bundle(clean_root, codeql_dir)
 
     copied_ignored = shutil.ignore_patterns("__pycache__", "*.pyc", "*.pyo")
     shutil.copytree(src_source, workspace / "src", ignore=copied_ignored, symlinks=True)
@@ -327,6 +400,7 @@ def main() -> int:
         "clean_iris_root": str(clean_root),
         "clean_iris_src_sha256": sha256_path(workspace / "src" / "iris.py"),
         "codeql_dir": str(codeql_dir),
+        "codeql_bundle": codeql_bundle,
         "receipt_path": str(input_path.resolve()),
         "receipt_sha256": sha256_path(input_path),
         "manifest_input": bool(args.manifest),
