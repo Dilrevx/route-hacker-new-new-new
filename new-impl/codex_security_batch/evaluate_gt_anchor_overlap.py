@@ -2,8 +2,9 @@
 """Evaluate completed Codex Security blind audits against unified-v2 anchors.
 
 Ground truth is deliberately consumed only after the blind audit. The evaluator
-reports several localization tiers rather than equating a primary-location match
-with semantic CVE confirmation.
+reports several localization proxies rather than treating a finding's emitted
+locations as a complete call graph or equating a location match with semantic
+CVE confirmation.
 """
 
 from __future__ import annotations
@@ -285,7 +286,7 @@ def main() -> None:
         "schema": "codex-security-unified-v2-anchor-alignment.v2",
         "method": {
             "primary_only_lower_bound": "Primary finding path/start-line overlaps a GT anchor span.",
-            "main_location_hit": "Any exported Codex Security location or code-evidence span overlaps a GT anchor span.",
+            "reported_location_overlap_proxy": "Any emitted Codex Security location or code-evidence span overlaps a GT anchor span; emitted locations are not assumed exhaustive.",
             "nearby_diagnostic": f"Any exported location is in the same file and at most {args.nearby_lines} lines from an anchor span.",
             "boundary": "All tiers are post-hoc localization proxies. None independently establishes semantic CVE equivalence or runtime exploitability; GT is not supplied to the blind audit.",
         },
@@ -315,12 +316,12 @@ def main() -> None:
     (args.out_dir / "summary.md").write_text(
         "# Codex Security vs Unified v2 Ground-Truth Anchor Alignment\n\n"
         "## Post-hoc localization tiers\n\n"
-        "The blind scan never receives GT. The main metric considers every reported finding location and code-evidence span; primary-only overlap is retained as a conservative lower bound. Neither tier alone is semantic CVE confirmation.\n\n"
+        "The blind scan never receives GT. The broader reported-location overlap proxy considers every finding location and code-evidence span explicitly emitted by Codex Security; emitted locations are not assumed exhaustive. Primary-only overlap is retained as a conservative lower bound. Neither tier alone is semantic CVE confirmation.\n\n"
         "| Metric | Value |\n| --- | ---: |\n"
         f"| GT-joined cases | {c['gt_joined_cases']} |\n"
         f"| Primary-only lower-bound hit cases | {c['primary_only_hit_cases']} |\n"
-        f"| Any reported-location anchor-hit cases (main) | {c['any_reported_location_hit_cases']} |\n"
-        f"| Any reported-location anchor-hit rate (main) | {c['any_reported_location_hit_rate']:.2%} |\n"
+        f"| Any reported-location anchor-overlap cases (proxy) | {c['any_reported_location_hit_cases']} |\n"
+        f"| Any reported-location anchor-overlap rate (proxy) | {c['any_reported_location_hit_rate']:.2%} |\n"
         f"| Same-file within {args.nearby_lines} lines, including hits (diagnostic) | {c[f'nearby_{args.nearby_lines}_line_cases_including_hits']} |\n"
         f"| Same-file within {args.nearby_lines} lines rate (diagnostic) | {c[f'nearby_{args.nearby_lines}_line_rate_including_hits']:.2%} |\n"
         f"| Same-anchor-file cases, including nearby | {c['same_anchor_file_cases_including_nearby']} |\n"

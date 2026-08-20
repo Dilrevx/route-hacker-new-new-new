@@ -175,13 +175,18 @@ to `run_blind_batch.sh` or Codex Security. Pass the raw `run_records.jsonl` so
 the evaluator can inspect the full canonical `locations` and `codeEvidence`,
 rather than relying only on the summary CSV's primary location.
 
-The main metric labels a finding as an anchor hit if **any** canonical reported
-location or code-evidence span overlaps an anchor's inclusive line range for the
-same `repo_key::vulnerability_id`. The evaluator retains primary-location-only
-overlap as a conservative lower bound and reports same-file within-50-line
-proximity as a diagnostic, not a formal hit. It produces a per-case table, a
-per-finding table, and a compact summary. It is a target-localization proxy;
-semantic CVE equivalence and runtime confirmation require separate review.
+The broader reported-location overlap proxy labels a finding when **any**
+canonical emitted location or code-evidence span overlaps an anchor's inclusive
+line range for the same `repo_key::vulnerability_id`. Codex Security documents
+these as finding locations and evidence; it does not guarantee they are a
+complete call graph or an exhaustive related-location set. The evaluator retains
+primary-location-only overlap as a conservative lower bound and reports
+same-file within-50-line proximity as a diagnostic, not a formal hit. A nearby
+file is determined only by exact normalized relative-path equality between a
+reported finding span and an anchor; its distance is the minimum gap between
+their inclusive line intervals. It produces a per-case table, a per-finding
+table, and a compact summary. It is a target-localization proxy; semantic CVE
+equivalence and runtime confirmation require separate review.
 
 ```bash
 python new-impl/codex_security_batch/evaluate_gt_anchor_overlap.py \

@@ -30,9 +30,9 @@
   },
   "method": {
     "boundary": "All tiers are post-hoc localization proxies. None independently establishes semantic CVE equivalence or runtime exploitability; GT is not supplied to the blind audit.",
-    "main_location_hit": "Any exported Codex Security location or code-evidence span overlaps a GT anchor span.",
     "nearby_diagnostic": "Any exported location is in the same file and at most 50 lines from an anchor span.",
-    "primary_only_lower_bound": "Primary finding path/start-line overlaps a GT anchor span."
+    "primary_only_lower_bound": "Primary finding path/start-line overlaps a GT anchor span.",
+    "reported_location_overlap_proxy": "Any emitted Codex Security location or code-evidence span overlaps a GT anchor span; emitted locations are not assumed exhaustive."
   },
   "schema": "codex-security-unified-v2-anchor-alignment.v2"
 }

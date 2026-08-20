@@ -2,14 +2,14 @@
 
 ## Post-hoc localization tiers
 
-The blind scan never receives GT. The main metric considers every reported finding location and code-evidence span; primary-only overlap is retained as a conservative lower bound. Neither tier alone is semantic CVE confirmation.
+The blind scan never receives GT. The broader reported-location overlap proxy considers every finding location and code-evidence span explicitly emitted by Codex Security; emitted locations are not assumed exhaustive. Primary-only overlap is retained as a conservative lower bound. Neither tier alone is semantic CVE confirmation.
 
 | Metric | Value |
 | --- | ---: |
 | GT-joined cases | 143 |
 | Primary-only lower-bound hit cases | 18 |
-| Any reported-location anchor-hit cases (main) | 45 |
-| Any reported-location anchor-hit rate (main) | 31.47% |
+| Any reported-location anchor-overlap cases (proxy) | 45 |
+| Any reported-location anchor-overlap rate (proxy) | 31.47% |
 | Same-file within 50 lines, including hits (diagnostic) | 53 |
 | Same-file within 50 lines rate (diagnostic) | 37.06% |
 | Same-anchor-file cases, including nearby | 62 |
