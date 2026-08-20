@@ -586,6 +586,35 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Let a8 finish, audit its complete receipt and database layout, and admit Spring to a fresh copied-original native-IRIS run only if all existing official-input and exact-source gates still pass. Continue monitoring a12/a13 independently; no active execution is counted before its strict completion receipt is present.
 
+### Round 19 - Spring Archive-Isolated DB Admission to Native IRIS
+
+**Goal:** Turn the first complete Spring Cloud Config CodeQL database produced by the archive-isolated Compile Builder v2 controller into a separately auditable native-IRIS input, without changing the frozen case identity or treating database creation as an IRIS result.
+
+**Scope:** The admitted row is only `case::e182cf07540c8aa7fcc0` / Spring Cloud Config `CVE-2020-5405`. It remains a member of the frozen 45-row v2 QA IRIS manifest and has the official query `cwe-022wLLM`, official package-name input, and exact declared revision `24e7292e5930367396461354d3f9d8ba8b94771c`. This round changes only the derived input path for `input_paths.codeql_db`; it does not edit benchmark source, substitute a revision, alter an IRIS query, or reuse an old partial database.
+
+**Action:**
+
+- Let Compile Builder v2 invocation `a10` finish from a new archive-verified source copy. Its constrained `retry_same_command` decision ran the recorded Maven command under CodeQL, completed Maven with `BUILD SUCCESS`, and created a finalised Java database in 1,067.333 seconds.
+- Verified that the produced database contains `codeql-database.yml`, `db-java/default`, and 83 Java relation files. The CodeQL finalisation log reports 73.10 MiB of uncompressed TRAP and 1.86 MiB of relation data.
+- Verified the controller's source-integrity evidence: the non-generated source-tree hash before and after the build is identical, `changed_path_count` is zero, and the archive SHA-256 / revision-bound codeload URL match the frozen manifest revision.
+- Created a one-row derived native-IRIS manifest and binding receipt. The binding records the immutable 45-row source-manifest hash, the a10 repair-ledger hash, validated-decision hash, archive materialisation receipt, source-integrity receipt, repaired DB path, and relation-file count.
+- Preflighted the derived row using the native batch validator against the frozen 143-case allowlist. Source directory, package-name file, full CodeQL layout, official IRIS metadata, query, and revision fields all passed.
+- Launched independent native attempt `qa-iris-v2-45-a14-spring-repaired-db` with one project worker and one original-IRIS label thread using `DeepSeek-V4-Pro`. The copied clean IRIS workspace links the a10 database and has entered its original `src/iris.py --query cwe-022wLLM` process.
+
+**Verification:**
+
+- Compile Builder evidence root:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/compile-repair-run-a10-isolated-clean-rebuild-linksafe/`.
+- Native-IRIS evidence root:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a14-spring-repaired-db-native-iris/`.
+- Derived manifest SHA-256:
+  `dbe7fde1db587e8461238d950f3648935bd8c37a95abd085692c9fd139a5e6a8`.
+- The materialization receipt records a copied clean IRIS `src`, the only local IRIS-code change as the bounded transport adapter, and an exact symlink to the repaired a10 CodeQL DB. The bridge concurrency contract remains `1 * 1 <= 8`.
+
+**Decision:** Spring is now an active, admissible native-IRIS attempt rather than a DB-only or controller-failure row. It is not a verified IRIS result yet. Only an original-IRIS exit code of zero, complete final artifacts, and valid JSON-list responses for every dispatched label prompt can produce `completed_verified`.
+
+**Next:** Monitor a14 to a strict receipt, audit its final artifact and label-response gates, and merge it into coverage only if it becomes `completed_verified`. Keep the a10 database, derived manifest, binding receipt, and a14 workspace/output as separate reproducibility evidence regardless of the native-IRIS result.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.

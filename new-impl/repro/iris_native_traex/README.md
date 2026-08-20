@@ -141,6 +141,31 @@ Each batch receipt stores IRIS candidate, labelling, vanilla-path, posthoc-path,
 method-overlap, elapsed-time, artifact-gate, and label-response fields. The
 dispatcher updates `summary.json` after each completed case.
 
+### Admitting a freshly repaired CodeQL database
+
+When Compile Builder v2 produces a new database for a frozen manifest row,
+create a **new derived manifest** rather than editing the frozen manifest or
+replacing its source inputs. The derived row keeps the original identity,
+revision, source, package-name file, query, and allowlist membership; only
+`input_paths.codeql_db` may point to the newly repaired database.
+
+Before dispatch, record a binding receipt that includes:
+
+- the frozen source-manifest and derived-manifest SHA-256 values;
+- the repair-ledger path and SHA-256;
+- `codeql_db_repaired`, `database_valid`, and a full Java database check
+  (`codeql-database.yml`, `db-java/default`, and at least one `.rel` file);
+- the repair's archive/revision evidence and verified non-generated
+  source-integrity evidence; and
+- the validated repair-decision hash and repaired database path.
+
+Run the normal batch command against that one-row derived manifest with
+`--expected-manifest-count 1`. The batch validator still checks that the row
+belongs to the same frozen 143-case allowlist and rejects incomplete databases
+before any LLM call. A repaired database is only an input-admission result:
+count the case only if the copied original `src/iris.py` later satisfies the
+strict `completed_verified` receipt gate.
+
 After a batch, merge the receipt and bridge JSONL files into a paper-facing
 report. It carries per-case output paths and aggregate candidate/path metrics,
 bridge-call status, and TraeX-reported total tokens without inventing an
