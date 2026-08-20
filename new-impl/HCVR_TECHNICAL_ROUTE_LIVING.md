@@ -345,6 +345,30 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Wait for a8 Sling and a9 MyFaces to write their strict completion receipts. Validate original IRIS return code, all required artifacts, and every raw JSON label before counting either result as `completed_verified`; then select the next frozen JSON-label retry that is not active.
 
+### Round 10 - Verified Sling JSON-List Retry Completion
+
+**Goal:** Close the a8 Sling retry only after the native IRIS runner, artifact gate, and label-response audit agree on a complete result.
+
+**Scope:** This round covers only `apache__sling-org-apache-sling-servlets-resolver::CVE-2024-23673` (`case::aec41e376e99c5fd0a40`) in attempt `qa-iris-v2-45-a8-jsonlist-retry`. The stale a8 MyFaces materialization receipt remains interruption evidence and is excluded from this case result.
+
+**Action:**
+
+- Observed the copied original `src/iris.py` complete its CodeQL, posthoc-filter, and evaluation stages without intervention.
+- Read the final a8 receipt and independently checked the strict gate fields rather than inferring success from the presence of intermediate SARIF files.
+- Distinguished API-labelling response files from historical empty raw files and posthoc-filter responses. Only the 18 prompt responses dispatched by the API-label stage are subject to the JSON-list contract; posthoc uses its own native response shape.
+
+**Verification:**
+
+- The Sling receipt is `completed_verified` with `runner_returncode: 0`.
+- Its artifact gate reports every required artifact present: primary `results.csv`, `results.sarif`, `results_pp.sarif`, final `results.json`, plus posthoc `results.json`, `results.sarif`, and `stats.json`.
+- Its label-response audit reports `all_valid: true` for all 18 dispatched API-label prompts.
+- The verified evidence remains at:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a8-jsonlist-retry/`.
+
+**Decision:** Count Sling as one native-IRIS `completed_verified` result. Do not widen the JSON-list audit to unrelated historical or posthoc raw-response files, because that would contradict the original API-label contract and create a false failure.
+
+**Next:** Continue MyFaces a9 until it emits its independent strict receipt; then apply the same return-code, artifact, and dispatched-label audit before merging it into coverage metrics.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.
