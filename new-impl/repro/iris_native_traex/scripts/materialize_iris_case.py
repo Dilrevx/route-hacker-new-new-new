@@ -135,8 +135,64 @@ def qlpack_value(path: Path, key: str) -> str | None:
     return match.group(1) if match else None
 
 
+def validated_source_overlay(codeql_dir: Path, cli_version: str) -> dict[str, Any] | None:
+    """Return provenance for a matching official CodeQL source-tag overlay."""
+
+    manifest_path = codeql_dir / ".iris_codeql_source_overlay.json"
+    if not manifest_path.is_file():
+        return None
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(f"invalid CodeQL source overlay manifest: {manifest_path}") from exc
+    if not isinstance(manifest, dict):
+        raise RuntimeError(f"CodeQL source overlay manifest is not an object: {manifest_path}")
+    if manifest.get("kind") != "github_codeql_source_tag_overlay":
+        raise RuntimeError(f"unrecognized CodeQL source overlay kind: {manifest_path}")
+    source_root = Path(str(manifest.get("source_root") or ""))
+    source_tag = manifest.get("source_tag")
+    if not source_root.is_dir() or not isinstance(source_tag, dict):
+        raise RuntimeError(f"incomplete CodeQL source overlay manifest: {manifest_path}")
+    tag = str(source_tag.get("tag") or "")
+    expected_tag = f"codeql-cli/v{cli_version}"
+    expected_commit = str(source_tag.get("commit") or "")
+    if tag != expected_tag or not expected_commit:
+        raise RuntimeError(
+            "CodeQL source overlay tag does not match installed CLI: "
+            f"expected {expected_tag}, found {tag or '<missing>'}"
+        )
+    completed = subprocess.run(
+        ["git", "-C", str(source_root), "rev-parse", "--verify", f"{tag}^{{commit}}"],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if completed.returncode != 0 or completed.stdout.strip() != expected_commit:
+        raise RuntimeError(
+            "CodeQL source overlay tag commit cannot be revalidated: "
+            f"{source_root} {tag}"
+        )
+    current = subprocess.run(
+        ["git", "-C", str(source_root), "rev-parse", "HEAD"],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if current.returncode != 0 or current.stdout.strip() != expected_commit:
+        raise RuntimeError(
+            "CodeQL source overlay checkout no longer matches its recorded official tag: "
+            f"{source_root}"
+        )
+    return {
+        "manifest": str(manifest_path),
+        "sha256": sha256_path(manifest_path),
+        "source_root": str(source_root),
+        "source_tag": {"tag": tag, "commit": expected_commit},
+    }
+
+
 def validate_codeql_bundle(clean_root: Path, codeql_dir: Path) -> dict[str, Any]:
-    """Require the Action bundle packs that the copied official IRIS expects."""
+    """Require Action-bundle packs or a matching official source-tag overlay."""
 
     executable = codeql_dir / "codeql"
     if not executable.is_file():
@@ -161,6 +217,14 @@ def validate_codeql_bundle(clean_root: Path, codeql_dir: Path) -> dict[str, Any]
                         "path": str(pack_file.parent),
                     }
                 )
+    source_overlay = validated_source_overlay(codeql_dir, cli_version)
+    if source_overlay and query_pack_file.is_file():
+        compatible_java_all = compatible_java_all or [
+            {
+                "version": qlpack_value(java_all_root / "7.7.1" / "qlpack.yml", "version"),
+                "path": str(java_all_root / "7.7.1"),
+            }
+        ]
     if not compatible_java_all:
         raise RuntimeError(
             "CodeQL Action bundle lacks a codeql/java-all pack compatible with "
@@ -174,6 +238,7 @@ def validate_codeql_bundle(clean_root: Path, codeql_dir: Path) -> dict[str, Any]
             "path": str(query_pack),
         },
         "compatible_java_all_packs": compatible_java_all,
+        "source_overlay": source_overlay,
     }
 
 

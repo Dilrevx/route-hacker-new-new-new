@@ -12,6 +12,7 @@ def test_scripts_are_present():
     assert (root / "run_native_iris_case.py").is_file()
     assert (root / "run_native_iris_batch.py").is_file()
     assert (root / "summarize_native_iris_metrics.py").is_file()
+    assert (root / "build_codeql_source_overlay.py").is_file()
 
 
 def test_bridge_json_mode_preserves_the_callers_requested_json_shape():
@@ -203,6 +204,49 @@ def test_codeql_bundle_validation_requires_matching_action_packs(tmp_path):
     assert result["codeql_cli_version"] == "2.23.2"
     assert result["iris_codeql_query_version"] == "1.8.1"
     assert result["compatible_java_all_packs"][0]["version"] == "7.7.1"
+
+
+def test_codeql_source_overlay_validation_requires_matching_official_tag(tmp_path, monkeypatch):
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "materialize_iris_case.py"))
+    clean = tmp_path / "iris"
+    (clean / "src").mkdir(parents=True)
+    (clean / "src" / "config.py").write_text('CODEQL_QUERY_VERSION = "1.8.1"\n')
+    codeql = tmp_path / "codeql"
+    query_pack = codeql / "qlpacks" / "codeql" / "java-queries" / "1.8.1"
+    java_all = codeql / "qlpacks" / "codeql" / "java-all" / "7.7.1"
+    query_pack.mkdir(parents=True)
+    java_all.mkdir(parents=True)
+    (query_pack / "qlpack.yml").write_text("name: codeql/java-queries\nversion: 1.8.1\n")
+    (java_all / "qlpack.yml").write_text("name: codeql/java-all\nversion: 7.7.1\n")
+    executable = codeql / "codeql"
+    executable.write_text("#!/bin/sh\necho 'CodeQL command-line toolchain release 2.23.2.'\n")
+    executable.chmod(0o755)
+    source = tmp_path / "source"
+    source.mkdir()
+    (source / ".git").mkdir()
+    manifest = {
+        "kind": "github_codeql_source_tag_overlay",
+        "source_root": str(source),
+        "source_tag": {"tag": "codeql-cli/v2.23.2", "commit": "abc123"},
+    }
+    (codeql / ".iris_codeql_source_overlay.json").write_text(__import__("json").dumps(manifest))
+
+    class Completed:
+        returncode = 0
+        stdout = "abc123\n"
+        stderr = ""
+
+    original_run = module["subprocess"].run
+
+    def fake_run(command, *args, **kwargs):
+        if command[:2] == ["git", "-C"]:
+            return Completed()
+        return original_run(command, *args, **kwargs)
+
+    monkeypatch.setattr(module["subprocess"], "run", fake_run)
+    result = module["validate_codeql_bundle"](clean, codeql)
+
+    assert result["source_overlay"]["source_tag"]["tag"] == "codeql-cli/v2.23.2"
 
 
 def test_traex_alias_injection_preserves_valid_python(tmp_path):
