@@ -1152,6 +1152,43 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Continue observation-only monitoring of the UIMA build. If it reaches `codeql_db_repaired`, generate and verify the normal strict repaired-DB manifest before launching copied-original native IRIS; otherwise retain its terminal evidence and inspect one next candidate before dispatching another repair.
 
+### Round 37 - Preserve Cumulative Repair Decisions and Admit Apache Shiro
+
+**Goal:** Ensure a bounded LLM feedback replan modifies, rather than silently replaces, an already validated generic build-repair plan; then apply the strict repaired-database admission gate to Apache Shiro before starting copied-original native IRIS.
+
+**Scope:** This round covers the IRIS-213 extension-lane cases Apache Shiro `iris213::a5c0fce163896a8ec537` (CVE-2023-46749, CWE-022) and XStream `iris213::314d56bf791dcfb7b222` (CVE-2013-7285, CWE-078), plus the generic Compile Builder v2 feedback-decision merger. It does not modify benchmark sources, archive revisions, official CodeQL queries, modules, project POMs, or frozen comparative cohorts.
+
+**Action:**
+
+- Rebuilt the local-to-remote TraeX bridge as a persistent keepalive-enabled reverse SSH tunnel after the first Shiro/XStream dispatch failed before any model decision due to a stale remote forward. Those first receipts remain transport failures and are not attributed to either project or build policy.
+- Identified a generic feedback-controller error from the Shiro second decision: the old dispatcher executed the feedback decision as a replacement and therefore discarded still-active first-round actions. In this instance the feedback correctly removed `-Dmaven.test.skip=true`, but it also unintentionally dropped the first-round `-Dmaven.buildNumber.skip=true` action.
+- Added `merge_repair_decisions()` to Compile Builder v2. Feedback decisions now incrementally merge into the validated prior plan: toolchain/heap selections replace only their own kind, added and removed build arguments reconcile deterministically, Maven clean is de-duplicated, and `no_safe_action` cannot erase an active plan. The merged result is revalidated against the same local allow-list before execution.
+- Preserved both the incremental feedback decision and the final cumulative validated decision in the round record, and updated the feedback prompt to state that the prior plan remains effective unless an action explicitly replaces or removes it.
+- Shiro's completed feedback build used the exact archive snapshot for `c8a294ab32b29a6e9d4b03bbaa6bae11c42daea1`, rebuilt the full 51-module Maven reactor with return code zero, and produced a fresh CodeQL 2.23.2 Java database.
+- XStream's feedback build correctly switched to approved Java 8 and compiled its parent/core/extension modules, but the final `xstream-distribution` site-generation reactor failed in `org.codehaus.xsite:xsite-maven-plugin`. It has no finalized Java relation evidence and is excluded rather than treating partial reactor progress as a database.
+- Materialized a strict Shiro manifest binding copied-original IRIS only to the repaired `source-001` and `codeql-db` paths, then launched `src/iris.py` through the existing local DeepSeek-V4-Pro bridge with eight IRIS worker threads and the bridge's global concurrency cap of eight.
+
+**Verification:**
+
+- The updated dispatcher and regression test passed remotely:
+  ` /data/lhq/.miniconda/bin/python3 -m pytest -q tests/test_codeql_llm_repair_dispatch.py`
+  with `23 passed, 4 warnings`; the warnings are the existing tar extraction deprecation warnings.
+- Shiro's terminal repair receipt is at:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/compile-repair-run-shiro-xstream-r2/dispatch/w1_llm_repair_receipts.jsonl`.
+  It records `status:"codeql_db_repaired"`, a CodeQL process return code of zero, exact archive-snapshot revision verification, and source-integrity `verified:true` with `changed_path_count:0`.
+- The admitted Shiro database is:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/compile-repair-run-shiro-xstream-r2/dispatch/cases/iris213__a5c0fce163896a8ec537/attempt-001/codeql-attempt-feedback-001/codeql-db`.
+  Its `codeql-database.yml` reports `primaryLanguage: java` and `finalised: true`; it contains 83 Java `.rel` files and a nonempty `exprs.rel`.
+- XStream has terminal status `repair_attempt_failed` in the same receipt ledger. Its failure is retained as an ordinary exact-source build outcome, without a manifest or native-IRIS execution.
+- The Shiro materialization is recorded in:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a23-shiro46749-repaired-db-native-iris/a23-shiro46749-strict-admitted.manifest.v1.jsonl`
+  and runs in the isolated workspace:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/workspaces-a23-shiro46749-native-iris/iris213::a5c0fce163896a8ec537`.
+
+**Decision:** Feedback repair is now cumulative and locally revalidated, preserving the intended architecture of LLM-selected bounded actions rather than project-specific recipes. Shiro satisfies every strict admission condition and proceeds through copied-original IRIS. XStream remains a failed repair with preserved evidence; no partial build/database is reused.
+
+**Next:** Wait for Shiro's artifact-gated native IRIS completion and record its outcome, including label-response validity, token/transport evidence if available, and final vanilla/posthoc paths. Continue future exact-source repairs through the generic cumulative dispatcher, admitting only finalized Java databases with zero source drift.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.

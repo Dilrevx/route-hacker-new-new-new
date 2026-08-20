@@ -527,7 +527,7 @@ def build_repair_feedback_prompt(
     packet: dict[str, Any],
     previous_decision: Mapping[str, Any],
 ) -> str:
-    """Request one distinct, locally-valid repair after a failed execution.
+    """Request an incremental, locally-valid repair after a failed execution.
 
     ``packet`` must be the final packet emitted by ``execute_repair_attempt``.
     Its log is therefore bound to the immediately preceding execution rather
@@ -539,13 +539,107 @@ def build_repair_feedback_prompt(
         f"{build_repair_prompt(packet)}\n"
         "A previous locally validated decision was executed but did not create "
         "a valid CodeQL database. The PACKET now contains the final redacted "
-        "log from that execution. Select a different action set only if the "
-        "fresh failure evidence justifies one; do not repeat this decision:\n"
+        "log from that execution. The previous cumulative decision remains in "
+        "effect unless your new decision explicitly replaces an environment "
+        "selection or removes an approved existing build argument. Select only "
+        "the additional or replacement action(s) justified by the fresh "
+        "failure evidence; do not repeat actions that should remain:\n"
         f"{previous}\n"
-        "The replacement decision is executed from the original build command. "
-        "If an earlier approved action remains necessary, include it again in "
-        "the replacement action set.\n"
-        "Return a complete replacement decision, not an explanation or a patch."
+        "The dispatcher will merge your validated incremental actions with this "
+        "previous decision before executing the original build command. Return "
+        "a complete JSON decision for this incremental change, not an "
+        "explanation or a patch."
+    )
+
+
+def merge_repair_decisions(
+    previous_decision: Mapping[str, Any] | None,
+    incremental_decision: Mapping[str, Any],
+    *,
+    approved_java_homes: Sequence[str],
+    approved_maven_homes: Sequence[str],
+) -> dict[str, Any]:
+    """Merge a feedback action set into the previously executed repair plan.
+
+    Build-feedback responses are incremental by design. Replacing the whole
+    plan causes a second decision to silently discard a still-required first
+    action, while arbitrary command composition would violate the repair
+    boundary. This helper only combines already validated, allow-listed action
+    types and validates the resulting cumulative plan again.
+    """
+
+    if previous_decision is None:
+        return dict(incremental_decision)
+
+    previous_actions = previous_decision.get("actions")
+    incremental_actions = incremental_decision.get("actions")
+    if not isinstance(previous_actions, list) or not isinstance(incremental_actions, list):
+        raise RepairValidationError("validated repair decision lacks actions")
+
+    merged_actions = [
+        dict(action)
+        for action in previous_actions
+        if isinstance(action, Mapping) and action.get("kind") != "retry_same_command"
+    ]
+    for action in incremental_actions:
+        if not isinstance(action, Mapping):
+            raise RepairValidationError("validated repair action must be an object")
+        kind = action.get("kind")
+        if kind == "no_safe_action":
+            raise RepairValidationError("feedback action cannot discard an active repair plan")
+        if kind == "retry_same_command":
+            continue
+        if kind in {"set_java_home", "set_maven_home", "set_ant_home", "set_maven_heap"}:
+            merged_actions = [
+                existing for existing in merged_actions if existing.get("kind") != kind
+            ]
+            merged_actions.append(dict(action))
+            continue
+        if kind in {"append_build_args", "remove_existing_build_args"}:
+            existing = next(
+                (candidate for candidate in merged_actions if candidate.get("kind") == kind),
+                None,
+            )
+            if existing is None:
+                merged_actions.append(dict(action))
+            else:
+                existing["args"] = _append_unique(
+                    list(existing.get("args", [])),
+                    list(action.get("args", [])),
+                )
+            continue
+        if kind == "prepend_maven_clean":
+            if not any(existing.get("kind") == kind for existing in merged_actions):
+                merged_actions.append(dict(action))
+            continue
+        raise RepairValidationError(f"unsupported validated feedback action: {kind}")
+
+    removed_args = {
+        argument
+        for action in merged_actions
+        if action.get("kind") == "remove_existing_build_args"
+        for argument in action.get("args", [])
+    }
+    for action in merged_actions:
+        if action.get("kind") == "append_build_args":
+            action["args"] = [
+                argument for argument in action.get("args", []) if argument not in removed_args
+            ]
+    merged_actions = [
+        action
+        for action in merged_actions
+        if action.get("kind") != "append_build_args" or action.get("args")
+    ]
+    return validate_repair_decision(
+        {
+            "actions": merged_actions,
+            "rationale": (
+                f"{previous_decision.get('rationale', '')} "
+                f"{incremental_decision.get('rationale', '')}"
+            ).strip(),
+        },
+        approved_java_homes=approved_java_homes,
+        approved_maven_homes=approved_maven_homes,
     )
 
 
@@ -862,6 +956,7 @@ def run_case(
     prior_decision_hashes: set[str] = set()
     active_packet = packet
     active_prompt = prompt
+    cumulative_decision: dict[str, Any] | None = None
 
     for decision_round in range(MAX_BUILD_FEEDBACK_REPLAN_ATTEMPTS + 1):
         if decision_round:
@@ -961,7 +1056,13 @@ def run_case(
                 active_prompt = build_repair_correction_prompt(active_packet, error_text)
         assert validated is not None
         assert model_receipt is not None
-        decision_hash = stable_json_sha256(validated)
+        executed_decision = merge_repair_decisions(
+            cumulative_decision,
+            validated,
+            approved_java_homes=approved_java_homes,
+            approved_maven_homes=approved_maven_homes,
+        )
+        decision_hash = stable_json_sha256(executed_decision)
         if decision_hash in prior_decision_hashes:
             return {
                 **base,
@@ -970,7 +1071,7 @@ def run_case(
                 "model_invocation": model_receipt,
                 "model_invocations": model_invocations,
                 "proposal_validation_errors": validation_errors,
-                "validated_decision": validated,
+                "validated_decision": executed_decision,
                 "decision_rounds": decision_rounds,
             }
         prior_decision_hashes.add(decision_hash)
@@ -979,18 +1080,19 @@ def run_case(
             if decision_round == 0
             else case_dir / f"validated-decision-feedback-{decision_round:03d}.json"
         )
-        write_json(decision_path, validated)
+        write_json(decision_path, executed_decision)
         round_record = {
             "decision_round": decision_round,
             "feedback_from_prior_build_failure": decision_round > 0,
             "packet_sha256": active_packet["packet_sha256"],
             "validated_decision_sha256": decision_hash,
             "validated_decision_path": stable_path(decision_path),
-            "validated_decision": validated,
+            "incremental_decision": validated,
+            "validated_decision": executed_decision,
             "model_invocation_index": len(model_invocations) - 1,
             "proposal_validation_errors": round_validation_errors,
         }
-        if validated["actions"] == [{"kind": "no_safe_action"}]:
+        if executed_decision["actions"] == [{"kind": "no_safe_action"}]:
             decision_rounds.append(round_record)
             return {
                 **base,
@@ -998,7 +1100,7 @@ def run_case(
                 "model_invocation": model_receipt,
                 "model_invocations": model_invocations,
                 "proposal_validation_errors": validation_errors,
-                "validated_decision": validated,
+                "validated_decision": executed_decision,
                 "decision_rounds": decision_rounds,
             }
         attempt_dir = (
@@ -1031,7 +1133,7 @@ def run_case(
             }
         attempt = execute_repair_attempt(
             execution_failed_receipt,
-            validated,
+            executed_decision,
             attempt_dir=attempt_dir,
             timeout_seconds=codeql_timeout_seconds,
             inactivity_timeout_seconds=codeql_inactivity_timeout_seconds,
@@ -1051,7 +1153,7 @@ def run_case(
                 "model_invocation": model_receipt,
                 "model_invocations": model_invocations,
                 "proposal_validation_errors": validation_errors,
-                "validated_decision": validated,
+                "validated_decision": executed_decision,
                 "repair_attempt": attempt,
                 "repair_attempts": decision_rounds,
                 "build_feedback_replan_count": decision_round,
@@ -1063,7 +1165,7 @@ def run_case(
                 "model_invocation": model_receipt,
                 "model_invocations": model_invocations,
                 "proposal_validation_errors": validation_errors,
-                "validated_decision": validated,
+                "validated_decision": executed_decision,
                 "repair_attempt": attempt,
                 "repair_attempts": decision_rounds,
                 "build_feedback_replan_count": decision_round,
@@ -1079,13 +1181,14 @@ def run_case(
                 "model_invocation": model_receipt,
                 "model_invocations": model_invocations,
                 "proposal_validation_errors": validation_errors,
-                "validated_decision": validated,
+                "validated_decision": executed_decision,
                 "repair_attempt": attempt,
                 "repair_attempts": decision_rounds,
                 "build_feedback_replan_count": decision_round,
             }
         active_packet = refreshed_packet
-        active_prompt = build_repair_feedback_prompt(active_packet, validated)
+        cumulative_decision = executed_decision
+        active_prompt = build_repair_feedback_prompt(active_packet, cumulative_decision)
     raise AssertionError("build feedback replan loop exhausted unexpectedly")
 
 

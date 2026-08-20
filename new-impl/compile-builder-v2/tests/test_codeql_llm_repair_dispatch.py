@@ -655,8 +655,11 @@ def test_controller_replans_once_from_fresh_failed_build_evidence(
         kwargs["historical_toolchain_receipt"] is failed for kwargs in execution_kwargs
     )
     assert executed_decisions[0] != executed_decisions[1]
+    assert executed_decisions[1]["actions"] == [
+        {"kind": "append_build_args", "args": ["-Dcheckstyle.skip=true", "-Denforcer.skip=true"]}
+    ]
     assert "fresh checkstyle network failure" in prompts[1]
-    assert "Select a different action set" in prompts[1]
+    assert "previous cumulative decision remains in effect" in prompts[1]
 
 
 def test_controller_retries_one_transport_failure_before_validating_decision(
