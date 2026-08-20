@@ -191,6 +191,30 @@ def validated_source_overlay(codeql_dir: Path, cli_version: str) -> dict[str, An
     }
 
 
+def compile_source_overlay_probe(codeql_dir: Path, query_pack: Path) -> dict[str, str]:
+    """Compile one official query so a source-pack projection cannot be metadata-only."""
+
+    candidates = sorted((query_pack / "Security" / "CWE").glob("CWE-*/*.ql"))
+    if not candidates:
+        raise RuntimeError(
+            "CodeQL source overlay has no official Java CWE query available for compile probing: "
+            f"{query_pack}"
+        )
+    probe = candidates[0]
+    completed = subprocess.run(
+        [str(codeql_dir / "codeql"), "query", "compile", str(probe)],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if completed.returncode != 0:
+        raise RuntimeError(
+            "CodeQL source overlay cannot compile an official Java CWE query: "
+            f"{probe}; {completed.stderr.strip()[-1500:]}"
+        )
+    return {"query": str(probe), "status": "compiled"}
+
+
 def validate_codeql_bundle(clean_root: Path, codeql_dir: Path) -> dict[str, Any]:
     """Require Action-bundle packs or a matching official source-tag overlay."""
 
@@ -230,6 +254,11 @@ def validate_codeql_bundle(clean_root: Path, codeql_dir: Path) -> dict[str, Any]
             "CodeQL Action bundle lacks a codeql/java-all pack compatible with "
             f"CLI {cli_version}; expected a qlpack buildMetadata.cliVersion match"
         )
+    compile_probe = (
+        compile_source_overlay_probe(codeql_dir, query_pack)
+        if source_overlay
+        else None
+    )
     return {
         "codeql_cli_version": cli_version,
         "iris_codeql_query_version": required_query_version,
@@ -239,6 +268,7 @@ def validate_codeql_bundle(clean_root: Path, codeql_dir: Path) -> dict[str, Any]
         },
         "compatible_java_all_packs": compatible_java_all,
         "source_overlay": source_overlay,
+        "source_overlay_compile_probe": compile_probe,
     }
 
 

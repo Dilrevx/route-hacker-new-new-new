@@ -103,15 +103,100 @@ def discover_codeql_packs(source_root: Path) -> list[dict[str, str]]:
     ]
 
 
-def symlink_exact(source: Path, destination: Path) -> None:
-    destination.parent.mkdir(parents=True, exist_ok=True)
-    destination.symlink_to(source, target_is_directory=True)
+def workspace_dependency_projection(
+    qlpack_path: Path,
+    versions_by_name: dict[str, str],
+) -> tuple[str, list[dict[str, str]]]:
+    """Expand only `${workspace}` references into versions from the same tag."""
+
+    source = qlpack_path.read_text(encoding="utf-8")
+    replacements: list[dict[str, str]] = []
+
+    def replace(match: re.Match[str]) -> str:
+        indentation, name = match.groups()
+        version = versions_by_name.get(name)
+        if not version:
+            raise RuntimeError(
+                f"{qlpack_path} has a workspace dependency without a matching source pack: {name}"
+            )
+        replacements.append({"name": name, "version": version})
+        return f"{indentation}{name}: {version}"
+
+    rendered = re.sub(
+        r"(?m)^(\s+)(codeql/[A-Za-z0-9_-]+):\s*\$\{workspace\}\s*$",
+        replace,
+        source,
+    )
+    return rendered, replacements
+
+
+def pack_dependencies(
+    qlpack_path: Path,
+    versions_by_name: dict[str, str],
+) -> list[str]:
+    source = qlpack_path.read_text(encoding="utf-8")
+    dependencies: list[str] = []
+    for match in re.finditer(r"(?m)^\s+(codeql/[A-Za-z0-9_-]+):\s*([^\s#]+)", source):
+        name, version = match.groups()
+        if version == "${workspace}" and name not in versions_by_name:
+            raise RuntimeError(
+                f"{qlpack_path} has a workspace dependency without a matching source pack: {name}"
+            )
+        dependencies.append(name)
+    return dependencies
+
+
+def required_pack_closure(packs: list[dict[str, str]]) -> list[dict[str, str]]:
+    by_name: dict[str, dict[str, str]] = {}
+    for pack in packs:
+        name = str(pack["name"])
+        version = str(pack["version"])
+        prior = by_name.get(name)
+        if prior is None or version > str(prior["version"]):
+            by_name[name] = pack
+    pending = ["codeql/java-queries"]
+    selected: set[str] = set()
+    while pending:
+        name = pending.pop()
+        if name in selected:
+            continue
+        pack = by_name.get(name)
+        if not pack:
+            raise RuntimeError(f"required source dependency is absent: {name}")
+        selected.add(name)
+        pending.extend(pack_dependencies(Path(pack["source"]) / "qlpack.yml", {
+            key: str(value["version"]) for key, value in by_name.items()
+        }))
+    return [by_name[name] for name in sorted(selected)]
+
+
+def project_pack(
+    pack: dict[str, str],
+    versions_by_name: dict[str, str],
+    output_root: Path,
+) -> dict[str, object]:
+    source = Path(pack["source"])
+    destination = output_root / "qlpacks" / Path(pack["name"]) / pack["version"]
+    shutil.copytree(source, destination, symlinks=True)
+    qlpack = destination / "qlpack.yml"
+    rendered, replacements = workspace_dependency_projection(
+        source / "qlpack.yml",
+        versions_by_name,
+    )
+    qlpack.write_text(rendered, encoding="utf-8")
+    return {
+        **pack,
+        "projected_path": str(destination),
+        "source_qlpack_sha256": sha256_path(source / "qlpack.yml"),
+        "projected_qlpack_sha256": sha256_path(qlpack),
+        "workspace_dependency_replacements": replacements,
+    }
 
 
 def build_overlay(codeql_dir: Path, source_root: Path, output_dir: Path) -> dict[str, object]:
     cli_version = codeql_cli_version(codeql_dir)
     source_provenance = validate_official_source_tag(source_root, cli_version)
-    packs = discover_codeql_packs(source_root)
+    packs = required_pack_closure(discover_codeql_packs(source_root))
     required = {
         "codeql/java-queries": False,
         "codeql/java-all": False,
@@ -130,10 +215,12 @@ def build_overlay(codeql_dir: Path, source_root: Path, output_dir: Path) -> dict
     if output_dir.exists():
         raise RuntimeError(f"refusing to replace existing overlay: {output_dir}")
     output_dir.mkdir(parents=True)
-    symlink_exact(codeql_dir / "codeql", output_dir / "codeql")
-    for pack in packs:
-        name_path = Path(pack["name"])
-        symlink_exact(Path(pack["source"]), output_dir / "qlpacks" / name_path / pack["version"])
+    (output_dir / "codeql").symlink_to(codeql_dir / "codeql")
+    versions_by_name = {str(pack["name"]): str(pack["version"]) for pack in packs}
+    projected_packs = [
+        project_pack(pack, versions_by_name, output_dir)
+        for pack in packs
+    ]
     manifest = {
         "schema_version": "iris_codeql_source_overlay.v1",
         "created_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
@@ -145,11 +232,11 @@ def build_overlay(codeql_dir: Path, source_root: Path, output_dir: Path) -> dict
         },
         "source_tag": source_provenance,
         "source_root": str(source_root),
-        "packs": packs,
+        "packs": projected_packs,
         "contract": {
             "official_source_tag_matches_cli_version": True,
-            "no_query_files_copied_or_modified": True,
-            "overlay_contains_symlinks_only": True,
+            "query_files_copied_verbatim_from_official_source_tag": True,
+            "only_qlpack_workspace_dependencies_are_rendered": True,
             "not_an_action_bundle": True,
         },
     }
