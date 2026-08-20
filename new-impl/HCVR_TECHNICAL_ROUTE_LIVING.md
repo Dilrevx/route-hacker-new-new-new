@@ -1215,6 +1215,38 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Preserve Shiro's strict DB and native receipts as a completed baseline row. Continue selecting exact-source cases one at a time through the generic cumulative-repair dispatcher; only terminal finalized Java databases may enter the same native IRIS protocol.
 
+### Round 39 - Run Current-Wrapper Native IRIS for XStream 2020 and JStachio
+
+**Goal:** Exercise two further strictly admitted repaired Java CodeQL databases through the copied-original IRIS entrypoint, while keeping the repair queue source-bound and restoring generic bridge availability without changing IRIS, benchmark source, or database contents.
+
+**Scope:** This round covers XStream `iris213::a9178b8fc1dc3822aaa3` (CVE-2020-26217, CWE-078) and JStachio `iris213::4706c69734a04621c9d1` (CVE-2023-33962, CWE-079) in the IRIS-213 extension lane. It also audits the generic Compile Builder v2 input set. It does not alter benchmark sources, archive revisions, official IRIS queries, repaired databases, or frozen comparative cohorts.
+
+**Action:**
+
+- Re-admitted XStream 2020 from its terminal `codeql_db_repaired` receipt: exact archive/source verification is true, source-integrity `changed_path_count` is zero, CodeQL database creation returned zero, and the finalized Java database has 96 Java relation files with nonempty expression evidence.
+- Started copied-original `src/iris.py` for XStream using a fresh materialized case workspace, the CodeQL 2.23.2 official source-overlay wrapper, `gpt-traex-pro`, eight IRIS worker threads, and the bridge-wide concurrency cap of eight. This replaces its earlier obsolete absolute-query-path failure; the old workspace is not reused.
+- Re-admitted JStachio from its terminal `codeql_db_repaired` receipt with the same strict gate: exact archive/source verification, zero source drift, CodeQL return code zero, a finalized Java database, and 98 Java relation files.
+- Materialized a new JStachio workspace rather than reusing the old execution directory that failed before Stage 1 on obsolete CodeQL pack resolution. An initial launcher typo referenced a nonexistent workspace subdirectory and exited before the runner started; it produced no IRIS artifact, model call, source change, or database change. The corrected launch invokes the generic native runner from the package root and is active.
+- Audited the generic repair-input inventories. The active small input folder has only two rows, but `compile-repair-run-nifi-r1/full-inputs/` contains all 47 eligible projection cases with matching exact-source and historical failed-CodeQL receipts. These receipts are the reusable provenance input for generic re-preparation; no receipt is synthesized or hand-written.
+- Detected that the remote loopback bridge forward had become a stale listener after its SSH transport disappeared. The local DeepSeek-V4-Pro bridge remained healthy. Closed only the isolated stale forwarding session, rebuilt the reverse forward with `ExitOnForwardFailure`, `ServerAliveInterval=30`, and `ServerAliveCountMax=3`, then verified remote `http://127.0.0.1:18889/healthz`. Existing IRIS processes remained running and resumed through their existing bounded transport-retry behavior.
+
+**Verification:**
+
+- XStream strict manifest:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a24-xstream2020-repaired-db-native-iris/a24-xstream2020-strict-admitted.manifest.v1.jsonl`.
+  Its isolated workspace is:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/workspaces-a24-xstream2020-native-iris/iris213::a9178b8fc1dc3822aaa3`.
+- JStachio strict manifest:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a25-jstachio-repaired-db-native-iris/a25-jstachio-strict-admitted.manifest.v1.jsonl`.
+  Its isolated workspace is:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/workspaces-a25-jstachio-native-iris/iris213::4706c69734a04621c9d1`.
+- At this update, both copied-original `src/iris.py` processes remain active. Bridge metrics record 69 completed DeepSeek-V4-Pro calls for XStream and 5 for JStachio after restoration; no token total is claimed because the bridge's reported token field remains null.
+- The current remote bridge health endpoint returns `{"status":"ok","transport":"traex"}` and the keepalive-enabled tunnel carries the active IRIS connections.
+
+**Decision:** XStream 2020 and JStachio are active strict native-IRIS evaluations, not completed result rows. The full 47-case exact-source repair-input set is available through generic preparation, so future compile repair can extend beyond the prior two-case folder without weakening source provenance. Bridge recovery is infrastructure-only and preserves the existing native IRIS and bounded-retry protocols.
+
+**Next:** Wait for each active runner's artifact-gated terminal summary, validate required artifacts and JSON-list response audits, then record each completed or failed outcome separately. After those bounded runs free capacity, regenerate a generic repair input directory from the 47 receipt pairs and dispatch only individually reviewed cases through Compile Builder v2.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.
