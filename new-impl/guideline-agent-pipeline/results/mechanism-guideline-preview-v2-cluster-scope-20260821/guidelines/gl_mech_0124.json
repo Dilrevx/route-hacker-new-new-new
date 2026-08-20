@@ -1,0 +1,80 @@
+{
+  "cluster_summary": "This cluster comprises various cryptographic implementation errors including missing validation of cryptographic operation results and input parameters, carry propagation bugs in arithmetic, side-channel leakage due to non-constant-time code, integer overflow, default insecure modes, and improper order of operations. These flaws lead to predictable keys, oracle attacks, keystream reuse, and out-of-bounds access.",
+  "created_at": "2026-08-20T19:54:08+00:00",
+  "cve_ids": [
+    "CVE-2017-13098",
+    "CVE-2020-25022",
+    "CVE-2020-25023",
+    "CVE-2021-41272",
+    "CVE-2026-33306",
+    "CVE-2026-41207"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0027__mech_toctou_mutable_object_reuse",
+  "guideline_id": "gl_mech_0124",
+  "guideline_text": "Trace mutable files, paths, objects, identities, request fields, or shared state that are checked before use into sensitive file, state, permission, memory, or resource effects that depend on the earlier check. Report code paths where the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 6 historical CVE example(s), not as a project-specific signature. A safe implementation should bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary.",
+  "mechanism": {
+    "aliases": [
+      "TOCTOU",
+      "check then use race",
+      "double fetch",
+      "stale object reuse"
+    ],
+    "family": "race_or_lifecycle",
+    "mechanism_id": "mech_toctou_mutable_object_reuse",
+    "missing_guard": "the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect",
+    "name": "time-of-check to time-of-use on mutable object",
+    "sink_shape": "sensitive file, state, permission, memory, or resource effects that depend on the earlier check",
+    "source_shape": "mutable files, paths, objects, identities, request fields, or shared state that are checked before use",
+    "typical_fix": "bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2017-13098",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    27
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 27,
+      "fix_strategy": "Add explicit checks after each cryptographic call (null return, exception, or length validation) and throw exceptions or treat invalid results as errors.",
+      "members": [
+        "CVE-2026-41207",
+        "CVE-2017-13098"
+      ],
+      "name": "Missing validation of cryptographic output for correctness",
+      "root_cause": "Caller assumes cryptographic functions always succeed and does not check return values or output validity, leading to use of all-zero keys or processing of invalid plaintext that leaks information."
+    },
+    {
+      "cluster_id": 27,
+      "fix_strategy": "Use wider integer types (e.g., long) for iteration counts; add range checks after conversion to catch negative values.",
+      "members": [
+        "CVE-2026-33306",
+        "CVE-2021-41272"
+      ],
+      "name": "Integer overflow or signedness confusion in cryptographic parameters",
+      "root_cause": "Signed integer overflow or unsigned-to-signed conversion without range checking causes loop bounds to become negative or shift amounts to be interpreted incorrectly."
+    },
+    {
+      "cluster_id": 27,
+      "fix_strategy": "Add validation at the start of each method: check that offsets and lengths are non-negative and within array bounds; throw IllegalArgumentException otherwise.",
+      "members": [
+        "CVE-2020-25023",
+        "CVE-2020-25022"
+      ],
+      "name": "Missing bounds validation on array offsets and lengths",
+      "root_cause": "Array offset and length parameters are not validated before use, allowing negative or out-of-range values to cause out-of-bounds memory access."
+    }
+  ],
+  "tags": [
+    "race_or_lifecycle",
+    "mech_toctou_mutable_object_reuse",
+    "TOCTOU",
+    "check then use race",
+    "double fetch",
+    "stale object reuse"
+  ]
+}

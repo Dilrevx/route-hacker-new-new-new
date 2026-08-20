@@ -1,0 +1,54 @@
+{
+  "cluster_summary": "A deliberately broad historical cluster that mixes naming lookups and ordinary outbound URL fetches.",
+  "created_at": "2026-08-20T19:54:03+00:00",
+  "cve_ids": [
+    "CVE-2099-1002"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0007__mech_ssrf_webhook_url_fetch",
+  "guideline_id": "gl_mech_0002",
+  "guideline_text": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets.",
+  "mechanism": {
+    "aliases": [
+      "webhook SSRF",
+      "callback URL fetch",
+      "user controlled URL fetch",
+      "outbound HTTP client SSRF"
+    ],
+    "family": "ssrf",
+    "mechanism_id": "mech_ssrf_webhook_url_fetch",
+    "missing_guard": "scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request",
+    "name": "attacker-controlled webhook or callback URL fetch",
+    "sink_shape": "outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers",
+    "source_shape": "attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations",
+    "typical_fix": "enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2099-1002",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    7
+  ],
+  "source_fingerprint": "e719fd5e44e665e0edcc54f47bde1c2a5a8eb92bc34ce00284159d4c4b1c7d89",
+  "source_method": "llm_native",
+  "sub_patterns": [
+    {
+      "cluster_id": 7,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2099-1002"
+      ],
+      "name": "outbound lookup and request bugs",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "ssrf",
+    "mech_ssrf_webhook_url_fetch",
+    "webhook SSRF",
+    "callback URL fetch",
+    "user controlled URL fetch",
+    "outbound HTTP client SSRF"
+  ]
+}

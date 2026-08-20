@@ -145,57 +145,6 @@ CWE_GUIDELINES = {
     "CWE-1336": GUIDELINES["template_expression_injection"],
 }
 
-BROAD_GUIDELINE_TYPES = {"iris", "m9_wave2", "m9_wave4", "m9_expansion"}
-
-MECHANISM_GUIDELINES = [
-    (
-        re.compile(r"\b(jndi|ldap|rmi|naming context|initialcontext)\b", re.I),
-        (
-            "Audit whether attacker-controlled names, URLs, headers, or "
-            "configuration can reach JNDI, LDAP, RMI, naming-context, or remote "
-            "lookup APIs without constraining the lookup scheme, authority, "
-            "factory, object type, and network destination."
-        ),
-    ),
-    (
-        re.compile(r"\b(jmx|mbean|rmi connector|management connector)\b", re.I),
-        (
-            "Audit whether management, JMX, MBean, RMI, or administrative "
-            "connectors can be exposed or created without authentication, "
-            "authorization, local binding, or a restricted trusted interface."
-        ),
-    ),
-    (
-        re.compile(r"\b(spel|ognl|velocity|freemarker|thymeleaf|template|expression|macro)\b", re.I),
-        GUIDELINES["template_expression_injection"],
-    ),
-    (
-        re.compile(r"\b(beanutils|bean introspection|introspector|property descriptor|classloader|class loader)\b", re.I),
-        (
-            "Audit whether attacker-controlled property names, bean paths, "
-            "reflection metadata, or class-loader related fields can reach bean "
-            "introspection, property-copy, conversion, or reflective access APIs "
-            "without suppressing dangerous properties and nested meta-properties."
-        ),
-    ),
-    (
-        re.compile(r"\b(deseriali[sz]ation|deserialize|serializer|objectinputstream|pickle|marshal)\b", re.I),
-        CWE_GUIDELINES["CWE-502"],
-    ),
-    (
-        re.compile(r"\b(ssrf|server-side request forgery|webhook|metadata service|169\\.254\\.169\\.254|url fetch|http client)\b", re.I),
-        GUIDELINES["ssrf"],
-    ),
-    (
-        re.compile(r"\b(open redirect|redirect_uri|return url|callback url|location header)\b", re.I),
-        GUIDELINES["open_redirect"],
-    ),
-    (
-        re.compile(r"\b(path traversal|zip slip|archive entry|tar entry|canonical path|directory traversal)\b", re.I),
-        GUIDELINES["path_archive_traversal"],
-    ),
-]
-
 
 def read_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
@@ -553,27 +502,6 @@ def direct_guideline_text(case: dict[str, Any]) -> str:
     return ""
 
 
-def infer_mechanism_guideline(case: dict[str, Any]) -> str:
-    classification = case.get("classification") or {}
-    vuln = case.get("vulnerability") or {}
-    cwe_descriptions = classification.get("cwe_descriptions") or {}
-    haystack_parts = [
-        str(case.get("identity_key") or ""),
-        str(classification.get("primary_hcvr_type") or ""),
-        " ".join(str(value) for value in classification.get("hcvr_types") or []),
-        " ".join(str(value) for value in classification.get("cwe_ids") or []),
-        " ".join(str(value) for value in cwe_descriptions.values()),
-        str(vuln.get("id") or ""),
-        str(vuln.get("description") or ""),
-        " ".join(str(value) for value in vuln.get("aliases") or []),
-    ]
-    haystack = "\n".join(part for part in haystack_parts if part)
-    for pattern, guideline in MECHANISM_GUIDELINES:
-        if pattern.search(haystack):
-            return guideline
-    return ""
-
-
 def build_guideline(case: dict[str, Any]) -> str:
     classification = case.get("classification") or {}
     typ = classification.get("primary_hcvr_type") or ""
@@ -581,8 +509,6 @@ def build_guideline(case: dict[str, Any]) -> str:
     vuln = case.get("vulnerability") or {}
     description = vuln.get("description") or ""
     base = direct_guideline_text(case)
-    if typ in BROAD_GUIDELINE_TYPES or typ not in GUIDELINES:
-        base = base or infer_mechanism_guideline(case)
     if not base:
         base = GUIDELINES.get(typ, "")
     if not base:

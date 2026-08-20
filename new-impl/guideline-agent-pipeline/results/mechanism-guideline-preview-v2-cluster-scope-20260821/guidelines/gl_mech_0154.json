@@ -1,0 +1,54 @@
+{
+  "cluster_summary": "A cluster of vulnerabilities where user-controlled wiki content is executed with the wrong security context (e.g., viewer's or page author's privileges instead of content owner's) or where missing required-rights analyses allow low-privileged users to inject script content that later executes with elevated privileges.",
+  "created_at": "2026-08-20T19:54:08+00:00",
+  "cve_ids": [
+    "CVE-2023-35166",
+    "CVE-2025-58365"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0036__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0154",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2023-35166",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    36
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 36,
+      "fix_strategy": "Execute content with the correct user's rights (author, creator) or parse immediately in the correct context, and disable async/caching that could reuse privileged outputs.",
+      "members": [
+        "CVE-2025-58365",
+        "CVE-2023-35166"
+      ],
+      "name": "Content executed under wrong user's security context",
+      "root_cause": "User-controlled content (macro parameters, footnotes, UI extensions, cached results) is rendered using the privileges of a different user (viewer, page author, or a high-privilege entity) instead of the content author or creator, allowing privilege escalation."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

@@ -1,0 +1,1839 @@
+{
+  "items": [
+    {
+      "cve_count": 12,
+      "file_name": "gl_mech_0001.json",
+      "guideline_group_key": "mech_bean_property_reflection_escape",
+      "guideline_id": "gl_mech_0001",
+      "guideline_preview": "Trace attacker-controlled property names, bean paths, binding keys, or conversion metadata into bean introspection, property-copy, nested binding, conversion, or reflective access APIs. Report code paths where dangerous meta-properties, nes",
+      "mechanism_family": "reflection_or_binding",
+      "mechanism_id": "mech_bean_property_reflection_escape",
+      "mechanism_name": "bean property reflection escape",
+      "source_cluster_ids": [
+        9,
+        25
+      ],
+      "top_tags": [
+        "reflection_or_binding",
+        "mech_bean_property_reflection_escape",
+        "BeanUtils property injection",
+        "bean introspection",
+        "classloader property escape",
+        "nested property binding"
+      ]
+    },
+    {
+      "cve_count": 110,
+      "file_name": "gl_mech_0002.json",
+      "guideline_group_key": "mech_deserialization_untrusted_type_graph",
+      "guideline_id": "gl_mech_0002",
+      "guideline_preview": "Trace untrusted serialized bytes, object streams, pickles, marshaled payloads, or type metadata into deserializers that instantiate classes, reconstruct object graphs, or invoke callbacks during object creation. Report code paths where allo",
+      "mechanism_family": "deserialization",
+      "mechanism_id": "mech_deserialization_untrusted_type_graph",
+      "mechanism_name": "untrusted deserialization with attacker-controlled type graph",
+      "source_cluster_ids": [
+        0,
+        7,
+        9,
+        10,
+        11,
+        17,
+        33
+      ],
+      "top_tags": [
+        "deserialization",
+        "mech_deserialization_untrusted_type_graph",
+        "unsafe deserialization",
+        "ObjectInputStream.readObject",
+        "pickle load",
+        "marshal load"
+      ]
+    },
+    {
+      "cve_count": 20,
+      "file_name": "gl_mech_0003.json",
+      "guideline_group_key": "mech_jndi_untrusted_lookup_target",
+      "guideline_id": "gl_mech_0003",
+      "guideline_preview": "Trace attacker-controlled names, URLs, headers, configuration values, or lookup keys into JNDI, LDAP, RMI, naming-context, or remote lookup APIs. Report code paths where the lookup scheme, authority, object factory, object type, and network",
+      "mechanism_family": "remote_lookup_or_ssrf",
+      "mechanism_id": "mech_jndi_untrusted_lookup_target",
+      "mechanism_name": "attacker-controlled JNDI lookup target",
+      "source_cluster_ids": [
+        9,
+        11,
+        15
+      ],
+      "top_tags": [
+        "remote_lookup_or_ssrf",
+        "mech_jndi_untrusted_lookup_target",
+        "JNDI lookup",
+        "LDAP lookup",
+        "RMI lookup",
+        "InitialContext.lookup"
+      ]
+    },
+    {
+      "cve_count": 94,
+      "file_name": "gl_mech_0004.json",
+      "guideline_group_key": "mech_missing_authentication_before_privileged_action",
+      "guideline_id": "gl_mech_0004",
+      "guideline_preview": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller iden",
+      "mechanism_family": "authentication",
+      "mechanism_id": "mech_missing_authentication_before_privileged_action",
+      "mechanism_name": "missing authentication before privileged action",
+      "source_cluster_ids": [
+        5,
+        6,
+        8,
+        12,
+        13,
+        14,
+        15,
+        16,
+        22,
+        23,
+        25,
+        28,
+        29,
+        30,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37
+      ],
+      "top_tags": [
+        "authentication",
+        "mech_missing_authentication_before_privileged_action",
+        "missing authentication",
+        "unauthenticated privileged action",
+        "missing login check"
+      ]
+    },
+    {
+      "cve_count": 76,
+      "file_name": "gl_mech_0005.json",
+      "guideline_group_key": "mech_object_owner_scope_missing_authz",
+      "guideline_id": "gl_mech_0005",
+      "guideline_preview": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where ",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_object_owner_scope_missing_authz",
+      "mechanism_name": "missing object-owner or tenant-scope authorization",
+      "source_cluster_ids": [
+        3,
+        6,
+        19,
+        22,
+        23,
+        28,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_object_owner_scope_missing_authz",
+        "object ownership authorization",
+        "tenant scope check",
+        "IDOR",
+        "resource scoped authorization"
+      ]
+    },
+    {
+      "cve_count": 156,
+      "file_name": "gl_mech_0006.json",
+      "guideline_group_key": "mech_path_traversal_missing_canonical_prefix",
+      "guideline_id": "gl_mech_0006",
+      "guideline_preview": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under",
+      "mechanism_family": "filesystem",
+      "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+      "mechanism_name": "path traversal through missing canonical prefix check",
+      "source_cluster_ids": [
+        0,
+        2,
+        4,
+        11,
+        16,
+        18,
+        21,
+        27
+      ],
+      "top_tags": [
+        "filesystem",
+        "mech_path_traversal_missing_canonical_prefix",
+        "path traversal",
+        "directory traversal",
+        "Zip Slip",
+        "archive entry traversal"
+      ]
+    },
+    {
+      "cve_count": 46,
+      "file_name": "gl_mech_0007.json",
+      "guideline_group_key": "mech_ssrf_redirect_following_client",
+      "guideline_id": "gl_mech_0007",
+      "guideline_preview": "Trace attacker-controlled URLs or server-controlled redirect responses into HTTP clients that automatically follow redirects or reuse a previously validated URL decision. Report code paths where the final redirected scheme, host, port, and ",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_redirect_following_client",
+      "mechanism_name": "SSRF through redirect-following client",
+      "source_cluster_ids": [
+        5,
+        11,
+        18
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_redirect_following_client",
+        "redirect-follow SSRF",
+        "HTTP redirect SSRF",
+        "Location header SSRF"
+      ]
+    },
+    {
+      "cve_count": 25,
+      "file_name": "gl_mech_0008.json",
+      "guideline_group_key": "mech_ssrf_webhook_url_fetch",
+      "guideline_id": "gl_mech_0008",
+      "guideline_preview": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host, ",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_webhook_url_fetch",
+      "mechanism_name": "attacker-controlled webhook or callback URL fetch",
+      "source_cluster_ids": [
+        5,
+        11,
+        16,
+        18,
+        23,
+        24,
+        25,
+        37
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_webhook_url_fetch",
+        "webhook SSRF",
+        "callback URL fetch",
+        "user controlled URL fetch",
+        "outbound HTTP client SSRF"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0009.json",
+      "guideline_group_key": "mech_state_precondition_missing_before_effect",
+      "guideline_id": "gl_mech_0009",
+      "guideline_preview": "Trace requests or events that select an operation, workflow step, account, resource, or state transition into sensitive state changes, billing effects, entitlement changes, resource consumption, or workflow transitions. Report code paths wh",
+      "mechanism_family": "business_logic",
+      "mechanism_id": "mech_state_precondition_missing_before_effect",
+      "mechanism_name": "missing business-state precondition before sensitive effect",
+      "source_cluster_ids": [
+        12,
+        27
+      ],
+      "top_tags": [
+        "business_logic",
+        "mech_state_precondition_missing_before_effect",
+        "business state precondition",
+        "state transition guard",
+        "lifecycle check",
+        "quota check"
+      ]
+    },
+    {
+      "cve_count": 75,
+      "file_name": "gl_mech_0010.json",
+      "guideline_group_key": "mech_template_expression_untrusted_eval",
+      "guideline_id": "gl_mech_0010",
+      "guideline_preview": "Trace attacker-controlled template text, expression strings, macro content, or rendering parameters into template engines, expression evaluators, macro renderers, or scriptable configuration evaluators. Report code paths where untrusted exp",
+      "mechanism_family": "code_or_template_injection",
+      "mechanism_id": "mech_template_expression_untrusted_eval",
+      "mechanism_name": "untrusted template or expression evaluation",
+      "source_cluster_ids": [
+        3,
+        12,
+        15,
+        24,
+        25,
+        29,
+        30,
+        31,
+        32,
+        36
+      ],
+      "top_tags": [
+        "code_or_template_injection",
+        "mech_template_expression_untrusted_eval",
+        "template injection",
+        "expression language injection",
+        "SpEL injection",
+        "OGNL injection"
+      ]
+    },
+    {
+      "cve_count": 54,
+      "file_name": "gl_mech_0011.json",
+      "guideline_group_key": "mech_toctou_mutable_object_reuse",
+      "guideline_id": "gl_mech_0011",
+      "guideline_preview": "Trace mutable files, paths, objects, identities, request fields, or shared state that are checked before use into sensitive file, state, permission, memory, or resource effects that depend on the earlier check. Report code paths where the c",
+      "mechanism_family": "race_or_lifecycle",
+      "mechanism_id": "mech_toctou_mutable_object_reuse",
+      "mechanism_name": "time-of-check to time-of-use on mutable object",
+      "source_cluster_ids": [
+        1,
+        11,
+        12,
+        14,
+        17,
+        18,
+        19,
+        21,
+        22,
+        26,
+        27,
+        33
+      ],
+      "top_tags": [
+        "race_or_lifecycle",
+        "mech_toctou_mutable_object_reuse",
+        "TOCTOU",
+        "check then use race",
+        "double fetch",
+        "stale object reuse"
+      ]
+    },
+    {
+      "cve_count": 5,
+      "file_name": "gl_mech_0012.json",
+      "guideline_group_key": "pending_mech_cluster_11_insufficient_input_validation_in_jdbc_jndi_url_construction_and_sql_q",
+      "guideline_id": "gl_mech_0012",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_11_insufficient_input_validation_in_jdbc_jndi_url_construction_and_sql_q",
+      "mechanism_name": "Insufficient input validation in JDBC/JNDI URL construction and SQL query assembly",
+      "source_cluster_ids": [
+        11
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_11_insufficient_input_validation_in_jdbc_jndi_url_construction_and_sql_q",
+        "name",
+        "user-controlled",
+        "reassembling",
+        "canonicalization"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0013.json",
+      "guideline_group_key": "pending_mech_cluster_11_sql_injection_via_direct_string_concatenation",
+      "guideline_id": "gl_mech_0013",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_11_sql_injection_via_direct_string_concatenation",
+      "mechanism_name": "SQL injection via direct string concatenation",
+      "source_cluster_ids": [
+        11
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_11_sql_injection_via_direct_string_concatenation",
+        "name",
+        "vulnerabilities",
+        "names",
+        "critical"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0014.json",
+      "guideline_group_key": "pending_mech_cluster_12_incomplete_hql_structural_validation_allowing_injection_via_where_or_",
+      "guideline_id": "gl_mech_0014",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_12_incomplete_hql_structural_validation_allowing_injection_via_where_or_",
+      "mechanism_name": "Incomplete HQL structural validation allowing injection via WHERE or short-form statements",
+      "source_cluster_ids": [
+        12
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_12_incomplete_hql_structural_validation_allowing_injection_via_where_or_",
+        "complete",
+        "vulnerabilities",
+        "names",
+        "condition"
+      ]
+    },
+    {
+      "cve_count": 3,
+      "file_name": "gl_mech_0015.json",
+      "guideline_group_key": "pending_mech_cluster_12_missing_allow_list_validation_for_order_by_column_names",
+      "guideline_id": "gl_mech_0015",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_12_missing_allow_list_validation_for_order_by_column_names",
+      "mechanism_name": "Missing allow-list validation for ORDER BY column names",
+      "source_cluster_ids": [
+        12
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_12_missing_allow_list_validation_for_order_by_column_names",
+        "name",
+        "vulnerabilities",
+        "names",
+        "user-controlled"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0016.json",
+      "guideline_group_key": "pending_mech_cluster_12_missing_configuration_check_for_sorting_on_obfuscated_fields",
+      "guideline_id": "gl_mech_0016",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_12_missing_configuration_check_for_sorting_on_obfuscated_fields",
+      "mechanism_name": "Missing configuration check for sorting on obfuscated fields",
+      "source_cluster_ids": [
+        12
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_12_missing_configuration_check_for_sorting_on_obfuscated_fields",
+        "vulnerabilities",
+        "names",
+        "condition",
+        "user-controlled"
+      ]
+    },
+    {
+      "cve_count": 12,
+      "file_name": "gl_mech_0017.json",
+      "guideline_group_key": "pending_mech_cluster_13_direct_string_concatenation_into_sql_query",
+      "guideline_id": "gl_mech_0017",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_13_direct_string_concatenation_into_sql_query",
+      "mechanism_name": "Direct string concatenation into SQL query",
+      "source_cluster_ids": [
+        13
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_13_direct_string_concatenation_into_sql_query",
+        "name",
+        "vulnerabilities",
+        "attribute",
+        "nome"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0018.json",
+      "guideline_group_key": "pending_mech_cluster_13_missing_parameterization_in_sql_query_construction",
+      "guideline_id": "gl_mech_0018",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_13_missing_parameterization_in_sql_query_construction",
+      "mechanism_name": "Missing parameterization in SQL query construction",
+      "source_cluster_ids": [
+        13
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_13_missing_parameterization_in_sql_query_construction",
+        "evidence",
+        "unverified",
+        "vulnerabilities",
+        "ide"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0019.json",
+      "guideline_group_key": "pending_mech_cluster_14_insufficient_escaping_or_parameterization_in_sql_query_construction",
+      "guideline_id": "gl_mech_0019",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_14_insufficient_escaping_or_parameterization_in_sql_query_construction",
+      "mechanism_name": "Insufficient escaping or parameterization in SQL query construction",
+      "source_cluster_ids": [
+        14
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_14_insufficient_escaping_or_parameterization_in_sql_query_construction",
+        "complete",
+        "name",
+        "vulnerabilities",
+        "user-controlled"
+      ]
+    },
+    {
+      "cve_count": 4,
+      "file_name": "gl_mech_0020.json",
+      "guideline_group_key": "pending_mech_cluster_14_sql_injection_mitigated_by_input_escaping",
+      "guideline_id": "gl_mech_0020",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_14_sql_injection_mitigated_by_input_escaping",
+      "mechanism_name": "SQL injection mitigated by input escaping",
+      "source_cluster_ids": [
+        14
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_14_sql_injection_mitigated_by_input_escaping",
+        "vulnerabilities",
+        "user-controlled",
+        "comment",
+        "attacker"
+      ]
+    },
+    {
+      "cve_count": 4,
+      "file_name": "gl_mech_0021.json",
+      "guideline_group_key": "pending_mech_cluster_14_sql_injection_mitigated_by_parameterized_queries",
+      "guideline_id": "gl_mech_0021",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_14_sql_injection_mitigated_by_parameterized_queries",
+      "mechanism_name": "SQL injection mitigated by parameterized queries",
+      "source_cluster_ids": [
+        14
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_14_sql_injection_mitigated_by_parameterized_queries",
+        "name",
+        "keywords",
+        "vulnerabilities",
+        "condition"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0022.json",
+      "guideline_group_key": "pending_mech_cluster_15_missing_or_improper_ldap_filter_escaping",
+      "guideline_id": "gl_mech_0022",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_15_missing_or_improper_ldap_filter_escaping",
+      "mechanism_name": "Missing or improper LDAP filter escaping",
+      "source_cluster_ids": [
+        15
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_15_missing_or_improper_ldap_filter_escaping",
+        "name",
+        "complete",
+        "vulnerabilities",
+        "including"
+      ]
+    },
+    {
+      "cve_count": 3,
+      "file_name": "gl_mech_0023.json",
+      "guideline_group_key": "pending_mech_cluster_16_incomplete_dom_node_handling_in_sanitization",
+      "guideline_id": "gl_mech_0023",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_16_incomplete_dom_node_handling_in_sanitization",
+      "mechanism_name": "Incomplete DOM node handling in sanitization",
+      "source_cluster_ids": [
+        16
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_16_incomplete_dom_node_handling_in_sanitization",
+        "vulnerabilities",
+        "page",
+        "including",
+        "reconstructs"
+      ]
+    },
+    {
+      "cve_count": 3,
+      "file_name": "gl_mech_0024.json",
+      "guideline_group_key": "pending_mech_cluster_16_incomplete_regex_for_attribute_event_handler_detection",
+      "guideline_id": "gl_mech_0024",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_16_incomplete_regex_for_attribute_event_handler_detection",
+      "mechanism_name": "Incomplete regex for attribute/event handler detection",
+      "source_cluster_ids": [
+        16
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_16_incomplete_regex_for_attribute_event_handler_detection",
+        "name",
+        "complete",
+        "vulnerabilities",
+        "page"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0025.json",
+      "guideline_group_key": "pending_mech_cluster_16_incorrect_string_normalization_post_processing",
+      "guideline_id": "gl_mech_0025",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_16_incorrect_string_normalization_post_processing",
+      "mechanism_name": "Incorrect string normalization/post-processing",
+      "source_cluster_ids": [
+        16
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_16_incorrect_string_normalization_post_processing",
+        "vulnerabilities",
+        "page",
+        "session",
+        "interprets"
+      ]
+    },
+    {
+      "cve_count": 4,
+      "file_name": "gl_mech_0026.json",
+      "guideline_group_key": "pending_mech_cluster_16_missing_context_dependent_output_encoding",
+      "guideline_id": "gl_mech_0026",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_16_missing_context_dependent_output_encoding",
+      "mechanism_name": "Missing context-dependent output encoding",
+      "source_cluster_ids": [
+        16
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_16_missing_context_dependent_output_encoding",
+        "complete",
+        "boolean",
+        "vulnerabilities",
+        "page"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0027.json",
+      "guideline_group_key": "pending_mech_cluster_16_unbounded_recursion_in_dom_traversal",
+      "guideline_id": "gl_mech_0027",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_16_unbounded_recursion_in_dom_traversal",
+      "mechanism_name": "Unbounded recursion in DOM traversal",
+      "source_cluster_ids": [
+        16
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_16_unbounded_recursion_in_dom_traversal",
+        "vulnerabilities",
+        "attacker",
+        "content",
+        "generate"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0028.json",
+      "guideline_group_key": "pending_mech_cluster_17_infinite_loop_due_to_missing_eof_check_in_comment_parser",
+      "guideline_id": "gl_mech_0028",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_17_infinite_loop_due_to_missing_eof_check_in_comment_parser",
+      "mechanism_name": "Infinite loop due to missing EOF check in comment parser",
+      "source_cluster_ids": [
+        17
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_17_infinite_loop_due_to_missing_eof_check_in_comment_parser",
+        "vulnerabilities",
+        "condition",
+        "consumes",
+        "ends"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0029.json",
+      "guideline_group_key": "pending_mech_cluster_17_missing_recursion_depth_limit_in_parsing_deserialization",
+      "guideline_id": "gl_mech_0029",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_17_missing_recursion_depth_limit_in_parsing_deserialization",
+      "mechanism_name": "Missing recursion depth limit in parsing/deserialization",
+      "source_cluster_ids": [
+        17
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_17_missing_recursion_depth_limit_in_parsing_deserialization",
+        "vulnerabilities",
+        "enforces",
+        "dos",
+        "attacker"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0030.json",
+      "guideline_group_key": "pending_mech_cluster_17_unbounded_recursion_due_to_missing_cycle_detection_in_binary_deserial",
+      "guideline_id": "gl_mech_0030",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_17_unbounded_recursion_due_to_missing_cycle_detection_in_binary_deserial",
+      "mechanism_name": "Unbounded recursion due to missing cycle detection in binary deserialization",
+      "source_cluster_ids": [
+        17
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_17_unbounded_recursion_due_to_missing_cycle_detection_in_binary_deserial",
+        "vulnerabilities",
+        "attacker",
+        "two",
+        "0x0a"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0031.json",
+      "guideline_group_key": "pending_mech_cluster_18_bypass_of_header_validation_in_bulk_set",
+      "guideline_id": "gl_mech_0031",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_18_bypass_of_header_validation_in_bulk_set",
+      "mechanism_name": "Bypass of header validation in bulk set",
+      "source_cluster_ids": [
+        18
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_18_bypass_of_header_validation_in_bulk_set",
+        "name",
+        "vulnerabilities",
+        "including",
+        "validatevalue"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0032.json",
+      "guideline_group_key": "pending_mech_cluster_18_control_character_validation_in_header_names",
+      "guideline_id": "gl_mech_0032",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_18_control_character_validation_in_header_names",
+      "mechanism_name": "Control character validation in header names",
+      "source_cluster_ids": [
+        18
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_18_control_character_validation_in_header_names",
+        "name",
+        "vulnerabilities",
+        "names",
+        "including"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0033.json",
+      "guideline_group_key": "pending_mech_cluster_18_disabled_header_validation_flag",
+      "guideline_id": "gl_mech_0033",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_18_disabled_header_validation_flag",
+      "mechanism_name": "Disabled header validation flag",
+      "source_cluster_ids": [
+        18
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_18_disabled_header_validation_flag",
+        "vulnerabilities",
+        "including",
+        "they",
+        "disables"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0034.json",
+      "guideline_group_key": "pending_mech_cluster_18_http_2_continuation_frame_hang",
+      "guideline_id": "gl_mech_0034",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_18_http_2_continuation_frame_hang",
+      "mechanism_name": "HTTP/2 CONTINUATION frame hang",
+      "source_cluster_ids": [
+        18
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_18_http_2_continuation_frame_hang",
+        "complete",
+        "vulnerabilities",
+        "including",
+        "validation"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0035.json",
+      "guideline_group_key": "pending_mech_cluster_18_incorrect_ajp_connection_reuse_flag",
+      "guideline_id": "gl_mech_0035",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_18_incorrect_ajp_connection_reuse_flag",
+      "mechanism_name": "Incorrect AJP connection reuse flag",
+      "source_cluster_ids": [
+        18
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_18_incorrect_ajp_connection_reuse_flag",
+        "vulnerabilities",
+        "including",
+        "condition",
+        "interprets"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0036.json",
+      "guideline_group_key": "pending_mech_cluster_18_lenient_lf_as_chunk_delimiter",
+      "guideline_id": "gl_mech_0036",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_18_lenient_lf_as_chunk_delimiter",
+      "mechanism_name": "Lenient LF as chunk delimiter",
+      "source_cluster_ids": [
+        18
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_18_lenient_lf_as_chunk_delimiter",
+        "vulnerabilities",
+        "including",
+        "session",
+        "interprets"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0037.json",
+      "guideline_group_key": "pending_mech_cluster_18_missing_content_length_validation_on_http_2_downgrade",
+      "guideline_id": "gl_mech_0037",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_18_missing_content_length_validation_on_http_2_downgrade",
+      "mechanism_name": "Missing Content-Length validation on HTTP/2 downgrade",
+      "source_cluster_ids": [
+        18
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_18_missing_content_length_validation_on_http_2_downgrade",
+        "vulnerabilities",
+        "including",
+        "user-controlled",
+        "interprets"
+      ]
+    },
+    {
+      "cve_count": 3,
+      "file_name": "gl_mech_0038.json",
+      "guideline_group_key": "pending_mech_cluster_18_missing_crlf_validation_in_protocol_fields",
+      "guideline_id": "gl_mech_0038",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_18_missing_crlf_validation_in_protocol_fields",
+      "mechanism_name": "Missing CRLF validation in protocol fields",
+      "source_cluster_ids": [
+        18
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_18_missing_crlf_validation_in_protocol_fields",
+        "name",
+        "vulnerabilities",
+        "names",
+        "including"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0039.json",
+      "guideline_group_key": "pending_mech_cluster_18_missing_final_chunk_verification",
+      "guideline_id": "gl_mech_0039",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_18_missing_final_chunk_verification",
+      "mechanism_name": "Missing final chunk verification",
+      "source_cluster_ids": [
+        18
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_18_missing_final_chunk_verification",
+        "complete",
+        "vulnerabilities",
+        "including",
+        "observed"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0040.json",
+      "guideline_group_key": "pending_mech_cluster_18_unsafe_string_split_indexing",
+      "guideline_id": "gl_mech_0040",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_18_unsafe_string_split_indexing",
+      "mechanism_name": "Unsafe string split indexing",
+      "source_cluster_ids": [
+        18
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_18_unsafe_string_split_indexing",
+        "vulnerabilities",
+        "library",
+        "including",
+        "attacker"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0041.json",
+      "guideline_group_key": "pending_mech_cluster_18_websocket_buffer_leak",
+      "guideline_id": "gl_mech_0041",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_18_websocket_buffer_leak",
+      "mechanism_name": "WebSocket buffer leak",
+      "source_cluster_ids": [
+        18
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_18_websocket_buffer_leak",
+        "freed",
+        "vulnerabilities",
+        "including",
+        "state"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0042.json",
+      "guideline_group_key": "pending_mech_cluster_19_missing_gui_state_synchronization_for_bundle_items",
+      "guideline_id": "gl_mech_0042",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_19_missing_gui_state_synchronization_for_bundle_items",
+      "mechanism_name": "Missing GUI state synchronization for bundle items",
+      "source_cluster_ids": [
+        19
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_19_missing_gui_state_synchronization_for_bundle_items",
+        "vulnerabilities",
+        "interactions",
+        "present",
+        "they"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0043.json",
+      "guideline_group_key": "pending_mech_cluster_19_missing_player_identity_in_storage_update_context",
+      "guideline_id": "gl_mech_0043",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_19_missing_player_identity_in_storage_update_context",
+      "mechanism_name": "Missing player identity in storage update context",
+      "source_cluster_ids": [
+        19
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_19_missing_player_identity_in_storage_update_context",
+        "vulnerabilities",
+        "validation",
+        "modification",
+        "unique-action"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0044.json",
+      "guideline_group_key": "pending_mech_cluster_19_missing_slot_property_validation_before_item_transfer",
+      "guideline_id": "gl_mech_0044",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_19_missing_slot_property_validation_before_item_transfer",
+      "mechanism_name": "Missing slot property validation before item transfer",
+      "source_cluster_ids": [
+        19
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_19_missing_slot_property_validation_before_item_transfer",
+        "slot.allowmodification",
+        "vulnerabilities",
+        "they",
+        "validation"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0045.json",
+      "guideline_group_key": "pending_mech_cluster_20_hardcoded_cryptographic_keys_for_token_signing",
+      "guideline_id": "gl_mech_0045",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_20_hardcoded_cryptographic_keys_for_token_signing",
+      "mechanism_name": "Hardcoded cryptographic keys for token signing",
+      "source_cluster_ids": [
+        20
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_20_hardcoded_cryptographic_keys_for_token_signing",
+        "initialization",
+        "vulnerabilities",
+        "they",
+        "attacker"
+      ]
+    },
+    {
+      "cve_count": 5,
+      "file_name": "gl_mech_0046.json",
+      "guideline_group_key": "pending_mech_cluster_20_use_of_non_cryptographic_prng_for_security_sensitive_values",
+      "guideline_id": "gl_mech_0046",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_20_use_of_non_cryptographic_prng_for_security_sensitive_values",
+      "mechanism_name": "Use of non-cryptographic PRNG for security-sensitive values",
+      "source_cluster_ids": [
+        20
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_20_use_of_non_cryptographic_prng_for_security_sensitive_values",
+        "initialization",
+        "vulnerabilities",
+        "low",
+        "library"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0047.json",
+      "guideline_group_key": "pending_mech_cluster_21_inefficient_parsing_of_duplicate_non_repeated_fields_without_builder_",
+      "guideline_id": "gl_mech_0047",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_21_inefficient_parsing_of_duplicate_non_repeated_fields_without_builder_",
+      "mechanism_name": "Inefficient parsing of duplicate non-repeated fields without builder reuse",
+      "source_cluster_ids": [
+        21
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_21_inefficient_parsing_of_duplicate_non_repeated_fields_without_builder_",
+        "complete",
+        "subbuilder",
+        "vulnerabilities",
+        "they"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0048.json",
+      "guideline_group_key": "pending_mech_cluster_21_infinite_loop_from_unhandled_unknown_protocol_type",
+      "guideline_id": "gl_mech_0048",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_21_infinite_loop_from_unhandled_unknown_protocol_type",
+      "mechanism_name": "Infinite loop from unhandled unknown protocol type",
+      "source_cluster_ids": [
+        21
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_21_infinite_loop_from_unhandled_unknown_protocol_type",
+        "vulnerabilities",
+        "attacker",
+        "validation",
+        "encounters"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0049.json",
+      "guideline_group_key": "pending_mech_cluster_21_integer_overflow_in_size_length_arithmetic",
+      "guideline_id": "gl_mech_0049",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_21_integer_overflow_in_size_length_arithmetic",
+      "mechanism_name": "Integer overflow in size/length arithmetic",
+      "source_cluster_ids": [
+        21
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_21_integer_overflow_in_size_length_arithmetic",
+        "multiplier",
+        "vulnerabilities",
+        "validation",
+        "negativearraysizeexception"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0050.json",
+      "guideline_group_key": "pending_mech_cluster_21_invalid_back_reference_offset_in_lz_decompression",
+      "guideline_id": "gl_mech_0050",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_21_invalid_back_reference_offset_in_lz_decompression",
+      "mechanism_name": "Invalid back-reference offset in LZ decompression",
+      "source_cluster_ids": [
+        21
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_21_invalid_back_reference_offset_in_lz_decompression",
+        "vulnerabilities",
+        "attacker",
+        "validation",
+        "crafted"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0051.json",
+      "guideline_group_key": "pending_mech_cluster_21_missing_validation_of_container_size_against_available_input",
+      "guideline_id": "gl_mech_0051",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_21_missing_validation_of_container_size_against_available_input",
+      "mechanism_name": "Missing validation of container size against available input",
+      "source_cluster_ids": [
+        21
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_21_missing_validation_of_container_size_against_available_input",
+        "vulnerabilities",
+        "attacker",
+        "validation",
+        "actual"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0052.json",
+      "guideline_group_key": "pending_mech_cluster_21_off_by_one_in_byte_counting_ignores_zero_value_bytes",
+      "guideline_id": "gl_mech_0052",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_21_off_by_one_in_byte_counting_ignores_zero_value_bytes",
+      "mechanism_name": "Off-by-one in byte counting ignores zero-value bytes",
+      "source_cluster_ids": [
+        21
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_21_off_by_one_in_byte_counting_ignores_zero_value_bytes",
+        "vulnerabilities",
+        "supplying",
+        "attacker",
+        "validation"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0053.json",
+      "guideline_group_key": "pending_mech_cluster_21_unbounded_accumulation_of_decompressed_output_chunks",
+      "guideline_id": "gl_mech_0053",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_21_unbounded_accumulation_of_decompressed_output_chunks",
+      "mechanism_name": "Unbounded accumulation of decompressed output chunks",
+      "source_cluster_ids": [
+        21
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_21_unbounded_accumulation_of_decompressed_output_chunks",
+        "complete",
+        "vulnerabilities",
+        "deferred",
+        "buffered"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0054.json",
+      "guideline_group_key": "pending_mech_cluster_21_unbounded_allocation_from_untrusted_length_field",
+      "guideline_id": "gl_mech_0054",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_21_unbounded_allocation_from_untrusted_length_field",
+      "mechanism_name": "Unbounded allocation from untrusted length field",
+      "source_cluster_ids": [
+        21
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_21_unbounded_allocation_from_untrusted_length_field",
+        "vulnerabilities",
+        "library",
+        "ends",
+        "user-controlled"
+      ]
+    },
+    {
+      "cve_count": 3,
+      "file_name": "gl_mech_0055.json",
+      "guideline_group_key": "pending_mech_cluster_23_missing_cryptographic_token_verification",
+      "guideline_id": "gl_mech_0055",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_23_missing_cryptographic_token_verification",
+      "mechanism_name": "Missing cryptographic token verification",
+      "source_cluster_ids": [
+        23
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_23_missing_cryptographic_token_verification",
+        "boolean",
+        "vulnerabilities",
+        "validatetoken",
+        "proof"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0056.json",
+      "guideline_group_key": "pending_mech_cluster_23_missing_token_temporal_validity_checks",
+      "guideline_id": "gl_mech_0056",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_23_missing_token_temporal_validity_checks",
+      "mechanism_name": "Missing token temporal validity checks",
+      "source_cluster_ids": [
+        23
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_23_missing_token_temporal_validity_checks",
+        "vulnerabilities",
+        "impersonation",
+        "attacker",
+        "validation"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0057.json",
+      "guideline_group_key": "pending_mech_cluster_24_full_exception_stack_trace_disclosure_in_error_response",
+      "guideline_id": "gl_mech_0057",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_24_full_exception_stack_trace_disclosure_in_error_response",
+      "mechanism_name": "Full exception stack trace disclosure in error response",
+      "source_cluster_ids": [
+        24
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_24_full_exception_stack_trace_disclosure_in_error_response",
+        "implementation",
+        "vulnerabilities",
+        "page",
+        "causes"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0058.json",
+      "guideline_group_key": "pending_mech_cluster_24_missing_html_escaping_of_user_controllable_error_content_leading_to_x",
+      "guideline_id": "gl_mech_0058",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_24_missing_html_escaping_of_user_controllable_error_content_leading_to_x",
+      "mechanism_name": "Missing HTML escaping of user-controllable error content leading to XSS",
+      "source_cluster_ids": [
+        24
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_24_missing_html_escaping_of_user_controllable_error_content_leading_to_x",
+        "vulnerabilities",
+        "page",
+        "well",
+        "user-controlled"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0059.json",
+      "guideline_group_key": "pending_mech_cluster_24_reflected_xss_via_unescaped_query_parameter_in_loading_page",
+      "guideline_id": "gl_mech_0059",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_24_reflected_xss_via_unescaped_query_parameter_in_loading_page",
+      "mechanism_name": "Reflected XSS via unescaped query parameter in loading page",
+      "source_cluster_ids": [
+        24
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_24_reflected_xss_via_unescaped_query_parameter_in_loading_page",
+        "vulnerabilities",
+        "page",
+        "session",
+        "well"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0060.json",
+      "guideline_group_key": "pending_mech_cluster_24_unbounded_cache_of_attacker_influenced_error_pages",
+      "guideline_id": "gl_mech_0060",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_24_unbounded_cache_of_attacker_influenced_error_pages",
+      "mechanism_name": "Unbounded cache of attacker-influenced error pages",
+      "source_cluster_ids": [
+        24
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_24_unbounded_cache_of_attacker_influenced_error_pages",
+        "vulnerabilities",
+        "page",
+        "eviction",
+        "well"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0061.json",
+      "guideline_group_key": "pending_mech_cluster_25_missing_html_encoding_or_sanitization_of_user_input_before_rendering",
+      "guideline_id": "gl_mech_0061",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_25_missing_html_encoding_or_sanitization_of_user_input_before_rendering",
+      "mechanism_name": "missing HTML encoding or sanitization of user input before rendering",
+      "source_cluster_ids": [
+        25
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_25_missing_html_encoding_or_sanitization_of_user_input_before_rendering",
+        "name",
+        "vulnerabilities",
+        "attacker",
+        "validation"
+      ]
+    },
+    {
+      "cve_count": 9,
+      "file_name": "gl_mech_0062.json",
+      "guideline_group_key": "pending_mech_cluster_25_missing_html_entity_encoding_in_output_rendering",
+      "guideline_id": "gl_mech_0062",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_25_missing_html_entity_encoding_in_output_rendering",
+      "mechanism_name": "missing HTML entity encoding in output rendering",
+      "source_cluster_ids": [
+        25
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_25_missing_html_entity_encoding_in_output_rendering",
+        "name",
+        "vulnerabilities",
+        "page",
+        "names"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0063.json",
+      "guideline_group_key": "pending_mech_cluster_25_missing_input_sanitization_via_global_servlet_filter",
+      "guideline_id": "gl_mech_0063",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_25_missing_input_sanitization_via_global_servlet_filter",
+      "mechanism_name": "missing input sanitization via global servlet filter",
+      "source_cluster_ids": [
+        25
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_25_missing_input_sanitization_via_global_servlet_filter",
+        "vulnerabilities",
+        "they",
+        "user-controlled",
+        "validation"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0064.json",
+      "guideline_group_key": "pending_mech_cluster_26_signature_verification_over_hash_digest_instead_of_full_signed_data",
+      "guideline_id": "gl_mech_0064",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_26_signature_verification_over_hash_digest_instead_of_full_signed_data",
+      "mechanism_name": "Signature verification over hash digest instead of full signed data",
+      "source_cluster_ids": [
+        26
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_26_signature_verification_over_hash_digest_instead_of_full_signed_data",
+        "guarantees",
+        "vulnerabilities",
+        "low",
+        "attacker"
+      ]
+    },
+    {
+      "cve_count": 3,
+      "file_name": "gl_mech_0065.json",
+      "guideline_group_key": "pending_mech_cluster_26_weak_cryptographic_hash_algorithm_used_for_digital_signatures",
+      "guideline_id": "gl_mech_0065",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_26_weak_cryptographic_hash_algorithm_used_for_digital_signatures",
+      "mechanism_name": "Weak cryptographic hash algorithm used for digital signatures",
+      "source_cluster_ids": [
+        26
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_26_weak_cryptographic_hash_algorithm_used_for_digital_signatures",
+        "guarantees",
+        "name",
+        "vulnerabilities",
+        "names"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0066.json",
+      "guideline_group_key": "pending_mech_cluster_27_cbc_unpadding_before_mac_verification_enabling_padding_oracle",
+      "guideline_id": "gl_mech_0066",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_27_cbc_unpadding_before_mac_verification_enabling_padding_oracle",
+      "mechanism_name": "CBC unpadding before MAC verification enabling padding oracle",
+      "source_cluster_ids": [
+        27
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_27_cbc_unpadding_before_mac_verification_enabling_padding_oracle",
+        "various",
+        "including",
+        "modes",
+        "attacker"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0067.json",
+      "guideline_group_key": "pending_mech_cluster_27_defaulting_to_ecb_mode_without_initialization_vector",
+      "guideline_id": "gl_mech_0067",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_27_defaulting_to_ecb_mode_without_initialization_vector",
+      "mechanism_name": "Defaulting to ECB mode without initialization vector",
+      "source_cluster_ids": [
+        27
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_27_defaulting_to_ecb_mode_without_initialization_vector",
+        "initialization",
+        "name",
+        "names",
+        "various"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0068.json",
+      "guideline_group_key": "pending_mech_cluster_27_insufficient_primality_test_rounds_due_to_incorrect_parameter_selecti",
+      "guideline_id": "gl_mech_0068",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_27_insufficient_primality_test_rounds_due_to_incorrect_parameter_selecti",
+      "mechanism_name": "Insufficient primality test rounds due to incorrect parameter selection",
+      "source_cluster_ids": [
+        27
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_27_insufficient_primality_test_rounds_due_to_incorrect_parameter_selecti",
+        "various",
+        "including",
+        "modes",
+        "validation"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0069.json",
+      "guideline_group_key": "pending_mech_cluster_27_missing_carry_propagation_in_arithmetic_operations",
+      "guideline_id": "gl_mech_0069",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_27_missing_carry_propagation_in_arithmetic_operations",
+      "mechanism_name": "Missing carry propagation in arithmetic operations",
+      "source_cluster_ids": [
+        27
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_27_missing_carry_propagation_in_arithmetic_operations",
+        "low",
+        "various",
+        "including",
+        "modes"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0070.json",
+      "guideline_group_key": "pending_mech_cluster_27_secret_dependent_code_paths_or_memory_accesses_enabling_side_channels",
+      "guideline_id": "gl_mech_0070",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_27_secret_dependent_code_paths_or_memory_accesses_enabling_side_channels",
+      "mechanism_name": "Secret-dependent code paths or memory accesses enabling side channels",
+      "source_cluster_ids": [
+        27
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_27_secret_dependent_code_paths_or_memory_accesses_enabling_side_channels",
+        "various",
+        "including",
+        "modes",
+        "observed"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0071.json",
+      "guideline_group_key": "pending_mech_cluster_30_missing_html_entity_encoding_in_html_content_and_attributes",
+      "guideline_id": "gl_mech_0071",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_30_missing_html_entity_encoding_in_html_content_and_attributes",
+      "mechanism_name": "Missing HTML entity encoding in HTML content and attributes",
+      "source_cluster_ids": [
+        30
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_30_missing_html_entity_encoding_in_html_content_and_attributes",
+        "name",
+        "vulnerabilities",
+        "names",
+        "page"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0072.json",
+      "guideline_group_key": "pending_mech_cluster_30_missing_javascript_context_escaping_in_server_generated_javascript_co",
+      "guideline_id": "gl_mech_0072",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_30_missing_javascript_context_escaping_in_server_generated_javascript_co",
+      "mechanism_name": "Missing JavaScript context escaping in server-generated JavaScript code",
+      "source_cluster_ids": [
+        30
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_30_missing_javascript_context_escaping_in_server_generated_javascript_co",
+        "name",
+        "vulnerabilities",
+        "page",
+        "user-controlled"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0073.json",
+      "guideline_group_key": "pending_mech_cluster_30_unsafe_dom_construction_via_string_concatenation",
+      "guideline_id": "gl_mech_0073",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_30_unsafe_dom_construction_via_string_concatenation",
+      "mechanism_name": "Unsafe DOM construction via string concatenation",
+      "source_cluster_ids": [
+        30
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_30_unsafe_dom_construction_via_string_concatenation",
+        "name",
+        "vulnerabilities",
+        "affected",
+        "user-controlled"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0074.json",
+      "guideline_group_key": "pending_mech_cluster_33_sensitive_data_exposure_via_missing_field_type_checks_in_query_buildi",
+      "guideline_id": "gl_mech_0074",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_33_sensitive_data_exposure_via_missing_field_type_checks_in_query_buildi",
+      "mechanism_name": "Sensitive data exposure via missing field-type checks in query building and serialization",
+      "source_cluster_ids": [
+        33
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_33_sensitive_data_exposure_via_missing_field_type_checks_in_query_buildi",
+        "name",
+        "vulnerabilities",
+        "names",
+        "including"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0075.json",
+      "guideline_group_key": "pending_mech_cluster_33_unbounded_memory_allocation_from_user_controlled_object_index",
+      "guideline_id": "gl_mech_0075",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_33_unbounded_memory_allocation_from_user_controlled_object_index",
+      "mechanism_name": "Unbounded memory allocation from user-controlled object index",
+      "source_cluster_ids": [
+        33
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_33_unbounded_memory_allocation_from_user_controlled_object_index",
+        "vulnerabilities",
+        "affected",
+        "user-controlled",
+        "validation"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0076.json",
+      "guideline_group_key": "pending_mech_cluster_33_unbounded_query_result_size_due_to_missing_configurable_limit",
+      "guideline_id": "gl_mech_0076",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_33_unbounded_query_result_size_due_to_missing_configurable_limit",
+      "mechanism_name": "Unbounded query result size due to missing configurable limit",
+      "source_cluster_ids": [
+        33
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_33_unbounded_query_result_size_due_to_missing_configurable_limit",
+        "vulnerabilities",
+        "page",
+        "enforces",
+        "affected"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0077.json",
+      "guideline_group_key": "pending_mech_cluster_7_annotation_based_whitelist",
+      "guideline_id": "gl_mech_0077",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_7_annotation_based_whitelist",
+      "mechanism_name": "Annotation-based whitelist",
+      "source_cluster_ids": [
+        7
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_7_annotation_based_whitelist",
+        "default",
+        "annotation",
+        "snakeyaml",
+        "library"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0078.json",
+      "guideline_group_key": "pending_mech_cluster_7_direct_safeconstructor_replacement",
+      "guideline_id": "gl_mech_0078",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_7_direct_safeconstructor_replacement",
+      "mechanism_name": "Direct SafeConstructor replacement",
+      "source_cluster_ids": [
+        7
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_7_direct_safeconstructor_replacement",
+        "default",
+        "place",
+        "snakeyaml",
+        "library"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0079.json",
+      "guideline_group_key": "pending_mech_cluster_7_singletypeconstructor_restriction",
+      "guideline_id": "gl_mech_0079",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_7_singletypeconstructor_restriction",
+      "mechanism_name": "SingleTypeConstructor restriction",
+      "source_cluster_ids": [
+        7
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_7_singletypeconstructor_restriction",
+        "library",
+        "attacker",
+        "unsafe",
+        "crafted"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0080.json",
+      "guideline_group_key": "pending_mech_cluster_8_direct_string_interpolation_of_sensitive_values_without_redaction",
+      "guideline_id": "gl_mech_0080",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_8_direct_string_interpolation_of_sensitive_values_without_redaction",
+      "mechanism_name": "Direct string interpolation of sensitive values without redaction",
+      "source_cluster_ids": [
+        8
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_8_direct_string_interpolation_of_sensitive_values_without_redaction",
+        "initialization",
+        "vulnerabilities",
+        "rootappcredentials",
+        "commands"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0081.json",
+      "guideline_group_key": "pending_mech_cluster_8_failure_to_merge_existing_redaction_rules_when_constructing_new_loggin",
+      "guideline_id": "gl_mech_0081",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_8_failure_to_merge_existing_redaction_rules_when_constructing_new_loggin",
+      "mechanism_name": "Failure to merge existing redaction rules when constructing new logging context",
+      "source_cluster_ids": [
+        8
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_8_failure_to_merge_existing_redaction_rules_when_constructing_new_loggin",
+        "vulnerabilities",
+        "rules",
+        "attacker",
+        "appear"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0082.json",
+      "guideline_group_key": "pending_mech_cluster_8_missing_field_level_redaction_on_serialized_structured_data",
+      "guideline_id": "gl_mech_0082",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_8_missing_field_level_redaction_on_serialized_structured_data",
+      "mechanism_name": "Missing field-level redaction on serialized structured data",
+      "source_cluster_ids": [
+        8
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_8_missing_field_level_redaction_on_serialized_structured_data",
+        "vulnerabilities",
+        "maps",
+        "json",
+        "redacted"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0083.json",
+      "guideline_group_key": "pending_mech_cluster_8_missing_redaction_of_sensitive_data_before_logging",
+      "guideline_id": "gl_mech_0083",
+      "guideline_preview": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validati",
+      "mechanism_family": "pending_review",
+      "mechanism_id": "pending_mech_cluster_8_missing_redaction_of_sensitive_data_before_logging",
+      "mechanism_name": "missing redaction of sensitive data before logging",
+      "source_cluster_ids": [
+        8
+      ],
+      "top_tags": [
+        "pending_review",
+        "pending_mech_cluster_8_missing_redaction_of_sensitive_data_before_logging",
+        "vulnerabilities",
+        "they",
+        "user-controlled",
+        "insertion"
+      ]
+    }
+  ],
+  "summary": {
+    "active_attribution_count": 231,
+    "created_at": "2026-08-20T19:59:27+00:00",
+    "files": {
+      "guideline_overrides": null,
+      "index": "index.json",
+      "mechanism_candidates": "mechanism_candidates.jsonl"
+    },
+    "group_scope": "mechanism",
+    "guideline_count": 83,
+    "override_count": 0,
+    "pending_review_count": 72,
+    "schema_version": "hcvr_mechanism_guideline_release.v1",
+    "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+    "source_method": "traditional",
+    "work_item_count": 303
+  }
+}

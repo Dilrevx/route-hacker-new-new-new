@@ -1,0 +1,56 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities stemming from improper handling of user-controllable data in LDAP operations, including missing or incorrect escaping in LDAP filter construction, unbounded recursion during alias dereferencing, credential disclosure in logs, and cross-site scripting via LDAP attribute values. Two outliers involve unrelated SQL injection and database validation bypass.",
+  "created_at": "2026-08-20T19:54:07+00:00",
+  "cve_ids": [
+    "CVE-2018-25084"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0015__mech_template_expression_untrusted_eval",
+  "guideline_id": "gl_mech_0051",
+  "guideline_text": "Trace attacker-controlled template text, expression strings, macro content, or rendering parameters into template engines, expression evaluators, macro renderers, or scriptable configuration evaluators. Report code paths where untrusted expression content is evaluated without sandboxing, escaping, allowlisting, or disabling reflective execution features. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should separate data from templates, sandbox expression evaluation, and disable reflection or method invocation features for untrusted input.",
+  "mechanism": {
+    "aliases": [
+      "template injection",
+      "expression language injection",
+      "SpEL injection",
+      "OGNL injection",
+      "Velocity macro injection",
+      "FreeMarker template injection"
+    ],
+    "family": "code_or_template_injection",
+    "mechanism_id": "mech_template_expression_untrusted_eval",
+    "missing_guard": "untrusted expression content is evaluated without sandboxing, escaping, allowlisting, or disabling reflective execution features",
+    "name": "untrusted template or expression evaluation",
+    "sink_shape": "template engines, expression evaluators, macro renderers, or scriptable configuration evaluators",
+    "source_shape": "attacker-controlled template text, expression strings, macro content, or rendering parameters",
+    "typical_fix": "separate data from templates, sandbox expression evaluation, and disable reflection or method invocation features for untrusted input"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2018-25084",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    15
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 15,
+      "fix_strategy": "Apply HTML escaping (e.g., HtmlUtils.htmlEscape()) before adding to the model.",
+      "members": [
+        "CVE-2018-25084"
+      ],
+      "name": "Stored cross-site scripting from unsanitized LDAP attributes",
+      "root_cause": "LDAP attribute values are added to a Spring model without HTML escaping, assuming they are safe for rendering."
+    }
+  ],
+  "tags": [
+    "code_or_template_injection",
+    "mech_template_expression_untrusted_eval",
+    "template injection",
+    "expression language injection",
+    "SpEL injection",
+    "OGNL injection"
+  ]
+}

@@ -1,0 +1,240 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where user-supplied URLs or redirect targets are used in server-side network operations (redirects, HTTP requests, OS commands, DNS) without proper validation, allowing attackers to redirect users to malicious sites, perform SSRF, leak credentials, or execute commands.",
+  "created_at": "2026-08-20T19:54:07+00:00",
+  "cve_ids": [
+    "CVE-2014-4172",
+    "CVE-2018-16153",
+    "CVE-2020-26234",
+    "CVE-2021-29061",
+    "CVE-2021-29506",
+    "CVE-2021-32700",
+    "CVE-2022-1379",
+    "CVE-2022-1711",
+    "CVE-2022-1713",
+    "CVE-2022-1722",
+    "CVE-2022-23544",
+    "CVE-2022-23618",
+    "CVE-2022-31193",
+    "CVE-2022-4096",
+    "CVE-2022-41949",
+    "CVE-2022-43550",
+    "CVE-2022-4361",
+    "CVE-2023-29204",
+    "CVE-2023-32068",
+    "CVE-2023-33176",
+    "CVE-2023-3432",
+    "CVE-2023-41045",
+    "CVE-2023-48240",
+    "CVE-2024-25638",
+    "CVE-2024-42467",
+    "CVE-2025-24789",
+    "CVE-2025-32970",
+    "CVE-2025-46568",
+    "CVE-2025-54380",
+    "CVE-2025-55150",
+    "CVE-2025-55151",
+    "CVE-2025-55161",
+    "CVE-2025-62371",
+    "CVE-2025-7759",
+    "CVE-2025-7949",
+    "CVE-2025-8813",
+    "CVE-2026-11477",
+    "CVE-2026-22816",
+    "CVE-2026-23529",
+    "CVE-2026-25534",
+    "CVE-2026-3788",
+    "CVE-2026-3789",
+    "CVE-2026-42140"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0005__mech_ssrf_redirect_following_client",
+  "guideline_id": "gl_mech_0009",
+  "guideline_text": "Trace attacker-controlled URLs or server-controlled redirect responses into HTTP clients that automatically follow redirects or reuse a previously validated URL decision. Report code paths where the final redirected scheme, host, port, and resolved address are not revalidated before the sensitive network request. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 43 historical CVE example(s), not as a project-specific signature. A safe implementation should disable automatic redirects or revalidate every redirect hop against the same allowlist and address policy.",
+  "mechanism": {
+    "aliases": [
+      "redirect-follow SSRF",
+      "HTTP redirect SSRF",
+      "Location header SSRF"
+    ],
+    "family": "ssrf",
+    "mechanism_id": "mech_ssrf_redirect_following_client",
+    "missing_guard": "the final redirected scheme, host, port, and resolved address are not revalidated before the sensitive network request",
+    "name": "SSRF through redirect-following client",
+    "sink_shape": "HTTP clients that automatically follow redirects or reuse a previously validated URL decision",
+    "source_shape": "attacker-controlled URLs or server-controlled redirect responses",
+    "typical_fix": "disable automatic redirects or revalidate every redirect hop against the same allowlist and address policy"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2014-4172",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    5
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 5,
+      "fix_strategy": "Validate redirect target using domain allow-list, exact prefix check with context path, or remove the redirect feature.",
+      "members": [
+        "CVE-2026-11477",
+        "CVE-2025-8813",
+        "CVE-2025-32970",
+        "CVE-2022-31193",
+        "CVE-2022-23618",
+        "CVE-2023-29204",
+        "CVE-2023-32068",
+        "CVE-2022-4361"
+      ],
+      "name": "Server-side open redirect via insufficient URL validation",
+      "root_cause": "User-supplied redirect target is accepted without proper validation (naive prefix match, missing domain allow-list, incomplete regex) allowing redirection to external domains."
+    },
+    {
+      "cluster_id": 5,
+      "fix_strategy": "Add destination validation (domain allow-list, scheme restriction, IP range blocking) or replace with controlled paths.",
+      "members": [
+        "CVE-2026-42140",
+        "CVE-2026-3789",
+        "CVE-2026-3788",
+        "CVE-2025-7759",
+        "CVE-2022-41949",
+        "CVE-2022-23544",
+        "CVE-2023-3432",
+        "CVE-2023-33176",
+        "CVE-2024-42467"
+      ],
+      "name": "SSRF due to missing destination validation in server-side HTTP clients",
+      "root_cause": "User-supplied URL is used directly in an outgoing HTTP request without any allow-list or block-list for hosts, schemes, or IPs."
+    },
+    {
+      "cluster_id": 5,
+      "fix_strategy": "Validate all URLs before passing to conversion library, restrict protocols, and block internal addresses.",
+      "members": [
+        "CVE-2025-46568",
+        "CVE-2025-55151",
+        "CVE-2025-55161",
+        "CVE-2025-55150"
+      ],
+      "name": "SSRF in document conversion pipelines via unvalidated embedded URLs",
+      "root_cause": "User-supplied document content (HTML, Markdown) contains URLs that are fetched by the conversion library without validation, allowing SSRF."
+    },
+    {
+      "cluster_id": 5,
+      "fix_strategy": "Expand denylist to include all known internal/cloud metadata IP ranges and address types.",
+      "members": [
+        "CVE-2022-1722",
+        "CVE-2022-1711"
+      ],
+      "name": "SSRF due to incomplete IP address denylist",
+      "root_cause": "The IP blocklist omits certain internal addresses (link-local, cloud metadata) allowing SSRF to those endpoints."
+    },
+    {
+      "cluster_id": 5,
+      "fix_strategy": "Resolve hostname to IP address before checking, or use a more robust host parser that handles edge cases.",
+      "members": [
+        "CVE-2022-1713",
+        "CVE-2022-4096",
+        "CVE-2026-25534"
+      ],
+      "name": "SSRF due to hostname resolution and parsing bypass",
+      "root_cause": "Validation relies on hostname string checks without resolving to IP, or uses a host parser that returns null for certain hostnames, allowing bypass."
+    },
+    {
+      "cluster_id": 5,
+      "fix_strategy": "Restrict use of authenticated client to known internal hosts only; use a separate client for external requests.",
+      "members": [
+        "CVE-2025-54380",
+        "CVE-2018-16153"
+      ],
+      "name": "Credential leakage via authenticated HTTP client used for external destinations",
+      "root_cause": "A pre-authenticated HTTP client is reused for user-supplied URLs without verifying the destination is internal, leaking credentials."
+    },
+    {
+      "cluster_id": 5,
+      "fix_strategy": "Validate record authenticity based on section (answer vs additional) and use multiple random source ports.",
+      "members": [
+        "CVE-2024-25638",
+        "CVE-2023-41045"
+      ],
+      "name": "DNS cache poisoning due to insufficient response validation",
+      "root_cause": "DNS client caches all records from a response without checking if they are in-bailiwick or uses a single source port, allowing cache poisoning."
+    },
+    {
+      "cluster_id": 5,
+      "fix_strategy": "Use absolute path to executable, reject non-http URL prefixes, or use safe API (java.awt.Desktop).",
+      "members": [
+        "CVE-2022-43550",
+        "CVE-2025-24789"
+      ],
+      "name": "OS command injection via unsanitized URL in system command",
+      "root_cause": "User-supplied URL is concatenated into an OS command string without sanitization, allowing injection of shell metacharacters."
+    },
+    {
+      "cluster_id": 5,
+      "fix_strategy": "Only enable trust-all when explicitly set; otherwise use default JVM trust store.",
+      "members": [
+        "CVE-2025-62371",
+        "CVE-2020-26234"
+      ],
+      "name": "SSL/TLS certificate validation disabled by default",
+      "root_cause": "The default SSL context trusts all certificates without requiring an explicit insecure flag, disabling certificate validation."
+    },
+    {
+      "cluster_id": 5,
+      "fix_strategy": "Remove the client-side redirect script or validate the redirect target.",
+      "members": [
+        "CVE-2025-7949"
+      ],
+      "name": "Client-side open redirect via window.location assignment",
+      "root_cause": "User-supplied query parameter is directly assigned to window.location without validation, allowing attacker-controlled URLs."
+    },
+    {
+      "cluster_id": 5,
+      "fix_strategy": "Apply proper URL encoding to each parameter.",
+      "members": [
+        "CVE-2014-4172"
+      ],
+      "name": "URL parameter injection due to missing encoding",
+      "root_cause": "User-controlled parameters are concatenated into a URL query string without URL encoding, allowing injection of additional parameters."
+    },
+    {
+      "cluster_id": 5,
+      "fix_strategy": "Validate credential JSON with a dedicated validator to reject dangerous constructs.",
+      "members": [
+        "CVE-2026-23529"
+      ],
+      "name": "Missing validation of credential source JSON",
+      "root_cause": "User-supplied credential JSON contains dangerous file/URL references that are passed to auth library without sanitization."
+    },
+    {
+      "cluster_id": 5,
+      "fix_strategy": "Disable repository after exhausting retries regardless of error type.",
+      "members": [
+        "CVE-2026-22816"
+      ],
+      "name": "Dependency resolver fallback to untrusted repository after non-critical errors",
+      "root_cause": "Non-critical network errors do not disable a repository, allowing fallback to an attacker-controlled repository if the primary fails."
+    },
+    {
+      "cluster_id": 5,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2022-1379",
+        "CVE-2021-32700",
+        "CVE-2021-29506",
+        "CVE-2021-29061",
+        "CVE-2023-48240"
+      ],
+      "name": "Missing validation of user-provided URL targets in server-side network operations",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "ssrf",
+    "mech_ssrf_redirect_following_client",
+    "redirect-follow SSRF",
+    "HTTP redirect SSRF",
+    "Location header SSRF"
+  ]
+}

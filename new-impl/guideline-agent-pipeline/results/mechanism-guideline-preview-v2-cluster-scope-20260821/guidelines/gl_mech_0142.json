@@ -1,0 +1,58 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where server-side operations (returning privileged objects, evaluating dynamic code) are performed without proper authorization checks on user privileges or session origin. Attackers can exploit missing programming or script rights checks to escalate privileges, or lack of CSRF tokens to forge requests on behalf of authenticated users.",
+  "created_at": "2026-08-20T19:54:08+00:00",
+  "cve_ids": [
+    "CVE-2024-31997",
+    "CVE-2024-37901"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0032__mech_template_expression_untrusted_eval",
+  "guideline_id": "gl_mech_0142",
+  "guideline_text": "Trace attacker-controlled template text, expression strings, macro content, or rendering parameters into template engines, expression evaluators, macro renderers, or scriptable configuration evaluators. Report code paths where untrusted expression content is evaluated without sandboxing, escaping, allowlisting, or disabling reflective execution features. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should separate data from templates, sandbox expression evaluation, and disable reflection or method invocation features for untrusted input.",
+  "mechanism": {
+    "aliases": [
+      "template injection",
+      "expression language injection",
+      "SpEL injection",
+      "OGNL injection",
+      "Velocity macro injection",
+      "FreeMarker template injection"
+    ],
+    "family": "code_or_template_injection",
+    "mechanism_id": "mech_template_expression_untrusted_eval",
+    "missing_guard": "untrusted expression content is evaluated without sandboxing, escaping, allowlisting, or disabling reflective execution features",
+    "name": "untrusted template or expression evaluation",
+    "sink_shape": "template engines, expression evaluators, macro renderers, or scriptable configuration evaluators",
+    "source_shape": "attacker-controlled template text, expression strings, macro content, or rendering parameters",
+    "typical_fix": "separate data from templates, sandbox expression evaluation, and disable reflection or method invocation features for untrusted input"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2024-31997",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    32
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 32,
+      "fix_strategy": "Add authorization check (hasAccess(Right.SCRIPT)) before evaluation; optionally restrict evaluation to safe properties or escape output.",
+      "members": [
+        "CVE-2024-37901",
+        "CVE-2024-31997"
+      ],
+      "name": "Missing script rights check before Velocity template evaluation",
+      "root_cause": "User-controlled content (object properties, headings, UI extension parameters) is passed to Velocity #evaluate() without verifying that the content author has script rights, allowing arbitrary code execution."
+    }
+  ],
+  "tags": [
+    "code_or_template_injection",
+    "mech_template_expression_untrusted_eval",
+    "template injection",
+    "expression language injection",
+    "SpEL injection",
+    "OGNL injection"
+  ]
+}

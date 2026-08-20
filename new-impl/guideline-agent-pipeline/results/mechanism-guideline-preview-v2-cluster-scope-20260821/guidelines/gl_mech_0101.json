@@ -1,0 +1,106 @@
+{
+  "cluster_summary": "A collection of authentication and authorization vulnerabilities where tokens or credentials are not properly validated, either cryptographically, temporally, or through binding checks, leading to bypass, impersonation, or unauthorized access.",
+  "created_at": "2026-08-20T19:54:08+00:00",
+  "cve_ids": [
+    "CVE-2014-2062",
+    "CVE-2015-20110",
+    "CVE-2018-20595",
+    "CVE-2020-7692",
+    "CVE-2021-29451",
+    "CVE-2021-29455",
+    "CVE-2021-3827",
+    "CVE-2021-39177",
+    "CVE-2022-39308",
+    "CVE-2023-25558",
+    "CVE-2023-36820",
+    "CVE-2023-37471",
+    "CVE-2024-12369",
+    "CVE-2025-30373",
+    "CVE-2025-62614",
+    "CVE-2026-11618"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0023__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0101",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 16 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2014-2062",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    23
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 23,
+      "fix_strategy": "Add mandatory cryptographic verification (signature verification, proof-of-possession, or decryption) before accepting token claims.",
+      "members": [
+        "CVE-2026-11618",
+        "CVE-2023-37471",
+        "CVE-2021-39177",
+        "CVE-2021-29451",
+        "CVE-2021-29455"
+      ],
+      "name": "Missing cryptographic token verification",
+      "root_cause": "The code fails to cryptographically verify the authenticity of a token (e.g., JWT signature, SAML signature, client certificate possession, token decryption) before accepting it as valid."
+    },
+    {
+      "cluster_id": 23,
+      "fix_strategy": "Generate and verify state/nonce parameters and implement PKCE with code verifier and challenge.",
+      "members": [
+        "CVE-2024-12369",
+        "CVE-2023-25558",
+        "CVE-2020-7692",
+        "CVE-2018-20595"
+      ],
+      "name": "Missing session binding in OAuth/OIDC flows",
+      "root_cause": "The OAuth/OIDC implementation does not enforce state, nonce, or PKCE parameters that bind the authorization request to the token exchange, allowing code injection, CSRF, or replay."
+    },
+    {
+      "cluster_id": 23,
+      "fix_strategy": "Add explicit checks to reject requests that lack credentials or fail authorization conditions, and ensure control flow stops after sending error response.",
+      "members": [
+        "CVE-2025-62614",
+        "CVE-2025-30373",
+        "CVE-2023-36820",
+        "CVE-2014-2062",
+        "CVE-2021-3827"
+      ],
+      "name": "Missing authentication enforcement or missing authorization checks",
+      "root_cause": "The code fails to enforce authentication (e.g., missing token presence check, missing early return after error) or fails to perform necessary authorization checks (e.g., audience, user existence, client permission) leading to unauthorized access."
+    },
+    {
+      "cluster_id": 23,
+      "fix_strategy": "Replace standard string equality with constant-time comparison (e.g., MessageDigest.isEqual or XOR-based method).",
+      "members": [
+        "CVE-2022-39308",
+        "CVE-2015-20110"
+      ],
+      "name": "Timing side-channel in credential comparison",
+      "root_cause": "Credential comparison uses non-constant-time string equality, allowing an attacker to guess secrets via timing differences."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

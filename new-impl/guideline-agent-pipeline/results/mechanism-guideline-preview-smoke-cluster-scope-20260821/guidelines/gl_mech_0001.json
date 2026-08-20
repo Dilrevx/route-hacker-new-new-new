@@ -1,0 +1,55 @@
+{
+  "cluster_summary": "A deliberately broad historical cluster that mixes naming lookups and ordinary outbound URL fetches.",
+  "created_at": "2026-08-20T19:54:03+00:00",
+  "cve_ids": [
+    "CVE-2099-1001"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0007__mech_jndi_untrusted_lookup_target",
+  "guideline_id": "gl_mech_0001",
+  "guideline_text": "Trace attacker-controlled names, URLs, headers, configuration values, or lookup keys into JNDI, LDAP, RMI, naming-context, or remote lookup APIs. Report code paths where the lookup scheme, authority, object factory, object type, and network destination are not constrained before lookup. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should bind lookup inputs to trusted constants or allowlists, restrict schemes and destinations, and disable remote object factories.",
+  "mechanism": {
+    "aliases": [
+      "JNDI lookup",
+      "LDAP lookup",
+      "RMI lookup",
+      "InitialContext.lookup",
+      "naming context lookup"
+    ],
+    "family": "remote_lookup_or_ssrf",
+    "mechanism_id": "mech_jndi_untrusted_lookup_target",
+    "missing_guard": "the lookup scheme, authority, object factory, object type, and network destination are not constrained before lookup",
+    "name": "attacker-controlled JNDI lookup target",
+    "sink_shape": "JNDI, LDAP, RMI, naming-context, or remote lookup APIs",
+    "source_shape": "attacker-controlled names, URLs, headers, configuration values, or lookup keys",
+    "typical_fix": "bind lookup inputs to trusted constants or allowlists, restrict schemes and destinations, and disable remote object factories"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2099-1001",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    7
+  ],
+  "source_fingerprint": "e719fd5e44e665e0edcc54f47bde1c2a5a8eb92bc34ce00284159d4c4b1c7d89",
+  "source_method": "llm_native",
+  "sub_patterns": [
+    {
+      "cluster_id": 7,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2099-1001"
+      ],
+      "name": "outbound lookup and request bugs",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "remote_lookup_or_ssrf",
+    "mech_jndi_untrusted_lookup_target",
+    "JNDI lookup",
+    "LDAP lookup",
+    "RMI lookup",
+    "InitialContext.lookup"
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "cluster_summary": "A collection of 18 vulnerabilities where HTTP endpoints lack proper authentication or authorization checks. The root causes span missing authentication guards, missing permission annotations, missing object-level ownership verification, insufficient privilege validation, and other authorization bypass issues, allowing unauthenticated or unauthorized access to sensitive operations.",
+  "created_at": "2026-08-20T19:54:08+00:00",
+  "cve_ids": [
+    "CVE-2021-21246",
+    "CVE-2021-43287",
+    "CVE-2022-23061",
+    "CVE-2024-42470",
+    "CVE-2024-43397",
+    "CVE-2024-47876",
+    "CVE-2024-6908",
+    "CVE-2025-14909",
+    "CVE-2025-3199",
+    "CVE-2025-3202",
+    "CVE-2026-24468",
+    "CVE-2026-3186",
+    "CVE-2026-5616"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0034__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0150",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 13 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2021-21246",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    34
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 34,
+      "fix_strategy": "Add explicit authentication checks (e.g., verify user is authenticated) or remove the endpoint entirely.",
+      "members": [
+        "CVE-2026-5616",
+        "CVE-2026-3186",
+        "CVE-2024-42470",
+        "CVE-2021-43287",
+        "CVE-2021-21246"
+      ],
+      "name": "Missing authentication guard on endpoints",
+      "root_cause": "Endpoints are exposed without any authentication check, often due to missing annotations or global filter assumptions, allowing unauthenticated attackers to invoke sensitive operations."
+    },
+    {
+      "cluster_id": 34,
+      "fix_strategy": "Add the appropriate permission annotation to each method to enforce role-based or permission-based access control.",
+      "members": [
+        "CVE-2025-14909",
+        "CVE-2025-3199",
+        "CVE-2025-3202"
+      ],
+      "name": "Missing permission annotation on controller methods",
+      "root_cause": "Controller methods are accessible to any authenticated user because they lack fine-grained permission annotations (e.g., @RequiresPermissions, @SaCheckPermission), assuming authentication alone is sufficient."
+    },
+    {
+      "cluster_id": 34,
+      "fix_strategy": "Add validation that each identifier in the request body matches the path parameters before processing the permission check.",
+      "members": [
+        "CVE-2024-43397"
+      ],
+      "name": "Missing validation of resource identifiers against path parameters",
+      "root_cause": "In bulk operations, the request body contains resource identifiers that are not validated to match the resource identified by the URL path, allowing the operation to bypass path-based authorization checks."
+    },
+    {
+      "cluster_id": 34,
+      "fix_strategy": "Add explicit checks that reject the operation if the target user is a superadmin or if the requested role is reserved for higher privileges.",
+      "members": [
+        "CVE-2022-23061",
+        "CVE-2024-6908"
+      ],
+      "name": "Insufficient privilege validation in user management operations",
+      "root_cause": "Administrative operations (delete user, assign role) do not check whether the target user has a higher privilege level or the requested role is restricted, allowing lower-privileged admins to escalate or harm superadmin accounts."
+    },
+    {
+      "cluster_id": 34,
+      "fix_strategy": "Set password to null for roleview accounts and add an early return in the authentication method that rejects any user with the roleview type.",
+      "members": [
+        "CVE-2024-47876"
+      ],
+      "name": "Authentication bypass via predictable credentials and missing user-type ban",
+      "root_cause": "Roleview mock users are created with a predictable password (equal to username) and the authentication method does not reject login attempts from this user type, allowing unauthorized access with default credentials."
+    },
+    {
+      "cluster_id": 34,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2026-24468"
+      ],
+      "name": "Missing authorization checks in web endpoints",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

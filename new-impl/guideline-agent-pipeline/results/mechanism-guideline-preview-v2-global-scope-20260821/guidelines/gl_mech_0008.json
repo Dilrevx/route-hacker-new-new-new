@@ -1,0 +1,237 @@
+{
+  "cluster_summary": "A collection of authentication and authorization vulnerabilities where tokens or credentials are not properly validated, either cryptographically, temporally, or through binding checks, leading to bypass, impersonation, or unauthorized access. / A wide range of cross-site scripting (XSS) vulnerabilities caused by failing to neutralize user-supplied data—either through HTML entity encoding, input sanitization, or input validation—before it is embedded in web pages. The cluster includes reflected, stored, and JSONP-based XSS, with fixes ranging from global input filters to per-field encoding and strict allowlist validation. / The cluster comprises vulnerabilities where the system incorrectly uses the document's stored author identity for authorization decisions or inadvertently overwrites it during automated operations, leading to privilege escalation. Many also involve missing authorization checks before sensitive state-changing operations on documents. / This cluster consists of 22 CVE",
+  "created_at": "2026-08-20T19:59:26+00:00",
+  "cve_ids": [
+    "CVE-2011-4344",
+    "CVE-2013-10019",
+    "CVE-2014-125052",
+    "CVE-2014-1904",
+    "CVE-2020-15231",
+    "CVE-2020-7611",
+    "CVE-2021-33562",
+    "CVE-2021-4266",
+    "CVE-2022-31196",
+    "CVE-2023-0301",
+    "CVE-2023-36812",
+    "CVE-2023-37262",
+    "CVE-2023-41886",
+    "CVE-2023-46242",
+    "CVE-2024-10553",
+    "CVE-2024-40642",
+    "CVE-2024-41668",
+    "CVE-2025-5662",
+    "CVE-2025-62422",
+    "CVE-2025-9796",
+    "CVE-2026-0858",
+    "CVE-2026-10514",
+    "CVE-2026-10567",
+    "CVE-2026-3960",
+    "CVE-2026-40942"
+  ],
+  "embeddings": {},
+  "group_scope": "mechanism",
+  "guideline_group_key": "mech_ssrf_webhook_url_fetch",
+  "guideline_id": "gl_mech_0008",
+  "guideline_text": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 25 historical CVE example(s), not as a project-specific signature. A safe implementation should enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets.",
+  "mechanism": {
+    "aliases": [
+      "webhook SSRF",
+      "callback URL fetch",
+      "user controlled URL fetch",
+      "outbound HTTP client SSRF"
+    ],
+    "family": "ssrf",
+    "mechanism_id": "mech_ssrf_webhook_url_fetch",
+    "missing_guard": "scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request",
+    "name": "attacker-controlled webhook or callback URL fetch",
+    "sink_shape": "outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers",
+    "source_shape": "attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations",
+    "typical_fix": "enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2011-4344",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    5,
+    11,
+    16,
+    18,
+    23,
+    24,
+    25,
+    37
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 5,
+      "fix_strategy": "Expand denylist to include all known internal/cloud metadata IP ranges and address types.",
+      "members": [
+        "CVE-2023-37262"
+      ],
+      "name": "SSRF due to incomplete IP address denylist",
+      "root_cause": "The IP blocklist omits certain internal addresses (link-local, cloud metadata) allowing SSRF to those endpoints."
+    },
+    {
+      "cluster_id": 5,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2024-41668"
+      ],
+      "name": "Missing validation of user-provided URL targets in server-side network operations",
+      "root_cause": ""
+    },
+    {
+      "cluster_id": 11,
+      "fix_strategy": "Expand the blacklist to cover all known dangerous parameters and protocols, apply the check after full URL assembly and URL-decoding, and use robust regex that matches parameter names regardless of context.",
+      "members": [
+        "CVE-2026-3960",
+        "CVE-2025-5662",
+        "CVE-2024-10553"
+      ],
+      "name": "Incomplete or misapplied blacklist for JDBC connection parameters",
+      "root_cause": "The application relies on a blacklist to filter dangerous JDBC URL parameters, but the blacklist is missing entries (e.g., socketFactory, autoDeserialize, iiop), applied too early (before URL assembly or decoding), or uses overly restrictive regex patterns, allowing bypass."
+    },
+    {
+      "cluster_id": 11,
+      "fix_strategy": "Use parameterized queries (PreparedStatement) or, if necessary, apply strict allow-list validation or proper escaping.",
+      "members": [
+        "CVE-2025-62422",
+        "CVE-2013-10019"
+      ],
+      "name": "SQL injection via direct string concatenation",
+      "root_cause": "User-controlled input is concatenated into SQL query strings without parameterization, escaping, or allow-list validation, allowing injection of arbitrary SQL."
+    },
+    {
+      "cluster_id": 11,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2022-31196",
+        "CVE-2023-41886",
+        "CVE-2014-125052"
+      ],
+      "name": "Insufficient input validation in JDBC/JNDI URL construction and SQL query assembly",
+      "root_cause": ""
+    },
+    {
+      "cluster_id": 16,
+      "fix_strategy": "Apply the appropriate context-aware encoding function (e.g., HTML attribute encoding, JavaScript string escaping, HTML entity encoding) for all user-controlled data before interpolation.",
+      "members": [
+        "CVE-2021-4266",
+        "CVE-2023-36812"
+      ],
+      "name": "Missing context-dependent output encoding",
+      "root_cause": "The code assumes user input is safe for a specific output context (HTML attribute, JavaScript string, HTML entity) and applies no or incomplete escaping, leaving dangerous characters unescaped."
+    },
+    {
+      "cluster_id": 16,
+      "fix_strategy": "Add missing dangerous schemes to the denylist or enforce an allowlist of safe schemes (e.g., http, https).",
+      "members": [
+        "CVE-2025-9796",
+        "CVE-2023-0301"
+      ],
+      "name": "Incomplete URI scheme filtering",
+      "root_cause": "The code uses a denylist or allowlist for URI schemes but omits dangerous schemes like data:, javascript:, vbscript:."
+    },
+    {
+      "cluster_id": 16,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2026-0858"
+      ],
+      "name": "Insufficient input sanitization and context-sensitive output encoding",
+      "root_cause": ""
+    },
+    {
+      "cluster_id": 18,
+      "fix_strategy": "Enable header validation by using the default constructor (or passing true) to reject header values containing line terminators.",
+      "members": [
+        "CVE-2020-7611"
+      ],
+      "name": "Disabled header validation flag",
+      "root_cause": "The code explicitly disables HTTP header validation by passing false to the DefaultHttpHeaders constructor, allowing CRLF injection characters."
+    },
+    {
+      "cluster_id": 18,
+      "fix_strategy": "Add per-field character validation using ByteProcessor iterators that throw IllegalArgumentException on disallowed characters.",
+      "members": [
+        "CVE-2024-40642"
+      ],
+      "name": "Missing character validation in binary HTTP parser",
+      "root_cause": "The readRequestHead method extracts field values from binary HTTP without character validation, allowing arbitrary bytes including whitespace and control characters."
+    },
+    {
+      "cluster_id": 23,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2026-40942"
+      ],
+      "name": "Inadequate authentication token verification",
+      "root_cause": ""
+    },
+    {
+      "cluster_id": 24,
+      "fix_strategy": "Apply HTML escaping to the data (e.g., using StringEscapeUtils.escapeHtml4 or HtmlEscapers) before inserting it into the HTML template.",
+      "members": [
+        "CVE-2011-4344"
+      ],
+      "name": "Missing HTML escaping of user-controllable error content leading to XSS",
+      "root_cause": "User-controlled data (error messages or exception stack traces) is embedded directly into an HTML response without HTML entity encoding, allowing injection of arbitrary HTML/JavaScript."
+    },
+    {
+      "cluster_id": 25,
+      "fix_strategy": "Introduce a global servlet filter and AOP aspect that sanitize all request parameters using Jsoup.clean (or equivalent) before they reach any controller.",
+      "members": [
+        "CVE-2021-33562"
+      ],
+      "name": "missing input sanitization via global servlet filter",
+      "root_cause": "Ad-hoc, inconsistent sanitization in individual controllers; developers forgot to call sanitization functions, leaving endpoints unprotected."
+    },
+    {
+      "cluster_id": 25,
+      "fix_strategy": "Replace the global toggle with a URL pattern allowlist that conditionally applies HtmlUtils.htmlEscape only for specific endpoints.",
+      "members": [
+        "CVE-2026-10567",
+        "CVE-2026-10514"
+      ],
+      "name": "missing HTML escaping during JSON deserialization with URL pattern allowlist",
+      "root_cause": "Reliance on a global opt-in flag (off by default) to enable HTML escaping during JSON deserialization, leading to unescaped strings when the flag is not enabled."
+    },
+    {
+      "cluster_id": 25,
+      "fix_strategy": "Remove JSONP support entirely by deleting the callback parameter and related functionality.",
+      "members": [
+        "CVE-2020-15231"
+      ],
+      "name": "JSONP callback injection",
+      "root_cause": "User-controlled callback parameter reflected directly in JavaScript function wrapper without sanitization, enabling script injection."
+    },
+    {
+      "cluster_id": 25,
+      "fix_strategy": "Encode the request URI path using UriUtils.encodePath before embedding it in the HTML attribute.",
+      "members": [
+        "CVE-2014-1904"
+      ],
+      "name": "missing URI encoding in HTML attribute",
+      "root_cause": "Request URI used directly as HTML form action attribute without URL encoding, allowing injection via malicious characters."
+    },
+    {
+      "cluster_id": 37,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2023-46242"
+      ],
+      "name": "Authorization flaws in document author identity handling",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "ssrf",
+    "mech_ssrf_webhook_url_fetch",
+    "webhook SSRF",
+    "callback URL fetch",
+    "user controlled URL fetch",
+    "outbound HTTP client SSRF"
+  ]
+}

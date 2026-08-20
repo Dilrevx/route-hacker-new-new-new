@@ -1,0 +1,87 @@
+{
+  "cluster_summary": "This cluster covers injection vulnerabilities (JDBC parameter injection, JNDI scheme injection, SQL injection) caused by incomplete blacklists, missing scheme or prefix validation, or direct string concatenation of user input into sensitive constructs. The majority of issues stem from assuming user-controlled data is safe when building JDBC URLs or SQL queries without proper validation, canonicalization, or parameterization.",
+  "created_at": "2026-08-20T19:54:07+00:00",
+  "cve_ids": [
+    "CVE-2022-24818",
+    "CVE-2023-40743",
+    "CVE-2023-51441",
+    "CVE-2023-51653",
+    "CVE-2024-57971",
+    "CVE-2025-13467",
+    "CVE-2025-57772",
+    "CVE-2025-57773",
+    "CVE-2025-58045",
+    "CVE-2025-58046",
+    "CVE-2025-58748",
+    "CVE-2025-64164",
+    "CVE-2025-64428"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0011__mech_jndi_untrusted_lookup_target",
+  "guideline_id": "gl_mech_0027",
+  "guideline_text": "Trace attacker-controlled names, URLs, headers, configuration values, or lookup keys into JNDI, LDAP, RMI, naming-context, or remote lookup APIs. Report code paths where the lookup scheme, authority, object factory, object type, and network destination are not constrained before lookup. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 13 historical CVE example(s), not as a project-specific signature. A safe implementation should bind lookup inputs to trusted constants or allowlists, restrict schemes and destinations, and disable remote object factories.",
+  "mechanism": {
+    "aliases": [
+      "JNDI lookup",
+      "LDAP lookup",
+      "RMI lookup",
+      "InitialContext.lookup",
+      "naming context lookup"
+    ],
+    "family": "remote_lookup_or_ssrf",
+    "mechanism_id": "mech_jndi_untrusted_lookup_target",
+    "missing_guard": "the lookup scheme, authority, object factory, object type, and network destination are not constrained before lookup",
+    "name": "attacker-controlled JNDI lookup target",
+    "sink_shape": "JNDI, LDAP, RMI, naming-context, or remote lookup APIs",
+    "source_shape": "attacker-controlled names, URLs, headers, configuration values, or lookup keys",
+    "typical_fix": "bind lookup inputs to trusted constants or allowlists, restrict schemes and destinations, and disable remote object factories"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2022-24818",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    11
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 11,
+      "fix_strategy": "Expand the blacklist to cover all known dangerous parameters and protocols, apply the check after full URL assembly and URL-decoding, and use robust regex that matches parameter names regardless of context.",
+      "members": [
+        "CVE-2025-64164",
+        "CVE-2025-58045",
+        "CVE-2025-58046",
+        "CVE-2025-57773"
+      ],
+      "name": "Incomplete or misapplied blacklist for JDBC connection parameters",
+      "root_cause": "The application relies on a blacklist to filter dangerous JDBC URL parameters, but the blacklist is missing entries (e.g., socketFactory, autoDeserialize, iiop), applied too early (before URL assembly or decoding), or uses overly restrictive regex patterns, allowing bypass."
+    },
+    {
+      "cluster_id": 11,
+      "fix_strategy": "Enforce that the URL starts with the required scheme (e.g., 'jdbc:h2') or the JNDI name starts with 'java:comp/env/jdbc/', or restrict JNDI lookups to safe schemes via blacklist of dangerous schemes (LDAP, RMI, etc.).",
+      "members": [
+        "CVE-2025-13467",
+        "CVE-2025-64428",
+        "CVE-2025-58748",
+        "CVE-2025-57772",
+        "CVE-2023-51441",
+        "CVE-2022-24818",
+        "CVE-2023-51653",
+        "CVE-2024-57971",
+        "CVE-2023-40743"
+      ],
+      "name": "Missing scheme or prefix validation for JDBC/JNDI URLs",
+      "root_cause": "The application does not verify that the user-supplied JDBC URL or JNDI name matches the expected scheme or namespace prefix, enabling substitution of a different driver or resource that supports dangerous features."
+    }
+  ],
+  "tags": [
+    "remote_lookup_or_ssrf",
+    "mech_jndi_untrusted_lookup_target",
+    "JNDI lookup",
+    "LDAP lookup",
+    "RMI lookup",
+    "InitialContext.lookup"
+  ]
+}

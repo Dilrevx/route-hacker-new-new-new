@@ -1,0 +1,379 @@
+{
+  "cluster_summary": "A set of vulnerabilities in inventory/GUI storage code that lead to item duplication due to inadequate synchronization between GUI and backing storage, missing player context in storage updates, and lack of validation of slot properties (fake slots, modification permissions). One outlier involves a missing permission check in a packet handler for file modification. / Multiple vulnerabilities arise from failing to enforce upper bounds on user-controlled size parameters (query limits, object indices) or from neglecting to check field metadata (types like Password, Email) before exposing data through queries, exports, REST APIs, and diffs. These omissions lead to resource exhaustion or unauthorized disclosure of sensitive information. / Multiple vulnerabilities arise from user-controlled input being concatenated directly into SQL query strings without proper escaping or use of parameterized queries, leading to SQL injection. A few related issues involve regex backtracking, OS command inje",
+  "created_at": "2026-08-20T19:59:26+00:00",
+  "cve_ids": [
+    "CVE-2010-10006",
+    "CVE-2016-1000338",
+    "CVE-2016-1000342",
+    "CVE-2016-1000346",
+    "CVE-2017-13098",
+    "CVE-2018-25068",
+    "CVE-2020-15250",
+    "CVE-2020-25022",
+    "CVE-2020-25023",
+    "CVE-2020-27223",
+    "CVE-2020-28371",
+    "CVE-2020-28491",
+    "CVE-2020-8908",
+    "CVE-2021-21290",
+    "CVE-2021-21363",
+    "CVE-2021-21364",
+    "CVE-2021-21409",
+    "CVE-2021-41272",
+    "CVE-2022-21126",
+    "CVE-2022-24823",
+    "CVE-2022-24913",
+    "CVE-2022-39312",
+    "CVE-2022-3952",
+    "CVE-2022-3969",
+    "CVE-2022-41946",
+    "CVE-2022-41954",
+    "CVE-2022-4641",
+    "CVE-2022-4817",
+    "CVE-2023-0482",
+    "CVE-2023-26053",
+    "CVE-2023-34453",
+    "CVE-2023-34455",
+    "CVE-2023-34467",
+    "CVE-2023-41041",
+    "CVE-2023-46120",
+    "CVE-2024-23833",
+    "CVE-2024-23953",
+    "CVE-2024-29869",
+    "CVE-2024-36114",
+    "CVE-2024-55952",
+    "CVE-2024-56158",
+    "CVE-2025-24790",
+    "CVE-2025-48382",
+    "CVE-2025-49128",
+    "CVE-2025-62193",
+    "CVE-2025-62420",
+    "CVE-2025-62784",
+    "CVE-2025-6544",
+    "CVE-2025-67721",
+    "CVE-2026-33013",
+    "CVE-2026-33306",
+    "CVE-2026-41207",
+    "CVE-2026-44714",
+    "CVE-2026-5588"
+  ],
+  "embeddings": {},
+  "group_scope": "mechanism",
+  "guideline_group_key": "mech_toctou_mutable_object_reuse",
+  "guideline_id": "gl_mech_0011",
+  "guideline_text": "Trace mutable files, paths, objects, identities, request fields, or shared state that are checked before use into sensitive file, state, permission, memory, or resource effects that depend on the earlier check. Report code paths where the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 54 historical CVE example(s), not as a project-specific signature. A safe implementation should bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary.",
+  "mechanism": {
+    "aliases": [
+      "TOCTOU",
+      "check then use race",
+      "double fetch",
+      "stale object reuse"
+    ],
+    "family": "race_or_lifecycle",
+    "mechanism_id": "mech_toctou_mutable_object_reuse",
+    "missing_guard": "the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect",
+    "name": "time-of-check to time-of-use on mutable object",
+    "sink_shape": "sensitive file, state, permission, memory, or resource effects that depend on the earlier check",
+    "source_shape": "mutable files, paths, objects, identities, request fields, or shared state that are checked before use",
+    "typical_fix": "bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2010-10006",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    1,
+    11,
+    12,
+    14,
+    17,
+    18,
+    19,
+    21,
+    22,
+    26,
+    27,
+    33
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 1,
+      "fix_strategy": "Replace the manual delete-and-mkdir sequence with the atomic Files.createTempDirectory() API, which atomically creates a unique temporary directory with owner-only permissions.",
+      "members": [
+        "CVE-2022-21126",
+        "CVE-2022-3952",
+        "CVE-2022-3969",
+        "CVE-2022-4817",
+        "CVE-2018-25068",
+        "CVE-2021-21363"
+      ],
+      "name": "Non-atomic temporary directory creation via file-delete-mkdir sequence",
+      "root_cause": "A temporary directory is created by first creating a temporary file, deleting it, then calling mkdir/mkdirs on the same path. This non-atomic sequence allows a local attacker to win a TOCTOU race by replacing the path with a symbolic link, leading to directory creation at an attacker-controlled location."
+    },
+    {
+      "cluster_id": 1,
+      "fix_strategy": "Replace File.createTempFile() with java.nio.file.Files.createTempFile(), which defaults to owner-only (0600) permissions, or immediately call setReadable/setWritable with owner-only flags after creation, optionally checking return values.",
+      "members": [
+        "CVE-2022-41946",
+        "CVE-2025-48382",
+        "CVE-2022-41954",
+        "CVE-2022-4641",
+        "CVE-2022-24913",
+        "CVE-2023-0482",
+        "CVE-2021-21364",
+        "CVE-2021-21290"
+      ],
+      "name": "Insecure default permissions on temporary files created with File.createTempFile",
+      "root_cause": "The code uses java.io.File.createTempFile() which on Unix-like systems creates temporary files with default umask-based permissions (often world-readable). No subsequent permission hardening is applied, leaving sensitive spooled data accessible to other local users."
+    },
+    {
+      "cluster_id": 1,
+      "fix_strategy": "Use java.nio.file.Files.createTempDirectory() which creates directories with owner-only (0700) permissions by default, or explicitly set permissions to 0700 after creation.",
+      "members": [
+        "CVE-2020-8908",
+        "CVE-2020-15250"
+      ],
+      "name": "Insecure default permissions on temporary directories created with mkdir",
+      "root_cause": "Temporary directories are created using File.mkdir() or manual delete-then-mkdir sequences that inherit the system umask, often resulting in world-readable (0755) permissions instead of owner-only (0700). No explicit restrictive permissions are applied."
+    },
+    {
+      "cluster_id": 1,
+      "fix_strategy": "Check the return value of every file.setReadable() call and throw an IOException if any call indicates failure, ensuring the insecure file is not used.",
+      "members": [
+        "CVE-2022-24823"
+      ],
+      "name": "Unchecked return value of file permission hardening API",
+      "root_cause": "The code attempts to restrict file permissions using File.setReadable() but ignores the boolean return value. If the permission change fails silently (e.g., due to filesystem restrictions), the file retains insecure default permissions."
+    },
+    {
+      "cluster_id": 1,
+      "fix_strategy": "Pass an explicit PosixFilePermissions attribute set (e.g., OWNER_READ, OWNER_WRITE) to Files.createFile(), or open the file with a restrictive permission mask before writing; also validate permissions on subsequent reads.",
+      "members": [
+        "CVE-2025-24790",
+        "CVE-2024-29869"
+      ],
+      "name": "Sensitive file creation without explicit restrictive permissions using non-temporary APIs",
+      "root_cause": "Sensitive data (e.g., credential caches, token files) is written to a file created via Files.createFile() or Credentials.writeTokenStorageFile() without specifying explicit file permissions. The file inherits the process umask, typically resulting in world-readable permissions."
+    },
+    {
+      "cluster_id": 11,
+      "fix_strategy": "Expand the blacklist to cover all known dangerous parameters and protocols, apply the check after full URL assembly and URL-decoding, and use robust regex that matches parameter names regardless of context.",
+      "members": [
+        "CVE-2025-62420",
+        "CVE-2025-6544",
+        "CVE-2024-23833",
+        "CVE-2022-39312",
+        "CVE-2024-55952"
+      ],
+      "name": "Incomplete or misapplied blacklist for JDBC connection parameters",
+      "root_cause": "The application relies on a blacklist to filter dangerous JDBC URL parameters, but the blacklist is missing entries (e.g., socketFactory, autoDeserialize, iiop), applied too early (before URL assembly or decoding), or uses overly restrictive regex patterns, allowing bypass."
+    },
+    {
+      "cluster_id": 11,
+      "fix_strategy": "Use parameterized queries (PreparedStatement) or, if necessary, apply strict allow-list validation or proper escaping.",
+      "members": [
+        "CVE-2024-56158"
+      ],
+      "name": "SQL injection via direct string concatenation",
+      "root_cause": "User-controlled input is concatenated into SQL query strings without parameterization, escaping, or allow-list validation, allowing injection of arbitrary SQL."
+    },
+    {
+      "cluster_id": 12,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2020-27223"
+      ],
+      "name": "Insufficient validation of user-controlled query components",
+      "root_cause": ""
+    },
+    {
+      "cluster_id": 14,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2025-62193"
+      ],
+      "name": "Insufficient escaping or parameterization in SQL query construction",
+      "root_cause": ""
+    },
+    {
+      "cluster_id": 17,
+      "fix_strategy": "Change the loop condition to use less-than (`<`) so padding only occurs when the array is smaller than needed.",
+      "members": [
+        "CVE-2026-33013"
+      ],
+      "name": "Infinite loop due to wrong loop termination condition in array expansion",
+      "root_cause": "The loop condition uses strict inequality (`!=`) to pad an array to a target size, but when indices are inserted out of order the array size may already exceed the target, causing the condition to remain true indefinitely."
+    },
+    {
+      "cluster_id": 18,
+      "fix_strategy": "Capture the 'headers received' state at method entry into a local variable before any state-modifying processing.",
+      "members": [
+        "CVE-2021-21409"
+      ],
+      "name": "Missing Content-Length validation due to state flag timing",
+      "root_cause": "The code uses a mutable stream state flag after downstream processing may have set it, bypassing content-length validation for initial headers frames with end-stream flag."
+    },
+    {
+      "cluster_id": 19,
+      "fix_strategy": "After any click operation, compare GUI slot item with storage item and redraw if they differ; also intercept right-click events on bundle items to force a redraw and skip normal logic.",
+      "members": [
+        "CVE-2025-62784"
+      ],
+      "name": "Missing GUI state synchronization for bundle items",
+      "root_cause": "The GUI storage handler does not invalidate the GUI proxy after modifications for bundle items, and does not block secondary implicit actions (right-click) that bypass synchronization, leading to inconsistent state and duplication."
+    },
+    {
+      "cluster_id": 21,
+      "fix_strategy": "Introduce a maximum allowed allocation size (configurable or hardcoded) and/or use gradual reading with threshold; throw an exception if the declared length exceeds the limit.",
+      "members": [
+        "CVE-2023-34455",
+        "CVE-2020-28491",
+        "CVE-2023-46120"
+      ],
+      "name": "Unbounded allocation from untrusted length field",
+      "root_cause": "The code directly uses an attacker-controlled length value from the input stream to allocate a buffer without imposing any upper bound or size limit."
+    },
+    {
+      "cluster_id": 21,
+      "fix_strategy": "Add overflow detection checks (e.g., compare product to original factor, use subtraction to avoid overflow) and throw an error on overflow.",
+      "members": [
+        "CVE-2023-34453",
+        "CVE-2024-36114",
+        "CVE-2020-28371"
+      ],
+      "name": "Integer overflow in size/length arithmetic",
+      "root_cause": "Arithmetic operations (multiplication, addition) on attacker-controlled size values are performed without overflow checks, causing integer wrap-around that leads to undersized buffer allocations or bypassed bounds checks."
+    },
+    {
+      "cluster_id": 21,
+      "fix_strategy": "Enforce a positive offset (offset > 0) and/or zero-fill output region when offset is zero.",
+      "members": [
+        "CVE-2025-67721"
+      ],
+      "name": "Invalid back-reference offset in LZ decompression",
+      "root_cause": "LZ77/LZ4 decompression routines do not reject zero or negative back-reference offsets, causing data to be copied from uninitialized or reused buffer memory."
+    },
+    {
+      "cluster_id": 21,
+      "fix_strategy": "Use the content reference's offset and length to slice the snippet.",
+      "members": [
+        "CVE-2025-49128"
+      ],
+      "name": "Error snippet extraction ignores content offset",
+      "root_cause": "When generating error messages, the code reads from index 0 of the underlying buffer instead of using the logical content's offset and length, potentially leaking sensitive data from reused buffers."
+    },
+    {
+      "cluster_id": 22,
+      "fix_strategy": "Broadcast a session-deleted event on logout and add listeners on all nodes to remove the corresponding cached session.",
+      "members": [
+        "CVE-2023-41041"
+      ],
+      "name": "Incomplete distributed session invalidation on logout",
+      "root_cause": "Logout deletes the session from the local node and database, but peer nodes retain a cached copy. No cluster-wide invalidation event is broadcast, so stale sessions remain valid on other nodes."
+    },
+    {
+      "cluster_id": 26,
+      "fix_strategy": "Replace with constant-time comparison functions like a safeEquals() that XORs all bytes without early exit, or use MessageDigest.isEqual.",
+      "members": [
+        "CVE-2010-10006",
+        "CVE-2024-23953"
+      ],
+      "name": "Non-constant-time cryptographic comparison",
+      "root_cause": "Code uses short-circuit equality checks (String.equals or Arrays.equals) to compare HMAC or signatures, leaking timing information that enables byte-by-byte oracle attacks."
+    },
+    {
+      "cluster_id": 26,
+      "fix_strategy": "After parsing, re-encode with strict DER and compare to original bytes; also validate sequence element count.",
+      "members": [
+        "CVE-2016-1000342",
+        "CVE-2016-1000338"
+      ],
+      "name": "Non-strict DER encoding validation in signature parsing",
+      "root_cause": "Signature decoder does not enforce strict DER encoding, allowing extra data or non-minimal integer encodings, enabling signature malleability."
+    },
+    {
+      "cluster_id": 26,
+      "fix_strategy": "Track whether any non-null verifier was checked; return success only if no failure and at least one check occurred.",
+      "members": [
+        "CVE-2026-5588"
+      ],
+      "name": "Empty signature set allowed in verification loop",
+      "root_cause": "Verification loop iterates over verifiers, skipping null ones, and returns success if no failure recorded, without ensuring at least one verifier was used."
+    },
+    {
+      "cluster_id": 26,
+      "fix_strategy": "Compute HASH160 of the provided public key and compare to the hash from scriptPubKey; reject on mismatch.",
+      "members": [
+        "CVE-2026-44714"
+      ],
+      "name": "Missing public key hash commitment check in signature verification",
+      "root_cause": "Fast-path verification accepts an attacker-supplied public key without verifying that its hash matches the output's scriptPubKey, allowing key substitution."
+    },
+    {
+      "cluster_id": 26,
+      "fix_strategy": "Reject any key identifier shorter than full fingerprint length; use fingerprint hex string for verification.",
+      "members": [
+        "CVE-2023-26053"
+      ],
+      "name": "Acceptance of short key identifier as trust anchor",
+      "root_cause": "Code accepts 64-bit key IDs in trust elements, which are vulnerable to collision attacks; full fingerprint required."
+    },
+    {
+      "cluster_id": 26,
+      "fix_strategy": "Validate Y is in range [2, p-2] and if subgroup Q exists, verify Y^Q mod P == 1; reject shared secret equal to 1.",
+      "members": [
+        "CVE-2016-1000346"
+      ],
+      "name": "Missing DH public key subgroup validation",
+      "root_cause": "DH public key Y is used directly without checking it belongs to the expected subgroup, enabling small subgroup attacks."
+    },
+    {
+      "cluster_id": 27,
+      "fix_strategy": "Add explicit checks after each cryptographic call (null return, exception, or length validation) and throw exceptions or treat invalid results as errors.",
+      "members": [
+        "CVE-2026-41207",
+        "CVE-2017-13098"
+      ],
+      "name": "Missing validation of cryptographic output for correctness",
+      "root_cause": "Caller assumes cryptographic functions always succeed and does not check return values or output validity, leading to use of all-zero keys or processing of invalid plaintext that leaks information."
+    },
+    {
+      "cluster_id": 27,
+      "fix_strategy": "Use wider integer types (e.g., long) for iteration counts; add range checks after conversion to catch negative values.",
+      "members": [
+        "CVE-2026-33306",
+        "CVE-2021-41272"
+      ],
+      "name": "Integer overflow or signedness confusion in cryptographic parameters",
+      "root_cause": "Signed integer overflow or unsigned-to-signed conversion without range checking causes loop bounds to become negative or shift amounts to be interpreted incorrectly."
+    },
+    {
+      "cluster_id": 27,
+      "fix_strategy": "Add validation at the start of each method: check that offsets and lengths are non-negative and within array bounds; throw IllegalArgumentException otherwise.",
+      "members": [
+        "CVE-2020-25023",
+        "CVE-2020-25022"
+      ],
+      "name": "Missing bounds validation on array offsets and lengths",
+      "root_cause": "Array offset and length parameters are not validated before use, allowing negative or out-of-range values to cause out-of-bounds memory access."
+    },
+    {
+      "cluster_id": 33,
+      "fix_strategy": "Add type-based checks at each output point: skip or mask fields of sensitive types, obfuscate emails according to configuration, and ensure class metadata is preserved in diffs.",
+      "members": [
+        "CVE-2023-34467"
+      ],
+      "name": "Sensitive data exposure via missing field-type checks in query building and serialization",
+      "root_cause": "Code that builds database queries, generates XML exports, computes diffs, or returns REST responses does not inspect field metadata (e.g., Password, Email types) before including or exposing property values, allowing unprivileged users to read confidential data."
+    }
+  ],
+  "tags": [
+    "race_or_lifecycle",
+    "mech_toctou_mutable_object_reuse",
+    "TOCTOU",
+    "check then use race",
+    "double fetch",
+    "stale object reuse"
+  ]
+}

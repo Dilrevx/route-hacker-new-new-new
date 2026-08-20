@@ -34,8 +34,8 @@ The detailed bad-case note is
 - `scripts/run_hcvr_case_anchor_audits.py`
   - Reads an HCVR QA receipt.
   - Selects cases from `added_identities`.
-  - Builds mechanism-aware retrieval guidelines, or consumes guideline sidecar
-    overrides from offline clustering output.
+  - Builds retrieval guidelines from explicit case text, clustering sidecar
+    overrides, CWE templates, or coarse HCVR type templates.
   - Consumes selected anchors from a recall run, or uses each case's existing
     `recall_anchors` for audit-only compatibility runs.
   - Materializes the exact source checkout in a read-only snapshot.
@@ -115,10 +115,102 @@ only the query/guideline vector with a residual MLP.
 
 Guideline construction is deliberately kept on the query side. The default
 builder uses the case's explicit `guideline_text`, `retrieval_guideline`, or
-`audit_guideline` when present, then falls back to mechanism-aware templates
-from the case classification, CWE metadata, and public description fields.
+`audit_guideline` when present, then falls back to CWE templates and coarse
+HCVR type templates. It does not infer mechanism-specific queries from ad hoc
+regular expressions over advisory text; mechanism names such as JNDI, LDAP,
+RMI, unsafe template evaluation, or SSRF-through-JNDI must come from a
+reviewable offline guideline release or from an explicit sidecar override.
 Known anchors, ranks, file paths, and line numbers are never used to construct
 the retrieval query.
+
+## Guideline Clustering Roadmap
+
+The intended offline-to-online contract is:
+
+```text
+CVE metadata + patch diff
+  -> code-centric root-cause extraction
+  -> cluster refinement into evidence neighborhoods and sub-patterns
+  -> mechanism attribution inside each neighborhood
+  -> one reusable guideline per cluster-scoped mechanism
+  -> guideline sidecar consumed by recall and audit
+```
+
+The historical `cve_clustering` implementation already has the right artifact
+shape: each structured CVE carries `root_cause`, `abstract_pattern`,
+`data_flow`, `trigger_condition`, and `fix_strategy`; refined clusters can
+carry `sub_patterns` with their own root cause, fix strategy, and member CVEs;
+guideline generation expands broad clusters into reviewable mechanism-scoped
+guidelines. When `--cases-file` is provided, the release also emits
+`guideline_overrides.jsonl`, which recall and audit consume through
+`--guideline-file`.
+
+The current weakness is guideline granularity. Broad buckets such as `iris`,
+`m9_wave2`, `m9_wave4`, and `m9_expansion` are useful for bookkeeping, but they
+are too coarse as retrieval queries. A Java naming bug should surface as a
+JNDI/LDAP/RMI lookup guideline, and an outbound lookup bug should be expressible
+as SSRF through a naming or lookup API rather than as a generic SSRF or generic
+security-relevant code path. This module now implements that split as an
+offline release step, backed by a reviewable mechanism lexicon.
+
+For the next guideline-v2 iteration:
+
+1. Treat `bad-case` branch material as motivation and regression data,
+   including the historical bad-case notes and the fixed-143 retrieval
+   evidence.
+2. Improve offline cluster refinement so `sub_patterns` are mechanism-level
+   and audit-actionable, not umbrella vulnerability categories.
+3. Emit a sidecar keyed by `identity_key` or `case_id` for this module to
+   consume without mutating the dataset.
+4. Rerun P3C64 on the frozen 143 identity file and compare against
+   `results/p3c64-fixed143-paper-eval-20260820/` at Top-100, Top-150, and
+   Top-200.
+
+The current implementation does not abandon clustering. It changes the role of
+clustering: clusters provide the local historical evidence neighborhood, while
+mechanism attribution decides the released guideline boundary. A broad cluster
+can therefore emit separate guidelines for JNDI lookup, webhook SSRF,
+redirect-following SSRF, template evaluation, or pending-review mechanisms.
+
+Generate a guideline-v2 preview from cve_clustering artifacts:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/generate_mechanism_guidelines.py \
+  --clusters /path/to/refined_clusters.json \
+  --structured /path/to/structured_cves.jsonl \
+  --output-dir /path/to/mechanism-guideline-release
+```
+
+The default `--group-scope cluster-mechanism` emits one guideline per
+`(cluster_id, mechanism_id)`. This keeps JNDI-in-cluster-9 separate from
+JNDI-in-cluster-11, while still preserving both the cluster context and the
+human-readable mechanism label. Use `--group-scope mechanism` only for ablation
+against the older global same-mechanism aggregation. Use
+`--group-scope sub-pattern` when the refined cluster already contains high
+quality sub-pattern boundaries and you want the narrowest release.
+
+The mechanism lexicon is an offline release asset:
+
+```text
+guidelines/mechanism_lexicon.seed.json
+```
+
+It records reusable mechanism names, aliases, source shape, sink shape, missing
+guard, and typical fix text. Unknown work items are written as
+`pending_review`; the next lexicon iteration can be maintained manually or by an
+LLM reviewer that proposes new entries from those pending rows. The online
+recall runner consumes the released `guideline_overrides.jsonl` sidecar and
+does not infer mechanism words from advisory regexes.
+
+Committed preview outputs:
+
+- `results/mechanism-guideline-preview-smoke-cluster-scope-20260821/` shows a
+  deliberately broad cluster split into separate JNDI and webhook SSRF
+  guidelines.
+- `results/mechanism-guideline-preview-v2-cluster-scope-20260821/` applies the
+  same generator to the historical cve_clustering v2 artifacts. It emits 160
+  guidelines from 303 work items: 231 active lexicon attributions and 72
+  pending-review attributions.
 
 For model A/B evaluation, always pass the same `--identity-file` to every run.
 `--selection all --limit N` without `--identity-file` selects the first N

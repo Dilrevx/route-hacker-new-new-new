@@ -1,0 +1,206 @@
+{
+  "cluster_summary": "This cluster comprises 40 XWiki vulnerabilities, primarily server-side template injection (SSTI) and cross-site scripting (XSS), caused by user-controlled data being interpolated into templates without proper context-specific escaping (HTML, wiki syntax, or URL). Variants include incomplete delimiter escaping, bypassing the rendering pipeline, misconfigured output directives, unsafe wrapper removal, direct code evaluation, and one unrelated error-handling issue.",
+  "created_at": "2026-08-20T19:54:08+00:00",
+  "cve_ids": [
+    "CVE-2023-26472",
+    "CVE-2023-26477",
+    "CVE-2023-26479",
+    "CVE-2023-29211",
+    "CVE-2023-29212",
+    "CVE-2023-29213",
+    "CVE-2023-29511",
+    "CVE-2023-29512",
+    "CVE-2023-29514",
+    "CVE-2023-29516",
+    "CVE-2023-29518",
+    "CVE-2023-29522",
+    "CVE-2023-29523",
+    "CVE-2023-30537",
+    "CVE-2023-34464",
+    "CVE-2023-35152",
+    "CVE-2023-35153",
+    "CVE-2023-36469",
+    "CVE-2023-36470",
+    "CVE-2023-36471",
+    "CVE-2023-37462",
+    "CVE-2023-37909",
+    "CVE-2023-37914",
+    "CVE-2023-40176",
+    "CVE-2023-46731",
+    "CVE-2023-50721",
+    "CVE-2024-21650",
+    "CVE-2024-31465",
+    "CVE-2024-31982",
+    "CVE-2024-31984",
+    "CVE-2024-31996",
+    "CVE-2024-41947",
+    "CVE-2024-55662",
+    "CVE-2024-55877",
+    "CVE-2025-24893",
+    "CVE-2025-46558",
+    "CVE-2025-53835",
+    "CVE-2025-66474",
+    "CVE-2026-24128",
+    "CVE-2026-40105"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0031__mech_template_expression_untrusted_eval",
+  "guideline_id": "gl_mech_0139",
+  "guideline_text": "Trace attacker-controlled template text, expression strings, macro content, or rendering parameters into template engines, expression evaluators, macro renderers, or scriptable configuration evaluators. Report code paths where untrusted expression content is evaluated without sandboxing, escaping, allowlisting, or disabling reflective execution features. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 40 historical CVE example(s), not as a project-specific signature. A safe implementation should separate data from templates, sandbox expression evaluation, and disable reflection or method invocation features for untrusted input.",
+  "mechanism": {
+    "aliases": [
+      "template injection",
+      "expression language injection",
+      "SpEL injection",
+      "OGNL injection",
+      "Velocity macro injection",
+      "FreeMarker template injection"
+    ],
+    "family": "code_or_template_injection",
+    "mechanism_id": "mech_template_expression_untrusted_eval",
+    "missing_guard": "untrusted expression content is evaluated without sandboxing, escaping, allowlisting, or disabling reflective execution features",
+    "name": "untrusted template or expression evaluation",
+    "sink_shape": "template engines, expression evaluators, macro renderers, or scriptable configuration evaluators",
+    "source_shape": "attacker-controlled template text, expression strings, macro content, or rendering parameters",
+    "typical_fix": "separate data from templates, sandbox expression evaluation, and disable reflection or method invocation features for untrusted input"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2023-26472",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    31
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 31,
+      "fix_strategy": "Apply escapetool.xml() or equivalent HTML/XML escaping function to all dynamic values before embedding in HTML.",
+      "members": [
+        "CVE-2026-24128",
+        "CVE-2023-29522",
+        "CVE-2023-29511",
+        "CVE-2023-29512",
+        "CVE-2023-29518",
+        "CVE-2023-35153",
+        "CVE-2023-37909",
+        "CVE-2024-41947",
+        "CVE-2023-29213"
+      ],
+      "name": "Missing HTML/XML escaping in template output",
+      "root_cause": "User-controlled values are interpolated into HTML attributes or text nodes without applying HTML entity encoding, allowing injection of arbitrary HTML/JavaScript."
+    },
+    {
+      "cluster_id": 31,
+      "fix_strategy": "Use $services.rendering.escape(value, 'xwiki/2.1') to escape the value for the wiki syntax context before interpolation.",
+      "members": [
+        "CVE-2024-21650",
+        "CVE-2023-26477",
+        "CVE-2023-26472",
+        "CVE-2023-30537",
+        "CVE-2023-29211",
+        "CVE-2023-29212",
+        "CVE-2023-29516",
+        "CVE-2023-29514",
+        "CVE-2024-55877",
+        "CVE-2024-55662",
+        "CVE-2023-36470",
+        "CVE-2023-37462",
+        "CVE-2023-46731",
+        "CVE-2024-31465",
+        "CVE-2023-50721"
+      ],
+      "name": "Missing wiki syntax escaping in template output",
+      "root_cause": "User-controlled values are interpolated into XWiki wiki syntax markup without escaping special characters that denote macros or directives, enabling server-side template injection."
+    },
+    {
+      "cluster_id": 31,
+      "fix_strategy": "Escape all possible delimiter sequences, including opening and closing macros, and add trailing character guards.",
+      "members": [
+        "CVE-2025-66474",
+        "CVE-2023-29523",
+        "CVE-2024-31996"
+      ],
+      "name": "Incomplete delimiter escaping in template blocks",
+      "root_cause": "Only a subset of the closing delimiter sequences (e.g., '{{/html}}') are escaped, allowing attackers to break out of literal blocks by using alternative forms or partial prefixes."
+    },
+    {
+      "cluster_id": 31,
+      "fix_strategy": "Use rawResponse macro for complete bypass, or write directly to the response writer and mark the request as finished, or route raw HTML through a sanitizing macro.",
+      "members": [
+        "CVE-2025-24893",
+        "CVE-2024-31982",
+        "CVE-2025-53835",
+        "CVE-2025-46558",
+        "CVE-2023-36469"
+      ],
+      "name": "Bypassing the template rendering pipeline",
+      "root_cause": "User-controlled content is rendered through the full wiki rendering engine, which interprets embedded macros; the fix is to write the output directly to the response or use a macro that bypasses further processing."
+    },
+    {
+      "cluster_id": 31,
+      "fix_strategy": "Apply escapetool.url() to the query parameter values.",
+      "members": [
+        "CVE-2026-40105"
+      ],
+      "name": "Missing URL encoding in href attributes",
+      "root_cause": "User-controlled revision IDs are concatenated into query strings without URL encoding, allowing injection of HTML attributes/scripts via quotes and brackets."
+    },
+    {
+      "cluster_id": 31,
+      "fix_strategy": "Set wiki='false' in the Velocity macro directive.",
+      "members": [
+        "CVE-2023-35152",
+        "CVE-2023-37914"
+      ],
+      "name": "Missing Velocity directive to disable wiki parsing",
+      "root_cause": "Velocity macro output is processed as wiki markup by default; missing wiki='false' allows injected macros to be evaluated."
+    },
+    {
+      "cluster_id": 31,
+      "fix_strategy": "Set Content-Type to text/plain for non-HTML output; remove form-related tags from sanitizer allowlist.",
+      "members": [
+        "CVE-2023-34464",
+        "CVE-2023-36471"
+      ],
+      "name": "Missing Content-Type header or improper sanitizer allowlist",
+      "root_cause": "Non-HTML output is served with default text/html Content-Type, or the HTML sanitizer allows form tags that enable Groovy injection."
+    },
+    {
+      "cluster_id": 31,
+      "fix_strategy": "Use a helper that unwraps and applies HTML escaping.",
+      "members": [
+        "CVE-2023-40176"
+      ],
+      "name": "Unsafe stripping of safe HTML wrapper",
+      "root_cause": "Code removes the {{html}} wrapper that provides escaping, then outputs the unwrapped content without re-escaping."
+    },
+    {
+      "cluster_id": 31,
+      "fix_strategy": "Sanitize input or avoid dynamic evaluation.",
+      "members": [
+        "CVE-2024-31984"
+      ],
+      "name": "Direct code evaluation without sanitization",
+      "root_cause": "User-controlled document title is concatenated into a Groovy evaluation string without escaping, leading to code injection."
+    },
+    {
+      "cluster_id": 31,
+      "fix_strategy": "Catch StackOverflowError and rethrow as checked exception.",
+      "members": [
+        "CVE-2023-26479"
+      ],
+      "name": "Uncaught StackOverflow error",
+      "root_cause": "Parser invocation is not wrapped in a try-catch for Errors, allowing StackOverflow to propagate."
+    }
+  ],
+  "tags": [
+    "code_or_template_injection",
+    "mech_template_expression_untrusted_eval",
+    "template injection",
+    "expression language injection",
+    "SpEL injection",
+    "OGNL injection"
+  ]
+}

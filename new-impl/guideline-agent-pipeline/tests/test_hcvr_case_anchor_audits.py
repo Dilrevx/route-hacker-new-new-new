@@ -313,7 +313,7 @@ def test_prepare_packet_writes_prompt_and_handoff_fields(tmp_path: Path):
     assert "The Confidence value" in normalized_prompt
 
 
-def test_build_guideline_specializes_broad_type_from_description():
+def test_build_guideline_does_not_specialize_broad_type_from_description():
     module = load_module()
     case = sample_case()
     case["classification"] = {
@@ -327,10 +327,11 @@ def test_build_guideline_specializes_broad_type_from_description():
     }
 
     guideline = module.build_guideline(case)
+    query_body = guideline.split("Guideline:", 1)[1].split("Case description:", 1)[0]
 
-    assert "JNDI" in guideline
-    assert "LDAP" in guideline
-    assert "known security-relevant code path" not in guideline
+    assert "known security-relevant code path" in query_body
+    assert "JNDI" not in query_body
+    assert "LDAP" not in query_body
     assert "Case description: A user controlled endpoint" in guideline
 
 

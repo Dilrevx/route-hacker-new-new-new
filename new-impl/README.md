@@ -102,11 +102,25 @@ current guideline text. It does not yet measure a new guideline-v2 release.
 ## Guideline-V2 Work
 
 The active bottleneck is guideline quality. The pipeline now supports
-mechanism-aware default guideline generation and a non-mutating
-`--guideline-file` sidecar.
+explicit guideline text and a non-mutating `--guideline-file` sidecar.
 
 Use the sidecar path to attach offline clustering output without leaking target
 anchors, ranks, file paths, line numbers, or labels into the query text.
+Mechanism-specific terms such as JNDI, LDAP, RMI, template evaluation, and
+SSRF-through-lookup must be produced by the offline guideline release or an
+explicit sidecar override, not by online regex inference over advisory text.
+
+Current guideline-v2 preview artifacts:
+
+- `guideline-agent-pipeline/results/mechanism-guideline-preview-v2-cluster-scope-20260821/`
+  is the default new release shape. It keeps clustering as evidence context and
+  emits one guideline per `(cluster_id, mechanism_id)`: 303 work items, 160
+  guidelines, 231 active attributions, 72 pending-review attributions.
+- `guideline-agent-pipeline/results/mechanism-guideline-preview-v2-global-scope-20260821/`
+  is an ablation that globally merges every same-mechanism item: 303 work
+  items, 83 guidelines, 231 active attributions, 72 pending-review
+  attributions. It is useful for showing why global mechanism aggregation can
+  be too broad.
 
 Recommended next experiment:
 

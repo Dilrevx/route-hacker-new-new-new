@@ -1,0 +1,94 @@
+{
+  "cluster_summary": "This cluster covers a variety of authentication and authorization vulnerabilities, including user enumeration via distinct error messages, insecure password storage and hashing, insufficient password strength validation, missing ownership checks on operations, password reset token flaws, and other implementation errors.",
+  "created_at": "2026-08-20T19:54:08+00:00",
+  "cve_ids": [
+    "CVE-2019-14837",
+    "CVE-2020-10194",
+    "CVE-2021-32620",
+    "CVE-2022-1848",
+    "CVE-2025-8548"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0035__mech_object_owner_scope_missing_authz",
+  "guideline_id": "gl_mech_0153",
+  "guideline_text": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where the authorization decision is not bound to both the current principal and the exact resource or tenant being affected. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 5 historical CVE example(s), not as a project-specific signature. A safe implementation should check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation.",
+  "mechanism": {
+    "aliases": [
+      "object ownership authorization",
+      "tenant scope check",
+      "IDOR",
+      "resource scoped authorization"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_object_owner_scope_missing_authz",
+    "missing_guard": "the authorization decision is not bound to both the current principal and the exact resource or tenant being affected",
+    "name": "missing object-owner or tenant-scope authorization",
+    "sink_shape": "sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource",
+    "source_shape": "attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets",
+    "typical_fix": "check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2019-14837",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    35
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 35,
+      "fix_strategy": "Replace all user-existence-dependent responses with a generic message or behavior, such as always returning a success message regardless of account existence.",
+      "members": [
+        "CVE-2025-8548"
+      ],
+      "name": "Distinct error responses revealing user existence",
+      "root_cause": "The application returns different error messages or statuses for existing versus non-existing users, allowing an attacker to enumerate valid accounts."
+    },
+    {
+      "cluster_id": 35,
+      "fix_strategy": "Impose a strict password policy with required character classes (uppercase, lowercase, digit, special), minimum length, and optionally prevent reuse of the current password. Validate programmatically in all code paths.",
+      "members": [
+        "CVE-2022-1848"
+      ],
+      "name": "Insufficient password complexity enforcement",
+      "root_cause": "The application lacks proper validation of password strength (character classes, length, reuse) before accepting or storing the password, allowing weak or easily guessable passwords."
+    },
+    {
+      "cluster_id": 35,
+      "fix_strategy": "Add server-side checks to ensure the target resource belongs to the authenticated user or is in the user's domain, and verify status flags (e.g., active) before proceeding.",
+      "members": [
+        "CVE-2020-10194"
+      ],
+      "name": "Missing ownership or status verification on user operations",
+      "root_cause": "Authenticated endpoints accept resource identifiers (email, account IDs) without verifying that the requesting user owns or is authorized for that resource, allowing cross-user actions."
+    },
+    {
+      "cluster_id": 35,
+      "fix_strategy": "Do not assign an email address to service accounts; remove the hardcoded placeholder assignment.",
+      "members": [
+        "CVE-2019-14837"
+      ],
+      "name": "Hardcoded predictable email for service accounts",
+      "root_cause": "Service accounts are assigned a hardcoded, predictable email address (e.g., username@placeholder.org), allowing an attacker who controls the email domain to request password reset and take over the account."
+    },
+    {
+      "cluster_id": 35,
+      "fix_strategy": "Clear the token field in the user record upon successful validation before saving.",
+      "members": [
+        "CVE-2021-32620"
+      ],
+      "name": "Token not invalidated after use",
+      "root_cause": "Email validation tokens are not cleared after successful activation, enabling replay attacks to re-enable a disabled account."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_object_owner_scope_missing_authz",
+    "object ownership authorization",
+    "tenant scope check",
+    "IDOR",
+    "resource scoped authorization"
+  ]
+}

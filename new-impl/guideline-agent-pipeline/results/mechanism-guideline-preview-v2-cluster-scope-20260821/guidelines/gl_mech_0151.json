@@ -1,0 +1,62 @@
+{
+  "cluster_summary": "A collection of 18 vulnerabilities where HTTP endpoints lack proper authentication or authorization checks. The root causes span missing authentication guards, missing permission annotations, missing object-level ownership verification, insufficient privilege validation, and other authorization bypass issues, allowing unauthenticated or unauthorized access to sensitive operations.",
+  "created_at": "2026-08-20T19:54:08+00:00",
+  "cve_ids": [
+    "CVE-2023-32310",
+    "CVE-2023-38494",
+    "CVE-2025-14908",
+    "CVE-2026-2010",
+    "CVE-2026-34832"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0034__mech_object_owner_scope_missing_authz",
+  "guideline_id": "gl_mech_0151",
+  "guideline_text": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where the authorization decision is not bound to both the current principal and the exact resource or tenant being affected. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 5 historical CVE example(s), not as a project-specific signature. A safe implementation should check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation.",
+  "mechanism": {
+    "aliases": [
+      "object ownership authorization",
+      "tenant scope check",
+      "IDOR",
+      "resource scoped authorization"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_object_owner_scope_missing_authz",
+    "missing_guard": "the authorization decision is not bound to both the current principal and the exact resource or tenant being affected",
+    "name": "missing object-owner or tenant-scope authorization",
+    "sink_shape": "sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource",
+    "source_shape": "attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets",
+    "typical_fix": "check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2023-32310",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    34
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 34,
+      "fix_strategy": "Add an ownership or membership check (e.g., verify user owns the object or belongs to the resource) before performing the operation, or remove the vulnerable endpoint.",
+      "members": [
+        "CVE-2026-34832",
+        "CVE-2026-2010",
+        "CVE-2025-14908",
+        "CVE-2023-32310",
+        "CVE-2023-38494"
+      ],
+      "name": "Missing object-level authorization (IDOR and ownership check)",
+      "root_cause": "Endpoints use user-supplied resource identifiers to fetch or act on objects without verifying that the authenticated user owns or has permission to access that specific object."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_object_owner_scope_missing_authz",
+    "object ownership authorization",
+    "tenant scope check",
+    "IDOR",
+    "resource scoped authorization"
+  ]
+}
