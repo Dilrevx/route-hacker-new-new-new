@@ -6,6 +6,7 @@ import os
 import stat
 import subprocess
 import sys
+import tarfile
 import time
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -20,6 +21,7 @@ from scripts.run_codeql_llm_repair_dispatch import (
     command_for_claude,
     extract_structured_output,
     invoke_openai_bridge_model,
+    materialize_isolated_attempt_receipts,
     normalize_openai_base_url,
     repair_json_schema,
     validate_prior_completion_binding,
@@ -32,8 +34,14 @@ LAUNCHER = ROOT / "scripts" / "launch_deepseek_claude.sh"
 
 
 def source_receipt(source: Path, case_id: str, revision: str) -> dict:
-    archive = source.parent / "source.tar.gz"
-    archive.write_bytes(b"exact-source")
+    receipt_name = case_id.replace(":", "_")
+    archive = source.parent / f"{receipt_name}.tar.gz"
+    archive_input = source.parent / f"{receipt_name}-archive-input"
+    archive_root = archive_input / "repo-revision"
+    archive_root.mkdir(parents=True)
+    (archive_root / "README.md").write_text("exact-source\n", encoding="utf-8")
+    with tarfile.open(archive, "w:gz") as handle:
+        handle.add(archive_root, arcname=archive_root.name)
     return {
         "case_id": case_id,
         "source_dir": str(source),
@@ -286,6 +294,30 @@ def test_prior_completion_binding_rejects_receipt_mismatch(tmp_path: Path) -> No
             source_receipt=receipt,
             completion=completion,
         )
+
+
+def test_materialize_isolated_attempt_receipts_uses_archive_and_rewrites_source_root(
+    tmp_path: Path,
+) -> None:
+    source = tmp_path / "source"
+    source.mkdir()
+    case_id = "v8:isolated-source"
+    receipt = source_receipt(source, case_id, "abc123")
+    failed = failed_receipt(source, case_id, "abc123")
+    destination = tmp_path / "attempt-source"
+
+    execution_failed, execution_source, evidence = materialize_isolated_attempt_receipts(
+        failed_receipt=failed,
+        source_receipt=receipt,
+        destination=destination,
+    )
+
+    assert (destination / "README.md").read_text(encoding="utf-8") == "exact-source\n"
+    assert execution_failed["source_dir"] == str(destination.resolve())
+    assert execution_source["source_dir"] == str(destination.resolve())
+    command = execution_failed["planned_codeql_database_command"]
+    assert f"--source-root={destination.resolve()}" in command
+    assert evidence["mode"] == "archive_verified_isolated_copy"
 
 
 def test_dry_run_only_accepts_deterministic_unresolved_rows(tmp_path: Path) -> None:

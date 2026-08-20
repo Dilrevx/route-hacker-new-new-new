@@ -11,11 +11,13 @@ terminal outcome before this lane starts.
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 import os
 import subprocess
 import sys
+import tarfile
 import threading
 import time
 import urllib.error
@@ -140,6 +142,105 @@ def safe_name(value: str) -> str:
     return "".join(character if character.isalnum() or character in "._-" else "_" for character in value)[
         :180
     ]
+
+
+def _rewrite_codeql_source_root(command: list[str], source_dir: Path) -> list[str]:
+    """Bind a copied CodeQL create command to an isolated exact-source tree."""
+
+    rewritten = list(command)
+    for index, value in enumerate(rewritten):
+        if value == "--source-root":
+            if index + 1 >= len(rewritten):
+                raise RepairValidationError("CodeQL command has --source-root without a value")
+            rewritten[index + 1] = stable_path(source_dir)
+            return rewritten
+        if value.startswith("--source-root="):
+            rewritten[index] = f"--source-root={stable_path(source_dir)}"
+            return rewritten
+    raise RepairValidationError("CodeQL command is missing --source-root")
+
+
+def _safe_extract_archive(archive_path: Path, destination: Path) -> None:
+    """Extract a source archive without accepting path traversal entries."""
+
+    destination.mkdir(parents=True, exist_ok=False)
+    destination_root = destination.resolve()
+    with tarfile.open(archive_path, "r:*") as archive:
+        members = archive.getmembers()
+        if not members:
+            raise RepairValidationError("source archive has no members")
+        for member in members:
+            member_path = (destination / member.name).resolve()
+            if member_path != destination_root and destination_root not in member_path.parents:
+                raise RepairValidationError("source archive contains an unsafe member path")
+            if member.issym() or member.islnk() or member.isdev():
+                raise RepairValidationError("source archive contains unsupported link or device member")
+        archive.extractall(destination, members=members)
+
+
+def materialize_isolated_attempt_receipts(
+    *,
+    failed_receipt: Mapping[str, Any],
+    source_receipt: Mapping[str, Any],
+    destination: Path,
+) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
+    """Materialize an archive-verified source copy for one repair execution.
+
+    Each bounded CodeQL retry runs from a new source tree. This keeps previous
+    build outputs and build-plugin side effects from influencing later model
+    decisions or CodeQL extraction, while retaining the original archive hash
+    as the source identity root.
+    """
+
+    archive_result = source_receipt.get("archive_result")
+    archive = archive_result if isinstance(archive_result, Mapping) else {}
+    archive_path_text = archive.get("archive_path")
+    expected_sha256 = archive.get("archive_sha256")
+    expected_revision = str(
+        failed_receipt.get("resolved_buggy_commit")
+        or failed_receipt.get("declared_buggy_commit")
+        or ""
+    )
+    archive_url = str(archive.get("archive_url") or "")
+    if not isinstance(archive_path_text, str) or not isinstance(expected_sha256, str):
+        raise RepairValidationError("source receipt has no archive-bound source material")
+    archive_path = Path(archive_path_text)
+    if not archive_path.is_file() or sha256_file(archive_path) != expected_sha256:
+        raise RepairValidationError("source archive is missing or does not match its receipt hash")
+    if not expected_revision or not archive_url.rstrip("/").endswith(expected_revision):
+        raise RepairValidationError("source archive URL is not bound to the declared revision")
+    staging = destination.with_name(f".{destination.name}.extracting")
+    if staging.exists() or destination.exists():
+        raise RepairValidationError("isolated attempt source destination already exists")
+    _safe_extract_archive(archive_path, staging)
+    entries = [entry for entry in staging.iterdir()]
+    if len(entries) != 1 or not entries[0].is_dir():
+        raise RepairValidationError("source archive must contain exactly one top-level directory")
+    entries[0].replace(destination)
+    staging.rmdir()
+    execution_failed_receipt = copy.deepcopy(dict(failed_receipt))
+    execution_source_receipt = copy.deepcopy(dict(source_receipt))
+    execution_failed_receipt["source_dir"] = stable_path(destination)
+    execution_source_receipt["source_dir"] = stable_path(destination)
+    command = execution_failed_receipt.get("planned_codeql_database_command")
+    if not isinstance(command, list) or not all(isinstance(item, str) for item in command):
+        raise RepairValidationError("failed receipt has no usable planned CodeQL command")
+    execution_failed_receipt["planned_codeql_database_command"] = _rewrite_codeql_source_root(
+        command,
+        destination,
+    )
+    return (
+        execution_failed_receipt,
+        execution_source_receipt,
+        {
+            "mode": "archive_verified_isolated_copy",
+            "source_dir": stable_path(destination),
+            "archive_path": stable_path(archive_path),
+            "archive_sha256": expected_sha256,
+            "archive_url": archive_url,
+            "expected_revision": expected_revision,
+        },
+    )
 
 
 def receipt_by_case(rows: Iterable[dict[str, Any]], label: str) -> dict[str, dict[str, Any]]:
@@ -839,15 +940,39 @@ def run_case(
             if decision_round == 0
             else case_dir / f"codeql-attempt-feedback-{decision_round:03d}"
         )
+        try:
+            (
+                execution_failed_receipt,
+                execution_source_receipt,
+                source_materialization,
+            ) = materialize_isolated_attempt_receipts(
+                failed_receipt=failed_receipt,
+                source_receipt=source_receipt,
+                destination=case_dir / f"source-{decision_round:03d}",
+            )
+        except RepairValidationError as error:
+            return {
+                **base,
+                "status": "source_revision_verification_failed",
+                "reason": "isolated_attempt_source_materialization_failed",
+                "error_type": type(error).__name__,
+                "error": str(error),
+                "model_invocation": model_receipt,
+                "model_invocations": model_invocations,
+                "proposal_validation_errors": validation_errors,
+                "validated_decision": validated,
+                "decision_rounds": decision_rounds,
+            }
         attempt = execute_repair_attempt(
-            failed_receipt,
+            execution_failed_receipt,
             validated,
             attempt_dir=attempt_dir,
             timeout_seconds=codeql_timeout_seconds,
             approved_java_homes=approved_java_homes,
             approved_maven_homes=approved_maven_homes,
-            source_receipt=source_receipt,
+            source_receipt=execution_source_receipt,
         )
+        attempt["source_materialization"] = source_materialization
         round_record["repair_attempt"] = attempt
         decision_rounds.append(round_record)
         if attempt["status"] != "repair_attempt_failed":
