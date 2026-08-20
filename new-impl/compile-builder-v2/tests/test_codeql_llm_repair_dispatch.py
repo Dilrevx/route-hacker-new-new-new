@@ -370,6 +370,75 @@ def test_controller_uses_its_adjacent_runtime_without_pythonpath(tmp_path: Path)
     assert row["status"] == "no_safe_llm_repair"
 
 
+def test_controller_corrects_one_locally_rejected_model_proposal(tmp_path: Path) -> None:
+    source = tmp_path / "source"
+    source.mkdir()
+    case_id = "v8:proposal-correction"
+    source_row = source_receipt(source, case_id, "abc123")
+    failed = failed_receipt(source, case_id, "abc123")
+    prior = deterministic_completion(failed, source_row)
+    failed_path = tmp_path / "failed.jsonl"
+    source_path = tmp_path / "source.jsonl"
+    prior_path = tmp_path / "prior.jsonl"
+    output = tmp_path / "output"
+    counter = tmp_path / "model-call-count.txt"
+    model = tmp_path / "correcting-fake-claude"
+    model.write_text(
+        "#!" + sys.executable + "\n"
+        "import json\n"
+        "import pathlib\n"
+        "import sys\n"
+        "sys.stdin.read()\n"
+        f"counter = pathlib.Path({str(counter)!r})\n"
+        "call_count = int(counter.read_text()) + 1 if counter.exists() else 1\n"
+        "counter.write_text(str(call_count))\n"
+        "actions = ([{'kind':'append_build_args','value':'-Dunapproved=true'}]\n"
+        "           if call_count == 1 else [{'kind':'no_safe_action'}])\n"
+        "print(json.dumps({'type':'result','structured_output':"
+        "{'actions':actions,'rationale':'bounded correction'}}))\n",
+        encoding="utf-8",
+    )
+    model.chmod(model.stat().st_mode | stat.S_IXUSR)
+    write_jsonl(failed_path, [failed])
+    write_jsonl(source_path, [source_row])
+    write_jsonl(prior_path, [prior])
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(SCRIPT),
+            "--failed-receipts",
+            str(failed_path),
+            "--source-receipts",
+            str(source_path),
+            "--prior-ledger",
+            str(prior_path),
+            "--output-dir",
+            str(output),
+            "--expected-eligible-case-count",
+            "1",
+            "--claude-command",
+            str(model),
+            "--model-timeout-seconds",
+            "10",
+        ],
+        cwd=ROOT,
+        env={"PATH": os.environ["PATH"]},
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr
+    row = json.loads((output / "w1_llm_repair_receipts.jsonl").read_text(encoding="utf-8"))
+    assert counter.read_text() == "2"
+    assert row["status"] == "no_safe_llm_repair"
+    assert len(row["model_invocations"]) == 2
+    assert row["proposal_validation_errors"] == [
+        "append_build_args contains an unapproved argument"
+    ]
+
+
 def test_controller_has_distinct_worker_failure_status() -> None:
     source = SCRIPT.read_text(encoding="utf-8")
 

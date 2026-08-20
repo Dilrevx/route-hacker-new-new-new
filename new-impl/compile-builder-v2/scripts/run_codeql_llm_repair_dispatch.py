@@ -68,6 +68,7 @@ TERMINAL_STATUSES = frozenset(
 DEFAULT_CLAUDE_COMMAND = "/data/lhq/.local/bin/claude"
 MAX_MODEL_OUTPUT_CHARACTERS = 16_000
 DEFAULT_OPENAI_MODEL = "DeepSeek-V4-Pro"
+MAX_PROPOSAL_CORRECTION_ATTEMPTS = 1
 
 
 def normalize_openai_base_url(bridge_url: str) -> str:
@@ -357,6 +358,18 @@ def build_repair_prompt(packet: dict[str, Any]) -> str:
         'use an approved action "value". For append_build_args, use an "args" '
         "array containing only approved arguments.\n\n"
         f"PACKET:\n{payload}\n"
+    )
+
+
+def build_repair_correction_prompt(packet: dict[str, Any], validation_error: str) -> str:
+    """Ask the bounded model to replace one locally rejected action proposal."""
+
+    return (
+        f"{build_repair_prompt(packet)}\n"
+        "Your previous proposal was rejected by the local validator for this "
+        f"reason: {validation_error}\n"
+        "Return a complete replacement decision, not an explanation or a patch. "
+        "Every action and value must conform to allowed_action_schema."
     )
 
 
@@ -653,40 +666,67 @@ def run_case(
         return {**base, "status": "llm_repair_dry_run"}
     if not claude_command and not openai_bridge_url:
         raise RepairValidationError("claude command is required unless --dry-run is set")
-    model = invoke_model(
-        claude_command=claude_command,
-        openai_bridge_url=openai_bridge_url,
-        openai_model=openai_model,
-        prompt=prompt,
-        packet=packet,
-        output_path=case_dir / "model-output.txt",
-        timeout_seconds=model_timeout_seconds,
-        case_id=case_id,
-    )
-    model_receipt = {key: value for key, value in model.items() if key != "raw_text"}
-    if model["bounded_process"]["returncode"] != 0 or model["bounded_process"]["timed_out"]:
-        return {**base, "status": "llm_model_invocation_failed", "model_invocation": model_receipt}
-    try:
-        parsed = extract_structured_output(str(model["raw_text"]))
-        validated = validate_repair_decision(
-            parsed,
-            approved_java_homes=approved_java_homes,
-            approved_maven_homes=approved_maven_homes,
+    model_invocations: list[dict[str, Any]] = []
+    validation_errors: list[str] = []
+    attempt_prompt = prompt
+    validated: dict[str, Any] | None = None
+    model_receipt: dict[str, Any] | None = None
+    for correction_attempt in range(MAX_PROPOSAL_CORRECTION_ATTEMPTS + 1):
+        output_name = (
+            "model-output.txt"
+            if correction_attempt == 0
+            else f"model-output-correction-{correction_attempt:03d}.txt"
         )
-    except RepairValidationError as error:
-        return {
-            **base,
-            "status": "llm_repair_proposal_rejected",
-            "model_invocation": model_receipt,
-            "error_type": type(error).__name__,
-            "error": str(error),
-        }
+        model = invoke_model(
+            claude_command=claude_command,
+            openai_bridge_url=openai_bridge_url,
+            openai_model=openai_model,
+            prompt=attempt_prompt,
+            packet=packet,
+            output_path=case_dir / output_name,
+            timeout_seconds=model_timeout_seconds,
+            case_id=case_id,
+        )
+        model_receipt = {key: value for key, value in model.items() if key != "raw_text"}
+        model_invocations.append(model_receipt)
+        if model["bounded_process"]["returncode"] != 0 or model["bounded_process"]["timed_out"]:
+            return {
+                **base,
+                "status": "llm_model_invocation_failed",
+                "model_invocation": model_receipt,
+                "model_invocations": model_invocations,
+            }
+        try:
+            parsed = extract_structured_output(str(model["raw_text"]))
+            validated = validate_repair_decision(
+                parsed,
+                approved_java_homes=approved_java_homes,
+                approved_maven_homes=approved_maven_homes,
+            )
+            break
+        except RepairValidationError as error:
+            validation_errors.append(str(error))
+            if correction_attempt == MAX_PROPOSAL_CORRECTION_ATTEMPTS:
+                return {
+                    **base,
+                    "status": "llm_repair_proposal_rejected",
+                    "model_invocation": model_receipt,
+                    "model_invocations": model_invocations,
+                    "error_type": type(error).__name__,
+                    "error": str(error),
+                    "proposal_validation_errors": validation_errors,
+                }
+            attempt_prompt = build_repair_correction_prompt(packet, str(error))
+    assert validated is not None
+    assert model_receipt is not None
     write_json(case_dir / "validated-decision.json", validated)
     if validated["actions"] == [{"kind": "no_safe_action"}]:
         return {
             **base,
             "status": "no_safe_llm_repair",
             "model_invocation": model_receipt,
+            "model_invocations": model_invocations,
+            "proposal_validation_errors": validation_errors,
             "validated_decision": validated,
         }
     attempt = execute_repair_attempt(
@@ -702,6 +742,8 @@ def run_case(
         **base,
         "status": attempt["status"],
         "model_invocation": model_receipt,
+        "model_invocations": model_invocations,
+        "proposal_validation_errors": validation_errors,
         "validated_decision": validated,
         "repair_attempt": attempt,
     }
