@@ -162,6 +162,27 @@ def test_candidate_disposition_validation_requires_exact_one_to_one_match():
     assert "mismatch" in error
 
 
+def test_formal_gate_rejects_completed_case_with_bad_group_dispositions():
+    module = load_module()
+    row = {
+        "state": "completed",
+        "groups": [
+            {
+                "group_index": 1,
+                "state": "completed",
+                "anchors": anchors(2),
+                "candidate_dispositions": [
+                    {"anchor_id": "anchor::1", "status": "dismissed"},
+                    {"anchor_id": "anchor::1", "status": "risk"},
+                ],
+            }
+        ],
+    }
+    complete, error = module.case_receipt_is_complete(row)
+    assert complete is False
+    assert "group_1" in error
+
+
 def test_type_guideline_override_replaces_only_matching_type():
     module = load_module()
     override = {"sql_like_pattern_misuse": "Audit SQL LIKE pattern construction only."}

@@ -1080,6 +1080,33 @@ def finding_hits_truth(finding: dict[str, Any], truth: list[dict[str, Any]]) -> 
     return None
 
 
+def case_receipt_is_complete(row: dict[str, Any] | None) -> tuple[bool, str]:
+    """Return whether a case row is eligible for a formal comparison.
+
+    Score diagnostics may be useful while a long-running pilot is in flight,
+    but a formal ablation row requires all selected cases and every group-level
+    completeness receipt.  This gate prevents timeout/invalid receipts from
+    being converted into paper metrics by omission.
+    """
+    if not row:
+        return False, "missing_case_receipt"
+    if row.get("state") != "completed":
+        return False, f"case_state={row.get('state') or 'unknown'}"
+    groups = row.get("groups")
+    # Unit-score fixtures and legacy one-shot runners may not have group rows.
+    # New grouped receipts always do, and each must validate independently.
+    if groups is None:
+        return True, ""
+    if not isinstance(groups, list) or not groups:
+        return False, "missing_group_receipts"
+    for group in groups:
+        if not isinstance(group, dict):
+            return False, "malformed_group_receipt"
+        if not reusable_completed_group(group, list(group.get("anchors") or [])):
+            return False, f"group_{group.get('group_index')}={group.get('state') or 'unknown'}"
+    return True, ""
+
+
 def score_variant(
     variant_dir: Path,
     cases_by_identity: dict[str, dict[str, Any]],
@@ -1092,8 +1119,12 @@ def score_variant(
     tp = 0
     fp = 0
     fn = 0
+    completeness_failures: list[dict[str, str]] = []
     for identity, case in cases_by_identity.items():
         row = rows_by_identity.get(identity)
+        receipt_complete, receipt_error = case_receipt_is_complete(row)
+        if not receipt_complete:
+            completeness_failures.append({"identity_key": identity, "reason": receipt_error})
         truth = truth_methods(case)
         findings = list((row or {}).get("findings") or [])
         case_alarms = len(findings)
@@ -1122,6 +1153,8 @@ def score_variant(
             {
                 "identity_key": identity,
                 "state": (row or {}).get("state", "not_run"),
+                "receipt_complete": receipt_complete,
+                "receipt_error": receipt_error,
                 "alarm_count": case_alarms,
                 "tp": case_tp,
                 "fp": case_fp,
@@ -1144,6 +1177,9 @@ def score_variant(
         "variant_label": VARIANT_LABELS.get(variant_dir.name, variant_dir.name),
         "case_count": denominator,
         "completed_count": states["completed"],
+        "formal_eligible": not completeness_failures and len(rows_by_identity) == denominator,
+        "completeness_failure_count": len(completeness_failures),
+        "completeness_failure_examples": completeness_failures[:10],
         "state_counts": dict(states),
         "tp": tp,
         "fp": fp,
@@ -1314,6 +1350,12 @@ def write_run_report(
         if score is None:
             rows.append(f"{VARIANT_LABELS[variant]} | PENDING | PENDING | PENDING | PENDING | N/A")
             continue
+        if not score.get("formal_eligible"):
+            rows.append(
+                f"{score['variant_label']} | INCOMPLETE | INCOMPLETE | INCOMPLETE | INCOMPLETE | "
+                f"N/A (receipt failures={score.get('completeness_failure_count', 'unknown')})"
+            )
+            continue
         rows.append(
             " | ".join(
                 [
@@ -1332,7 +1374,8 @@ def write_run_report(
         if score is None:
             continue
         count_rows.append(
-            f"{score['variant_label']} | TP={score['tp']} | FP={score['fp']} | FN={score['fn']} | states={score['state_counts']}"
+            f"{score['variant_label']} | TP={score['tp']} | FP={score['fp']} | FN={score['fn']} | "
+            f"formal_eligible={score.get('formal_eligible')} | receipt_failures={score.get('completeness_failure_count')} | states={score['state_counts']}"
         )
     flips = build_flip_notes(by_variant)
     report = f"""# Unified V2 Experiment A Ablation Report
