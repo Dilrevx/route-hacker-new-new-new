@@ -1117,6 +1117,41 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Push the bounded transport retry, submit the single UIMA retry, and inspect its decision plus actual Java path before admitting any database. Continue Spring native-IRIS monitoring independently.
 
+### Round 36 - Complete a Strict Native IRIS Run and Make Resumption Toolchain-Safe
+
+**Goal:** Complete one copied-original native IRIS execution from a strict repaired Java CodeQL database, then remove generic execution compatibility gaps discovered while resuming its unfinished downstream stages.
+
+**Scope:** This round covers the IRIS-213 extension-lane Spring Cloud Config case `iris213::a1aa70dc0a5b3c481e98` (`spring-cloud__spring-cloud-config_CVE-2020-5410_2.1.8.RELEASE`, CWE-022), plus generic case materialization and native-run recovery behavior. It does not modify benchmark source, exact archive identity, official IRIS query logic, repaired database contents, or frozen comparative cohorts.
+
+**Action:**
+
+- Revalidated Spring Cloud Config's repaired database admission before invoking native IRIS. The receipt-bound Java 8 Maven/CodeQL build returned zero, the exact archive source-integrity gate reports `verified:true` with `changed_path_count:0`, CodeQL metadata is valid, and the database contains 83 finalized Java relation files.
+- Ran the copied original upstream `src/iris.py` through the case-local materialization wrapper and the local DeepSeek-V4-Pro bridge. The first run reached the upstream pipeline but could not contact the absent remote bridge tunnel; its refusal is retained as a transport failure and is not represented as an evaluation result.
+- Restored the bridge forward, then fixed a generic CodeQL 2.23.2 invocation incompatibility exposed by the remaining native stages. CodeQL rejected an absolute `.ql` file path under the case-local workspace as an invalid package specification even though the official generated query and database were valid.
+- Added a case-local wrapper adapter that accepts only absolute `.ql` paths located below the current workspace and with a local `qlpack.yml` ancestor, then normalizes them to workspace-relative file paths before forwarding the original IRIS `database analyze` invocation. It preserves the upstream search-path and source-overlay pack behavior. This changes CLI argument normalization only; it does not change the query, source, or database.
+- Added `--refresh-codeql-toolchain` to rebuild only `<workspace>/codeql`, preserving copied IRIS files, source binding, database symlink, and already-written native output artifacts.
+- Added `--resume-existing-run` to invoke the copied original `src/iris.py` with the same run identifier after an unfinished run. The original IRIS cache checks decide which stages to skip; a run whose local summary already says `verified_completion:true` is rejected rather than rerun.
+- Added regression coverage for relative query adaptation, refresh preservation of existing outputs, and resume summary semantics. The remote materialization suite passed `20 passed in 0.14s`.
+- Requeued Apache UIMA only through the existing generic controlled Compile Builder v2 path with its bounded liveness policy. It remains an active Java-8 dependency-resolution build; no UIMA terminal DB claim is made in this round.
+
+**Verification:**
+
+- Spring's strict repaired-DB ledger and database are retained under:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/compile-repair-run-spring-feedback-toolchain-r1/dispatch/`.
+- The final copied-original native IRIS summary is:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a22-spring5410-repaired-db-native-iris/native-run-resume-r2/summary.json`.
+  It records `status:"completed_verified"`, `returncode:0`, `timed_out:false`, `verified_completion:true`, all required artifacts present, and valid label-response audit.
+- The native run recorded 2,708 candidate API calls over 672 candidate APIs; it labelled 27 sources, 23 sinks, and 80 taint propagators. All 23 label responses passed JSON-list validation. The run produced zero vanilla and zero post-hoc result paths, so this is a faithful completed execution with a zero-path outcome rather than a detected vulnerability.
+- The case-local wrapper compatibility preflight successfully compiled and evaluated the generated CWE-022 query after relative-path normalization. The toolchain-refresh receipt is retained at:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a22-spring5410-repaired-db-native-iris/codeql-toolchain-refresh-r4.json`.
+- UIMA's active liveness-bounded attempt remains at:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/compile-repair-run-uima-liveness-r3/dispatch/`.
+  It is still resolving third-party Eclipse/P2 dependencies under the approved Java 8 toolchain and has no terminal repair receipt.
+
+**Decision:** A strict repaired Java database can now enter a reproducible copied-original native IRIS run with a case-local CodeQL toolchain that is compatible with the deployed CodeQL CLI. Resume is generic and artifact-preserving: it delegates stage reuse to original IRIS rather than replaying or replacing upstream logic. Spring contributes one verified native execution with zero final paths to the extension lane only; it does not change frozen comparative aggregates. UIMA remains pending normal strict admission gates.
+
+**Next:** Continue observation-only monitoring of the UIMA build. If it reaches `codeql_db_repaired`, generate and verify the normal strict repaired-DB manifest before launching copied-original native IRIS; otherwise retain its terminal evidence and inspect one next candidate before dispatching another repair.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.

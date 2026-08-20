@@ -230,10 +230,14 @@ def materialize_codeql_toolchain(
 ) -> dict[str, str]:
     """Stage a case-local CodeQL entrypoint without mutating the shared toolchain.
 
-    Official IRIS invokes CodeQL without package-search arguments. A matching
-    source-tag overlay is local-only, so the case-local wrapper makes that
-    overlay available to the original commands that resolve QL packs:
-    ``pack install``, ``query`` and ``database analyze``. ``pack install``
+    Official IRIS invokes CodeQL without package-search arguments and passes
+    its generated query as an absolute ``.ql`` path. A matching source-tag
+    overlay is local-only, so the case-local wrapper makes that overlay
+    available to the original commands that resolve QL packs. For CodeQL CLI
+    releases that reject an absolute query in ``database analyze``, the
+    wrapper converts only a query below a local ``qlpack.yml`` to a
+    workspace-relative ``.ql`` filepath, which remains a file query
+    specifier across CodeQL CLI releases. ``pack install``
     additionally uses non-strict local resolution to avoid downloading
     already-projected official packs.
     """
@@ -264,12 +268,31 @@ def materialize_codeql_toolchain(
         '  exec "$IRIS_CODEQL_REAL" "$@"\n'
         "fi\n"
         'args=("$@")\n'
+        'if [[ "${1:-}" == "database" && "${2:-}" == "analyze" ]]; then\n'
+        '  for index in "${!args[@]}"; do\n'
+        '    candidate="${args[$index]}"\n'
+        '    if [[ "$candidate" != /* || "$candidate" != *.ql || ! -f "$candidate" ]]; then\n'
+        '      continue\n'
+        '    fi\n'
+        '    pack_root="$(dirname "$candidate")"\n'
+        '    while [[ "$pack_root" != "/" && ! -f "$pack_root/qlpack.yml" ]]; do\n'
+        '      pack_root="$(dirname "$pack_root")"\n'
+        '    done\n'
+        '    if [[ ! -f "$pack_root/qlpack.yml" ]]; then\n'
+        '      continue\n'
+        '    fi\n'
+        '    if [[ "$candidate" != "$PWD/"* ]]; then\n'
+        '      continue\n'
+        '    fi\n'
+        '    args[$index]="${candidate#"$PWD"/}"\n'
+        '  done\n'
+        "fi\n"
         'for index in "${!args[@]}"; do\n'
         '  if [[ "${args[$index]}" == "--" ]]; then\n'
         '    exec "$IRIS_CODEQL_REAL" "${args[@]:0:$index}" --additional-packs "$IRIS_CODEQL_OVERLAY_PACKS" "${args[@]:$index}"\n'
         '  fi\n'
         'done\n'
-        'exec "$IRIS_CODEQL_REAL" "$@" --additional-packs "$IRIS_CODEQL_OVERLAY_PACKS"\n',
+        'exec "$IRIS_CODEQL_REAL" "${args[@]}" --additional-packs "$IRIS_CODEQL_OVERLAY_PACKS"\n',
         encoding="utf-8",
     )
     wrapper.chmod(0o755)
@@ -282,6 +305,10 @@ def materialize_codeql_toolchain(
         "overlay_qlpacks": str(overlay_packs),
         "pack_resolution_scope": "pack_install_query_and_database_analyze",
         "install_special_case": "codeql pack install",
+        "database_analyze_query_specifier_adapter": (
+            "absolute .ql files below a local qlpack.yml and current workspace "
+            "are converted to workspace-relative .ql file paths"
+        ),
         "injected_options": [
             "--additional-packs",
             str(overlay_packs),
@@ -360,6 +387,47 @@ def validate_codeql_bundle(clean_root: Path, codeql_dir: Path) -> dict[str, Any]
         "source_overlay": source_overlay,
         "requires_case_local_pack_install_wrapper": bool(source_overlay),
         "source_overlay_compile_probe": compile_probe,
+    }
+
+
+def refresh_case_local_codeql_toolchain(
+    *,
+    clean_root: Path,
+    codeql_dir: Path,
+    workspace: Path,
+) -> dict[str, Any]:
+    """Refresh only an existing materialized workspace's local CodeQL wrapper."""
+
+    materialization_path = workspace / "materialization.json"
+    destination = workspace / "codeql"
+    if not materialization_path.is_file():
+        raise RuntimeError(
+            "--refresh-codeql-toolchain requires a materialized workspace: "
+            f"{materialization_path}"
+        )
+    if not destination.is_dir():
+        raise RuntimeError(
+            "--refresh-codeql-toolchain requires an existing case-local CodeQL directory: "
+            f"{destination}"
+        )
+    codeql_bundle = validate_codeql_bundle(clean_root, codeql_dir)
+    source_overlay = codeql_bundle["source_overlay"]
+    if source_overlay is None:
+        raise RuntimeError(
+            "--refresh-codeql-toolchain only applies to a source-overlay CodeQL bundle"
+        )
+    shutil.rmtree(destination)
+    action = materialize_codeql_toolchain(
+        codeql_dir=codeql_dir,
+        workspace=workspace,
+        source_overlay=source_overlay,
+    )
+    return {
+        "schema_version": "iris_case_codeql_toolchain_refresh.v1",
+        "workspace": str(workspace),
+        "materialization_sha256": sha256_path(materialization_path),
+        "codeql_bundle": codeql_bundle,
+        "toolchain_action": action,
     }
 
 
@@ -516,6 +584,14 @@ def main() -> int:
     parser.add_argument("--codeql-dir", type=Path, required=True)
     parser.add_argument("--workspace", type=Path)
     parser.add_argument("--overwrite-empty-workspace", action="store_true")
+    parser.add_argument(
+        "--refresh-codeql-toolchain",
+        action="store_true",
+        help=(
+            "refresh only a materialized workspace's case-local CodeQL wrapper; "
+            "preserves copied IRIS, database bindings, and output artifacts"
+        ),
+    )
     args = parser.parse_args()
 
     clean_root = args.clean_iris_root.resolve()
@@ -524,6 +600,20 @@ def main() -> int:
         raise SystemExit(f"missing clean IRIS src: {src_source}")
     codeql_dir = args.codeql_dir.resolve()
     codeql_bundle = validate_codeql_bundle(clean_root, codeql_dir)
+    if args.refresh_codeql_toolchain:
+        if not args.workspace:
+            raise SystemExit("--refresh-codeql-toolchain requires --workspace")
+        if args.manifest or args.receipts or args.case_id or args.overwrite_empty_workspace:
+            raise SystemExit(
+                "--refresh-codeql-toolchain cannot be combined with case materialization arguments"
+            )
+        refreshed = refresh_case_local_codeql_toolchain(
+            clean_root=clean_root,
+            codeql_dir=codeql_dir,
+            workspace=args.workspace.resolve(),
+        )
+        print(json.dumps(refreshed, indent=2, sort_keys=True))
+        return 0
     if args.validate_codeql_bundle:
         if args.manifest or args.receipts or args.case_id or args.workspace:
             raise SystemExit(

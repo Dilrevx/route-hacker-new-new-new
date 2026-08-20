@@ -54,6 +54,15 @@ def test_batch_single_case_command_forwards_label_batch_sizes(tmp_path):
     assert command[command.index("--label-func-param-batch-size") + 1] == "20"
 
 
+def test_native_runner_resume_flag_is_present():
+    source = (
+        Path(__file__).resolve().parents[1] / "scripts" / "run_native_iris_case.py"
+    ).read_text()
+    assert "--resume-existing-run" in source
+    assert "refusing to resume a run already marked completed_verified" in source
+    assert '"resume_existing_run": args.resume_existing_run' in source
+
+
 def test_batch_rejects_overcommitted_llm_concurrency(tmp_path):
     module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "run_native_iris_batch.py"))
     manifest = tmp_path / "manifest.jsonl"
@@ -278,6 +287,9 @@ def test_source_overlay_materializes_case_local_pack_install_wrapper(tmp_path):
     source = wrapper.read_text()
     assert '[[ "${1:-}" == "pack" && "${2:-}" == "install" ]]' in source
     assert '[[ "${1:-}" != "query"' in source
+    assert '[[ "${1:-}" == "database" && "${2:-}" == "analyze" ]]' in source
+    assert 'args[$index]="${candidate#"$PWD"/}"' in source
+    assert "qlpack.yml" in source
     assert 'if [[ "${args[$index]}" == "--" ]]' in source
     assert "--additional-packs" in source
     assert str(overlay_packs) in source
@@ -286,7 +298,41 @@ def test_source_overlay_materializes_case_local_pack_install_wrapper(tmp_path):
     )
     assert provenance["pack_resolution_scope"] == "pack_install_query_and_database_analyze"
     assert provenance["install_special_case"] == "codeql pack install"
+    assert "workspace-relative .ql file paths" in provenance["database_analyze_query_specifier_adapter"]
     assert provenance["other_commands"] == "executes_shared_codeql_binary_unchanged"
+
+
+def test_refresh_case_local_codeql_toolchain_preserves_existing_outputs(tmp_path, monkeypatch):
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "materialize_iris_case.py"))
+    workspace = tmp_path / "workspace"
+    workspace.mkdir()
+    (workspace / "materialization.json").write_text("{}")
+    old_codeql = workspace / "codeql"
+    old_codeql.mkdir()
+    (old_codeql / "old-wrapper").write_text("old")
+    preserved_output = workspace / "output" / "artifact.txt"
+    preserved_output.parent.mkdir()
+    preserved_output.write_text("keep")
+    codeql = tmp_path / "codeql"
+    (codeql / "qlpacks").mkdir(parents=True)
+    executable = codeql / "codeql"
+    executable.write_text("#!/usr/bin/env bash\nexit 0\n")
+    executable.chmod(0o755)
+
+    monkeypatch.setitem(
+        module["refresh_case_local_codeql_toolchain"].__globals__,
+        "validate_codeql_bundle",
+        lambda _clean, _codeql: {"source_overlay": {"source_tag": {"tag": "codeql-cli/v2.23.2"}}},
+    )
+    refreshed = module["refresh_case_local_codeql_toolchain"](
+        clean_root=tmp_path / "clean",
+        codeql_dir=codeql,
+        workspace=workspace,
+    )
+
+    assert refreshed["toolchain_action"]["kind"] == "case_local_codeql_pack_install_wrapper"
+    assert (workspace / "codeql" / "codeql").is_file()
+    assert preserved_output.read_text() == "keep"
 
 
 def test_traex_alias_injection_preserves_valid_python(tmp_path):

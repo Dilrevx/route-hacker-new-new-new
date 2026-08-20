@@ -167,6 +167,14 @@ def main() -> int:
     parser.add_argument("--label-func-param-batch-size", type=int, default=20)
     parser.add_argument("--timeout-seconds", type=int, default=3600)
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument(
+        "--resume-existing-run",
+        action="store_true",
+        help=(
+            "rerun copied original IRIS with the same run-id so its own cache checks "
+            "reuse already-written stage artifacts; rejects a verified prior summary"
+        ),
+    )
     args = parser.parse_args()
 
     workspace = args.workspace.resolve()
@@ -178,7 +186,16 @@ def main() -> int:
     output_dir.mkdir(parents=True, exist_ok=True)
     project_output = workspace / "output" / slug / args.run_id
     common_output = workspace / "output" / "common" / args.run_id
-    if project_output.exists() or common_output.exists():
+    prior_summary_path = output_dir / "summary.json"
+    if args.resume_existing_run:
+        if not project_output.is_dir():
+            raise SystemExit(
+                "--resume-existing-run requires an existing project output directory "
+                "for this workspace and run-id"
+            )
+        if prior_summary_path.is_file() and read_json(prior_summary_path).get("verified_completion"):
+            raise SystemExit("refusing to resume a run already marked completed_verified")
+    elif project_output.exists() or common_output.exists():
         raise SystemExit("run-id collides with existing project/common output; choose a fresh --run-id")
 
     command = [
@@ -241,6 +258,7 @@ def main() -> int:
         "workspace": str(workspace),
         "materialization_sha256": sha256_path(workspace / "materialization.json"),
         "command": command,
+        "resume_existing_run": args.resume_existing_run,
         "returncode": returncode,
         "timed_out": timed_out,
         "elapsed_seconds": elapsed_seconds,
