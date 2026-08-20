@@ -15,6 +15,8 @@ import copy
 import hashlib
 import json
 import os
+import socket
+import ssl
 import subprocess
 import sys
 import tarfile
@@ -681,7 +683,17 @@ def invoke_openai_bridge_model(
             if not isinstance(loaded, dict):
                 raise RepairValidationError("OpenAI bridge response must be a JSON object")
             response_payload = loaded
-    except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, json.JSONDecodeError, ValueError) as error:
+    except (
+        urllib.error.HTTPError,
+        urllib.error.URLError,
+        TimeoutError,
+        socket.timeout,
+        ConnectionError,
+        OSError,
+        ssl.SSLError,
+        json.JSONDecodeError,
+        ValueError,
+    ) as error:
         transport_error = f"{type(error).__name__}: {error}"
     elapsed_seconds = round(time.monotonic() - started, 3)
     if response_payload is None:

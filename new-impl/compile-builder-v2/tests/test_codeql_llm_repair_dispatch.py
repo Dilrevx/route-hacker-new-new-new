@@ -271,6 +271,32 @@ def test_openai_bridge_transport_wraps_validated_structured_output(tmp_path: Pat
     }
 
 
+def test_openai_bridge_connection_reset_becomes_a_failed_model_receipt(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def connection_reset(*_args: object, **_kwargs: object) -> object:
+        raise ConnectionResetError(104, "Connection reset by peer")
+
+    monkeypatch.setattr(dispatcher.urllib.request, "urlopen", connection_reset)
+
+    result = invoke_openai_bridge_model(
+        bridge_url="http://127.0.0.1:18889",
+        model="DeepSeek-V4-Pro",
+        prompt="Return strict JSON.",
+        output_path=tmp_path / "model-output.txt",
+        timeout_seconds=5,
+        case_id="case::connection-reset",
+    )
+
+    assert result["bounded_process"]["returncode"] == 1
+    assert result["bounded_process"]["timed_out"] is False
+    assert result["bounded_process"]["transport_error"].startswith(
+        "ConnectionResetError:"
+    )
+    assert "ConnectionResetError" in result["raw_text"]
+
+
 @pytest.mark.parametrize(
     ("bridge_url", "expected"),
     [

@@ -1064,6 +1064,32 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Stop the stale UIMA B2 process tree, submit one archive-isolated UIMA retry using the generic inactivity bound, and continue monitoring the independent Spring Java-8 retry. For every terminal `codeql_db_repaired` result, require exact archive identity, source-integrity verification, valid DB metadata, and Java `.rel` files before generating a native-IRIS manifest.
 
+### Round 34 - Normalize Bridge Connection Resets as Auditable Model Failures
+
+**Goal:** Keep transient local TraeX/OpenAI bridge connection resets inside the bounded model-transport contract rather than allowing them to escape as dispatcher worker exceptions.
+
+**Scope:** This round follows the first UIMA liveness-bound retry, which reached the local bridge request and received `Connection reset by peer` before a model decision. It changes only generic bridge exception handling; it does not change the model prompt, decision schema, source/archive rules, build-action allow-list, or native IRIS.
+
+**Action:**
+
+- Read the complete one-case UIMA ledger instead of treating its `llm_repair_worker_failed` status as a build result. The case never reached a validated decision or CodeQL execution; only `packet.json`, `prompt.txt`, and the model request payload were written.
+- Extended `invoke_openai_bridge_model` to convert socket resets, generic connection failures, TLS failures, and other OS-level transport reads into the existing redacted nonzero model receipt shape. Existing HTTP/URL/JSON/timeout handling remains unchanged.
+- Added a regression test that forces `urllib.request.urlopen` to raise `ConnectionResetError` and verifies that the dispatcher receives an auditable failed model receipt rather than an uncaught worker exception.
+- Re-ran the remote Compile Builder v2 suite after synchronization:
+  `93 passed, 4 warnings`. The warnings are the existing tar extraction deprecation warnings.
+
+**Verification:**
+
+- The failed UIMA retry ledger is preserved at:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/compile-repair-run-uima-liveness-r1/dispatch/w1_llm_repair_receipts.jsonl`.
+  It records `ConnectionResetError: [Errno 104] Connection reset by peer`; no database or source mutation was produced.
+- The Spring Cloud Config clean retry reached terminal `codeql_db_repaired` under the receipt-bound Java 8 runtime. Its exact archive evidence is verified, source-integrity changed-path count is zero, CodeQL returns zero, `database_valid` is true, and the DB contains 83 Java relation files.
+- A strict single-case repaired-DB manifest and binding receipt were generated for Spring Cloud Config, and the copied original `src/iris.py` runner was launched with the local TraeX bridge. It is actively producing API-labelling prompts; this is an active native run, not a completed evaluation.
+
+**Decision:** Local bridge connection resets are normal bounded transport failures with durable evidence, not uncaught controller faults. Requeue UIMA after the generic transport normalization; retain the 900-second execution-log inactivity bound and the existing 7200-second absolute CodeQL limit. Spring has passed repaired-DB admission and proceeds through native IRIS independently.
+
+**Next:** Push the bridge-transport normalization, requeue only UIMA with the same strict receipts and liveness bound, and observe its Java/runtime/log evidence. Continue monitoring the active Spring native IRIS run through artifact-gated terminal verification.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.
