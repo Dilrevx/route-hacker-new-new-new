@@ -1273,6 +1273,41 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Use the complete 47-pair exact-source/failed-CodeQL receipt inventory to prepare a fresh generic Compile Builder v2 input directory. Review the next candidate's historical build evidence before dispatch, and admit only a terminal finalized Java database to the same copied-original native IRIS protocol.
 
+### Round 41 - Repair and Complete Native IRIS for AntiSamy
+
+**Goal:** Run one individually reviewed exact-source Java repair through the generic Compile Builder v2 controller, admit only its finalized database through the strict derived-manifest gate, and complete copied-original native IRIS without changing the benchmark source or query.
+
+**Scope:** This round covers AntiSamy `iris213::3eb08c2182472534afee` (`nahsra__antisamy_CVE-2017-14735_1.5.6`, CVE-2017-14735, CWE-079) in the IRIS-213 extension lane. It uses the regenerated 47-pair source-bound repair inventory. It does not modify the vulnerable archive, source revision, project POM, official IRIS query, target metadata, or frozen comparative cohorts.
+
+**Action:**
+
+- Reviewed AntiSamy's historical failure before dispatch. The original build had reached compilation but used Maven `3.5.0`; `maven-compiler-plugin:3.13.0` requires Maven `>=3.6.3`. The general controller exposed only approved Maven and JDK homes to the model rather than adding a project-specific build recipe.
+- Submitted one archive-isolated, single-worker Compile Builder v2 attempt using the full 47-case receipt set and the restored DeepSeek-V4-Pro bridge. The first model decision selected approved Maven `3.9.9`. Fresh redacted build feedback then identified Spotless `apply` failing because the verified archive snapshot is not a Git checkout; the bounded feedback decision selected the existing allow-listed `-Dspotless.apply.skip=true` build argument. No source-edit action, revision substitution, query modification, or arbitrary shell action was available to the model.
+- The resulting Maven/CodeQL build used the approved Java 21 environment and completed with CodeQL return code zero. The controller retained the original failed execution, feedback packet, both model outputs, validated decisions, source materialization receipts, and terminal repair receipt.
+- Generated a one-row derived native-IRIS manifest and binding receipt from the immutable `eligible_manifest.jsonl`, the exact-source receipt, and the successful repair ledger. Materialized a fresh isolated workspace and ran copied-original upstream `src/iris.py` with `gpt-traex-pro`, eight IRIS worker threads, the official CodeQL 2.23.2 source-overlay wrapper, and the local bridge.
+
+**Verification:**
+
+- AntiSamy's terminal repair ledger is:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/compile-repair-run-antisamy-r1/dispatch/w1_llm_repair_receipts.jsonl`.
+  It records `status:"codeql_db_repaired"`, verified archive-snapshot provenance for revision `1369d4c904e1f021d3616580daf9e1d8e43e0ddb`, `changed_path_count:0`, a zero CodeQL return code, and `database_valid:true`.
+- The admitted database is:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/compile-repair-run-antisamy-r1/dispatch/cases/iris213__3eb08c2182472534afee/attempt-001/codeql-attempt-feedback-001/codeql-db`.
+  Its metadata reports `primaryLanguage: java` and `finalised: true`; it contains 80 nonempty Java relation files, including expression-enclosing relation evidence.
+- The strict derived manifest and binding receipt are:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a26-antisamy-repaired-db-native-iris/a26-antisamy-strict-admitted.manifest.v1.jsonl`
+  and
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a26-antisamy-repaired-db-native-iris/a26-antisamy-db-binding-receipt.json`.
+- The terminal copied-original native-IRIS receipt is:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a26-antisamy-repaired-db-native-iris/native-run/summary.json`.
+  It records `status:"completed_verified"`, return code zero, no timeout, all required artifacts present, and valid JSON-list responses for all 11 dispatched API-label prompts.
+- IRIS processed 1,773 external API calls into 314 candidates, labelled 10 sources, 7 sinks, and 82 taint propagators. No public function-parameter candidate was available. The generated CWE-079 query produced one vanilla alarm/path; posthoc filtering retained one alarm but zero paths. Both vanilla and posthoc `Recall@Method` values are false.
+- Bridge metrics contain 12 completed DeepSeek-V4-Pro requests for this case/run, with 1,031.371 summed request seconds and no transport failure. The bridge reported `traex_reported_total_tokens:null` for every call, so this round records no token total.
+
+**Decision:** AntiSamy is a fully verified native IRIS execution over an archive-verified, source-unchanged, finalized Java CodeQL database built by the generic bounded LLM repair controller. Its zero-target-recall outcome is retained as extension-lane execution evidence, not a positive vulnerability-detection claim and not an update to frozen aggregate metrics.
+
+**Next:** Continue reviewing exact-source/failed-CodeQL cases one at a time from the same 47-pair inventory. For every terminal `codeql_db_repaired` receipt, repeat the strict derived-manifest gate before scheduling copied-original native IRIS; preserve unsuccessful repairs as terminal receipts without project-specific recovery code.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.
