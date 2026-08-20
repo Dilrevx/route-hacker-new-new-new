@@ -653,7 +653,7 @@ def validate_repair_decision(
         kind = raw_action.get("kind")
         if not isinstance(kind, str):
             raise RepairValidationError("repair action is missing kind")
-        if kind in seen_kinds:
+        if kind in seen_kinds and kind != "append_build_args":
             raise RepairValidationError(f"duplicate repair action: {kind}")
         seen_kinds.add(kind)
         if kind == "retry_same_command":
@@ -687,11 +687,21 @@ def validate_repair_decision(
             actions.append({"kind": kind, "ant_home": ant_home})
         elif kind == "append_build_args":
             args = raw_action.get("args")
+            if args is None:
+                value = raw_action.get("value")
+                args = [value] if isinstance(value, str) else None
             if not isinstance(args, list) or not args or not all(isinstance(arg, str) for arg in args):
                 raise RepairValidationError("append_build_args requires a nonempty string args list")
             if not set(args).issubset(SAFE_BUILD_ARGS):
                 raise RepairValidationError("append_build_args contains an unapproved argument")
-            actions.append({"kind": kind, "args": list(args)})
+            existing = next(
+                (action for action in actions if action["kind"] == kind),
+                None,
+            )
+            if existing is None:
+                actions.append({"kind": kind, "args": list(args)})
+            else:
+                existing["args"] = _append_unique(existing["args"], args)
         elif kind == "set_maven_heap":
             value = raw_action.get("value")
             if not isinstance(value, str) or value not in SAFE_MAVEN_HEAP_OPTIONS:

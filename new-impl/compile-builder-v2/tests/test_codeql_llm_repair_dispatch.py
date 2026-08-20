@@ -136,8 +136,8 @@ def test_repair_json_schema_encodes_per_packet_action_values() -> None:
     args_choice = next(
         choice for choice in choices if choice["properties"]["kind"] == {"const": "append_build_args"}
     )
-    assert java_choice["properties"]["java_home"]["enum"] == ["/opt/java-17"]
-    assert maven_choice["properties"]["maven_home"]["enum"] == ["/opt/maven-3.9"]
+    assert java_choice["properties"]["value"]["enum"] == ["/opt/java-17"]
+    assert maven_choice["properties"]["value"]["enum"] == ["/opt/maven-3.9"]
     assert args_choice["properties"]["args"]["minItems"] == 1
     assert args_choice["properties"]["args"]["items"]["enum"] == ["-Denforcer.skip=true"]
 

@@ -671,6 +671,28 @@ def test_validate_repair_decision_rejects_conflicting_home_value_fields():
         )
 
 
+def test_validate_repair_decision_merges_generic_build_argument_values():
+    validated = validate_repair_decision(
+        {
+            "actions": [
+                {"kind": "append_build_args", "value": "-Dcheckstyle.skip=true"},
+                {"kind": "append_build_args", "value": "-Denforcer.skip=true"},
+                {"kind": "append_build_args", "value": "-Dcheckstyle.skip=true"},
+            ],
+            "rationale": "Skip approved non-semantic quality gates.",
+        },
+        approved_java_homes=[],
+        approved_maven_homes=[],
+    )
+
+    assert validated["actions"] == [
+        {
+            "kind": "append_build_args",
+            "args": ["-Dcheckstyle.skip=true", "-Denforcer.skip=true"],
+        }
+    ]
+
+
 def test_apply_repair_uses_new_database_and_preserves_source_root(tmp_path):
     receipt = failed_receipt(tmp_path)
     decision = validate_repair_decision(

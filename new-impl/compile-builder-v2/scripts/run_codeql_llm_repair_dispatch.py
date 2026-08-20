@@ -253,11 +253,11 @@ def repair_json_schema(packet: Mapping[str, Any]) -> str:
     executable_action_choices: list[dict[str, Any]] = []
     if java_homes:
         executable_action_choices.append(
-            _action_schema("set_java_home", java_home={"type": "string", "enum": java_homes})
+            _action_schema("set_java_home", value={"type": "string", "enum": java_homes})
         )
     if maven_homes:
         executable_action_choices.append(
-            _action_schema("set_maven_home", maven_home={"type": "string", "enum": maven_homes})
+            _action_schema("set_maven_home", value={"type": "string", "enum": maven_homes})
         )
     if build_args:
         executable_action_choices.append(
@@ -353,6 +353,9 @@ def build_repair_prompt(packet: dict[str, Any]) -> str:
         '[{"kind":"no_safe_action"}].\n\n'
         "Return strict JSON only with exactly these keys:\n"
         '{"actions":[{"kind":"..."}],"rationale":"brief reason"}\n\n'
+        "For set_java_home, set_maven_home, set_ant_home, and set_maven_heap, "
+        'use an approved action "value". For append_build_args, use an "args" '
+        "array containing only approved arguments.\n\n"
         f"PACKET:\n{payload}\n"
     )
 
@@ -1051,7 +1054,20 @@ def main() -> int:
         "approved_java_home_count": len(approved_java_homes),
         "approved_maven_home_count": len(approved_maven_homes),
         "dry_run": args.dry_run,
-        "model": None if args.dry_run else Path(args.claude_command).name,
+        "model": (
+            None
+            if args.dry_run
+            else args.openai_model
+            if args.openai_bridge_url
+            else Path(args.claude_command).name
+        ),
+        "model_transport": (
+            "none"
+            if args.dry_run
+            else "openai_compatible_bridge"
+            if args.openai_bridge_url
+            else "claude_cli"
+        ),
     }
     final["contract"] = {
         "eligible_cases_are_only_deterministic_unresolved": True,
