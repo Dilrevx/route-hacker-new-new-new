@@ -19,6 +19,7 @@ from scripts.run_codeql_llm_repair_dispatch import (
     command_for_claude,
     extract_structured_output,
     invoke_openai_bridge_model,
+    normalize_openai_base_url,
     repair_json_schema,
     validate_prior_completion_binding,
 )
@@ -170,11 +171,13 @@ def test_extract_structured_output_uses_terminal_result_only() -> None:
 def test_openai_bridge_transport_wraps_validated_structured_output(tmp_path: Path) -> None:
     class BridgeHandler(BaseHTTPRequestHandler):
         request_payload: dict | None = None
+        request_path: str | None = None
 
         def log_message(self, _format: str, *args: object) -> None:
             return
 
         def do_POST(self) -> None:
+            BridgeHandler.request_path = self.path
             BridgeHandler.request_payload = json.loads(
                 self.rfile.read(int(self.headers["Content-Length"])).decode("utf-8")
             )
@@ -219,12 +222,31 @@ def test_openai_bridge_transport_wraps_validated_structured_output(tmp_path: Pat
 
     assert result["bounded_process"]["returncode"] == 0
     assert result["bridge"]["model"] == "DeepSeek-V4-Pro"
+    assert BridgeHandler.request_path == "/v1/chat/completions"
     assert BridgeHandler.request_payload is not None
     assert BridgeHandler.request_payload["response_format"] == {"type": "json_object"}
     assert extract_structured_output(result["raw_text"]) == {
         "actions": [{"kind": "no_safe_action"}],
         "rationale": "No approved action is justified.",
     }
+
+
+@pytest.mark.parametrize(
+    ("bridge_url", "expected"),
+    [
+        ("http://127.0.0.1:18889", "http://127.0.0.1:18889/v1"),
+        ("http://127.0.0.1:18889/", "http://127.0.0.1:18889/v1"),
+        ("http://127.0.0.1:18889/v1", "http://127.0.0.1:18889/v1"),
+        ("http://127.0.0.1:18889/v1/", "http://127.0.0.1:18889/v1"),
+    ],
+)
+def test_normalize_openai_base_url(bridge_url: str, expected: str) -> None:
+    assert normalize_openai_base_url(bridge_url) == expected
+
+
+def test_normalize_openai_base_url_rejects_blank_value() -> None:
+    with pytest.raises(ValueError, match="must not be empty"):
+        normalize_openai_base_url("   ")
 
 
 def test_prior_completion_binding_rejects_receipt_mismatch(tmp_path: Path) -> None:

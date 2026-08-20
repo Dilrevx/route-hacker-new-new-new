@@ -70,6 +70,15 @@ MAX_MODEL_OUTPUT_CHARACTERS = 16_000
 DEFAULT_OPENAI_MODEL = "DeepSeek-V4-Pro"
 
 
+def normalize_openai_base_url(bridge_url: str) -> str:
+    """Return the OpenAI-compatible base URL without duplicating its version path."""
+
+    normalized = bridge_url.strip().rstrip("/")
+    if not normalized:
+        raise ValueError("bridge URL must not be empty")
+    return normalized if normalized.endswith("/v1") else f"{normalized}/v1"
+
+
 def utc_now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
 
@@ -461,7 +470,7 @@ def invoke_openai_bridge_model(
         "temperature": 0,
     }
     write_json(input_path, payload)
-    endpoint = f"{bridge_url.rstrip('/')}/v1/chat/completions"
+    endpoint = f"{normalize_openai_base_url(bridge_url)}/chat/completions"
     request = urllib.request.Request(
         endpoint,
         data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
