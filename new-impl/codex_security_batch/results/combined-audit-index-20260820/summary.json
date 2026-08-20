@@ -1,5 +1,12 @@
 {
   "all_exported_snapshot_rows_non_deduplicated": 1868,
+  "axis_followup_20260821": {
+    "boundary": "This confirms default-path SOAP-root heap exhaustion, while attachment temp-file growth remains service-dependent.",
+    "report": "axis-soap-root-default-war-http-validation.md",
+    "result": "Valid DIME HTTP SOAP root requests of 8 MiB and 32 MiB triggered request-level java.lang.OutOfMemoryError: Java heap space under -Xmx24m and -Xmx64m; the process continued serving WSDL after each request.",
+    "revision": "2c0d66018480e0cb73d5005c99c68ef55558d2a3",
+    "target": "apache/axis-axis1-java default WAR default Version service"
+  },
   "boundaries": [
     "Codex Security findings are candidates until source review and runtime verification.",
     "The 143-case snapshots are cumulative and must not be summed as independent alert sets.",
@@ -19,11 +26,11 @@
     "completed_verdict_rows": 16,
     "final_disposition_counts": {
       "confirmed_for_dataset_runtime": 8,
-      "disputed_or_likely_not_vendor_reportable": 1,
       "duplicate_historical_CVE-2015-5254_AMQ-6013": 1,
       "historical_revision_specific_not_latest_master": 1,
       "rejected_by_poc_agent": 2,
-      "review_rejected_wrong_effect": 3
+      "review_rejected_wrong_effect": 3,
+      "soap_root_request_oom_confirmed_attachment_tempfile_scope_limited": 1
     },
     "run_attempt_state_counts": {
       "completed": 3,

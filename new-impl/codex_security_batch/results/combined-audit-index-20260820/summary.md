@@ -47,7 +47,7 @@ Final/discussion disposition counts are:
 | Disposition | Count |
 | --- | ---: |
 | `confirmed_for_dataset_runtime` | 8 |
-| `disputed_or_likely_not_vendor_reportable` | 1 |
+| `soap_root_request_oom_confirmed_attachment_tempfile_scope_limited` | 1 |
 | `duplicate_historical_CVE-2015-5254_AMQ-6013` | 1 |
 | `historical_revision_specific_not_latest_master` | 1 |
 | `rejected_by_poc_agent` | 2 |
@@ -59,12 +59,12 @@ Important interpretation notes:
 - `review_rejected_wrong_effect` means the PoC-agent initially claimed a runnable confirmation, but a follow-up reviewer found the demonstrated effect did not match the dataset CVE/root-cause being validated.
 - `historical_revision_specific_not_latest_master` means the candidate was confirmed on a pinned historical revision only.
 - `duplicate_historical_CVE-2015-5254_AMQ-6013` means the unsafe condition was real historically but is not a new vendor report.
-- `disputed_or_likely_not_vendor_reportable` currently applies to the Axis SOAP/DIME attachment upload/resource-exhaustion case: a standard Axis service that accesses attachments can materialize attacker-controlled DIME attachment bytes to temp files, but the default Version service did not materialize attachments, so vendor acceptance is doubtful without a stronger default-service exploitability argument.
+- `soap_root_request_oom_confirmed_attachment_tempfile_scope_limited` currently applies to the Axis SOAP/DIME resource-exhaustion case: follow-up default-WAR HTTP testing confirmed request-level JVM heap OOM for attacker-controlled DIME SOAP root bodies on the default `Version` service; attachment temp-file growth remains dependent on a service that accesses attachments.
 
 Upload/file-transfer related rows that are explicitly represented:
 
 - ActiveMQ fileserver PUT/MOVE arbitrary file write: PoC-agent `CONFIRMED` on pinned ActiveMQ 5.11.0, final disposition `historical_revision_specific_not_latest_master`.
-- Axis DIME/SOAP attachment upload/materialization: PoC-agent `CONFIRMED`, later HTTP validation narrowed scope to attachment-consuming services; final disposition `disputed_or_likely_not_vendor_reportable`.
+- Axis DIME/SOAP root and attachment handling: PoC-agent `CONFIRMED`; follow-up default-WAR HTTP validation confirmed SOAP-root request-level JVM heap OOM, while attachment temp-file materialization remains limited to attachment-consuming services; final disposition `soap_root_request_oom_confirmed_attachment_tempfile_scope_limited`. See `axis-soap-root-default-war-http-validation.md`.
 - OpenMeetings FileWebService negative-parent file metadata case: PoC-agent run attempted but exceeded token limit; no completed PoC-agent verdict in this index.
 
 Detailed tables:
@@ -73,6 +73,12 @@ Detailed tables:
 - `poc_agent_run_attempts.csv` lists failed, interrupted, token-limited, and prepared-but-not-run attempts.
 - `disposition_counts.csv` gives compact counts for both initial verdicts and final dispositions.
 
+## 2026-08-21 Axis SOAP-Root Follow-Up
+
+A follow-up HTTP test used the default Axis WAR and default `Version` service, without deploying a custom attachment-consuming service. Valid `application/dime` requests with a single `text/xml` root SOAP record were accepted over HTTP. With constrained heaps (`-Xmx24m` and `-Xmx64m`), 1 MiB root SOAP returned `HTTP/1.1 200 OK`, while 8 MiB and 32 MiB root SOAP returned `HTTP/1.1 500 Server Error` containing `java.lang.OutOfMemoryError: Java heap space`. The WSDL endpoint remained available after each case, so the evidence supports request-level heap exhaustion and repeated-request DoS potential, not one-shot JVM process death.
+
+Report: `axis-soap-root-default-war-http-validation.md`.
+
 ## Current Bottom Line
 
-The scanner snapshots provide candidate queues, not verified vulnerabilities. For the currently indexed representative scans, the candidate volume is 835 findings with 31 Critical and 368 High rows. The recovered completed PoC-agent validations contain 16 verdict rows: 13 initial `CONFIRMED`-style rows and 3 initial rejected/not-new rows. After follow-up review and discussion, 8 rows remain cleanly confirmed for their dataset/runtime target, while the rest are rejected, duplicate/historical, latest-master-limited, or vendor-reportability-disputed.
+The scanner snapshots provide candidate queues, not verified vulnerabilities. For the currently indexed representative scans, the candidate volume is 835 findings with 31 Critical and 368 High rows. The recovered completed PoC-agent validations contain 16 verdict rows: 13 initial `CONFIRMED`-style rows and 3 initial rejected/not-new rows. After follow-up review and discussion, 8 rows remain cleanly confirmed for their dataset/runtime target, while the rest are rejected, duplicate/historical, latest-master-limited, wrong-effect, or scope-limited after follow-up validation.
