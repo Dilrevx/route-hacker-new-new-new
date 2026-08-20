@@ -698,6 +698,42 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Complete or locate a verified full `codeql-bundle-v2.23.2` Action bundle, preflight it with the new gate, then materialize JStachio in a fresh workspace and rerun copied original `src/iris.py`. Continue selecting the next 213-case Compile Builder candidate only after preserving this dependency boundary.
 
+### Round 23 - Complete Strict Repair Inputs and NiFi Toolchain Batch
+
+**Goal:** Resume the 213-case exact-source Compile Builder v2 lane one reviewed batch at a time, beginning with two NiFi cases whose historical records isolate a Maven-version failure.
+
+**Scope:** This round admits only `iris213::969cb39e2010152b58b4` / NiFi `CVE-2023-34468` version `1.21.0` and `iris213::7997ade0d28f26b11ba9` / NiFi `CVE-2023-36542` version `1.22.0`. Both remain in the broader 213-case runnability track; no database result is added to the frozen 45-case comparative cohort and no native IRIS process is started by this repair lane.
+
+**Action:**
+
+- Audited the original failure logs before selection. Both records stopped at Maven Enforcer because the historical controller used Maven `3.5.0`, while the projects require Maven `>=3.6.0`.
+- Detected and corrected a generic queue-materialization gap: the strict projection already contained 47 eligible cases, but the original `compile-repair-inputs` directory had been materialized only for the initial two-case Graylog/JStachio batch. It could therefore not admit later reviewed cases.
+- Re-ran the existing generic `prepare_iris_codeql_repair_inputs.py` over the immutable 47-row strict manifest, the 100 historical failed-CodeQL receipts, and the 213 exact-source receipt ledger. The generated projection contains 47/47 `eligible_for_compile_builder_v2` rows, each bound to its upstream failure receipt and archive/revision source receipt.
+- Generated a selected-ID file for the two reviewed NiFi rows and completed a dispatcher dry run with the global expected-eligible count fixed at 47. The dry run produced two `llm_repair_dry_run` receipts without widening the candidate set.
+- Started a two-worker Compile Builder v2 invocation with the shared `DeepSeek-V4-Pro` bridge, approved JDK `8/17/21`, approved Maven `3.9.9/3.9.8`, archive-isolated source copies, source-integrity validation, one bounded build-feedback replan, and a 7,200-second CodeQL bound.
+- The constrained model decisions passed local action validation and both builds entered real CodeQL Java extraction. NiFi `1.21.0` runs with approved Maven `3.9.9`; NiFi `1.22.0` runs with the same approved Maven plus the allow-listed Enforcer skip. Both are still active build/database-creation attempts.
+- Separately audited the existing Keycloak native-IRIS process in a13. It initially produced 159 original-IRIS API-label prompts with no response artifacts for more than two hours, then resumed through the same bridge and completed without a rerun.
+
+**Verification:**
+
+- Complete generated input projection:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/compile-repair-run-nifi-r1/full-inputs/summary.json`.
+  It records `candidate_count: 47`, `eligible_count: 47`, and exact hashes for all derived input ledgers.
+- Selected-case dry-run evidence:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/compile-repair-run-nifi-r1/dry-run/summary.json`.
+  It records two selected cases, two dry-run receipts, and `eligible_deterministic_unresolved_case_count: 47`.
+- Active repair evidence:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/compile-repair-run-nifi-r1/dispatch/`.
+  Both attempt directories contain model packets, validated decisions, independent source copies, and active `codeql database create` logs with Java extraction activity.
+- Neither NiFi case has a terminal repair receipt, a finalized `db-java/default` directory, or Java relation files yet. No database success is claimed in this round.
+- Keycloak now has an independent native-IRIS `completed_verified` receipt at:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a13-repaired-db-native-iris/cases/case__15ee12b80b2260c66d7f/summary.json`.
+  The copied original run exited `0` after `11,868.573` seconds; all required final artifacts are present and all `159` dispatched API-label prompts have paired, parseable JSON-list responses. It produced `15` vanilla and `15` posthoc results, with `21` posthoc LLM calls and no posthoc LLM failure.
+
+**Decision:** The strict 213-case lane now has a complete, immutable admission projection instead of a two-case-only input artifact. The NiFi batch is a valid controlled test of the generic Maven/JDK action space, not a per-project recipe. Keycloak is a completed native-IRIS execution in the frozen 45-case lane; its completion receipt is separate from the pending NiFi DB-only repair work.
+
+**Next:** Wait for both NiFi terminal receipts, then independently require CodeQL metadata, `db-java/default`, relation files, archive/revision evidence, and an unchanged source-integrity receipt before any derived native-IRIS manifest is created. Preserve the Keycloak recovery interval and final receipt as runtime evidence for the generic native runner/transport boundary.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.
