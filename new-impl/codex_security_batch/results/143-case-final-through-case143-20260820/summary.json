@@ -1,0 +1,49 @@
+{
+  "boundaries": [
+    "All scans are repository-level blind audits at dataset revisions.",
+    "Dataset vulnerability IDs and types are joined after execution for evaluation bookkeeping.",
+    "Findings are Codex Security candidates and are not runtime-confirmed vulnerabilities.",
+    "partial_artifacts means core artifacts exist after a non-zero scanner exit.",
+    "No credentials, auth state, local logs, source trees, or absolute artifact paths are included."
+  ],
+  "coverage_counts": {
+    "complete": 44,
+    "partial": 95,
+    "unknown": 3
+  },
+  "elapsed_seconds": 152953,
+  "findings_total": 737,
+  "model_counts": {
+    "gpt-5.4": 40,
+    "gpt-5.5": 38,
+    "gpt-5.6-terra": 62
+  },
+  "processed_cases": 143,
+  "producer_counts": {
+    "codex-security-plugin@0.1.20": 140,
+    "unknown": 2
+  },
+  "queue": {
+    "cases": 143,
+    "sha256": "65b1daafbf4f806b46ab0779861568d5aa7e7f1c49a3533185ea26e6be82af22"
+  },
+  "records": {
+    "raw_rows": 152,
+    "sha256": "020543c630a0da1b7f04e891418e16551040f6aafbc8a55e7b0d2012322ff50f",
+    "unique_cases": 142
+  },
+  "schema": "codex-security-blind-batch-summary.v1",
+  "severity_counts": {
+    "critical": 29,
+    "high": 326,
+    "low": 43,
+    "medium": 339
+  },
+  "status_counts": {
+    "accepted": 32,
+    "failed": 2,
+    "partial_artifacts": 106,
+    "source_prepare_failed": 2,
+    "stopped": 1
+  }
+}
