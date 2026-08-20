@@ -1,0 +1,3 @@
+commit=4ba1a1689f33d81bd2349a2bb8c66f0c95b04d1d
+tags=HEAD, tag: activemq-5.11.0
+subject=[maven-release-plugin] prepare release activemq-5.11.0

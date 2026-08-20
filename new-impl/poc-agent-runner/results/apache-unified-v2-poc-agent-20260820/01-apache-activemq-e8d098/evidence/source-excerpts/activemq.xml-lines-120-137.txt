@@ -1,0 +1,17 @@
+   120	        <!-- destroy the spring context on shutdown to stop jetty -->
+   121	        <shutdownHooks>
+   122	            <bean xmlns="http://www.springframework.org/schema/beans" class="org.apache.activemq.hooks.SpringContextHook" />
+   123	        </shutdownHooks>
+   124
+   125	    </broker>
+   126
+   127	    <!--
+   128	        Enable web consoles, REST and Ajax APIs and demos
+   129	        The web consoles requires by default login, you can disable this in the jetty.xml file
+   130
+   131	        Take a look at ${ACTIVEMQ_HOME}/conf/jetty.xml for more details
+   132	    -->
+   133	    <import resource="jetty.xml"/>
+   134
+   135	</beans>
+   136	<!-- END SNIPPET: example -->

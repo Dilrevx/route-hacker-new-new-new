@@ -1,0 +1,35 @@
+    22	<web-app>
+    23
+    24	  <display-name>RESTful file access application</display-name>
+    25
+    26	  <filter>
+    27	   <filter-name>RestFilter</filter-name>
+    28	   <filter-class>org.apache.activemq.util.RestFilter</filter-class>
+    29	  </filter>
+    30
+    31	  <filter>
+    32	   <filter-name>FilenameGuardFilter</filter-name>
+    33	   <filter-class>org.apache.activemq.util.FilenameGuardFilter</filter-class>
+    34	  </filter>
+    35
+    36	  <filter-mapping>
+    37	   <filter-name>FilenameGuardFilter</filter-name>
+    38	   <url-pattern>/*</url-pattern>
+    39	  </filter-mapping>
+    40
+    41	  <filter-mapping>
+    42	   <filter-name>RestFilter</filter-name>
+    43	   <url-pattern>/*</url-pattern>
+    44	  </filter-mapping>
+    45
+    46	  <servlet>
+    47	    <servlet-name>DefaultServlet</servlet-name>
+    48	    <servlet-class>org.eclipse.jetty.servlet.DefaultServlet</servlet-class>
+    49	  </servlet>
+    50
+    51	  <servlet-mapping>
+    52	   <servlet-name>DefaultServlet</servlet-name>
+    53	   <url-pattern>/*</url-pattern>
+    54	  </servlet-mapping>
+    55
+    56	</web-app>

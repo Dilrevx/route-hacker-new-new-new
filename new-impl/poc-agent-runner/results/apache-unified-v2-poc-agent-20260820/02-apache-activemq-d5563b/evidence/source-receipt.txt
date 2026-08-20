@@ -1,0 +1,441 @@
+Pinned checkout
+4ba1a1689f33d81bd2349a2bb8c66f0c95b04d1d
+tag_subject=HEAD, tag: activemq-5.11.0
+author=gtully <gary.tully@gmail.com>
+date=2015-01-30T12:46:08Z
+subject=[maven-release-plugin] prepare release activemq-5.11.0
+
+Relevant file SHA-256
+6359a9b686b42c3036f187b7c2fa265e9d97ac477fdf9f0d54334073672a9e5b  activemq checkout at 4ba1a1689f33d81bd2349a2bb8c66f0c95b04d1d (not included in snapshot)/activemq-http/src/main/java/org/apache/activemq/transport/http/HttpTunnelServlet.java
+ff1934d2d6036f58ee065e8ca4cf15e5ad47c6a3b675548b0f7a61ecd5c47a5f  activemq checkout at 4ba1a1689f33d81bd2349a2bb8c66f0c95b04d1d (not included in snapshot)/activemq-http/src/main/java/org/apache/activemq/transport/http/HttpTransportFactory.java
+cdbd957c78adab699348c9c5e2b18fb3db4949320a49c413f6e4c8ecee18b89a  activemq checkout at 4ba1a1689f33d81bd2349a2bb8c66f0c95b04d1d (not included in snapshot)/activemq-http/src/main/java/org/apache/activemq/transport/http/HttpTransportServer.java
+155bd814eb4f929ed927aa9a4fd38b4d4aa966280db72ad235e81002c2f4ec73  activemq checkout at 4ba1a1689f33d81bd2349a2bb8c66f0c95b04d1d (not included in snapshot)/activemq-http/src/main/java/org/apache/activemq/transport/xstream/XStreamWireFormat.java
+666f3e026e07b8353ee2bac7b1b2b21b01f3e6c042fcccc074b7671107301a93  activemq checkout at 4ba1a1689f33d81bd2349a2bb8c66f0c95b04d1d (not included in snapshot)/assembly/src/release/conf/activemq.xml
+
+HTTP request -> deserialize ordering
+   117	    @Override
+   118	    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+   119
+   120	        InputStream stream = request.getInputStream();
+   121	        String contentType = request.getContentType();
+   122	        if (contentType != null && contentType.equals("application/x-gzip")) {
+   123	            stream = new GZIPInputStream(stream);
+   124	        }
+   125
+   126	        // Read the command directly from the reader, assuming UTF8 encoding
+   127	        Command command = (Command) wireFormat.unmarshalText(new InputStreamReader(stream, "UTF-8"));
+   128
+   129	        if (command instanceof WireFormatInfo) {
+   130	            WireFormatInfo info = (WireFormatInfo) command;
+   131	            if (!canProcessWireFormatVersion(info.getVersion())) {
+   132	                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Cannot process wire format of version: "
+   133	                        + info.getVersion());
+   134	            }
+   135
+   136	        } else {
+   137
+   138	            BlockingQueueTransport transport = getTransportChannel(request, response);
+   139	            if (transport == null) {
+   140	                return;
+   141	            }
+   142
+   143	            transport.doConsume(command);
+   144	        }
+   145	    }
+
+Default wire-format selection
+    56	    protected TextWireFormat asTextWireFormat(WireFormat wireFormat) {
+    57	        if (wireFormat instanceof TextWireFormat) {
+    58	            return (TextWireFormat)wireFormat;
+    59	        }
+    60	        LOG.trace("Not created with a TextWireFormat: " + wireFormat);
+    61	        return new XStreamWireFormat();
+    62	    }
+    63
+    64	    protected String getDefaultWireFormatType() {
+    65	        return "xstream";
+    66	    }
+    67
+    53	    public TextWireFormat getWireFormat() {
+    54	        if (wireFormat == null) {
+    55	            wireFormat = createWireFormat();
+    56	        }
+    57	        return wireFormat;
+    58	    }
+    59
+    60	    public void setWireFormat(TextWireFormat wireFormat) {
+    61	        this.wireFormat = wireFormat;
+    62	    }
+    63
+    64	    // Implementation methods
+    65	    // -------------------------------------------------------------------------
+    66	    protected TextWireFormat createWireFormat() {
+    67	        return new XStreamWireFormat();
+    68	    }
+    69
+    70	    protected void setConnector(Connector connector) {
+    71	        this.connector = connector;
+    72	    }
+    73
+    74	    @Override
+    75	    protected void doStart() throws Exception {
+    76	        createServer();
+    77	        if (connector == null) {
+    78	            connector = socketConnectorFactory.createConnector(server);
+    79	        }
+    80
+    81	        URI boundTo = bind();
+    82
+    83	        ServletContextHandler contextHandler =
+    84	            new ServletContextHandler(server, "/", ServletContextHandler.NO_SECURITY);
+    85
+    86	        ServletHolder holder = new ServletHolder();
+    87	        holder.setServlet(new HttpTunnelServlet());
+    88	        contextHandler.addServlet(holder, "/");
+    89
+    90	        contextHandler.setAttribute("acceptListener", getAcceptListener());
+    91	        contextHandler.setAttribute("wireFormat", getWireFormat());
+    92	        contextHandler.setAttribute("transportFactory", transportFactory);
+    93	        contextHandler.setAttribute("transportOptions", transportOptions);
+
+Pinned XStream configuration
+    50	    public WireFormat copy() {
+    51	        return new XStreamWireFormat();
+    52	    }
+    53
+    54	    @Override
+    55	    public Object unmarshalText(String text) {
+    56	        return getXStream().fromXML(text);
+    57	    }
+    58
+    59	    @Override
+    60	    public Object unmarshalText(Reader reader) {
+    61	        return getXStream().fromXML(reader);
+    62	    }
+    63
+    64	    @Override
+    65	    public String marshalText(Object command) throws IOException {
+    66	        if (command instanceof MarshallAware) {
+    67	            ((MarshallAware)command).beforeMarshall(this);
+    68	        } else if(command instanceof MessageDispatch) {
+    69	            MessageDispatch dispatch = (MessageDispatch) command;
+    70	            if (dispatch != null && dispatch.getMessage() != null) {
+    71	                dispatch.getMessage().beforeMarshall(this);
+    72	            }
+    73	        }
+    74
+    75	        return getXStream().toXML(command);
+    76	    }
+    77
+    78	    /**
+    79	     * Can this wireformat process packets of this version
+    80	     *
+    81	     * @param version the version number to test
+    82	     * @return true if can accept the version
+    83	     */
+    84	    public boolean canProcessWireFormatVersion(int version) {
+    85	        return true;
+    86	    }
+    87
+    88	    /**
+    89	     * @return the current version of this wire format
+    90	     */
+    91	    public int getCurrentWireFormatVersion() {
+    92	        return 1;
+    93	    }
+    94
+    95	    // Properties
+    96	    // -------------------------------------------------------------------------
+    97	    public XStream getXStream() {
+    98	        if (xStream == null) {
+    99	            xStream = createXStream();
+   100	            // make it work in OSGi env
+   101	            xStream.setClassLoader(getClass().getClassLoader());
+   102	        }
+   103	        return xStream;
+   104	    }
+   105
+   106	    public void setXStream(XStream xStream) {
+   107	        this.xStream = xStream;
+   108	    }
+   109
+   110	    // Implementation methods
+   111	    // -------------------------------------------------------------------------
+   112	    protected XStream createXStream() {
+   113	        XStream xstream = new XStream();
+   114	        xstream.ignoreUnknownElements();
+   115	        return xstream;
+   116	    }
+
+Pinned XStream dependency version
+   122	    <woodstox-core-asl-version>4.2.0</woodstox-core-asl-version>
+   123	    <xalan-version>2.7.2</xalan-version>
+   124	    <xmlbeans-version>2.6.0</xmlbeans-version>
+   125	    <xmlbeans-bundle-version>2.6.0_2</xmlbeans-bundle-version>
+   126	    <xmlresolver-bundle-version>1.2_5</xmlresolver-bundle-version>
+   127	    <xpp3-version>1.1.4c</xpp3-version>
+   128	    <xstream-version>1.4.7</xstream-version>
+   129	    <xbean-version>3.18</xbean-version>
+   130	    <xerces-version>2.11.0</xerces-version>
+   131	    <jaxb-basics-version>0.6.4</jaxb-basics-version>
+   132	    <stompjms-version>1.19</stompjms-version>
+   909	        <version>${xalan-version}</version>
+   910	      </dependency>
+   911
+   912	      <dependency>
+   913	        <groupId>com.thoughtworks.xstream</groupId>
+   914	        <artifactId>xstream</artifactId>
+   915	        <version>${xstream-version}</version>
+   916	        <exclusions>
+   917	          <exclusion>
+   918	            <!-- xom is an optional dependency of xstream. Its also
+   919	              LGPL, so its really not ASF compatible. -->
+   920	            <groupId>xom</groupId>
+   921	            <artifactId>xom</artifactId>
+
+Default released broker connectors
+   105	        <!--
+   106	            The transport connectors expose ActiveMQ over a given protocol to
+   107	            clients and other brokers. For more information, see:
+   108
+   109	            http://activemq.apache.org/configuring-transports.html
+   110	        -->
+   111	        <transportConnectors>
+   112	            <!-- DOS protection, limit concurrent connections to 1000 and frame size to 100MB -->
+   113	            <transportConnector name="openwire" uri="tcp://0.0.0.0:61616?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
+   114	            <transportConnector name="amqp" uri="amqp://0.0.0.0:5672?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
+   115	            <transportConnector name="stomp" uri="stomp://0.0.0.0:61613?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
+   116	            <transportConnector name="mqtt" uri="mqtt://0.0.0.0:1883?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
+   117	            <transportConnector name="ws" uri="ws://0.0.0.0:61614?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
+   118	        </transportConnectors>
+   119
+   120	        <!-- destroy the spring context on shutdown to stop jetty -->
+
+Later remediation commit and post-fix control
+commit=e7a4b53f799685e337972dd36ba0253c04bcc01f
+author_date=2015-10-16T15:44:02+02:00
+commit_date=2015-12-03T19:22:30+01:00
+subject=https://issues.apache.org/jira/browse/AMQ-6013 - restrict classes which can be serialized inside the broker
+diff --git a/activemq-http/src/main/java/org/apache/activemq/transport/xstream/XStreamWireFormat.java b/activemq-http/src/main/java/org/apache/activemq/transport/xstream/XStreamWireFormat.java
+index de437c9557..76a58737d1 100755
+--- a/activemq-http/src/main/java/org/apache/activemq/transport/xstream/XStreamWireFormat.java
++++ b/activemq-http/src/main/java/org/apache/activemq/transport/xstream/XStreamWireFormat.java
+@@ -12,22 +12,31 @@
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
+ package org.apache.activemq.transport.xstream;
+
+ import java.io.IOException;
+ import java.io.Reader;
+
++<<<<<<< HEAD
++=======
++import com.thoughtworks.xstream.converters.Converter;
++import com.thoughtworks.xstream.converters.MarshallingContext;
++import com.thoughtworks.xstream.converters.UnmarshallingContext;
++import com.thoughtworks.xstream.io.HierarchicalStreamReader;
++import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
++>>>>>>> a7e2a44... https://issues.apache.org/jira/browse/AMQ-6013 - restrict classes which can be serialized inside the broker
+ import org.apache.activemq.command.MarshallAware;
+ import org.apache.activemq.command.MessageDispatch;
++import org.apache.activemq.transport.stomp.XStreamSupport;
+ import org.apache.activemq.transport.util.TextWireFormat;
+ import org.apache.activemq.wireformat.WireFormat;
+
+ import com.thoughtworks.xstream.XStream;
+
+ /**
+  * A {@link WireFormat} implementation which uses the <a
+  * href="http://xstream.codehaus.org/>XStream</a> library to marshall commands
+  * onto the wire
+  *
+@@ -86,33 +95,32 @@ public class XStreamWireFormat extends TextWireFormat {
+     }
+
+     /**
+      * @return the current version of this wire format
+      */
+     public int getCurrentWireFormatVersion() {
+         return 1;
+     }
+
+     // Properties
+-    // -------------------------------------------------------------------------
+-    public XStream getXStream() {
++    // -------------------------------------------------activemq-http/src/main/java/org/apache/activemq/transport/xstream/XStreamWireFormat.java
+         if (xStream == null) {
+             xStream = createXStream();
+             // make it work in OSGi env
+             xStream.setClassLoader(getClass().getClassLoader());
+         }
+         return xStream;
+     }
+
+     public void setXStream(XStream xStream) {
+         this.xStream = xStream;
+     }
+
+     // Implementation methods
+     // -------------------------------------------------------------------------
+     protected XStream createXStream() {
+-        XStream xstream = new XStream();
++        final XStream xstream = XStreamSupport.createXStream();
+         xstream.ignoreUnknownElements();
+         return xstream;
+     }
+
+ }
+    28	public class XStreamSupport {
+    29
+    30	    public static XStream createXStream() {
+    31	        XStream stream = new XStream();
+    32	        stream.addPermission(NoTypePermission.NONE);
+    33	        stream.addPermission(PrimitiveTypePermission.PRIMITIVES);
+    34	        stream.allowTypeHierarchy(Collection.class);
+    35	        stream.allowTypeHierarchy(Map.class);
+    36	        stream.allowTypes(new Class[]{String.class});
+    37	        if (ClassLoadingAwareObjectInputStream.isAllAllowed()) {
+    38	            stream.addPermission(AnyTypePermission.ANY);
+    39	        } else {
+    40	            for (String packageName : ClassLoadingAwareObjectInputStream.serializablePackages) {
+    41	                stream.allowTypesByWildcard(new String[]{packageName + ".**"});
+    42	            }
+    43	        }
+    44	        return stream;
+    45	    }
+
+Version tags
+pinned_tag=activemq-5.11.0
+remediation_in_tags=
+activemq-5.12.2
+activemq-5.12.3
+
+Runtime tool probes
+The operation couldn’t be completed. Unable to locate a Java Runtime.
+Please visit http://www.java.com for information on installing Java.
+
+The operation couldn’t be completed. Unable to locate a Java Runtime.
+Please visit http://www.java.com for information on installing Java.
+
+
+HTTP session lookup occurs after POST deserialization
+   117	    @Override
+   118	    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+   119
+   120	        InputStream stream = request.getInputStream();
+   121	        String contentType = request.getContentType();
+   122	        if (contentType != null && contentType.equals("application/x-gzip")) {
+   123	            stream = new GZIPInputStream(stream);
+   124	        }
+   125
+   126	        // Read the command directly from the reader, assuming UTF8 encoding
+   127	        Command command = (Command) wireFormat.unmarshalText(new InputStreamReader(stream, "UTF-8"));
+   128
+   129	        if (command instanceof WireFormatInfo) {
+   130	            WireFormatInfo info = (WireFormatInfo) command;
+   131	            if (!canProcessWireFormatVersion(info.getVersion())) {
+   132	                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Cannot process wire format of version: "
+   133	                        + info.getVersion());
+   134	            }
+   135
+   136	        } else {
+   137
+   138	            BlockingQueueTransport transport = getTransportChannel(request, response);
+   139	            if (transport == null) {
+   140	                return;
+   141	            }
+   142
+   143	            transport.doConsume(command);
+   144	        }
+   145	    }
+   166	    protected BlockingQueueTransport getTransportChannel(HttpServletRequest request, HttpServletResponse response) throws IOException {
+   167	        String clientID = request.getHeader("clientID");
+   168	        if (clientID == null) {
+   169	            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No clientID header specified");
+   170	            LOG.warn("No clientID header specified");
+   171	            return null;
+   172	        }
+   173	        BlockingQueueTransport answer = clients.get(clientID);
+   174	        if (answer == null) {
+   175	            LOG.warn("The clientID header specified is invalid. Client sesion has not yet been established for it: " + clientID);
+   176	            return null;
+   177	        }
+   178	        return answer;
+   179	    }
+
+HTTP server has NO_SECURITY servlet context
+    75	    protected void doStart() throws Exception {
+    76	        createServer();
+    77	        if (connector == null) {
+    78	            connector = socketConnectorFactory.createConnector(server);
+    79	        }
+    80
+    81	        URI boundTo = bind();
+    82
+    83	        ServletContextHandler contextHandler =
+    84	            new ServletContextHandler(server, "/", ServletContextHandler.NO_SECURITY);
+    85
+    86	        ServletHolder holder = new ServletHolder();
+    87	        holder.setServlet(new HttpTunnelServlet());
+    88	        contextHandler.addServlet(holder, "/");
+    89
+    90	        contextHandler.setAttribute("acceptListener", getAcceptListener());
+    91	        contextHandler.setAttribute("wireFormat", getWireFormat());
+    92	        contextHandler.setAttribute("transportFactory", transportFactory);
+    93	        contextHandler.setAttribute("transportOptions", transportOptions);
+    94
+    95	        addGzipHandler(contextHandler);
+    96
+    97	        server.start();
+
+Configured authentication is a broker-command stage
+    64	    }
+    65
+    66	    @Override
+    67	    public void addConnection(ConnectionContext context, ConnectionInfo info) throws Exception {
+    68
+    69	        SecurityContext s = context.getSecurityContext();
+    70	        if (s == null) {
+    71	            // Check the username and password.
+    72	            if (anonymousAccessAllowed && info.getUserName() == null && info.getPassword() == null) {
+    73	                info.setUserName(anonymousUser);
+    74	                s = new SecurityContext(info.getUserName()) {
+    75	                    @Override
+    76	                    public Set<Principal> getPrincipals() {
+    77	                        Set<Principal> groups = new HashSet<Principal>();
+    78	                        groups.add(new GroupPrincipal(anonymousGroup));
+    79	                        return groups;
+    80	                    }
+    81	                };
+    82	            } else {
+    83	                String pw = userPasswords.get(info.getUserName());
+    84	                if (pw == null || !pw.equals(info.getPassword())) {
+    85	                    throw new SecurityException(
+    86	                            "User name [" + info.getUserName() + "] or password is invalid.");
+    87	                }
+    88
+    89	                final Set<Principal> groups = userGroups.get(info.getUserName());
+    90	                s = new SecurityContext(info.getUserName()) {
+    91	                    @Override
+    92	                    public Set<Principal> getPrincipals() {
+    93	                        return groups;
+    94	                    }
+    95	                };
+    96	            }
+    97
+    98	            context.setSecurityContext(s);
+    99	            securityContexts.add(s);
+   100	        }
+   101
+   102	        try {
+   103	            super.addConnection(context, info);
+   104	        } catch (Exception e) {
+   105	            securityContexts.remove(s);
+   106	            context.setSecurityContext(null);
+   107	            throw e;
+   108	        }
+   109	    }
+   110	}

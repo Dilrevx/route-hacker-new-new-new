@@ -1,0 +1,126 @@
+    15	    <!--
+    16	        An embedded servlet engine for serving up the Admin consoles, REST and Ajax APIs and
+    17	        some demos Include this file in your configuration to enable ActiveMQ web components
+    18	        e.g. <import resource="jetty.xml"/>
+    19	    -->
+    20	<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    21	    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    22
+    23	    <bean id="securityLoginService" class="org.eclipse.jetty.security.HashLoginService">
+    24	        <property name="name" value="ActiveMQRealm" />
+    25	        <property name="config" value="${activemq.conf}/jetty-realm.properties" />
+    26	    </bean>
+    27
+    28	    <bean id="securityConstraint" class="org.eclipse.jetty.util.security.Constraint">
+    29	        <property name="name" value="BASIC" />
+    30	        <property name="roles" value="user,admin" />
+    31	        <!-- set authenticate=false to disable login -->
+    32	        <property name="authenticate" value="true" />
+    33	    </bean>
+    34	    <bean id="adminSecurityConstraint" class="org.eclipse.jetty.util.security.Constraint">
+    35	        <property name="name" value="BASIC" />
+    36	        <property name="roles" value="admin" />
+    37	         <!-- set authenticate=false to disable login -->
+    38	        <property name="authenticate" value="true" />
+    39	    </bean>
+    40	    <bean id="securityConstraintMapping" class="org.eclipse.jetty.security.ConstraintMapping">
+    41	        <property name="constraint" ref="securityConstraint" />
+    42	        <property name="pathSpec" value="/api/*,/admin/*,*.jsp" />
+    43	    </bean>
+    44	    <bean id="adminSecurityConstraintMapping" class="org.eclipse.jetty.security.ConstraintMapping">
+    45	        <property name="constraint" ref="adminSecurityConstraint" />
+    46	        <property name="pathSpec" value="*.action" />
+    47	    </bean>
+    48	    <bean id="securityHandler" class="org.eclipse.jetty.security.ConstraintSecurityHandler">
+    49	        <property name="loginService" ref="securityLoginService" />
+    50	        <property name="authenticator">
+    51	            <bean class="org.eclipse.jetty.security.authentication.BasicAuthenticator" />
+    52	        </property>
+    53	        <property name="constraintMappings">
+    54	            <list>
+    55	                <ref bean="adminSecurityConstraintMapping" />
+    56	                <ref bean="securityConstraintMapping" />
+    57	            </list>
+    58	        </property>
+    59	        <property name="handler">
+    60	            <bean id="sec" class="org.eclipse.jetty.server.handler.HandlerCollection">
+    61	                <property name="handlers">
+    62	                    <list>
+    63	                        <bean class="org.eclipse.jetty.webapp.WebAppContext">
+    64	                            <property name="contextPath" value="/admin" />
+    65	                            <property name="resourceBase" value="${activemq.home}/webapps/admin" />
+    66	                            <property name="logUrlOnStart" value="true" />
+    67	                        </bean>
+    68	                        <bean class="org.eclipse.jetty.webapp.WebAppContext">
+    69	                            <property name="contextPath" value="/fileserver" />
+    70	                            <property name="resourceBase" value="${activemq.home}/webapps/fileserver" />
+    71	                            <property name="logUrlOnStart" value="true" />
+    72	                            <property name="parentLoaderPriority" value="true" />
+    73	                        </bean>
+    74	                        <bean class="org.eclipse.jetty.webapp.WebAppContext">
+    75	                            <property name="contextPath" value="/api" />
+    76	                            <property name="resourceBase" value="${activemq.home}/webapps/api" />
+    77	                            <property name="logUrlOnStart" value="true" />
+    78	                        </bean>
+    79	                        <bean class="org.eclipse.jetty.server.handler.ResourceHandler">
+    80	                            <property name="directoriesListed" value="false" />
+    81	                            <property name="welcomeFiles">
+    82	                                <list>
+    83	                                    <value>index.html</value>
+    84	                                </list>
+    85	                            </property>
+    86	                            <property name="resourceBase" value="${activemq.home}/webapps/" />
+    87	                        </bean>
+    88	                        <bean id="defaultHandler" class="org.eclipse.jetty.server.handler.DefaultHandler">
+    89	                            <property name="serveIcon" value="false" />
+    90	                        </bean>
+    91	                    </list>
+    92	                </property>
+    93	            </bean>
+    94	        </property>
+    95	    </bean>
+    96
+    97	    <bean id="contexts" class="org.eclipse.jetty.server.handler.ContextHandlerCollection">
+    98	    </bean>
+    99
+   100	    <bean id="jettyPort" class="org.apache.activemq.web.WebConsolePort" init-method="start">
+   101	             <!-- the default port number for the web console -->
+   102	        <property name="host" value="0.0.0.0"/>
+   103	        <property name="port" value="8161"/>
+   104	    </bean>
+   105
+   106	    <bean id="Server" depends-on="jettyPort" class="org.eclipse.jetty.server.Server" init-method="start"
+   107	        destroy-method="stop">
+   108
+   109	        <property name="connectors">
+   110	            <list>
+   111	                <bean id="Connector" class="org.eclipse.jetty.server.nio.SelectChannelConnector">
+   112	                     <!-- see the jettyPort bean -->
+   113	                    <property name="host" value="#{systemProperties['jetty.host']}" />
+   114	                    <property name="port" value="#{systemProperties['jetty.port']}" />
+   115	                </bean>
+   116	                <!--
+   117	                    Enable this connector if you wish to use https with web console
+   118	                -->
+   119	                <!--
+   120	                <bean id="SecureConnector" class="org.eclipse.jetty.server.ssl.SslSelectChannelConnector">
+   121	                    <property name="port" value="8162" />
+   122	                    <property name="keystore" value="file:${activemq.conf}/broker.ks" />
+   123	                    <property name="password" value="password" />
+   124	                </bean>
+   125	                -->
+   126	            </list>
+   127	        </property>
+   128
+   129	        <property name="handler">
+   130	            <bean id="handlers" class="org.eclipse.jetty.server.handler.HandlerCollection">
+   131	                <property name="handlers">
+   132	                    <list>
+   133	                        <ref bean="contexts" />
+   134	                        <ref bean="securityHandler" />
+   135	                    </list>
+   136	                </property>
+   137	            </bean>
+   138	        </property>
+   139
+   140	    </bean>

@@ -1,0 +1,25 @@
+commit 3dd86d04e8b90ba309819317d19e7260d414d9e7
+Author:     Dejan Bosanac <dejan@nighttale.net>
+AuthorDate: Tue May 3 12:37:05 2016 +0200
+Commit:     Dejan Bosanac <dejan@nighttale.net>
+CommitDate: Tue May 3 12:39:50 2016 +0200
+
+    https://issues.apache.org/jira/browse/AMQ-6276 - remove fileserver webapp
+
+ activemq-fileserver/pom.xml                        | 112 ----------
+ .../apache/activemq/util/FilenameGuardFilter.java  |  96 ---------
+ .../java/org/apache/activemq/util/IOHelper.java    | 139 -------------
+ .../java/org/apache/activemq/util/RestFilter.java  | 230 ---------------------
+ .../src/main/webapp/META-INF/LICENSE               | 203 ------------------
+ .../src/main/webapp/META-INF/NOTICE                |   5 -
+ .../src/main/webapp/WEB-INF/web.xml                |  55 -----
+ activemq-fileserver/src/main/webapp/index.html     |  30 ---
+ .../org/apache/activemq/util/HttpBlobTest.java     |  72 -------
+ .../org/apache/activemq/util/HttpTestSupport.java  | 127 ------------
+ .../org/apache/activemq/util/RestFilterTest.java   |  70 -------
+ assembly/pom.xml                                   |   5 -
+ assembly/src/main/descriptors/common-bin.xml       |  17 --
+ assembly/src/release/conf/jetty.xml                |   5 -
+ assembly/src/release/examples/conf/jetty-demo.xml  |   6 -
+ pom.xml                                            |   7 -
+ 16 files changed, 1179 deletions(-)

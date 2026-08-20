@@ -1,0 +1,18 @@
+    84	      <directory>../activemq-web-console/src/main/webapp/js/</directory>
+    85	      <outputDirectory>/webapps-demo/demo/js/</outputDirectory>
+    86	    </fileSet>
+    87
+    88	    <!-- the file server -->
+    89	    <fileSet>
+    90	      <directory>../activemq-fileserver/src/main/webapp</directory>
+    91	      <outputDirectory>/webapps/fileserver</outputDirectory>
+    92	    </fileSet>
+    93	    <fileSet>
+    94	      <directory>../activemq-fileserver/target/classes</directory>
+    95	      <outputDirectory>/webapps/fileserver/WEB-INF/classes</outputDirectory>
+    96	      <includes>
+    97	        <include>**/*.class</include>
+    98	      </includes>
+    99	    </fileSet>
+   100	  </fileSets>
+   101

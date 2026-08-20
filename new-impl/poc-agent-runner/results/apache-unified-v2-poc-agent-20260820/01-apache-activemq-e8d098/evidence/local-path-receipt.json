@@ -1,0 +1,21 @@
+{
+  "asserted_tokens": {
+    "broker_imports_jetty": true,
+    "default_jetty_fileserver_context": true,
+    "default_jetty_listen_host": "0.0.0.0",
+    "default_security_path_spec": "/api/*,/admin/*,*.jsp",
+    "fileserver_filter_mapping": true,
+    "no_descriptor_write_role": true,
+    "rest_filter_sink": true
+  },
+  "configured_storage_root": "evidence/local-path-receipt/fileserver-storage",
+  "destination_created": true,
+  "destination_inside_storage_root": false,
+  "destination_sha256": "17c011a510f04c2cbe8cc0d816999ca6c74055e858747232f2a73762c314c973",
+  "mode": "local-only source-derived receipt; no service started; no HTTP sent",
+  "sink_expression": "new File(destinationUrl.getFile())",
+  "source_file": "activemq-fileserver/src/main/java/org/apache/activemq/util/RestFilter.java",
+  "source_removed_after_copy": true,
+  "source_root": "activemq checkout at 4ba1a1689f33d81bd2349a2bb8c66f0c95b04d1d (not included in snapshot)",
+  "source_sha256_before_copy": "17c011a510f04c2cbe8cc0d816999ca6c74055e858747232f2a73762c314c973"
+}

@@ -1,0 +1,62 @@
+commit 9fd5cb7dfe0fcc431f99d5e14206e0090e72f36b
+Author:     Dejan Bosanac <dejan@nighttale.net>
+AuthorDate: Thu Apr 30 12:08:26 2015 +0200
+Commit:     Daniel Kulp <dkulp@apache.org>
+CommitDate: Wed Aug 5 11:15:43 2015 -0400
+
+    https://issues.apache.org/jira/browse/AMQ-5754 - disable file server by default
+
+diff --git a/activemq-fileserver/src/main/java/org/apache/activemq/util/FilenameGuardFilter.java b/activemq-fileserver/src/main/java/org/apache/activemq/util/FilenameGuardFilter.java
+index 099fa414a..89bfa58cb 100644
+--- a/activemq-fileserver/src/main/java/org/apache/activemq/util/FilenameGuardFilter.java
++++ b/activemq-fileserver/src/main/java/org/apache/activemq/util/FilenameGuardFilter.java
+@@ -60,7 +60,7 @@ public class FilenameGuardFilter implements Filter {
+         }
+
+         private String guard(String filename) {
+-            String guarded = filename.replace(":", "_");
++            String guarded = filename.replace(":", "_").replace("\\", "").replace("/", "");
+             if (LOG.isDebugEnabled()) {
+                 LOG.debug("guarded " + filename + " to " + guarded);
+             }
+diff --git a/activemq-fileserver/src/main/webapp/index.html b/activemq-fileserver/src/main/webapp/index.html
+index 56294f670..f30eb6994 100644
+--- a/activemq-fileserver/src/main/webapp/index.html
++++ b/activemq-fileserver/src/main/webapp/index.html
+@@ -16,14 +16,14 @@
+ -->
+ <html>
+ <head>
+-<title>ActiveMQ Console</title>
++<title>ActiveMQ File server</title>
+ </head>
+ <body>
+
+ <h1>RESTful file access</h1>
+
+ <p>
+-	This webapp provides RESTful file access.
++	This webapp provides RESTful file access for <a href="http://activemq.apache.org/blob-messages.html">blob messages</a>. It's disabled by default, please take a look at web server configuration on how to enable it.
+ </p>
+
+ </body>
+diff --git a/assembly/src/release/conf/jetty.xml b/assembly/src/release/conf/jetty.xml
+index 2f77ee556..12e104c39 100644
+--- a/assembly/src/release/conf/jetty.xml
++++ b/assembly/src/release/conf/jetty.xml
+@@ -65,12 +65,15 @@
+                             <property name="resourceBase" value="${activemq.home}/webapps/admin" />
+                             <property name="logUrlOnStart" value="true" />
+                         </bean>
++                        <!-- Enable embedded file server for Blob messages -->
++                        <!--
+                         <bean class="org.eclipse.jetty.webapp.WebAppContext">
+                             <property name="contextPath" value="/fileserver" />
+                             <property name="resourceBase" value="${activemq.home}/webapps/fileserver" />
+                             <property name="logUrlOnStart" value="true" />
+                             <property name="parentLoaderPriority" value="true" />
+                         </bean>
++                        -->
+                         <bean class="org.eclipse.jetty.webapp.WebAppContext">
+                             <property name="contextPath" value="/api" />
+                             <property name="resourceBase" value="${activemq.home}/webapps/api" />
