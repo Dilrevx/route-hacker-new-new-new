@@ -541,6 +541,7 @@ def test_controller_replans_once_from_fresh_failed_build_evidence(
     prior = deterministic_completion(failed, source_row)
     prompts: list[str] = []
     executed_decisions: list[dict] = []
+    execution_kwargs: list[dict[str, object]] = []
 
     def fake_invoke_model(**kwargs: object) -> dict:
         prompts.append(str(kwargs["prompt"]))
@@ -568,6 +569,7 @@ def test_controller_replans_once_from_fresh_failed_build_evidence(
         **kwargs: object,
     ) -> dict:
         executed_decisions.append(decision)
+        execution_kwargs.append(kwargs)
         packet = dispatcher.build_repair_packet(
             receipt,
             approved_java_homes=[],
@@ -621,6 +623,7 @@ def test_controller_replans_once_from_fresh_failed_build_evidence(
     assert len(result["model_invocations"]) == 2
     assert len(result["repair_attempts"]) == 2
     assert len(executed_decisions) == 2
+    assert all(kwargs["isolate_build_home"] is True for kwargs in execution_kwargs)
     assert executed_decisions[0] != executed_decisions[1]
     assert "fresh checkstyle network failure" in prompts[1]
     assert "Select a different action set" in prompts[1]
