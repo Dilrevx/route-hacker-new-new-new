@@ -537,6 +537,33 @@ def is_maven_build_command(build_command: Sequence[str]) -> bool:
     return bool(build_command) and Path(build_command[0]).name in {"mvn", "mvnw"}
 
 
+def redirect_maven_local_repository(
+    build_command: Sequence[str],
+    repository: Path,
+) -> tuple[list[str], str | None]:
+    """Point an explicit Maven local repository at an isolated attempt cache.
+
+    Historical receipts may include ``-Dmaven.repo.local=...``.  Such a value
+    bypasses ``MAVEN_USER_HOME`` and otherwise lets a retry consume a stale or
+    corrupted shared cache.  The execution layer, not the LLM action space,
+    therefore redirects this one Maven runtime property when a build home is
+    isolated.  Commands without the property retain normal Maven resolution
+    through the isolated ``MAVEN_USER_HOME``.
+    """
+
+    if not is_maven_build_command(build_command):
+        return list(build_command), None
+    prefix = "-Dmaven.repo.local="
+    target = f"{prefix}{repository}"
+    rewritten = list(build_command)
+    replaced: str | None = None
+    for index, token in enumerate(rewritten):
+        if token.startswith(prefix):
+            replaced = token
+            rewritten[index] = target
+    return rewritten, replaced
+
+
 def prepend_maven_clean_goal(build_command: Sequence[str]) -> list[str]:
     """Insert Maven's ``clean`` lifecycle before a supported build lifecycle.
 
@@ -1067,11 +1094,6 @@ def apply_repair_decision(
         else:
             raise RepairValidationError(f"unexpected validated repair action: {kind}")
 
-    repaired_build_value = shlex.join(build_command)
-    if build_inline:
-        repaired[build_index] = f"--command={repaired_build_value}"
-    else:
-        repaired[build_index + 1] = repaired_build_value
     verified_environment: dict[str, str] = {}
     if verified_gradle_user_home is not None:
         gradle_user_home = verified_gradle_user_home.resolve()
@@ -1082,13 +1104,19 @@ def apply_repair_decision(
     if isolated_build_home is not None:
         build_home = isolated_build_home.resolve()
         maven_user_home = build_home / ".m2"
+        maven_repository = maven_user_home / "repository"
         gradle_user_home = build_home / ".gradle"
         if (
             not build_home.is_dir()
             or not maven_user_home.is_dir()
+            or not maven_repository.is_dir()
             or not gradle_user_home.is_dir()
         ):
             raise RepairValidationError("isolated build home is incomplete")
+        build_command, replaced_maven_repository = redirect_maven_local_repository(
+            build_command,
+            maven_repository,
+        )
         existing_maven_opts = os.environ.get("MAVEN_OPTS", "")
         user_home_option = f"-Duser.home={build_home}"
         env["HOME"] = str(build_home)
@@ -1103,10 +1131,17 @@ def apply_repair_decision(
             {
                 "HOME": str(build_home),
                 "MAVEN_USER_HOME": str(maven_user_home),
+                "MAVEN_REPOSITORY": str(maven_repository),
                 "GRADLE_USER_HOME": str(gradle_user_home),
                 "MAVEN_OPTS_user_home": user_home_option,
+                "rewritten_maven_repo_local_argument": replaced_maven_repository,
             }
         )
+    repaired_build_value = shlex.join(build_command)
+    if build_inline:
+        repaired[build_index] = f"--command={repaired_build_value}"
+    else:
+        repaired[build_index + 1] = repaired_build_value
     if "JAVA_HOME" in env:
         verified_environment["JAVA_HOME"] = env["JAVA_HOME"]
         verified_environment["PATH_prefix"] = str(Path(env["JAVA_HOME"]) / "bin")
@@ -1212,6 +1247,8 @@ def execute_repair_attempt(
                 source_maven_repository,
                 attempt_build_home / ".m2" / "repository",
             )
+        else:
+            (attempt_build_home / ".m2" / "repository").mkdir()
         if source_maven_wrapper_dists is not None:
             shutil.copytree(
                 source_maven_wrapper_dists,

@@ -941,7 +941,7 @@ def test_prepend_maven_clean_rejects_non_maven_build_command(tmp_path):
 def test_apply_repair_can_isolate_maven_user_home_without_changing_build_command(tmp_path):
     receipt = failed_receipt(tmp_path)
     build_home = tmp_path / "attempt-build-home"
-    (build_home / ".m2").mkdir(parents=True)
+    (build_home / ".m2" / "repository").mkdir(parents=True)
     (build_home / ".gradle").mkdir()
     decision = validate_repair_decision(
         {"actions": [{"kind": "retry_same_command"}], "rationale": "retry"},
@@ -968,6 +968,40 @@ def test_apply_repair_can_isolate_maven_user_home_without_changing_build_command
     )
     assert applied["verified_environment"]["MAVEN_OPTS_user_home"] == (
         f"-Duser.home={build_home}"
+    )
+
+
+def test_apply_repair_redirects_explicit_maven_repository_to_isolated_home(tmp_path):
+    receipt = failed_receipt(tmp_path)
+    receipt["planned_codeql_database_command"][-1] = (
+        "mvn -Dmaven.repo.local=/shared/stale-m2 -DskipTests package"
+    )
+    build_home = tmp_path / "attempt-build-home"
+    (build_home / ".m2" / "repository").mkdir(parents=True)
+    (build_home / ".gradle").mkdir()
+    decision = validate_repair_decision(
+        {"actions": [{"kind": "retry_same_command"}], "rationale": "retry"},
+        approved_java_homes=[],
+        approved_maven_homes=[],
+    )
+
+    command, _env, applied = apply_repair_decision(
+        receipt["planned_codeql_database_command"],
+        decision,
+        attempt_database_dir=tmp_path / "new-attempt-db",
+        approved_java_homes=[],
+        approved_maven_homes=[],
+        isolated_build_home=build_home,
+    )
+
+    build_command = command[command.index("--command") + 1]
+    assert "-Dmaven.repo.local=/shared/stale-m2" not in build_command
+    assert f"-Dmaven.repo.local={build_home / '.m2' / 'repository'}" in build_command
+    assert applied["verified_environment"]["MAVEN_REPOSITORY"] == str(
+        build_home / ".m2" / "repository"
+    )
+    assert applied["verified_environment"]["rewritten_maven_repo_local_argument"] == (
+        "-Dmaven.repo.local=/shared/stale-m2"
     )
 
 
