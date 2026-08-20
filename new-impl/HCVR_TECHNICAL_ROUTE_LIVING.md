@@ -1189,6 +1189,32 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Wait for Shiro's artifact-gated native IRIS completion and record its outcome, including label-response validity, token/transport evidence if available, and final vanilla/posthoc paths. Continue future exact-source repairs through the generic cumulative dispatcher, admitting only finalized Java databases with zero source drift.
 
+### Round 38 - Complete Apache Shiro Native IRIS Evaluation
+
+**Goal:** Finish the artifact-gated copied-original IRIS evaluation for the strictly admitted Apache Shiro database and preserve its result without conflating completed execution with a true-positive detection.
+
+**Scope:** This round covers only Apache Shiro `iris213::a5c0fce163896a8ec537` (CVE-2023-46749, CWE-022) in the IRIS-213 extension lane. It neither changes the repaired database nor modifies the official query, benchmark target metadata, frozen comparative cohorts, or any other case.
+
+**Action:**
+
+- Ran the materialized copied-original `src/iris.py` entrypoint with `gpt-traex-pro`, eight IRIS worker threads, the case-local CodeQL wrapper, and the persistent local DeepSeek-V4-Pro OpenAI-compatible bridge.
+- Allowed all upstream stages to execute: candidate extraction, both LLM labelling stages, generated project-specific query construction, CodeQL analysis, post-processing, posthoc filtering, and evaluation.
+- Retained the native runner's required-artifact and JSON-list response gates rather than inferring completion from a terminal tmux session or the presence of partial result files.
+
+**Verification:**
+
+- Final native receipt:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a23-shiro46749-repaired-db-native-iris/native-run/summary.json`.
+  It records `status:"completed_verified"`, return code zero, no timeout, all required artifacts present, and `verified_completion:true`.
+- IRIS processed 17,401 external API calls into 1,311 API candidates, labelled 23 sources, 16 sinks, and 63 taint propagators, then labelled 53 source function parameters from 213 public function candidates.
+- All 54 label-stage prompt/response pairs passed the required JSON-list validation; IRIS also completed five posthoc LLM calls with zero recorded posthoc failures.
+- The original generated CWE-022 query produced two vanilla alarms and six paths. Posthoc filtering retained two alarms and six paths. Evaluation reports zero target-positive paths and `Recall@Method:false` for both vanilla and posthoc results.
+- Bridge metrics retain 65 completed DeepSeek-V4-Pro calls with zero transport failures and 3,198.8 seconds of summed request elapsed time. The TraeX bridge returned no token counts (`traex_reported_total_tokens:null`) for this run, so no token total is claimed.
+
+**Decision:** Apache Shiro is a fully verified native IRIS execution on a strict rebuilt Java CodeQL database, but it is a zero-target-recall outcome for the benchmark method target. It contributes execution/runnability evidence to the extension lane and does not contribute a detected-vulnerability claim or alter frozen aggregate metrics.
+
+**Next:** Preserve Shiro's strict DB and native receipts as a completed baseline row. Continue selecting exact-source cases one at a time through the generic cumulative-repair dispatcher; only terminal finalized Java databases may enter the same native IRIS protocol.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.
