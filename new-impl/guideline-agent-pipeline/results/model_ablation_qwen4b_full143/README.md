@@ -23,6 +23,25 @@ The run completed all 143 cases with no failed output directories. Four cases di
 
 Candidate volume: 1,095,817 candidate anchors over 143 cases, mean 7,663.1 candidates per case.
 
+## P3C64 Query-Residual Comparison
+
+The recovered P3C64 query-residual method was later run on the same 143-case
+Unified V2 paper-eval set with `--top-k 200`. Full artifacts are in
+`../p3c64-full143-top200-20260820/`.
+
+| Metric | Qwen3-Embedding-4B | P3C64 query-residual | Delta |
+| --- | ---: | ---: | ---: |
+| Hit@30 | 30/143 = 0.2098 | 41/143 = 0.2867 | +0.0769 |
+| Hit@50 | 37/143 = 0.2587 | 47/143 = 0.3287 | +0.0699 |
+| Hit@100 | 55/143 = 0.3846 | 56/143 = 0.3916 | +0.0070 |
+| Hit@200 | 74/143 = 0.5175 | 71/143 = 0.4965 | -0.0210 |
+| MRR | 0.050733 | 0.080642 | +0.029909 |
+
+Interpretation: P3C64 improves early-rank concentration and MRR on the full
+143-case run, but it does not preserve the 30-case `+10%` Hit@200 gain against
+the frozen 4B baseline. At the Top-200 budget, the 143-case P3C64 run is 3 cases
+below Qwen3-Embedding-4B.
+
 ## Misses And Tail Cases
 
 Cases without a known vulnerable anchor inside the saved top-50,000 ranking:
