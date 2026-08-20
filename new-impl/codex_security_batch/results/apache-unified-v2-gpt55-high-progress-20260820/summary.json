@@ -17,14 +17,14 @@
   "model_counts": {
     "gpt-5.5": 21
   },
-  "processed_cases": 22,
+  "processed_cases": 23,
   "producer_counts": {
     "codex-security-plugin@0.1.12": 1,
     "codex-security-plugin@0.1.20": 20
   },
   "queue": {
-    "cases": 40,
-    "sha256": "a4f03bd526cfbd349034926c2b0cfc29af02ec247790a3f4e25f6cc15248fec0"
+    "cases": 44,
+    "sha256": "7e22ecdd90ec13fdbe221ee3244ff8cb91e8ea3384c30eb10118a0c4e613b447"
   },
   "records": {
     "raw_rows": 21,
@@ -41,7 +41,7 @@
   "status_counts": {
     "accepted": 4,
     "partial_artifacts": 17,
-    "pending": 18,
-    "stopped": 1
+    "pending": 21,
+    "stopped": 2
   }
 }

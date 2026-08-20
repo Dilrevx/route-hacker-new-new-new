@@ -20,7 +20,7 @@ rank,case_id,repo_key,vulnerability_id,vulnerability_type,paper_eval_decision,st
 19,apache_019,apache__iotdb,,unclassified,,partial_artifacts,partial_artifacts,gpt-5.5,high,native-codex,922,partial,10,"{""critical"": 2, ""high"": 3, ""low"": 1, ""medium"": 4}",7e9bbfa2-775a-4632-ad89-6d4aad2def2f,completed,codex-security-plugin@0.1.20,"{""coverage.json"": true, ""exports/results.sarif"": true, ""findings.json"": true, ""report.md"": true, ""scan-manifest.json"": true}"
 20,apache_020,apache__iotdb-web-workbench,,unclassified,,stopped,,,,,,,0,{},,,,{}
 21,apache_021,apache__jackrabbit,,iris,,partial_artifacts,partial_artifacts,gpt-5.5,high,native-codex,1187,partial,8,"{""high"": 2, ""medium"": 6}",64fa5dfa-2720-4112-acbc-2436e48d8618,completed,codex-security-plugin@0.1.20,"{""coverage.json"": true, ""exports/results.sarif"": false, ""findings.json"": true, ""report.md"": false, ""scan-manifest.json"": true}"
-22,apache_022,apache__james-project,,iris,,pending,,,,,,,0,{},,,,{}
+22,apache_022,apache__james-project,,iris,,stopped,,,,,,,0,{},,,,{}
 23,apache_023,apache__jclouds,,path_archive_traversal,,partial_artifacts,partial_artifacts,gpt-5.5,high,native-codex,888,partial,5,"{""high"": 4, ""medium"": 1}",145b11b6-6e6d-423f-b769-3256dfcb9dfd,completed,codex-security-plugin@0.1.20,"{""coverage.json"": true, ""exports/results.sarif"": true, ""findings.json"": true, ""report.md"": true, ""scan-manifest.json"": true}"
 24,apache_024,apache__jena,,iris,,pending,,,,,,,0,{},,,,{}
 25,apache_025,apache__jspwiki,,iris,,pending,,,,,,,0,{},,,,{}
@@ -39,3 +39,7 @@ rank,case_id,repo_key,vulnerability_id,vulnerability_type,paper_eval_decision,st
 38,apache_038,apache__sling-org-apache-sling-xss,,iris,,pending,,,,,,,0,{},,,,{}
 39,apache_039,apache__struts,,iris,,pending,,,,,,,0,{},,,,{}
 40,apache_040,apache__superset,,unclassified,,pending,,,,,,,0,{},,,,{}
+41,apache_041,apache__tapestry-5,,iris,,pending,,,,,,,0,{},,,,{}
+42,apache_042,apache__tika,,iris,,pending,,,,,,,0,{},,,,{}
+43,apache_043,apache__tomcat,,iris,,pending,,,,,,,0,{},,,,{}
+44,apache_044,apache__uima-uimaj,,iris,,pending,,,,,,,0,{},,,,{}
