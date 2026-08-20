@@ -320,6 +320,32 @@ def test_materialize_isolated_attempt_receipts_uses_archive_and_rewrites_source_
     assert evidence["mode"] == "archive_verified_isolated_copy"
 
 
+def test_materialize_isolated_attempt_receipts_rejects_archive_link_escape(
+    tmp_path: Path,
+) -> None:
+    source = tmp_path / "source"
+    source.mkdir()
+    case_id = "v8:unsafe-archive-link"
+    receipt = source_receipt(source, case_id, "abc123")
+    archive = Path(receipt["archive_result"]["archive_path"])
+    archive_input = tmp_path / "unsafe-archive-input"
+    archive_root = archive_input / "repo-revision"
+    archive_root.mkdir(parents=True)
+    (archive_root / "inside.txt").write_text("safe\n", encoding="utf-8")
+    (archive_root / "escape").symlink_to("../../outside")
+    with tarfile.open(archive, "w:gz") as handle:
+        handle.add(archive_root, arcname=archive_root.name, recursive=True)
+    receipt["archive_result"]["archive_sha256"] = hashlib.sha256(archive.read_bytes()).hexdigest()
+    failed = failed_receipt(source, case_id, "abc123")
+
+    with pytest.raises(RepairValidationError, match="unsafe link target"):
+        materialize_isolated_attempt_receipts(
+            failed_receipt=failed,
+            source_receipt=receipt,
+            destination=tmp_path / "attempt-source",
+        )
+
+
 def test_dry_run_only_accepts_deterministic_unresolved_rows(tmp_path: Path) -> None:
     source = tmp_path / "source"
     source.mkdir()

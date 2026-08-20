@@ -160,8 +160,12 @@ def _rewrite_codeql_source_root(command: list[str], source_dir: Path) -> list[st
     raise RepairValidationError("CodeQL command is missing --source-root")
 
 
+def _is_within(root: Path, candidate: Path) -> bool:
+    return candidate == root or root in candidate.parents
+
+
 def _safe_extract_archive(archive_path: Path, destination: Path) -> None:
-    """Extract a source archive without accepting path traversal entries."""
+    """Extract a source archive without accepting traversal or escaping links."""
 
     destination.mkdir(parents=True, exist_ok=False)
     destination_root = destination.resolve()
@@ -171,10 +175,17 @@ def _safe_extract_archive(archive_path: Path, destination: Path) -> None:
             raise RepairValidationError("source archive has no members")
         for member in members:
             member_path = (destination / member.name).resolve()
-            if member_path != destination_root and destination_root not in member_path.parents:
+            if not _is_within(destination_root, member_path):
                 raise RepairValidationError("source archive contains an unsafe member path")
-            if member.issym() or member.islnk() or member.isdev():
-                raise RepairValidationError("source archive contains unsupported link or device member")
+            if member.isdev():
+                raise RepairValidationError("source archive contains an unsupported device member")
+            if member.issym() or member.islnk():
+                link_target = Path(member.linkname)
+                if link_target.is_absolute():
+                    raise RepairValidationError("source archive contains an absolute link target")
+                resolved_target = (member_path.parent / link_target).resolve()
+                if not _is_within(destination_root, resolved_target):
+                    raise RepairValidationError("source archive contains an unsafe link target")
         archive.extractall(destination, members=members)
 
 
