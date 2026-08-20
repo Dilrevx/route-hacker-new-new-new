@@ -422,6 +422,33 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Strictly validate a10 receipts as they arrive, then inspect the existing a6/a7 in-flight cases for completion or a reusable transport/root-cause classification before creating any further queue.
 
+### Round 13 - JSON-List Retry Exhaustion Diagnosis and Transport Hardening
+
+**Goal:** Preserve the strict native-IRIS completion contract while fixing a general LLM-transport reliability gap exposed by the first completed a10 case.
+
+**Scope:** `asf__commons-io::CVE-2021-29425` (`case::e86c4a41fffbe86f19ad`) completed copied original `src/iris.py` in a clean a10 workspace. The run produced all required CodeQL, posthoc, and final artifacts, so the remaining question was whether every original IRIS API/function-parameter labelling prompt received a valid JSON-list response.
+
+**Action:**
+
+- Audited the runner's exact prompt-to-response mapping rather than scanning unrelated raw files.
+- Kept Commons IO as `failed_or_incomplete`: native IRIS returned `0` and all required artifacts exist, but one of 33 dispatched label responses was not a standalone JSON list.
+- The failing API-label response contained `[]` followed by an explanatory paragraph. It is not repaired, truncated, or rewritten after the fact.
+- Traced the issue to the generic copied `GPTModel` transport adapter: its existing bounded correction used only two total attempts. The original API-label system prompt requires JSON-only output, but a model can still violate the contract after one correction.
+- Increased the general `IRIS_JSON_LIST_FORMAT_ATTEMPTS` default from `2` to `4`. Each retry preserves the original IRIS system/user prompts and asks only for the required JSON array; it now explicitly states that an empty result must be exactly `[]`.
+- Added a regression that simulates two invalid model replies followed by a valid list, proving that the generated adapter retries the same original task and accepts the third response. The change does not alter IRIS candidate collection, query construction, CodeQL analysis, posthoc filtering, evaluation, or any case-specific data.
+
+**Verification:**
+
+- Commons IO receipt:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a10-jsonlist-coverage-retry/cases/case__e86c4a41fffbe86f19ad/summary.json`.
+- Its strict result is intentionally non-verified: `runner_returncode: 0`, complete artifact gate, `33` dispatched labels, and one invalid API-label response. Native IRIS recorded 564 API candidates, 133 labelled function-parameter sources, 41 vanilla results, 117 vanilla paths, and 86 successful posthoc calls.
+- The materializer, single-case runner, and batch dispatcher pass `py_compile`; the JSON-list retry regression passes when invoked directly with the standard-library test fixture. The local Python installation does not include `pytest`, so the full pytest command was not available.
+- Hutool and Vert.x 2018 remain live in the same a10 queue. After Commons IO exited, the two-worker dispatcher automatically materialized and started Vert.x without exceeding the bridge-level eight-request cap.
+
+**Decision:** A successful original IRIS exit and complete final artifacts are necessary but not sufficient. Only `completed_verified` receipts with every dispatched label response valid are counted. The retry change is transport-wide and will be used only by newly materialized isolated workspaces; no existing response is normalized retrospectively.
+
+**Next:** Let Hutool and Vert.x finish under the current bounded queue. Audit each receipt against the same return-code, artifact, and prompt-mapped label gate. Re-materialize Commons IO only after this general adapter change is deployed and the in-flight cases no longer share its prior workspace.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.

@@ -179,7 +179,7 @@ def add_traex_model_aliases(gpt_model_path: Path) -> dict[str, str]:
             return False
 
     def _retry_json_list_format(self, request_kwargs, first_response):
-        max_attempts = max(1, int(os.getenv("IRIS_JSON_LIST_FORMAT_ATTEMPTS", "2")))
+        max_attempts = max(1, int(os.getenv("IRIS_JSON_LIST_FORMAT_ATTEMPTS", "4")))
         response = first_response
         response_text = response.choices[0].message.content
         if self._is_json_list_response(response_text):
@@ -188,7 +188,8 @@ def add_traex_model_aliases(gpt_model_path: Path) -> dict[str, str]:
             "role": "user",
             "content": (
                 "Format correction: return only a valid JSON array for the original task. "
-                "Do not include Markdown fences, explanation, or any surrounding text."
+                "Do not include Markdown fences, explanation, or any surrounding text. "
+                "If no items apply, return exactly []."
             ),
         }
         retry_kwargs = dict(request_kwargs)

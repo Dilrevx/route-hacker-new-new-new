@@ -231,7 +231,14 @@ def test_traex_alias_injection_retries_invalid_json_list_with_original_prompt(tm
 
         def create(self, **kwargs):
             calls.append(kwargs)
-            return DummyCompletion("explanation before JSON" if len(calls) == 1 else "[]")
+            response = (
+                "explanation before JSON"
+                if len(calls) == 1
+                else "[]\n\nNo candidate functions apply."
+                if len(calls) == 2
+                else "[]"
+            )
+            return DummyCompletion(response)
 
     class DummyOpenAI:
         def __init__(self, **kwargs):
@@ -283,11 +290,12 @@ def test_traex_alias_injection_retries_invalid_json_list_with_original_prompt(tm
         ]
         assert model._predict(prompt) == "[]"
 
-    assert len(calls) == 2
+    assert len(calls) == 3
     assert calls[0]["messages"] == prompt
     assert calls[1]["messages"][:2] == prompt
     assert calls[1]["messages"][2]["role"] == "user"
     assert "valid JSON array" in calls[1]["messages"][2]["content"]
+    assert calls[2]["messages"] == calls[1]["messages"]
 
 
 def test_traex_alias_injection_accepts_complete_fenced_json_list_without_retry(tmp_path):
