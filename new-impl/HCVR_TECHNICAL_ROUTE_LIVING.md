@@ -943,6 +943,39 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Wait for the DSpace terminal receipt, inspect its fresh build evidence if it fails, and use the standard repaired-DB manifest builder only if it passes every strict gate. Continue monitoring XStream, AWS, and NiFi for copied-original IRIS artifact-gated completion; continue recording latency/response evidence without fabricating token totals.
 
+### Round 30 - Historical Toolchain Continuity for Strict Same-Command Retries
+
+**Goal:** Ensure that a controlled `retry_same_command` replay preserves the approved JDK recorded for the exact historical failed command rather than silently using the host-default Java runtime.
+
+**Scope:** This round changes the generic Compile Builder v2 execution boundary and requeues two IRIS-213 extension-lane cases: `iris213::e68952d1f3419537a188` / Apache UIMA 3.3.0 and `iris213::a1aa70dc0a5b3c481e98` / Spring Cloud Config 2.1.8.RELEASE. Neither case is admitted to native IRIS in this round. No benchmark source, exact revision, project module, dependency configuration, official query, or copied-original IRIS logic is changed.
+
+**Action:**
+
+- Inspected the first B1 retry processes instead of treating their continued Maven downloads as success. Both model decisions were `retry_same_command`, but their actual Maven child processes ran through the host `java/current` symlink, which resolves to Java 11.
+- Compared that execution state to the matching historical receipts. Both exact failed CodeQL commands recorded Java 8.0.452-amzn; UIMA and Spring Cloud were historical timeout cases, so replaying the command under an unrelated JDK would not be semantically equivalent.
+- Stopped the inconsistent B1 dispatcher before either case could be treated as a valid retry result. The stopped attempts are retained as rejected execution evidence and are not eligible for repaired-DB admission.
+- Added a generic historical-toolchain continuity rule to Compile Builder v2. For a standalone `retry_same_command`, the runtime matches the receipt's current failed `log_path` or `log_sha256` to one historical attempt, inherits its Java home only when that home is uniquely identified and remains in the current approved allow-list, and records the result in the repair packet and attempt receipt. Missing, ambiguous, or no-longer-approved evidence results in no inherited toolchain rather than an unsafe fallback.
+- Preserved LLM agency and the controlled action boundary: the model can still select an explicit approved `set_java_home` when it has evidence for an alternate JDK; no project-specific build recipe or hidden JDK selection was added.
+- Added regression coverage for packet-level historical-toolchain binding and execution-level Java environment inheritance. Also updated the repair prompt to state the retry semantics.
+- Re-ran the remote Compile Builder suite after synchronization: `85 passed, 4 warnings`. The warnings are the existing Python tar extraction deprecation warnings.
+- Submitted a new archive-isolated two-worker B2 dispatch using the unchanged 47-case strict input set, unchanged source/archive receipts, approved JDK/Maven homes, `DeepSeek-V4-Pro`, a 7200-second CodeQL limit, and one feedback replan maximum. The model independently selected `retry_same_command` for both cases.
+
+**Verification:**
+
+- The B2 decisions are retained at:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/compile-repair-run-toolchain-continuity-b2/dispatch/cases/`.
+  Their rationales cite the historical Java 8.0.452-amzn receipt rather than a host-default runtime.
+- Active B2 Maven child processes explicitly execute:
+  `/data/lhq/.sdkman/candidates/java/8.0.452-amzn/bin/java`
+  for both UIMA and Spring Cloud, with each command's Maven local repository redirected to its own attempt-local build home.
+- DSpace emitted a terminal `no_safe_llm_repair` disposition at:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/compile-repair-run-dspace-2016-r1/dispatch/w1_llm_repair_receipts.jsonl`.
+  Java 8 passed the old `${toolsjar}` issue, then Maven blocked the legacy HTTP Restlet repository. Reconfiguring remote repositories or disabling Maven's HTTP blocker is outside the allowed action space, so the case has no repaired DB and is not admitted.
+
+**Decision:** A same-command retry now has reproducible, receipt-bound JDK semantics whenever exact approved historical evidence exists. UIMA and Spring Cloud B2 are active strict CodeQL builds only; their databases require the normal exact archive, source-integrity, metadata, and Java-relation gates before native IRIS. DSpace is a factual no-safe disposition under the current policy, not a build success or a generic repair failure to conceal.
+
+**Next:** Collect the B2 terminal receipts. For every `codeql_db_repaired` result, invoke `build_repaired_db_native_iris_manifest.py` and launch only the generated manifest through the copied-original native IRIS runner. Continue monitoring the active XStream, AWS, and NiFi native runs through artifact-gated completion, and continue reporting bridge usage only where emitted by the bridge.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.

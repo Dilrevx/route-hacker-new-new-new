@@ -524,6 +524,78 @@ def _command_from_receipt(receipt: Mapping[str, Any]) -> list[str]:
     return list(value)
 
 
+def historical_retry_java_home(
+    receipt: Mapping[str, Any],
+    approved_java_homes: Sequence[str],
+) -> dict[str, Any]:
+    """Return the approved JDK used by the exact failed command, if recorded.
+
+    ``retry_same_command`` must replay the historical runtime context rather
+    than silently switching to whatever JDK happens to be the current host
+    default. Only an attempt whose logged CodeQL result exactly matches the
+    receipt's failed result can supply this inherited toolchain. The value is
+    then constrained to the caller's current JDK allow-list.
+    """
+
+    result = receipt.get("codeql_database_create_result")
+    result_map = result if isinstance(result, Mapping) else {}
+    result_log_path = result_map.get("log_path")
+    result_log_sha256 = result_map.get("log_sha256")
+    attempts = receipt.get("attempts")
+    if not isinstance(attempts, list):
+        return {
+            "java_home": None,
+            "reason": "historical_attempts_missing",
+            "matched_attempt_count": 0,
+        }
+    matched_java_homes: list[str] = []
+    for attempt in attempts:
+        if not isinstance(attempt, Mapping):
+            continue
+        attempt_result = attempt.get("result")
+        toolchain = attempt.get("toolchain")
+        if not isinstance(attempt_result, Mapping) or not isinstance(toolchain, Mapping):
+            continue
+        same_log = (
+            isinstance(result_log_sha256, str)
+            and result_log_sha256
+            and attempt_result.get("log_sha256") == result_log_sha256
+        ) or (
+            isinstance(result_log_path, str)
+            and result_log_path
+            and attempt_result.get("log_path") == result_log_path
+        )
+        if not same_log:
+            continue
+        java_home = toolchain.get("java_home")
+        if isinstance(java_home, str) and java_home:
+            matched_java_homes.append(java_home)
+    unique_homes = sorted(set(matched_java_homes))
+    if len(unique_homes) != 1:
+        return {
+            "java_home": None,
+            "reason": (
+                "historical_toolchain_ambiguous"
+                if unique_homes
+                else "historical_toolchain_not_recorded_for_failed_command"
+            ),
+            "matched_attempt_count": len(matched_java_homes),
+        }
+    java_home = unique_homes[0]
+    if java_home not in set(approved_java_homes):
+        return {
+            "java_home": None,
+            "reason": "historical_java_home_not_currently_approved",
+            "matched_attempt_count": len(matched_java_homes),
+            "historical_java_home": java_home,
+        }
+    return {
+        "java_home": java_home,
+        "reason": None,
+        "matched_attempt_count": len(matched_java_homes),
+    }
+
+
 def _append_unique(values: list[str], additions: Iterable[str]) -> list[str]:
     for item in additions:
         if item not in values:
@@ -623,6 +695,10 @@ def build_repair_packet(
     log_path = Path(log_path_text) if isinstance(log_path_text, str) and log_path_text else None
     log = read_log_excerpt(log_path)
     category = classify_build_failure(str(log["excerpt"]))
+    historical_retry_toolchain = historical_retry_java_home(
+        receipt,
+        approved_java_homes,
+    )
     packet = {
         "schema_version": f"{SCHEMA_VERSION}:repair_packet",
         "case_id": receipt.get("case_id"),
@@ -642,6 +718,7 @@ def build_repair_packet(
             "failure_category": category,
             "planned_codeql_database_command": command,
             "log": log,
+            "historical_retry_toolchain": historical_retry_toolchain,
         },
         "allowed_action_schema": {
             "maximum_actions": MAX_ACTIONS,
@@ -981,6 +1058,7 @@ def apply_repair_decision(
     approved_ant_homes: Sequence[str] = (),
     verified_gradle_user_home: Path | None = None,
     isolated_build_home: Path | None = None,
+    inherited_java_home: str | None = None,
 ) -> tuple[list[str], dict[str, str], dict[str, Any]]:
     """Turn a validated decision into a new isolated CodeQL command and env."""
 
@@ -1003,6 +1081,16 @@ def apply_repair_decision(
     actions = decision.get("actions")
     if not isinstance(actions, list):
         raise RepairValidationError("validated repair decision has no actions")
+    retry_same_command = actions == [{"kind": "retry_same_command"}]
+    if inherited_java_home is not None:
+        if not retry_same_command:
+            raise RepairValidationError(
+                "historical Java home may only be inherited for retry_same_command"
+            )
+        if inherited_java_home not in java_homes:
+            raise RepairValidationError("historical Java home is not currently approved")
+        env["JAVA_HOME"] = inherited_java_home
+        env["PATH"] = f"{Path(inherited_java_home) / 'bin'}:{os.environ.get('PATH', '')}"
     applied_actions: list[dict[str, Any]] = []
     for action in actions:
         if not isinstance(action, Mapping):
@@ -1011,7 +1099,12 @@ def apply_repair_decision(
         if kind == "no_safe_action":
             raise RepairValidationError("no_safe_action cannot be executed")
         if kind == "retry_same_command":
-            applied_actions.append({"kind": kind})
+            applied_actions.append(
+                {
+                    "kind": kind,
+                    "inherited_java_home": inherited_java_home,
+                }
+            )
         elif kind == "set_java_home":
             java_home = action.get("java_home")
             if not isinstance(java_home, str) or java_home not in java_homes:
@@ -1145,6 +1238,8 @@ def apply_repair_decision(
     if "JAVA_HOME" in env:
         verified_environment["JAVA_HOME"] = env["JAVA_HOME"]
         verified_environment["PATH_prefix"] = str(Path(env["JAVA_HOME"]) / "bin")
+        if inherited_java_home is not None:
+            verified_environment["inherited_java_home"] = inherited_java_home
     return repaired, env, {
         "applied_actions": applied_actions,
         "source_root": source_root,
@@ -1186,6 +1281,12 @@ def execute_repair_attempt(
         approved_java_homes=approved_java_homes,
         approved_maven_homes=approved_maven_homes,
         approved_ant_homes=approved_ant_homes,
+    )
+    retry_toolchain = historical_retry_java_home(receipt, approved_java_homes)
+    inherited_java_home = (
+        retry_toolchain["java_home"]
+        if validated["actions"] == [{"kind": "retry_same_command"}]
+        else None
     )
     source_dir = Path(packet["source"]["source_dir"])
     expected_revision = str(packet["source"]["expected_revision"])
@@ -1273,6 +1374,7 @@ def execute_repair_attempt(
         approved_ant_homes=approved_ant_homes,
         verified_gradle_user_home=attempt_gradle_user_home,
         isolated_build_home=attempt_build_home,
+        inherited_java_home=inherited_java_home,
     )
     if Path(applied["source_root"]).resolve() != source_dir.resolve():
         raise RepairValidationError("repair attempted to change the exact source root")
@@ -1310,6 +1412,7 @@ def execute_repair_attempt(
         "status": status,
         "packet": final_packet,
         "validated_decision": validated,
+        "historical_retry_toolchain": retry_toolchain,
         "source_revision_evidence": source_evidence,
         "original_command_sha256": stable_json_sha256(original_command),
         "executed_command": repaired_command,

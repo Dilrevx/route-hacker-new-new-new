@@ -491,7 +491,11 @@ def build_repair_prompt(packet: dict[str, Any]) -> str:
         "query changes, database reuse, credentials, package installation, or "
         "network configuration. Select only actions and values listed in "
         "allowed_action_schema. retry_same_command is a standalone action: "
-        "never include it with any other action. When no listed action is justified, use exactly "
+        "never include it with any other action. When selected, it inherits "
+        "only the approved historical Java home recorded in "
+        "failed_attempt.historical_retry_toolchain; it never falls back to "
+        "the host-default JDK. Use set_java_home when an explicit alternate "
+        "approved JDK is justified. When no listed action is justified, use exactly "
         '[{"kind":"no_safe_action"}].\n\n'
         "Return strict JSON only with exactly these keys:\n"
         '{"actions":[{"kind":"..."}],"rationale":"brief reason"}\n\n'

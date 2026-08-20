@@ -10,6 +10,7 @@ from route_hacker.runtime.codeql_repair import (
     build_repair_packet,
     classify_build_failure,
     heuristic_repair_decision,
+    historical_retry_java_home,
     redact_text,
     source_integrity_snapshot,
     validate_repair_decision,
@@ -78,6 +79,109 @@ def test_packet_redacts_log_and_classifies_enforcer_failure(tmp_path):
     assert "[REDACTED]" in packet["failed_attempt"]["log"]["excerpt"]
     assert "should-not-leak" not in packet["failed_attempt"]["log"]["excerpt"]
     assert packet["packet_sha256"]
+
+
+def test_retry_same_command_packet_binds_the_matching_historical_java_home(tmp_path):
+    receipt = failed_receipt(tmp_path)
+    log_path = Path(receipt["codeql_database_create_result"]["log_path"])
+    receipt["attempts"] = [
+        {
+            "result": {
+                "log_path": str(log_path),
+                "log_sha256": hashlib.sha256(log_path.read_bytes()).hexdigest(),
+            },
+            "toolchain": {"java_home": "/opt/java-8"},
+        },
+        {
+            "result": {
+                "log_path": str(tmp_path / "other-attempt.log"),
+                "log_sha256": "other",
+            },
+            "toolchain": {"java_home": "/opt/java-21"},
+        },
+    ]
+
+    packet = build_repair_packet(
+        receipt,
+        approved_java_homes=["/opt/java-8", "/opt/java-17"],
+        approved_maven_homes=[],
+    )
+
+    assert packet["failed_attempt"]["historical_retry_toolchain"] == {
+        "java_home": "/opt/java-8",
+        "reason": None,
+        "matched_attempt_count": 1,
+    }
+    assert historical_retry_java_home(
+        receipt,
+        approved_java_homes=["/opt/java-17"],
+    ) == {
+        "java_home": None,
+        "reason": "historical_java_home_not_currently_approved",
+        "matched_attempt_count": 1,
+        "historical_java_home": "/opt/java-8",
+    }
+
+
+def test_execute_retry_same_command_inherits_matching_historical_java_home(
+    tmp_path,
+    monkeypatch,
+):
+    receipt = failed_receipt(tmp_path)
+    log_path = Path(receipt["codeql_database_create_result"]["log_path"])
+    receipt["attempts"] = [
+        {
+            "result": {"log_path": str(log_path)},
+            "toolchain": {"java_home": "/opt/java-8"},
+        }
+    ]
+    archive = tmp_path / "source.tar.gz"
+    archive.write_bytes(b"archive-content")
+    exact_source = {
+        "case_id": "v8:example",
+        "source_dir": receipt["source_dir"],
+        "resolved_buggy_commit": "abc123",
+        "status": "source_materialized_exact_archive_snapshot",
+        "contract": {"exact_declared_buggy_commit_only": True},
+        "archive_result": {
+            "archive_path": str(archive),
+            "archive_sha256": hashlib.sha256(archive.read_bytes()).hexdigest(),
+            "archive_url": "https://codeload.github.com/example/repo/tar.gz/abc123",
+        },
+    }
+    captured_env: dict[str, str] = {}
+
+    class Result:
+        returncode = 1
+
+        def to_dict(self):
+            return {"returncode": 1, "timed_out": False}
+
+    def run_failed(*_args, **kwargs):
+        captured_env.update(kwargs["env"])
+        return Result()
+
+    monkeypatch.setattr(
+        "route_hacker.runtime.codeql_repair.run_bounded_process",
+        run_failed,
+    )
+    from route_hacker.runtime.codeql_repair import execute_repair_attempt
+
+    attempt = execute_repair_attempt(
+        receipt,
+        {"actions": [{"kind": "retry_same_command"}], "rationale": "retry"},
+        attempt_dir=tmp_path / "attempt",
+        timeout_seconds=10,
+        approved_java_homes=["/opt/java-8"],
+        approved_maven_homes=[],
+        source_receipt=exact_source,
+    )
+
+    assert captured_env["JAVA_HOME"] == "/opt/java-8"
+    assert attempt["historical_retry_toolchain"]["java_home"] == "/opt/java-8"
+    assert attempt["applied_repair"]["applied_actions"] == [
+        {"kind": "retry_same_command", "inherited_java_home": "/opt/java-8"}
+    ]
 
 
 def test_completed_attempt_packet_binds_final_log_and_failure_category(
