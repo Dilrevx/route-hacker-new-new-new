@@ -222,6 +222,77 @@ def compile_source_overlay_probe(codeql_dir: Path, query_pack: Path) -> dict[str
     return {"query": str(probe), "status": "compiled"}
 
 
+def materialize_codeql_toolchain(
+    *,
+    codeql_dir: Path,
+    workspace: Path,
+    source_overlay: dict[str, Any] | None,
+) -> dict[str, str]:
+    """Stage a case-local CodeQL entrypoint without mutating the shared toolchain.
+
+    Official IRIS invokes ``codeql pack install`` without package-search arguments.
+    A matching source-tag overlay is local-only, so the case-local wrapper adds it
+    only to that command. All other CodeQL commands execute the original binary
+    unchanged.
+    """
+
+    destination = workspace / "codeql"
+    if source_overlay is None:
+        return symlink_exact(codeql_dir, destination)
+
+    overlay_packs = codeql_dir / "qlpacks"
+    executable = codeql_dir / "codeql"
+    if not overlay_packs.is_dir() or not executable.is_file():
+        raise RuntimeError(
+            "matching CodeQL source overlay lacks qlpacks or executable: "
+            f"{codeql_dir}"
+        )
+    destination.mkdir(parents=True)
+    (destination / "qlpacks").symlink_to(overlay_packs, target_is_directory=True)
+    wrapper = destination / "codeql"
+    wrapper.write_text(
+        "#!/usr/bin/env bash\n"
+        "set -euo pipefail\n"
+        f"readonly IRIS_CODEQL_REAL={str(executable)!r}\n"
+        f"readonly IRIS_CODEQL_OVERLAY_PACKS={str(overlay_packs)!r}\n"
+        'if [[ "${1:-}" == "pack" && "${2:-}" == "install" ]]; then\n'
+        '  exec "$IRIS_CODEQL_REAL" "$@" --additional-packs "$IRIS_CODEQL_OVERLAY_PACKS" --no-strict-mode\n'
+        "fi\n"
+        'exec "$IRIS_CODEQL_REAL" "$@"\n',
+        encoding="utf-8",
+    )
+    wrapper.chmod(0o755)
+    provenance = {
+        "schema_version": "iris_case_codeql_toolchain_overlay.v1",
+        "kind": "case_local_pack_install_wrapper",
+        "shared_codeql_dir": str(codeql_dir),
+        "shared_codeql_executable": str(executable),
+        "local_qlpacks": str(destination / "qlpacks"),
+        "overlay_qlpacks": str(overlay_packs),
+        "intercepted_command": "codeql pack install",
+        "injected_options": [
+            "--additional-packs",
+            str(overlay_packs),
+            "--no-strict-mode",
+        ],
+        "other_commands": "executes_shared_codeql_binary_unchanged",
+        "source_overlay": source_overlay,
+    }
+    provenance_path = destination / ".iris_case_codeql_toolchain_overlay.json"
+    provenance_path.write_text(
+        json.dumps(provenance, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    return {
+        "source": str(codeql_dir),
+        "destination": str(destination),
+        "kind": "case_local_codeql_pack_install_wrapper",
+        "wrapper": str(wrapper),
+        "provenance": str(provenance_path),
+        "sha256": sha256_path(provenance_path),
+    }
+
+
 def validate_codeql_bundle(clean_root: Path, codeql_dir: Path) -> dict[str, Any]:
     """Require Action-bundle packs or a matching official source-tag overlay."""
 
@@ -275,6 +346,7 @@ def validate_codeql_bundle(clean_root: Path, codeql_dir: Path) -> dict[str, Any]
         },
         "compatible_java_all_packs": compatible_java_all,
         "source_overlay": source_overlay,
+        "requires_case_local_pack_install_wrapper": bool(source_overlay),
         "source_overlay_compile_probe": compile_probe,
     }
 
@@ -476,7 +548,11 @@ def main() -> int:
             "destination": str(workspace / "src"),
             "kind": "copied_clean_iris_src",
         },
-        symlink_exact(codeql_dir, workspace / "codeql"),
+        materialize_codeql_toolchain(
+            codeql_dir=codeql_dir,
+            workspace=workspace,
+            source_overlay=codeql_bundle["source_overlay"],
+        ),
         add_traex_model_aliases(workspace / "src" / "models" / "gpt.py"),
     ]
     (workspace / "data" / "project-sources").mkdir(parents=True)
@@ -529,6 +605,7 @@ def main() -> int:
             "isolated_workspace": True,
             "clean_iris_src_copied": True,
             "only_local_source_change_is_gpt_transport_aliases": True,
+            "codeql_toolchain_is_case_local_wrapper_when_source_overlay_is_used": True,
             "case_source_and_db_linked_from_receipt": True,
             "input_paths_validated_before_materialization": bool(args.manifest),
             "no_iris_execution": True,

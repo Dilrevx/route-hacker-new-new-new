@@ -252,6 +252,38 @@ def test_codeql_source_overlay_validation_requires_matching_official_tag(tmp_pat
     result = module["validate_codeql_bundle"](clean, codeql)
 
     assert result["source_overlay"]["source_tag"]["tag"] == "codeql-cli/v2.23.2"
+    assert result["requires_case_local_pack_install_wrapper"] is True
+
+
+def test_source_overlay_materializes_case_local_pack_install_wrapper(tmp_path):
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "materialize_iris_case.py"))
+    codeql = tmp_path / "codeql"
+    overlay_packs = codeql / "qlpacks"
+    overlay_packs.mkdir(parents=True)
+    executable = codeql / "codeql"
+    executable.write_text("#!/usr/bin/env bash\nexit 0\n")
+    executable.chmod(0o755)
+    workspace = tmp_path / "workspace"
+
+    action = module["materialize_codeql_toolchain"](
+        codeql_dir=codeql,
+        workspace=workspace,
+        source_overlay={"source_tag": {"tag": "codeql-cli/v2.23.2"}},
+    )
+
+    wrapper = workspace / "codeql" / "codeql"
+    assert action["kind"] == "case_local_codeql_pack_install_wrapper"
+    assert (workspace / "codeql" / "qlpacks").is_symlink()
+    assert wrapper.is_file()
+    source = wrapper.read_text()
+    assert '[[ "${1:-}" == "pack" && "${2:-}" == "install" ]]' in source
+    assert "--additional-packs" in source
+    assert str(overlay_packs) in source
+    provenance = __import__("json").loads(
+        (workspace / "codeql" / ".iris_case_codeql_toolchain_overlay.json").read_text()
+    )
+    assert provenance["intercepted_command"] == "codeql pack install"
+    assert provenance["other_commands"] == "executes_shared_codeql_binary_unchanged"
 
 
 def test_traex_alias_injection_preserves_valid_python(tmp_path):
