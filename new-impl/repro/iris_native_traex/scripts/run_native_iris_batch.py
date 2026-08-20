@@ -6,6 +6,8 @@ import argparse
 import collections
 import hashlib
 import json
+import os
+import shutil
 import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -199,6 +201,27 @@ def single_case_command(
     ]
 
 
+def workspace_lock_path(workspace: Path) -> Path:
+    """Return the sibling lock path used to prevent duplicate case execution."""
+
+    return workspace.parent / f".{workspace.name}.lock"
+
+
+def quarantine_workspace(workspace: Path) -> Path:
+    """Preserve an interrupted materialization before a resume retry replaces it."""
+
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    destination = workspace.with_name(f"{workspace.name}.interrupted-{timestamp}")
+    suffix = 1
+    while destination.exists():
+        destination = workspace.with_name(
+            f"{workspace.name}.interrupted-{timestamp}-{suffix}"
+        )
+        suffix += 1
+    shutil.move(str(workspace), str(destination))
+    return destination
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--iris-manifest", type=Path, required=True)
@@ -214,7 +237,14 @@ def main() -> int:
     parser.add_argument("--python", default=sys.executable)
     parser.add_argument("--max-workers", type=int, default=2)
     parser.add_argument("--limit", type=int)
-    parser.add_argument("--resume", action="store_true")
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        help=(
+            "skip verified receipts and retry other cases; an unlocked interrupted "
+            "workspace is preserved under a timestamped sibling name before rematerialization"
+        ),
+    )
     parser.add_argument("--attempt-id", default="attempt-1")
     parser.add_argument("--llm", choices=("gpt-traex-flash", "gpt-traex-pro"), default="gpt-traex-flash")
     parser.add_argument("--num-threads", type=int, default=1)
@@ -328,78 +358,118 @@ def main() -> int:
                 "error_kind": "input_path_validation",
                 "errors": path_errors,
             }
-        materialize = [
-            args.python, str(args.materializer), "--manifest", str(manifest_path),
-            "--case-id", case_id, "--clean-iris-root", str(args.clean_iris_root),
-            "--codeql-dir", str(args.codeql_dir), "--workspace", str(workspace),
-        ]
+        lock_path = workspace_lock_path(workspace)
+        lock_path.parent.mkdir(parents=True, exist_ok=True)
         try:
-            materialized = subprocess.run(materialize, text=True, capture_output=True, check=False)
-        except OSError as exc:
+            lock_fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except FileExistsError:
             return {
                 **base_receipt,
-                "status": "materialization_failed",
+                "status": "workspace_busy",
                 "retryable": True,
-                "error_kind": "materializer_spawn",
-                "error": str(exc),
+                "error_kind": "workspace_lock_exists",
+                "workspace_lock": str(lock_path),
             }
-        if materialized.returncode != 0:
+        try:
+            with os.fdopen(lock_fd, "w", encoding="utf-8") as handle:
+                handle.write(
+                    json.dumps(
+                        {
+                            "attempt_id": args.attempt_id,
+                            "case_id": case_id,
+                            "identity_key": identity_key,
+                            "pid": os.getpid(),
+                            "started_at": datetime.now(timezone.utc).replace(
+                                microsecond=0
+                            ).isoformat(),
+                        },
+                        sort_keys=True,
+                    )
+                    + "\n"
+                )
+            quarantined_workspace = None
+            if workspace.exists() and args.resume:
+                quarantined_workspace = quarantine_workspace(workspace)
+            materialize = [
+                args.python, str(args.materializer), "--manifest", str(manifest_path),
+                "--case-id", case_id, "--clean-iris-root", str(args.clean_iris_root),
+                "--codeql-dir", str(args.codeql_dir), "--workspace", str(workspace),
+            ]
+            try:
+                materialized = subprocess.run(materialize, text=True, capture_output=True, check=False)
+            except OSError as exc:
+                return {
+                    **base_receipt,
+                    "status": "materialization_failed",
+                    "retryable": True,
+                    "error_kind": "materializer_spawn",
+                    "error": str(exc),
+                }
+            if materialized.returncode != 0:
+                return {
+                    **base_receipt,
+                    "status": "materialization_failed",
+                    "retryable": True,
+                    "error_kind": "materializer_exit",
+                    "runner_returncode": materialized.returncode,
+                    "stderr": materialized.stderr[-2000:],
+                    "stdout": materialized.stdout[-2000:],
+                    "quarantined_workspace": (
+                        str(quarantined_workspace) if quarantined_workspace else None
+                    ),
+                }
+            run = single_case_command(
+                python=args.python,
+                runner=args.single_case_runner,
+                workspace=workspace,
+                run_id=run_id,
+                bridge_url=args.bridge_url,
+                llm=args.llm,
+                num_threads=args.num_threads,
+                label_api_batch_size=args.label_api_batch_size,
+                label_func_param_batch_size=args.label_func_param_batch_size,
+                timeout_seconds=args.timeout_seconds,
+                output_dir=case_dir,
+            )
+            try:
+                executed = subprocess.run(run, text=True, capture_output=True, check=False)
+            except OSError as exc:
+                return {
+                    **base_receipt,
+                    "status": "runner_failed",
+                    "retryable": True,
+                    "error_kind": "runner_spawn",
+                    "error": str(exc),
+                }
+            summary_path = case_dir / "summary.json"
+            try:
+                summary = json.loads(summary_path.read_text()) if summary_path.is_file() else {}
+            except (OSError, json.JSONDecodeError) as exc:
+                summary = {}
+                summary_error = str(exc)
+            else:
+                summary_error = None
             return {
                 **base_receipt,
-                "status": "materialization_failed",
-                "retryable": True,
-                "error_kind": "materializer_exit",
-                "runner_returncode": materialized.returncode,
-                "stderr": materialized.stderr[-2000:],
-                "stdout": materialized.stdout[-2000:],
+                "status": summary.get("status", "runner_summary_missing"),
+                "runner_returncode": executed.returncode,
+                "retryable": summary.get("status") != "completed_verified",
+                "summary_path": str(summary_path) if summary_path.is_file() else None,
+                "summary_error": summary_error,
+                "verified_completion": summary.get("verified_completion"),
+                "elapsed_seconds": summary.get("elapsed_seconds"),
+                "iris_statistics": summary.get("iris_statistics") or {},
+                "label_response_audit": {
+                    "total_dispatched_prompt_count": (summary.get("label_response_audit") or {}).get("total_dispatched_prompt_count"),
+                    "all_valid": (summary.get("label_response_audit") or {}).get("all_valid"),
+                },
+                "artifact_gate": summary.get("artifact_gate") or {},
+                "quarantined_workspace": (
+                    str(quarantined_workspace) if quarantined_workspace else None
+                ),
             }
-        run = single_case_command(
-            python=args.python,
-            runner=args.single_case_runner,
-            workspace=workspace,
-            run_id=run_id,
-            bridge_url=args.bridge_url,
-            llm=args.llm,
-            num_threads=args.num_threads,
-            label_api_batch_size=args.label_api_batch_size,
-            label_func_param_batch_size=args.label_func_param_batch_size,
-            timeout_seconds=args.timeout_seconds,
-            output_dir=case_dir,
-        )
-        try:
-            executed = subprocess.run(run, text=True, capture_output=True, check=False)
-        except OSError as exc:
-            return {
-                **base_receipt,
-                "status": "runner_failed",
-                "retryable": True,
-                "error_kind": "runner_spawn",
-                "error": str(exc),
-            }
-        summary_path = case_dir / "summary.json"
-        try:
-            summary = json.loads(summary_path.read_text()) if summary_path.is_file() else {}
-        except (OSError, json.JSONDecodeError) as exc:
-            summary = {}
-            summary_error = str(exc)
-        else:
-            summary_error = None
-        return {
-            **base_receipt,
-            "status": summary.get("status", "runner_summary_missing"),
-            "runner_returncode": executed.returncode,
-            "retryable": summary.get("status") != "completed_verified",
-            "summary_path": str(summary_path) if summary_path.is_file() else None,
-            "summary_error": summary_error,
-            "verified_completion": summary.get("verified_completion"),
-            "elapsed_seconds": summary.get("elapsed_seconds"),
-            "iris_statistics": summary.get("iris_statistics") or {},
-            "label_response_audit": {
-                "total_dispatched_prompt_count": (summary.get("label_response_audit") or {}).get("total_dispatched_prompt_count"),
-                "all_valid": (summary.get("label_response_audit") or {}).get("all_valid"),
-            },
-            "artifact_gate": summary.get("artifact_gate") or {},
-        }
+        finally:
+            lock_path.unlink(missing_ok=True)
 
     with ThreadPoolExecutor(max_workers=args.max_workers) as pool:
         futures = [pool.submit(run_case, row) for row in selected]

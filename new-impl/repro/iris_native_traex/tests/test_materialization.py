@@ -121,6 +121,20 @@ def test_batch_rejects_partial_codeql_database(tmp_path):
     assert module["codeql_database_errors"]({"input_paths": {"codeql_db": str(database)}}) == []
 
 
+def test_batch_quarantines_interrupted_workspace_before_resume(tmp_path):
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "run_native_iris_batch.py"))
+    workspace = tmp_path / "workspace"
+    workspace.mkdir()
+    (workspace / "partial.txt").write_text("interrupted")
+
+    quarantined = module["quarantine_workspace"](workspace)
+
+    assert not workspace.exists()
+    assert quarantined.is_dir()
+    assert (quarantined / "partial.txt").read_text() == "interrupted"
+    assert module["workspace_lock_path"](workspace) == tmp_path / ".workspace.lock"
+
+
 def test_manifest_materialization_path_validation_requires_revision(tmp_path):
     module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "materialize_iris_case.py"))
     row = {

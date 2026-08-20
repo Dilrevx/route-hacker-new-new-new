@@ -304,7 +304,8 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 - Rechecked Compile Builder v2 inputs. Four exact-source DB-failed cases were eligible for the constrained repair dispatcher: Tika produced a fresh valid CodeQL DB and a verified native IRIS run; Axis and Spring Cloud Config had no safe action; Keycloak's proposal was rejected by the approved-environment validator.
 - Added explicit forwarding of `--label-api-batch-size` and `--label-func-param-batch-size` from the batch dispatcher to every single-case runner. The change is tested and pushed as `a709855`.
 - Created a derived eight-case manifest containing only cases whose original native IRIS execution produced all final artifacts but failed only the strict JSON-label audit. The already verified One Java Agent case is excluded.
-- Started a one-worker a8 retry only for two cases not already active or queued by older dispatchers. Its concurrency contract is one local IRIS thread plus seven existing native workers, capped at the eight-slot bridge capacity.
+- Started a one-worker a8 retry only for two cases not already active or queued by older dispatchers. Native IRIS may hold HTTP connections while its own prompt batches are pending; the authoritative global bound is therefore the bridge's eight-slot semaphore, which caps actual `traex exec` completions even when additional requests queue.
+- Hardened the batch dispatcher for interruption recovery: each case workspace has an exclusive lock, and a resumed, unlocked partial workspace is preserved under a timestamped sibling name before rematerialization. This keeps partial evidence while allowing a clean native retry.
 
 **Verification:**
 
@@ -312,11 +313,11 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
   `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a8-jsonlist-admission/`.
 - The active a8 subset and launch contract are stored at:
   `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a8-jsonlist-retry/`.
-- The first a8 workspace was materialized from the current adapter, compiled successfully, and reached the original IRIS CodeQL extraction stages with explicit label batch sizes `30` and `20`.
+- The first a8 workspace was materialized from the current adapter, compiled successfully, and reached the original IRIS CodeQL extraction stages with explicit label batch sizes `30` and `20`. Bridge metrics showed successful model calls during the run; all token fields remain null when TraeX does not report a total.
 
 **Decision:** Native IRIS coverage is expanded only where original IRIS metadata, exact source, a complete CodeQL database, and a package-name file all exist. Cases missing official IRIS inputs are retained in the v2 denominator as documented input failures rather than being transformed into a different benchmark.
 
-**Next:** Continue monitoring a6/a7/Hutool/a8. When an existing worker exits, admit the next non-overlapping JSON-label retry from the frozen eight-case queue; merge only strict `completed_verified` receipts.
+**Next:** Continue monitoring a6/a7/Hutool/a8. Resume interrupted cases through a fresh attempt namespace, then admit the next non-overlapping JSON-label retry from the frozen eight-case queue; merge only strict `completed_verified` receipts.
 
 ## Near-Term Checklist
 
