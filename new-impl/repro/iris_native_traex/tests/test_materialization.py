@@ -2,7 +2,7 @@ from pathlib import Path
 import runpy
 import sys
 import types
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 
 def test_scripts_are_present():
@@ -93,6 +93,26 @@ def test_batch_rejects_overcommitted_llm_concurrency(tmp_path):
             assert "exceeds bridge capacity" in str(exc)
         else:
             raise AssertionError("overcommitted dispatch must be rejected")
+
+
+def test_batch_bundle_preflight_rejects_before_queue_creation(tmp_path):
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "run_native_iris_batch.py"))
+    materializer = tmp_path / "materialize.py"
+    materializer.write_text("")
+    failed = Mock(returncode=1, stdout="", stderr="missing java-queries pack")
+    with patch.object(module["subprocess"], "run", return_value=failed):
+        try:
+            module["validate_codeql_bundle"](
+                python="python3",
+                materializer=materializer,
+                clean_iris_root=tmp_path / "iris",
+                codeql_dir=tmp_path / "codeql",
+            )
+        except RuntimeError as exc:
+            assert "before queue creation" in str(exc)
+            assert "missing java-queries pack" in str(exc)
+        else:
+            raise AssertionError("missing Action packs must block a whole batch before queue creation")
 
 
 def test_manifest_input_path_validation_reports_missing_paths(tmp_path):

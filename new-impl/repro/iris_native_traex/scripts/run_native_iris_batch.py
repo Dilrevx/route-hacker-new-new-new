@@ -201,6 +201,46 @@ def single_case_command(
     ]
 
 
+def validate_codeql_bundle(
+    *,
+    python: str,
+    materializer: Path,
+    clean_iris_root: Path,
+    codeql_dir: Path,
+) -> dict[str, Any]:
+    """Check the shared official Action bundle once before any case is queued."""
+
+    command = [
+        python,
+        str(materializer),
+        "--validate-codeql-bundle",
+        "--clean-iris-root",
+        str(clean_iris_root),
+        "--codeql-dir",
+        str(codeql_dir),
+    ]
+    try:
+        completed = subprocess.run(command, text=True, capture_output=True, check=False)
+    except OSError as exc:
+        raise RuntimeError(f"cannot start CodeQL bundle preflight: {exc}") from exc
+    if completed.returncode != 0:
+        detail = (completed.stderr or completed.stdout).strip()[-2000:]
+        raise RuntimeError(
+            "CodeQL Action bundle preflight failed before queue creation "
+            f"(exit {completed.returncode}): {detail}"
+        )
+    try:
+        bundle = json.loads(completed.stdout)
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(
+            "CodeQL Action bundle preflight returned non-JSON output: "
+            f"{completed.stdout[-500:]}"
+        ) from exc
+    if not isinstance(bundle, dict):
+        raise RuntimeError("CodeQL Action bundle preflight returned a non-object payload")
+    return bundle
+
+
 def workspace_lock_path(workspace: Path) -> Path:
     """Return the sibling lock path used to prevent duplicate case execution."""
 
@@ -289,6 +329,12 @@ def main() -> int:
         read_jsonl(allowlist_path),
         args.expected_manifest_count,
     )
+    bundle = validate_codeql_bundle(
+        python=args.python,
+        materializer=args.materializer.resolve(),
+        clean_iris_root=args.clean_iris_root.resolve(),
+        codeql_dir=args.codeql_dir.resolve(),
+    )
     manifest_hash = sha256_path(manifest_path)
     queue_rows = [
         {
@@ -314,6 +360,10 @@ def main() -> int:
         with queue_path.open("w", encoding="utf-8") as handle:
             for row in queue_rows:
                 handle.write(json.dumps(row, sort_keys=True) + "\n")
+    (output_dir / "codeql-bundle-preflight.json").write_text(
+        json.dumps(bundle, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
     completed: set[str] = set()
     if args.resume and ledger.is_file():
         completed = {

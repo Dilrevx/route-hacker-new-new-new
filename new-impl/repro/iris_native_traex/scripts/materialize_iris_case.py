@@ -317,15 +317,40 @@ def add_traex_model_aliases(gpt_model_path: Path) -> dict[str, str]:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    inputs = parser.add_mutually_exclusive_group(required=True)
+    inputs = parser.add_mutually_exclusive_group()
     inputs.add_argument("--receipts", type=Path)
     inputs.add_argument("--manifest", type=Path)
-    parser.add_argument("--case-id", required=True)
+    parser.add_argument(
+        "--validate-codeql-bundle",
+        action="store_true",
+        help="validate the official CodeQL Action bundle without materializing a case",
+    )
+    parser.add_argument("--case-id")
     parser.add_argument("--clean-iris-root", type=Path, required=True)
     parser.add_argument("--codeql-dir", type=Path, required=True)
-    parser.add_argument("--workspace", type=Path, required=True)
+    parser.add_argument("--workspace", type=Path)
     parser.add_argument("--overwrite-empty-workspace", action="store_true")
     args = parser.parse_args()
+
+    clean_root = args.clean_iris_root.resolve()
+    src_source = clean_root / "src"
+    if not src_source.is_dir():
+        raise SystemExit(f"missing clean IRIS src: {src_source}")
+    codeql_dir = args.codeql_dir.resolve()
+    codeql_bundle = validate_codeql_bundle(clean_root, codeql_dir)
+    if args.validate_codeql_bundle:
+        if args.manifest or args.receipts or args.case_id or args.workspace:
+            raise SystemExit(
+                "--validate-codeql-bundle cannot be combined with case materialization arguments"
+            )
+        print(json.dumps(codeql_bundle, indent=2, sort_keys=True))
+        return 0
+    if not (args.manifest or args.receipts):
+        raise SystemExit("one of --manifest or --receipts is required for case materialization")
+    if not args.case_id:
+        raise SystemExit("--case-id is required for case materialization")
+    if not args.workspace:
+        raise SystemExit("--workspace is required for case materialization")
 
     input_path = args.manifest or args.receipts
     rows = read_jsonl(input_path)
@@ -340,13 +365,6 @@ def main() -> int:
         if any(workspace.iterdir()):
             raise SystemExit(f"workspace is not empty: {workspace}")
     workspace.mkdir(parents=True, exist_ok=True)
-
-    clean_root = args.clean_iris_root.resolve()
-    src_source = clean_root / "src"
-    if not src_source.is_dir():
-        raise SystemExit(f"missing clean IRIS src: {src_source}")
-    codeql_dir = args.codeql_dir.resolve()
-    codeql_bundle = validate_codeql_bundle(clean_root, codeql_dir)
 
     copied_ignored = shutil.ignore_patterns("__pycache__", "*.pyc", "*.pyo")
     shutil.copytree(src_source, workspace / "src", ignore=copied_ignored, symlinks=True)
