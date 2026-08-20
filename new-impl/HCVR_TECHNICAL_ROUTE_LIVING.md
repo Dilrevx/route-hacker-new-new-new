@@ -1247,6 +1247,32 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Wait for each active runner's artifact-gated terminal summary, validate required artifacts and JSON-list response audits, then record each completed or failed outcome separately. After those bounded runs free capacity, regenerate a generic repair input directory from the 47 receipt pairs and dispatch only individually reviewed cases through Compile Builder v2.
 
+### Round 40 - Complete XStream 2020 and JStachio Native IRIS Evaluations
+
+**Goal:** Verify the terminal artifact-gated outcomes for the two Round 39 strict repaired-database runs and preserve their native IRIS metrics without converting zero-path results into vulnerability claims.
+
+**Scope:** This round covers only XStream `iris213::a9178b8fc1dc3822aaa3` (CVE-2020-26217, CWE-078) and JStachio `iris213::4706c69734a04621c9d1` (CVE-2023-33962, CWE-079) in the IRIS-213 extension lane. It does not modify source, CodeQL databases, official queries, original IRIS logic, or frozen comparative cohorts.
+
+**Action:**
+
+- Observed both copied-original `src/iris.py` executions through terminal native-run summaries rather than treating tmux-session state as completion. The two runners each return zero and satisfy the runner's required-artifact and JSON-list-response gates.
+- Retained the restored keepalive bridge as the transport path. All recorded bridge requests for these two run identifiers completed; bridge token metadata remains unavailable and is not estimated.
+- Distinguished the JStachio detached-session state from a failure: the original IRIS process continued under the runner after its tmux launcher had exited and ultimately wrote a valid terminal summary.
+
+**Verification:**
+
+- XStream terminal receipt:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a24-xstream2020-repaired-db-native-iris/native-run/summary.json`.
+  It records `status:"completed_verified"`, return code zero, no timeout, all required artifacts present, and valid JSON-list labels for 70 dispatched prompts. IRIS processed 26,158 external API calls into 1,762 candidates; it labelled 32 sources, zero sinks, 205 taint propagators, and 58 function-parameter sources. Vanilla and posthoc results both contain zero paths and `Recall@Method:false`.
+- JStachio terminal receipt:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a25-jstachio-repaired-db-native-iris/native-run/summary.json`.
+  It records `status:"completed_verified"`, return code zero, no timeout, all required artifacts present, and valid JSON-list labels for 24 dispatched prompts. IRIS processed 6,555 external API calls into 695 candidates; it labelled eight sources, nine sinks, 147 taint propagators, and no function-parameter sources because the candidate set was empty. Vanilla and posthoc results both contain zero paths and `Recall@Method:false`.
+- Bridge metrics contain 80 completed DeepSeek-V4-Pro requests for XStream (4,402.8 summed request seconds) and 24 for JStachio (1,761.361 summed request seconds). Every `traex_reported_total_tokens` value is null, so no token count is claimed.
+
+**Decision:** Both cases are fully verified native IRIS executions over strictly admitted rebuilt Java CodeQL databases, and both are zero-target-recall outcomes. They add runnability/execution evidence to the extension lane only; neither produces a positive vulnerability-detection claim or affects frozen aggregate metrics.
+
+**Next:** Use the complete 47-pair exact-source/failed-CodeQL receipt inventory to prepare a fresh generic Compile Builder v2 input directory. Review the next candidate's historical build evidence before dispatch, and admit only a terminal finalized Java database to the same copied-original native IRIS protocol.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.
