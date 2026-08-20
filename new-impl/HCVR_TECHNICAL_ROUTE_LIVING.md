@@ -319,6 +319,32 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Continue monitoring a6/a7/Hutool/a8. Resume interrupted cases through a fresh attempt namespace, then admit the next non-overlapping JSON-label retry from the frozen eight-case queue; merge only strict `completed_verified` receipts.
 
+### Round 9 - Interruption-Safe Retry and Bridge-Level Concurrency Enforcement
+
+**Goal:** Make native IRIS retries resilient to an interrupted case workspace while preserving original IRIS execution, evidence, and the global model-capacity constraint.
+
+**Scope:** The a8 JSON-list retry was intentionally interrupted during MyFaces observation. Sling continued in the existing a8 attempt. MyFaces required a clean retry namespace because the interrupted workspace cannot be treated as a completed result.
+
+**Action:**
+
+- Verified that original IRIS constructs all prompt batches before calling its model adapter; `--num-threads` controls concurrent calls within that native `predict()` stage.
+- Verified that the TraeX OpenAI bridge owns the authoritative global `BoundedSemaphore(8)`. Extra HTTP clients can wait at the bridge, but no more than eight `traex exec` model calls execute concurrently.
+- Added per-workspace exclusive locks to the batch dispatcher. A second dispatcher receives an auditable `workspace_busy` receipt instead of racing a live case.
+- Added interruption-safe `--resume`: an unlocked partial workspace is moved to a timestamped `.interrupted-*` sibling and the case is rematerialized cleanly. The partial workspace is preserved rather than deleted.
+- Preserved a8 Sling as its original native attempt and launched MyFaces in separate attempt `qa-iris-v2-45-a9-myfaces-jsonlist-retry`, with a single-row derived manifest and an independently recorded result directory.
+- Corrected the a9 launch manifest before execution by parsing and validating the single JSONL row; the initial malformed wrapper output did not start IRIS and was replaced before the retry entered `src/iris.py`.
+
+**Verification:**
+
+- `run_native_iris_batch.py` passed `py_compile`, existing transport/strict-gate tests, the batch concurrency and partial-DB gates, and a new interruption-workspace quarantine regression test.
+- The change is pushed as `796cc88`.
+- During observation, Sling and MyFaces both produced successful bridge-completion metrics. Raw label response files remain pending until each original IRIS `predict()` batch completes; this is native IRIS batch behavior.
+- The a8 stale MyFaces `materialization_failed` receipt is retained as interruption evidence and is not counted as a native IRIS outcome for the independent a9 attempt.
+
+**Decision:** The bridge semaphore is the enforced model-concurrency contract. Project-level worker counts provide scheduling context only. Interrupted retries always receive a fresh attempt identity or explicit `--resume` recovery, so no partial workspace or stale receipt can silently become a successful run.
+
+**Next:** Wait for a8 Sling and a9 MyFaces to write their strict completion receipts. Validate original IRIS return code, all required artifacts, and every raw JSON label before counting either result as `completed_verified`; then select the next frozen JSON-label retry that is not active.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.
