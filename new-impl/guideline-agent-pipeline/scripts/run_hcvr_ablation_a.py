@@ -716,6 +716,7 @@ def run_anchor_group_audit(
     source_context: str | None,
     include_case_metadata: bool,
     guideline_overrides: dict[str, str] | None,
+    retry_attempt: int = 0,
 ) -> dict[str, Any]:
     identity = case["identity_key"]
     slug = safe_slug(identity)
@@ -723,6 +724,8 @@ def run_anchor_group_audit(
     reports_dir = variant_dir / "reports"
     reports_dir.mkdir(parents=True, exist_ok=True)
     group_slug = f"{slug}.group-{group_index:03d}-of-{group_count:03d}"
+    if retry_attempt:
+        group_slug += f".retry-{retry_attempt:03d}"
     report_path = reports_dir / f"{group_slug}.json"
     events_path = reports_dir / f"{group_slug}.events.jsonl"
     prompt_path = reports_dir / f"{group_slug}.prompt.txt"
@@ -821,6 +824,7 @@ def run_anchor_group_audit(
         "anchors": anchors,
         "group_index": group_index,
         "group_count": group_count,
+        "retry_attempt": retry_attempt,
         "finding_count": len(findings),
         "findings": findings,
         "candidate_dispositions": (parsed or {}).get("candidate_dispositions")
@@ -863,6 +867,8 @@ def run_case_grouped_audit(
     inline_context_max_chars: int,
     include_case_metadata: bool,
     guideline_overrides: dict[str, str] | None,
+    existing_groups: dict[int, dict[str, Any]] | None = None,
+    retry_incomplete_groups: bool = False,
 ) -> dict[str, Any]:
     """Audit all selected Top-K candidates via independent local groups.
 
@@ -873,7 +879,20 @@ def run_case_grouped_audit(
     """
     groups = group_anchors_by_directory(anchors, anchor_group_size)
     rows: list[dict[str, Any]] = []
+    reused_group_count = 0
+    retried_group_count = 0
     for group_index, group in enumerate(groups, start=1):
+        previous = (existing_groups or {}).get(group_index)
+        if previous and previous.get("state") in {"completed", "fallback_parsed"}:
+            # A valid first attempt is immutable evidence.  Resume must never
+            # spend provider budget or overwrite its prompt/events/report.
+            rows.append(previous)
+            reused_group_count += 1
+            continue
+        if previous and not retry_incomplete_groups:
+            rows.append(previous)
+            reused_group_count += 1
+            continue
         source_context = None
         if inline_source_context:
             source_context = build_source_context(
@@ -883,28 +902,32 @@ def run_case_grouped_audit(
                 context_lines=inline_context_lines,
                 max_chars=inline_context_max_chars,
             )
-        rows.append(
-            run_anchor_group_audit(
-                audit_runner=audit_runner,
-                codex=codex,
-                opencode=opencode,
-                model=model,
-                codex_home=codex_home,
-                temp_root=temp_root,
-                output=output,
-                variant=variant,
-                case=case,
-                snapshot=snapshot,
-                anchors=group,
-                group_index=group_index,
-                group_count=len(groups),
-                timeout=group_timeout,
-                model_budget_note=model_budget_note,
-                source_context=source_context,
-                include_case_metadata=include_case_metadata,
-                guideline_overrides=guideline_overrides,
-            )
+        fresh = run_anchor_group_audit(
+            audit_runner=audit_runner,
+            codex=codex,
+            opencode=opencode,
+            model=model,
+            codex_home=codex_home,
+            temp_root=temp_root,
+            output=output,
+            variant=variant,
+            case=case,
+            snapshot=snapshot,
+            anchors=group,
+            group_index=group_index,
+            group_count=len(groups),
+            timeout=group_timeout,
+            model_budget_note=model_budget_note,
+            source_context=source_context,
+            include_case_metadata=include_case_metadata,
+            guideline_overrides=guideline_overrides,
+                retry_attempt=(int(previous.get("retry_attempt") or 0) + 1) if previous else 0,
         )
+        if previous:
+            fresh["retry_of_state"] = previous.get("state")
+            fresh["retry_of_report"] = previous.get("report")
+            retried_group_count += 1
+        rows.append(fresh)
     findings = [finding for row in rows for finding in row.get("findings") or []]
     group_states = collections.Counter(str(row.get("state") or "unknown") for row in rows)
     states = set(group_states)
@@ -934,6 +957,8 @@ def run_case_grouped_audit(
         "anchor_group_size": anchor_group_size,
         "group_count": len(groups),
         "group_state_counts": dict(group_states),
+        "reused_group_count": reused_group_count,
+        "retried_group_count": retried_group_count,
         "groups": rows,
         "anchors": anchors,
         "finding_count": len(findings),
@@ -1075,10 +1100,11 @@ def score_variant(
     return score
 
 
-def load_done_identities(path: Path) -> set[str]:
+def load_existing_case_results(path: Path) -> dict[str, dict[str, Any]]:
     if not path.is_file():
-        return set()
-    return {row["identity_key"] for row in read_jsonl(path) if row.get("identity_key")}
+        return {}
+    # Later rows supersede earlier partial receipts for the same case.
+    return {row["identity_key"]: row for row in read_jsonl(path) if row.get("identity_key")}
 
 
 def run_variant(
@@ -1091,7 +1117,7 @@ def run_variant(
     variant_dir = args.output_dir / variant
     variant_dir.mkdir(parents=True, exist_ok=True)
     result_path = variant_dir / "case_results.jsonl"
-    done = load_done_identities(result_path) if args.resume else set()
+    existing_rows = load_existing_case_results(result_path) if args.resume else {}
     codex_path = shutil.which(args.codex) or args.codex
     opencode_path = shutil.which(args.opencode) or args.opencode
     if args.audit_runner == "codex" and shutil.which(args.codex) is None:
@@ -1103,7 +1129,10 @@ def run_variant(
     include_ext = {value.strip().lower() for value in args.include_ext.split(",") if value.strip()}
 
     def handle_case(case: dict[str, Any]) -> dict[str, Any]:
-        if case["identity_key"] in done:
+        existing = existing_rows.get(case["identity_key"])
+        if existing and not args.retry_incomplete_groups:
+            return {"identity_key": case["identity_key"], "state": "skipped_existing"}
+        if existing and existing.get("state") == "completed":
             return {"identity_key": case["identity_key"], "state": "skipped_existing"}
         try:
             snapshot = ensure_snapshot(
@@ -1147,6 +1176,12 @@ def run_variant(
                 inline_context_max_chars=args.inline_context_max_chars,
                 include_case_metadata=args.include_case_metadata,
                 guideline_overrides=args.guideline_overrides_map,
+                existing_groups={
+                    int(group_row.get("group_index")): group_row
+                    for group_row in (existing or {}).get("groups") or []
+                    if group_row.get("group_index") is not None
+                },
+                retry_incomplete_groups=args.retry_incomplete_groups,
             )
         except BaseException as error:  # record per-case failures and keep the batch moving
             return {
@@ -1163,7 +1198,17 @@ def run_variant(
                 "findings": [],
             }
 
-    pending = [case for case in cases if case["identity_key"] not in done]
+    pending = [
+        case
+        for case in cases
+        if not (
+            existing_rows.get(case["identity_key"])
+            and (
+                not args.retry_incomplete_groups
+                or existing_rows[case["identity_key"]].get("state") == "completed"
+            )
+        )
+    ]
     if args.concurrency == 1:
         for case in pending:
             row = handle_case(case)
@@ -1422,6 +1467,11 @@ def main() -> None:
     parser.add_argument("--clone-timeout", type=int, default=600)
     parser.add_argument("--concurrency", type=int, default=4)
     parser.add_argument("--resume", action="store_true")
+    parser.add_argument(
+        "--retry-incomplete-groups",
+        action="store_true",
+        help="With --resume, reuse completed groups and rerun only timeout/invalid/failure groups.",
+    )
     parser.add_argument("--model-budget-note", default="single bounded audit response; inspect only the minimal relevant source path")
     parser.add_argument("--window-lines", type=int, default=80)
     parser.add_argument("--stride-lines", type=int, default=40)
@@ -1495,6 +1545,7 @@ def main() -> None:
         "skip": args.skip,
         "group_timeout": args.group_timeout,
         "concurrency": args.concurrency,
+        "retry_incomplete_groups": args.retry_incomplete_groups,
         "inline_source_context": args.inline_source_context,
         "inline_context_anchors": args.inline_context_anchors,
         "inline_context_lines": args.inline_context_lines,
