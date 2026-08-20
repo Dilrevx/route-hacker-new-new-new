@@ -357,6 +357,14 @@ case_id_from_row() {
   json_get "$1" case_id
 }
 
+# Keep the scheduler's queue on an explicit file descriptor.  Background
+# workers are started with stdin redirected to /dev/null, but this descriptor
+# also prevents accidental consumption of the queue by any helper launched
+# from the parent shell.
+read_queue_row() {
+  IFS= read -r REPLY <&3
+}
+
 case_is_terminal_or_active() {
   local case_id="$1"
   [[ -f "$STATE_DIR/$case_id.accepted" ||
@@ -455,7 +463,9 @@ main() {
   trap on_interrupt INT TERM
 
   local row case_id
-  while IFS= read -r row; do
+  exec 3<"$QUEUE"
+  while read_queue_row; do
+    row="$REPLY"
     [[ -n "$row" ]] || continue
     check_quota_guard
     check_auth_guard
@@ -470,10 +480,14 @@ main() {
     fi
     check_quota_guard
     check_auth_guard
-    run_case "$row" &
+    # A worker inherits this loop's queue file descriptor unless its standard
+    # input is detached.  Tools launched by a worker may read stdin, which
+    # would otherwise advance the scheduler's queue and silently skip rows.
+    run_case "$row" </dev/null &
     active_pids+=("$!")
     started_cases=$((started_cases + 1))
-  done <"$QUEUE"
+  done
+  exec 3<&-
 
   wait_for_all_workers
   if [[ "$abort_status" -ne 0 ]]; then
