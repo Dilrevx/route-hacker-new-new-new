@@ -202,7 +202,14 @@ def compile_source_overlay_probe(codeql_dir: Path, query_pack: Path) -> dict[str
         )
     probe = candidates[0]
     completed = subprocess.run(
-        [str(codeql_dir / "codeql"), "query", "compile", str(probe)],
+        [
+            str(codeql_dir / "codeql"),
+            "query",
+            "compile",
+            "--additional-packs",
+            str(codeql_dir / "qlpacks"),
+            str(probe),
+        ],
         text=True,
         capture_output=True,
         check=False,
