@@ -200,6 +200,38 @@ python new-impl/codex_security_batch/evaluate_gt_anchor_overlap.py \
 The current checked-in snapshot is under
 `results/native-blind-batch-20260817/`.
 
+## Adjudicate Semantic CVE Equivalence After the Blind Scan
+
+`build_semantic_judge_packets.py`, `run_semantic_judge.py`, and
+`summarize_semantic_judge.py` form a separate LLM-as-a-judge stage. This stage
+may use CVE descriptions, reviewed GT rationale, anchors, and trace nodes only
+after the repository-level audit is complete. It uses reported-location/anchor
+overlap solely to limit the review queue, then asks whether each reported
+finding actually has the same vulnerable behavior, attack surface, root cause,
+and harmful effect as the historical CVE. Shared files, nearby lines, CWE, or
+component names are explicitly insufficient.
+
+Each case receives one of `same_vulnerability`, `related_but_different`,
+`different_vulnerability`, or `insufficient_evidence`; individual findings are
+also labeled. These are LLM-as-a-judge results, not source-level CVE
+confirmation or reproductions.
+
+```bash
+python3 new-impl/codex_security_batch/build_semantic_judge_packets.py \
+  --case-alignment <gt-anchor-alignment>/case_gt_alignment.csv \
+  --finding-alignment <gt-anchor-alignment>/finding_gt_alignment.csv \
+  --unified-cases <unified-v2-cases.jsonl> \
+  --records <blind-run-records.jsonl> \
+  --out-dir <judge-run>
+
+python3 new-impl/codex_security_batch/run_semantic_judge.py \
+  --run-dir <judge-run> --model GPT-5.6-Luna \
+  --reasoning-effort medium --parallelism 2 --timeout-seconds 1800
+
+python3 new-impl/codex_security_batch/summarize_semantic_judge.py \
+  --run-dir <judge-run> --out-dir <result-snapshot>/semantic-cve-adjudication
+```
+
 ## Guards
 
 The runner creates sentinels under `control/state/` and refuses to continue

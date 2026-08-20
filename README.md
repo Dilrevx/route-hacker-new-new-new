@@ -20,7 +20,7 @@ evaluation after scanning.
 
 | Snapshot | What it contains | Status | Result files |
 | --- | --- | --- | --- |
-| [`143-case-final-through-case143-20260820`](new-impl/codex_security_batch/results/143-case-final-through-case143-20260820/) | Final 143-case blind-audit snapshot. Earlier cases include native Codex and provider-substituted TraeX runs; the final continuation uses TraeX with GPT-5.4 high. | Complete queue: 143/143 terminal cases | [`summary.md`](new-impl/codex_security_batch/results/143-case-final-through-case143-20260820/summary.md), [`cases.csv`](new-impl/codex_security_batch/results/143-case-final-through-case143-20260820/cases.csv), [`findings.csv`](new-impl/codex_security_batch/results/143-case-final-through-case143-20260820/findings.csv), [`GT location alignment v2`](new-impl/codex_security_batch/results/143-case-final-through-case143-20260820/gt-anchor-alignment-v2-20260821/summary.md) |
+| [`143-case-final-through-case143-20260820`](new-impl/codex_security_batch/results/143-case-final-through-case143-20260820/) | Final 143-case blind-audit snapshot. Earlier cases include native Codex and provider-substituted TraeX runs; the final continuation uses TraeX with GPT-5.4 high. | Complete queue: 143/143 terminal cases | [`summary.md`](new-impl/codex_security_batch/results/143-case-final-through-case143-20260820/summary.md), [`cases.csv`](new-impl/codex_security_batch/results/143-case-final-through-case143-20260820/cases.csv), [`findings.csv`](new-impl/codex_security_batch/results/143-case-final-through-case143-20260820/findings.csv), [`GT location alignment v2`](new-impl/codex_security_batch/results/143-case-final-through-case143-20260820/gt-anchor-alignment-v2-20260821/summary.md), [`Luna semantic adjudication`](new-impl/codex_security_batch/results/143-case-final-through-case143-20260820/semantic-cve-adjudication-luna-medium-20260821/summary.md) |
 | [`143-case-through-case111-20260820`](new-impl/codex_security_batch/results/143-case-through-case111-20260820/) | Intermediate checkpoint before the final 32-case continuation. | 111/143 terminal cases | [`summary.md`](new-impl/codex_security_batch/results/143-case-through-case111-20260820/summary.md) |
 | [`traex-continuation-143-pre-run-20260819`](new-impl/codex_security_batch/results/traex-continuation-143-pre-run-20260819/) | Earlier TraeX continuation checkpoint. | Historical checkpoint | [`summary.md`](new-impl/codex_security_batch/results/traex-continuation-143-pre-run-20260819/summary.md) |
 | [`native-blind-batch-20260817`](new-impl/codex_security_batch/results/native-blind-batch-20260817/) | Original native Codex Security blind-batch snapshot. | Historical checkpoint | [`summary.md`](new-impl/codex_security_batch/results/native-blind-batch-20260817/summary.md) |
@@ -34,6 +34,14 @@ complete call graph or an exhaustive set of related code locations. The earlier
 `gt-anchor-overlap-20260820` result is a primary-location-only lower bound
 (18/143). Neither proxy is a semantic CVE match or runtime confirmation, and
 ground-truth alignment remains outside the blind-audit prompt.
+
+The post-scan LLM-as-a-judge pass reviewed all 45 cases selected by that
+reported-location proxy using TraeX `GPT-5.6-Luna` with medium reasoning. It
+judged 32 cases `same_vulnerability`, 5 `related_but_different`, 7
+`different_vulnerability`, and 1 `insufficient_evidence`. This is a semantic
+judgment over the selected 45-case review set, not an independently confirmed
+143-case CVE recall rate or a runtime reproduction result; see the linked
+adjudication snapshot for raw answers and case-level evidence.
 
 The Apache project audit is a project-level discovery run, not a one-to-one CVE
 evaluation set. Its candidates require independent source review and, where
