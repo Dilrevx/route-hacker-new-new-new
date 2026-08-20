@@ -24,9 +24,14 @@ evaluation after scanning.
 | [`143-case-through-case111-20260820`](new-impl/codex_security_batch/results/143-case-through-case111-20260820/) | Intermediate checkpoint before the final 32-case continuation. | 111/143 terminal cases | [`summary.md`](new-impl/codex_security_batch/results/143-case-through-case111-20260820/summary.md) |
 | [`traex-continuation-143-pre-run-20260819`](new-impl/codex_security_batch/results/traex-continuation-143-pre-run-20260819/) | Earlier TraeX continuation checkpoint. | Historical checkpoint | [`summary.md`](new-impl/codex_security_batch/results/traex-continuation-143-pre-run-20260819/summary.md) |
 | [`native-blind-batch-20260817`](new-impl/codex_security_batch/results/native-blind-batch-20260817/) | Original native Codex Security blind-batch snapshot. | Historical checkpoint | [`summary.md`](new-impl/codex_security_batch/results/native-blind-batch-20260817/summary.md) |
+| [Apache unified-v2 project audit](https://github.com/Dilrevx/route-hacker-new-new/tree/apache-audit/new-impl/codex_security_batch/results/apache-unified-v2-gpt55-high-progress-20260820) | Separate 40-project Apache blind-audit queue using native Codex Security with GPT-5.5/high. This portable snapshot lives on the `apache-audit` branch until it is explicitly merged. | In progress snapshot: 22/40 terminal queue entries; 168 candidate findings from 21 recorded scans | [summary](https://github.com/Dilrevx/route-hacker-new-new/blob/apache-audit/new-impl/codex_security_batch/results/apache-unified-v2-gpt55-high-progress-20260820/summary.md), [cases](https://github.com/Dilrevx/route-hacker-new-new/blob/apache-audit/new-impl/codex_security_batch/results/apache-unified-v2-gpt55-high-progress-20260820/cases.csv), [findings](https://github.com/Dilrevx/route-hacker-new-new/blob/apache-audit/new-impl/codex_security_batch/results/apache-unified-v2-gpt55-high-progress-20260820/findings.csv) |
 
 The final snapshot contains 737 source-backed finding candidates across the 143
 cases. These are not yet ground-truth CVE matches or runtime-confirmed
 vulnerabilities. A separate offline evaluator must join a finding's path and
 line range with the unified-v2 recall anchors, then report the target-CVE
 hit-rate; that evaluation must remain outside the blind-audit prompt.
+
+The Apache project audit is a project-level discovery run, not a one-to-one CVE
+evaluation set. Its candidates require independent source review and, where
+appropriate, runtime verification before they are treated as vulnerabilities.
