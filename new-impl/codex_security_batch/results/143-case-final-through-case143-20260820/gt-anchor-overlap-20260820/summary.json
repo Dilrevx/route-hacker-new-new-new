@@ -1,0 +1,35 @@
+{
+  "counts": {
+    "audited_cases": 143,
+    "different_file_findings": 676,
+    "findings": 737,
+    "findings_elsewhere_cases": 93,
+    "gt_joined_cases": 143,
+    "no_findings_cases": 10,
+    "same_anchor_file_nonoverlap_findings": 40,
+    "same_anchor_file_only_cases": 22,
+    "strict_anchor_hit_cases": 18,
+    "strict_anchor_hit_rate": 0.1258741258741259,
+    "strict_anchor_overlap_findings": 21
+  },
+  "inputs": {
+    "cases_csv": {
+      "path": "/Users/bytedance/tmp_codex_security_publish_143final_20260820/new-impl/codex_security_batch/results/143-case-final-through-case143-20260820/cases.csv",
+      "sha256": "5949edaf4fdb0c4b2fc29159af8458d86af9dd8e5a4511408d853e212b21518c"
+    },
+    "findings_csv": {
+      "path": "/Users/bytedance/tmp_codex_security_publish_143final_20260820/new-impl/codex_security_batch/results/143-case-final-through-case143-20260820/findings.csv",
+      "sha256": "c26e2aa554113bdf774f084bfc8c2066f1231c8d39d2802cd58304069cda9d1e"
+    },
+    "unified_cases_jsonl": {
+      "path": "/Users/bytedance/workspace/route-hacker-new-new/new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl",
+      "sha256": "f687641e6a47fd291fe402e7bac8cbb9aa16b38e2456bc85b2b174017fa7047d"
+    }
+  },
+  "method": {
+    "boundary": "This is a post-hoc localization proxy, not semantic CVE adjudication or runtime confirmation. Ground truth is not supplied to the blind audit.",
+    "definition": "A hit requires exact normalized relative path equality and a finding primary_start_line within an offline unified-v2 recall-anchor [start_line, end_line] span for the same repo_key::vulnerability_id.",
+    "name": "strict_primary_location_anchor_overlap"
+  },
+  "schema": "codex-security-unified-v2-anchor-overlap.v1"
+}

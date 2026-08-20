@@ -166,6 +166,28 @@ The output contains:
 Dataset vulnerability IDs and types in these exports are evaluation joins. They
 are not passed into the repository-level blind audit prompt.
 
+## Evaluate Offline Ground-Truth Anchor Overlap
+
+`evaluate_gt_anchor_overlap.py` evaluates a completed blind-audit export against
+unified-v2 `recall_anchors`. It is intentionally an **offline-only** step: do
+not use the anchor file, CVE identifier, target path, or line ranges as an input
+to `run_blind_batch.sh` or Codex Security.
+
+The strict metric labels a finding as an anchor hit only if its exported
+`primary_path` equals a recall-anchor file and its `primary_start_line` is inside
+the anchor's inclusive `[start_line, end_line]` range for the same
+`repo_key::vulnerability_id`. It produces a per-case table, a per-finding table,
+and a compact summary. It is a target-localization proxy; semantic CVE
+equivalence and runtime confirmation require separate review.
+
+```bash
+python new-impl/codex_security_batch/evaluate_gt_anchor_overlap.py \
+  --cases new-impl/codex_security_batch/results/<snapshot>/cases.csv \
+  --findings new-impl/codex_security_batch/results/<snapshot>/findings.csv \
+  --unified-cases new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
+  --out-dir new-impl/codex_security_batch/results/<snapshot>/gt-anchor-overlap
+```
+
 The current checked-in snapshot is under
 `results/native-blind-batch-20260817/`.
 
