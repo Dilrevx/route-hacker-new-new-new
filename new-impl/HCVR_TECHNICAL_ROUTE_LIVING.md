@@ -799,6 +799,42 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Collect the AWS terminal receipt and admit each terminally valid repaired database through `build_repaired_db_native_iris_manifest.py`. Separately inspect the local bridge owner and call logging to determine why the two pending native-IRIS requests exceeded the bridge's configured request timeout without emitting response or timeout evidence; repair that shared transport boundary, add a regression test, and then retry only after the current processes are cleanly terminated or time out.
 
+### Round 26 - Bridge Provenance Correction and Spark Native IRIS Admission
+
+**Goal:** Resolve the apparent native-IRIS bridge stall from the shared transport boundary, preserve the existing NiFi executions, and start the independently verified Spark repaired database through the copied original IRIS pipeline.
+
+**Scope:** This round covers the shared local TraeX bridge, the already-running two-case NiFi extension lane, and the one-case Spark extension lane. It does not change IRIS source, benchmark source, CodeQL queries, exact revisions, or Compile Builder repair actions. All three identities remain outside the frozen 45/143 comparative cohort.
+
+**Action:**
+
+- Performed a narrow listener/provenance audit rather than starting a second remote service. Remote `127.0.0.1:18889` is a forwarded endpoint and therefore has no local remote `serve_traex_openai.py` owner or `traex` binary. The actual owner is the local repository bridge process, `serve_traex_openai.py` PID `58332`, running `DeepSeek-V4-Pro`, `max_concurrency: 8`, and `timeout_seconds: 900`.
+- Corrected the Round 25 stalled-transport interpretation. The bridge already has an explicit per-call subprocess timeout and metrics log; the missing remote-local process was an expected consequence of the forwarding topology, not a missing bridge implementation. The new audit found live `traex exec` children and freshly appended completed-call metrics for both NiFi runs.
+- Kept the existing NiFi `src/iris.py` processes alive because they were consuming completed bridge responses again. Their calls remain bounded by the shared bridge's 900-second timeout and retain per-call response hashes, elapsed time, run identity, and token field (currently null because TraeX did not report a total).
+- Generated a one-row Spark allowlist from the strict derived manifest and launched the generic `run_native_iris_batch.py` runner with one project worker, one original-IRIS label thread, bridge capacity eight, `DeepSeek-V4-Pro`, and the pinned CodeQL source overlay.
+- The Spark runner materialized a fresh copied workspace and invoked the unmodified upstream execution path:
+  `src/iris.py --query cwe-022wLLM --llm gpt-traex-pro --num-threads 1`.
+  It then completed its first genuine label request through the shared bridge.
+- Continued the AWS Compile Builder run independently. Its archive-isolated Java 8 reactor has advanced through module `228/314`; it remains active and has no terminal repair receipt.
+
+**Verification:**
+
+- Local bridge process and metrics:
+  `/Users/bytedance/workspace/route-hacker-new-new/new-impl/repro/iris_native_traex/output/pro-45-a6-jsonshape/traex_pro_calls.jsonl`.
+  Recent NiFi rows have `status: completed`, response hashes, and elapsed times; this is transport evidence, not an IRIS completion claim.
+- Spark strict derived manifest and binding:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a17-spark-repaired-db-native-iris/iris213::0ccc302c9ad34ef4bc35.manifest.jsonl`
+  and
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a17-spark-repaired-db-native-iris/iris213::0ccc302c9ad34ef4bc35.binding.json`.
+  They bind the exact archive receipt, unchanged source tree, valid repaired CodeQL database, and `79` Java relation files.
+- Spark active native run:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a17-spark-repaired-db-native-iris/native-run/`.
+  Its process tree includes the generic batch runner, generic single-case runner, and copied `src/iris.py`; bridge metrics contain a completed Spark call for run ID `native-traex-a17-spark-native-iris-perwendel__spark_CVE-2016-9177_2.5.1`.
+- No IRIS case is marked complete in this round. A terminal result still requires original `src/iris.py` exit `0`, complete artifacts, and parseable responses for every dispatched label prompt.
+
+**Decision:** The shared local bridge is functioning and observable; no per-case recovery or remote hard-coded bridge is introduced. Spark is now a live native-IRIS execution backed by a strict Compile Builder v2 database. NiFi remains active with restored response flow, and AWS remains an active database-repair attempt.
+
+**Next:** Monitor the three active native IRIS processes to artifact-gated terminal receipts and check AWS for a terminal repair receipt. Admit AWS to native IRIS only through the same strict manifest builder if its database, archive identity, and source-integrity checks all pass. Continue using bridge metrics as the sole token/latency evidence source.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.
