@@ -13,6 +13,7 @@ import argparse
 import collections
 import concurrent.futures
 import hashlib
+import inspect
 import json
 import os
 import re
@@ -1205,6 +1206,18 @@ def load_existing_case_results(path: Path) -> dict[str, dict[str, Any]]:
     return {row["identity_key"]: row for row in read_jsonl(path) if row.get("identity_key")}
 
 
+def materialize_case_snapshot(
+    case: dict[str, Any],
+    repo_cache: Path,
+    snapshot_root: Path,
+    clone_timeout: int,
+) -> Path:
+    """Call the shared snapshot helper across historical signatures."""
+    if len(inspect.signature(ensure_snapshot).parameters) >= 4:
+        return ensure_snapshot(case, repo_cache, snapshot_root, clone_timeout)
+    return ensure_snapshot(case, repo_cache, snapshot_root)
+
+
 def run_variant(
     *,
     args: argparse.Namespace,
@@ -1231,7 +1244,7 @@ def run_variant(
         if existing and existing.get("state") == "completed":
             return {"identity_key": case["identity_key"], "state": "skipped_existing"}
         try:
-            snapshot = ensure_snapshot(
+            snapshot = materialize_case_snapshot(
                 case,
                 args.repo_cache.resolve(),
                 args.snapshot_root.resolve(),

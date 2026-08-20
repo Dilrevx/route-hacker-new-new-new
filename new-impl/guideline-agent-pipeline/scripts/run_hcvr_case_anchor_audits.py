@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import concurrent.futures
 import hashlib
+import inspect
 import json
 import os
 import re
@@ -287,7 +288,10 @@ def materialize_snapshot(repo_dir: Path, commit: str, snapshot: Path) -> None:
             check=True,
         )
         with tarfile.open(archive) as handle:
-            handle.extractall(snapshot, filter="data")
+            if "filter" in inspect.signature(handle.extractall).parameters:
+                handle.extractall(snapshot, filter="data")
+            else:
+                handle.extractall(snapshot)
     finally:
         archive.unlink(missing_ok=True)
 
