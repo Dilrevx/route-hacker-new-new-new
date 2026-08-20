@@ -48,8 +48,6 @@ SAFE_BUILD_ARGS = frozenset(
         "-Dspotless.apply.skip=true",
         "-Dspotless.check.skip=true",
         "-Dspotless.skip=true",
-        "--no-daemon",
-        "--stacktrace",
     }
 )
 SAFE_MAVEN_HEAP_OPTIONS = frozenset({"-Xmx2g", "-Xmx4g", "-Xmx6g"})

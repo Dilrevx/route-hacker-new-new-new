@@ -600,6 +600,16 @@ def test_validate_repair_decision_rejects_unapproved_argument():
         )
 
 
+@pytest.mark.parametrize("argument", ["--no-daemon", "--stacktrace"])
+def test_validate_repair_decision_rejects_gradle_only_argument(argument: str):
+    with pytest.raises(RepairValidationError, match="unapproved argument"):
+        validate_repair_decision(
+            {"actions": [{"kind": "append_build_args", "args": [argument]}]},
+            approved_java_homes=[],
+            approved_maven_homes=[],
+        )
+
+
 def test_validate_repair_decision_drops_redundant_retry_same_command():
     validated = validate_repair_decision(
         {
