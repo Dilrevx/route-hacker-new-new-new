@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -21,6 +22,93 @@ ATTEMPTS: tuple[tuple[int, AttemptKind], ...] = (
     (2, "warm"),
     (3, "clean"),
 )
+
+
+def source_attestation_reason(task: RuntimeTask, attempt_dir: Path) -> FailureReason | None:
+    """Fail closed when a source-bound task lacks an exact source receipt."""
+    if not task.provenance:
+        return None
+    path = attempt_dir / "workspace" / "source-attestation.json"
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return FailureReason(
+            stage="source_identity",
+            code="source_attestation_missing",
+            message=f"exact-source attestation is unavailable: {type(exc).__name__}: {exc}",
+            evidence_path=str(path),
+        )
+    if not isinstance(value, dict):
+        return FailureReason(
+            stage="source_identity",
+            code="source_attestation_invalid",
+            message="source attestation must be a JSON object",
+            evidence_path=str(path),
+        )
+    for field, expected in task.provenance.items():
+        if value.get(field) != expected:
+            return FailureReason(
+                stage="source_identity",
+                code="source_attestation_mismatch",
+                message=f"source attestation mismatch for {field}",
+                evidence_path=str(path),
+            )
+    source_root_value = value.get("source_root")
+    if not isinstance(source_root_value, str) or not source_root_value.strip():
+        return FailureReason(
+            stage="source_identity",
+            code="source_root_missing",
+            message="source attestation must provide a source_root under the attempt workspace",
+            evidence_path=str(path),
+        )
+    source_root = Path(source_root_value).expanduser().resolve()
+    workspace_root = (attempt_dir / "workspace").resolve()
+    try:
+        source_root.relative_to(workspace_root)
+    except ValueError:
+        return FailureReason(
+            stage="source_identity",
+            code="source_root_outside_workspace",
+            message="attested source_root must be inside the attempt workspace",
+            evidence_path=str(path),
+        )
+    try:
+        observed = subprocess.run(
+            ["git", "-C", str(source_root), "rev-parse", "HEAD"],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=30,
+        ).stdout.strip()
+        remote = subprocess.run(
+            ["git", "-C", str(source_root), "config", "--get", "remote.origin.url"],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=30,
+        ).stdout.strip()
+    except (OSError, subprocess.SubprocessError) as exc:
+        return FailureReason(
+            stage="source_identity",
+            code="source_git_inspection_failed",
+            message=f"unable to independently inspect attested source tree: {type(exc).__name__}: {exc}",
+            evidence_path=str(path),
+        )
+    if observed != task.provenance.get("checkout_revision"):
+        return FailureReason(
+            stage="source_identity",
+            code="source_revision_drift",
+            message="git rev-parse HEAD does not equal the required checkout revision",
+            evidence_path=str(path),
+        )
+    if remote.rstrip("/") != str(task.provenance.get("repo_url", "")).rstrip("/"):
+        return FailureReason(
+            stage="source_identity",
+            code="source_remote_mismatch",
+            message="git remote.origin.url does not equal the required repository URL",
+            evidence_path=str(path),
+        )
+    return None
 
 
 @dataclass(frozen=True)
@@ -182,7 +270,13 @@ class RuntimeV2Orchestrator:
                         ),
                         detail=json.dumps(audit.to_dict(), ensure_ascii=False),
                     )
-            reason = self._attempt_reason(
+            attestation_reason = source_attestation_reason(task, attempt_dir) if (
+                verification is not None
+                and verification.status == "passed"
+                and audit is not None
+                and audit.status == "passed"
+            ) else None
+            reason = attestation_reason or self._attempt_reason(
                 agent_error=agent_result.error,
                 attempt_id=attempt_id,
                 accepted=accepted,
@@ -196,6 +290,7 @@ class RuntimeV2Orchestrator:
                 and verification.status == "passed"
                 and audit is not None
                 and audit.status == "passed"
+                and attestation_reason is None
             )
             summary = {
                 "attempt_id": attempt_id,
@@ -421,6 +516,8 @@ class RuntimeV2Orchestrator:
         except (OSError, json.JSONDecodeError):
             return None
         if verification.get("status") != "passed" or audit.get("status") != "passed":
+            return None
+        if source_attestation_reason(task, result_path.parent) is not None:
             return None
         final = {
             "task_id": task.task_id,

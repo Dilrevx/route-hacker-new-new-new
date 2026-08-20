@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import os
 import signal
 import subprocess
@@ -11,6 +12,17 @@ import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Mapping, Sequence
+
+
+DEVELOPER_VERDICTS = {"CONFIRMED", "NOT_VULNERABLE", "INCONCLUSIVE", "BLOCKED"}
+VERIFIER_VERDICTS = {"CONFIRMED", "REJECTED", "INVALID_POC", "BLOCKED", "INCONCLUSIVE"}
+LINEAGE_FIELDS = (
+    "identity_key",
+    "case_id",
+    "finding_id",
+    "finding_sha256",
+    "checkout_revision",
+)
 
 
 @dataclass(frozen=True)
@@ -24,6 +36,7 @@ class PocAgentRunConfig:
     token_limit: int = 800_000
     timeout_seconds: int = 7_200
     environment: Mapping[str, str] | None = None
+    confirmation_request: Path | None = None
 
 
 @dataclass(frozen=True)
@@ -38,6 +51,8 @@ class PocVerifierRunConfig:
     model: str | None = None
     timeout_seconds: int = 3_600
     environment: Mapping[str, str] | None = None
+    confirmation_request: Path | None = None
+    developer_receipt: Path | None = None
 
 
 @dataclass(frozen=True)
@@ -54,16 +69,83 @@ class PocAgentRunResult:
     run_path: str
     command: list[str]
     error: str | None = None
+    receipt_path: str | None = None
+    verdict: str | None = None
 
     @property
     def succeeded(self) -> bool:
-        return self.status == "completed" and self.returncode == 0
+        return self.status == "completed" and self.returncode == 0 and self.verdict is not None
 
     def to_dict(self) -> dict[str, object]:
         return asdict(self)
 
 
 PocVerifierRunResult = PocAgentRunResult
+
+
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for block in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def _read_json_object(path: Path, label: str) -> dict[str, Any]:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ValueError(f"{label} is not a readable JSON object: {type(exc).__name__}: {exc}") from exc
+    if not isinstance(value, dict):
+        raise ValueError(f"{label} must be a JSON object")
+    return value
+
+
+def _load_confirmation_request(path: Path | None) -> dict[str, str] | None:
+    if path is None:
+        return None
+    resolved = path.expanduser().resolve()
+    if not resolved.is_file():
+        raise FileNotFoundError(f"confirmation request does not exist: {resolved}")
+    value = _read_json_object(resolved, "confirmation request")
+    missing = [field for field in LINEAGE_FIELDS if not isinstance(value.get(field), str) or not value[field].strip()]
+    if missing:
+        raise ValueError(f"confirmation request is missing lineage fields: {missing}")
+    return {field: value[field].strip() for field in LINEAGE_FIELDS}
+
+
+def _validated_receipt(
+    *,
+    output_dir: Path,
+    role: str,
+    expected_lineage: dict[str, str] | None,
+    developer_receipt_sha256: str | None = None,
+    receipt_path: Path | None = None,
+) -> tuple[Path, dict[str, Any]]:
+    receipt_path = receipt_path or output_dir / f"{role}-receipt.json"
+    if not receipt_path.is_file():
+        raise ValueError(f"{role} agent exited successfully but did not write {receipt_path.name}")
+    receipt = _read_json_object(receipt_path, f"{role} receipt")
+    allowed = DEVELOPER_VERDICTS if role == "developer" else VERIFIER_VERDICTS
+    if receipt.get("verdict") not in allowed:
+        raise ValueError(f"{role} receipt verdict must be one of {sorted(allowed)}")
+    if expected_lineage:
+        for field, expected in expected_lineage.items():
+            if receipt.get(field) != expected:
+                raise ValueError(f"{role} receipt lineage mismatch for {field}")
+    if developer_receipt_sha256 is not None and receipt.get("developer_receipt_sha256") != developer_receipt_sha256:
+        raise ValueError("verifier receipt does not bind the exact developer receipt SHA-256")
+    if receipt["verdict"] == "CONFIRMED":
+        artifact = receipt.get("artifact_path")
+        evidence = receipt.get("evidence_paths")
+        reproduce = receipt.get("reproduce_command")
+        if not isinstance(artifact, str) or not Path(artifact).expanduser().is_file():
+            raise ValueError(f"{role} CONFIRMED receipt must reference an existing artifact_path")
+        if not isinstance(evidence, list) or not evidence or any(not isinstance(item, str) or not Path(item).expanduser().is_file() for item in evidence):
+            raise ValueError(f"{role} CONFIRMED receipt must reference existing non-empty evidence_paths")
+        if not isinstance(reproduce, str) or not reproduce.strip():
+            raise ValueError(f"{role} CONFIRMED receipt must contain reproduce_command")
+    return receipt_path, receipt
 
 
 def _budget_tokens(usage: Mapping[str, int]) -> int:
@@ -79,6 +161,8 @@ def build_poc_agent_prompt(
     audit_report: str,
     poc_workspace: str,
     token_limit: int,
+    receipt_path: str,
+    lineage: Mapping[str, str] | None = None,
 ) -> str:
     """Build an open-ended PoC-development brief from an audit report."""
     return f"""You are the independent PoC Development Agent.
@@ -105,7 +189,11 @@ Before finishing:
 1. Execute the final PoC against the target or its faithful test/runtime harness.
 2. Preserve the PoC plus enough output to distinguish success from a normal safe
    response.
-3. In your final response, state the exact artifact paths and reproduction command,
+3. Write a machine-readable JSON receipt to {receipt_path}. It must include:
+   verdict, identity_key, case_id, finding_id, finding_sha256, checkout_revision,
+   artifact_path, evidence_paths, and reproduce_command. For CONFIRMED, all named
+   artifact/evidence paths must exist.
+4. In your final response, state the exact artifact paths and reproduction command,
    summarize iterations and observed feedback, and label the result with exactly
    one of CONFIRMED, NOT_VULNERABLE, INCONCLUSIVE, or BLOCKED.
 
@@ -119,7 +207,7 @@ Audit report:
 --- BEGIN AUDIT REPORT ---
 {audit_report.rstrip()}
 --- END AUDIT REPORT ---
-"""
+""" + (f"\nImmutable finding lineage (copy verbatim into the receipt):\n{json.dumps(dict(lineage), ensure_ascii=False, sort_keys=True)}\n" if lineage else "")
 
 
 def build_poc_verifier_prompt(
@@ -128,6 +216,9 @@ def build_poc_verifier_prompt(
     poc_artifact: str,
     reproduce_command: str,
     verifier_workspace: str,
+    receipt_path: str,
+    lineage: Mapping[str, str] | None = None,
+    developer_receipt_sha256: str | None = None,
 ) -> str:
     """Build an independent verification brief for a completed PoC artifact."""
     return f"""You are the independent AI PoC Verifier.
@@ -150,8 +241,10 @@ Rules:
    or exploit logic.
 4. Do not modify the instrumentation or target bundle. If the PoC only works after
    changing its security semantics, label the result INVALID_POC.
-5. Preserve a verifier receipt under the verifier workspace with commands, logs,
-   final verdict, and exact reason.
+5. Write a machine-readable verifier receipt to {receipt_path}. It must include
+   verdict, identity_key, case_id, finding_id, finding_sha256, checkout_revision,
+   developer_receipt_sha256, artifact_path, evidence_paths, and reproduce_command.
+   For CONFIRMED, all named artifact/evidence paths must exist.
 
 Final verdict must be one of:
 - CONFIRMED
@@ -168,7 +261,7 @@ Audit report:
 --- BEGIN AUDIT REPORT ---
 {audit_report.rstrip()}
 --- END AUDIT REPORT ---
-"""
+""" + (f"\nImmutable finding lineage (copy verbatim into the receipt):\n{json.dumps(dict(lineage), ensure_ascii=False, sort_keys=True)}\nDeveloper receipt SHA-256 (copy verbatim): {developer_receipt_sha256}\n" if lineage else "")
 
 
 def _token_usage(event: dict[str, Any]) -> dict[str, int] | None:
@@ -221,6 +314,7 @@ def run_poc_agent(config: PocAgentRunConfig) -> PocAgentRunResult:
 
     output_dir = config.output_dir.expanduser().resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
+    lineage = _load_confirmation_request(config.confirmation_request)
     prompt_path = output_dir / "prompt.txt"
     events_path = output_dir / "agent.events.jsonl"
     stderr_path = output_dir / "agent.stderr.log"
@@ -232,6 +326,8 @@ def run_poc_agent(config: PocAgentRunConfig) -> PocAgentRunResult:
         audit_report=audit_report,
         poc_workspace=config.poc_workspace,
         token_limit=config.token_limit,
+        receipt_path=str(output_dir / "developer-receipt.json"),
+        lineage=lineage,
     )
     prompt_path.write_text(prompt, encoding="utf-8")
 
@@ -329,7 +425,16 @@ def run_poc_agent(config: PocAgentRunConfig) -> PocAgentRunResult:
                 status = "timed_out"
                 error = f"PoC Agent timed out after {config.timeout_seconds} seconds"
             elif returncode == 0:
-                status = "completed"
+                try:
+                    _, receipt = _validated_receipt(
+                        output_dir=output_dir,
+                        role="developer",
+                        expected_lineage=lineage,
+                    )
+                    status = "completed"
+                    verdict = str(receipt["verdict"])
+                except ValueError as exc:
+                    error = str(exc)
             else:
                 error = f"TraeX exited with status {returncode}"
     except OSError as exc:
@@ -340,6 +445,7 @@ def run_poc_agent(config: PocAgentRunConfig) -> PocAgentRunResult:
     finally:
         deadline_reached.set()
 
+    receipt_path = output_dir / "developer-receipt.json"
     result = PocAgentRunResult(
         status=status,
         returncode=returncode,
@@ -353,6 +459,8 @@ def run_poc_agent(config: PocAgentRunConfig) -> PocAgentRunResult:
         run_path=str(run_path),
         command=command,
         error=error,
+        receipt_path=str(receipt_path) if receipt_path.is_file() else None,
+        verdict=locals().get("verdict"),
     )
     run_path.write_text(
         json.dumps(result.to_dict(), indent=2, ensure_ascii=False) + "\n",
@@ -375,6 +483,23 @@ def run_poc_verifier(config: PocVerifierRunConfig) -> PocVerifierRunResult:
 
     output_dir = config.output_dir.expanduser().resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
+    lineage = _load_confirmation_request(config.confirmation_request)
+    developer_receipt_sha256: str | None = None
+    if lineage is not None and config.developer_receipt is None:
+        raise ValueError(
+            "formal confirmation verification requires --developer-receipt to bind the exact developer receipt"
+        )
+    if config.developer_receipt is not None:
+        developer_path = config.developer_receipt.expanduser().resolve()
+        if not developer_path.is_file():
+            raise FileNotFoundError(f"developer receipt does not exist: {developer_path}")
+        _validated_receipt(
+            output_dir=developer_path.parent,
+            role="developer",
+            expected_lineage=lineage,
+            receipt_path=developer_path,
+        )
+        developer_receipt_sha256 = _sha256_file(developer_path)
     prompt_path = output_dir / "verifier.prompt.txt"
     events_path = output_dir / "verifier.events.jsonl"
     stderr_path = output_dir / "verifier.stderr.log"
@@ -387,6 +512,9 @@ def run_poc_verifier(config: PocVerifierRunConfig) -> PocVerifierRunResult:
         poc_artifact=config.poc_artifact,
         reproduce_command=config.reproduce_command,
         verifier_workspace=config.verifier_workspace,
+        receipt_path=str(output_dir / "verifier-receipt.json"),
+        lineage=lineage,
+        developer_receipt_sha256=developer_receipt_sha256,
     )
     prompt_path.write_text(prompt, encoding="utf-8")
 
@@ -473,7 +601,17 @@ def run_poc_verifier(config: PocVerifierRunConfig) -> PocVerifierRunResult:
                 status = "timed_out"
                 error = f"Verifier timed out after {config.timeout_seconds} seconds"
             elif returncode == 0:
-                status = "completed"
+                try:
+                    _, receipt = _validated_receipt(
+                        output_dir=output_dir,
+                        role="verifier",
+                        expected_lineage=lineage,
+                        developer_receipt_sha256=developer_receipt_sha256,
+                    )
+                    status = "completed"
+                    verdict = str(receipt["verdict"])
+                except ValueError as exc:
+                    error = str(exc)
             else:
                 error = f"TraeX exited with status {returncode}"
     except OSError as exc:
@@ -484,6 +622,7 @@ def run_poc_verifier(config: PocVerifierRunConfig) -> PocVerifierRunResult:
     finally:
         deadline_reached.set()
 
+    receipt_path = output_dir / "verifier-receipt.json"
     result = PocVerifierRunResult(
         status=status,
         returncode=returncode,
@@ -497,6 +636,8 @@ def run_poc_verifier(config: PocVerifierRunConfig) -> PocVerifierRunResult:
         run_path=str(run_path),
         command=command,
         error=error,
+        receipt_path=str(receipt_path) if receipt_path.is_file() else None,
+        verdict=locals().get("verdict"),
     )
     run_path.write_text(
         json.dumps(result.to_dict(), indent=2, ensure_ascii=False) + "\n",

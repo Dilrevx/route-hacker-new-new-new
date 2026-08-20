@@ -1,6 +1,7 @@
 import json
 import shlex
 import stat
+import subprocess
 import sys
 from pathlib import Path
 
@@ -38,6 +39,22 @@ class SubmittingAgent:
         check.write_text("#!/bin/sh\ntest -f ready.txt\n", encoding="utf-8")
         for path in (start, stop, check):
             path.chmod(path.stat().st_mode | stat.S_IXUSR)
+        if task.provenance:
+            source_root = attempt_dir / "workspace" / "source"
+            source_root.mkdir()
+            subprocess.run(["git", "init", "-q", str(source_root)], check=True)
+            subprocess.run(["git", "-C", str(source_root), "config", "user.email", "test@example.test"], check=True)
+            subprocess.run(["git", "-C", str(source_root), "config", "user.name", "Test"], check=True)
+            (source_root / "README").write_text("fixture\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(source_root), "add", "README"], check=True)
+            subprocess.run(["git", "-C", str(source_root), "commit", "-qm", "fixture"], check=True)
+            revision = subprocess.run(["git", "-C", str(source_root), "rev-parse", "HEAD"], check=True, capture_output=True, text=True).stdout.strip()
+            subprocess.run(["git", "-C", str(source_root), "remote", "add", "origin", task.provenance["repo_url"]], check=True)
+            object.__setattr__(task, "provenance", {**task.provenance, "checkout_revision": revision})
+            (attempt_dir / "workspace" / "source-attestation.json").write_text(
+                json.dumps({**task.provenance, "source_root": str(source_root), "observed_revision": task.provenance["checkout_revision"]}),
+                encoding="utf-8",
+            )
         candidate = attempt_dir / "candidate-result.json"
         candidate.write_text(
             json.dumps(
@@ -91,6 +108,30 @@ class MissingSubmissionAgent:
         timeout_seconds: int,
     ) -> AgentRunResult:
         return _agent_result(attempt_dir)
+
+
+class MissingAttestationSubmittingAgent(SubmittingAgent):
+    def run(
+        self,
+        *,
+        task: RuntimeTask,
+        attempt_kind: str,
+        attempt_dir: Path,
+        prompt: str,
+        timeout_seconds: int,
+    ) -> AgentRunResult:
+        original = task.provenance
+        object.__setattr__(task, "provenance", None)
+        try:
+            return super().run(
+                task=task,
+                attempt_kind=attempt_kind,
+                attempt_dir=attempt_dir,
+                prompt=prompt,
+                timeout_seconds=timeout_seconds,
+            )
+        finally:
+            object.__setattr__(task, "provenance", original)
 
 
 def _agent_result(attempt_dir: Path) -> AgentRunResult:
@@ -165,3 +206,34 @@ def test_orchestrator_persists_submission_missing_reason(tmp_path: Path) -> None
         json.loads(str(attempt["reason_json"]))["code"] == "submission_missing"
         for attempt in attempts
     )
+
+
+def test_source_bound_runtime_rejects_missing_attestation(tmp_path: Path) -> None:
+    run_dir = tmp_path / "run"
+    queue = QueueStore(run_dir / "queue.db")
+    queue.submit(
+        task_id="poc-case-1",
+        prompt="Build exact source runtime",
+        provenance={
+            "identity_key": "org__repo::CVE-X",
+            "case_id": "case-1",
+            "finding_id": "finding::abc",
+            "finding_sha256": "a" * 64,
+            "repo_url": "https://example.test/repo.git",
+            "checkout_revision": "deadbeef",
+        },
+    )
+    task = queue.claim(owner="test", lease_seconds=120)
+    assert task is not None
+    orchestrator = RuntimeV2Orchestrator(
+        queue=queue,
+        workspaces=WorkspaceManager(run_dir),
+        agent=MissingAttestationSubmittingAgent(),
+        verifier=RuntimeVerifier(command_timeout_seconds=5),
+        auditor=PassingAuditor(),
+    )
+
+    final = orchestrator.run_task(task)
+
+    assert final["status"] == "failed"
+    assert final["reason"]["code"] == "source_attestation_missing"

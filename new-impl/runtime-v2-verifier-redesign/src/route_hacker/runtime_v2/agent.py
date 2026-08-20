@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import json
 import signal
 import subprocess
 import time
@@ -55,8 +56,8 @@ def build_agent_prompt(
     lines = [
         "Build a runnable application environment for the vulnerability task below.",
         "",
-        "You have full autonomy. Inspect or clone source code, choose revisions, use or",
-        "ignore any supplied compile image or Dockerfile, install tools, resolve dependency",
+        "You have full autonomy. Inspect or clone source code, use or ignore any supplied",
+        "compile image or Dockerfile, install tools, resolve dependency",
         "conflicts, pull supporting service images, and create a Docker image, Compose",
         "topology, or start/stop scripts. Keep debugging until the environment works.",
         "Do not run destructive shared-host cleanup commands such as docker system prune,",
@@ -100,6 +101,32 @@ def build_agent_prompt(
         "configuration available for the verifier. Do not delete volumes or files required",
         "to start the declared runtime from a clean verifier invocation.",
     ]
+    if task.provenance:
+        required = (
+            "identity_key",
+            "case_id",
+            "finding_id",
+            "finding_sha256",
+            "repo_url",
+            "checkout_revision",
+        )
+        missing = [field for field in required if not task.provenance.get(field)]
+        if missing:
+            raise ValueError(f"runtime task provenance is missing required fields: {missing}")
+        lines.extend(
+            [
+                "",
+                "This is a source-bound confirmation task. You MUST clone the exact",
+                f"repository {task.provenance['repo_url']} at revision {task.provenance['checkout_revision']}.",
+                "Do not substitute a nearby revision. Before submission, write",
+                "source-attestation.json in the attempt workspace with the immutable",
+                "provenance fields below, source_root as the absolute checkout path under",
+                "the attempt workspace, and observed_revision from `git rev-parse HEAD`.",
+                "Runtime V2 independently reruns git rev-parse and checks origin URL;",
+                "the observed revision must equal checkout_revision exactly.",
+                json.dumps(task.provenance, ensure_ascii=False, sort_keys=True),
+            ]
+        )
     if history_paths:
         lines.extend(
             [

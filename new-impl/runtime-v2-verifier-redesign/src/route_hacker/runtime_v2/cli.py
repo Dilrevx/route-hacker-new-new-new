@@ -114,6 +114,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 task_id=value["task_id"],
                 prompt=value["prompt"],
                 project_key=value.get("project_key"),
+                provenance=value.get("provenance"),
                 priority=value.get("priority", 0),
             )
             submitted.append(task.task_id)

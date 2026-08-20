@@ -123,6 +123,24 @@ def test_minus_rank_keeps_identical_candidates_but_hides_rank(tmp_path: Path):
     assert module.group_anchors_by_directory(ranked, 4) == module.group_anchors_by_directory(unranked, 4)
 
 
+def test_directory_group_membership_does_not_depend_on_retrieval_rank():
+    module = load_module()
+    ranked = [
+        {**anchor, "file": f"src/{'near' if index <= 4 else 'far'}/F{index}.java"}
+        for index, anchor in enumerate(anchors(8), start=1)
+    ]
+    permuted = [{**anchor, "rank": 99 - anchor["rank"]} for anchor in ranked]
+    grouped_ranked = [
+        {anchor["anchor_id"] for anchor in group}
+        for group in module.group_anchors_by_directory(ranked, 4)
+    ]
+    grouped_permuted = [
+        {anchor["anchor_id"] for anchor in group}
+        for group in module.group_anchors_by_directory(permuted, 4)
+    ]
+    assert grouped_ranked == grouped_permuted
+
+
 def test_minus_guideline_hides_hcvr_family_and_case_identity(tmp_path: Path):
     module = load_module()
     prompt = module.build_group_prompt(
@@ -231,3 +249,135 @@ def test_score_variant_counts_multiple_findings_and_distinct_truth_methods(tmp_p
     assert score["recall"] == 1.0
     assert score["precision"] == 1 / 3
     assert score["alarms"] == score["tp"] + score["fp"]
+
+
+def test_score_variant_records_actual_anchor_count_when_recall_has_fewer_than_budget():
+    module = load_module()
+    recall = {
+        sample_case()["identity_key"]: {
+            "top_anchors": [
+                {"anchor_id": "anchor::1", "file": "src/App.java", "start_line": 1},
+                {"anchor_id": "anchor::2", "file": "src/App.java", "start_line": 2},
+            ]
+        }
+    }
+    selected = module.select_ranked_anchors(sample_case(), recall, budget=200)
+    assert len(selected) == 2
+    assert [anchor["rank"] for anchor in selected] == [1, 2]
+
+
+
+def test_localization_judge_prompt_is_narrow_and_excludes_case_identity():
+    module = load_module()
+    prompt = module.build_localization_judge_prompt(
+        finding={"file": "src/App.java", "start_line": 12, "end_line": 15, "symbol": "App.first"},
+        truth=module.truth_methods(sample_case()),
+    )
+    assert "independent localization judge" in prompt
+    assert "NOT a" in prompt
+    assert "vulnerability audit" in prompt
+    assert "CVE-2099-0001" not in prompt
+    assert "git history, patches, advisories" in prompt
+
+
+def test_localization_judge_verdict_contract_rejects_unsupported_match():
+    module = load_module()
+    truth = module.truth_methods(sample_case())
+    valid, error, matched = module.validate_localization_verdict(
+        {"verdict": "match", "matched_reference_ids": [1], "reason": "same enclosing method"},
+        truth,
+    )
+    assert valid is True
+    assert error == ""
+    assert matched == [1]
+    valid, error, _ = module.validate_localization_verdict(
+        {"verdict": "match", "matched_reference_ids": [], "reason": "unsupported"},
+        truth,
+    )
+    assert valid is False
+    assert "requires" in error
+    valid, error, _ = module.validate_localization_verdict(
+        {"verdict": "no_match", "matched_reference_ids": [1], "reason": "contradictory"},
+        truth,
+    )
+    assert valid is False
+    assert "must not" in error
+
+
+def test_minus_poc_reuses_full_stage2_receipt_instead_of_rerunning(monkeypatch, tmp_path: Path):
+    module = load_module()
+    full_dir = tmp_path / "full"
+    full_dir.mkdir()
+    full_row = {
+        "identity_key": sample_case()["identity_key"],
+        "state": "completed",
+        "findings": [{"file": "src/App.java", "start_line": 12, "end_line": 15}],
+    }
+    full_results = full_dir / "case_results.jsonl"
+    full_results.write_text(json.dumps(full_row) + "\n", encoding="utf-8")
+
+    class Args:
+        output_dir = tmp_path
+
+    def unexpected_audit(**_: object):
+        raise AssertionError("-PoC must not invoke stage-2 audit")
+
+    monkeypatch.setattr(module, "run_case_grouped_audit", unexpected_audit)
+    score = module.run_variant(
+        args=Args(),
+        variant="minus_poc",
+        cases=[sample_case()],
+        recall_results={},
+    )
+
+    assert score["stage2_source_variant"] == "full"
+    assert score["stage2_results_sha256"] == module.sha256_file(full_results)
+    source = json.loads((tmp_path / "minus_poc" / "stage2_source.json").read_text(encoding="utf-8"))
+    assert source["source_sha256"] == module.sha256_file(full_results)
+
+
+def test_full_confirmation_summary_must_bind_exact_stage2_receipt(tmp_path: Path):
+    module = load_module()
+    variant_dir = tmp_path / "full"
+    variant_dir.mkdir()
+    stage2 = variant_dir / "case_results.jsonl"
+    stage2.write_text(
+        json.dumps(
+            {
+                "identity_key": sample_case()["identity_key"],
+                "state": "completed",
+                "findings": [{"file": "src/App.java", "start_line": 12, "end_line": 15}],
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    score = module.score_variant(variant_dir, {sample_case()["identity_key"]: sample_case()}, denominator=1)
+    assert score["formal_eligible"] is False
+    assert score["formal_blocker"] == "confirmation_pending"
+    confirmation = variant_dir / "confirmation" / "confirmation_summary.json"
+    confirmation.parent.mkdir()
+    confirmation.write_text(
+        json.dumps(
+            {
+                "stage2_results_sha256": score["stage2_results_sha256"],
+                "finding_count": score["alarms"],
+                "confirmed_count": 1,
+            }
+        ),
+        encoding="utf-8",
+    )
+    attached = module.attach_confirmation_summary(variant_dir, score)
+    assert attached["confirmed"] == 1
+    assert attached["formal_eligible"] is True
+
+    confirmation.write_text(
+        json.dumps({"stage2_results_sha256": "wrong", "finding_count": 1, "confirmed_count": 1}),
+        encoding="utf-8",
+    )
+    try:
+        module.attach_confirmation_summary(variant_dir, score)
+    except ValueError as error:
+        assert "not bound" in str(error)
+    else:
+        raise AssertionError("unbound confirmation summary was accepted")

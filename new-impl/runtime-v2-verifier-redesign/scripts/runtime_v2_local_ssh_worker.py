@@ -431,6 +431,7 @@ class Worker:
                                 task_id=task["task_id"],
                                 prompt=task["prompt"],
                                 project_key=task.get("project_key"),
+                                provenance=task.get("provenance"),
                                 priority=int(task.get("priority", 0)),
                                 status=task.get("status", "running"),
                                 attempt_index=int(task.get("attempt_index", 0)),

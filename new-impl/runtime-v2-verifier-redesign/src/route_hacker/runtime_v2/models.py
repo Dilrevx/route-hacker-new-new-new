@@ -34,6 +34,10 @@ class RuntimeTask:
     task_id: str
     prompt: str
     project_key: str | None = None
+    # Optional immutable context supplied by a downstream confirmation queue.
+    # Runtime V2 does not decide vulnerability verdicts, but it must build the
+    # exact source revision that the PoC stage will later exercise.
+    provenance: dict[str, str] | None = None
     priority: int = 0
     status: TaskStatus = "queued"
     attempt_index: int = 0

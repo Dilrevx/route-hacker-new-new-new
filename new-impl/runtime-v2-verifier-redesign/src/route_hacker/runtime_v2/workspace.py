@@ -29,6 +29,8 @@ class WorkspaceManager:
         task_dir = self.task_dir(task.task_id)
         task_dir.mkdir(parents=True, exist_ok=True)
         (task_dir / "task.txt").write_text(task.prompt + "\n", encoding="utf-8")
+        if task.provenance:
+            self.write_json(task_dir / "provenance.json", task.provenance)
         return task_dir
 
     def prepare_attempt(

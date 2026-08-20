@@ -6,13 +6,15 @@ This module is the cleaned implementation of the simplified Route-Hacker flow:
 offline guideline clustering / guideline release
   -> online guideline-conditioned anchor recall
   -> per-anchor Codex harness audit
-  -> audit report with risk/no-risk, confidence, and PoC handoff locations
-  -> later PoC agent instrumentation and dynamic validation
+  -> bounded audit findings with frozen stage-2 receipts
+  -> Runtime V2 exact-revision environment -> PoC developer -> independent verifier
 ```
 
-The implementation keeps the boundary intentionally small. Retrieval proposes
-anchors. The audit agent decides `risk` or `no-risk`. The PoC stage is a handoff
-contract in the audit report, not a hidden reducer or schema-heavy verifier.
+The implementation keeps retrieval and audit separately measurable. Retrieval
+proposes anchors and the audit agent emits localized findings. The confirmation
+bridge creates finding-level Runtime V2 tasks and accepts a confirmation only
+when the runtime, PoC developer, and independent verifier receipts bind the
+same finding and exact vulnerable checkout.
 
 ## Files
 
@@ -38,6 +40,12 @@ contract in the audit report, not a hidden reducer or schema-heavy verifier.
   - Converts completed `risk` audit rows into PoC-agent handoff packets.
   - Extracts `file:line` candidates from the report body without claiming they
     are final proof.
+- `scripts/bridge_audit_findings_to_runtime_poc.py`
+  - Converts a formal grouped stage-2 receipt into immutable finding-level
+    Runtime V2 tasks, each requiring an exact-revision source attestation.
+  - Reduces Runtime V2, PoC developer, and independent verifier receipts.
+  - Counts `CONFIRMED` only after all lineage, artifact, evidence, reproduce
+    command, and independent-verifier checks pass.
 - `tests/`
   - Unit tests for footer parsing, command-event validation, QA case selection,
     prompt construction, and deterministic guideline derivation.
@@ -312,10 +320,7 @@ python new-impl/guideline-agent-pipeline/scripts/run_hcvr_backend_b_model_queue.
   --resume
 ```
 
-The launcher writes a compact Top-200 projection under `$RUN_ROOT/input/`,
-records any cases with fewer than 200 available mechanical candidates in the
-projection manifest, and then runs `run_hcvr_ablation_a.py` one case at a time
-with:
+The launcher writes a compact Top-200 projection under `$RUN_ROOT/input/`, records any cases with fewer than 200 available mechanical candidates in the projection manifest, and then runs `run_hcvr_ablation_a.py` one case at a time with:
 
 ```text
 --anchor-budget 200
@@ -416,8 +421,10 @@ function names, and line numbers from the released guideline text.
 ## PoC Handoff
 
 The PoC agent is downstream of this module. It should consume risk reports and
-use the report body to choose instrumentation points. This module does not run
-dynamic PoCs itself.
+use the report body to choose instrumentation points. The legacy extractor
+below remains useful for one-shot audit reports. Formal Experiment A uses the
+strict bridge shown next, so Runtime V2 and both PoC roles retain exact finding
+and checkout lineage.
 
 Recommended handoff fields are already present in the report text:
 
@@ -434,6 +441,78 @@ python new-impl/guideline-agent-pipeline/scripts/extract_poc_handoff_from_audit.
   --audit-index /path/to/run/audit20/audit_index.jsonl \
   --output /path/to/run/audit20/poc_handoff.jsonl
 ```
+
+### Formal Experiment A Confirmation Bridge
+
+For `GCA(full)`, prepare only the findings emitted by the completed `full`
+stage-2 receipt. The generated `runtime_v2_tasks.jsonl` is submitted to Runtime
+V2 with `submit-jsonl`; each task requires the builder to retain a source
+attestation proving that its observed checkout equals the frozen case revision.
+
+```bash
+FULL=/path/to/experiment-a/full/case_results.jsonl
+CONFIRM=/path/to/experiment-a/full/confirmation
+
+python new-impl/guideline-agent-pipeline/scripts/bridge_audit_findings_to_runtime_poc.py \
+  prepare --stage2-results "$FULL" --output-dir "$CONFIRM"
+
+PYTHONPATH=new-impl/runtime-v2-verifier-redesign/src \
+python new-impl/runtime-v2-verifier-redesign/scripts/runtime_v2.py submit-jsonl \
+  --run-dir /path/to/runtime-v2-run --input "$CONFIRM/runtime_v2_tasks.jsonl"
+```
+
+Run the Runtime V2 worker normally after submission. The bridge-generated rows
+now include immutable `provenance`; Runtime V2 persists it and refuses to mark a
+task `runtime_ready` unless the attempt workspace contains a matching
+`source-attestation.json` with `observed_revision == checkout_revision`.
+
+For every finding that is `runtime_ready`, launch the developer and independent
+verifier with the same immutable request. Both commands require a structured
+receipt; a TraeX exit code of zero alone is recorded as failure. The verifier
+also binds the exact developer receipt by SHA-256.
+
+```bash
+FINDING_DIR="$CONFIRM/findings/poc-<finding-suffix>"
+REQUEST="$FINDING_DIR/confirmation-request.json"
+AUDIT_REPORT="$FINDING_DIR/audit-report.md"
+DEV=/path/to/poc-receipts/poc-<finding-suffix>/developer
+VERIFY=/path/to/poc-receipts/poc-<finding-suffix>/verifier
+
+PYTHONPATH=new-impl/poc-agent-runner/src \
+python -m cli.commands.poc run "$AUDIT_REPORT" \
+  --output-dir "$DEV" --poc-workspace /path/to/poc-workspace \
+  --confirmation-request "$REQUEST" --agent-cwd /path/to/agent-cwd
+
+PYTHONPATH=new-impl/poc-agent-runner/src \
+python -m cli.commands.poc verify "$AUDIT_REPORT" \
+  --output-dir "$VERIFY" --poc-artifact /path/to/poc-artifact \
+  --reproduce-command /path/to/reproduce.sh --verifier-workspace /path/to/verifier-workspace \
+  --confirmation-request "$REQUEST" \
+  --developer-receipt "$DEV/developer-receipt.json" --agent-cwd /path/to/agent-cwd
+```
+
+After the Runtime V2 run and the developer/verifier sessions each write a
+structured receipt, reduce them with:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/bridge_audit_findings_to_runtime_poc.py \
+  reduce --requests "$CONFIRM/confirmation_requests.jsonl" \
+  --runtime-run-dir /path/to/runtime-v2-run \
+  --poc-receipts /path/to/combined-poc-receipts.jsonl \
+  --output-dir "$CONFIRM"
+```
+
+The reducer requires `runtime_ready` *and* passed Runtime V2 verification/audit,
+an exact-revision source attestation, a developer receipt, and a verifier
+receipt bound by developer-receipt SHA-256. A `CONFIRMED` verdict additionally
+requires an existing artifact, evidence path(s), and reproduction command.
+`runtime_ready`, a normal agent process exit, a developer-only claim, or a
+missing artifact cannot increment `Confirmed`. Copy the reducer's
+`confirmation_summary.json` to `full/confirmation/` before rerunning the
+ablation scorer; it is SHA-bound to the same stage-2 receipt.
+
+`-PoC` never resamples audit. It byte-reuses `full/case_results.jsonl`, records
+the source SHA-256 in `minus_poc/stage2_source.json`, and omits confirmation.
 
 ## Test
 

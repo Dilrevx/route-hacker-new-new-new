@@ -51,6 +51,7 @@ class QueueStore:
                     task_id TEXT PRIMARY KEY,
                     prompt TEXT NOT NULL,
                     project_key TEXT,
+                    provenance_json TEXT,
                     priority INTEGER NOT NULL DEFAULT 0,
                     status TEXT NOT NULL DEFAULT 'queued',
                     attempt_index INTEGER NOT NULL DEFAULT 0,
@@ -106,6 +107,7 @@ class QueueStore:
             self._ensure_column(connection, "attempts", "accepted_submission_id", "INTEGER")
             self._ensure_column(connection, "attempts", "audit_path", "TEXT")
             self._ensure_column(connection, "attempts", "reason_json", "TEXT")
+            self._ensure_column(connection, "tasks", "provenance_json", "TEXT")
 
     def _ensure_column(
         self,
@@ -129,6 +131,7 @@ class QueueStore:
         task_id: str,
         prompt: str,
         project_key: str | None = None,
+        provenance: dict[str, str] | None = None,
         priority: int = 0,
     ) -> RuntimeTask:
         task_id = task_id.strip()
@@ -141,15 +144,28 @@ class QueueStore:
             )
         if not prompt:
             raise ValueError("prompt must not be empty")
+        if provenance is not None:
+            if not isinstance(provenance, dict) or not provenance:
+                raise ValueError("provenance must be a non-empty object when supplied")
+            if any(not isinstance(key, str) or not isinstance(value, str) or not value for key, value in provenance.items()):
+                raise ValueError("provenance must contain non-empty string keys and values")
         now = utc_now()
         with self.connect() as connection:
             connection.execute(
                 """
                 INSERT INTO tasks (
-                    task_id, prompt, project_key, priority, created_at, updated_at
-                ) VALUES (?, ?, ?, ?, ?, ?)
+                    task_id, prompt, project_key, provenance_json, priority, created_at, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?)
                 """,
-                (task_id, prompt, project_key or None, int(priority), now, now),
+                (
+                    task_id,
+                    prompt,
+                    project_key or None,
+                    json.dumps(provenance, ensure_ascii=False, sort_keys=True) if provenance else None,
+                    int(priority),
+                    now,
+                    now,
+                ),
             )
             connection.execute(
                 """
@@ -162,6 +178,7 @@ class QueueStore:
             task_id=task_id,
             prompt=prompt,
             project_key=project_key or None,
+            provenance=provenance,
             priority=int(priority),
         )
 
@@ -186,7 +203,7 @@ class QueueStore:
             )
             row = connection.execute(
                 """
-                SELECT task_id, prompt, project_key, priority, status, attempt_index
+                SELECT task_id, prompt, project_key, provenance_json, priority, status, attempt_index
                 FROM tasks AS candidate
                 WHERE candidate.status = 'queued'
                   AND candidate.cancel_requested = 0
@@ -225,6 +242,7 @@ class QueueStore:
                 task_id=row["task_id"],
                 prompt=row["prompt"],
                 project_key=row["project_key"],
+                provenance=(json.loads(row["provenance_json"]) if row["provenance_json"] else None),
                 priority=row["priority"],
                 status="running",
                 attempt_index=row["attempt_index"],
@@ -523,7 +541,7 @@ class QueueStore:
         with self.connect() as connection:
             rows = connection.execute(
                 """
-                SELECT task_id, project_key, priority, status, attempt_index,
+                SELECT task_id, project_key, provenance_json, priority, status, attempt_index,
                        created_at, updated_at, final_json
                 FROM tasks
                 ORDER BY priority DESC, created_at, task_id

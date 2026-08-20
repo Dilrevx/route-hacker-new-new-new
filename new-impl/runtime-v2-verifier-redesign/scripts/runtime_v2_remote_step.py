@@ -21,6 +21,7 @@ def task_from_dict(value: dict[str, Any]) -> RuntimeTask:
         task_id=value["task_id"],
         prompt=value["prompt"],
         project_key=value.get("project_key"),
+        provenance=value.get("provenance"),
         priority=int(value.get("priority", 0)),
         status=value.get("status", "queued"),
         attempt_index=int(value.get("attempt_index", 0)),
@@ -347,12 +348,16 @@ def finish_attempt(
             message=str(agent_run["error"]),
             evidence_path=str(attempt_dir / "agent_run.json"),
         )
+    if reason is None and verification is not None and verification.get("status") == "passed" and audit is not None and audit.get("status") == "passed":
+        from route_hacker.runtime_v2.orchestrator import source_attestation_reason
+        reason = source_attestation_reason(task, attempt_dir)
     error = reason.message if reason else None
     passed = (
         verification is not None
         and verification.get("status") == "passed"
         and audit is not None
         and audit.get("status") == "passed"
+        and reason is None
     )
     summary = {
         "attempt_id": attempt_id,

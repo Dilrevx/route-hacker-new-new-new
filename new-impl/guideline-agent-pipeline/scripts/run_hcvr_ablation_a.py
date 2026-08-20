@@ -3,8 +3,10 @@
 
 The script is intentionally scoped to the paper-eval 143-case ablation run:
 it verifies the frozen dataset receipts, runs a case-level bounded audit prompt
-for each variant, and scores emitted findings against the case vulnerability
-trace locations with one comparable scorer.
+for each variant, and scores emitted findings against frozen reference locations.
+Direct source-location matches are deterministic.  A finding that does not
+match mechanically is sent to a separate read-only harness process for a narrow
+localization decision; the judge never performs a new vulnerability audit.
 """
 
 from __future__ import annotations
@@ -64,6 +66,8 @@ VARIANT_LABELS = {
     "minus_guideline": "-Guideline",
     "minus_poc": "-PoC",
 }
+
+LOCALIZATION_VERDICTS = {"match", "no_match", "inconclusive"}
 
 
 def read_json(path: Path) -> dict[str, Any]:
@@ -264,6 +268,8 @@ def select_ranked_anchors(
     if not recall:
         raise ValueError(f"missing recall result for {case['identity_key']}")
     anchors = list(recall.get("top_anchors") or [])[:budget]
+    if not anchors:
+        raise ValueError(f"recall result has no anchors for {case['identity_key']}")
     return [normalize_anchor(anchor, index) for index, anchor in enumerate(anchors, start=1)]
 
 
@@ -383,32 +389,40 @@ def group_anchors_by_directory(
 ) -> list[list[dict[str, Any]]]:
     """Partition every selected anchor into directory-local bounded groups.
 
-    The first unassigned (therefore lowest-rank) anchor seeds a group.  The
-    nearest remaining anchors in the repository directory tree fill that group,
-    with retrieval rank resolving ties.  This deterministic greedy clustering
-    keeps all Top-K anchors while giving one audit invocation a coherent local
-    exploration surface.
+    The first unassigned anchor in a content-derived canonical order seeds a
+    group. The nearest remaining anchors in the repository directory tree fill
+    that group, with file/span identity resolving ties. This deterministic
+    greedy clustering keeps all Top-K anchors while giving one audit invocation
+    a coherent local exploration surface. It intentionally does not consume
+    retrieval rank: otherwise the -Rank ablation would still let rank choose
+    which candidates share a bounded audit session.
     """
     if group_size < 1:
         raise ValueError("anchor group size must be positive")
-    # The full and -Rank variants must share group membership.  Retrieval rank
-    # deterministically seeds the same directory-local groups for both; -Rank
-    # removes rank only from the order displayed to the harness.
-    remaining = sorted(anchors, key=lambda anchor: int(anchor.get("rank") or 0))
+    # The full and -Rank variants must share group membership without rank
+    # influencing that membership. Rank is only a presentation/order signal in
+    # the full prompt; the -Rank prompt removes it entirely.
+    canonical_key = lambda anchor: (
+        "/".join(anchor_directory(anchor)),
+        str(anchor.get("file") or ""),
+        int(anchor.get("start_line") or 0),
+        int(anchor.get("end_line") or 0),
+        str(anchor.get("symbol") or ""),
+        str(anchor.get("anchor_id") or ""),
+    )
+    remaining = sorted(anchors, key=canonical_key)
     groups: list[list[dict[str, Any]]] = []
     while remaining:
         seed = remaining.pop(0)
         group = [seed]
         while remaining and len(group) < group_size:
             # Use the closest current member so a chain of nearby directories
-            # remains together; rank makes the result stable.
+            # remains together; source identity makes the result stable.
             best_index = min(
                 range(len(remaining)),
                 key=lambda index: (
                     min(directory_distance(remaining[index], member) for member in group),
-                    int(remaining[index].get("rank") or 0),
-                    str(remaining[index].get("file") or ""),
-                    str(remaining[index].get("anchor_id") or ""),
+                    canonical_key(remaining[index]),
                 ),
             )
             group.append(remaining.pop(best_index))
@@ -1080,6 +1094,204 @@ def finding_hits_truth(finding: dict[str, Any], truth: list[dict[str, Any]]) -> 
     return None
 
 
+def run_localization_judge(
+    *,
+    audit_runner: str,
+    codex: str,
+    opencode: str,
+    model: str,
+    codex_home: Path,
+    temp_root: Path,
+    output_dir: Path,
+    snapshot: Path,
+    case: dict[str, Any],
+    finding: dict[str, Any],
+    finding_index: int,
+    truth: list[dict[str, Any]],
+    timeout: int,
+) -> dict[str, Any]:
+    """Run a distinct read-only harness process and persist its decision receipt."""
+    reports_dir = output_dir / "localization_judges"
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    slug = f"{safe_slug(case['identity_key'])}.finding-{finding_index:04d}"
+    prompt_path = reports_dir / f"{slug}.prompt.txt"
+    events_path = reports_dir / f"{slug}.events.jsonl"
+    report_path = reports_dir / f"{slug}.json"
+    receipt_path = reports_dir / f"{slug}.receipt.json"
+    prompt = build_localization_judge_prompt(finding=finding, truth=truth)
+    prompt_path.write_text(prompt, encoding="utf-8")
+    environment = os.environ.copy()
+    environment["CODEX_HOME"] = str(codex_home)
+    environment["TMPDIR"] = str(temp_root)
+    started = time.time()
+    token_usage: dict[str, Any] = {}
+    if audit_runner == "opencode":
+        command = [opencode, "run", "--format", "json", "--model", model, prompt]
+        returncode, output_text, state = run_command(
+            command, cwd=snapshot, env=environment, input_text="", timeout=timeout
+        )
+        events_path.write_text(output_text, encoding="utf-8")
+        report_text, token_usage = parse_opencode_events(output_text)
+        report_path.write_text(report_text, encoding="utf-8")
+        if state == "completed" and returncode != 0:
+            state = "opencode_failed"
+    else:
+        command = [
+            codex, "exec", "--ignore-rules", "--ephemeral", "--sandbox", "read-only",
+            "--skip-git-repo-check", "--cd", str(snapshot), "--model", model,
+            "--output-last-message", str(report_path), "--json", "--color", "never", "-",
+        ]
+        returncode, output_text, state = run_command(
+            command, cwd=snapshot, env=environment, input_text=prompt, timeout=timeout
+        )
+        events_path.write_text(output_text, encoding="utf-8")
+        if state == "completed" and returncode != 0:
+            state = "codex_failed"
+        report_text = report_path.read_text(encoding="utf-8") if report_path.is_file() else ""
+    parsed = extract_json_object(report_text)
+    valid, error, matched_ids = validate_localization_verdict(parsed, truth)
+    if state == "completed" and not valid:
+        state = "invalid_judge_report"
+    receipt = {
+        "schema_version": "hcvr_ablation_a_localization_judge.v1",
+        "identity_key": case["identity_key"],
+        "finding_index": finding_index,
+        "finding": finding,
+        "checkout_revision": case["revisions"]["checkout_revision"],
+        "state": state,
+        "verdict": (parsed or {}).get("verdict") if isinstance(parsed, dict) else None,
+        "matched_reference_ids": matched_ids,
+        "valid": valid,
+        "validation_error": error,
+        "audit_runner": audit_runner,
+        "model": model,
+        "returncode": returncode,
+        "duration_seconds": round(time.time() - started, 3),
+        "token_usage": token_usage,
+        "prompt": str(prompt_path),
+        "prompt_sha256": sha256_file(prompt_path),
+        "events": str(events_path),
+        "report": str(report_path),
+        "report_sha256": sha256_file(report_path) if report_path.is_file() else None,
+    }
+    write_json(receipt_path, receipt)
+    receipt["receipt"] = str(receipt_path)
+    receipt["receipt_sha256"] = sha256_file(receipt_path)
+    return receipt
+
+
+def reuse_localization_judge_receipt(
+    *,
+    receipts_dir: Path,
+    case: dict[str, Any],
+    finding: dict[str, Any],
+    finding_index: int,
+    truth: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Load a Full localization decision for -PoC without resampling a judge."""
+    slug = f"{safe_slug(case['identity_key'])}.finding-{finding_index:04d}.receipt.json"
+    receipt_path = receipts_dir / "localization_judges" / slug
+    if not receipt_path.is_file():
+        return {
+            "state": "missing_judge_receipt",
+            "valid": False,
+            "validation_error": f"missing reused localization receipt: {receipt_path}",
+        }
+    receipt = read_json(receipt_path)
+    if receipt.get("identity_key") != case["identity_key"]:
+        return {"state": "invalid_reused_judge_receipt", "valid": False, "validation_error": "identity mismatch"}
+    if receipt.get("finding_index") != finding_index:
+        return {"state": "invalid_reused_judge_receipt", "valid": False, "validation_error": "finding index mismatch"}
+    if receipt.get("finding") != finding:
+        return {"state": "invalid_reused_judge_receipt", "valid": False, "validation_error": "finding payload mismatch"}
+    valid, error, matched = validate_localization_verdict(
+        {"verdict": receipt.get("verdict"), "matched_reference_ids": receipt.get("matched_reference_ids"), "reason": "reused receipt"},
+        truth,
+    )
+    if receipt.get("state") != "completed" or not receipt.get("valid") or not valid:
+        return {
+            "state": "invalid_reused_judge_receipt",
+            "valid": False,
+            "validation_error": error or str(receipt.get("validation_error") or "judge receipt incomplete"),
+        }
+    receipt = dict(receipt)
+    receipt["matched_reference_ids"] = matched
+    receipt["reused_from"] = str(receipt_path)
+    receipt["reused_from_sha256"] = sha256_file(receipt_path)
+    return receipt
+
+
+def build_localization_judge_prompt(
+    *,
+    finding: dict[str, Any],
+    truth: list[dict[str, Any]],
+) -> str:
+    """Render a narrow, independent localization-only harness task."""
+    references = [
+        {
+            "reference_id": index,
+            "file": item.get("file"),
+            "start_line": item.get("start_line"),
+            "end_line": item.get("end_line"),
+            "symbol": item.get("symbol") or "",
+            "span_kind": item.get("span_kind") or "",
+        }
+        for index, item in enumerate(truth, start=1)
+    ]
+    payload = json.dumps(
+        {"finding": finding, "frozen_reference_locations": references},
+        ensure_ascii=False,
+        indent=2,
+        sort_keys=True,
+    )
+    return """You are an independent localization judge. Decide only whether
+an emitted finding identifies the same vulnerable implementation location as
+at least one frozen reference location in this checkout. This is NOT a
+vulnerability audit: do not look for other bugs, do not use the internet, and
+do not use git history, patches, advisories, CVE text, or external writeups.
+
+You may read only the minimum relevant source around the supplied finding and
+frozen reference locations to resolve enclosing-method ownership, aliases, or
+line drift. Return exactly one JSON object and no Markdown:
+{
+  "verdict": "match" | "no_match" | "inconclusive",
+  "matched_reference_ids": [integer],
+  "reason": "short localization-only explanation"
+}
+
+A "match" verdict is allowed only when the finding and at least one reference
+identify the same implementation method or semantic code location. Return
+"inconclusive" when the supplied evidence cannot establish that relationship.
+
+Input JSON:
+""" + payload
+
+
+def validate_localization_verdict(
+    parsed: Any,
+    truth: list[dict[str, Any]],
+) -> tuple[bool, str, list[int]]:
+    if not isinstance(parsed, dict):
+        return False, "judge report is not a JSON object", []
+    verdict = parsed.get("verdict")
+    if verdict not in LOCALIZATION_VERDICTS:
+        return False, f"invalid judge verdict: {verdict!r}", []
+    matched = parsed.get("matched_reference_ids")
+    if not isinstance(matched, list) or any(
+        not isinstance(value, int) or value < 1 or value > len(truth)
+        for value in matched
+    ):
+        return False, "matched_reference_ids must be valid one-based reference ids", []
+    if verdict == "match" and not matched:
+        return False, "match verdict requires at least one matched reference id", []
+    if verdict != "match" and matched:
+        return False, "non-match verdict must not name matched reference ids", []
+    reason = parsed.get("reason")
+    if not isinstance(reason, str) or not reason.strip():
+        return False, "judge reason is required", []
+    return True, "", matched
+
+
 def case_receipt_is_complete(row: dict[str, Any] | None) -> tuple[bool, str]:
     """Return whether a case row is eligible for a formal comparison.
 
@@ -1112,14 +1324,28 @@ def score_variant(
     cases_by_identity: dict[str, dict[str, Any]],
     *,
     denominator: int,
+    results_path: Path | None = None,
+    stage2_source_variant: str | None = None,
+    localization_judges: bool = False,
+    localization_audit_runner: str = "codex",
+    localization_codex: str = "codex",
+    localization_opencode: str = "opencode",
+    localization_model: str = "",
+    localization_codex_home: Path | None = None,
+    localization_temp_root: Path | None = None,
+    localization_snapshot_root: Path | None = None,
+    localization_timeout: int = 300,
+    localization_reuse_dir: Path | None = None,
 ) -> dict[str, Any]:
-    rows = list(read_jsonl(variant_dir / "case_results.jsonl")) if (variant_dir / "case_results.jsonl").is_file() else []
+    source_path = results_path or (variant_dir / "case_results.jsonl")
+    rows = list(read_jsonl(source_path)) if source_path.is_file() else []
     rows_by_identity = {row["identity_key"]: row for row in rows}
     case_scores: list[dict[str, Any]] = []
     tp = 0
     fp = 0
     fn = 0
     completeness_failures: list[dict[str, str]] = []
+    localization_failures: list[dict[str, str]] = []
     for identity, case in cases_by_identity.items():
         row = rows_by_identity.get(identity)
         receipt_complete, receipt_error = case_receipt_is_complete(row)
@@ -1130,13 +1356,76 @@ def score_variant(
         case_alarms = len(findings)
         matched_finding_indexes: list[int] = []
         hit_methods: list[dict[str, Any]] = []
+        finding_localizations: list[dict[str, Any]] = []
         for index, finding in enumerate(findings):
             hit_method = finding_hits_truth(finding, truth)
-            if hit_method is None:
+            if hit_method is not None:
+                matched_finding_indexes.append(index)
+                if hit_method not in hit_methods:
+                    hit_methods.append(hit_method)
+                finding_localizations.append(
+                    {"finding_index": index, "decision": "deterministic_match", "reference": hit_method}
+                )
                 continue
-            matched_finding_indexes.append(index)
-            if hit_method not in hit_methods:
-                hit_methods.append(hit_method)
+            if not localization_judges:
+                finding_localizations.append(
+                    {"finding_index": index, "decision": "deterministic_no_match"}
+                )
+                continue
+            if not truth:
+                localization_failures.append({"identity_key": identity, "reason": "no_frozen_reference_locations"})
+                finding_localizations.append(
+                    {"finding_index": index, "decision": "judge_unavailable_no_reference"}
+                )
+                continue
+            if not (localization_codex_home and localization_temp_root and localization_snapshot_root):
+                raise ValueError("localization judge paths are required when localization_judges is enabled")
+            snapshot = localization_snapshot_root / f"{safe_slug(case['repository']['repo_key'])}__{case['revisions']['checkout_revision'][:12]}"
+            if not snapshot.is_dir():
+                localization_failures.append({"identity_key": identity, "reason": "missing_frozen_snapshot"})
+                finding_localizations.append(
+                    {"finding_index": index, "decision": "judge_unavailable_missing_snapshot"}
+                )
+                continue
+            judge = (
+                reuse_localization_judge_receipt(
+                    receipts_dir=localization_reuse_dir,
+                    case=case,
+                    finding=finding,
+                    finding_index=index,
+                    truth=truth,
+                )
+                if localization_reuse_dir is not None
+                else run_localization_judge(
+                    audit_runner=localization_audit_runner,
+                    codex=localization_codex,
+                    opencode=localization_opencode,
+                    model=localization_model,
+                    codex_home=localization_codex_home,
+                    temp_root=localization_temp_root,
+                    output_dir=variant_dir,
+                    snapshot=snapshot,
+                    case=case,
+                    finding=finding,
+                    finding_index=index,
+                    truth=truth,
+                    timeout=localization_timeout,
+                )
+            )
+            finding_localizations.append(
+                {"finding_index": index, "decision": "independent_judge", "receipt": judge}
+            )
+            if judge.get("state") != "completed" or not judge.get("valid"):
+                localization_failures.append(
+                    {"identity_key": identity, "reason": f"judge_state={judge.get('state')}"}
+                )
+                continue
+            if judge.get("verdict") == "match":
+                matched_finding_indexes.append(index)
+                matched = [truth[ref_id - 1] for ref_id in judge.get("matched_reference_ids") or []]
+                for method in matched:
+                    if method not in hit_methods:
+                        hit_methods.append(method)
         # The experiment contract evaluates recall at case granularity.  Select
         # at most one true alarm per case (the first truth-localizing emitted
         # finding in output order); every other emitted finding remains an
@@ -1164,6 +1453,7 @@ def score_variant(
                 "matched_finding_count": len(matched_finding_indexes),
                 "scored_true_finding_index": matched_finding_indexes[0] if matched_finding_indexes else None,
                 "truth_method_count": len(truth),
+                "localization_decisions": finding_localizations,
             }
         )
     recall = tp / denominator if denominator else 0.0
@@ -1171,15 +1461,29 @@ def score_variant(
     precision = tp / alarms if alarms else 0.0
     f1 = (2 * tp) / (2 * tp + fp + fn) if (2 * tp + fp + fn) else 0.0
     states = collections.Counter((row.get("state") or "unknown") for row in rows)
+    stage2_formal_eligible = not completeness_failures and len(rows_by_identity) == denominator
+    localization_formal_eligible = not localization_failures
+    is_full_variant = variant_dir.name == "full"
     score = {
         "schema_version": "hcvr_ablation_a_score.v1",
         "variant": variant_dir.name,
         "variant_label": VARIANT_LABELS.get(variant_dir.name, variant_dir.name),
         "case_count": denominator,
         "completed_count": states["completed"],
-        "formal_eligible": not completeness_failures and len(rows_by_identity) == denominator,
+        "stage2_formal_eligible": stage2_formal_eligible,
+        "formal_eligible": stage2_formal_eligible and localization_formal_eligible and not is_full_variant,
+        "confirmation_required": is_full_variant,
+        "confirmation_eligible": not is_full_variant,
+        "formal_blocker": (
+            "confirmation_pending" if is_full_variant and stage2_formal_eligible and localization_formal_eligible
+            else "localization_judge_incomplete" if not localization_formal_eligible else None
+        ),
         "completeness_failure_count": len(completeness_failures),
         "completeness_failure_examples": completeness_failures[:10],
+        "localization_judges_enabled": localization_judges,
+        "localization_formal_eligible": localization_formal_eligible,
+        "localization_failure_count": len(localization_failures),
+        "localization_failure_examples": localization_failures[:10],
         "state_counts": dict(states),
         "tp": tp,
         "fp": fp,
@@ -1189,12 +1493,54 @@ def score_variant(
         "f1": f1,
         "alarms": alarms,
         "confirmed": "N/A (confirmation stage not integrated)",
+        "stage2_results_path": str(source_path.resolve()),
+        "stage2_results_sha256": sha256_file(source_path) if source_path.is_file() else None,
+        "stage2_source_variant": stage2_source_variant or variant_dir.name,
         "case_scores": case_scores,
     }
     write_json(variant_dir / "score_summary.json", score)
     with (variant_dir / "case_scores.jsonl").open("w", encoding="utf-8") as handle:
         for row in case_scores:
             handle.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n")
+    return score
+
+
+def attach_confirmation_summary(variant_dir: Path, score: dict[str, Any]) -> dict[str, Any]:
+    """Attach only a receipt-bound stage-3 total to the GCA(full) score.
+
+    Confirmation can filter/label emitted alarms, but it cannot change the
+    common stage-2 TP/FP/FN scorer used for the ablation table.
+    """
+    path = variant_dir / "confirmation" / "confirmation_summary.json"
+    if not path.is_file():
+        return score
+    summary = read_json(path)
+    expected_stage2_sha = score.get("stage2_results_sha256")
+    observed_stage2_sha = summary.get("stage2_results_sha256")
+    if not expected_stage2_sha or observed_stage2_sha != expected_stage2_sha:
+        raise ValueError(
+            "confirmation summary is not bound to the scored full stage-2 receipt: "
+            f"expected={expected_stage2_sha} observed={observed_stage2_sha}"
+        )
+    count = summary.get("confirmed_count")
+    finding_count = summary.get("finding_count")
+    if not isinstance(count, int) or count < 0:
+        raise ValueError("confirmation_summary.confirmed_count must be a non-negative integer")
+    if not isinstance(finding_count, int) or finding_count != score.get("alarms"):
+        raise ValueError(
+            "confirmation summary finding_count must equal full stage-2 alarm count; "
+            f"expected={score.get('alarms')} observed={finding_count}"
+        )
+    score = dict(score)
+    if not score.get("stage2_formal_eligible"):
+        raise ValueError("cannot attach confirmation to an incomplete stage-2 receipt")
+    score["confirmed"] = count
+    score["confirmation_eligible"] = True
+    score["formal_eligible"] = True
+    score["formal_blocker"] = None
+    score["confirmation_summary_path"] = str(path.resolve())
+    score["confirmation_summary_sha256"] = sha256_file(path)
+    write_json(variant_dir / "score_summary.json", score)
     return score
 
 
@@ -1214,6 +1560,43 @@ def run_variant(
 ) -> dict[str, Any]:
     variant_dir = args.output_dir / variant
     variant_dir.mkdir(parents=True, exist_ok=True)
+    if variant == "minus_poc":
+        # -PoC is a stage-3 ablation, not an independently sampled audit run.
+        # It must score the exact stage-2 evidence used by GCA(full); otherwise
+        # model nondeterminism is confounded with the confirmation-stage delta.
+        full_results = args.output_dir / "full" / "case_results.jsonl"
+        if not full_results.is_file():
+            raise FileNotFoundError(
+                "-PoC requires the immutable GCA(full) stage-2 receipt at "
+                f"{full_results}; run full first or resume a completed full run"
+            )
+        stage2_source = {
+            "schema_version": "hcvr_ablation_a_stage2_reuse.v1",
+            "variant": "minus_poc",
+            "source_variant": "full",
+            "source_path": str(full_results.resolve()),
+            "source_sha256": sha256_file(full_results),
+            "reason": "-PoC reuses GCA(full) stage-2 receipt; it disables only stage 3",
+        }
+        write_json(variant_dir / "stage2_source.json", stage2_source)
+        cases_by_identity = {case["identity_key"]: case for case in cases}
+        return score_variant(
+            variant_dir,
+            cases_by_identity,
+            denominator=len(cases),
+            results_path=full_results,
+            stage2_source_variant="full",
+            localization_judges=args.localization_judges,
+            localization_audit_runner=args.localization_audit_runner,
+            localization_codex=args.localization_codex,
+            localization_opencode=args.localization_opencode,
+            localization_model=args.localization_model,
+            localization_codex_home=args.codex_home.resolve(),
+            localization_temp_root=args.localization_temp_root.resolve(),
+            localization_snapshot_root=args.snapshot_root.resolve(),
+            localization_timeout=args.localization_timeout,
+            localization_reuse_dir=args.output_dir / "full",
+        )
     result_path = variant_dir / "case_results.jsonl"
     existing_rows = load_existing_case_results(result_path) if args.resume else {}
     codex_path = shutil.which(args.codex) or args.codex
@@ -1329,7 +1712,21 @@ def run_variant(
                     flush=True,
                 )
     cases_by_identity = {case["identity_key"]: case for case in cases}
-    return score_variant(variant_dir, cases_by_identity, denominator=len(cases))
+    score = score_variant(
+        variant_dir,
+        cases_by_identity,
+        denominator=len(cases),
+        localization_judges=args.localization_judges,
+        localization_audit_runner=args.localization_audit_runner,
+        localization_codex=args.localization_codex,
+        localization_opencode=args.localization_opencode,
+        localization_model=args.localization_model,
+        localization_codex_home=args.codex_home.resolve(),
+        localization_temp_root=args.localization_temp_root.resolve(),
+        localization_snapshot_root=args.snapshot_root.resolve(),
+        localization_timeout=args.localization_timeout,
+    )
+    return attach_confirmation_summary(variant_dir, score) if variant == "full" else score
 
 
 def format_rate(value: float) -> str:
@@ -1351,6 +1748,12 @@ def write_run_report(
             rows.append(f"{VARIANT_LABELS[variant]} | PENDING | PENDING | PENDING | PENDING | N/A")
             continue
         if not score.get("formal_eligible"):
+            if score.get("formal_blocker") == "confirmation_pending":
+                rows.append(
+                    f"{score['variant_label']} | PENDING_CONFIRMATION | PENDING_CONFIRMATION | "
+                    f"PENDING_CONFIRMATION | PENDING_CONFIRMATION | N/A"
+                )
+                continue
             rows.append(
                 f"{score['variant_label']} | INCOMPLETE | INCOMPLETE | INCOMPLETE | INCOMPLETE | "
                 f"N/A (receipt failures={score.get('completeness_failure_count', 'unknown')})"
@@ -1384,7 +1787,7 @@ def write_run_report(
 
 本报告覆盖 Experiment A（三项消融）。目标是用同一 143-case paper-eval 集合、同一审计后端、同一候选 anchor budget 和同一 scorer，比较完整 GCA 链路与三个消融项：关闭 trace 排序、清空 guideline 约束、以及去掉 PoC 确认阶段。消融解释的 claim 是：召回排序、guideline 义务约束、以及后续确认阶段分别贡献定位效率、审计约束和 false-alarm 削减证据。
 
-当前脚本真实运行 stage-2 bounded audit，并对模型 emitted finding 做统一 TP/FP/FN 评分。PoC confirmation 子系统在本仓库 README 中仍是 handoff contract，因此本次自动报告把 Confirmed 记录为 N/A，并在异常与缺口中列明，避免把未运行的动态确认写成论文数字。
+当前脚本真实运行 stage-2 bounded audit，并对模型 emitted finding 做统一 TP/FP/FN 评分。GCA(full) 仅在 `full/confirmation/confirmation_summary.json` 通过 finding、revision、runtime provenance、PoC artifact/evidence 与独立 verifier verdict 的全部绑定校验后，才填写 Confirmed 并成为 formal eligible；否则报告行显示 `PENDING_CONFIRMATION`，而不是可贴论文的数字。`-PoC` 始终复用 full 的同一份 stage-2 receipt，并且不运行/不读取 confirmation receipt。
 
 ## 2. 数据集与环境
 
@@ -1403,21 +1806,22 @@ def write_run_report(
 - Branch/commit: `{args.git_branch}` / `{args.git_commit}`
 - Audit runner: `{args.audit_runner}`
 - Audit backend model: `{args.model}`
-- Anchor budget: `{args.anchor_budget}`
+- Requested maximum anchor budget: `{args.anchor_budget}`
+- Actual recalled candidates per selected case: min `{args.actual_anchor_count_min}`, max `{args.actual_anchor_count_max}`, cases below requested maximum `{args.actual_anchor_count_below_budget}`. Each case consumes `K_i=min(requested budget, available recalled candidates)`; every ablation variant shares the same `K_i` for that case.
 - Audit timeout per 10-anchor group: `{args.group_timeout}` seconds
 - Concurrency: `{args.concurrency}`
 - Optional inline source context: `{args.inline_source_context}`; anchors `{args.inline_context_anchors}`, context lines `{args.inline_context_lines}`, max chars `{args.inline_context_max_chars}`. It is supplementary and does not restrict agentic checkout exploration.
 - Candidate protocol: consume Top-K `{args.anchor_budget}` candidates through directory-local groups of `{args.anchor_group_size}`. Every candidate is owned by exactly one group. Each group has an independent read-only harness session, log, and `{args.group_timeout}`-second timeout; a case completes after all of its groups have been attempted.
 - Audit-stage guideline overrides: `{args.guideline_overrides}` (SHA-256 `{sha256_file(args.guideline_overrides)}`; types `{sorted(args.guideline_overrides_map)}`). They replace only the matching type's audit obligation and do not alter the frozen recall result file.
-- Randomness control: deterministic case allowlist order, deterministic Top-K recall receipt, deterministic rank-removed file/line ordering for -Rank, and deterministic directory-local grouping; no sampling parameter is set by the harness.
+- Randomness control: deterministic case allowlist order, deterministic Top-K recall receipt, deterministic rank-removed file/line ordering for -Rank, and deterministic directory-local grouping derived only from source paths/spans (not retrieval rank); no sampling parameter is set by the harness.
 
 ## 3. 方法与配置
 
-固定部分：143-case allowlist、vulnerable checkout、repository snapshot materialization、同一个冻结的 Top-K recall receipt、anchor budget、directory-local group membership、audit backend model、timeout 和 scorer 在所有行中共享。所有变体都消费同一个 `{args.anchor_budget}`-anchor Top-K 集合，来源为 `{args.recall_results}`。每个 group 只有在 `candidate_dispositions` 与其输入的 anchor ID 一一精确对应时才可以标记 completed；少一个、重复一个或转写错误都作为无效 receipt 重跑。scorer 将 vulnerability trace nodes 作为冻结的 vulnerable-method proxy。每个 case 最多产生一个 TP：若多个 finding 都命中该 case 的 truth，仅首个命中作为 TP，其余仍计为 emitted alarms/FP；因此逐行恒有 `Alarms = TP + FP`，FN 保持 case-level 定义。
+固定部分：143-case allowlist、vulnerable checkout、repository snapshot materialization、同一个冻结的 Top-K recall receipt、per-case `K_i=min({args.anchor_budget}, available)`、directory-local group membership、audit backend model、timeout 和 scorer 在所有行中共享。每个 group 只有在 `candidate_dispositions` 与其输入的 anchor ID 一一精确对应时才可以标记 completed；少一个、重复一个或转写错误都作为无效 receipt 重跑。scorer 将 vulnerability trace nodes 作为冻结的 vulnerable-method proxy。每个 case 最多产生一个 TP：若多个 finding 都命中该 case 的 truth，仅首个命中作为 TP，其余仍计为 emitted alarms/FP；因此逐行恒有 `Alarms = TP + FP`，FN 保持 case-level 定义。
 
-GCA(full): uses guideline-conditioned ranked anchors and the audit-only type guideline projected from `build_guideline`（不传递 case description、CVE、fix 或 truth location）。The stage-2 emitted finding is scored here; dynamic confirmation is not available in this script and is recorded as N/A.
+GCA(full): uses guideline-conditioned ranked anchors and the audit-only type guideline projected from `build_guideline`（不传递 case description、CVE、fix 或 truth location）。The stage-2 emitted finding is scored here. Stage 3 consumes the emitted findings through `bridge_audit_findings_to_runtime_poc.py`; it can fill Confirmed only after receipt-bound runtime/PoC/independent-verifier evidence is present.
 
--Rank: keeps precisely the same Top-K anchor IDs, files, line spans and directory-local group membership as full, but deterministically reorders candidates within each group by file/line and removes every rank field from the harness prompt. This row therefore isolates rank priority without changing candidate coverage or the group-level budget allocation.
+-Rank: keeps precisely the same Top-K anchor IDs, files, line spans and directory-local group membership as full. Group membership is source-derived and rank-independent. -Rank deterministically reorders candidates within each group by file/line and removes every rank field from the harness prompt. This row therefore isolates rank priority without changing candidate coverage or the group-level budget allocation.
 
 -Guideline: keeps the ranked anchors and audit budget fixed but replaces the case-specific guideline with the generic prompt below. The prompt intentionally omits both the HCVR family/type label and any case-specific vulnerability metadata.
 
@@ -1425,7 +1829,7 @@ GCA(full): uses guideline-conditioned ranked anchors and the audit-only type gui
 {GENERIC_AUDIT_PROMPT}
 ```
 
--PoC: uses the same ranked anchors and guideline as GCA(full), reports only stage-2 bounded-audit findings, and does not run the confirmation handoff. This repository currently has no integrated instrumented confirmation reducer, so it is a two-stage protocol row only after a corresponding full three-stage runner exists; until then its Confirmed value remains explicitly unavailable rather than a fabricated zero.
+-PoC: reuses the byte-identical `full/case_results.jsonl` stage-2 receipt (the source path and SHA-256 are recorded in `minus_poc/stage2_source.json`), then reports that same stage-2 bounded-audit score without preparing, running, or reading confirmation evidence. This isolates the two-stage versus three-stage delta without resampling the audit model. Its Confirmed column is N/A by definition.
 
 ## 4. 结果
 
@@ -1440,7 +1844,7 @@ Representative hit/miss flips:
 
 ## 5. 异常与缺口
 
-PoC confirmation was not executed because the current `guideline-agent-pipeline` README defines the PoC stage as a handoff contract (`extract_poc_handoff_from_audit.py`) rather than an integrated 143-case instrumented confirmation reducer. Therefore this script cannot yet yield a paper-comparable full-vs--PoC pair, and Confirmed is unavailable rather than zero. Any per-case materialization, model, timeout, JSON-format, or disposition-completeness failures are preserved in each variant's `case_results.jsonl` and summarized in `state_counts` above.
+The confirmation bridge rejects (rather than counts) any runtime that lacks source-attested exact revision lineage, any PoC/verifier receipt lacking finding SHA binding, any missing artifact/evidence/reproduce command for a CONFIRMED verdict, or every verifier result other than CONFIRMED. The present PoC runner still needs to emit these structured receipts automatically after its autonomous sessions; until it does, full Confirmed remains N/A. Any per-case materialization, model, timeout, JSON-format, disposition-completeness, runtime, or confirmation-receipt failures are preserved in the corresponding output roots.
 
 ## 6. 复现入口
 
@@ -1458,6 +1862,7 @@ Primary output files:
 - `{output_dir}/<variant>/case_results.jsonl`
 - `{output_dir}/<variant>/score_summary.json`
 - `{output_dir}/<variant>/case_scores.jsonl`
+- `{output_dir}/full/confirmation/confirmation_summary.json` (only after a valid stage-3 run)
 
 Pure-text table for LaTeX:
 
@@ -1533,6 +1938,11 @@ def main() -> None:
     parser.add_argument("--codex", default="codex")
     parser.add_argument("--opencode", default="opencode")
     parser.add_argument("--model", default="DeepSeek-V4-Pro")
+    parser.add_argument(
+        "--localization-judges",
+        action="store_true",
+        help="For findings without a deterministic frozen-reference match, run a separate localization-only receipt using the same runner, executable, model, and timeout as Stage 2.",
+    )
     parser.add_argument("--variants", type=parse_variants, default=["full", "minus_rank", "minus_guideline", "minus_poc"])
     parser.add_argument("--limit", type=int)
     parser.add_argument("--skip", type=int, default=0)
@@ -1584,6 +1994,13 @@ def main() -> None:
     if args.skip < 0 or (args.limit is not None and args.limit < 1):
         raise SystemExit("skip must be non-negative and limit must be positive when set")
     args.output_dir = args.output_dir.resolve()
+    args.localization_audit_runner = args.audit_runner
+    args.localization_codex = args.codex
+    args.localization_opencode = args.opencode
+    args.localization_model = args.model
+    args.localization_timeout = args.group_timeout
+    args.localization_temp_root = (args.temp_root / "localization-judges").resolve()
+    args.localization_temp_root.mkdir(parents=True, exist_ok=True)
     args.guideline_overrides = args.guideline_overrides.resolve()
     args.guideline_overrides_map = load_guideline_overrides(args.guideline_overrides)
     if args.output_dir.exists() and not args.resume:
@@ -1608,19 +2025,33 @@ def main() -> None:
     expected_run_cases = len(cases)
     needed_identities = {case["identity_key"] for case in cases}
     present_needed = len(needed_identities.intersection(recall_results))
-    if present_needed < expected_run_cases and any(v != "minus_rank" for v in args.variants):
+    if present_needed < expected_run_cases:
         raise ValueError(
             f"recall results cover {present_needed}/{expected_run_cases} selected cases"
         )
+    actual_anchor_counts = [
+        len(select_ranked_anchors(case, recall_results, args.anchor_budget))
+        for case in cases
+    ]
+    args.actual_anchor_count_min = min(actual_anchor_counts) if actual_anchor_counts else 0
+    args.actual_anchor_count_max = max(actual_anchor_counts) if actual_anchor_counts else 0
+    args.actual_anchor_count_below_budget = sum(
+        count < args.anchor_budget for count in actual_anchor_counts
+    )
     repo_root = root.parent
     args.git_branch = git_value(["git", "rev-parse", "--abbrev-ref", "HEAD"], repo_root)
     args.git_commit = git_value(["git", "rev-parse", "HEAD"], repo_root)
     config = {
         "schema_version": "hcvr_ablation_a_config.v3",
+        "runner_script": str(Path(__file__).resolve()),
+        "runner_script_sha256": sha256_file(Path(__file__).resolve()),
         "variants": args.variants,
         "audit_runner": args.audit_runner,
         "model": args.model,
         "anchor_budget": args.anchor_budget,
+        "actual_anchor_count_min": args.actual_anchor_count_min,
+        "actual_anchor_count_max": args.actual_anchor_count_max,
+        "actual_anchor_count_below_budget": args.actual_anchor_count_below_budget,
         "anchor_group_size": args.anchor_group_size,
         "case_count": expected_run_cases,
         "full_dataset_case_count": EXPECTED_CASE_COUNT,
@@ -1629,6 +2060,12 @@ def main() -> None:
         "skip": args.skip,
         "group_timeout": args.group_timeout,
         "concurrency": args.concurrency,
+        "localization_judges": args.localization_judges,
+        "localization_inherits_stage2_runner": True,
+        "localization_audit_runner": args.audit_runner,
+        "localization_model": args.model,
+        "localization_timeout": args.group_timeout,
+        "localization_temp_root": str(args.localization_temp_root),
         "retry_incomplete_groups": args.retry_incomplete_groups,
         "inline_source_context": args.inline_source_context,
         "inline_context_anchors": args.inline_context_anchors,
@@ -1642,12 +2079,13 @@ def main() -> None:
         "git_branch": args.git_branch,
         "git_commit": args.git_commit,
         "scoring": {
-            "tp": "at most one emitted finding per case: the first finding overlapping any vulnerability_trace node",
+            "tp": "at most one emitted finding per case: deterministic frozen-reference overlap/symbol match, or a valid independent localization-judge match receipt",
             "fp": "every emitted finding other than the one scored TP for its case, including duplicate or additional truth-overlapping findings",
             "fn": "case has no emitted finding overlapping any vulnerability_trace node",
             "recall_denominator": expected_run_cases,
             "alarms": "TP+FP; raw emitted finding total after the one-TP-per-case policy",
             "f1": "2*TP/(2*TP+FP+FN)",
+            "unresolved_localization": "when --localization-judges is enabled, every non-deterministic finding requires a valid independent judge receipt; missing/failed receipts make the row formal-ineligible",
         },
     }
     write_json(args.output_dir / "ablation_config.json", config)

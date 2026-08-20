@@ -27,6 +27,11 @@ printf '%s\n' '{{"type":"thread.started","thread_id":"session-test-123"}}'
 printf '%s\n' '{{"type":"item.completed","item":{{"type":"agent_message","text":"CONFIRMED"}}}}'
 printf '%s\n' '{{"type":"turn.completed","usage":{{"input_tokens":{usage - 10},"cached_input_tokens":{cached_tokens},"output_tokens":10,"reasoning_output_tokens":3}}}}'
 printf '%s' 'CONFIRMED' > "$final"
+case "$(basename "$final")" in
+  agent.final.txt) receipt="$(dirname "$final")/developer-receipt.json" ;;
+  verifier.final.txt) receipt="$(dirname "$final")/verifier-receipt.json" ;;
+esac
+printf '%s' '{{"verdict":"INCONCLUSIVE"}}' > "$receipt"
 """,
         encoding="utf-8",
     )
@@ -74,6 +79,8 @@ def test_run_poc_agent_preserves_session_prompt_usage_and_artifacts(tmp_path: Pa
     run = json.loads((tmp_path / "run" / "run.json").read_text(encoding="utf-8"))
     assert run["session_id"] == "session-test-123"
     assert run["status"] == "completed"
+    assert run["verdict"] == "INCONCLUSIVE"
+    assert Path(str(run["receipt_path"])).is_file()
     assert Path(run["events_path"]).is_file()
     assert Path(run["final_message_path"]).read_text(encoding="utf-8") == "CONFIRMED"
 
@@ -92,6 +99,30 @@ def test_run_poc_agent_records_token_limit_failure(tmp_path: Path) -> None:
 
     run = json.loads((tmp_path / "run" / "run.json").read_text(encoding="utf-8"))
     assert run["status"] == "token_limit_exceeded"
+
+
+def test_run_poc_agent_rejects_exit_zero_without_machine_receipt(tmp_path: Path) -> None:
+    executable = tmp_path / "fake-traex-no-receipt"
+    executable.write_text(
+        """#!/bin/sh
+final=""
+while [ "$#" -gt 0 ]; do
+  if [ "$1" = "--output-last-message" ]; then shift; final="$1"; fi
+  shift
+done
+cat >/dev/null
+printf '%s' 'CONFIRMED' > "$final"
+""",
+        encoding="utf-8",
+    )
+    executable.chmod(0o755)
+    result = run_poc_agent(_config(tmp_path, executable))
+
+    assert result.returncode == 0
+    assert result.status == "failed"
+    assert not result.succeeded
+    assert result.error is not None
+    assert "developer-receipt.json" in result.error
 
 
 def test_cached_context_does_not_count_against_budget(tmp_path: Path) -> None:
@@ -142,3 +173,4 @@ def test_run_poc_verifier_uses_independent_verifier_prompt(tmp_path: Path) -> No
     assert "/remote/verifier-receipts/case-1" in prompt
     assert "Do not modify the PoC request semantics" in prompt
     assert "Verify FileWebService private-room leak" in prompt
+    assert "verifier-receipt.json" in prompt
