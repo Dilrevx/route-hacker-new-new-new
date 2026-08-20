@@ -615,6 +615,33 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Monitor a14 to a strict receipt, audit its final artifact and label-response gates, and merge it into coverage only if it becomes `completed_verified`. Keep the a10 database, derived manifest, binding receipt, and a14 workspace/output as separate reproducibility evidence regardless of the native-IRIS result.
 
+### Round 20 - 213-Case Strict Repair Projection and First Bounded Batch
+
+**Goal:** Extend Compile Builder v2 recovery beyond the frozen 45-case v2 subset while retaining the exact-source and native-IRIS admission boundary needed for a faithful IRIS reproduction.
+
+**Scope:** This round joins three independently preserved 213-case inputs: the clean-IRIS preflight, the merged exact-source receipts, and the historical CodeQL database-failure receipts. It excludes a case from repair dispatch when official IRIS project/fix/package metadata is absent, the native IRIS query is unsupported by the copied official `src.queries.QUERIES` catalog, the source receipt cannot prove the declared revision, a strict native IRIS result already exists, or a duplicate native execution is active.
+
+**Action:**
+
+- Built a fresh 100-row historical-failure projection from the 213-case matrix rather than reusing the earlier 45-case state classification as a repair queue.
+- Corrected the native-query check to load the copied official IRIS `QUERIES` registry. This preserves all implemented native IRIS queries and excludes only query names not available in the original implementation; it does not infer support from a guessed query-file path.
+- The projection produced 47 exact-source, official-metadata, native-query-supported, non-completed, non-active Compile Builder v2 candidates. The other 53 rows remain explicit exclusions with their missing-metadata, unsupported-query, completed, or active-execution reason.
+- Selected Graylog `CVE-2023-41044` and JStachio `CVE-2023-33962` as the first two-case batch after manually reviewing their historical failures. Both failures were toolchain-only: Maven `3.5.0` was below the project requirement; Graylog also required JDK 17 rather than JDK 21.
+- Generated new repair inputs by binding each fresh `iris213::` case ID to the original failed receipt and exact archive-source receipt. The dispatcher dry run accepted both bindings before any model request.
+- Launched Compile Builder v2 with two workers, approved JDK 8/17/21 and Maven 3.9 homes, one bounded build-feedback replan, archive-isolated source copies, source-integrity checks, and the shared `DeepSeek-V4-Pro` bridge. This repair lane does not create native IRIS LLM work.
+
+**Verification:**
+
+- Projection evidence:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/summary.json`.
+- The selected-input generator reported two `eligible_for_compile_builder_v2` rows; the dispatcher dry run recorded two `llm_repair_dry_run` receipts with verified prior-receipt hashes.
+- JStachio first selected Maven 3.9.9 plus the allow-listed Enforcer skip. Its fresh build log then identified `invalid target release: 17`; the bounded feedback decision selected approved JDK 17 and progressed through the JStachio reactor.
+- Graylog first selected approved JDK 17 and Maven 3.9.9. Its fresh build log identified an Enforcer plugin null-context failure; the bounded feedback decision retained the toolchain selection and appended the allow-listed Enforcer skip. The resulting build progressed into the Graylog server compilation stage.
+
+**Decision:** The 213-case expansion is now an evidence-backed repair queue rather than a bulk replay of failed records. Graylog and JStachio are active Compile Builder attempts only; neither database nor any downstream native IRIS result is counted until the dispatcher records a complete CodeQL layout and exact-source integrity evidence.
+
+**Next:** Monitor both first-batch receipts. For every `codeql_db_repaired` result, independently verify `codeql-database.yml`, `db-java/default`, relation files, archive/revision evidence, and source-integrity evidence before constructing a derived native IRIS manifest. Review the next two rows from the 47-case strict queue only after this batch reaches terminal receipts.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.

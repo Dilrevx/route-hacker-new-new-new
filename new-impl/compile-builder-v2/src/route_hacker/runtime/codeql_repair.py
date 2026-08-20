@@ -38,6 +38,11 @@ SOURCE_INTEGRITY_IGNORED_DIRECTORIES = frozenset(
         "target",
     }
 )
+SOURCE_INTEGRITY_IGNORED_FILENAMES = frozenset(
+    {
+        "dependency-reduced-pom.xml",
+    }
+)
 MAX_SOURCE_INTEGRITY_CHANGED_PATHS = 100
 SAFE_BUILD_ARGS = frozenset(
     {
@@ -113,9 +118,10 @@ def sha256_file(path: Path) -> str:
 def source_integrity_snapshot(source_dir: Path) -> dict[str, Any]:
     """Hash non-generated source content before and after a repair build.
 
-    Maven/Gradle output directories are intentionally excluded because a
-    compilation must create them. Any change outside this small generic list
-    is evidence that the build altered benchmark input and therefore cannot
+    Maven/Gradle output directories and the Maven Shade plugin's fixed
+    ``dependency-reduced-pom.xml`` generated metadata are intentionally
+    excluded because a compilation may create them. Any other change is
+    evidence that the build altered benchmark input and therefore cannot
     qualify as an admissible repaired database.
     """
 
@@ -126,12 +132,15 @@ def source_integrity_snapshot(source_dir: Path) -> dict[str, Any]:
             "available": False,
             "reason": "source_directory_missing",
             "ignored_directory_names": sorted(SOURCE_INTEGRITY_IGNORED_DIRECTORIES),
+            "ignored_file_names": sorted(SOURCE_INTEGRITY_IGNORED_FILENAMES),
             "files": files,
             "tree_sha256": None,
         }
     for path in sorted(source_dir.rglob("*")):
         relative = path.relative_to(source_dir)
         if any(part in SOURCE_INTEGRITY_IGNORED_DIRECTORIES for part in relative.parts):
+            continue
+        if relative.name in SOURCE_INTEGRITY_IGNORED_FILENAMES:
             continue
         if path.is_file() and not path.is_symlink():
             files[str(relative)] = sha256_file(path)
@@ -140,6 +149,7 @@ def source_integrity_snapshot(source_dir: Path) -> dict[str, Any]:
         "source_dir": str(source_dir),
         "available": True,
         "ignored_directory_names": sorted(SOURCE_INTEGRITY_IGNORED_DIRECTORIES),
+        "ignored_file_names": sorted(SOURCE_INTEGRITY_IGNORED_FILENAMES),
         "files": files,
         "tree_sha256": tree_sha256,
     }
@@ -175,6 +185,7 @@ def compare_source_integrity(
         "changed_paths": changed_paths[:MAX_SOURCE_INTEGRITY_CHANGED_PATHS],
         "changed_paths_truncated": len(changed_paths) > MAX_SOURCE_INTEGRITY_CHANGED_PATHS,
         "ignored_directory_names": sorted(SOURCE_INTEGRITY_IGNORED_DIRECTORIES),
+        "ignored_file_names": sorted(SOURCE_INTEGRITY_IGNORED_FILENAMES),
     }
 
 
