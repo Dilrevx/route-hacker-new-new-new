@@ -500,6 +500,32 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Monitor a12 until each receipt is written. Audit every completed receipt independently, then update coverage only with `completed_verified` rows; Vert.x will begin after one of the two bounded project workers becomes available.
 
+### Round 16 - Generic Compile Builder Action Validation and DB Coverage Extension
+
+**Goal:** Remove controller-level incompatibilities that prevented a bounded LLM repair proposal from reaching a valid Maven/CodeQL build, while preserving the frozen 45-case native-IRIS boundary and the strict downstream completion gate.
+
+**Scope:** The frozen Compile Builder repair input admits exactly four rows whose only remaining native-IRIS prerequisite is a missing CodeQL database: Axis `CVE-2023-51441`, Tika `CVE-2018-11762`, Keycloak `CVE-2022-4361`, and Spring Cloud Config `CVE-2020-5405`. Tika already has a completed database and verified native-IRIS result. This round uses no source edits, source-revision substitutions, query changes, or case-specific build recipes.
+
+**Action:**
+
+- Audited the OpenAI-compatible bridge output from the generic Compile Builder v2 dispatcher. The model returned action objects with a generic `value` field, including approved Java/Maven homes and repeated build-argument actions, while the local validator expected only action-specific fields.
+- Generalized the local validator to normalize those bridge action shapes only after approved-environment and build-argument allow-list validation. Conflicting or unapproved values continue to be rejected locally.
+- Added one bounded, tool-less model correction round when a proposal fails local validation. The correction receives the validation error and must submit another fully allowed decision; source and query changes remain forbidden.
+- Removed Gradle-only `--no-daemon` and `--stacktrace` from the global Maven-safe build-argument allow-list. The previous broad list let a legal-looking generic action append these options to an Axis Maven invocation, where Maven rejected them before compilation.
+- Added regression coverage that verifies both Gradle-only options are rejected. The complete remote Compile Builder suite passed with `77 passed` before the focused commit; the local checkout lacks `pytest`, so the focused local command was unavailable.
+- Pushed the final controller correction as `a4a3be9` (`Reject Gradle-only repair arguments`) on `bad-case`; the deployed remote package was synchronized to that version.
+- Preserved the prior a5 Axis failure as evidence rather than rewriting it. a5 Keycloak and Spring CodeQL attempts continue in their original isolated attempt directories. A fresh a6 Axis invocation is scheduled through the same generic dispatcher only after a5 releases its two build slots, with one worker and the corrected general validator.
+
+**Verification:**
+
+- a5 records its original action, command, validator input, and database-create log. Axis is explicitly non-valid because Maven rejected the two Gradle flags; it is not represented as a source or IRIS failure.
+- At the time of this update, Keycloak is actively resolving/building under approved Maven `3.9.9`; Spring Cloud Config has progressed through Maven modules under its original bounded CodeQL attempt. Neither database is counted until it contains both `codeql-database.yml` and `db-java`, and the Compile Builder receipt records `database_valid: true`.
+- a12 remains an independent native-IRIS lane: Commons IO and Hutool are still executing copied original `src/iris.py` with real `DeepSeek-V4-Pro` bridge completions. Their intermediate outputs are not yet counted; all cases remain subject to the original return-code, artifact, and prompt-mapped JSON-list gates.
+
+**Decision:** The controller now distinguishes safe generic repair decisions from build-tool-specific options. Database-building evidence, native-IRIS evidence, and failed historical attempts remain separate receipts. No new verified native-IRIS outcome is claimed in this round.
+
+**Next:** Let a5 settle, validate any complete Keycloak/Spring database, run original native IRIS only for a newly valid complete DB with official IRIS inputs, then audit a12/a6 receipts and merge only `completed_verified` outcomes into the coverage ledger.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.
