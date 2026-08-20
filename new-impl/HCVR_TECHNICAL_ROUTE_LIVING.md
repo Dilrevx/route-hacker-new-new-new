@@ -913,6 +913,36 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Monitor XStream and AWS to artifact-gated original-IRIS completion. Record a case only after `src/iris.py` exits `0`, required result artifacts exist, and each dispatched label response parses as a JSON list. Continue selecting later strict candidates individually, using the expanded generic action interface rather than project-specific recovery logic.
 
+### Round 29 - Attempt-Local Maven Cache Isolation and DSpace Re-entry
+
+**Goal:** Remove a generic Compile Builder v2 execution leak exposed by a strict DSpace audit, then retry the exact archived project through the same controlled LLM decision and integrity gates.
+
+**Scope:** This round covers only `iris213::fff9668e692e25cea9d3` / `DSpace__DSpace_CVE-2016-10726_4.4` (`CVE-2016-10726`, native query `cwe-022wLLM`) in the IRIS-213 extension lane. It does not admit DSpace to native IRIS yet and does not alter benchmark sources, revisions, official queries, dependencies, or project modules.
+
+**Action:**
+
+- Resolved the exact historical receipt rather than inferring from the POM. Its Java 8 build reached compilation but failed while reading two corrupted Restlet JARs from the old shared `-Dmaven.repo.local` cache. Java 17 and Java 21 failed earlier because the legacy `${toolsjar}` system dependency requires Java 8.
+- Identified a generic dispatcher gap: source trees were archive-isolated, but an explicit `-Dmaven.repo.local=...` in a historical build command overrode the isolated Maven user home. A `retry_same_command` could therefore still reuse a stale or corrupted shared repository.
+- Added execution-layer-only cache redirection. When the dispatcher creates an attempt-local build home, a direct Maven command's explicit `-Dmaven.repo.local` is rewritten to that attempt's `.m2/repository`; commands with no explicit property continue to resolve through the isolated Maven user home. The LLM cannot request, choose, or redirect cache paths.
+- Made isolated build homes mandatory for every LLM repair attempt in the dispatcher, and added regression coverage for both the direct runtime rewrite and the controller wiring. Pushed `88c6158` (`Isolate explicit Maven repository cache per repair attempt`) and `e123968` (`Isolate build homes for all LLM repair attempts`).
+- Re-ran the remote targeted Compile Builder suite after synchronization: `83 passed, 4 warnings`.
+- Submitted DSpace as a one-case, one-worker bounded dispatch with the existing exact-source receipts, approved Java/Maven homes, `DeepSeek-V4-Pro`, one build-feedback replan maximum, and the unchanged action allow-list. The constrained model selected only the approved Java 8 home.
+
+**Verification:**
+
+- Historical failure evidence:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/hcvr/v9-execution/w1-db-projection-v1/cases/DSpace__DSpace_CVE-2016-10726_4.4/logs/10-codeql-database-create.attempt1.host_java_1.log`.
+  It records the corrupted `org.restlet` and `org.restlet.ext.servlet` JAR reads from the historical cache; attempts 2 and 3 record the unresolved `${toolsjar}` condition under newer JDKs.
+- Active strict repair output:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/compile-repair-run-dspace-2016-r1/dispatch/`.
+  The validated decision selects Java 8 only. Its actual CodeQL command records `-Dmaven.repo.local=.../attempt-001/codeql-attempt/build-home/.m2/repository`, proving the corrupt historical shared cache is not reused.
+- The active DSpace Maven child process has Java 8, the attempt-local `-Duser.home`, and the redirected repository path. It is downloading dependencies into the clean cache and has passed the historical Java-17/21 POM-read failure point. This is liveness evidence, not a terminal database claim.
+- XStream, AWS, and both NiFi copied-original `src/iris.py` processes still have live bridge connections and recently appended completed bridge-call evidence. The bridge receipt field `traex_reported_total_tokens` remains `null`, so this round reports no token aggregate.
+
+**Decision:** Maven-cache isolation is a general repair-execution invariant, not a DSpace-specific recipe. DSpace is an active strict repair only; it will be admitted further only if the dispatcher reports a valid new CodeQL database, exact archive identity, and zero non-generated source changes. The active native IRIS executions remain active, not completed, until their artifact gates pass.
+
+**Next:** Wait for the DSpace terminal receipt, inspect its fresh build evidence if it fails, and use the standard repaired-DB manifest builder only if it passes every strict gate. Continue monitoring XStream, AWS, and NiFi for copied-original IRIS artifact-gated completion; continue recording latency/response evidence without fabricating token totals.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.
