@@ -449,6 +449,32 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Let Hutool and Vert.x finish under the current bounded queue. Audit each receipt against the same return-code, artifact, and prompt-mapped label gate. Re-materialize Commons IO only after this general adapter change is deployed and the in-flight cases no longer share its prior workspace.
 
+### Round 14 - OpenAI Base-URL Normalization and Clean Retry Boundary
+
+**Goal:** Restore the native IRIS transport contract after a retry-attempt configuration error, without weakening any admission, artifact, or label-response gate.
+
+**Scope:** This round covers the same three preflight-eligible frozen rows selected for a10: Commons IO `CVE-2021-29425`, Hutool `CVE-2018-17297`, and Vert.x Web `CVE-2018-12542`. The remote-to-local TraeX reverse tunnel was re-established before dispatch and passed a remote `/healthz` check.
+
+**Action:**
+
+- Synced the committed four-attempt JSON-list adapter to the remote native-IRIS package and verified matching SHA-256 values plus remote `py_compile`.
+- Created a fresh a11 manifest and isolated workspaces; all three rows again passed exact-source, package-name, official IRIS metadata, and complete CodeQL database checks (`codeql-database.yml` plus `db-java`).
+- Identified a general base-URL defect before any a11 model completion: the batch launch passed a bridge URL ending in `/v1`, while the single-case runner mechanically appended another `/v1`. OpenAI therefore requested `/v1/v1/chat/completions`, which the local bridge correctly rejected with HTTP 404.
+- Preserved all three a11 receipts as failed transport evidence. Their copied original `src/iris.py` instances reached candidate extraction and began API labelling, but no request reached the TraeX bridge metrics and no model output or final IRIS artifact is counted.
+- Added `normalize_openai_base_url()` to the generic single-case runner. It accepts either a bridge root URL or a URL already ending in `/v1`, always exporting exactly one OpenAI version path. This is transport normalization only; it does not alter copied IRIS code, prompts, candidate sets, CodeQL queries, label rules, or evaluation.
+
+**Verification:**
+
+- The local bridge and remote forwarded bridge both returned `{"status": "ok", "transport": "traex"}` from `/healthz`.
+- Endpoint and traceback evidence show the a11 failure was the duplicate-version URL: the bridge supports `/v1/chat/completions`, while a11 received an untracked 404 before the bridge handler/metrics.
+- The URL-normalization regression passed for root, trailing-slash root, `/v1`, and `/v1/` inputs; an empty value raises `ValueError`. The updated runner passes `py_compile` and `git diff --check`.
+- a11 evidence root:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a11-jsonlist-4retry/`.
+
+**Decision:** a11 is not a valid native-IRIS result and contributes zero verified completions. Its three rows remain admissible for a clean a12 retry because the failure occurred before any model completion and has a single general transport root cause. The a12 dispatcher will use a fresh output/workspace namespace and the normalized runner.
+
+**Next:** Commit and deploy the URL-normalization fix, launch a12 with the same two-project-worker / one-native-label-thread configuration, verify the first bridge metrics carry the a12 run ID, then count only receipts satisfying original IRIS return-code, full-artifact, and prompt-mapped JSON-list gates.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.

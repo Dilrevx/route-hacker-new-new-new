@@ -26,6 +26,15 @@ EXPECTED_ARTIFACTS = (
 )
 
 
+def normalize_openai_base_url(bridge_url: str) -> str:
+    """Return the OpenAI-compatible base URL without duplicating its version path."""
+
+    normalized = bridge_url.strip().rstrip("/")
+    if not normalized:
+        raise ValueError("bridge URL must not be empty")
+    return normalized if normalized.endswith("/v1") else f"{normalized}/v1"
+
+
 def sha256_path(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -193,7 +202,7 @@ def main() -> int:
     env.update(
         {
             "OPENAI_API_KEY": "traex-local-bridge",
-            "OPENAI_BASE_URL": args.bridge_url.rstrip("/") + "/v1",
+            "OPENAI_BASE_URL": normalize_openai_base_url(args.bridge_url),
             "IRIS_LLM_MAX_ATTEMPTS": env.get("IRIS_LLM_MAX_ATTEMPTS", "4"),
             "IRIS_LLM_RETRY_DELAY_SECONDS": env.get("IRIS_LLM_RETRY_DELAY_SECONDS", "5"),
             "IRIS_TRAEX_RUN_ID": args.run_id,
