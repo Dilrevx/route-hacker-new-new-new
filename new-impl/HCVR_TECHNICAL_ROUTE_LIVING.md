@@ -393,6 +393,35 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Merge a8 Sling and a9 MyFaces into the v2 QA native-IRIS coverage ledger, while remaining in-flight historical a6/a7 cases continue under the bridge-level eight-request cap.
 
+### Round 12 - Per-Case Native IRIS Coverage Audit and a10 Retry Queue
+
+**Goal:** Expand native-IRIS coverage only for frozen v2 QA cases whose remaining failure is transport-format reliability, while keeping source identity, IRIS metadata, and CodeQL database validity explicit.
+
+**Scope:** Audited every row in the frozen 45-case native-IRIS manifest against all prior native-run receipts, current CodeQL database layout, and Compile Builder v2 repair receipts. This round does not invent IRIS project metadata, package-name files, queries, or source revisions.
+
+**Action:**
+
+- Reused the existing Compile Builder v2 audit for the four cases whose only manifest blocker was a missing CodeQL database. Tika produced a repaired complete database and already reached `completed_verified`; Axis, Keycloak, and Spring Cloud Config remain explicit non-successes because their locally constrained model decisions were respectively no-safe-action, rejected, and no-safe-action.
+- Distinguished 17 currently complete CodeQL databases from partial or absent database directories using both `codeql-database.yml` and `db-java`.
+- Found 11 of those 17 cases already have at least one strict `completed_verified` native-IRIS receipt. Three more are in existing a6/a7 native runs.
+- Selected exactly three non-active cases with complete CodeQL DBs, exact source, official IRIS project/fix metadata, package-name files, and final artifacts from prior runs whose only failed gate was API-label JSON-list validity:
+  `asf__commons-io::CVE-2021-29425`,
+  `dromara__hutool::CVE-2018-17297`, and
+  `vert-x3__vertx-web::CVE-2018-12542`.
+- Created the frozen a10 derived manifest with SHA-256 `852f75b6da615e60bf68234115ac52bd99e7f26e33614aebf205e16f59ec819d` and launched it with two project workers, one native IRIS label thread per project, a 14,400-second case timeout, and the bridge-level eight-request cap.
+
+**Verification:**
+
+- The deployed materializer, single-case runner, and batch dispatcher match the checked-in SHA-256 values and pass `py_compile`.
+- Before dispatch, every a10 row was checked for source directory, package-name file, no manifest blockers, and a complete CodeQL layout.
+- The a10 dispatcher materialized Commons IO and Hutool into clean isolated workspaces and invoked the copied original `src/iris.py`; Vert.x 2018 remains queued behind the two-worker bound.
+- The a10 evidence root is:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a10-jsonlist-coverage-retry/`.
+
+**Decision:** The a10 queue targets a single general transport failure class, not a case-specific recovery. Cases missing official IRIS prerequisites or whose Compile Builder v2 repair was safely rejected remain recorded as non-admitted rather than being converted into synthetic native-IRIS inputs.
+
+**Next:** Strictly validate a10 receipts as they arrive, then inspect the existing a6/a7 in-flight cases for completion or a reusable transport/root-cause classification before creating any further queue.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.
