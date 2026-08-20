@@ -1308,6 +1308,40 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Continue reviewing exact-source/failed-CodeQL cases one at a time from the same 47-pair inventory. For every terminal `codeql_db_repaired` receipt, repeat the strict derived-manifest gate before scheduling copied-original native IRIS; preserve unsuccessful repairs as terminal receipts without project-specific recovery code.
 
+### Round 42 - Complete Two Apache NiFi Native IRIS Runs and Preserve Safe Repair Rejections
+
+**Goal:** Complete copied-original native IRIS for two strictly admitted Apache NiFi databases, and document two individually reviewed repair cases that correctly terminate without a database when the constrained controller has no safe action.
+
+**Scope:** This round covers NiFi `iris213::7997ade0d28f26b11ba9` (`asf__nifi_CVE-2023-36542_1.22.0`, CVE-2023-36542, CWE-094) and NiFi `iris213::969cb39e2010152b58b4` (`asf__nifi_CVE-2023-34468_1.21.0`, CVE-2023-34468, CWE-094), together with reviewed exact-source repair attempts for Perfecto and Venice. It does not alter benchmark sources, revisions, project build files, official IRIS query logic, repaired databases, or frozen comparative cohorts.
+
+**Action:**
+
+- Re-admitted both NiFi databases only after their terminal repair receipts, exact archive verification, source-integrity `changed_path_count:0`, successful CodeQL creation, finalized Java metadata, and nonzero Java relation evidence. The CVE-2023-36542 database has 95 nonempty Java relation files; CVE-2023-34468 has the same 95-file evidence.
+- Materialized isolated workspaces for both cases and ran the copied-original upstream `src/iris.py` entrypoint with `gpt-traex-pro`, four IRIS worker threads per project, the case-local CodeQL source-overlay wrapper, and the bridge-wide DeepSeek-V4-Pro concurrency cap of eight.
+- Retained upstream batch semantics while monitoring LLM posthoc filtering: prompt files may be written before a whole batch returns responses, so progress was measured from live process state and increasing response artifacts rather than inferring a stall from an absent early `summary.json`.
+- Reviewed Jenkins Perfecto `iris213::c5a300154eca654c89ce` against its exact archive and historical slow Maven dependency download. The constrained model selected `no_safe_action`; the terminal dispatcher status is `no_safe_llm_repair`.
+- Reviewed Venice `iris213::24c9a01eaeda5f36c0e0` against its exact archive and reproducible Gradle 7.4.1 wrapper distribution download timeout. One allow-listed same-command retry reproduced the external timeout, after which constrained feedback selected `no_safe_action`. The terminal dispatcher status is `no_safe_llm_repair`.
+
+**Verification:**
+
+- NiFi CVE-2023-36542 terminal native receipt:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a27-a28-nifi-current-wrapper-native-iris/a27-nifi36542/native-run/summary.json`.
+  It records `status:"completed_verified"`, return code zero, no timeout, complete required artifacts, and a valid JSON-list label-response audit. IRIS evaluated 17,331 API candidates from 411,692 candidate API calls; it labelled 1,023 sources, 253 sinks, and 1,401 taint propagators. It completed 174 posthoc LLM calls with zero posthoc failures and produced 188 vanilla and 188 posthoc results, with 469 vanilla paths and 11 posthoc paths.
+- NiFi CVE-2023-34468 terminal native receipt:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a27-a28-nifi-current-wrapper-native-iris/a28-nifi34468/native-run/summary.json`.
+  It records `status:"completed_verified"`, return code zero, no timeout, complete required artifacts, and valid JSON-list labels for all 572 dispatched API-label prompts. IRIS evaluated 17,147 API candidates from 407,962 candidate API calls; it labelled 905 sources, 222 sinks, and 1,357 taint propagators. It completed 168 posthoc LLM calls with zero posthoc failures and produced 150 vanilla and 150 posthoc results, with 397 vanilla paths and 25 posthoc paths.
+- The CVE-2023-34468 final posthoc artifacts are structurally valid: `results.json` contains 424 entries, the final result object exposes vanilla and posthoc results/statistics, and both SARIF artifacts parse successfully. The runner's specialized label-response audit is authoritative for labels because IRIS stores label outputs as JSON lists rather than arbitrary JSON objects.
+- The local bridge ledger records completed requests only for the two NiFi run identifiers. Every bridge token field remains `traex_reported_total_tokens:null`; this round therefore records no estimated token total.
+- Perfecto's safe terminal ledger is:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/compile-repair-run-perfecto-r1/dispatch/`.
+  Venice's safe terminal ledger is:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/compile-repair-run-venice-r1/dispatch/`.
+  Both preserve exact-source integrity and create neither source drift nor a claimed CodeQL database.
+
+**Decision:** Both NiFi cases are fully verified native IRIS extension-lane executions over strict rebuilt Java CodeQL databases. Their result counts are execution outputs, not target-positive claims, and remain separate from frozen comparative aggregates. Perfecto and Venice are correctly retained as constrained-controller `no_safe_llm_repair` outcomes: external artifact retrieval failures do not justify source edits, project-specific recovery recipes, cache fabrication, or database substitution.
+
+**Next:** Continue reviewing only one independently evidenced source-bound candidate at a time from the immutable 47-case repair inventory. Admit a future case to copied-original native IRIS only after a terminal `codeql_db_repaired` receipt passes the full strict manifest gate; otherwise preserve its terminal no-safe or failed receipt and move to the next reviewed candidate.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.
