@@ -277,12 +277,15 @@ def test_source_overlay_materializes_case_local_pack_install_wrapper(tmp_path):
     assert wrapper.is_file()
     source = wrapper.read_text()
     assert '[[ "${1:-}" == "pack" && "${2:-}" == "install" ]]' in source
+    assert '[[ "${1:-}" != "query"' in source
+    assert 'if [[ "${args[$index]}" == "--" ]]' in source
     assert "--additional-packs" in source
     assert str(overlay_packs) in source
     provenance = __import__("json").loads(
         (workspace / "codeql" / ".iris_case_codeql_toolchain_overlay.json").read_text()
     )
-    assert provenance["intercepted_command"] == "codeql pack install"
+    assert provenance["pack_resolution_scope"] == "pack_install_query_and_database_analyze"
+    assert provenance["install_special_case"] == "codeql pack install"
     assert provenance["other_commands"] == "executes_shared_codeql_binary_unchanged"
 
 

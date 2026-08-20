@@ -230,10 +230,12 @@ def materialize_codeql_toolchain(
 ) -> dict[str, str]:
     """Stage a case-local CodeQL entrypoint without mutating the shared toolchain.
 
-    Official IRIS invokes ``codeql pack install`` without package-search arguments.
-    A matching source-tag overlay is local-only, so the case-local wrapper adds it
-    only to that command. All other CodeQL commands execute the original binary
-    unchanged.
+    Official IRIS invokes CodeQL without package-search arguments. A matching
+    source-tag overlay is local-only, so the case-local wrapper makes that
+    overlay available to the original commands that resolve QL packs:
+    ``pack install``, ``query`` and ``database analyze``. ``pack install``
+    additionally uses non-strict local resolution to avoid downloading
+    already-projected official packs.
     """
 
     destination = workspace / "codeql"
@@ -258,7 +260,16 @@ def materialize_codeql_toolchain(
         'if [[ "${1:-}" == "pack" && "${2:-}" == "install" ]]; then\n'
         '  exec "$IRIS_CODEQL_REAL" "$@" --additional-packs "$IRIS_CODEQL_OVERLAY_PACKS" --no-strict-mode\n'
         "fi\n"
-        'exec "$IRIS_CODEQL_REAL" "$@"\n',
+        'if [[ "${1:-}" != "query" && ! ( "${1:-}" == "database" && "${2:-}" == "analyze" ) ]]; then\n'
+        '  exec "$IRIS_CODEQL_REAL" "$@"\n'
+        "fi\n"
+        'args=("$@")\n'
+        'for index in "${!args[@]}"; do\n'
+        '  if [[ "${args[$index]}" == "--" ]]; then\n'
+        '    exec "$IRIS_CODEQL_REAL" "${args[@]:0:$index}" --additional-packs "$IRIS_CODEQL_OVERLAY_PACKS" "${args[@]:$index}"\n'
+        '  fi\n'
+        'done\n'
+        'exec "$IRIS_CODEQL_REAL" "$@" --additional-packs "$IRIS_CODEQL_OVERLAY_PACKS"\n',
         encoding="utf-8",
     )
     wrapper.chmod(0o755)
@@ -269,7 +280,8 @@ def materialize_codeql_toolchain(
         "shared_codeql_executable": str(executable),
         "local_qlpacks": str(destination / "qlpacks"),
         "overlay_qlpacks": str(overlay_packs),
-        "intercepted_command": "codeql pack install",
+        "pack_resolution_scope": "pack_install_query_and_database_analyze",
+        "install_special_case": "codeql pack install",
         "injected_options": [
             "--additional-packs",
             str(overlay_packs),
