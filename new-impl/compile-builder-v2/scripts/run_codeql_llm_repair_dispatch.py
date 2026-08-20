@@ -69,6 +69,7 @@ DEFAULT_CLAUDE_COMMAND = "/data/lhq/.local/bin/claude"
 MAX_MODEL_OUTPUT_CHARACTERS = 16_000
 DEFAULT_OPENAI_MODEL = "DeepSeek-V4-Pro"
 MAX_PROPOSAL_CORRECTION_ATTEMPTS = 1
+MAX_BUILD_FEEDBACK_REPLAN_ATTEMPTS = 1
 
 
 def normalize_openai_base_url(bridge_url: str) -> str:
@@ -373,6 +374,29 @@ def build_repair_correction_prompt(packet: dict[str, Any], validation_error: str
     )
 
 
+def build_repair_feedback_prompt(
+    packet: dict[str, Any],
+    previous_decision: Mapping[str, Any],
+) -> str:
+    """Request one distinct, locally-valid repair after a failed execution.
+
+    ``packet`` must be the final packet emitted by ``execute_repair_attempt``.
+    Its log is therefore bound to the immediately preceding execution rather
+    than the original deterministic failure receipt.
+    """
+
+    previous = json.dumps(previous_decision, ensure_ascii=False, sort_keys=True)
+    return (
+        f"{build_repair_prompt(packet)}\n"
+        "A previous locally validated decision was executed but did not create "
+        "a valid CodeQL database. The PACKET now contains the final redacted "
+        "log from that execution. Select a different action set only if the "
+        "fresh failure evidence justifies one; do not repeat this decision:\n"
+        f"{previous}\n"
+        "Return a complete replacement decision, not an explanation or a patch."
+    )
+
+
 def extract_structured_output(stream_text: str) -> dict[str, Any]:
     structured: dict[str, Any] | None = None
     terminal_result_text: str | None = None
@@ -648,6 +672,9 @@ def run_case(
         "contract": {
             "model_tools_disabled": True,
             "model_actions_validated_locally": True,
+            "build_failure_feedback_replan_bounded_to_one": True,
+            "repeated_validated_build_decision_not_reexecuted": True,
+            "fresh_redacted_build_log_used_for_replan": True,
             "exact_declared_source_reverified_before_execution": True,
             "source_revision_substitution_forbidden": True,
             "source_edits_forbidden": True,
@@ -668,85 +695,186 @@ def run_case(
         raise RepairValidationError("claude command is required unless --dry-run is set")
     model_invocations: list[dict[str, Any]] = []
     validation_errors: list[str] = []
-    attempt_prompt = prompt
-    validated: dict[str, Any] | None = None
-    model_receipt: dict[str, Any] | None = None
-    for correction_attempt in range(MAX_PROPOSAL_CORRECTION_ATTEMPTS + 1):
-        output_name = (
-            "model-output.txt"
-            if correction_attempt == 0
-            else f"model-output-correction-{correction_attempt:03d}.txt"
-        )
-        model = invoke_model(
-            claude_command=claude_command,
-            openai_bridge_url=openai_bridge_url,
-            openai_model=openai_model,
-            prompt=attempt_prompt,
-            packet=packet,
-            output_path=case_dir / output_name,
-            timeout_seconds=model_timeout_seconds,
-            case_id=case_id,
-        )
-        model_receipt = {key: value for key, value in model.items() if key != "raw_text"}
-        model_invocations.append(model_receipt)
-        if model["bounded_process"]["returncode"] != 0 or model["bounded_process"]["timed_out"]:
-            return {
-                **base,
-                "status": "llm_model_invocation_failed",
-                "model_invocation": model_receipt,
-                "model_invocations": model_invocations,
-            }
-        try:
-            parsed = extract_structured_output(str(model["raw_text"]))
-            validated = validate_repair_decision(
-                parsed,
-                approved_java_homes=approved_java_homes,
-                approved_maven_homes=approved_maven_homes,
+    decision_rounds: list[dict[str, Any]] = []
+    prior_decision_hashes: set[str] = set()
+    active_packet = packet
+    active_prompt = prompt
+
+    for decision_round in range(MAX_BUILD_FEEDBACK_REPLAN_ATTEMPTS + 1):
+        if decision_round:
+            write_json(
+                case_dir / f"feedback-packet-{decision_round:03d}.json",
+                active_packet,
             )
-            break
-        except RepairValidationError as error:
-            validation_errors.append(str(error))
-            if correction_attempt == MAX_PROPOSAL_CORRECTION_ATTEMPTS:
+            write_text(
+                case_dir / f"feedback-prompt-{decision_round:03d}.txt",
+                active_prompt,
+            )
+        validated: dict[str, Any] | None = None
+        model_receipt: dict[str, Any] | None = None
+        round_validation_errors: list[str] = []
+        for correction_attempt in range(MAX_PROPOSAL_CORRECTION_ATTEMPTS + 1):
+            if decision_round == 0:
+                output_name = (
+                    "model-output.txt"
+                    if correction_attempt == 0
+                    else f"model-output-correction-{correction_attempt:03d}.txt"
+                )
+            else:
+                output_name = (
+                    f"model-output-feedback-{decision_round:03d}.txt"
+                    if correction_attempt == 0
+                    else (
+                        "model-output-feedback-"
+                        f"{decision_round:03d}-correction-{correction_attempt:03d}.txt"
+                    )
+                )
+            model = invoke_model(
+                claude_command=claude_command,
+                openai_bridge_url=openai_bridge_url,
+                openai_model=openai_model,
+                prompt=active_prompt,
+                packet=active_packet,
+                output_path=case_dir / output_name,
+                timeout_seconds=model_timeout_seconds,
+                case_id=case_id,
+            )
+            model_receipt = {key: value for key, value in model.items() if key != "raw_text"}
+            model_invocations.append(model_receipt)
+            if model["bounded_process"]["returncode"] != 0 or model["bounded_process"]["timed_out"]:
                 return {
                     **base,
-                    "status": "llm_repair_proposal_rejected",
+                    "status": "llm_model_invocation_failed",
                     "model_invocation": model_receipt,
                     "model_invocations": model_invocations,
-                    "error_type": type(error).__name__,
-                    "error": str(error),
                     "proposal_validation_errors": validation_errors,
+                    "decision_rounds": decision_rounds,
                 }
-            attempt_prompt = build_repair_correction_prompt(packet, str(error))
-    assert validated is not None
-    assert model_receipt is not None
-    write_json(case_dir / "validated-decision.json", validated)
-    if validated["actions"] == [{"kind": "no_safe_action"}]:
-        return {
-            **base,
-            "status": "no_safe_llm_repair",
-            "model_invocation": model_receipt,
-            "model_invocations": model_invocations,
-            "proposal_validation_errors": validation_errors,
+            try:
+                parsed = extract_structured_output(str(model["raw_text"]))
+                validated = validate_repair_decision(
+                    parsed,
+                    approved_java_homes=approved_java_homes,
+                    approved_maven_homes=approved_maven_homes,
+                )
+                break
+            except RepairValidationError as error:
+                error_text = str(error)
+                validation_errors.append(error_text)
+                round_validation_errors.append(error_text)
+                if correction_attempt == MAX_PROPOSAL_CORRECTION_ATTEMPTS:
+                    return {
+                        **base,
+                        "status": "llm_repair_proposal_rejected",
+                        "model_invocation": model_receipt,
+                        "model_invocations": model_invocations,
+                        "error_type": type(error).__name__,
+                        "error": error_text,
+                        "proposal_validation_errors": validation_errors,
+                        "decision_rounds": decision_rounds,
+                    }
+                active_prompt = build_repair_correction_prompt(active_packet, error_text)
+        assert validated is not None
+        assert model_receipt is not None
+        decision_hash = stable_json_sha256(validated)
+        if decision_hash in prior_decision_hashes:
+            return {
+                **base,
+                "status": "no_safe_llm_repair",
+                "reason": "repeated_validated_decision_after_build_failure",
+                "model_invocation": model_receipt,
+                "model_invocations": model_invocations,
+                "proposal_validation_errors": validation_errors,
+                "validated_decision": validated,
+                "decision_rounds": decision_rounds,
+            }
+        prior_decision_hashes.add(decision_hash)
+        decision_path = (
+            case_dir / "validated-decision.json"
+            if decision_round == 0
+            else case_dir / f"validated-decision-feedback-{decision_round:03d}.json"
+        )
+        write_json(decision_path, validated)
+        round_record = {
+            "decision_round": decision_round,
+            "feedback_from_prior_build_failure": decision_round > 0,
+            "packet_sha256": active_packet["packet_sha256"],
+            "validated_decision_sha256": decision_hash,
+            "validated_decision_path": stable_path(decision_path),
             "validated_decision": validated,
+            "model_invocation_index": len(model_invocations) - 1,
+            "proposal_validation_errors": round_validation_errors,
         }
-    attempt = execute_repair_attempt(
-        failed_receipt,
-        validated,
-        attempt_dir=case_dir / "codeql-attempt",
-        timeout_seconds=codeql_timeout_seconds,
-        approved_java_homes=approved_java_homes,
-        approved_maven_homes=approved_maven_homes,
-        source_receipt=source_receipt,
-    )
-    return {
-        **base,
-        "status": attempt["status"],
-        "model_invocation": model_receipt,
-        "model_invocations": model_invocations,
-        "proposal_validation_errors": validation_errors,
-        "validated_decision": validated,
-        "repair_attempt": attempt,
-    }
+        if validated["actions"] == [{"kind": "no_safe_action"}]:
+            decision_rounds.append(round_record)
+            return {
+                **base,
+                "status": "no_safe_llm_repair",
+                "model_invocation": model_receipt,
+                "model_invocations": model_invocations,
+                "proposal_validation_errors": validation_errors,
+                "validated_decision": validated,
+                "decision_rounds": decision_rounds,
+            }
+        attempt_dir = (
+            case_dir / "codeql-attempt"
+            if decision_round == 0
+            else case_dir / f"codeql-attempt-feedback-{decision_round:03d}"
+        )
+        attempt = execute_repair_attempt(
+            failed_receipt,
+            validated,
+            attempt_dir=attempt_dir,
+            timeout_seconds=codeql_timeout_seconds,
+            approved_java_homes=approved_java_homes,
+            approved_maven_homes=approved_maven_homes,
+            source_receipt=source_receipt,
+        )
+        round_record["repair_attempt"] = attempt
+        decision_rounds.append(round_record)
+        if attempt["status"] != "repair_attempt_failed":
+            return {
+                **base,
+                "status": attempt["status"],
+                "model_invocation": model_receipt,
+                "model_invocations": model_invocations,
+                "proposal_validation_errors": validation_errors,
+                "validated_decision": validated,
+                "repair_attempt": attempt,
+                "repair_attempts": decision_rounds,
+                "build_feedback_replan_count": decision_round,
+            }
+        if decision_round == MAX_BUILD_FEEDBACK_REPLAN_ATTEMPTS:
+            return {
+                **base,
+                "status": attempt["status"],
+                "model_invocation": model_receipt,
+                "model_invocations": model_invocations,
+                "proposal_validation_errors": validation_errors,
+                "validated_decision": validated,
+                "repair_attempt": attempt,
+                "repair_attempts": decision_rounds,
+                "build_feedback_replan_count": decision_round,
+            }
+        refreshed_packet = attempt.get("packet")
+        if not isinstance(refreshed_packet, dict) or not isinstance(
+            refreshed_packet.get("packet_sha256"), str
+        ):
+            return {
+                **base,
+                "status": "repair_attempt_failed",
+                "reason": "repair_attempt_did_not_return_a_refreshable_packet",
+                "model_invocation": model_receipt,
+                "model_invocations": model_invocations,
+                "proposal_validation_errors": validation_errors,
+                "validated_decision": validated,
+                "repair_attempt": attempt,
+                "repair_attempts": decision_rounds,
+                "build_feedback_replan_count": decision_round,
+            }
+        active_packet = refreshed_packet
+        active_prompt = build_repair_feedback_prompt(active_packet, validated)
+    raise AssertionError("build feedback replan loop exhausted unexpectedly")
 
 
 def prior_attempts(rows: Iterable[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
@@ -1093,6 +1221,7 @@ def main() -> int:
         "model_timeout_seconds": args.model_timeout_seconds,
         "codeql_timeout_seconds": args.codeql_timeout_seconds,
         "max_attempts": args.max_attempts,
+        "max_build_feedback_replan_attempts_per_case": MAX_BUILD_FEEDBACK_REPLAN_ATTEMPTS,
         "approved_java_home_count": len(approved_java_homes),
         "approved_maven_home_count": len(approved_maven_homes),
         "dry_run": args.dry_run,
@@ -1116,6 +1245,9 @@ def main() -> int:
         "prior_receipt_hashes_verified_before_model_call": True,
         "model_tools_disabled": True,
         "model_actions_validated_locally": True,
+        "build_failure_feedback_replan_bounded_to_one": True,
+        "repeated_validated_build_decision_not_reexecuted": True,
+        "fresh_redacted_build_log_used_for_replan": True,
         "source_revision_substitution_forbidden": True,
         "source_edits_forbidden": True,
         "official_query_change_forbidden": True,

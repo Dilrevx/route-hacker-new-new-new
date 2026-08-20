@@ -14,6 +14,7 @@ from pathlib import Path
 import pytest
 
 from route_hacker.runtime.codeql_repair import RepairValidationError, stable_json_sha256
+import scripts.run_codeql_llm_repair_dispatch as dispatcher
 from scripts.run_codeql_llm_repair_dispatch import (
     build_repair_prompt,
     command_for_claude,
@@ -437,6 +438,167 @@ def test_controller_corrects_one_locally_rejected_model_proposal(tmp_path: Path)
     assert row["proposal_validation_errors"] == [
         "append_build_args contains an unapproved argument"
     ]
+
+
+def test_controller_replans_once_from_fresh_failed_build_evidence(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = tmp_path / "source"
+    source.mkdir()
+    case_id = "v8:build-feedback"
+    source_row = source_receipt(source, case_id, "abc123")
+    failed = failed_receipt(source, case_id, "abc123")
+    prior = deterministic_completion(failed, source_row)
+    prompts: list[str] = []
+    executed_decisions: list[dict] = []
+
+    def fake_invoke_model(**kwargs: object) -> dict:
+        prompts.append(str(kwargs["prompt"]))
+        decision = (
+            {
+                "actions": [{"kind": "append_build_args", "args": ["-Dcheckstyle.skip=true"]}],
+                "rationale": "Skip the failed quality gate.",
+            }
+            if len(prompts) == 1
+            else {
+                "actions": [{"kind": "append_build_args", "args": ["-Denforcer.skip=true"]}],
+                "rationale": "Use a distinct bounded retry action.",
+            }
+        )
+        return {
+            "command": ["fake-model"],
+            "bounded_process": {"returncode": 0, "timed_out": False},
+            "output_path": str(kwargs["output_path"]),
+            "raw_text": json.dumps({"type": "result", "structured_output": decision}),
+        }
+
+    def fake_execute_repair_attempt(
+        receipt: dict,
+        decision: dict,
+        **kwargs: object,
+    ) -> dict:
+        executed_decisions.append(decision)
+        packet = dispatcher.build_repair_packet(
+            receipt,
+            approved_java_homes=[],
+            approved_maven_homes=[],
+            source_receipt=source_row,
+        )
+        packet["failed_attempt"] = {
+            **packet["failed_attempt"],
+            "failure_category": "maven_quality_gate",
+            "log": {
+                "path": "fresh-codeql-repair.log",
+                "sha256": "fresh-log",
+                "available": True,
+                "excerpt": "BUILD FAILURE: fresh checkstyle network failure",
+            },
+        }
+        packet["packet_sha256"] = stable_json_sha256(
+            {key: value for key, value in packet.items() if key != "packet_sha256"}
+        )
+        return {
+            "status": (
+                "repair_attempt_failed"
+                if len(executed_decisions) == 1
+                else "codeql_db_repaired"
+            ),
+            "packet": packet,
+            "database_valid": len(executed_decisions) == 2,
+        }
+
+    monkeypatch.setattr(dispatcher, "invoke_model", fake_invoke_model)
+    monkeypatch.setattr(dispatcher, "execute_repair_attempt", fake_execute_repair_attempt)
+
+    result = dispatcher.run_case(
+        failed_receipt=failed,
+        source_receipt=source_row,
+        prior_completion=prior,
+        output_dir=tmp_path / "output",
+        attempt_number=1,
+        claude_command="fake-model",
+        openai_bridge_url=None,
+        openai_model="fake-model",
+        model_timeout_seconds=10,
+        codeql_timeout_seconds=10,
+        approved_java_homes=[],
+        approved_maven_homes=[],
+        dry_run=False,
+    )
+
+    assert result["status"] == "codeql_db_repaired"
+    assert result["build_feedback_replan_count"] == 1
+    assert len(result["model_invocations"]) == 2
+    assert len(result["repair_attempts"]) == 2
+    assert len(executed_decisions) == 2
+    assert executed_decisions[0] != executed_decisions[1]
+    assert "fresh checkstyle network failure" in prompts[1]
+    assert "Select a different action set" in prompts[1]
+
+
+def test_controller_does_not_reexecute_a_repeated_build_feedback_decision(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = tmp_path / "source"
+    source.mkdir()
+    case_id = "v8:repeated-build-feedback"
+    source_row = source_receipt(source, case_id, "abc123")
+    failed = failed_receipt(source, case_id, "abc123")
+    prior = deterministic_completion(failed, source_row)
+    executed_decisions: list[dict] = []
+
+    def fake_invoke_model(**kwargs: object) -> dict:
+        decision = {
+            "actions": [{"kind": "retry_same_command"}],
+            "rationale": "Repeat the same bounded retry.",
+        }
+        return {
+            "command": ["fake-model"],
+            "bounded_process": {"returncode": 0, "timed_out": False},
+            "output_path": str(kwargs["output_path"]),
+            "raw_text": json.dumps({"type": "result", "structured_output": decision}),
+        }
+
+    def fake_execute_repair_attempt(
+        receipt: dict,
+        decision: dict,
+        **kwargs: object,
+    ) -> dict:
+        executed_decisions.append(decision)
+        packet = dispatcher.build_repair_packet(
+            receipt,
+            approved_java_homes=[],
+            approved_maven_homes=[],
+            source_receipt=source_row,
+        )
+        return {"status": "repair_attempt_failed", "packet": packet}
+
+    monkeypatch.setattr(dispatcher, "invoke_model", fake_invoke_model)
+    monkeypatch.setattr(dispatcher, "execute_repair_attempt", fake_execute_repair_attempt)
+
+    result = dispatcher.run_case(
+        failed_receipt=failed,
+        source_receipt=source_row,
+        prior_completion=prior,
+        output_dir=tmp_path / "output",
+        attempt_number=1,
+        claude_command="fake-model",
+        openai_bridge_url=None,
+        openai_model="fake-model",
+        model_timeout_seconds=10,
+        codeql_timeout_seconds=10,
+        approved_java_homes=[],
+        approved_maven_homes=[],
+        dry_run=False,
+    )
+
+    assert result["status"] == "no_safe_llm_repair"
+    assert result["reason"] == "repeated_validated_decision_after_build_failure"
+    assert len(result["model_invocations"]) == 2
+    assert len(executed_decisions) == 1
+    assert len(result["decision_rounds"]) == 1
 
 
 def test_controller_has_distinct_worker_failure_status() -> None:

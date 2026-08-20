@@ -554,6 +554,32 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Monitor a12 and a13 receipts to completion, independently audit all strict gates, and merge only `completed_verified` outcomes into the 45-case coverage ledger. Retain Spring as a constrained-repair failure until a future generic controller capability addresses its documented Maven quality-gate failure.
 
+### Round 18 - Bounded Build-Feedback Replanning in Compile Builder v2
+
+**Goal:** Close the general controller gap where a locally valid, bounded repair action could fail to create a CodeQL database but the dispatcher would terminate without allowing the model to inspect the new redacted build evidence.
+
+**Scope:** This round changes the generic Compile Builder v2 controller only. It preserves the frozen 45-case manifest, exact source revision evidence, official IRIS inputs, and the existing model action allow-list. It introduces no source edits, revision substitutions, query changes, package installation, network configuration, or per-project build recipe.
+
+**Action:**
+
+- Added one bounded build-feedback replan round to `run_codeql_llm_repair_dispatch.py`. After a locally validated decision executes and returns `repair_attempt_failed`, the controller receives the completed attempt packet whose `failed_attempt.log` is refreshed from that attempt's final redacted `codeql-repair.log`.
+- The controller sends that fresh packet to the same tool-less model interface and applies the same local validator before a second CodeQL creation attempt. The prompt includes the previous decision and requires a different action set rather than an unbounded retry.
+- Stored every model call, proposal-validation error, validated decision, refreshed packet, and execution receipt under the original per-case attempt directory. The receipt records `repair_attempts`, the feedback replan count, and the explicit bounded-loop contract.
+- Added a duplicate-decision guard. If the model proposes the same locally validated decision after a failed execution, the controller records `no_safe_llm_repair` and does not execute it a second time.
+- Added regression coverage for both paths: a first failed attempt followed by a distinct feedback decision that succeeds, and a repeated feedback decision that is not re-executed.
+- Ran the focused remote Compile Builder suite after deployment: `73 passed in 2.15s`. The local checkout has no `pytest`, but both changed Python files pass `py_compile`.
+- Started a fresh, evidence-preserving Spring Cloud Config repair invocation `a8` for `case::e182cf07540c8aa7fcc0`. It uses a new output namespace, the same four-case frozen repair input, approved Java/Maven homes, one worker, the reverse-tunneled `DeepSeek-V4-Pro` bridge, and a 5,400-second CodeQL bound. The old a5 receipt is retained unchanged.
+
+**Verification:**
+
+- Remote package and local checkout have matching dispatcher SHA-256 after deployment.
+- The local Pro bridge and reverse SSH tunnel are live; the dispatcher entered its first constrained model-decision stage and wrote a new packet/prompt in the a8 attempt directory.
+- The bridge-level semaphore remains the authoritative model-concurrency limit of eight. The a8 repair lane issues at most one model request at a time and shares that limit with the active native-IRIS runs.
+
+**Decision:** Spring is no longer blocked by a controller limitation. Its a8 outcome remains pending and will be accepted only if a new CodeQL database creation exits successfully and produces the complete database layout. Any failed or rejected bounded decision remains a recorded non-success, not a source-level or native-IRIS result.
+
+**Next:** Let a8 finish, audit its complete receipt and database layout, and admit Spring to a fresh copied-original native-IRIS run only if all existing official-input and exact-source gates still pass. Continue monitoring a12/a13 independently; no active execution is counted before its strict completion receipt is present.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.
