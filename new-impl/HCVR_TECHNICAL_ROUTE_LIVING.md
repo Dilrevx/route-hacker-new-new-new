@@ -871,6 +871,48 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Monitor Spark 2.7.1, Spark 2.5.1, and the two NiFi processes through artifact-gated terminal receipts. Keep AWS in the repair lane until it emits a terminal receipt, then use the same manifest builder gate before any native-IRIS admission. Review exactly one further strict candidate only when a repair worker becomes free, starting from its historical failure logs and source receipt.
 
+### Round 28 - Generic Build-Argument Reversal, Generated-Metadata Gate, and XStream/AWS Native Admission
+
+**Goal:** Repair two generic Compile Builder v2 boundary gaps exposed by a strictly admitted XStream case, then admit only fully verified XStream and AWS CodeQL databases to copied-original native IRIS.
+
+**Scope:** This round covers `iris213::a9178b8fc1dc3822aaa3` / XStream `CVE-2020-26217` and `iris213::d46490c8daf3cd53542f` / AWS SDK Java `CVE-2022-31159` in the IRIS-213 extension lane. Neither identity joins the frozen 45/143 comparative cohort. The changes do not edit benchmark source, substitute a revision, exclude a project module, change an official IRIS query, or replace original IRIS execution.
+
+**Action:**
+
+- Audited XStream's historical failure and strict-admission inputs before running it. Java 8 was rejected by the project Enforcer; later attempts reached the reactor but could not resolve XStream's own `tests` classifier because the inherited build command contained `-Dmaven.test.skip=true`.
+- Preserved the LLM-controlled repair model and extended the generic action interface with `remove_existing_build_args`. The model may select only an argument that is both globally allow-listed and already present in the exact failed build command; local validation rejects unapproved or absent values. This lets a generic repair keep `-DskipTests` while restoring test compilation/test-jar production when another reactor module requires it.
+- The first successful XStream build exposed a separate generic source-integrity false negative: Maven Flatten writes fixed `.flattened-pom.xml` metadata beside module POMs. Added that fixed generated filename to the existing generated-metadata ignore set alongside `dependency-reduced-pom.xml`; genuine source and ordinary POM changes remain in the integrity hash and continue to reject the attempt.
+- Pushed the two Compile Builder v2 commits:
+  `9938891` (`Add bounded removal of existing build args`) and
+  `0dfb7e5` (`Ignore Maven Flatten generated metadata`).
+  The remote targeted suite passed `82 passed` after each synchronization.
+- Re-ran XStream from a new archive-isolated source copy. The constrained model selected only `remove_existing_build_args(["-Dmaven.test.skip=true"])`; the exact Maven reactor then completed and CodeQL produced a valid database with no non-generated source change.
+- AWS independently reached a terminal repair receipt under the existing generic Java-8 selection. Its previously long Java reactor completed and CodeQL finalized the database; no special recovery recipe was added.
+- Used `build_repaired_db_native_iris_manifest.py` for both cases, then materialized independent copied-IRIS workspaces with the provenance-checked CodeQL source overlay. Started the copied official `src/iris.py` processes with their official queries and one label thread each.
+
+**Verification:**
+
+- XStream repair ledger:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/compile-repair-run-xstream-2020-r3/dispatch/w1_llm_repair_receipts.jsonl`.
+  Its terminal receipt records `codeql_db_repaired`, the exact declared archive revision, source-integrity `changed_path_count: 0`, a valid database, and `96` Java relation files.
+- AWS repair ledger:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/compile-repair-run-spark-aws-r1/dispatch/w1_llm_repair_receipts.jsonl`.
+  Its terminal receipt records `codeql_db_repaired`, exact archive verification, source-integrity `changed_path_count: 0`, and `84` Java relation files.
+- Strict manifest/binding pairs:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a19-xstream-repaired-db-native-iris/iris213::a9178b8fc1dc3822aaa3.manifest.jsonl`,
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a19-xstream-repaired-db-native-iris/iris213::a9178b8fc1dc3822aaa3.binding.json`,
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a20-aws-repaired-db-native-iris/iris213::d46490c8daf3cd53542f.manifest.jsonl`, and
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a20-aws-repaired-db-native-iris/iris213::d46490c8daf3cd53542f.binding.json`.
+  Each records `iris213_preflight_ready_repaired_codeql_db` and its derived database path.
+- Active original-IRIS processes are:
+  `src/iris.py --query cwe-078wLLM ... x-stream__xstream_CVE-2020-26217_1.4.14-java7` and
+  `src/iris.py --query cwe-022wLLM ... aws__aws-sdk-java_CVE-2022-31159_1.12.260`.
+  Both use `DeepSeek-V4-Pro`, one IRIS label thread, and the shared bridge capacity remains eight.
+
+**Decision:** The XStream failure is recovered through a general, locally constrained action rather than a module exclusion or source patch. The source-integrity gate now recognizes two fixed Maven-generated metadata filenames without weakening detection of ordinary benchmark-source changes. XStream and AWS are valid repaired databases and active native-IRIS executions, not completed IRIS results. Token totals remain unreported because the bridge response usage field is null.
+
+**Next:** Monitor XStream and AWS to artifact-gated original-IRIS completion. Record a case only after `src/iris.py` exits `0`, required result artifacts exist, and each dispatched label response parses as a JSON list. Continue selecting later strict candidates individually, using the expanded generic action interface rather than project-specific recovery logic.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.
