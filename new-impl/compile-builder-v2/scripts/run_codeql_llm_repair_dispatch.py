@@ -73,6 +73,7 @@ DEFAULT_CLAUDE_COMMAND = "/data/lhq/.local/bin/claude"
 MAX_MODEL_OUTPUT_CHARACTERS = 16_000
 DEFAULT_OPENAI_MODEL = "DeepSeek-V4-Pro"
 MAX_PROPOSAL_CORRECTION_ATTEMPTS = 1
+MAX_MODEL_TRANSPORT_ATTEMPTS = 2
 MAX_BUILD_FEEDBACK_REPLAN_ATTEMPTS = 1
 
 
@@ -891,19 +892,41 @@ def run_case(
                         f"{decision_round:03d}-correction-{correction_attempt:03d}.txt"
                     )
                 )
-            model = invoke_model(
-                claude_command=claude_command,
-                openai_bridge_url=openai_bridge_url,
-                openai_model=openai_model,
-                prompt=active_prompt,
-                packet=active_packet,
-                output_path=case_dir / output_name,
-                timeout_seconds=model_timeout_seconds,
-                case_id=case_id,
-            )
-            model_receipt = {key: value for key, value in model.items() if key != "raw_text"}
-            model_invocations.append(model_receipt)
-            if model["bounded_process"]["returncode"] != 0 or model["bounded_process"]["timed_out"]:
+            for transport_attempt in range(MAX_MODEL_TRANSPORT_ATTEMPTS):
+                transport_output_name = (
+                    output_name
+                    if transport_attempt == 0
+                    else output_name.removesuffix(".txt")
+                    + f"-transport-retry-{transport_attempt:03d}.txt"
+                )
+                model = invoke_model(
+                    claude_command=claude_command,
+                    openai_bridge_url=openai_bridge_url,
+                    openai_model=openai_model,
+                    prompt=active_prompt,
+                    packet=active_packet,
+                    output_path=case_dir / transport_output_name,
+                    timeout_seconds=model_timeout_seconds,
+                    case_id=case_id,
+                )
+                model_receipt = {
+                    key: value for key, value in model.items() if key != "raw_text"
+                }
+                model_invocations.append(model_receipt)
+                bounded_process = model["bounded_process"]
+                transport_error = bounded_process.get("transport_error")
+                if (
+                    bounded_process["returncode"] != 0
+                    and isinstance(transport_error, str)
+                    and transport_error
+                    and transport_attempt + 1 < MAX_MODEL_TRANSPORT_ATTEMPTS
+                ):
+                    continue
+                break
+            if (
+                model["bounded_process"]["returncode"] != 0
+                or model["bounded_process"]["timed_out"]
+            ):
                 return {
                     **base,
                     "status": "llm_model_invocation_failed",
@@ -1425,6 +1448,7 @@ def main() -> int:
         "codeql_timeout_seconds": args.codeql_timeout_seconds,
         "codeql_inactivity_timeout_seconds": args.codeql_inactivity_timeout_seconds,
         "max_attempts": args.max_attempts,
+        "max_model_transport_attempts": MAX_MODEL_TRANSPORT_ATTEMPTS,
         "max_build_feedback_replan_attempts_per_case": MAX_BUILD_FEEDBACK_REPLAN_ATTEMPTS,
         "approved_java_home_count": len(approved_java_homes),
         "approved_maven_home_count": len(approved_maven_homes),

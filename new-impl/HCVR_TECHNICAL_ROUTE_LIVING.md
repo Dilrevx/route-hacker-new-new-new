@@ -1090,6 +1090,33 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Push the bridge-transport normalization, requeue only UIMA with the same strict receipts and liveness bound, and observe its Java/runtime/log evidence. Continue monitoring the active Spring native IRIS run through artifact-gated terminal verification.
 
+### Round 35 - Bound Transient Bridge Failures with a Single Receipt-Preserving Retry
+
+**Goal:** Let a constrained repair decision survive one transient bridge transport failure without hiding the failure evidence or changing the bounded model/build policy.
+
+**Scope:** This round follows the normalized UIMA retry receiving `Connection refused` while the remote `127.0.0.1:18889` forward was absent. It changes the generic dispatcher transport loop and restores the existing local-to-remote bridge tunnel; it does not modify source, archive identity, repair actions, Java selection, CodeQL, or native IRIS.
+
+**Action:**
+
+- Verified that the local DeepSeek-V4-Pro bridge continued to listen on the workstation at `127.0.0.1:18889`; the failure was solely the missing remote loopback forward.
+- Restored a keepalive-enabled reverse SSH forward so the remote execution host's `127.0.0.1:18889` maps only to the already-running local bridge. Confirmed the remote listener and a TCP probe before scheduling another model request.
+- Added a generic maximum of two model transport attempts per decision request. The dispatcher retries only when a nonzero model receipt includes a concrete transport error; it retains the failed receipt in `model_invocations`, uses a separate retry output file, and does not retry semantic model rejections, local validation failures, or build executions.
+- Added regression coverage for a first `ConnectionResetError` receipt followed by a valid `no_safe_action` decision. The test verifies two durable model receipts and no hidden retry.
+- Re-ran the remote Compile Builder v2 suite after synchronization:
+  `94 passed, 4 warnings`. The warnings remain the existing tar extraction deprecation warnings.
+
+**Verification:**
+
+- The first UIMA liveness retry's transport-only failure is retained at:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/compile-repair-run-uima-liveness-r2/dispatch/w1_llm_repair_receipts.jsonl`.
+  It is `llm_model_invocation_failed` with `URLError: [Errno 111] Connection refused`, not a repaired database or source/build failure.
+- The restored remote bridge listener passed a loopback TCP probe before the next UIMA dispatch. No model request was sent merely to test the tunnel.
+- Spring Cloud Config's copied-original IRIS run remains active in the API-labelling phase with newly written prompt artifacts. Its result remains pending the runner's complete artifact gate.
+
+**Decision:** Bridge availability is now protected by both an explicit tunnel liveness check and a bounded, receipt-preserving transport retry. Requeue UIMA once with the same archive-isolated input and 900-second build-log inactivity limit; do not broaden the action allow-list or introduce a UIMA-specific workaround.
+
+**Next:** Push the bounded transport retry, submit the single UIMA retry, and inspect its decision plus actual Java path before admitting any database. Continue Spring native-IRIS monitoring independently.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.

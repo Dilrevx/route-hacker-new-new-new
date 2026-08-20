@@ -659,6 +659,75 @@ def test_controller_replans_once_from_fresh_failed_build_evidence(
     assert "Select a different action set" in prompts[1]
 
 
+def test_controller_retries_one_transport_failure_before_validating_decision(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = tmp_path / "source"
+    source.mkdir()
+    case_id = "v8:transport-retry"
+    source_row = source_receipt(source, case_id, "abc123")
+    failed = failed_receipt(source, case_id, "abc123")
+    prior = deterministic_completion(failed, source_row)
+    invocation_count = 0
+
+    def fake_invoke_model(**_kwargs: object) -> dict:
+        nonlocal invocation_count
+        invocation_count += 1
+        if invocation_count == 1:
+            return {
+                "command": ["fake-model"],
+                "bounded_process": {
+                    "returncode": 1,
+                    "timed_out": False,
+                    "transport_error": "ConnectionResetError: reset",
+                },
+                "raw_text": '{"type":"result","is_error":true}',
+            }
+        return {
+            "command": ["fake-model"],
+            "bounded_process": {
+                "returncode": 0,
+                "timed_out": False,
+                "transport_error": None,
+            },
+            "raw_text": json.dumps(
+                {
+                    "type": "result",
+                    "structured_output": {
+                        "actions": [{"kind": "no_safe_action"}],
+                        "rationale": "No approved action is justified.",
+                    },
+                }
+            ),
+        }
+
+    monkeypatch.setattr(dispatcher, "invoke_model", fake_invoke_model)
+    result = dispatcher.run_case(
+        failed_receipt=failed,
+        source_receipt=source_row,
+        prior_completion=prior,
+        output_dir=tmp_path / "output",
+        attempt_number=1,
+        claude_command="fake-model",
+        openai_bridge_url=None,
+        openai_model="fake-model",
+        model_timeout_seconds=10,
+        codeql_timeout_seconds=10,
+        codeql_inactivity_timeout_seconds=None,
+        approved_java_homes=[],
+        approved_maven_homes=[],
+        dry_run=False,
+    )
+
+    assert result["status"] == "no_safe_llm_repair"
+    assert invocation_count == 2
+    assert len(result["model_invocations"]) == 2
+    assert result["model_invocations"][0]["bounded_process"]["transport_error"].startswith(
+        "ConnectionResetError:"
+    )
+
+
 def test_controller_does_not_reexecute_a_repeated_build_feedback_decision(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
