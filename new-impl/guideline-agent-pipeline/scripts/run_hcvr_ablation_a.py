@@ -23,10 +23,6 @@ import time
 from pathlib import Path
 from typing import Any, Iterable
 
-from recall_guideline_anchors import (
-    DEFAULT_SUFFIXES,
-    slice_snapshot,
-)
 from run_hcvr_case_anchor_audits import (
     build_guideline,
     ensure_snapshot,
@@ -271,32 +267,25 @@ def select_ranked_anchors(
     return [normalize_anchor(anchor, index) for index, anchor in enumerate(anchors, start=1)]
 
 
-def select_unranked_anchors(
-    case: dict[str, Any],
-    snapshot: Path,
-    budget: int,
-    *,
-    window_lines: int,
-    stride_lines: int,
-    max_file_bytes: int,
-    max_files: int,
-    max_candidates: int,
-    include_ext: set[str],
-) -> list[dict[str, Any]]:
-    candidates = slice_snapshot(
-        case=case,
-        snapshot=snapshot,
-        suffixes=include_ext,
-        window_lines=window_lines,
-        stride_lines=stride_lines,
-        max_file_bytes=max_file_bytes,
-        max_files=max_files,
-        max_candidates=max_candidates,
+def remove_rank_order(anchors: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Return the identical recalled candidates in a rank-independent order.
+
+    This is the only candidate-side change for ``-Rank``.  In particular, it
+    must not substitute a mechanical source slicer or otherwise change recall
+    coverage: doing so would conflate retrieval coverage with trace ordering.
+    The original rank remains in the receipt for provenance, but is withheld
+    from the worker prompt.
+    """
+    return sorted(
+        anchors,
+        key=lambda anchor: (
+            str(anchor.get("file") or ""),
+            int(anchor.get("start_line") or 0),
+            int(anchor.get("end_line") or 0),
+            str(anchor.get("symbol") or ""),
+            str(anchor.get("anchor_id") or ""),
+        ),
     )
-    return [
-        normalize_anchor(candidate, index)
-        for index, candidate in enumerate(candidates[:budget], start=1)
-    ]
 
 
 def build_type_guideline(
@@ -402,6 +391,9 @@ def group_anchors_by_directory(
     """
     if group_size < 1:
         raise ValueError("anchor group size must be positive")
+    # The full and -Rank variants must share group membership.  Retrieval rank
+    # deterministically seeds the same directory-local groups for both; -Rank
+    # removes rank only from the order displayed to the harness.
     remaining = sorted(anchors, key=lambda anchor: int(anchor.get("rank") or 0))
     groups: list[list[dict[str, Any]]] = []
     while remaining:
@@ -416,6 +408,7 @@ def group_anchors_by_directory(
                     min(directory_distance(remaining[index], member) for member in group),
                     int(remaining[index].get("rank") or 0),
                     str(remaining[index].get("file") or ""),
+                    str(remaining[index].get("anchor_id") or ""),
                 ),
             )
             group.append(remaining.pop(best_index))
@@ -428,13 +421,15 @@ def format_anchor_group(
     *,
     group_index: int,
     group_count: int,
+    show_rank: bool,
 ) -> str:
     lines = [
         f"Candidate group {group_index}/{group_count} ({len(anchors)} anchors; directory-local grouping):"
     ]
     for anchor in anchors:
+        rank = f"rank={anchor['rank']} " if show_rank else ""
         lines.append(
-            f"- rank={anchor['rank']} id={anchor['anchor_id']} file={anchor['file']} "
+            f"- {rank}id={anchor['anchor_id']} file={anchor['file']} "
             f"lines={anchor['start_line']}-{anchor['end_line']} "
             f"symbol={anchor.get('symbol') or ''} "
             f"span={anchor.get('span_kind') or ''}"
@@ -457,11 +452,16 @@ def build_group_prompt(
 ) -> str:
     vuln = case.get("vulnerability") or {}
     revisions = case.get("revisions") or {}
-    classification = case.get("classification") or {}
     if variant == "minus_guideline":
         guideline = GENERIC_AUDIT_PROMPT
+        family_line = ""
     else:
         guideline = build_type_guideline(case, guideline_overrides)
+        classification = case.get("classification") or {}
+        family_line = (
+            "HCVR vulnerability family: "
+            f"{classification.get('primary_hcvr_type') or 'unspecified'}\n"
+        )
     ranked_note = (
         "The candidate anchors are ranked by guideline-conditioned trace recall."
         if variant != "minus_rank"
@@ -471,6 +471,7 @@ def build_group_prompt(
         anchors,
         group_index=group_index,
         group_count=group_count,
+        show_rank=variant != "minus_rank",
     )
     case_metadata = ""
     if include_case_metadata:
@@ -495,7 +496,7 @@ reading: inspect the checkout agentically as needed, beginning with candidates.
 
 Repository: {snapshot}
 Exact vulnerable checkout: {revisions.get("checkout_revision", "")}
-{case_metadata}HCVR vulnerability family: {classification.get("primary_hcvr_type") or "unspecified"}
+{case_metadata}{family_line}
 Budget: {model_budget_note}
 
 Audit obligation:
@@ -507,8 +508,8 @@ Candidate trace anchors:
 {source_section}
 
 Instructions:
-- The guideline defines the vulnerability family in scope. Do not substitute a
-  different, more familiar vulnerability class merely because it is nearby.
+- The audit obligation defines the risk scope. Do not substitute a different,
+  more familiar vulnerability class merely because it is nearby.
 - This worker owns exactly the {len(anchors)} listed anchors. Consider every
   listed anchor, but triage quickly: if a candidate cannot plausibly implement
   the guideline family, mark it dismissed and move on. Do not broaden into a
@@ -664,6 +665,48 @@ def normalize_findings(value: Any, report_text: str) -> list[dict[str, Any]]:
     return findings
 
 
+VALID_DISPOSITION_STATUSES = {"risk", "dismissed", "insufficient_evidence"}
+
+
+def validate_candidate_dispositions(
+    dispositions: Any,
+    anchors: list[dict[str, Any]],
+) -> tuple[bool, str]:
+    """Validate the group completeness receipt without forgiving model drift.
+
+    A group can be scored only when the model returned exactly one disposition
+    for every supplied candidate identifier.  This catches dropped anchors,
+    duplicates, and small identifier transcription errors that would otherwise
+    silently turn a partial audit into a completed receipt.
+    """
+    if not isinstance(dispositions, list):
+        return False, "candidate_dispositions is not a list"
+    expected_ids = [str(anchor.get("anchor_id") or "") for anchor in anchors]
+    if any(not anchor_id for anchor_id in expected_ids):
+        return False, "selected anchors contain an empty anchor_id"
+    actual_ids: list[str] = []
+    for index, disposition in enumerate(dispositions):
+        if not isinstance(disposition, dict):
+            return False, f"candidate_dispositions[{index}] is not an object"
+        anchor_id = disposition.get("anchor_id")
+        if not isinstance(anchor_id, str) or not anchor_id:
+            return False, f"candidate_dispositions[{index}].anchor_id is missing"
+        if disposition.get("status") not in VALID_DISPOSITION_STATUSES:
+            return False, (
+                f"candidate_dispositions[{index}].status={disposition.get('status')!r} "
+                f"not in {sorted(VALID_DISPOSITION_STATUSES)}"
+            )
+        actual_ids.append(anchor_id)
+    if collections.Counter(actual_ids) != collections.Counter(expected_ids):
+        missing = list((collections.Counter(expected_ids) - collections.Counter(actual_ids)).elements())
+        unexpected = list((collections.Counter(actual_ids) - collections.Counter(expected_ids)).elements())
+        return False, (
+            "candidate_dispositions anchor_id mismatch; "
+            f"missing={missing[:3]} unexpected={unexpected[:3]}"
+        )
+    return True, ""
+
+
 def parse_opencode_events(text: str) -> tuple[str, dict[str, Any]]:
     final_text = ""
     usage = {
@@ -802,8 +845,12 @@ def run_anchor_group_audit(
         report_text = report_path.read_text(encoding="utf-8") if report_path.is_file() else ""
     parsed = extract_json_object(report_text)
     findings = normalize_findings(parsed, report_text)
+    dispositions = (parsed or {}).get("candidate_dispositions") if isinstance(parsed, dict) else []
     if state == "completed" and parsed is None:
-        state = "invalid_json_report" if not findings else "fallback_parsed"
+        state = "invalid_json_report"
+    disposition_valid, disposition_error = validate_candidate_dispositions(dispositions, anchors)
+    if state == "completed" and not disposition_valid:
+        state = "invalid_dispositions"
     classification = case.get("classification") or {}
     return {
         "schema_version": "hcvr_ablation_a_case_audit.v1",
@@ -827,9 +874,9 @@ def run_anchor_group_audit(
         "retry_attempt": retry_attempt,
         "finding_count": len(findings),
         "findings": findings,
-        "candidate_dispositions": (parsed or {}).get("candidate_dispositions")
-        if isinstance(parsed, dict)
-        else [],
+        "candidate_dispositions": dispositions,
+        "disposition_valid": disposition_valid,
+        "disposition_error": disposition_error,
         "report": str(report_path),
         "report_sha256": sha256_file(report_path) if report_path.is_file() else None,
         "events": str(events_path),
@@ -843,6 +890,19 @@ def merge_group_token_usage(group_rows: list[dict[str, Any]]) -> dict[str, int]:
         key: sum(int((row.get("token_usage") or {}).get(key) or 0) for row in group_rows)
         for key in keys
     }
+
+
+def reusable_completed_group(
+    group_row: dict[str, Any],
+    anchors: list[dict[str, Any]],
+) -> bool:
+    """Return whether a prior group can be reused as complete evidence."""
+    if group_row.get("state") != "completed":
+        return False
+    valid, _ = validate_candidate_dispositions(
+        group_row.get("candidate_dispositions"), anchors
+    )
+    return valid
 
 
 def run_case_grouped_audit(
@@ -882,8 +942,9 @@ def run_case_grouped_audit(
     reused_group_count = 0
     retried_group_count = 0
     for group_index, group in enumerate(groups, start=1):
+        prompt_group = remove_rank_order(group) if variant == "minus_rank" else group
         previous = (existing_groups or {}).get(group_index)
-        if previous and previous.get("state") in {"completed", "fallback_parsed"}:
+        if previous and reusable_completed_group(previous, group):
             # A valid first attempt is immutable evidence.  Resume must never
             # spend provider budget or overwrite its prompt/events/report.
             rows.append(previous)
@@ -913,7 +974,7 @@ def run_case_grouped_audit(
             variant=variant,
             case=case,
             snapshot=snapshot,
-            anchors=group,
+                anchors=prompt_group,
             group_index=group_index,
             group_count=len(groups),
             timeout=group_timeout,
@@ -931,7 +992,7 @@ def run_case_grouped_audit(
     findings = [finding for row in rows for finding in row.get("findings") or []]
     group_states = collections.Counter(str(row.get("state") or "unknown") for row in rows)
     states = set(group_states)
-    if states <= {"completed", "fallback_parsed"}:
+    if states <= {"completed"}:
         state = "completed"
     elif "timeout" in states:
         state = "partial_timeout"
@@ -1031,27 +1092,28 @@ def score_variant(
     tp = 0
     fp = 0
     fn = 0
-    alarms = 0
     for identity, case in cases_by_identity.items():
         row = rows_by_identity.get(identity)
         truth = truth_methods(case)
         findings = list((row or {}).get("findings") or [])
         case_alarms = len(findings)
-        alarms += case_alarms
-        matched_finding_indexes: set[int] = set()
+        matched_finding_indexes: list[int] = []
         hit_methods: list[dict[str, Any]] = []
         for index, finding in enumerate(findings):
             hit_method = finding_hits_truth(finding, truth)
             if hit_method is None:
                 continue
-            matched_finding_indexes.add(index)
+            matched_finding_indexes.append(index)
             if hit_method not in hit_methods:
                 hit_methods.append(hit_method)
-        # Recall/FN are case-level by the experiment contract: one or more
-        # truth-matching findings make this case a TP, regardless of how many
-        # vulnerable methods or duplicate findings it contains.
+        # The experiment contract evaluates recall at case granularity.  Select
+        # at most one true alarm per case (the first truth-localizing emitted
+        # finding in output order); every other emitted finding remains an
+        # alarm and therefore contributes FP.  This keeps case-level TP/FN
+        # while enforcing the required invariant Alarms == TP + FP even when
+        # a model emits duplicate hits or several locations on the same case.
         case_tp = 1 if hit_methods else 0
-        case_fp = case_alarms - len(matched_finding_indexes)
+        case_fp = case_alarms - case_tp
         case_fn = 1 if not hit_methods else 0
         tp += case_tp
         fp += case_fp
@@ -1067,10 +1129,12 @@ def score_variant(
                 "hit_truth": hit_methods,
                 "findings": findings,
                 "matched_finding_count": len(matched_finding_indexes),
+                "scored_true_finding_index": matched_finding_indexes[0] if matched_finding_indexes else None,
                 "truth_method_count": len(truth),
             }
         )
     recall = tp / denominator if denominator else 0.0
+    alarms = tp + fp
     precision = tp / alarms if alarms else 0.0
     f1 = (2 * tp) / (2 * tp + fp + fn) if (2 * tp + fp + fn) else 0.0
     states = collections.Counter((row.get("state") or "unknown") for row in rows)
@@ -1079,9 +1143,7 @@ def score_variant(
         "variant": variant_dir.name,
         "variant_label": VARIANT_LABELS.get(variant_dir.name, variant_dir.name),
         "case_count": denominator,
-        "completed_or_fallback_count": sum(
-            states[state] for state in ("completed", "fallback_parsed")
-        ),
+        "completed_count": states["completed"],
         "state_counts": dict(states),
         "tp": tp,
         "fp": fp,
@@ -1090,7 +1152,7 @@ def score_variant(
         "precision": precision,
         "f1": f1,
         "alarms": alarms,
-        "confirmed": "N/A",
+        "confirmed": "N/A (confirmation stage not integrated)",
         "case_scores": case_scores,
     }
     write_json(variant_dir / "score_summary.json", score)
@@ -1126,8 +1188,6 @@ def run_variant(
         raise FileNotFoundError(f"opencode executable not found: {args.opencode}")
     temp_root = args.temp_root.resolve()
     temp_root.mkdir(parents=True, exist_ok=True)
-    include_ext = {value.strip().lower() for value in args.include_ext.split(",") if value.strip()}
-
     def handle_case(case: dict[str, Any]) -> dict[str, Any]:
         existing = existing_rows.get(case["identity_key"])
         if existing and not args.retry_incomplete_groups:
@@ -1141,20 +1201,7 @@ def run_variant(
                 args.snapshot_root.resolve(),
                 args.clone_timeout,
             )
-            if variant == "minus_rank":
-                anchors = select_unranked_anchors(
-                    case,
-                    snapshot,
-                    args.anchor_budget,
-                    window_lines=args.window_lines,
-                    stride_lines=args.stride_lines,
-                    max_file_bytes=args.max_file_bytes,
-                    max_files=args.max_files_per_repo,
-                    max_candidates=args.max_candidates_per_case,
-                    include_ext=include_ext,
-                )
-            else:
-                anchors = select_ranked_anchors(case, recall_results, args.anchor_budget)
+            anchors = select_ranked_anchors(case, recall_results, args.anchor_budget)
             return run_case_grouped_audit(
                 audit_runner=args.audit_runner,
                 codex=codex_path,
@@ -1319,23 +1366,23 @@ def write_run_report(
 - Optional inline source context: `{args.inline_source_context}`; anchors `{args.inline_context_anchors}`, context lines `{args.inline_context_lines}`, max chars `{args.inline_context_max_chars}`. It is supplementary and does not restrict agentic checkout exploration.
 - Candidate protocol: consume Top-K `{args.anchor_budget}` candidates through directory-local groups of `{args.anchor_group_size}`. Every candidate is owned by exactly one group. Each group has an independent read-only harness session, log, and `{args.group_timeout}`-second timeout; a case completes after all of its groups have been attempted.
 - Audit-stage guideline overrides: `{args.guideline_overrides}` (SHA-256 `{sha256_file(args.guideline_overrides)}`; types `{sorted(args.guideline_overrides_map)}`). They replace only the matching type's audit obligation and do not alter the frozen recall result file.
-- Randomness control: deterministic case allowlist order, deterministic source slicing order, deterministic unranked candidate order; no sampling parameter is set by the harness.
+- Randomness control: deterministic case allowlist order, deterministic Top-K recall receipt, deterministic rank-removed file/line ordering for -Rank, and deterministic directory-local grouping; no sampling parameter is set by the harness.
 
 ## 3. 方法与配置
 
-固定部分：143-case allowlist、vulnerable checkout、repository snapshot materialization、source slicing parameters, Top-K candidate budget, audit backend model, timeout, and scorer are shared across all rows. Ranked variants consume the same recall result file: `{args.recall_results}`. The scorer treats the case vulnerability trace nodes as the frozen vulnerable-method proxy. Each case may emit multiple findings; case-level TP/FN follow the paper definition (a case is TP when any finding overlaps a truth method), while each emitted non-overlapping finding is an FP and Alarms is the raw finding total.
+固定部分：143-case allowlist、vulnerable checkout、repository snapshot materialization、同一个冻结的 Top-K recall receipt、anchor budget、directory-local group membership、audit backend model、timeout 和 scorer 在所有行中共享。所有变体都消费同一个 `{args.anchor_budget}`-anchor Top-K 集合，来源为 `{args.recall_results}`。每个 group 只有在 `candidate_dispositions` 与其输入的 anchor ID 一一精确对应时才可以标记 completed；少一个、重复一个或转写错误都作为无效 receipt 重跑。scorer 将 vulnerability trace nodes 作为冻结的 vulnerable-method proxy。每个 case 最多产生一个 TP：若多个 finding 都命中该 case 的 truth，仅首个命中作为 TP，其余仍计为 emitted alarms/FP；因此逐行恒有 `Alarms = TP + FP`，FN 保持 case-level 定义。
 
-GCA(full): uses guideline-conditioned ranked anchors and the case-specific guideline generated by `build_guideline`. The stage-2 emitted finding is scored here; dynamic confirmation is not available in this script and is recorded as N/A.
+GCA(full): uses guideline-conditioned ranked anchors and the audit-only type guideline projected from `build_guideline`（不传递 case description、CVE、fix 或 truth location）。The stage-2 emitted finding is scored here; dynamic confirmation is not available in this script and is recorded as N/A.
 
--Rank: replaces ranked anchors with the first unsorted mechanical source-slice anchors under the same anchor budget. The audit prompt explicitly says the anchors are unsorted and lets the harness choose the entry point within the same budget.
+-Rank: keeps precisely the same Top-K anchor IDs, files, line spans and directory-local group membership as full, but deterministically reorders candidates within each group by file/line and removes every rank field from the harness prompt. This row therefore isolates rank priority without changing candidate coverage or the group-level budget allocation.
 
--Guideline: keeps the ranked anchors and audit budget fixed but replaces the case-specific guideline with the generic prompt below.
+-Guideline: keeps the ranked anchors and audit budget fixed but replaces the case-specific guideline with the generic prompt below. The prompt intentionally omits both the HCVR family/type label and any case-specific vulnerability metadata.
 
 ```text
 {GENERIC_AUDIT_PROMPT}
 ```
 
--PoC: uses the same ranked anchors and guideline as GCA(full), reports only stage-2 bounded-audit findings, and does not run the confirmation handoff.
+-PoC: uses the same ranked anchors and guideline as GCA(full), reports only stage-2 bounded-audit findings, and does not run the confirmation handoff. This repository currently has no integrated instrumented confirmation reducer, so it is a two-stage protocol row only after a corresponding full three-stage runner exists; until then its Confirmed value remains explicitly unavailable rather than a fabricated zero.
 
 ## 4. 结果
 
@@ -1350,7 +1397,7 @@ Representative hit/miss flips:
 
 ## 5. 异常与缺口
 
-PoC confirmation was not executed because the current `guideline-agent-pipeline` README defines the PoC stage as a handoff contract (`extract_poc_handoff_from_audit.py`) rather than an integrated 143-case instrumented confirmation reducer. Therefore Confirmed is N/A for rows produced by this script. Any per-case materialization, model, timeout, or JSON-format failures are preserved in each variant's `case_results.jsonl` and summarized in `state_counts` above.
+PoC confirmation was not executed because the current `guideline-agent-pipeline` README defines the PoC stage as a handoff contract (`extract_poc_handoff_from_audit.py`) rather than an integrated 143-case instrumented confirmation reducer. Therefore this script cannot yet yield a paper-comparable full-vs--PoC pair, and Confirmed is unavailable rather than zero. Any per-case materialization, model, timeout, JSON-format, or disposition-completeness failures are preserved in each variant's `case_results.jsonl` and summarized in `state_counts` above.
 
 ## 6. 复现入口
 
@@ -1473,12 +1520,6 @@ def main() -> None:
         help="With --resume, reuse completed groups and rerun only timeout/invalid/failure groups.",
     )
     parser.add_argument("--model-budget-note", default="single bounded audit response; inspect only the minimal relevant source path")
-    parser.add_argument("--window-lines", type=int, default=80)
-    parser.add_argument("--stride-lines", type=int, default=40)
-    parser.add_argument("--include-ext", default=",".join(DEFAULT_SUFFIXES))
-    parser.add_argument("--max-file-bytes", type=int, default=1_000_000)
-    parser.add_argument("--max-files-per-repo", type=int, default=20_000)
-    parser.add_argument("--max-candidates-per-case", type=int, default=50_000)
     parser.add_argument("--inline-source-context", action="store_true")
     parser.add_argument("--inline-context-anchors", type=int, default=8)
     parser.add_argument("--inline-context-lines", type=int, default=20)
@@ -1532,7 +1573,7 @@ def main() -> None:
     args.git_branch = git_value(["git", "rev-parse", "--abbrev-ref", "HEAD"], repo_root)
     args.git_commit = git_value(["git", "rev-parse", "HEAD"], repo_root)
     config = {
-        "schema_version": "hcvr_ablation_a_config.v2",
+        "schema_version": "hcvr_ablation_a_config.v3",
         "variants": args.variants,
         "audit_runner": args.audit_runner,
         "model": args.model,
@@ -1558,10 +1599,11 @@ def main() -> None:
         "git_branch": args.git_branch,
         "git_commit": args.git_commit,
         "scoring": {
-            "tp": "one case with one or more emitted findings overlapping a vulnerability_trace node",
-            "fp": "each emitted finding that does not overlap any case vulnerability_trace node",
+            "tp": "at most one emitted finding per case: the first finding overlapping any vulnerability_trace node",
+            "fp": "every emitted finding other than the one scored TP for its case, including duplicate or additional truth-overlapping findings",
             "fn": "case has no emitted finding overlapping any vulnerability_trace node",
             "recall_denominator": expected_run_cases,
+            "alarms": "TP+FP; raw emitted finding total after the one-TP-per-case policy",
             "f1": "2*TP/(2*TP+FP+FN)",
         },
     }

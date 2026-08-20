@@ -104,6 +104,64 @@ def test_group_prompt_is_bounded_and_allows_local_agentic_exploration(tmp_path: 
     assert "CVE-2099-0001" not in prompt
 
 
+def test_minus_rank_keeps_identical_candidates_but_hides_rank(tmp_path: Path):
+    module = load_module()
+    ranked = anchors(10)
+    unranked = module.remove_rank_order(ranked)
+    assert {anchor["anchor_id"] for anchor in unranked} == {anchor["anchor_id"] for anchor in ranked}
+    prompt = module.build_group_prompt(
+        case=sample_case(),
+        snapshot=tmp_path,
+        variant="minus_rank",
+        anchors=unranked,
+        group_index=1,
+        group_count=1,
+        model_budget_note="test",
+    )
+    assert "deliberately unsorted" in prompt
+    assert "rank=" not in prompt
+    assert module.group_anchors_by_directory(ranked, 4) == module.group_anchors_by_directory(unranked, 4)
+
+
+def test_minus_guideline_hides_hcvr_family_and_case_identity(tmp_path: Path):
+    module = load_module()
+    prompt = module.build_group_prompt(
+        case=sample_case(),
+        snapshot=tmp_path,
+        variant="minus_guideline",
+        anchors=anchors(10),
+        group_index=1,
+        group_count=1,
+        model_budget_note="test",
+    )
+    assert "HCVR vulnerability family" not in prompt
+    assert "sql_like_pattern_misuse" not in prompt
+    assert "CVE-2099-0001" not in prompt
+
+
+def test_candidate_disposition_validation_requires_exact_one_to_one_match():
+    module = load_module()
+    selected = anchors(2)
+    valid, error = module.validate_candidate_dispositions(
+        [
+            {"anchor_id": "anchor::1", "status": "dismissed"},
+            {"anchor_id": "anchor::2", "status": "risk"},
+        ],
+        selected,
+    )
+    assert valid is True
+    assert error == ""
+    valid, error = module.validate_candidate_dispositions(
+        [
+            {"anchor_id": "anchor::1", "status": "dismissed"},
+            {"anchor_id": "anchor::1", "status": "risk"},
+        ],
+        selected,
+    )
+    assert valid is False
+    assert "mismatch" in error
+
+
 def test_type_guideline_override_replaces_only_matching_type():
     module = load_module()
     override = {"sql_like_pattern_misuse": "Audit SQL LIKE pattern construction only."}
@@ -146,8 +204,9 @@ def test_score_variant_counts_multiple_findings_and_distinct_truth_methods(tmp_p
         denominator=1,
     )
     assert score["tp"] == 1
-    assert score["fp"] == 1
+    assert score["fp"] == 2
     assert score["fn"] == 0
     assert score["alarms"] == 3
     assert score["recall"] == 1.0
     assert score["precision"] == 1 / 3
+    assert score["alarms"] == score["tp"] + score["fp"]
