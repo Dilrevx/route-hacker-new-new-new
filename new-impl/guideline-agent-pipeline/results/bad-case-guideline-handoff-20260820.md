@@ -8,6 +8,29 @@ stage-2 execution repair from the remaining guideline-quality work, so that
 guideline refinement can proceed without changing candidate grouping, scoring,
 or the audit harness contract.
 
+## Current 143-Case Retrieval Evidence
+
+The current fixed-identity 143-case P3C64 result and bad-case analysis are
+stored in:
+
+```text
+results/p3c64-fixed143-paper-eval-20260820/
+```
+
+Use this directory, rather than the older `--selection all --limit 143`
+artifact, for paper-facing comparison against Qwen3-Embedding-4B.
+
+| Budget | Qwen3-Embedding-4B | P3C64 query-residual | Delta |
+| --- | ---: | ---: | ---: |
+| Top-100 | 55/143 = 0.3846 | 73/143 = 0.5105 | +18 cases / +12.6 pp |
+| Top-150 | 65/143 = 0.4545 | 83/143 = 0.5804 | +18 cases / +12.6 pp |
+| Top-200 | 74/143 = 0.5175 | 84/143 = 0.5874 | +10 cases / +7.0 pp |
+
+The Top-100 miss set has 70 cases. Eleven of them have the first known anchor
+ranked 101-200, which is the most realistic next recovery target. The largest
+Top-100 miss bucket is `iris` with 20 cases, matching the guideline-quality
+failure mode below.
+
 ## Execution repair now on this branch
 
 The stage-2 harness consumes the selected Top-K anchors as independent,
