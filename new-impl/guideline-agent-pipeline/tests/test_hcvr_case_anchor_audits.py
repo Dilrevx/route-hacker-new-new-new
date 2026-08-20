@@ -207,6 +207,73 @@ def test_selected_anchor_file_overrides_dataset_anchor(tmp_path: Path):
     assert anchor["retrieval_source"] == "mechanical_slice_embedding_recall"
 
 
+def test_selected_anchor_file_guideline_flows_into_case(tmp_path: Path):
+    module = load_module()
+    selected_path = tmp_path / "selected_cases.jsonl"
+    selected_path.write_text(
+        json.dumps(
+            {
+                "identity_key": "owner__repo::CVE-2099-0001",
+                "anchor_id": "recalled::1",
+                "file": "src/Recalled.java",
+                "start_line": 31,
+                "end_line": 80,
+                "guideline": "Audit a refined mechanism guideline.",
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    _, anchors = module.load_selected_anchor_file(selected_path)
+    case = sample_case()
+    module.choose_anchor(case, anchor_index=0, selected_anchors=anchors)
+
+    assert module.build_guideline(case).splitlines()[1] == (
+        "Guideline: Audit a refined mechanism guideline."
+    )
+
+
+def test_guideline_overrides_apply_by_identity_or_case_id(tmp_path: Path):
+    module = load_module()
+    override_path = tmp_path / "guidelines.jsonl"
+    override_path.write_text(
+        json.dumps(
+            {
+                "identity_key": "owner__repo::CVE-2099-0001",
+                "guideline_text": "Audit identity-key guideline.",
+            }
+        )
+        + "\n"
+        + json.dumps(
+            {
+                "case_id": "case::2",
+                "retrieval_guideline": "Audit case-id guideline.",
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    case_a = sample_case()
+    case_b = sample_case() | {
+        "identity_key": "owner__repo::CVE-2099-0002",
+        "new_unified_case_id": "case::2",
+    }
+
+    count = module.apply_guideline_overrides(
+        [case_a, case_b],
+        module.load_guideline_overrides(override_path),
+    )
+
+    assert count == 2
+    assert module.build_guideline(case_a).splitlines()[1] == (
+        "Guideline: Audit identity-key guideline."
+    )
+    assert module.build_guideline(case_b).splitlines()[1] == (
+        "Guideline: Audit case-id guideline."
+    )
+
+
 def test_prompt_treats_anchor_as_entry_not_reading_boundary(tmp_path: Path):
     module = load_module()
     case = sample_case()
@@ -244,3 +311,78 @@ def test_prepare_packet_writes_prompt_and_handoff_fields(tmp_path: Path):
     normalized_prompt = " ".join(prompt.split())
     assert "Decision value must be either risk or no-risk" in normalized_prompt
     assert "The Confidence value" in normalized_prompt
+
+
+def test_build_guideline_specializes_broad_type_from_description():
+    module = load_module()
+    case = sample_case()
+    case["classification"] = {
+        "primary_hcvr_type": "iris",
+        "cwe_ids": [],
+        "hcvr_types": ["iris"],
+    }
+    case["vulnerability"] = {
+        "id": "CVE-2099-0003",
+        "description": "A user controlled endpoint can flow into a JNDI LDAP lookup.",
+    }
+
+    guideline = module.build_guideline(case)
+
+    assert "JNDI" in guideline
+    assert "LDAP" in guideline
+    assert "known security-relevant code path" not in guideline
+    assert "Case description: A user controlled endpoint" in guideline
+
+
+def test_build_guideline_prefers_explicit_retrieval_guideline():
+    module = load_module()
+    case = sample_case()
+    case["classification"] = {
+        "primary_hcvr_type": "iris",
+        "cwe_ids": [],
+        "hcvr_types": ["iris"],
+    }
+    case["retrieval_guideline"] = (
+        "Audit whether remote JMX connector creation drops the authentication "
+        "environment before exposing a management endpoint."
+    )
+    case["vulnerability"] = {"id": "CVE-2099-0006", "description": ""}
+
+    guideline = module.build_guideline(case)
+
+    assert "remote JMX connector creation drops the authentication environment" in guideline
+    assert "known security-relevant code path" not in guideline
+
+
+def test_build_guideline_keeps_specific_track_template():
+    module = load_module()
+    case = sample_case()
+    case["classification"] = {
+        "primary_hcvr_type": "authorization_bypass",
+        "cwe_ids": ["CWE-863"],
+        "hcvr_types": ["authorization_bypass"],
+    }
+    case["vulnerability"] = {
+        "id": "CVE-2099-0004",
+        "description": "The advisory mentions JNDI only as unrelated deployment context.",
+    }
+
+    guideline = module.build_guideline(case)
+
+    assert "authorization decision" in guideline
+    assert "JNDI" not in guideline.split("Guideline:", 1)[1].split("Case description:", 1)[0]
+
+
+def test_build_guideline_uses_cwe_for_unknown_type():
+    module = load_module()
+    case = sample_case()
+    case["classification"] = {
+        "primary_hcvr_type": "custom_unknown",
+        "cwe_ids": ["CWE-918"],
+        "hcvr_types": ["custom_unknown"],
+    }
+    case["vulnerability"] = {"id": "CVE-2099-0005", "description": ""}
+
+    guideline = module.build_guideline(case)
+
+    assert "outbound network requests" in guideline

@@ -1,0 +1,33 @@
+{
+  "artifacts": {
+    "recall_results": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/hcvr-p3c64-fixed143-20260820T113743/final_merged/recall_results.jsonl",
+    "selected_cases": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/hcvr-p3c64-fixed143-20260820T113743/final_merged/selected_cases.jsonl"
+  },
+  "identity_count": 143,
+  "identity_file": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/hcvr-p3c64-fixed143-20260820T113743/paper_eval_143_identities.jsonl",
+  "merge_failures": [],
+  "metrics": {
+    "candidate_count": 1094013,
+    "case_count": 143,
+    "completed_count": 143,
+    "failed_count": 0,
+    "hit_cases": 138,
+    "hit_count_at_100": 73,
+    "hit_count_at_200": 84,
+    "hit_count_at_30": 45,
+    "hit_count_at_300": 91,
+    "hit_count_at_50": 56,
+    "hit_count_at_500": 103,
+    "known_anchor_hit_at_100": 0.5104895104895105,
+    "known_anchor_hit_at_200": 0.5874125874125874,
+    "known_anchor_hit_at_30": 0.3146853146853147,
+    "known_anchor_hit_at_300": 0.6363636363636364,
+    "known_anchor_hit_at_50": 0.3916083916083916,
+    "known_anchor_hit_at_500": 0.7202797202797203,
+    "mean_candidates_per_completed_case": 7650.44055944056,
+    "mrr": 0.08852777946015142
+  },
+  "missing_identities": [],
+  "schema_version": "hcvr_recall_shard_merge.v1",
+  "shard_root": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/hcvr-p3c64-fixed143-20260820T113743/final_shards"
+}

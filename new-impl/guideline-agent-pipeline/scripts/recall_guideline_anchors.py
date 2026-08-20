@@ -19,8 +19,10 @@ from pathlib import Path
 from typing import Any, Iterable, Protocol
 
 from run_hcvr_case_anchor_audits import (
+    apply_guideline_overrides,
     build_guideline,
     ensure_snapshot,
+    load_guideline_overrides,
     load_selected_cases,
     safe_slug,
     sha256_file,
@@ -588,6 +590,7 @@ def selected_anchor_row(case_result: dict[str, Any], rank: int) -> dict[str, Any
                 "checkout_revision": case_result["checkout_revision"],
                 "hcvr_type": case_result.get("hcvr_type"),
                 "snapshot": case_result.get("snapshot"),
+                "guideline": case_result.get("guideline"),
                 **anchor,
             }
     return None
@@ -637,6 +640,16 @@ def main() -> None:
     parser.add_argument("--qa", type=Path, required=True)
     parser.add_argument("--cases-file", type=Path)
     parser.add_argument("--identity-file", type=Path)
+    parser.add_argument(
+        "--guideline-file",
+        type=Path,
+        help=(
+            "Optional JSON/JSONL sidecar keyed by identity_key or case_id. "
+            "Rows may contain guideline_text, retrieval_guideline, audit_guideline, "
+            "or guideline. Overrides generated broad track templates without "
+            "modifying the dataset."
+        ),
+    )
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--repo-cache", type=Path, required=True)
     parser.add_argument("--snapshot-root", type=Path, required=True)
@@ -702,6 +715,13 @@ def main() -> None:
         args.identity_file.resolve() if args.identity_file else None,
         None,
     )
+    guideline_file = args.guideline_file.resolve() if args.guideline_file else None
+    guideline_override_count = 0
+    if guideline_file is not None:
+        guideline_override_count = apply_guideline_overrides(
+            cases,
+            load_guideline_overrides(guideline_file),
+        )
     embedder = make_embedder(args)
     suffixes = {value.strip().lower() for value in args.include_ext.split(",") if value.strip()}
     started = time.time()
@@ -791,6 +811,9 @@ def main() -> None:
         "scope": "mechanical source slicing -> guideline embedding recall; known anchors used only for evaluation",
         "qa": str(args.qa.resolve()),
         "cases_file": str(args.cases_file.resolve()) if args.cases_file else None,
+        "identity_file": str(args.identity_file.resolve()) if args.identity_file else None,
+        "guideline_file": str(guideline_file) if guideline_file else None,
+        "guideline_override_count": guideline_override_count,
         "limit": args.limit,
         "skip": args.skip,
         "selection": args.selection,

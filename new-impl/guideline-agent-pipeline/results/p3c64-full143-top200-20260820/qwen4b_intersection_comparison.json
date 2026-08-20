@@ -1,0 +1,198 @@
+{
+  "budgets": [
+    30,
+    50,
+    100,
+    200,
+    300,
+    500
+  ],
+  "candidate_count_on_common": {
+    "different_count": 0,
+    "left_total": 374250,
+    "right_total": 374250
+  },
+  "common_count": 38,
+  "left_count": 143,
+  "left_label": "p3c64-current-accepted-first143",
+  "left_only_count": 105,
+  "left_only_sample": [
+    "4ra1n__super-xray::CVE-2022-41958",
+    "94fzb__zrlog-plugin-backup-sql-file::CVE-2024-57669",
+    "abersheeran__rpc.py::CVE-2022-35411",
+    "aces__loris::CVE-2026-39985",
+    "adonisjs__http-server::CVE-2026-40255",
+    "airsonic__airsonic::CVE-2019-10908",
+    "akka__akka-management::CVE-2025-46548",
+    "alibaba__nacos::CVE-2021-44667",
+    "alkacon__opencms-core::CVE-2023-31544",
+    "allure-framework__allure2::CVE-2025-52888",
+    "angular__angular-cli::CVE-2026-27738",
+    "ansible__ansible-runner::CVE-2021-3701",
+    "apache__activemq::CVE-2019-0222",
+    "apache__camel::CVE-2018-8041",
+    "apache__camel::CVE-2019-0194",
+    "apache__camel::CVE-2025-30177",
+    "apache__cassandra::CVE-2025-23015",
+    "apache__cxf-fediz::CVE-2018-8038",
+    "apache__cxf::CVE-2016-6812",
+    "apache__cxf::CVE-2019-17573"
+  ],
+  "metrics_on_common_identities": {
+    "hit_at_100": {
+      "delta_count": 1,
+      "delta_rate": 0.02631578947368421,
+      "left_count": 19,
+      "left_rate": 0.5,
+      "right_count": 18,
+      "right_rate": 0.47368421052631576
+    },
+    "hit_at_200": {
+      "delta_count": -1,
+      "delta_rate": -0.02631578947368421,
+      "left_count": 21,
+      "left_rate": 0.5526315789473685,
+      "right_count": 22,
+      "right_rate": 0.5789473684210527
+    },
+    "hit_at_30": {
+      "delta_count": 5,
+      "delta_rate": 0.13157894736842105,
+      "left_count": 12,
+      "left_rate": 0.3157894736842105,
+      "right_count": 7,
+      "right_rate": 0.18421052631578946
+    },
+    "hit_at_300": {
+      "delta_count": -2,
+      "delta_rate": -0.05263157894736842,
+      "left_count": 21,
+      "left_rate": 0.5526315789473685,
+      "right_count": 23,
+      "right_rate": 0.6052631578947368
+    },
+    "hit_at_50": {
+      "delta_count": 5,
+      "delta_rate": 0.13157894736842105,
+      "left_count": 15,
+      "left_rate": 0.39473684210526316,
+      "right_count": 10,
+      "right_rate": 0.2631578947368421
+    },
+    "hit_at_500": {
+      "delta_count": -4,
+      "delta_rate": -0.10526315789473684,
+      "left_count": 21,
+      "left_rate": 0.5526315789473685,
+      "right_count": 25,
+      "right_rate": 0.6578947368421053
+    },
+    "mrr": {
+      "delta": 0.03937631274013522,
+      "left": 0.07163173864854865,
+      "right": 0.032255425908413425
+    }
+  },
+  "primary_budget": 200,
+  "primary_budget_crossing": {
+    "both_hit_count": 18,
+    "both_miss_count": 13,
+    "left_only_hit_count": 3,
+    "left_only_hits": [
+      {
+        "cwe_ids": [],
+        "hcvr_type": "iris",
+        "identity_key": "apache__commons-fileupload::CVE-2025-48976",
+        "left_candidate_count": 419,
+        "left_rank": 64,
+        "right_candidate_count": 419,
+        "right_rank": 310
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "iris",
+        "identity_key": "apache__incubator-seata::CVE-2025-32897",
+        "left_candidate_count": 6793,
+        "left_rank": 74,
+        "right_candidate_count": 6793,
+        "right_rank": 352
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "iris",
+        "identity_key": "apache__activemq::CVE-2020-11998",
+        "left_candidate_count": 16951,
+        "left_rank": 109,
+        "right_candidate_count": 16951,
+        "right_rank": 4546
+      }
+    ],
+    "right_only_hit_count": 4,
+    "right_only_hits": [
+      {
+        "cwe_ids": [],
+        "hcvr_type": "iris",
+        "identity_key": "apache__inlong::CVE-2025-27531",
+        "left_candidate_count": 19871,
+        "left_rank": null,
+        "right_candidate_count": 19871,
+        "right_rank": 20
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "authorization_bypass",
+        "identity_key": "apolloconfig__apollo::CVE-2024-43397",
+        "left_candidate_count": 1833,
+        "left_rank": null,
+        "right_candidate_count": 1833,
+        "right_rank": 23
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "iris",
+        "identity_key": "apache__dubbo::CVE-2021-30181",
+        "left_candidate_count": 3837,
+        "left_rank": null,
+        "right_candidate_count": 3837,
+        "right_rank": 51
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "concurrent_object_lifecycle",
+        "identity_key": "api-platform__core::CVE-2026-49858",
+        "left_candidate_count": 2133,
+        "left_rank": null,
+        "right_candidate_count": 2133,
+        "right_rank": 78
+      }
+    ]
+  },
+  "right_count": 143,
+  "right_label": "qwen3-embedding-4b-frozen-paper-eval",
+  "right_only_count": 105,
+  "right_only_sample": [
+    "chartbrew__chartbrew::CVE-2026-32252",
+    "cloudreve__cloudreve::CVE-2026-55499",
+    "code16__sharp::CVE-2026-53634",
+    "coder__coder::CVE-2026-55435",
+    "conductor-oss__conductor::CVE-2025-26074",
+    "corewcf__corewcf::CVE-2026-54778",
+    "craftcms__cms::CVE-2026-50279",
+    "cuba-platform__cuba::CVE-2025-32959",
+    "cyberjunky__python-garminconnect::CVE-2026-54447",
+    "dromara__hutool::CVE-2018-17297",
+    "dspace__dspace::CVE-2025-53621",
+    "dspace__dspace::CVE-2025-53622",
+    "earendil-works__pi::CVE-2026-54327",
+    "eclipse-californium__californium::CVE-2022-39368",
+    "eclipse__milo::CVE-2022-25897",
+    "envoyproxy__gateway::CVE-2026-53715",
+    "erudika__para::CVE-2025-48955",
+    "erudika__para::CVE-2025-49009",
+    "ethyca__fides::CVE-2026-42303",
+    "expressjs__multer::CVE-2026-3304"
+  ],
+  "same_identity_order": false,
+  "same_identity_set": false,
+  "schema_version": "hcvr_recall_rank_comparison.v1"
+}

@@ -23,24 +23,34 @@ The run completed all 143 cases with no failed output directories. Four cases di
 
 Candidate volume: 1,095,817 candidate anchors over 143 cases, mean 7,663.1 candidates per case.
 
-## P3C64 Query-Residual Comparison
+## P3C64 Query-Residual Diagnostic
 
-The recovered P3C64 query-residual method was later run on the same 143-case
-Unified V2 paper-eval set with `--top-k 200`. Full artifacts are in
-`../p3c64-full143-top200-20260820/`.
+A later P3C64 query-residual run is stored in
+`../p3c64-full143-top200-20260820/`, but that run is not a valid same-143 A/B
+comparison with this Qwen3-Embedding-4B baseline.
+
+The Qwen3-Embedding-4B run used the frozen paper-eval identity file
+`paper_eval_143_identities.jsonl` with SHA256
+`e00a8622f2321ea86248de87a2cbbf89b388798e6e6a0d9df6bfbaf69191b805`.
+The P3C64 run used `--selection all --limit 143` without `--identity-file`,
+which selected the first 143 accepted cases from `new_unified_cases.v1.jsonl`.
+The two sets overlap on only 38 identities.
+
+On those 38 overlapping identities, candidate counts match exactly and the
+comparable result is:
 
 | Metric | Qwen3-Embedding-4B | P3C64 query-residual | Delta |
 | --- | ---: | ---: | ---: |
-| Hit@30 | 30/143 = 0.2098 | 41/143 = 0.2867 | +0.0769 |
-| Hit@50 | 37/143 = 0.2587 | 47/143 = 0.3287 | +0.0699 |
-| Hit@100 | 55/143 = 0.3846 | 56/143 = 0.3916 | +0.0070 |
-| Hit@200 | 74/143 = 0.5175 | 71/143 = 0.4965 | -0.0210 |
-| MRR | 0.050733 | 0.080642 | +0.029909 |
+| Hit@30 | 7/38 | 12/38 | +5 |
+| Hit@50 | 10/38 | 15/38 | +5 |
+| Hit@100 | 18/38 | 19/38 | +1 |
+| Hit@200 | 22/38 | 21/38 | -1 |
+| MRR | 0.032255 | 0.071632 | +0.039376 |
 
-Interpretation: P3C64 improves early-rank concentration and MRR on the full
-143-case run, but it does not preserve the 30-case `+10%` Hit@200 gain against
-the frozen 4B baseline. At the Top-200 budget, the 143-case P3C64 run is 3 cases
-below Qwen3-Embedding-4B.
+Interpretation: the existing P3C64 artifact shows stronger early-rank
+concentration on the overlap, but it cannot establish the intended full-143
+`+10%` target. Rerun P3C64 with the same frozen `paper_eval_143_identities.jsonl`
+identity file before reporting full-set deltas.
 
 ## Misses And Tail Cases
 

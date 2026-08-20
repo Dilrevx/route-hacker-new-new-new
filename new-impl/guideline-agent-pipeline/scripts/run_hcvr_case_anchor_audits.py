@@ -69,6 +69,18 @@ GUIDELINES = {
         "unexpected file, read an unauthorized file, or confuse canonical path "
         "validation."
     ),
+    "ssrf": (
+        "Audit whether attacker-controlled URLs, hosts, redirects, DNS names, "
+        "webhook targets, fetch clients, proxy destinations, or metadata-service "
+        "addresses can reach outbound network requests without scheme, host, "
+        "redirect, DNS rebinding, and private-address protections."
+    ),
+    "template_expression_injection": (
+        "Audit whether attacker-controlled template text, expression language, "
+        "macro content, rendering parameters, or scriptable configuration can be "
+        "compiled, interpreted, or evaluated without sandboxing, escaping, "
+        "allowlisting, or disabling dangerous reflection and execution features."
+    ),
     "toctou_check_use_race": (
         "Audit whether the code checks a mutable file, path, object, identity, "
         "or state and later performs a sensitive operation on a value that can "
@@ -86,6 +98,17 @@ GUIDELINES = {
         "security pattern where attacker-influenced input, resource identity, "
         "or execution context reaches a sensitive effect without the required "
         "validation, authorization, isolation, or state precondition."
+    ),
+    "m9_wave2": (
+        "Audit whether attacker-controlled input, resource identity, parser "
+        "state, or execution context can reach a sensitive effect without the "
+        "specific validation, authorization, isolation, decoding, or lifecycle "
+        "precondition required by that operation."
+    ),
+    "m9_expansion": (
+        "Audit whether a project-neutral vulnerability mechanism allows "
+        "attacker-controlled input, identity, state, or configuration to reach "
+        "a sensitive operation without the required guard or binding check."
     ),
 }
 
@@ -110,7 +133,68 @@ CWE_GUIDELINES = {
         "generated artifacts are created with overly permissive permissions or "
         "are exposed to unintended users."
     ),
+    "CWE-367": GUIDELINES["toctou_check_use_race"],
+    "CWE-918": GUIDELINES["ssrf"],
+    "CWE-862": GUIDELINES["authorization_bypass"],
+    "CWE-863": GUIDELINES["authorization_bypass"],
+    "CWE-22": GUIDELINES["path_archive_traversal"],
+    "CWE-23": GUIDELINES["path_archive_traversal"],
+    "CWE-94": GUIDELINES["template_expression_injection"],
+    "CWE-95": GUIDELINES["template_expression_injection"],
+    "CWE-917": GUIDELINES["template_expression_injection"],
+    "CWE-1336": GUIDELINES["template_expression_injection"],
 }
+
+BROAD_GUIDELINE_TYPES = {"iris", "m9_wave2", "m9_wave4", "m9_expansion"}
+
+MECHANISM_GUIDELINES = [
+    (
+        re.compile(r"\b(jndi|ldap|rmi|naming context|initialcontext)\b", re.I),
+        (
+            "Audit whether attacker-controlled names, URLs, headers, or "
+            "configuration can reach JNDI, LDAP, RMI, naming-context, or remote "
+            "lookup APIs without constraining the lookup scheme, authority, "
+            "factory, object type, and network destination."
+        ),
+    ),
+    (
+        re.compile(r"\b(jmx|mbean|rmi connector|management connector)\b", re.I),
+        (
+            "Audit whether management, JMX, MBean, RMI, or administrative "
+            "connectors can be exposed or created without authentication, "
+            "authorization, local binding, or a restricted trusted interface."
+        ),
+    ),
+    (
+        re.compile(r"\b(spel|ognl|velocity|freemarker|thymeleaf|template|expression|macro)\b", re.I),
+        GUIDELINES["template_expression_injection"],
+    ),
+    (
+        re.compile(r"\b(beanutils|bean introspection|introspector|property descriptor|classloader|class loader)\b", re.I),
+        (
+            "Audit whether attacker-controlled property names, bean paths, "
+            "reflection metadata, or class-loader related fields can reach bean "
+            "introspection, property-copy, conversion, or reflective access APIs "
+            "without suppressing dangerous properties and nested meta-properties."
+        ),
+    ),
+    (
+        re.compile(r"\b(deseriali[sz]ation|deserialize|serializer|objectinputstream|pickle|marshal)\b", re.I),
+        CWE_GUIDELINES["CWE-502"],
+    ),
+    (
+        re.compile(r"\b(ssrf|server-side request forgery|webhook|metadata service|169\\.254\\.169\\.254|url fetch|http client)\b", re.I),
+        GUIDELINES["ssrf"],
+    ),
+    (
+        re.compile(r"\b(open redirect|redirect_uri|return url|callback url|location header)\b", re.I),
+        GUIDELINES["open_redirect"],
+    ),
+    (
+        re.compile(r"\b(path traversal|zip slip|archive entry|tar entry|canonical path|directory traversal)\b", re.I),
+        GUIDELINES["path_archive_traversal"],
+    ),
+]
 
 
 def read_json(path: Path) -> dict[str, Any]:
@@ -316,10 +400,69 @@ def load_selected_anchor_file(path: Path) -> tuple[list[str], dict[str, dict[str
             "score": row.get("score"),
             "retrieval_source": row.get("retrieval_source"),
             "known_anchor_overlap": row.get("known_anchor_overlap"),
+            "guideline": row.get("guideline"),
         }
     if not identities:
         raise ValueError(f"selected anchor file has no usable rows: {path}")
     return identities, anchors
+
+
+def load_guideline_overrides(path: Path) -> dict[str, str]:
+    if path.suffix.lower() == ".json":
+        payload = read_json(path)
+        if isinstance(payload, dict) and "guidelines" in payload:
+            payload = payload["guidelines"]
+        if isinstance(payload, dict):
+            overrides: dict[str, str] = {}
+            for key, value in payload.items():
+                if isinstance(value, str) and value.strip():
+                    overrides[str(key)] = value.strip()
+                elif isinstance(value, dict):
+                    text = direct_guideline_text(value)
+                    if text:
+                        overrides[str(key)] = text
+            if overrides:
+                return overrides
+        if isinstance(payload, list):
+            rows = payload
+        else:
+            raise ValueError(f"unsupported guideline JSON shape: {path}")
+    else:
+        rows = list(read_jsonl(path))
+
+    overrides = {}
+    for row in rows:
+        identity = (
+            row.get("identity_key")
+            or row.get("new_unified_case_id")
+            or row.get("case_id")
+            or row.get("id")
+        )
+        text = direct_guideline_text(row)
+        if not identity or not text:
+            continue
+        key = str(identity)
+        if key in overrides and overrides[key] != text:
+            raise ValueError(f"conflicting guideline override for {key}")
+        overrides[key] = text
+    if not overrides:
+        raise ValueError(f"guideline override file has no usable rows: {path}")
+    return overrides
+
+
+def apply_guideline_overrides(
+    cases: list[dict[str, Any]],
+    overrides: dict[str, str],
+) -> int:
+    applied = 0
+    for case in cases:
+        identity = str(case.get("identity_key") or "")
+        case_id = str(case.get("new_unified_case_id") or "")
+        guideline = overrides.get(identity) or overrides.get(case_id)
+        if guideline:
+            case["retrieval_guideline"] = guideline
+            applied += 1
+    return applied
 
 
 def choose_anchor(
@@ -331,7 +474,10 @@ def choose_anchor(
     if selected_anchors is not None:
         identity = case["identity_key"]
         try:
-            return selected_anchors[identity]
+            anchor = selected_anchors[identity]
+            if isinstance(anchor.get("guideline"), str) and anchor["guideline"].strip():
+                case["retrieval_guideline"] = anchor["guideline"].strip()
+            return anchor
         except KeyError as error:
             raise ValueError(f"selected anchor missing for {identity}") from error
     return pick_anchor(case, anchor_index)
@@ -389,14 +535,56 @@ def ensure_snapshot(case: dict[str, Any], repo_cache: Path, snapshots: Path, clo
     return snapshot
 
 
+def direct_guideline_text(case: dict[str, Any]) -> str:
+    classification = case.get("classification") or {}
+    candidates = [
+        case.get("guideline"),
+        case.get("guideline_text"),
+        case.get("retrieval_guideline"),
+        case.get("audit_guideline"),
+        classification.get("guideline"),
+        classification.get("guideline_text"),
+        classification.get("retrieval_guideline"),
+        classification.get("audit_guideline"),
+    ]
+    for candidate in candidates:
+        if isinstance(candidate, str) and candidate.strip():
+            return candidate.strip()
+    return ""
+
+
+def infer_mechanism_guideline(case: dict[str, Any]) -> str:
+    classification = case.get("classification") or {}
+    vuln = case.get("vulnerability") or {}
+    cwe_descriptions = classification.get("cwe_descriptions") or {}
+    haystack_parts = [
+        str(case.get("identity_key") or ""),
+        str(classification.get("primary_hcvr_type") or ""),
+        " ".join(str(value) for value in classification.get("hcvr_types") or []),
+        " ".join(str(value) for value in classification.get("cwe_ids") or []),
+        " ".join(str(value) for value in cwe_descriptions.values()),
+        str(vuln.get("id") or ""),
+        str(vuln.get("description") or ""),
+        " ".join(str(value) for value in vuln.get("aliases") or []),
+    ]
+    haystack = "\n".join(part for part in haystack_parts if part)
+    for pattern, guideline in MECHANISM_GUIDELINES:
+        if pattern.search(haystack):
+            return guideline
+    return ""
+
+
 def build_guideline(case: dict[str, Any]) -> str:
     classification = case.get("classification") or {}
     typ = classification.get("primary_hcvr_type") or ""
-    base = GUIDELINES.get(
-        typ,
-        "",
-    )
     cwe_ids = classification.get("cwe_ids") or []
+    vuln = case.get("vulnerability") or {}
+    description = vuln.get("description") or ""
+    base = direct_guideline_text(case)
+    if typ in BROAD_GUIDELINE_TYPES or typ not in GUIDELINES:
+        base = base or infer_mechanism_guideline(case)
+    if not base:
+        base = GUIDELINES.get(typ, "")
     if not base:
         for cwe_id in cwe_ids:
             if cwe_id in CWE_GUIDELINES:
@@ -408,9 +596,7 @@ def build_guideline(case: dict[str, Any]) -> str:
             "described by the case metadata and whether a sensitive operation is "
             "reachable without the required security condition."
         )
-    vuln = case.get("vulnerability") or {}
     cwes = ", ".join(cwe_ids)
-    description = vuln.get("description") or ""
     parts = [
         f"HCVR type: {typ or 'unspecified'}",
         f"Guideline: {base}",
@@ -661,6 +847,16 @@ def main() -> None:
     parser.add_argument("--qa", type=Path, required=True)
     parser.add_argument("--cases-file", type=Path)
     parser.add_argument("--identity-file", type=Path)
+    parser.add_argument(
+        "--guideline-file",
+        type=Path,
+        help=(
+            "Optional JSON/JSONL sidecar keyed by identity_key or case_id. "
+            "Rows may contain guideline_text, retrieval_guideline, audit_guideline, "
+            "or guideline. Overrides generated broad track templates without "
+            "modifying the dataset."
+        ),
+    )
     parser.add_argument("--selected-anchor-file", type=Path)
     parser.add_argument("--exclude-audit-index", type=Path)
     parser.add_argument("--output-dir", type=Path, required=True)
@@ -727,6 +923,13 @@ def main() -> None:
         identity_file,
         args.exclude_audit_index.resolve() if args.exclude_audit_index else None,
     )
+    guideline_file = args.guideline_file.resolve() if args.guideline_file else None
+    guideline_override_count = 0
+    if guideline_file is not None:
+        guideline_override_count = apply_guideline_overrides(
+            cases,
+            load_guideline_overrides(guideline_file),
+        )
     (output / "reports").mkdir()
     selected_rows: list[dict[str, Any]] = []
     run_items: list[tuple[dict[str, Any], dict[str, Any], Path]] = []
@@ -765,6 +968,8 @@ def main() -> None:
             "limit": args.limit,
             "skip": args.skip,
             "selection": args.selection,
+            "guideline_file": str(guideline_file) if guideline_file else None,
+            "guideline_override_count": guideline_override_count,
             "anchor_index": args.anchor_index,
             "case_count": len(prepared_rows),
             "completed_count": 0,
@@ -811,6 +1016,8 @@ def main() -> None:
         "limit": args.limit,
         "skip": args.skip,
         "selection": args.selection,
+        "guideline_file": str(guideline_file) if guideline_file else None,
+        "guideline_override_count": guideline_override_count,
         "anchor_index": args.anchor_index,
         "case_count": len(results),
         "completed_count": sum(row["state"] == "completed" for row in results),

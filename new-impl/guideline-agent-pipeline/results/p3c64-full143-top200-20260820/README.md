@@ -12,14 +12,41 @@
 - Hit@500: 71/143 = 0.4965
 - MRR: 0.080642
 
-## Same-143 Comparison To Frozen Qwen3-Embedding-4B
+## Protocol Diagnostic
+
+This run is not a valid same-143 A/B comparison against the frozen
+Qwen3-Embedding-4B full-143 run.
+
+The P3C64 launcher used `--selection all --limit 143` without an
+`--identity-file`, so `load_selected_cases()` selected the first 143 accepted
+cases from `new_unified_cases.v1.jsonl`. The Qwen3-Embedding-4B run used the
+frozen paper-eval identity file:
+
+```text
+/data/lhq/workspace/hcvr-embedding-qwen-size-runs/run-143-qwen4b-20260819T052314/paper_eval_143_identities.jsonl
+sha256 e00a8622f2321ea86248de87a2cbbf89b388798e6e6a0d9df6bfbaf69191b805
+```
+
+The two 143-case sets overlap on only 38 identities. Therefore the previously
+reported aggregate deltas, such as `P3C64 Hit@200 71/143` versus
+`Qwen3-Embedding-4B Hit@200 74/143`, should not be used to decide whether
+P3C64 achieved the full-set `+10%` target.
+
+On the 38 overlapping identities, where candidate counts match exactly
+(`374250` candidates for each run), the comparable result is:
 
 | Metric | Qwen3-Embedding-4B | P3C64 query-residual | Delta |
 | --- | ---: | ---: | ---: |
-| Hit@100 | 55/143 = 0.3846 | 56/143 = 0.3916 | +0.0070 |
-| Hit@200 | 74/143 = 0.5175 | 71/143 = 0.4965 | -0.0210 |
-| Hit@500 | 94/143 = 0.6573 | 71/143 = 0.4965 | -0.1608 |
-| MRR | 0.050733 | 0.080642 | +0.029909 |
+| Hit@30 | 7/38 | 12/38 | +5 |
+| Hit@50 | 10/38 | 15/38 | +5 |
+| Hit@100 | 18/38 | 19/38 | +1 |
+| Hit@200 | 22/38 | 21/38 | -1 |
+| MRR | 0.032255 | 0.071632 | +0.039376 |
+
+The intersection result still shows stronger early-rank concentration, but the
+sample is too small and biased to answer the full-143 question. A valid
+full-set result requires rerunning P3C64 with the same `paper_eval_143_identities.jsonl`
+identity file used by the Qwen3-Embedding-4B baseline.
 
 ## Timing
 
