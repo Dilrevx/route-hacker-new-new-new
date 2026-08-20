@@ -276,6 +276,66 @@ Full QA receipt run:
 # Keep --top-k 200 for recall. Treat smaller budgets as rerank/audit budgets.
 ```
 
+## Unified V2 Backend-B Model Ablation
+
+Backend-B varies only the bounded-audit model. Keep the dataset, recall receipt,
+guideline prompt construction, candidate budget, grouping, timeout, and scorer
+fixed across model rows.
+
+Terminology for this experiment:
+
+- `Top-K` / `--anchor-budget`: how many recalled anchors each case consumes.
+- `m` / `--anchor-group-size`: how many anchors go into one grouped audit
+  prompt.
+
+The intended paper-comparison setting is Top-200 with `m=10`, which means each
+case is split into 20 grouped audit prompts. Do not interpret `m=10` as
+Top-10. A Top-10 audit is a different, much harsher budget and is not comparable
+to the backend-B table.
+
+Preferred local launcher:
+
+```bash
+RUN_ROOT=/Users/bytedance/tmp/hcvr-backend-b-deepseek-flash-top200-m10-$(date +%Y%m%dT%H%M%S)
+FULL_RECALL=/path/to/recall_results.merged.jsonl
+
+python new-impl/guideline-agent-pipeline/scripts/run_hcvr_backend_b_model_queue.py \
+  --recall-results "$FULL_RECALL" \
+  --output-dir "$RUN_ROOT" \
+  --repo-cache "$RUN_ROOT/repo-cache" \
+  --snapshot-root "$RUN_ROOT/snapshots" \
+  --temp-root "$RUN_ROOT/temp" \
+  --model DeepSeek-V4-Flash \
+  --top-k 200 \
+  --m 10 \
+  --group-timeout 3600 \
+  --resume
+```
+
+The launcher writes a compact Top-200 projection under `$RUN_ROOT/input/`,
+records any cases with fewer than 200 available mechanical candidates in the
+projection manifest, and then runs `run_hcvr_ablation_a.py` one case at a time
+with:
+
+```text
+--anchor-budget 200
+--anchor-group-size 10
+--variants full
+--concurrency 1
+```
+
+Per-case outputs live under:
+
+```text
+$RUN_ROOT/per-case-runs/case-001/
+$RUN_ROOT/per-case-runs/case-002/
+...
+```
+
+Use the same command with only `--model` changed for other backend rows. If a
+provider fails, record the backend name, case index, step, and raw stderr or
+event-stream error instead of fabricating a metric row.
+
 ## Oracle Anchor Baseline
 
 The audit runner without `--selected-anchor-file` uses each case's existing
