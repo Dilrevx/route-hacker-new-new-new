@@ -104,6 +104,7 @@ def repair_packet() -> dict:
             "approved_java_homes": ["/opt/java-17"],
             "approved_maven_homes": ["/opt/maven-3.9"],
             "safe_build_args": ["-Denforcer.skip=true"],
+            "removable_existing_build_args": ["-Dmaven.test.skip=true"],
             "safe_maven_heap_options": ["-Xmx4g"],
             "allow_prepend_maven_clean": False,
         }
@@ -146,10 +147,18 @@ def test_repair_json_schema_encodes_per_packet_action_values() -> None:
     args_choice = next(
         choice for choice in choices if choice["properties"]["kind"] == {"const": "append_build_args"}
     )
+    removal_choice = next(
+        choice
+        for choice in choices
+        if choice["properties"]["kind"] == {"const": "remove_existing_build_args"}
+    )
     assert java_choice["properties"]["value"]["enum"] == ["/opt/java-17"]
     assert maven_choice["properties"]["value"]["enum"] == ["/opt/maven-3.9"]
     assert args_choice["properties"]["args"]["minItems"] == 1
     assert args_choice["properties"]["args"]["items"]["enum"] == ["-Denforcer.skip=true"]
+    assert removal_choice["properties"]["args"]["items"]["enum"] == [
+        "-Dmaven.test.skip=true"
+    ]
 
 
 def test_repair_json_schema_offers_clean_only_for_direct_maven_build() -> None:

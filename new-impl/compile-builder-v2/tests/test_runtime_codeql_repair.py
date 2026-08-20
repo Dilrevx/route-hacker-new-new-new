@@ -851,6 +851,66 @@ def test_prepend_maven_clean_rebuilds_before_existing_package_goal(tmp_path):
     }
 
 
+def test_remove_existing_build_args_only_removes_approved_present_argument(tmp_path):
+    receipt = failed_receipt(tmp_path)
+    receipt["planned_codeql_database_command"][-1] = (
+        "mvn -DskipTests -Dmaven.test.skip=true package"
+    )
+    decision = validate_repair_decision(
+        {
+            "actions": [
+                {
+                    "kind": "remove_existing_build_args",
+                    "args": ["-Dmaven.test.skip=true"],
+                }
+            ],
+            "rationale": "Allow a required test-jar to be packaged.",
+        },
+        approved_java_homes=[],
+        approved_maven_homes=[],
+    )
+
+    command, _env, applied = apply_repair_decision(
+        receipt["planned_codeql_database_command"],
+        decision,
+        attempt_database_dir=tmp_path / "new-attempt-db",
+        approved_java_homes=[],
+        approved_maven_homes=[],
+    )
+
+    build_command = command[command.index("--command") + 1]
+    assert build_command == "mvn -DskipTests package"
+    assert applied["applied_actions"] == [
+        {"kind": "remove_existing_build_args", "args": ["-Dmaven.test.skip=true"]}
+    ]
+
+
+def test_remove_existing_build_args_rejects_absent_argument(tmp_path):
+    receipt = failed_receipt(tmp_path)
+    decision = validate_repair_decision(
+        {
+            "actions": [
+                {
+                    "kind": "remove_existing_build_args",
+                    "args": ["-Dmaven.test.skip=true"],
+                }
+            ],
+            "rationale": "Do not rewrite arbitrary arguments.",
+        },
+        approved_java_homes=[],
+        approved_maven_homes=[],
+    )
+
+    with pytest.raises(RepairValidationError, match="only remove arguments present"):
+        apply_repair_decision(
+            receipt["planned_codeql_database_command"],
+            decision,
+            attempt_database_dir=tmp_path / "new-attempt-db",
+            approved_java_homes=[],
+            approved_maven_homes=[],
+        )
+
+
 def test_prepend_maven_clean_rejects_non_maven_build_command(tmp_path):
     receipt = failed_receipt(tmp_path)
     receipt["planned_codeql_database_command"][-1] = "./gradlew build"

@@ -559,6 +559,19 @@ def prepend_maven_clean_goal(build_command: Sequence[str]) -> list[str]:
     )
 
 
+def removable_safe_build_args(build_command: Sequence[str]) -> list[str]:
+    """Return approved, already-present build arguments eligible for removal.
+
+    Removal is intentionally more restrictive than appending: a decision may
+    only remove an argument that is both globally approved and already present
+    in this exact failed command. This permits an LLM to stop a generic
+    skip flag from suppressing a required build artifact without enabling
+    arbitrary command editing.
+    """
+
+    return sorted({argument for argument in build_command if argument in SAFE_BUILD_ARGS})
+
+
 def build_repair_packet(
     receipt: Mapping[str, Any],
     *,
@@ -575,6 +588,7 @@ def build_repair_packet(
     )
     command = _command_from_receipt(receipt)
     build_command = shlex.split(_option_value(command, *_find_option(command, "--command"), "--command"))
+    removable_args = removable_safe_build_args(build_command)
     result = receipt.get("codeql_database_create_result")
     result_map = result if isinstance(result, Mapping) else {}
     log_path_text = result_map.get("log_path")
@@ -609,6 +623,7 @@ def build_repair_packet(
                 "set_maven_home",
                 "set_ant_home",
                 "append_build_args",
+                "remove_existing_build_args",
                 "set_maven_heap",
                 "prepend_maven_clean",
                 "no_safe_action",
@@ -617,6 +632,7 @@ def build_repair_packet(
             "approved_maven_homes": list(approved_maven_homes),
             "approved_ant_homes": list(approved_ant_homes),
             "safe_build_args": sorted(SAFE_BUILD_ARGS),
+            "removable_existing_build_args": removable_args,
             "safe_maven_heap_options": sorted(SAFE_MAVEN_HEAP_OPTIONS),
             "allow_prepend_maven_clean": is_maven_build_command(build_command),
             "prohibited": [
@@ -799,7 +815,7 @@ def validate_repair_decision(
         kind = raw_action.get("kind")
         if not isinstance(kind, str):
             raise RepairValidationError("repair action is missing kind")
-        if kind in seen_kinds and kind != "append_build_args":
+        if kind in seen_kinds and kind not in {"append_build_args", "remove_existing_build_args"}:
             raise RepairValidationError(f"duplicate repair action: {kind}")
         seen_kinds.add(kind)
         if kind == "retry_same_command":
@@ -840,6 +856,24 @@ def validate_repair_decision(
                 raise RepairValidationError("append_build_args requires a nonempty string args list")
             if not set(args).issubset(SAFE_BUILD_ARGS):
                 raise RepairValidationError("append_build_args contains an unapproved argument")
+            existing = next(
+                (action for action in actions if action["kind"] == kind),
+                None,
+            )
+            if existing is None:
+                actions.append({"kind": kind, "args": list(args)})
+            else:
+                existing["args"] = _append_unique(existing["args"], args)
+        elif kind == "remove_existing_build_args":
+            args = raw_action.get("args")
+            if not isinstance(args, list) or not args or not all(isinstance(arg, str) for arg in args):
+                raise RepairValidationError(
+                    "remove_existing_build_args requires a nonempty string args list"
+                )
+            if not set(args).issubset(SAFE_BUILD_ARGS):
+                raise RepairValidationError(
+                    "remove_existing_build_args contains an unapproved argument"
+                )
             existing = next(
                 (action for action in actions if action["kind"] == kind),
                 None,
@@ -994,6 +1028,25 @@ def apply_repair_decision(
             if not isinstance(args, list) or not all(isinstance(arg, str) for arg in args):
                 raise RepairValidationError("validated append_build_args is malformed")
             _append_unique(build_command, args)
+            applied_actions.append({"kind": kind, "args": list(args)})
+        elif kind == "remove_existing_build_args":
+            args = action.get("args")
+            if not isinstance(args, list) or not args or not all(isinstance(arg, str) for arg in args):
+                raise RepairValidationError(
+                    "validated remove_existing_build_args is malformed"
+                )
+            if not set(args).issubset(SAFE_BUILD_ARGS):
+                raise RepairValidationError(
+                    "validated remove_existing_build_args contains an unapproved argument"
+                )
+            missing_args = [argument for argument in args if argument not in build_command]
+            if missing_args:
+                raise RepairValidationError(
+                    "remove_existing_build_args can only remove arguments present in the build command"
+                )
+            build_command = [
+                argument for argument in build_command if argument not in set(args)
+            ]
             applied_actions.append({"kind": kind, "args": list(args)})
         elif kind == "set_maven_heap":
             heap = action.get("value")

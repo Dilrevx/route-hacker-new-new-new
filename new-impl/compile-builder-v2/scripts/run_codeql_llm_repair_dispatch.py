@@ -370,6 +370,7 @@ def repair_json_schema(packet: Mapping[str, Any]) -> str:
     java_homes = _packet_allow_list(packet, "approved_java_homes")
     maven_homes = _packet_allow_list(packet, "approved_maven_homes")
     build_args = _packet_allow_list(packet, "safe_build_args")
+    removable_build_args = _packet_allow_list(packet, "removable_existing_build_args")
     maven_heap_options = _packet_allow_list(packet, "safe_maven_heap_options")
     allow_prepend_maven_clean = _packet_boolean(packet, "allow_prepend_maven_clean")
     schema = packet.get("allowed_action_schema")
@@ -395,6 +396,18 @@ def repair_json_schema(packet: Mapping[str, Any]) -> str:
                     "minItems": 1,
                     "uniqueItems": True,
                     "items": {"type": "string", "enum": build_args},
+                },
+            )
+        )
+    if removable_build_args:
+        executable_action_choices.append(
+            _action_schema(
+                "remove_existing_build_args",
+                args={
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": True,
+                    "items": {"type": "string", "enum": removable_build_args},
                 },
             )
         )
@@ -483,8 +496,10 @@ def build_repair_prompt(packet: dict[str, Any]) -> str:
         "Return strict JSON only with exactly these keys:\n"
         '{"actions":[{"kind":"..."}],"rationale":"brief reason"}\n\n'
         "For set_java_home, set_maven_home, set_ant_home, and set_maven_heap, "
-        'use an approved action "value". For append_build_args, use an "args" '
-        "array containing only approved arguments.\n\n"
+        'use an approved action "value". For append_build_args and '
+        "remove_existing_build_args, use an \"args\" array containing only "
+        "values offered by allowed_action_schema. remove_existing_build_args "
+        "may only remove an already-present approved argument.\n\n"
         f"PACKET:\n{payload}\n"
     )
 
