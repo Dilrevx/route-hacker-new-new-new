@@ -89,6 +89,9 @@ def portable_case_row(
     log_dir: Path,
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     case_id = queue_row["case_id"]
+    # Project-deduplicated queues may intentionally omit a single dataset
+    # vulnerability ID. Use the repository key as their portable identifier.
+    vulnerability_id = queue_row.get("vulnerability_id") or queue_row["repo_key"]
     header = read_header_fields(log_dir / f"{case_id}.log.header")
     state = terminal_state(case_id, state_dir)
 
@@ -147,7 +150,7 @@ def portable_case_row(
                 "case_id": case_id,
                 "rank": queue_row["rank"],
                 "repo_key": queue_row["repo_key"],
-                "vulnerability_id": queue_row["vulnerability_id"],
+                "vulnerability_id": vulnerability_id,
                 "finding_id": finding.get("findingId"),
                 "severity": severity,
                 "confidence": normalize_severity(finding.get("confidence")),
@@ -277,14 +280,22 @@ def write_markdown(path: Path, summary: dict[str, Any], cases: list[dict[str, An
     scan_in_progress = [
         row["case_id"] for row in cases if row.get("scan_status") == "in_progress"
     ]
+    project_queue = all(row["case_id"].startswith("apache_") for row in cases)
+    queue_label = "Apache project audits" if project_queue else "HCVR v2 cases"
+    linkage_note = (
+        "Queue entries are project-level audit targets; they do not claim one-to-one "
+        "alignment with a dataset vulnerability."
+        if project_queue
+        else "Dataset vulnerability IDs and types are joined after execution for evaluation."
+    )
     text = f"""# Codex Security Native Blind Batch Snapshot
 
 ## Scope
 
-- Queue denominator: {summary["queue"]["cases"]} HCVR v2 cases.
-- Current terminal coverage: {summary["processed_cases"]}/{summary["queue"]["cases"]} cases.
+- Queue denominator: {summary["queue"]["cases"]} {queue_label}.
+- Current terminal coverage: {summary["processed_cases"]}/{summary["queue"]["cases"]} queue entries.
 - Execution policy: native Codex Security full-repository blind audit.
-- Dataset vulnerability identifiers and types are joined only after execution for evaluation.
+- {linkage_note}
 
 ## Aggregate Results
 
