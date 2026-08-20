@@ -50,6 +50,14 @@ The detailed bad-case note is
   - Supports `openai`, `sentence-transformers`, and the recovered
     `p3c64-query-residual` backend.
   - Uses known anchors only after ranking to compute Hit@K and MRR.
+- `scripts/generate_guidelines_from_clusters.py`
+  - Standalone migration of the old Route-Hacker `cve_clustering` guideline
+    generation stage.
+  - Expands refined clusters into one guideline per sub-pattern when needed.
+  - Writes the old release layout: `latest.json`, `guidelines/index.json`, and
+    `guidelines/gl_*.json`.
+  - Optionally exports a Unified V2 `--guideline-file` sidecar keyed by
+    `identity_key` / `case_id`.
 - `scripts/compare_recall_rank_tables.py`
   - Compares two recall rank tables by `identity_key`.
   - Fails by default when the identity sets differ, so model A/B runs do not
@@ -293,6 +301,59 @@ Outputs:
 
 The runner starts Codex in its own process group. If a timeout fires, it kills
 the full process group so native Codex children do not remain orphaned.
+
+## Generate Guidelines From Old Cluster Artifacts
+
+Use this stage when rebuilding the old offline guideline release from
+`cve_clustering` artifacts:
+
+```text
+structured CVE records + refined clusters
+  -> one generation task per cluster/sub-pattern
+  -> cve_clustering guideline release
+  -> optional case-keyed sidecar for recall
+```
+
+The migrated generator is self-contained and does not import the old
+`route_hacker` package:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/generate_guidelines_from_clusters.py \
+  --clusters /path/to/refined_clusters.json \
+  --structured /path/to/structured_cves.jsonl \
+  --output-dir /path/to/guideline-release \
+  --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
+  --sidecar-output /path/to/guideline_overrides.jsonl \
+  --openai-base-url http://127.0.0.1:8001/v1 \
+  --model DeepSeek-V4-Pro \
+  --concurrency 8
+```
+
+For a no-provider input check, emit prompt tasks only:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/generate_guidelines_from_clusters.py \
+  --clusters /path/to/refined_clusters.json \
+  --structured /path/to/structured_cves.jsonl \
+  --output-dir /tmp/guideline-prompts \
+  --dry-run-prompts
+```
+
+For deterministic smoke output without LLM calls:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/generate_guidelines_from_clusters.py \
+  --clusters /path/to/refined_clusters.json \
+  --structured /path/to/structured_cves.jsonl \
+  --output-dir /tmp/guideline-release-smoke \
+  --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
+  --deterministic
+```
+
+The generated sidecar can be passed directly to recall and audit with
+`--guideline-file`. The sidecar is query-side only: produce it from allowed
+offline clustering inputs, and do not include target anchors, ranks, file
+paths, line numbers, or evaluation labels in the guideline text.
 
 ## Seed a New Guideline from a Risk Audit
 
