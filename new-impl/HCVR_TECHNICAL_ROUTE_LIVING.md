@@ -734,6 +734,39 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Wait for both NiFi terminal receipts, then independently require CodeQL metadata, `db-java/default`, relation files, archive/revision evidence, and an unchanged source-integrity receipt before any derived native-IRIS manifest is created. Preserve the Keycloak recovery interval and final receipt as runtime evidence for the generic native runner/transport boundary.
 
+### Round 24 - Native IRIS Source-Overlay Toolchain Recovery and NiFi Restart
+
+**Goal:** Restore the pinned CodeQL `2.23.2` / `java-queries@1.8.1` environment needed by copied original IRIS without modifying IRIS source, benchmark source, queries, revisions, or per-case build recipes, then resume the two already-admitted NiFi extension-lane cases.
+
+**Scope:** This round covers only the shared native-IRIS CodeQL toolchain path and the existing NiFi `CVE-2023-34468` / `CVE-2023-36542` derived manifests. The two NiFi identities remain separate from the frozen 45/143-case comparative cohort. The original IRIS implementation remains copied unchanged except for the already-recorded local TraeX transport adapter.
+
+**Action:**
+
+- Diagnosed the prior native-IRIS block as a missing Action-distribution `qlpacks` tree, not a CodeQL database or LLM failure. The standalone CLI could resolve the current registry package set, which is incompatible with IRIS's pinned CLI/query versions.
+- Built and revalidated a complete local source-pack overlay from the official `github/codeql` tag `codeql-cli/v2.23.2` at commit `a05ffdbc810d58f3bf9cd44f48fab7b31fdea9fa`. The overlay contains the transitive Java query closure, records every projected pack/version, and only renders official `${workspace}` dependencies to exact same-tag versions.
+- Added generic materialization support for a **case-local CodeQL wrapper**. It links the provenance-validated overlay into the copied workspace, executes the shared official CLI binary, and supplies local overlay resolution only for original CodeQL commands that require QL packs: `pack install`, `query`, and `database analyze`. `pack install` additionally uses non-strict local resolution, so it writes the normal IRIS lock file while downloading nothing. Non-pack commands such as `bqrs decode` are forwarded unchanged.
+- Preserved the first a15 failure as an environment diagnostic: unmodified IRIS reached Stage 1 and completed local `pack install`, but `query run` did not inherit the local overlay. Extending the wrapper to QL-query resolution fixed that issue; an initial over-broad variant was narrowed after it incorrectly passed `--additional-packs` to `bqrs decode`.
+- Ran a full native Stage-1 smoke on the repaired NiFi `1.21.0` database. Original IRIS `fetch_external_apis.ql` compiled and evaluated successfully, and original `bqrs decode` produced a 407,963-row candidate API CSV.
+- Pushed the generic recovery implementation in commits `fb6dd86` and `2ec5666`. The remote native-materialization/manifest suite passed `19 passed in 0.13s`.
+- Started fresh attempt `a16-source-overlay-native-iris` with two project workers, one original-IRIS label thread per project, `DeepSeek-V4-Pro`, and bridge capacity eight. Both copied `src/iris.py` processes are concurrently executing Stage 1 candidate-API extraction.
+
+**Verification:**
+
+- Official source overlay:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/official-codeql-bundles/codeql-v2.23.2-source-overlay-v2/`.
+  Its manifest records CLI `2.23.2`, `codeql/java-queries@1.8.1`, `codeql/java-all@7.7.1`, the official source tag/commit, and query compile evidence.
+- The local wrapper's real IRIS-style `codeql pack install` gate completed with `Nothing downloaded`; the case-local provenance receipt records the original shared CLI, overlay path, wrapper hash, and injected command scope.
+- Stage-1 smoke evidence:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/workspaces-a15-stage1-gate/nifi-34468/output/stage1-gate/myqueries/fetch_external_apis/`.
+  It contains a `155 MiB` BQRS result and a decoded `407,963`-line CSV.
+- Active a16 run root:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a16-nifi-native-iris-source-overlay/`.
+  Its queue has two rows, the shared preflight records `requires_case_local_pack_install_wrapper: true`, and the concurrency contract is `2 * 1 <= 8`.
+
+**Decision:** The CodeQL source overlay is now a generic, provenance-checked native-IRIS toolchain capability. It replaces neither IRIS nor the official queries; it only makes the pinned official pack graph available locally to the original execution path. The a15 attempts remain failed/incomplete environment diagnostics with zero label prompts and are not counted as model or database failures. The a16 processes are active native IRIS executions, not completed results.
+
+**Next:** Monitor a16 through candidate extraction, LLM labelling, project-specific query generation, posthoc filtering, and evaluation. Count a NiFi run only when the copied original `src/iris.py` exits `0`, all final artifacts exist, and every dispatched label response parses as a JSON list. Record token usage only from bridge/response evidence that is actually present.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.
