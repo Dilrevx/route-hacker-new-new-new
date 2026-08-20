@@ -767,6 +767,38 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Monitor a16 through candidate extraction, LLM labelling, project-specific query generation, posthoc filtering, and evaluation. Count a NiFi run only when the copied original `src/iris.py` exits `0`, all final artifacts exist, and every dispatched label response parses as a JSON list. Record token usage only from bridge/response evidence that is actually present.
 
+### Round 25 - Strict Spark/AWS Repair Batch and Native IRIS Liveness Audit
+
+**Goal:** Extend the IRIS-213 exact-archive repair lane with two independently audited Maven cases, while preserving a clear distinction between repaired CodeQL databases and completed native IRIS executions.
+
+**Scope:** This round covers only `perwendel__spark_CVE-2016-9177_2.5.1` and `aws__aws-sdk-java_CVE-2022-31159_1.12.260` from the 47-case strict repair projection. These IRIS-213 extension cases remain outside the frozen 45/143 comparative cohort. It also records the liveness evidence for the already-running NiFi native-IRIS attempt without modifying the original IRIS code, benchmark sources, revisions, or official queries.
+
+**Action:**
+
+- Audited the historical terminal CodeQL failure logs before selection. Spark had a successful Maven lifecycle but `Nothing to compile`, leaving CodeQL with no Java capture. AWS had a full Java 8 reactor build ending in Maven `GC overhead limit exceeded`; later JDK attempts additionally rejected the project's source/target level 7.
+- Created a bounded two-case dispatch at:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/compile-repair-run-spark-aws-r1/`.
+  It uses the same 47-case exact-source receipts, archive verification, local action allow-list, source-integrity check, one build-feedback replan maximum, `DeepSeek-V4-Pro`, and two workers as the preceding NiFi batch.
+- The constrained model selected only approved generic actions. Spark first selected `prepend_maven_clean`; after fresh build feedback it selected Java 8 plus `prepend_maven_clean`. The second isolated archive copy rebuilt all 91 Java sources and CodeQL finalized a valid database. No source-tree paths changed outside ignored build outputs.
+- AWS selected the approved Java 8 home. Its current isolated CodeQL build is progressing through the 314-module reactor and the Java extractor is actively producing TRAP files. It has not yet emitted a terminal repair receipt and is not counted as repaired.
+- Audited the active NiFi native-IRIS workspaces. Both copied original `src/iris.py` processes reached `label_apis`, produced 572 and 578 raw user prompts respectively, and each has a live TCP connection to the local bridge. Neither workspace has a `raw_llm_response_*` file, final native-IRIS artifact, or completion receipt yet.
+
+**Verification:**
+
+- Spark terminal repair receipt:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/compile-repair-run-spark-aws-r1/dispatch/w1_llm_repair_receipts.jsonl`.
+  It records `status: codeql_db_repaired`, exact archive/revision verification, source-integrity `changed_path_count: 0`, a successful `codeql database create`, and the final database at the receipt's `attempt_database_dir`.
+- AWS live build evidence:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/compile-repair-run-spark-aws-r1/dispatch/cases/iris213__d46490c8daf3cd53542f/attempt-001/codeql-attempt/codeql-repair.log`.
+  The log has advanced past module 100 and the active CodeQL database contains Java extractor output. This is liveness evidence only, not a finalized database claim.
+- NiFi liveness evidence is retained in:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/workspaces-a16-nifi-native-iris-source-overlay/a16-source-overlay-native-iris/`.
+  The prompt/response audit currently reports zero paired responses for both cases. Therefore token usage is not reported: the bridge has not written response usage evidence.
+
+**Decision:** The generic controlled repair dispatcher has now recovered a second non-NiFi exact-archive CodeQL database without a project-specific recipe. AWS remains an active repair attempt until its CodeQL process exits and the dispatcher verifies metadata, Java relations, archive identity, and source integrity. The NiFi native-IRIS executions are active-but-stalled at two long-running bridge completions; they must not be counted as native IRIS results. The next native retry must first establish a transport-level bounded-request and observability fix rather than altering IRIS analysis logic.
+
+**Next:** Collect the AWS terminal receipt and admit each terminally valid repaired database through `build_repaired_db_native_iris_manifest.py`. Separately inspect the local bridge owner and call logging to determine why the two pending native-IRIS requests exceeded the bridge's configured request timeout without emitting response or timeout evidence; repair that shared transport boundary, add a regression test, and then retry only after the current processes are cleanly terminated or time out.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.
