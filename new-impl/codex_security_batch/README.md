@@ -171,20 +171,24 @@ are not passed into the repository-level blind audit prompt.
 `evaluate_gt_anchor_overlap.py` evaluates a completed blind-audit export against
 unified-v2 `recall_anchors`. It is intentionally an **offline-only** step: do
 not use the anchor file, CVE identifier, target path, or line ranges as an input
-to `run_blind_batch.sh` or Codex Security.
+to `run_blind_batch.sh` or Codex Security. Pass the raw `run_records.jsonl` so
+the evaluator can inspect the full canonical `locations` and `codeEvidence`,
+rather than relying only on the summary CSV's primary location.
 
-The strict metric labels a finding as an anchor hit only if its exported
-`primary_path` equals a recall-anchor file and its `primary_start_line` is inside
-the anchor's inclusive `[start_line, end_line]` range for the same
-`repo_key::vulnerability_id`. It produces a per-case table, a per-finding table,
-and a compact summary. It is a target-localization proxy; semantic CVE
-equivalence and runtime confirmation require separate review.
+The main metric labels a finding as an anchor hit if **any** canonical reported
+location or code-evidence span overlaps an anchor's inclusive line range for the
+same `repo_key::vulnerability_id`. The evaluator retains primary-location-only
+overlap as a conservative lower bound and reports same-file within-50-line
+proximity as a diagnostic, not a formal hit. It produces a per-case table, a
+per-finding table, and a compact summary. It is a target-localization proxy;
+semantic CVE equivalence and runtime confirmation require separate review.
 
 ```bash
 python new-impl/codex_security_batch/evaluate_gt_anchor_overlap.py \
   --cases new-impl/codex_security_batch/results/<snapshot>/cases.csv \
   --findings new-impl/codex_security_batch/results/<snapshot>/findings.csv \
   --unified-cases new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
+  --records /path/to/run/control/run_records.jsonl \
   --out-dir new-impl/codex_security_batch/results/<snapshot>/gt-anchor-overlap
 ```
 

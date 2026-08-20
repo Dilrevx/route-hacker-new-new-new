@@ -1,0 +1,38 @@
+{
+  "counts": {
+    "any_reported_location_anchor_overlap_findings": 67,
+    "any_reported_location_hit_cases": 45,
+    "any_reported_location_hit_rate": 0.3146853146853147,
+    "any_reported_location_within_50_lines_findings": 84,
+    "findings": 737,
+    "findings_elsewhere_cases": 71,
+    "gt_joined_cases": 143,
+    "nearby_50_line_cases_including_hits": 53,
+    "nearby_50_line_rate_including_hits": 0.3706293706293706,
+    "no_findings_cases": 10,
+    "primary_anchor_overlap_findings": 21,
+    "primary_only_hit_cases": 18,
+    "same_anchor_file_cases_including_nearby": 62
+  },
+  "inputs": {
+    "cases_csv": {
+      "sha256": "5949edaf4fdb0c4b2fc29159af8458d86af9dd8e5a4511408d853e212b21518c"
+    },
+    "findings_csv": {
+      "sha256": "c26e2aa554113bdf774f084bfc8c2066f1231c8d39d2802cd58304069cda9d1e"
+    },
+    "raw_records_jsonl": {
+      "sha256": "020543c630a0da1b7f04e891418e16551040f6aafbc8a55e7b0d2012322ff50f"
+    },
+    "unified_cases_jsonl": {
+      "sha256": "f687641e6a47fd291fe402e7bac8cbb9aa16b38e2456bc85b2b174017fa7047d"
+    }
+  },
+  "method": {
+    "boundary": "All tiers are post-hoc localization proxies. None independently establishes semantic CVE equivalence or runtime exploitability; GT is not supplied to the blind audit.",
+    "main_location_hit": "Any exported Codex Security location or code-evidence span overlaps a GT anchor span.",
+    "nearby_diagnostic": "Any exported location is in the same file and at most 50 lines from an anchor span.",
+    "primary_only_lower_bound": "Primary finding path/start-line overlaps a GT anchor span."
+  },
+  "schema": "codex-security-unified-v2-anchor-alignment.v2"
+}
