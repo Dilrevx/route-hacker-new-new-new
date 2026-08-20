@@ -51,6 +51,33 @@ SAFE_BUILD_ARGS = frozenset(
     }
 )
 SAFE_MAVEN_HEAP_OPTIONS = frozenset({"-Xmx2g", "-Xmx4g", "-Xmx6g"})
+MAVEN_LIFECYCLE_GOALS = frozenset(
+    {
+        "validate",
+        "initialize",
+        "generate-sources",
+        "process-sources",
+        "generate-resources",
+        "process-resources",
+        "compile",
+        "process-classes",
+        "generate-test-sources",
+        "process-test-sources",
+        "generate-test-resources",
+        "process-test-resources",
+        "test-compile",
+        "process-test-classes",
+        "test",
+        "prepare-package",
+        "package",
+        "pre-integration-test",
+        "integration-test",
+        "post-integration-test",
+        "verify",
+        "install",
+        "deploy",
+    }
+)
 SECRET_PATTERN = re.compile(
     r"(?im)(api[_-]?key|authorization|bearer|password|secret|token)"
     r"(\s*[:=]\s*|\s+)([^\r\n]+)"
@@ -414,6 +441,35 @@ def _append_unique(values: list[str], additions: Iterable[str]) -> list[str]:
     return values
 
 
+def is_maven_build_command(build_command: Sequence[str]) -> bool:
+    """Return whether a parsed build command invokes Maven directly."""
+
+    return bool(build_command) and Path(build_command[0]).name in {"mvn", "mvnw"}
+
+
+def prepend_maven_clean_goal(build_command: Sequence[str]) -> list[str]:
+    """Insert Maven's ``clean`` lifecycle before a supported build lifecycle.
+
+    This action is deliberately narrower than arbitrary command rewriting:
+    it only applies to a direct Maven invocation with an existing lifecycle
+    goal. It deletes generated build outputs, never source files, and avoids
+    treating arbitrary plugin invocations as an eligible clean rebuild.
+    """
+
+    rewritten = list(build_command)
+    if not is_maven_build_command(rewritten):
+        raise RepairValidationError("prepend_maven_clean requires a direct Maven build command")
+    if "clean" in rewritten:
+        return rewritten
+    for index, token in enumerate(rewritten[1:], start=1):
+        if token in MAVEN_LIFECYCLE_GOALS:
+            rewritten.insert(index, "clean")
+            return rewritten
+    raise RepairValidationError(
+        "prepend_maven_clean requires an existing Maven lifecycle build goal"
+    )
+
+
 def build_repair_packet(
     receipt: Mapping[str, Any],
     *,
@@ -429,6 +485,7 @@ def build_repair_packet(
         receipt.get("resolved_buggy_commit") or receipt.get("declared_buggy_commit") or ""
     )
     command = _command_from_receipt(receipt)
+    build_command = shlex.split(_option_value(command, *_find_option(command, "--command"), "--command"))
     result = receipt.get("codeql_database_create_result")
     result_map = result if isinstance(result, Mapping) else {}
     log_path_text = result_map.get("log_path")
@@ -464,6 +521,7 @@ def build_repair_packet(
                 "set_ant_home",
                 "append_build_args",
                 "set_maven_heap",
+                "prepend_maven_clean",
                 "no_safe_action",
             ],
             "approved_java_homes": list(approved_java_homes),
@@ -471,6 +529,7 @@ def build_repair_packet(
             "approved_ant_homes": list(approved_ant_homes),
             "safe_build_args": sorted(SAFE_BUILD_ARGS),
             "safe_maven_heap_options": sorted(SAFE_MAVEN_HEAP_OPTIONS),
+            "allow_prepend_maven_clean": is_maven_build_command(build_command),
             "prohibited": [
                 "source edits",
                 "revision substitution",
@@ -705,6 +764,8 @@ def validate_repair_decision(
             if not isinstance(value, str) or value not in SAFE_MAVEN_HEAP_OPTIONS:
                 raise RepairValidationError("set_maven_heap requires an approved heap option")
             actions.append({"kind": kind, "value": value})
+        elif kind == "prepend_maven_clean":
+            actions.append({"kind": kind})
         elif kind == "no_safe_action":
             actions.append({"kind": kind})
         else:
@@ -852,6 +913,14 @@ def apply_repair_decision(
             existing = os.environ.get("MAVEN_OPTS", "")
             env["MAVEN_OPTS"] = f"{existing} {heap}".strip()
             applied_actions.append({"kind": kind, "value": heap})
+        elif kind == "prepend_maven_clean":
+            build_command = prepend_maven_clean_goal(build_command)
+            applied_actions.append(
+                {
+                    "kind": kind,
+                    "effect": "maven_clean_lifecycle_before_existing_build_goal",
+                }
+            )
         else:
             raise RepairValidationError(f"unexpected validated repair action: {kind}")
 

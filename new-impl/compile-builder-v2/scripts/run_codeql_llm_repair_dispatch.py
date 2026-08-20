@@ -225,6 +225,18 @@ def _packet_allow_list(packet: Mapping[str, Any], key: str) -> list[str]:
     return list(values)
 
 
+def _packet_boolean(packet: Mapping[str, Any], key: str) -> bool:
+    """Read a trusted action-availability flag from the repair packet."""
+
+    schema = packet.get("allowed_action_schema")
+    if not isinstance(schema, Mapping):
+        raise RepairValidationError("repair packet lacks allowed_action_schema")
+    value = schema.get(key)
+    if not isinstance(value, bool):
+        raise RepairValidationError(f"repair packet has invalid {key} flag")
+    return value
+
+
 def _action_schema(kind: str, **properties: Any) -> dict[str, Any]:
     return {
         "type": "object",
@@ -247,6 +259,7 @@ def repair_json_schema(packet: Mapping[str, Any]) -> str:
     maven_homes = _packet_allow_list(packet, "approved_maven_homes")
     build_args = _packet_allow_list(packet, "safe_build_args")
     maven_heap_options = _packet_allow_list(packet, "safe_maven_heap_options")
+    allow_prepend_maven_clean = _packet_boolean(packet, "allow_prepend_maven_clean")
     schema = packet.get("allowed_action_schema")
     assert isinstance(schema, Mapping)
     maximum_actions = schema.get("maximum_actions")
@@ -280,6 +293,8 @@ def repair_json_schema(packet: Mapping[str, Any]) -> str:
                 value={"type": "string", "enum": maven_heap_options},
             )
         )
+    if allow_prepend_maven_clean:
+        executable_action_choices.append(_action_schema("prepend_maven_clean"))
     action_sequences: list[dict[str, Any]] = [
         {
             "type": "array",
@@ -393,6 +408,9 @@ def build_repair_feedback_prompt(
         "log from that execution. Select a different action set only if the "
         "fresh failure evidence justifies one; do not repeat this decision:\n"
         f"{previous}\n"
+        "The replacement decision is executed from the original build command. "
+        "If an earlier approved action remains necessary, include it again in "
+        "the replacement action set.\n"
         "Return a complete replacement decision, not an explanation or a patch."
     )
 

@@ -732,6 +732,58 @@ def test_apply_repair_uses_new_database_and_preserves_source_root(tmp_path):
     assert applied["source_root"] == str(tmp_path / "source")
 
 
+def test_prepend_maven_clean_rebuilds_before_existing_package_goal(tmp_path):
+    receipt = failed_receipt(tmp_path)
+    decision = validate_repair_decision(
+        {
+            "actions": [
+                {"kind": "prepend_maven_clean"},
+                {"kind": "append_build_args", "args": ["-Dcheckstyle.skip=true"]},
+            ],
+            "rationale": "Force a fresh Maven compilation for CodeQL capture.",
+        },
+        approved_java_homes=[],
+        approved_maven_homes=[],
+    )
+
+    command, _env, applied = apply_repair_decision(
+        receipt["planned_codeql_database_command"],
+        decision,
+        attempt_database_dir=tmp_path / "new-attempt-db",
+        approved_java_homes=[],
+        approved_maven_homes=[],
+    )
+
+    build_command = command[command.index("--command") + 1]
+    assert build_command == "mvn -DskipTests clean package -Dcheckstyle.skip=true"
+    assert applied["applied_actions"][0] == {
+        "kind": "prepend_maven_clean",
+        "effect": "maven_clean_lifecycle_before_existing_build_goal",
+    }
+
+
+def test_prepend_maven_clean_rejects_non_maven_build_command(tmp_path):
+    receipt = failed_receipt(tmp_path)
+    receipt["planned_codeql_database_command"][-1] = "./gradlew build"
+    decision = validate_repair_decision(
+        {
+            "actions": [{"kind": "prepend_maven_clean"}],
+            "rationale": "This must not rewrite Gradle.",
+        },
+        approved_java_homes=[],
+        approved_maven_homes=[],
+    )
+
+    with pytest.raises(RepairValidationError, match="direct Maven"):
+        apply_repair_decision(
+            receipt["planned_codeql_database_command"],
+            decision,
+            attempt_database_dir=tmp_path / "new-attempt-db",
+            approved_java_homes=[],
+            approved_maven_homes=[],
+        )
+
+
 def test_apply_repair_can_isolate_maven_user_home_without_changing_build_command(tmp_path):
     receipt = failed_receipt(tmp_path)
     build_home = tmp_path / "attempt-build-home"

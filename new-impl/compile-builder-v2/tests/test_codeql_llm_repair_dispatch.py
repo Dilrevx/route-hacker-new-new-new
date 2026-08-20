@@ -97,6 +97,7 @@ def repair_packet() -> dict:
             "approved_maven_homes": ["/opt/maven-3.9"],
             "safe_build_args": ["-Denforcer.skip=true"],
             "safe_maven_heap_options": ["-Xmx4g"],
+            "allow_prepend_maven_clean": False,
         }
     }
 
@@ -141,6 +142,27 @@ def test_repair_json_schema_encodes_per_packet_action_values() -> None:
     assert maven_choice["properties"]["value"]["enum"] == ["/opt/maven-3.9"]
     assert args_choice["properties"]["args"]["minItems"] == 1
     assert args_choice["properties"]["args"]["items"]["enum"] == ["-Denforcer.skip=true"]
+
+
+def test_repair_json_schema_offers_clean_only_for_direct_maven_build() -> None:
+    packet = repair_packet()
+    packet["failed_attempt"] = {
+        "planned_codeql_database_command": [
+            "codeql",
+            "database",
+            "create",
+            "/tmp/db",
+            "--source-root=/tmp/source",
+            "--command",
+            "mvn -DskipTests package",
+        ]
+    }
+    packet["allowed_action_schema"]["allow_prepend_maven_clean"] = True
+
+    schema = json.loads(repair_json_schema(packet))
+    choices = schema["properties"]["actions"]["oneOf"][2]["items"]["oneOf"]
+
+    assert any(choice["properties"]["kind"] == {"const": "prepend_maven_clean"} for choice in choices)
 
 
 def test_launcher_suppresses_profile_settings_mutation() -> None:
