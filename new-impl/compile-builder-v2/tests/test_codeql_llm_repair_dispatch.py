@@ -122,7 +122,7 @@ def test_llm_prompt_is_redacted_and_command_has_tools_disabled(tmp_path: Path) -
     )
 
     assert "do-not-leak" not in prompt
-    assert "retry_same_command is a standalone action" in prompt
+    assert "Unless you select set_java_home, execution inherits only the approved" in prompt
     command = command_for_claude("/opt/claude", repair_packet())
     assert "--tools" in command
     assert command[command.index("--tools") + 1] == ""

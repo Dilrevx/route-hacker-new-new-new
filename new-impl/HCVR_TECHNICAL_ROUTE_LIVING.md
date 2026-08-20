@@ -1019,6 +1019,7 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 - Audited the launched feedback child process before accepting it. The feedback build had lost the original receipt's Java 8 environment and was running through the host `java/current` symlink (Java 11). Stopped that invalid feedback child immediately; its database is not eligible for any result or manifest.
 - Identified the generic cause: `run_case` materializes a fresh intermediate failed receipt for feedback evidence, and `execute_repair_attempt` previously derived historical Java evidence from that intermediate receipt. Intermediate receipts do not carry the original `attempts[].toolchain` binding.
 - Extended `execute_repair_attempt` with an optional `historical_toolchain_receipt`, and changed the dispatcher to pass the immutable original failed receipt on every decision round. Runtime now inherits the original approved historical JDK for every action set that does not explicitly contain `set_java_home`; an explicit approved `set_java_home` remains the model-controlled override.
+- Aligned the model prompt with that runtime contract: a feedback action such as `append_build_args` keeps the receipt-bound JDK unless the model explicitly selects an alternate approved `set_java_home`.
 - Added regression coverage for a feedback-style `append_build_args([-Dcheckstyle.skip=true])` action preserving Java 8 and for dispatcher plumbing passing the original receipt through both decision rounds.
 
 **Verification:**
