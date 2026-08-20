@@ -835,6 +835,42 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Monitor the three active native IRIS processes to artifact-gated terminal receipts and check AWS for a terminal repair receipt. Admit AWS to native IRIS only through the same strict manifest builder if its database, archive identity, and source-integrity checks all pass. Continue using bridge metrics as the sole token/latency evidence source.
 
+### Round 27 - Individually Audited Spark 2.7.1 Repair and Native IRIS Admission
+
+**Goal:** Continue the strict IRIS-213 recovery lane one independently justified case at a time, exercising the generic Compile Builder v2 action space and immediately admitting a fully verified database to copied-original native IRIS.
+
+**Scope:** This round admits only `iris213::274aec74c6c1116ba040` / `perwendel__spark_CVE-2018-9159_2.7.1`. It is an IRIS-213 extension-lane result and remains outside the frozen 45/143 comparative cohort. The existing AWS repair and three previously active native-IRIS processes remain independent active work; no benchmark source, revision, official query, or IRIS logic is changed.
+
+**Action:**
+
+- Reviewed the case's own historical CodeQL receipts before queueing it. All three historical JDK runs completed Maven but emitted `Nothing to compile - all classes are up to date`, after which CodeQL reported that it had captured no Java/Kotlin source. This is the same generic stale-output failure class previously observed, not an inferred project-specific rule.
+- Verified the case's exact GitHub codeload archive receipt, declared commit `5316c0d0f057daaf556c3907c20df975f7bf8a8a`, package-name file, native `cwe-022wLLM` query support, and strict-admission membership.
+- Submitted a one-case, one-worker Compile Builder v2 dispatch with the unchanged global 47-case input ledger, approved JDK/Maven homes, archive-isolated source copy, local action validation, one bounded feedback replan, and `DeepSeek-V4-Pro`.
+- The constrained model selected only general approved actions: `prepend_maven_clean` and `-Denforcer.skip=true`. The resulting real Maven build recompiled sources, completed successfully, and CodeQL finalized a new Java database.
+- Ran the generic repaired-DB manifest builder rather than constructing a hand-written native input. It accepted the exact archive provenance, zero non-generated source changes, valid database layout, and 82 Java relation files.
+- Generated a one-row extension-lane allowlist and launched the generic native batch runner. The copied workspace is executing the original `src/iris.py --query cwe-022wLLM` with one project worker, one original IRIS label thread, the pinned local CodeQL source overlay, and bridge capacity eight.
+
+**Verification:**
+
+- Historical failure evidence:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/hcvr/v9-execution/w1-db-projection-v1/cases/perwendel__spark_CVE-2018-9159_2.7.1/logs/10-codeql-database-create.attempt1.host_java_1.log`.
+  It records Maven `BUILD SUCCESS`, `Nothing to compile`, and the resulting no-source-capture CodeQL failure.
+- Fresh generic repair output:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/compile-repair-run-spark-271-r1/dispatch/`.
+  Its terminal receipt records `codeql_db_repaired`; the repair log records recompilation and a successful CodeQL database create.
+- Strict manifest and binding:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a18-spark271-repaired-db-native-iris/iris213::274aec74c6c1116ba040.manifest.jsonl`
+  and
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a18-spark271-repaired-db-native-iris/iris213::274aec74c6c1116ba040.binding.json`.
+  The binding records a valid DB, `82` relation files, exact archive/revision verification through the source receipt, and source-integrity `changed_path_count: 0`.
+- Active native execution:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a18-spark271-repaired-db-native-iris/native-run/`.
+  Its process tree includes the generic batch runner, generic single-case runner, and copied official `src/iris.py`; it has not yet reached a terminal IRIS receipt.
+
+**Decision:** Spark 2.7.1 is a third independently verified Compile Builder v2 Java database in this strict recovery sequence and an active native-IRIS run. The only repair actions were selected from the generic controlled action space and verified against the fresh isolated build. It is not a completed native result until original IRIS exits cleanly with every required artifact and every dispatched response parses.
+
+**Next:** Monitor Spark 2.7.1, Spark 2.5.1, and the two NiFi processes through artifact-gated terminal receipts. Keep AWS in the repair lane until it emits a terminal receipt, then use the same manifest builder gate before any native-IRIS admission. Review exactly one further strict candidate only when a repair worker becomes free, starting from its historical failure logs and source receipt.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.
