@@ -475,6 +475,31 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Commit and deploy the URL-normalization fix, launch a12 with the same two-project-worker / one-native-label-thread configuration, verify the first bridge metrics carry the a12 run ID, then count only receipts satisfying original IRIS return-code, full-artifact, and prompt-mapped JSON-list gates.
 
+### Round 15 - a12 Normalized-URL Native IRIS Dispatch
+
+**Goal:** Start a clean native IRIS retry after the generic bridge URL fix and establish that the repaired transport reaches real model completions under the bounded concurrency contract.
+
+**Scope:** a12 reuses the same three independently preflight-eligible frozen rows as a10/a11, but has a new attempt ID, output root, and workspace root. It does not reuse a11 outputs as results.
+
+**Action:**
+
+- Deployed the normalized single-case runner from commit `c6f3df3` to the remote package and verified its SHA-256 matches the checked-in file.
+- Before spending model budget, issued a remote POST to `/v1/chat/completions` with an intentionally invalid empty payload. The bridge returned its expected HTTP `400` validation error (`messages must be a non-empty list`), proving the request reached the intended handler rather than a version-path 404.
+- Created and validated the three-row a12 manifest. It preserves the prior SHA-256 `852f75b6da615e60bf68234115ac52bd99e7f26e33614aebf205e16f59ec819d`, with complete source, package-name, and CodeQL (`codeql-database.yml` and `db-java`) checks.
+- Launched `qa-iris-v2-45-a12-normalized-base-url` with two project workers, one original-IRIS label thread per project, `DeepSeek-V4-Pro`, four JSON-list transport attempts, and bridge capacity eight.
+
+**Verification:**
+
+- Commons IO and Hutool each entered copied original `src/iris.py`, completed their CodeQL candidate-extraction stages, and reached native API labelling.
+- The first two bridge metric records are successful `completed` calls attributed to the a12 run IDs, one for Commons IO and one for Hutool. This establishes that the generic URL fix removed the a11 pre-handler 404 failure.
+- TraeX did not report total token counts for these calls, so the corresponding metric fields remain `null`.
+- a12 evidence root:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/results-a12-normalized-base-url/`.
+
+**Decision:** a12 is actively executing native IRIS and has passed the transport-start milestone only. It has not yet produced any verified result; completion accounting remains gated on original IRIS exit code, all required artifacts, and valid JSON-list responses for every dispatched label prompt.
+
+**Next:** Monitor a12 until each receipt is written. Audit every completed receipt independently, then update coverage only with `completed_verified` rows; Vert.x will begin after one of the two bounded project workers becomes available.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.
