@@ -1082,15 +1082,20 @@ def apply_repair_decision(
     if not isinstance(actions, list):
         raise RepairValidationError("validated repair decision has no actions")
     retry_same_command = actions == [{"kind": "retry_same_command"}]
+    explicitly_selects_java_home = any(
+        isinstance(action, Mapping) and action.get("kind") == "set_java_home"
+        for action in actions
+    )
+    inherited_java_home_applied = False
     if inherited_java_home is not None:
-        if not retry_same_command:
-            raise RepairValidationError(
-                "historical Java home may only be inherited for retry_same_command"
-            )
         if inherited_java_home not in java_homes:
             raise RepairValidationError("historical Java home is not currently approved")
-        env["JAVA_HOME"] = inherited_java_home
-        env["PATH"] = f"{Path(inherited_java_home) / 'bin'}:{os.environ.get('PATH', '')}"
+        if not explicitly_selects_java_home:
+            env["JAVA_HOME"] = inherited_java_home
+            env["PATH"] = (
+                f"{Path(inherited_java_home) / 'bin'}:{os.environ.get('PATH', '')}"
+            )
+            inherited_java_home_applied = True
     applied_actions: list[dict[str, Any]] = []
     for action in actions:
         if not isinstance(action, Mapping):
@@ -1102,7 +1107,9 @@ def apply_repair_decision(
             applied_actions.append(
                 {
                     "kind": kind,
-                    "inherited_java_home": inherited_java_home,
+                    "inherited_java_home": (
+                        inherited_java_home if inherited_java_home_applied else None
+                    ),
                 }
             )
         elif kind == "set_java_home":
@@ -1238,7 +1245,7 @@ def apply_repair_decision(
     if "JAVA_HOME" in env:
         verified_environment["JAVA_HOME"] = env["JAVA_HOME"]
         verified_environment["PATH_prefix"] = str(Path(env["JAVA_HOME"]) / "bin")
-        if inherited_java_home is not None:
+        if inherited_java_home_applied:
             verified_environment["inherited_java_home"] = inherited_java_home
     return repaired, env, {
         "applied_actions": applied_actions,
@@ -1263,6 +1270,7 @@ def execute_repair_attempt(
     verified_maven_repository_source: Path | None = None,
     verified_maven_wrapper_dists_source: Path | None = None,
     isolate_build_home: bool = False,
+    historical_toolchain_receipt: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Execute one verified, isolated repair attempt and return an auditable receipt."""
 
@@ -1282,10 +1290,16 @@ def execute_repair_attempt(
         approved_maven_homes=approved_maven_homes,
         approved_ant_homes=approved_ant_homes,
     )
-    retry_toolchain = historical_retry_java_home(receipt, approved_java_homes)
+    toolchain_receipt = historical_toolchain_receipt or receipt
+    retry_toolchain = historical_retry_java_home(toolchain_receipt, approved_java_homes)
+    actions = validated["actions"]
+    explicitly_selects_java_home = any(
+        isinstance(action, Mapping) and action.get("kind") == "set_java_home"
+        for action in actions
+    )
     inherited_java_home = (
         retry_toolchain["java_home"]
-        if validated["actions"] == [{"kind": "retry_same_command"}]
+        if not explicitly_selects_java_home
         else None
     )
     source_dir = Path(packet["source"]["source_dir"])

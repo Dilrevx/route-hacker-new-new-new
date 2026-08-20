@@ -1006,6 +1006,37 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Collect B2 terminal receipts. Classify terminal outcomes from the recorded logs, then inspect exactly one next strict candidate before submitting a fresh bounded dispatch. Maintain the existing native IRIS runs independently and report token usage only if bridge evidence becomes non-null.
 
+### Round 32 - Preserve Original JDK Binding Across Build-Feedback Replans
+
+**Goal:** Close a generic Compile Builder v2 toolchain-continuity gap found during an active B2 feedback retry, so a feedback action cannot silently change the Java runtime that was verified for the original failed receipt.
+
+**Scope:** This round covers the Spring Cloud Config B2 feedback execution for `iris213::a1aa70dc0a5b3c481e98` and the generic feedback-replan mechanism. It does not change benchmark source, exact archive revision, project modules, Maven repositories, official CodeQL queries, or native IRIS logic.
+
+**Action:**
+
+- Inspected Spring Cloud Config's first B2 build failure rather than accepting partial reactor progress as a successful database. The first Java-8 attempt built the parent, client, server, and monitor modules, then failed only because Checkstyle's externally hosted suppression XML connection reset.
+- The bounded feedback model selected the already allow-listed generic `-Dcheckstyle.skip=true` argument. This is a build-quality-gate bypass within the existing controlled action schema; it does not edit source or suppress Java compilation.
+- Audited the launched feedback child process before accepting it. The feedback build had lost the original receipt's Java 8 environment and was running through the host `java/current` symlink (Java 11). Stopped that invalid feedback child immediately; its database is not eligible for any result or manifest.
+- Identified the generic cause: `run_case` materializes a fresh intermediate failed receipt for feedback evidence, and `execute_repair_attempt` previously derived historical Java evidence from that intermediate receipt. Intermediate receipts do not carry the original `attempts[].toolchain` binding.
+- Extended `execute_repair_attempt` with an optional `historical_toolchain_receipt`, and changed the dispatcher to pass the immutable original failed receipt on every decision round. Runtime now inherits the original approved historical JDK for every action set that does not explicitly contain `set_java_home`; an explicit approved `set_java_home` remains the model-controlled override.
+- Added regression coverage for a feedback-style `append_build_args([-Dcheckstyle.skip=true])` action preserving Java 8 and for dispatcher plumbing passing the original receipt through both decision rounds.
+
+**Verification:**
+
+- The rejected Spring feedback process was observed as:
+  `/data/lhq/.sdkman/candidates/java/current/bin/java ... -Dcheckstyle.skip=true`
+  under `compile-repair-run-toolchain-continuity-b2`. It is terminated and never entered a repaired-DB manifest.
+- The first Spring B2 log records the exact external failure:
+  `Unable to read https://raw.githubusercontent.com/.../checkstyle-suppressions.xml: Connection reset`.
+  The preceding reactor summary proves compilation had advanced through the relevant Java modules before that unrelated quality gate failed.
+- Synchronized the changed v2 runtime, dispatcher, and tests to the remote execution checkout and ran:
+  `PYTHONPATH=src /data/lhq/.miniconda/bin/python3 -m pytest -q tests/test_runtime_codeql_repair.py tests/test_codeql_llm_repair_dispatch.py`.
+  Result: `86 passed, 4 warnings`; the warnings are the existing tar extraction deprecation warnings.
+
+**Decision:** The aborted feedback attempt is invalid due to Java-runtime drift and remains excluded. Feedback replans now retain receipt-bound toolchain continuity by default while preserving the LLM's bounded ability to choose a different approved JDK explicitly. Continue UIMA B2 only under its original valid Java-8 initial attempt; requeue Spring from a fresh exact archive only after the updated v2 code is deployed and a worker slot is free.
+
+**Next:** Push the generic feedback-toolchain fix, wait for B2 to record the stopped Spring attempt and the still-running UIMA terminal result, then submit a fresh one-case Spring retry with the updated v2 code. Apply the normal exact-source, source-integrity, valid-DB, and Java-relation manifest gates before any native IRIS admission.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.

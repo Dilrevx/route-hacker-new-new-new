@@ -184,6 +184,80 @@ def test_execute_retry_same_command_inherits_matching_historical_java_home(
     ]
 
 
+def test_execute_feedback_action_inherits_original_historical_java_home(
+    tmp_path,
+    monkeypatch,
+):
+    receipt = failed_receipt(tmp_path)
+    original_root = tmp_path / "original"
+    original_root.mkdir()
+    original_receipt = failed_receipt(original_root)
+    original_log_path = Path(
+        original_receipt["codeql_database_create_result"]["log_path"]
+    )
+    original_receipt["attempts"] = [
+        {
+            "result": {"log_path": str(original_log_path)},
+            "toolchain": {"java_home": "/opt/java-8"},
+        }
+    ]
+    archive = tmp_path / "source.tar.gz"
+    archive.write_bytes(b"archive-content")
+    exact_source = {
+        "case_id": "v8:example",
+        "source_dir": receipt["source_dir"],
+        "resolved_buggy_commit": "abc123",
+        "status": "source_materialized_exact_archive_snapshot",
+        "contract": {"exact_declared_buggy_commit_only": True},
+        "archive_result": {
+            "archive_path": str(archive),
+            "archive_sha256": hashlib.sha256(archive.read_bytes()).hexdigest(),
+            "archive_url": "https://codeload.github.com/example/repo/tar.gz/abc123",
+        },
+    }
+    captured_env: dict[str, str] = {}
+
+    class Result:
+        returncode = 1
+
+        def to_dict(self):
+            return {"returncode": 1, "timed_out": False}
+
+    def run_failed(*_args, **kwargs):
+        captured_env.update(kwargs["env"])
+        return Result()
+
+    monkeypatch.setattr(
+        "route_hacker.runtime.codeql_repair.run_bounded_process",
+        run_failed,
+    )
+    from route_hacker.runtime.codeql_repair import execute_repair_attempt
+
+    attempt = execute_repair_attempt(
+        receipt,
+        {
+            "actions": [
+                {"kind": "append_build_args", "args": ["-Dcheckstyle.skip=true"]}
+            ],
+            "rationale": "Skip an external quality-gate download.",
+        },
+        attempt_dir=tmp_path / "attempt-feedback",
+        timeout_seconds=10,
+        approved_java_homes=["/opt/java-8"],
+        approved_maven_homes=[],
+        source_receipt=exact_source,
+        historical_toolchain_receipt=original_receipt,
+    )
+
+    assert captured_env["JAVA_HOME"] == "/opt/java-8"
+    assert attempt["historical_retry_toolchain"]["java_home"] == "/opt/java-8"
+    assert attempt["applied_repair"]["verified_environment"] == {
+        "JAVA_HOME": "/opt/java-8",
+        "PATH_prefix": "/opt/java-8/bin",
+        "inherited_java_home": "/opt/java-8",
+    }
+
+
 def test_completed_attempt_packet_binds_final_log_and_failure_category(
     tmp_path,
     monkeypatch,

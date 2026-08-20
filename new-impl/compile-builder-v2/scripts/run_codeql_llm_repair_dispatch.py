@@ -1002,6 +1002,7 @@ def run_case(
             approved_maven_homes=approved_maven_homes,
             source_receipt=execution_source_receipt,
             isolate_build_home=True,
+            historical_toolchain_receipt=failed_receipt,
         )
         attempt["source_materialization"] = source_materialization
         round_record["repair_attempt"] = attempt
