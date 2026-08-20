@@ -29,6 +29,16 @@ SCHEMA_VERSION = "route_hacker_codeql_repair.v1"
 MAX_LOG_CHARACTERS = 12_000
 MAX_RATIONALE_CHARACTERS = 1_000
 MAX_ACTIONS = 4
+SOURCE_INTEGRITY_IGNORED_DIRECTORIES = frozenset(
+    {
+        ".git",
+        ".gradle",
+        "build",
+        "out",
+        "target",
+    }
+)
+MAX_SOURCE_INTEGRITY_CHANGED_PATHS = 100
 SAFE_BUILD_ARGS = frozenset(
     {
         "-Dmaven.buildNumber.skip=true",
@@ -98,6 +108,74 @@ def sha256_file(path: Path) -> str:
         for block in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(block)
     return digest.hexdigest()
+
+
+def source_integrity_snapshot(source_dir: Path) -> dict[str, Any]:
+    """Hash non-generated source content before and after a repair build.
+
+    Maven/Gradle output directories are intentionally excluded because a
+    compilation must create them. Any change outside this small generic list
+    is evidence that the build altered benchmark input and therefore cannot
+    qualify as an admissible repaired database.
+    """
+
+    files: dict[str, str] = {}
+    if not source_dir.is_dir():
+        return {
+            "source_dir": str(source_dir),
+            "available": False,
+            "reason": "source_directory_missing",
+            "ignored_directory_names": sorted(SOURCE_INTEGRITY_IGNORED_DIRECTORIES),
+            "files": files,
+            "tree_sha256": None,
+        }
+    for path in sorted(source_dir.rglob("*")):
+        relative = path.relative_to(source_dir)
+        if any(part in SOURCE_INTEGRITY_IGNORED_DIRECTORIES for part in relative.parts):
+            continue
+        if path.is_file() and not path.is_symlink():
+            files[str(relative)] = sha256_file(path)
+    tree_sha256 = stable_json_sha256(files)
+    return {
+        "source_dir": str(source_dir),
+        "available": True,
+        "ignored_directory_names": sorted(SOURCE_INTEGRITY_IGNORED_DIRECTORIES),
+        "files": files,
+        "tree_sha256": tree_sha256,
+    }
+
+
+def compare_source_integrity(
+    before: Mapping[str, Any],
+    after: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Return source-integrity evidence without persisting the full file map."""
+
+    before_files = before.get("files")
+    after_files = after.get("files")
+    if not isinstance(before_files, Mapping) or not isinstance(after_files, Mapping):
+        return {
+            "verified": False,
+            "reason": "source_integrity_snapshot_unavailable",
+            "before_tree_sha256": before.get("tree_sha256"),
+            "after_tree_sha256": after.get("tree_sha256"),
+            "changed_paths": [],
+        }
+    changed_paths = sorted(
+        path
+        for path in set(before_files) | set(after_files)
+        if before_files.get(path) != after_files.get(path)
+    )
+    return {
+        "verified": not changed_paths,
+        "reason": None if not changed_paths else "non_generated_source_content_changed_during_build",
+        "before_tree_sha256": before.get("tree_sha256"),
+        "after_tree_sha256": after.get("tree_sha256"),
+        "changed_path_count": len(changed_paths),
+        "changed_paths": changed_paths[:MAX_SOURCE_INTEGRITY_CHANGED_PATHS],
+        "changed_paths_truncated": len(changed_paths) > MAX_SOURCE_INTEGRITY_CHANGED_PATHS,
+        "ignored_directory_names": sorted(SOURCE_INTEGRITY_IGNORED_DIRECTORIES),
+    }
 
 
 def stable_json_sha256(value: Any) -> str:
@@ -1028,6 +1106,7 @@ def execute_repair_attempt(
             "validated_decision": validated,
             "source_revision_evidence": source_evidence,
         }
+    source_integrity_before = source_integrity_snapshot(source_dir)
 
     original_command = _command_from_receipt(receipt)
     database_dir = attempt_dir / "codeql-db"
@@ -1110,8 +1189,16 @@ def execute_repair_attempt(
             stderr=subprocess.STDOUT,
             text=True,
         )
+    source_integrity = compare_source_integrity(
+        source_integrity_before,
+        source_integrity_snapshot(source_dir),
+    )
     database_valid = valid_codeql_database(database_dir)
-    status = "codeql_db_repaired" if bounded.returncode == 0 and database_valid else "repair_attempt_failed"
+    status = (
+        "codeql_db_repaired"
+        if bounded.returncode == 0 and database_valid and source_integrity["verified"]
+        else "repair_attempt_failed"
+    )
     final_packet = refresh_attempt_packet_log(packet, log_path=log_path)
     return {
         "schema_version": f"{SCHEMA_VERSION}:attempt",
@@ -1148,11 +1235,13 @@ def execute_repair_attempt(
         "log_sha256": sha256_file(log_path),
         "database_dir": str(database_dir),
         "database_valid": database_valid,
+        "source_integrity_evidence": source_integrity,
         "official_query_status": receipt.get("official_query_status"),
         "contract": {
             "exact_declared_source_verified": True,
             "source_revision_substitution_forbidden": True,
             "source_edits_forbidden": True,
+            "non_generated_source_content_unchanged_after_build": source_integrity["verified"],
             "official_query_change_forbidden": True,
             "new_attempt_database_only": True,
             "retrieval_and_target_data_not_consumed": True,

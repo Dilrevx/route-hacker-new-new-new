@@ -11,6 +11,7 @@ from route_hacker.runtime.codeql_repair import (
     classify_build_failure,
     heuristic_repair_decision,
     redact_text,
+    source_integrity_snapshot,
     validate_repair_decision,
     verify_exact_source,
 )
@@ -131,6 +132,91 @@ def test_completed_attempt_packet_binds_final_log_and_failure_category(
     assert packet["failed_attempt"]["log"]["sha256"] == attempt["log_sha256"]
     assert packet["failed_attempt"]["failure_category"] == "generic_build_failure"
     assert packet["packet_sha256"]
+
+
+def test_source_integrity_snapshot_ignores_generated_outputs_and_detects_source_change(
+    tmp_path: Path,
+):
+    source = tmp_path / "source"
+    source.mkdir()
+    source_file = source / "src" / "Main.java"
+    source_file.parent.mkdir()
+    source_file.write_text("class Main {}\n", encoding="utf-8")
+    before = source_integrity_snapshot(source)
+
+    generated_file = source / "module" / "target" / "generated.txt"
+    generated_file.parent.mkdir(parents=True)
+    generated_file.write_text("generated\n", encoding="utf-8")
+    generated_only = source_integrity_snapshot(source)
+
+    from route_hacker.runtime.codeql_repair import compare_source_integrity
+
+    assert compare_source_integrity(before, generated_only)["verified"] is True
+
+    source_file.write_text("class Main { int changed; }\n", encoding="utf-8")
+    changed = compare_source_integrity(before, source_integrity_snapshot(source))
+    assert changed["verified"] is False
+    assert changed["reason"] == "non_generated_source_content_changed_during_build"
+    assert changed["changed_paths"] == ["src/Main.java"]
+
+
+def test_execute_repair_rejects_database_when_build_changes_source_content(
+    tmp_path: Path,
+    monkeypatch,
+):
+    receipt = failed_receipt(tmp_path)
+    source = Path(receipt["source_dir"])
+    source_file = source / "Main.java"
+    source_file.write_text("class Main {}\n", encoding="utf-8")
+    archive = tmp_path / "source.tar.gz"
+    archive.write_bytes(b"archive-content")
+    source_receipt = {
+        "case_id": "v8:example",
+        "source_dir": receipt["source_dir"],
+        "resolved_buggy_commit": "abc123",
+        "status": "source_materialized_exact_archive_snapshot",
+        "contract": {"exact_declared_buggy_commit_only": True},
+        "archive_result": {
+            "archive_path": str(archive),
+            "archive_sha256": hashlib.sha256(archive.read_bytes()).hexdigest(),
+            "archive_url": "https://codeload.github.com/example/repo/tar.gz/abc123",
+        },
+    }
+
+    class Result:
+        returncode = 0
+
+        def to_dict(self):
+            return {"returncode": 0, "timed_out": False}
+
+    def mutating_process(*args, **kwargs):
+        source_file.write_text("class Main { int changed; }\n", encoding="utf-8")
+        database = tmp_path / "attempt" / "codeql-db"
+        (database / "db-java" / "default").mkdir(parents=True)
+        (database / "codeql-database.yml").write_text("name: test\n", encoding="utf-8")
+        (database / "db-java" / "default" / "files.rel").write_bytes(b"relations")
+        return Result()
+
+    monkeypatch.setattr(
+        "route_hacker.runtime.codeql_repair.run_bounded_process",
+        mutating_process,
+    )
+    from route_hacker.runtime.codeql_repair import execute_repair_attempt
+
+    attempt = execute_repair_attempt(
+        receipt,
+        {"actions": [{"kind": "retry_same_command"}], "rationale": "retry"},
+        attempt_dir=tmp_path / "attempt",
+        timeout_seconds=10,
+        approved_java_homes=[],
+        approved_maven_homes=[],
+        source_receipt=source_receipt,
+    )
+
+    assert attempt["database_valid"] is True
+    assert attempt["status"] == "repair_attempt_failed"
+    assert attempt["source_integrity_evidence"]["verified"] is False
+    assert attempt["source_integrity_evidence"]["changed_paths"] == ["Main.java"]
 
 
 def test_execute_repair_attempt_copies_maven_wrapper_dists_into_isolated_home(
