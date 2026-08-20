@@ -41,6 +41,7 @@ SOURCE_INTEGRITY_IGNORED_DIRECTORIES = frozenset(
 SOURCE_INTEGRITY_IGNORED_FILENAMES = frozenset(
     {
         "dependency-reduced-pom.xml",
+        ".flattened-pom.xml",
     }
 )
 MAX_SOURCE_INTEGRITY_CHANGED_PATHS = 100
@@ -118,11 +119,11 @@ def sha256_file(path: Path) -> str:
 def source_integrity_snapshot(source_dir: Path) -> dict[str, Any]:
     """Hash non-generated source content before and after a repair build.
 
-    Maven/Gradle output directories and the Maven Shade plugin's fixed
-    ``dependency-reduced-pom.xml`` generated metadata are intentionally
-    excluded because a compilation may create them. Any other change is
-    evidence that the build altered benchmark input and therefore cannot
-    qualify as an admissible repaired database.
+    Maven/Gradle output directories and the Maven Shade/Flatten plugins'
+    fixed generated metadata files are intentionally excluded because a
+    compilation may create them. Any other change is evidence that the build
+    altered benchmark input and therefore cannot qualify as an admissible
+    repaired database.
     """
 
     files: dict[str, str] = {}

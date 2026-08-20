@@ -149,12 +149,17 @@ def test_source_integrity_snapshot_ignores_generated_outputs_and_detects_source_
     generated_file.write_text("generated\n", encoding="utf-8")
     shade_metadata = source / "module" / "dependency-reduced-pom.xml"
     shade_metadata.write_text("<project />\n", encoding="utf-8")
+    flattened_metadata = source / "module" / ".flattened-pom.xml"
+    flattened_metadata.write_text("<project />\n", encoding="utf-8")
     generated_only = source_integrity_snapshot(source)
 
     from route_hacker.runtime.codeql_repair import compare_source_integrity
 
     assert compare_source_integrity(before, generated_only)["verified"] is True
-    assert generated_only["ignored_file_names"] == ["dependency-reduced-pom.xml"]
+    assert generated_only["ignored_file_names"] == [
+        ".flattened-pom.xml",
+        "dependency-reduced-pom.xml",
+    ]
 
     source_file.write_text("class Main { int changed; }\n", encoding="utf-8")
     changed = compare_source_integrity(before, source_integrity_snapshot(source))
