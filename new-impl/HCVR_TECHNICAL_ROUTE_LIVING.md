@@ -976,6 +976,36 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Collect the B2 terminal receipts. For every `codeql_db_repaired` result, invoke `build_repaired_db_native_iris_manifest.py` and launch only the generated manifest through the copied-original native IRIS runner. Continue monitoring the active XStream, AWS, and NiFi native runs through artifact-gated completion, and continue reporting bridge usage only where emitted by the bridge.
 
+### Round 31 - B2 Liveness Audit of Third-Party Dependency Stalls
+
+**Goal:** Distinguish active dependency work from a completed CodeQL database or a JVM/build deadlock before making any B2 admission or recovery decision.
+
+**Scope:** This observation-only round covers the active B2 UIMA and Spring Cloud Config attempts in the IRIS-213 extension lane. It changes no source, dependency configuration, project module, official IRIS query, or repair action.
+
+**Action:**
+
+- Rechecked the B2 dispatcher and both per-case CodeQL/Maven process trees. The dispatcher remains active with both two-worker slots occupied and no terminal repair receipt.
+- Verified that both Maven children still use the exact receipt-bound approved Java 8.0.452-amzn runtime and attempt-local Maven repositories. The historical-toolchain continuity change is therefore active in the real build processes, not only in unit tests.
+- Sampled log timestamps, CodeQL trap files, process states, active HTTPS sockets, and JVM thread stacks instead of inferring success from the presence of a partially initialized database directory.
+- UIMA remains in active P2 dependency resolution: its output advances through Eclipse P2 artifacts, its Maven process retains active HTTPS sockets, and the JVM stack is inside `P2RepositoryLayout` / Maven artifact resolution. The attempt already generated more than 10,000 Java trap artifacts, but its database has zero finalized Java `.rel` files.
+- Spring Cloud Config is blocked in the Checkstyle plugin while reading an HTTPS-hosted suppression XML. Its main Maven thread is inside Checkstyle `SuppressionFilter` network parsing, with a live HTTPS socket; its output has not advanced beyond the checkstyle banner and its database likewise has zero finalized Java `.rel` files.
+
+**Verification:**
+
+- Active B2 summary:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/compile-repair-run-toolchain-continuity-b2/dispatch/summary.json`.
+  It reports two active cases, zero completed cases, and no terminal status count.
+- UIMA build log:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/compile-repair-run-toolchain-continuity-b2/dispatch/cases/iris213__e68952d1f3419537a188/attempt-001/codeql-attempt/codeql-repair.log`.
+  The log continued to append P2 download events during the audit; the process is not a stale completed build.
+- Spring build log:
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a16-iris213-strict-repair-projection/compile-repair-run-toolchain-continuity-b2/dispatch/cases/iris213__a1aa70dc0a5b3c481e98/attempt-001/codeql-attempt/codeql-repair.log`.
+  The corresponding JVM stack places the main thread in HTTPS XML parsing invoked by Checkstyle, rather than a Java compiler or CodeQL finalization phase.
+
+**Decision:** Neither B2 case is a repaired database. The observed stalls are external dependency/plugin HTTP waits, not evidence that the JDK-continuity change failed. Keep the bounded two-worker attempt running until its existing 7200-second CodeQL timeout or a terminal receipt; do not start Camel or another heavy repair while those slots remain occupied. If a case reaches `codeql_db_repaired`, apply the normal strict manifest and Java-relation gate before launching copied-original native IRIS.
+
+**Next:** Collect B2 terminal receipts. Classify terminal outcomes from the recorded logs, then inspect exactly one next strict candidate before submitting a fresh bounded dispatch. Maintain the existing native IRIS runs independently and report token usage only if bridge evidence becomes non-null.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.
