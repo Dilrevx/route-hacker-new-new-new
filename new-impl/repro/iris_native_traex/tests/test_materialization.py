@@ -217,6 +217,9 @@ def test_codeql_source_overlay_validation_requires_matching_official_tag(tmp_pat
     query_pack.mkdir(parents=True)
     java_all.mkdir(parents=True)
     (query_pack / "qlpack.yml").write_text("name: codeql/java-queries\nversion: 1.8.1\n")
+    query = query_pack / "Security" / "CWE" / "CWE-094" / "TemplateInjection.ql"
+    query.parent.mkdir(parents=True)
+    query.write_text("import java\nfrom int value\nselect value\n")
     (java_all / "qlpack.yml").write_text("name: codeql/java-all\nversion: 7.7.1\n")
     executable = codeql / "codeql"
     executable.write_text("#!/bin/sh\necho 'CodeQL command-line toolchain release 2.23.2.'\n")
@@ -240,6 +243,8 @@ def test_codeql_source_overlay_validation_requires_matching_official_tag(tmp_pat
 
     def fake_run(command, *args, **kwargs):
         if command[:2] == ["git", "-C"]:
+            return Completed()
+        if command[:3] == [str(executable), "query", "compile"]:
             return Completed()
         return original_run(command, *args, **kwargs)
 
