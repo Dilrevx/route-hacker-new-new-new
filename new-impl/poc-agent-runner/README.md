@@ -10,6 +10,25 @@ It is intentionally separate from `runtime-v2-verifier-redesign`:
 - `poc-agent-runner` launches an AI PoC development session from an audit report,
   then launches a fresh verifier session against the final PoC artifact.
 
+## Main Use Cases
+
+The PoC agent has two primary workflows:
+
+1. **Historical CVE reproduction evaluation.** Given a known CVE, pinned source
+   revision, and runtime artifact, the agent measures whether the pipeline can
+   reproduce the historical vulnerability and produce a faithful executable
+   proof. This workflow may target old or intentionally vulnerable revisions.
+2. **New-project false-positive audit.** Given new Codex Security candidates on
+   a project's current branch, the agent checks whether the candidate is a real
+   present-day issue worth further human review or vendor reporting.
+
+For the new-project false-positive audit workflow, only run PoC validation when
+the target repository's default branch has a latest commit dated in 2026. If the
+latest `master` or default-branch commit is older than 2026, skip the candidate
+as low-priority legacy surface instead of spending PoC-agent budget on it. This
+gate does not apply to historical CVE reproduction evaluation, where old
+revisions are expected by design.
+
 ## Core Files
 
 - `src/route_hacker/poc_agent/runner.py`
