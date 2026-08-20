@@ -592,6 +592,35 @@ def parse_repair_decision_text(text: str) -> dict[str, Any]:
     return value
 
 
+def _approved_home_from_action(
+    raw_action: Mapping[str, Any],
+    *,
+    field: str,
+    approved_homes: set[str],
+    action_kind: str,
+    label: str,
+) -> str:
+    """Read a home selection without widening the approved local allow-list.
+
+    The Claude JSON schema names action-specific fields, while compatible
+    OpenAI bridges may return their common ``value`` field.  Both forms are
+    canonicalized here only after an exact approved-home membership check.
+    """
+
+    explicit = raw_action.get(field)
+    generic = raw_action.get("value")
+    if explicit is not None and generic is not None and explicit != generic:
+        raise RepairValidationError(
+            f"{action_kind} has conflicting {field} and value selections"
+        )
+    selected = explicit if explicit is not None else generic
+    if not isinstance(selected, str) or selected not in approved_homes:
+        raise RepairValidationError(
+            f"{action_kind} must select an approved {label} home"
+        )
+    return selected
+
+
 def validate_repair_decision(
     decision: Mapping[str, Any],
     *,
@@ -630,19 +659,31 @@ def validate_repair_decision(
         if kind == "retry_same_command":
             actions.append({"kind": kind})
         elif kind == "set_java_home":
-            java_home = raw_action.get("java_home")
-            if not isinstance(java_home, str) or java_home not in approved_java:
-                raise RepairValidationError("set_java_home must select an approved Java home")
+            java_home = _approved_home_from_action(
+                raw_action,
+                field="java_home",
+                approved_homes=approved_java,
+                action_kind=kind,
+                label="Java",
+            )
             actions.append({"kind": kind, "java_home": java_home})
         elif kind == "set_maven_home":
-            maven_home = raw_action.get("maven_home")
-            if not isinstance(maven_home, str) or maven_home not in approved_maven:
-                raise RepairValidationError("set_maven_home must select an approved Maven home")
+            maven_home = _approved_home_from_action(
+                raw_action,
+                field="maven_home",
+                approved_homes=approved_maven,
+                action_kind=kind,
+                label="Maven",
+            )
             actions.append({"kind": kind, "maven_home": maven_home})
         elif kind == "set_ant_home":
-            ant_home = raw_action.get("ant_home")
-            if not isinstance(ant_home, str) or ant_home not in approved_ant:
-                raise RepairValidationError("set_ant_home must select an approved Ant home")
+            ant_home = _approved_home_from_action(
+                raw_action,
+                field="ant_home",
+                approved_homes=approved_ant,
+                action_kind=kind,
+                label="Ant",
+            )
             actions.append({"kind": kind, "ant_home": ant_home})
         elif kind == "append_build_args":
             args = raw_action.get("args")

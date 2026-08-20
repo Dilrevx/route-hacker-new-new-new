@@ -621,6 +621,56 @@ def test_validate_repair_decision_drops_redundant_retry_same_command():
     }
 
 
+@pytest.mark.parametrize(
+    ("kind", "approved_key", "home_field", "home"),
+    [
+        ("set_java_home", "approved_java_homes", "java_home", "/opt/java-17"),
+        ("set_maven_home", "approved_maven_homes", "maven_home", "/opt/maven-3.9.8"),
+        ("set_ant_home", "approved_ant_homes", "ant_home", "/opt/ant-1.10"),
+    ],
+)
+def test_validate_repair_decision_canonicalizes_approved_generic_home_value(
+    kind: str,
+    approved_key: str,
+    home_field: str,
+    home: str,
+):
+    approvals = {
+        "approved_java_homes": [],
+        "approved_maven_homes": [],
+        "approved_ant_homes": [],
+    }
+    approvals[approved_key] = [home]
+
+    validated = validate_repair_decision(
+        {
+            "actions": [{"kind": kind, "value": home}],
+            "rationale": "Use the approved toolchain.",
+        },
+        **approvals,
+    )
+
+    assert validated["actions"] == [{"kind": kind, home_field: home}]
+
+
+def test_validate_repair_decision_rejects_conflicting_home_value_fields():
+    with pytest.raises(RepairValidationError, match="conflicting java_home and value"):
+        validate_repair_decision(
+            {
+                "actions": [
+                    {
+                        "kind": "set_java_home",
+                        "java_home": "/opt/java-17",
+                        "value": "/opt/java-21",
+                    }
+                ],
+                "rationale": "ambiguous toolchain",
+            },
+            approved_java_homes=["/opt/java-17", "/opt/java-21"],
+            approved_maven_homes=[],
+        )
+
+
 def test_apply_repair_uses_new_database_and_preserves_source_root(tmp_path):
     receipt = failed_receipt(tmp_path)
     decision = validate_repair_decision(
