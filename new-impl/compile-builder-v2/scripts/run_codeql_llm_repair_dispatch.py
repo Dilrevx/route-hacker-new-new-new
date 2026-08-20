@@ -771,6 +771,7 @@ def run_case(
     openai_model: str,
     model_timeout_seconds: float,
     codeql_timeout_seconds: float,
+    codeql_inactivity_timeout_seconds: float | None,
     approved_java_homes: list[str],
     approved_maven_homes: list[str],
     dry_run: bool,
@@ -998,6 +999,7 @@ def run_case(
             validated,
             attempt_dir=attempt_dir,
             timeout_seconds=codeql_timeout_seconds,
+            inactivity_timeout_seconds=codeql_inactivity_timeout_seconds,
             approved_java_homes=approved_java_homes,
             approved_maven_homes=approved_maven_homes,
             source_receipt=execution_source_receipt,
@@ -1113,6 +1115,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-workers", type=int, default=2)
     parser.add_argument("--model-timeout-seconds", type=float, default=300)
     parser.add_argument("--codeql-timeout-seconds", type=float, default=3600)
+    parser.add_argument(
+        "--codeql-inactivity-timeout-seconds",
+        type=float,
+        help=(
+            "Terminate a CodeQL build when its execution log has no new bytes "
+            "for this duration; omitted disables the additional liveness bound."
+        ),
+    )
     parser.add_argument("--max-attempts", type=int, default=1)
     parser.add_argument("--case-id", action="append", default=[])
     parser.add_argument("--case-id-file", type=Path)
@@ -1130,6 +1140,11 @@ def main() -> int:
         raise SystemExit("--max-workers must be positive")
     if args.model_timeout_seconds <= 0 or args.codeql_timeout_seconds <= 0:
         raise SystemExit("model and CodeQL timeouts must be positive")
+    if (
+        args.codeql_inactivity_timeout_seconds is not None
+        and args.codeql_inactivity_timeout_seconds <= 0
+    ):
+        raise SystemExit("CodeQL inactivity timeout must be positive when set")
     if args.max_attempts < 1 or args.heartbeat_seconds < 1:
         raise SystemExit("max attempts and heartbeat seconds must be positive")
     if args.limit is not None and args.limit < 0:
@@ -1319,6 +1334,7 @@ def main() -> int:
                     openai_model=args.openai_model,
                     model_timeout_seconds=args.model_timeout_seconds,
                     codeql_timeout_seconds=args.codeql_timeout_seconds,
+                    codeql_inactivity_timeout_seconds=args.codeql_inactivity_timeout_seconds,
                     approved_java_homes=approved_java_homes,
                     approved_maven_homes=approved_maven_homes,
                     dry_run=args.dry_run,
@@ -1395,6 +1411,7 @@ def main() -> int:
         "max_workers": args.max_workers,
         "model_timeout_seconds": args.model_timeout_seconds,
         "codeql_timeout_seconds": args.codeql_timeout_seconds,
+        "codeql_inactivity_timeout_seconds": args.codeql_inactivity_timeout_seconds,
         "max_attempts": args.max_attempts,
         "max_build_feedback_replan_attempts_per_case": MAX_BUILD_FEEDBACK_REPLAN_ATTEMPTS,
         "approved_java_home_count": len(approved_java_homes),

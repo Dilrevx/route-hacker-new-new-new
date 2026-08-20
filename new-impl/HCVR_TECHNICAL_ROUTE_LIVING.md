@@ -1038,6 +1038,32 @@ healthy DBs ∩ historical M11 preflight-eligible cases ∖ historical completed
 
 **Next:** Push the generic feedback-toolchain fix, wait for B2 to record the stopped Spring attempt and the still-running UIMA terminal result, then submit a fresh one-case Spring retry with the updated v2 code. Apply the normal exact-source, source-integrity, valid-DB, and Java-relation manifest gates before any native IRIS admission.
 
+### Round 33 - Bound Silent Build-Log Stalls in the Generic Executor
+
+**Goal:** Ensure that Compile Builder v2 releases a repair worker when a CodeQL build remains alive but makes no observable execution-log progress, while retaining the full fixed wall-clock bound and process-tree cleanup evidence.
+
+**Scope:** This round addresses the generic bounded-subprocess layer after the active Apache UIMA B2 attempt entered a third-party P2 HTTPS read with no new build-log bytes. It does not add a UIMA recipe or alter benchmark source, source archives, project modules, dependency repositories, official CodeQL queries, or copied-original IRIS.
+
+**Action:**
+
+- Inspected the stalled UIMA Java 8 process with a JVM thread dump and socket state rather than interpreting its nonzero CPU usage as build progress. Maven's main thread was waiting for `P2RepositoryConnector` work while a resolver thread was blocked in `SSLSocketInputStream.read`; the process retained many closed-wait HTTPS sockets and had stopped appending its build log.
+- Extended the shared `run_bounded_process` primitive with an optional progress-file inactivity bound. When configured, it observes the log file's `(mtime, size)` signature, resets the inactivity clock only when new bytes appear, and invokes the same process-tree SIGTERM/SIGKILL cleanup routine used by the total timeout.
+- Added explicit receipt evidence: `timed_out`, `inactivity_timed_out`, elapsed time, process-group cleanup attempts, and cleanup signal/result. A liveness-bound termination remains a failed repair attempt and cannot be admitted as a CodeQL database.
+- Plumbed the optional `--codeql-inactivity-timeout-seconds` dispatcher setting into every controlled repair attempt. The setting is absent by default, so existing workloads preserve their original wall-clock-only behavior unless they opt in.
+- Added bounded-process tests for both a stale progress log and an advancing progress log, and updated feedback-controller tests for the expanded dispatcher contract.
+
+**Verification:**
+
+- Remote Compile Builder v2 verification ran:
+  `PYTHONPATH=src /data/lhq/.miniconda/bin/python3 -m pytest -q tests/test_runtime_bounded_process.py tests/test_runtime_codeql_repair.py tests/test_codeql_llm_repair_dispatch.py`.
+  Result: `92 passed, 4 warnings`. The warnings are the pre-existing tar extraction deprecation warnings.
+- The Spring Cloud Config clean retry remains an independent Java-8 process with a continually appended Maven/CodeQL log. It is not subject to a new inactivity setting and remains an active strict repair, not a database result.
+- The UIMA B2 evidence remains preserved in its attempt directory. Its recorded Java 8 command and exact-source state stay available for the fresh bounded retry; no partial traps or metadata are treated as a valid database.
+
+**Decision:** Build liveness is now a generic executor policy: a configured inactivity window ends only silent execution-log stalls and retains auditable cleanup evidence. The model still independently selects only allow-listed repair actions; no project-specific recovery path is introduced. Requeue UIMA from its immutable receipt/source records with the generic inactivity bound after recording this implementation and verifying the new runtime.
+
+**Next:** Stop the stale UIMA B2 process tree, submit one archive-isolated UIMA retry using the generic inactivity bound, and continue monitoring the independent Spring Java-8 retry. For every terminal `codeql_db_repaired` result, require exact archive identity, source-integrity verification, valid DB metadata, and Java `.rel` files before generating a native-IRIS manifest.
+
 ## Near-Term Checklist
 
 - [x] Recover historical M11 code and 49-case results.

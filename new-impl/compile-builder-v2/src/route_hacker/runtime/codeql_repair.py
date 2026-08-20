@@ -1262,6 +1262,7 @@ def execute_repair_attempt(
     *,
     attempt_dir: Path,
     timeout_seconds: float,
+    inactivity_timeout_seconds: float | None = None,
     approved_java_homes: Sequence[str],
     approved_maven_homes: Sequence[str],
     approved_ant_homes: Sequence[str] = (),
@@ -1276,6 +1277,8 @@ def execute_repair_attempt(
 
     if timeout_seconds <= 0:
         raise ValueError("timeout_seconds must be positive")
+    if inactivity_timeout_seconds is not None and inactivity_timeout_seconds <= 0:
+        raise ValueError("inactivity_timeout_seconds must be positive when set")
     attempt_dir.mkdir(parents=True, exist_ok=False)
     packet = build_repair_packet(
         receipt,
@@ -1403,6 +1406,8 @@ def execute_repair_attempt(
             env={**os.environ, **extra_env},
             timeout_seconds=timeout_seconds,
             term_grace_seconds=min(30, max(1, timeout_seconds / 20)),
+            inactivity_timeout_seconds=inactivity_timeout_seconds,
+            progress_path=log_path if inactivity_timeout_seconds is not None else None,
             stdout=handle,
             stderr=subprocess.STDOUT,
             text=True,
