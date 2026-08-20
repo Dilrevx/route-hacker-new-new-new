@@ -1,0 +1,56 @@
+{
+  "all_exported_snapshot_rows_non_deduplicated": 1868,
+  "boundaries": [
+    "Codex Security findings are candidates until source review and runtime verification.",
+    "The 143-case snapshots are cumulative and must not be summed as independent alert sets.",
+    "Raw agent logs, prompts, local source checkouts, credentials, and absolute local artifact paths are excluded."
+  ],
+  "files": {
+    "batches": "batches.csv",
+    "critical_high_all_snapshots": "critical_high_findings_by_snapshot.csv",
+    "critical_high_representative": "representative_critical_high_findings.csv",
+    "disposition_counts": "disposition_counts.csv",
+    "poc_attempts": "poc_agent_run_attempts.csv",
+    "poc_outcomes": "poc_agent_outcomes.csv",
+    "summary": "summary.md"
+  },
+  "generated": "2026-08-20",
+  "poc_agent": {
+    "completed_verdict_rows": 16,
+    "final_disposition_counts": {
+      "confirmed_for_dataset_runtime": 8,
+      "disputed_or_likely_not_vendor_reportable": 1,
+      "duplicate_historical_CVE-2015-5254_AMQ-6013": 1,
+      "historical_revision_specific_not_latest_master": 1,
+      "rejected_by_poc_agent": 2,
+      "review_rejected_wrong_effect": 3
+    },
+    "run_attempt_state_counts": {
+      "completed": 3,
+      "failed": 2,
+      "failed_or_terminated": 2,
+      "interrupted_no_final_verdict": 1,
+      "prepared_not_run": 2,
+      "token_limit_exceeded": 1
+    },
+    "verdict_counts": {
+      "CONFIRMED": 13,
+      "NOT_VULNERABLE_AS_NEW_VENDOR_REPORT": 1,
+      "REJECTED": 2
+    }
+  },
+  "representative_candidate_universe": {
+    "critical": 31,
+    "critical_high": 399,
+    "findings_total": 835,
+    "high": 368,
+    "included_batches": [
+      "143-case-through-case111-20260820",
+      "apache-unified-v2-gpt55-high-progress-20260820",
+      "axis-axis1-java-latest-head-smoke-20260819"
+    ],
+    "low": 52,
+    "medium": 384
+  },
+  "schema": "combined-audit-index.v1"
+}

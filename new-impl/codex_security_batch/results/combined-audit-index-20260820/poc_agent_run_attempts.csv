@@ -1,0 +1,12 @@
+source,run_id,repo_key,finding_or_group,run_state,run_result,notes
+axis-axis1-java-latest-head-poc-20260819,axis-agent-run,apache__axis-axis1-java,group-2347,failed,returncode=1,Initial local TraeX run failed before a usable verdict.
+axis-axis1-java-latest-head-poc-20260819,axis-agent-run-safe,apache__axis-axis1-java,group-2347,failed_or_terminated,returncode=-15,Safe run was terminated before a usable verdict.
+axis-axis1-java-latest-head-poc-20260819,axis-agent-run-remote,apache__axis-axis1-java,group-2347,failed_or_terminated,returncode=-15,Remote run was terminated before a usable verdict.
+axis-axis1-java-latest-head-poc-20260819,axis-group-2347-run-001,apache__axis-axis1-java,group-2347,completed,returncode=0,"Final group run produced CONFIRMED verdict, later scope-refined by HTTP validation."
+apache-unified-v2-poc-agent-20260820,01-apache-activemq-e8d098-run-001,apache__activemq,csf_fcd383a8ea47b07156e8d098,failed,returncode=1,First run failed with TraeX status 1.
+apache-unified-v2-poc-agent-20260820,01-apache-activemq-e8d098-run-002,apache__activemq,csf_fcd383a8ea47b07156e8d098,completed,returncode=0,Second run produced CONFIRMED verdict.
+apache-unified-v2-poc-agent-20260820,02-apache-activemq-d5563b-run-001,apache__activemq,csf_0983b2b79357f77f78d5563b,completed,returncode=0,Run produced NOT_VULNERABLE as a new vendor report.
+apache-unified-v2-poc-agent-20260820,03-apache-iotdb-ea94b2-run-001,apache__iotdb,csf_f5085b8f0a8a324f49ea94b2,interrupted_no_final_verdict,,Agent cloned/analyzed IoTDB but was interrupted before final verdict.
+apache-unified-v2-poc-agent-20260820,04-apache-cxf-2b5a52,apache__cxf,csf_3bd3542bf47f76fc472b5a52,prepared_not_run,,Audit brief prepared only.
+apache-unified-v2-poc-agent-20260820,05-apache-dolphinscheduler-5014a0,apache__dolphinscheduler,csf_f055164570c98978c65014a0,prepared_not_run,,Audit brief prepared only.
+openmeetings-filewebservice-negative-parent-20260817,run-20260817T121404,apache__openmeetings,manual-openmeetings-filewebservice-negative-parent,token_limit_exceeded,returncode=-15,PoC-agent run exceeded token limit and did not produce a completed verdict.

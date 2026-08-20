@@ -1,0 +1,16 @@
+kind,value,count
+poc_agent_verdict,CONFIRMED,13
+poc_agent_verdict,NOT_VULNERABLE_AS_NEW_VENDOR_REPORT,1
+poc_agent_verdict,REJECTED,2
+final_disposition,confirmed_for_dataset_runtime,8
+final_disposition,disputed_or_likely_not_vendor_reportable,1
+final_disposition,duplicate_historical_CVE-2015-5254_AMQ-6013,1
+final_disposition,historical_revision_specific_not_latest_master,1
+final_disposition,rejected_by_poc_agent,2
+final_disposition,review_rejected_wrong_effect,3
+run_attempt_state,completed,3
+run_attempt_state,failed,2
+run_attempt_state,failed_or_terminated,2
+run_attempt_state,interrupted_no_final_verdict,1
+run_attempt_state,prepared_not_run,2
+run_attempt_state,token_limit_exceeded,1
