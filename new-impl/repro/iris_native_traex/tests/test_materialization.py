@@ -29,6 +29,43 @@ def test_bridge_json_mode_preserves_the_callers_requested_json_shape():
     assert "valid JSON object" not in prompt
 
 
+def test_bridge_reverse_tunnel_command_enables_liveness_and_forward_failure():
+    module = runpy.run_path(
+        str(Path(__file__).resolve().parents[1] / "scripts" / "serve_traex_openai.py")
+    )
+
+    command = module["reverse_tunnel_command"](
+        ssh_bin="ssh",
+        remote="bobo5090",
+        remote_host="127.0.0.1",
+        remote_port=18889,
+        local_host="127.0.0.1",
+        local_port=18889,
+    )
+
+    assert command[-3:] == ["-R", "127.0.0.1:18889:127.0.0.1:18889", "bobo5090"]
+    assert "ExitOnForwardFailure=yes" in command
+    assert "ServerAliveInterval=30" in command
+    assert "ServerAliveCountMax=3" in command
+
+
+def test_native_runner_bridge_helpers_keep_transport_retries_narrow():
+    module = runpy.run_path(
+        str(Path(__file__).resolve().parents[1] / "scripts" / "run_native_iris_case.py")
+    )
+
+    assert module["bridge_health_url"]("http://127.0.0.1:18889") == (
+        "http://127.0.0.1:18889/healthz"
+    )
+    assert module["bridge_health_url"]("http://127.0.0.1:18889/v1") == (
+        "http://127.0.0.1:18889/healthz"
+    )
+    assert module["is_transient_bridge_failure"](
+        b"", b"openai.APIConnectionError: [Errno 111] Connection refused"
+    )
+    assert not module["is_transient_bridge_failure"](b"", b"CodeQL query failed")
+
+
 def test_batch_attempt_id_is_namespaced():
     module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "run_native_iris_batch.py"))
     assert module["safe_name"]("flash-a1") == "flash-a1"
@@ -49,9 +86,15 @@ def test_batch_single_case_command_forwards_label_batch_sizes(tmp_path):
         label_func_param_batch_size=20,
         timeout_seconds=7200,
         output_dir=tmp_path / "output",
+        bridge_ready_attempts=12,
+        bridge_ready_delay_seconds=3.0,
+        bridge_health_timeout_seconds=7.0,
+        transport_recovery_attempts=2,
     )
     assert command[command.index("--label-api-batch-size") + 1] == "30"
     assert command[command.index("--label-func-param-batch-size") + 1] == "20"
+    assert command[command.index("--bridge-ready-attempts") + 1] == "12"
+    assert command[command.index("--transport-recovery-attempts") + 1] == "2"
 
 
 def test_native_runner_resume_flag_is_present():

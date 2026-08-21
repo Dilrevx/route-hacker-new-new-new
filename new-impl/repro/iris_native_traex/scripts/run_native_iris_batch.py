@@ -174,6 +174,10 @@ def single_case_command(
     label_func_param_batch_size: int,
     timeout_seconds: int,
     output_dir: Path,
+    bridge_ready_attempts: int,
+    bridge_ready_delay_seconds: float,
+    bridge_health_timeout_seconds: float,
+    transport_recovery_attempts: int,
 ) -> list[str]:
     """Build the exact native-IRIS runner command recorded by a batch attempt."""
 
@@ -198,6 +202,14 @@ def single_case_command(
         str(timeout_seconds),
         "--output-dir",
         str(output_dir),
+        "--bridge-ready-attempts",
+        str(bridge_ready_attempts),
+        "--bridge-ready-delay-seconds",
+        str(bridge_ready_delay_seconds),
+        "--bridge-health-timeout-seconds",
+        str(bridge_health_timeout_seconds),
+        "--transport-recovery-attempts",
+        str(transport_recovery_attempts),
     ]
 
 
@@ -297,6 +309,10 @@ def main() -> int:
         help="maximum simultaneous bridge completions; prevents remote requests queueing past client timeouts",
     )
     parser.add_argument("--timeout-seconds", type=int, default=3600)
+    parser.add_argument("--bridge-ready-attempts", type=int, default=36)
+    parser.add_argument("--bridge-ready-delay-seconds", type=float, default=5.0)
+    parser.add_argument("--bridge-health-timeout-seconds", type=float, default=10.0)
+    parser.add_argument("--transport-recovery-attempts", type=int, default=2)
     args = parser.parse_args()
     if args.max_workers < 1 or args.max_workers > 8:
         raise SystemExit("--max-workers must be in [1, 8]")
@@ -308,6 +324,14 @@ def main() -> int:
         raise SystemExit("--label-func-param-batch-size must be positive")
     if args.bridge_max_concurrency < 1:
         raise SystemExit("--bridge-max-concurrency must be positive")
+    if args.bridge_ready_attempts < 1:
+        raise SystemExit("--bridge-ready-attempts must be positive")
+    if args.bridge_ready_delay_seconds < 0:
+        raise SystemExit("--bridge-ready-delay-seconds must not be negative")
+    if args.bridge_health_timeout_seconds <= 0:
+        raise SystemExit("--bridge-health-timeout-seconds must be positive")
+    if args.transport_recovery_attempts < 0:
+        raise SystemExit("--transport-recovery-attempts must not be negative")
     max_inflight_llm_requests = args.max_workers * args.num_threads
     if max_inflight_llm_requests > args.bridge_max_concurrency:
         raise SystemExit(
@@ -480,6 +504,10 @@ def main() -> int:
                 label_func_param_batch_size=args.label_func_param_batch_size,
                 timeout_seconds=args.timeout_seconds,
                 output_dir=case_dir,
+                bridge_ready_attempts=args.bridge_ready_attempts,
+                bridge_ready_delay_seconds=args.bridge_ready_delay_seconds,
+                bridge_health_timeout_seconds=args.bridge_health_timeout_seconds,
+                transport_recovery_attempts=args.transport_recovery_attempts,
             )
             try:
                 executed = subprocess.run(run, text=True, capture_output=True, check=False)

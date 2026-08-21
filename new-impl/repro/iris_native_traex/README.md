@@ -68,11 +68,25 @@ python3 scripts/serve_traex_openai.py \
   --metrics-log /path/to/traex_calls.jsonl
 ```
 
-Expose it to the remote IRIS host with a reverse SSH tunnel:
+Expose it to the remote IRIS host with a supervised reverse SSH tunnel:
 
 ```bash
-ssh -N -R 127.0.0.1:18888:127.0.0.1:18888 bobo5090
+python3 scripts/serve_traex_openai.py \
+  --port 18888 \
+  --model DeepSeek-V4-Pro \
+  --max-concurrency 8 \
+  --metrics-log /path/to/traex_calls.jsonl \
+  --reverse-ssh-remote bobo5090 \
+  --reverse-ssh-remote-port 18888 \
+  --reverse-ssh-log /path/to/reverse_tunnel.log
 ```
+
+The bridge owns the SSH process with `ExitOnForwardFailure` and SSH keepalives;
+if the network drops, it reconnects until the bridge exits. The remote runner
+preflights `/healthz` before it starts copied IRIS. If copied IRIS returns an
+explicit connection-level bridge error, it waits for the same health endpoint
+and resumes the same IRIS run-id within its bounded transport-recovery budget.
+It does not retry CodeQL, model-output, artifact, or analysis failures.
 
 On the remote host, materialize a fresh case workspace and execute it:
 

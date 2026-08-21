@@ -17,6 +17,7 @@ import threading
 import time
 import uuid
 import re
+import shlex
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -64,6 +65,100 @@ def response_payload(model: str, content: str) -> dict[str, Any]:
         ],
         "usage": {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
     }
+
+
+def reverse_tunnel_command(
+    *,
+    ssh_bin: str,
+    remote: str,
+    remote_host: str,
+    remote_port: int,
+    local_host: str,
+    local_port: int,
+) -> list[str]:
+    return [
+        ssh_bin,
+        "-N",
+        "-T",
+        "-o",
+        "ExitOnForwardFailure=yes",
+        "-o",
+        "ServerAliveInterval=30",
+        "-o",
+        "ServerAliveCountMax=3",
+        "-o",
+        "TCPKeepAlive=yes",
+        "-R",
+        f"{remote_host}:{remote_port}:{local_host}:{local_port}",
+        remote,
+    ]
+
+
+class ReverseTunnelSupervisor:
+    """Maintain a remote listener without coupling it to any one IRIS case."""
+
+    def __init__(
+        self,
+        *,
+        command: list[str],
+        reconnect_delay_seconds: float,
+        log_path: Path | None,
+    ) -> None:
+        self.command = command
+        self.reconnect_delay_seconds = reconnect_delay_seconds
+        self.log_path = log_path
+        self._stop = threading.Event()
+        self._thread = threading.Thread(target=self._run, name="iris-reverse-tunnel", daemon=True)
+        self._process: subprocess.Popen[str] | None = None
+        self._lock = threading.Lock()
+
+    def _log(self, message: str) -> None:
+        line = f"{time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())} {message}\n"
+        print(f"[reverse-tunnel] {message}", flush=True)
+        if self.log_path is not None:
+            self.log_path.parent.mkdir(parents=True, exist_ok=True)
+            with self.log_path.open("a", encoding="utf-8") as handle:
+                handle.write(line)
+                handle.flush()
+
+    def start(self) -> None:
+        self._thread.start()
+
+    def stop(self) -> None:
+        self._stop.set()
+        with self._lock:
+            process = self._process
+        if process is not None and process.poll() is None:
+            process.terminate()
+        self._thread.join(timeout=max(5.0, self.reconnect_delay_seconds + 2.0))
+
+    def _run(self) -> None:
+        while not self._stop.is_set():
+            self._log(f"starting: {shlex.join(self.command)}")
+            try:
+                process = subprocess.Popen(
+                    self.command,
+                    text=True,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                )
+            except OSError as exc:
+                self._log(f"failed to start: {type(exc).__name__}: {exc}")
+                self._stop.wait(self.reconnect_delay_seconds)
+                continue
+            with self._lock:
+                self._process = process
+            try:
+                output, _ = process.communicate()
+            finally:
+                with self._lock:
+                    self._process = None
+            if output:
+                self._log(f"exited rc={process.returncode}: {output.strip()[-1600:]}")
+            else:
+                self._log(f"exited rc={process.returncode}")
+            if not self._stop.is_set():
+                self._stop.wait(self.reconnect_delay_seconds)
 
 
 class TraexBackend:
@@ -256,11 +351,28 @@ def main() -> int:
     parser.add_argument("--timeout-seconds", type=int, default=900)
     parser.add_argument("--max-concurrency", type=int, default=1)
     parser.add_argument("--metrics-log", type=Path)
+    parser.add_argument(
+        "--reverse-ssh-remote",
+        help="optional SSH destination that receives a supervised reverse tunnel",
+    )
+    parser.add_argument("--reverse-ssh-bin", default="ssh")
+    parser.add_argument("--reverse-ssh-remote-host", default="127.0.0.1")
+    parser.add_argument("--reverse-ssh-remote-port", type=int)
+    parser.add_argument("--reverse-ssh-reconnect-delay-seconds", type=float, default=5.0)
+    parser.add_argument("--reverse-ssh-log", type=Path)
     args = parser.parse_args()
     if args.max_concurrency < 1:
         raise SystemExit("--max-concurrency must be positive")
     if args.timeout_seconds < 1:
         raise SystemExit("--timeout-seconds must be positive")
+    if args.reverse_ssh_remote and args.reverse_ssh_remote_port is None:
+        raise SystemExit("--reverse-ssh-remote-port is required with --reverse-ssh-remote")
+    if args.reverse_ssh_remote_port is not None and not args.reverse_ssh_remote:
+        raise SystemExit("--reverse-ssh-remote is required with --reverse-ssh-remote-port")
+    if args.reverse_ssh_remote_port is not None and not 1 <= args.reverse_ssh_remote_port <= 65535:
+        raise SystemExit("--reverse-ssh-remote-port must be a valid TCP port")
+    if args.reverse_ssh_reconnect_delay_seconds <= 0:
+        raise SystemExit("--reverse-ssh-reconnect-delay-seconds must be positive")
 
     Handler.backend = TraexBackend(
         traex_bin=args.traex_bin,
@@ -271,6 +383,21 @@ def main() -> int:
         metrics_log=args.metrics_log.resolve() if args.metrics_log else None,
     )
     server = ThreadingHTTPServer((args.host, args.port), Handler)
+    tunnel: ReverseTunnelSupervisor | None = None
+    if args.reverse_ssh_remote:
+        tunnel = ReverseTunnelSupervisor(
+            command=reverse_tunnel_command(
+                ssh_bin=args.reverse_ssh_bin,
+                remote=args.reverse_ssh_remote,
+                remote_host=args.reverse_ssh_remote_host,
+                remote_port=args.reverse_ssh_remote_port,
+                local_host=args.host,
+                local_port=args.port,
+            ),
+            reconnect_delay_seconds=args.reverse_ssh_reconnect_delay_seconds,
+            log_path=args.reverse_ssh_log.resolve() if args.reverse_ssh_log else None,
+        )
+        tunnel.start()
     print(
         json.dumps(
             {
@@ -290,6 +417,8 @@ def main() -> int:
         return 130
     finally:
         server.server_close()
+        if tunnel is not None:
+            tunnel.stop()
 
 
 if __name__ == "__main__":
