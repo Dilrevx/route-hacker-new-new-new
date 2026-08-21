@@ -1149,7 +1149,7 @@ def test_apply_repair_can_isolate_maven_user_home_without_changing_build_command
     )
 
 
-def test_apply_repair_preserves_maven_heap_when_isolating_build_home(tmp_path):
+def test_apply_repair_preserves_repaired_maven_heap_when_isolating_build_home(tmp_path):
     receipt = failed_receipt(tmp_path)
     build_home = tmp_path / "attempt-build-home"
     (build_home / ".m2" / "repository").mkdir(parents=True)
@@ -1173,6 +1173,7 @@ def test_apply_repair_preserves_maven_heap_when_isolating_build_home(tmp_path):
     )
 
     assert "-Xmx4g" in env["MAVEN_OPTS"]
+    assert "-Xmx1024M" not in env["MAVEN_OPTS"]
     assert f"-Duser.home={build_home}" in env["MAVEN_OPTS"]
 
 

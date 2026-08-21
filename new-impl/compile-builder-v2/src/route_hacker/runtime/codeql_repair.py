@@ -1181,7 +1181,13 @@ def apply_repair_decision(
             if not isinstance(heap, str) or heap not in SAFE_MAVEN_HEAP_OPTIONS:
                 raise RepairValidationError("validated Maven heap action is malformed")
             existing = env.get("MAVEN_OPTS", "")
-            env["MAVEN_OPTS"] = f"{existing} {heap}".strip()
+            existing_options = shlex.split(existing)
+            retained_options = [
+                option
+                for option in existing_options
+                if re.fullmatch(r"-Xmx\d+[kKmMgG]", option) is None
+            ]
+            env["MAVEN_OPTS"] = " ".join([*retained_options, heap])
             applied_actions.append({"kind": kind, "value": heap})
         elif kind == "prepend_maven_clean":
             build_command = prepend_maven_clean_goal(build_command)
