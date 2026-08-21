@@ -1,0 +1,13 @@
+identity_key	old_rank	r1_rank	r2_rank	r3_rank	old_to_r1_delta	r1_to_r2_delta	r2_to_r3_delta	old_hit100	r1_hit100	r2_hit100	r3_hit100	old_hit200	r1_hit200	r2_hit200	r3_hit200
+apache__axis-axis1-java::CVE-2023-51441	2729	134	135	135	2595	-1	0	False	False	False	False	False	True	True	True
+apolloconfig__apollo::CVE-2024-43397	554	751	260	260	-197	491	0	False	False	False	False	False	False	False	False
+jeecgboot__jeecgboot::CVE-2025-14908	445	273	276	276	172	-3	0	False	False	False	False	False	False	False	False
+jeecgboot__jeecgboot::CVE-2026-5616	1002	525	531	531	477	-6	0	False	False	False	False	False	False	False	False
+keycloak__keycloak::CVE-2022-4361	2524	2	187	28	2522	-185	159	False	True	False	True	False	True	True	True
+mezz__justenoughitems::CVE-2024-41565	128	36	36	36	92	0	0	False	True	True	True	True	True	True	True
+sanluan__publiccms::CVE-2026-2010	255	94	94	94	161	0	0	False	True	True	True	False	True	True	True
+swagger-api__swagger-codegen::CVE-2021-21363	276	317	155	155	-41	162	0	False	False	False	False	False	False	True	True
+swagger-api__swagger-codegen::CVE-2021-21364	None	None	None	None	none	none	none	False	False	False	False	False	False	False	False
+xwiki__xwiki-commons::CVE-2024-31996	150	42	42	42	108	0	0	False	True	True	True	True	True	True	True
+xwiki__xwiki-rendering::CVE-2025-66474	248	93	93	93	155	0	0	False	True	True	True	False	True	True	True
+xwiki__xwiki_platform::CVE-2022-23621	3671	5865	922	922	-2194	4943	0	False	False	False	False	False	False	False	False
