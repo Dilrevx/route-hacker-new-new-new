@@ -211,6 +211,21 @@ Committed preview outputs:
   same generator to the historical cve_clustering v2 artifacts. It emits 160
   guidelines from 303 work items: 231 active lexicon attributions and 72
   pending-review attributions.
+- `results/guideline-v2-badcase12-regression-20260821/` records a same-identity
+  regression over 12 old P3C64 Top-100 misses covered by the first guideline-v2
+  sidecar. It improves Top-100 from 0/12 to 5/12, but 3 cases regress in rank.
+- `results/mechanism-guideline-preview-v2-cluster-scope-r2-20260821/` is the
+  next guideline-v2 preview. It gives sub-pattern evidence precedence over
+  broad cluster summaries during mechanism attribution and adds narrower
+  mechanisms for request-body resource mismatch authorization, temporary
+  directory create-delete-mkdir TOCTOU, and privileged server-side capability
+  exposure.
+
+The r1 bad-case regression is useful but not yet sufficient for a full
+replacement run. Treat it as evidence that mechanism-scoped guidelines help
+some old misses and that attribution quality still needs a regression gate.
+Run r2 on the same 12 identities first, then decide whether to rerun the full
+143-case evaluation.
 
 For model A/B evaluation, always pass the same `--identity-file` to every run.
 `--selection all --limit N` without `--identity-file` selects the first N

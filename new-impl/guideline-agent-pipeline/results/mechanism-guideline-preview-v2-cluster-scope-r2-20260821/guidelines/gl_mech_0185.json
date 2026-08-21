@@ -1,0 +1,54 @@
+{
+  "cluster_summary": "This cluster covers a variety of authentication and authorization vulnerabilities, including user enumeration via distinct error messages, insecure password storage and hashing, insufficient password strength validation, missing ownership checks on operations, password reset token flaws, and other implementation errors.",
+  "created_at": "2026-08-21T09:41:10+00:00",
+  "cve_ids": [
+    "CVE-2022-1848"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0035__mech_object_owner_scope_missing_authz",
+  "guideline_id": "gl_mech_0185",
+  "guideline_text": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where the authorization decision is not bound to both the current principal and the exact resource or tenant being affected. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation.",
+  "mechanism": {
+    "aliases": [
+      "object ownership authorization",
+      "tenant scope check",
+      "IDOR",
+      "resource scoped authorization"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_object_owner_scope_missing_authz",
+    "missing_guard": "the authorization decision is not bound to both the current principal and the exact resource or tenant being affected",
+    "name": "missing object-owner or tenant-scope authorization",
+    "sink_shape": "sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource",
+    "source_shape": "attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets",
+    "typical_fix": "check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2022-1848",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    35
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 35,
+      "fix_strategy": "Impose a strict password policy with required character classes (uppercase, lowercase, digit, special), minimum length, and optionally prevent reuse of the current password. Validate programmatically in all code paths.",
+      "members": [
+        "CVE-2022-1848"
+      ],
+      "name": "Insufficient password complexity enforcement",
+      "root_cause": "The application lacks proper validation of password strength (character classes, length, reuse) before accepting or storing the password, allowing weak or easily guessable passwords."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_object_owner_scope_missing_authz",
+    "object ownership authorization",
+    "tenant scope check",
+    "IDOR",
+    "resource scoped authorization"
+  ]
+}

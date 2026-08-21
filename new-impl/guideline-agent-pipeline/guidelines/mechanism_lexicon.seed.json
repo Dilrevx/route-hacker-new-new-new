@@ -81,6 +81,17 @@
       "typical_fix": "check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation"
     },
     {
+      "mechanism_id": "mech_request_body_resource_mismatch_authz",
+      "name": "request-body resource identifiers bypass path-scoped authorization",
+      "family": "authorization",
+      "aliases": ["path parameter authorization mismatch", "request body resource mismatch", "bulk operation target mismatch", "namespace sync authorization bypass"],
+      "keywords": ["path parameter", "path parameters", "request body", "body", "resource identifier", "resource identifiers", "bulk operation", "sync", "namespace", "appId", "namespaceName", "target namespace", "permission check"],
+      "source_shape": "attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body",
+      "sink_shape": "bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources",
+      "missing_guard": "the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check",
+      "typical_fix": "validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation"
+    },
+    {
       "mechanism_id": "mech_missing_authentication_before_privileged_action",
       "name": "missing authentication before privileged action",
       "family": "authentication",
@@ -112,6 +123,28 @@
       "sink_shape": "sensitive file, state, permission, memory, or resource effects that depend on the earlier check",
       "missing_guard": "the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect",
       "typical_fix": "bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary"
+    },
+    {
+      "mechanism_id": "mech_temp_file_delete_mkdir_race",
+      "name": "temporary directory create-delete-mkdir TOCTOU race",
+      "family": "race_or_lifecycle",
+      "aliases": ["temporary directory TOCTOU", "createTempFile delete mkdir race", "file-delete-mkdir temporary directory race"],
+      "keywords": ["createtempfile", "create temp file", "temporary directory", "temp directory", "delete", "mkdir", "mkdirs", "file-delete-mkdir", "files.createtempdirectory", "non-atomic", "toctou", "race"],
+      "source_shape": "temporary file or directory names created in shared writable locations",
+      "sink_shape": "manual temporary directory creation sequences such as createTempFile, delete, then mkdir or mkdirs",
+      "missing_guard": "the temporary path is released between creation and directory creation, allowing another actor to replace or pre-create it before use",
+      "typical_fix": "use an atomic temporary-directory API such as Files.createTempDirectory and avoid delete-then-mkdir sequences"
+    },
+    {
+      "mechanism_id": "mech_privileged_server_side_capability_exposed",
+      "name": "privileged server-side capability exposed to lower privilege context",
+      "family": "authorization",
+      "aliases": ["missing programming rights check", "privileged API exposure", "server-side include capability exposure", "lower privilege script capability"],
+      "keywords": ["programming right", "programming rights", "script right", "script rights", "privileged api", "server-side include", "invokeServletAndReturnAsString", "requestdispatcher", "render template", "velocity", "internal file"],
+      "source_shape": "lower-privilege script, template, macro, plugin, or API callers that can invoke privileged server-side capabilities",
+      "sink_shape": "server-side include, template rendering, servlet dispatch, raw object access, internal file reads, or privileged framework APIs",
+      "missing_guard": "a higher privilege check is not enforced at the API entry point before exposing the server-side capability",
+      "typical_fix": "check the required higher privilege at the exposed API boundary and return no sensitive result when the caller lacks that privilege"
     },
     {
       "mechanism_id": "mech_bean_property_reflection_escape",

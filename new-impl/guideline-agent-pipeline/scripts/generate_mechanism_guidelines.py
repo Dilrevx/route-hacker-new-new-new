@@ -285,13 +285,16 @@ def record_text(record: dict[str, Any]) -> str:
 
 
 def work_item_text(item: WorkItem, structured: dict[str, dict[str, Any]]) -> str:
-    parts = [
-        item.cluster_name,
-        item.cluster_summary,
-        item.sub_pattern_name,
-        item.sub_pattern_root_cause,
-        item.sub_pattern_fix_strategy,
-    ]
+    parts = [item.cluster_name]
+    if item.source_kind == "cluster_fallback":
+        parts.append(item.cluster_summary)
+    parts.extend(
+        [
+            item.sub_pattern_name,
+            item.sub_pattern_root_cause,
+            item.sub_pattern_fix_strategy,
+        ]
+    )
     for cve_id in item.members:
         if cve_id in structured:
             parts.append(record_text(structured[cve_id]))

@@ -1,0 +1,71 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where user-supplied URLs or redirect targets are used in server-side network operations (redirects, HTTP requests, OS commands, DNS) without proper validation, allowing attackers to redirect users to malicious sites, perform SSRF, leak credentials, or execute commands.",
+  "created_at": "2026-08-21T09:41:09+00:00",
+  "cve_ids": [
+    "CVE-2022-43550",
+    "CVE-2023-29204",
+    "CVE-2025-24789",
+    "CVE-2025-8813",
+    "CVE-2026-11477"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0005__mech_path_traversal_missing_canonical_prefix",
+  "guideline_id": "gl_mech_0022",
+  "guideline_text": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under the intended base directory before the file operation. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 5 historical CVE example(s), not as a project-specific signature. A safe implementation should normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check.",
+  "mechanism": {
+    "aliases": [
+      "path traversal",
+      "directory traversal",
+      "Zip Slip",
+      "archive entry traversal",
+      "canonical path bypass"
+    ],
+    "family": "filesystem",
+    "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+    "missing_guard": "the normalized absolute path is not checked to remain under the intended base directory before the file operation",
+    "name": "path traversal through missing canonical prefix check",
+    "sink_shape": "file read, write, delete, extraction, or resource-loading APIs",
+    "source_shape": "attacker-controlled filenames, archive entries, path fragments, or resource names",
+    "typical_fix": "normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2022-43550",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    5
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 5,
+      "fix_strategy": "Validate redirect target using domain allow-list, exact prefix check with context path, or remove the redirect feature.",
+      "members": [
+        "CVE-2026-11477",
+        "CVE-2025-8813",
+        "CVE-2023-29204"
+      ],
+      "name": "Server-side open redirect via insufficient URL validation",
+      "root_cause": "User-supplied redirect target is accepted without proper validation (naive prefix match, missing domain allow-list, incomplete regex) allowing redirection to external domains."
+    },
+    {
+      "cluster_id": 5,
+      "fix_strategy": "Use absolute path to executable, reject non-http URL prefixes, or use safe API (java.awt.Desktop).",
+      "members": [
+        "CVE-2022-43550",
+        "CVE-2025-24789"
+      ],
+      "name": "OS command injection via unsanitized URL in system command",
+      "root_cause": "User-supplied URL is concatenated into an OS command string without sanitization, allowing injection of shell metacharacters."
+    }
+  ],
+  "tags": [
+    "filesystem",
+    "mech_path_traversal_missing_canonical_prefix",
+    "path traversal",
+    "directory traversal",
+    "Zip Slip",
+    "archive entry traversal"
+  ]
+}

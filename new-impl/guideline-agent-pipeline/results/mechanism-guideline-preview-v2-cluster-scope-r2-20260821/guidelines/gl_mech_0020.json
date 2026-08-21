@@ -1,0 +1,56 @@
+{
+  "cluster_summary": "A set of vulnerabilities caused by missing or insufficient validation of user-supplied data used in file path construction, file upload/download, and resource access. Common weaknesses include lack of path canonicalization, absence of file extension/MIME type allow-lists, missing inline disposition allow-lists, and failure to enforce size limits, leading to path traversal, arbitrary file upload, XSS, SSRF, and disk exhaustion.",
+  "created_at": "2026-08-21T09:41:09+00:00",
+  "cve_ids": [
+    "CVE-2025-32959"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0004__pending_mech_cluster_4_unbounded_file_upload_size_causing_disk_exhaustion",
+  "guideline_id": "gl_mech_0020",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Implement a maximum file size and use bounded copy operations; reject uploads exceeding the limit..",
+  "mechanism": {
+    "aliases": [
+      "exhaust",
+      "bounded",
+      "local",
+      "pseudocode",
+      "handlers",
+      "source"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_4_unbounded_file_upload_size_causing_disk_exhaustion",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Unbounded file upload size causing disk exhaustion",
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Implement a maximum file size and use bounded copy operations; reject uploads exceeding the limit."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2025-32959",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    4
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 4,
+      "fix_strategy": "Implement a maximum file size and use bounded copy operations; reject uploads exceeding the limit.",
+      "members": [
+        "CVE-2025-32959"
+      ],
+      "name": "Unbounded file upload size causing disk exhaustion",
+      "root_cause": "File upload handlers copy input streams to disk without imposing a maximum size limit, allowing attackers to exhaust disk space."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_4_unbounded_file_upload_size_causing_disk_exhaustion",
+    "exhaust",
+    "bounded",
+    "local",
+    "pseudocode"
+  ]
+}

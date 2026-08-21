@@ -1,0 +1,52 @@
+{
+  "cluster_summary": "Multiple vulnerabilities arise from user-controlled input being concatenated directly into SQL query strings without proper escaping or use of parameterized queries, leading to SQL injection. A few related issues involve regex backtracking, OS command injection, and Elasticsearch query malformation causing denial of service.",
+  "created_at": "2026-08-21T09:41:09+00:00",
+  "cve_ids": [
+    "CVE-2024-52797"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0014__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0067",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2024-52797",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    14
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 14,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2024-52797"
+      ],
+      "name": "Insufficient escaping or parameterization in SQL query construction",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

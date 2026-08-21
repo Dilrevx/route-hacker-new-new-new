@@ -134,14 +134,60 @@ def test_cli_writes_guidelines_and_case_sidecar(tmp_path: Path):
         json.loads(line)
         for line in (output / "guideline_overrides.jsonl").read_text(encoding="utf-8").splitlines()
     ]
-    assert {row["mechanism_id"] for row in overrides} == {
+    assert {row["mechanism_ids"][0] for row in overrides} == {
         "mech_jndi_untrusted_lookup_target",
         "mech_ssrf_webhook_url_fetch",
     }
     jndi_guideline = next(
         row["retrieval_guideline"]
         for row in overrides
-        if row["mechanism_id"] == "mech_jndi_untrusted_lookup_target"
+        if row["mechanism_ids"] == ["mech_jndi_untrusted_lookup_target"]
     )
     assert "JNDI" in jndi_guideline
     assert "webhook" not in jndi_guideline.lower()
+
+
+def test_sub_pattern_evidence_takes_precedence_over_broad_cluster_summary():
+    module = load_module()
+    lexicon = module.load_lexicon(LEXICON)
+    structured = {
+        "CVE-2099-2001": {
+            "cve_id": "CVE-2099-2001",
+            "vuln_type": "missing validation of target namespace identifiers in bulk sync operation",
+            "root_cause": (
+                "The request body contains syncToNamespaces resource identifiers "
+                "that are not validated to match the appId and namespaceName path "
+                "parameters, allowing a path-scoped permission check to be bypassed."
+            ),
+            "abstract_pattern": (
+                "User-supplied resource identifiers in a bulk operation are not "
+                "bound to the resource identified by path parameters."
+            ),
+            "data_flow": "HTTP body syncToNamespaces -> NamespaceSyncModel -> syncItems mutation",
+            "trigger_condition": "Authenticated request with mismatched body namespace targets.",
+            "fix_strategy": "Validate every body namespace target against the path parameters.",
+            "impact": "Modify a namespace not covered by the path-scoped authorization decision.",
+        }
+    }
+    item = module.WorkItem(
+        cluster_id=34,
+        cluster_name="Missing authorization checks in web endpoints",
+        cluster_summary=(
+            "HTTP endpoints lack authentication guards, permission annotations, "
+            "object-level ownership checks, and other broad authorization controls."
+        ),
+        sub_pattern_name="Missing validation of resource identifiers against path parameters",
+        sub_pattern_root_cause=(
+            "Request body resource identifiers are not validated to match URL path parameters."
+        ),
+        sub_pattern_fix_strategy="Validate each body-selected target against the path parameters.",
+        members=("CVE-2099-2001",),
+        source_kind="sub_pattern",
+    )
+
+    attributed = module.attributed_work_items(item, structured, lexicon, min_score=2.0)
+
+    assert len(attributed) == 1
+    _, mechanism, status, _, _ = attributed[0]
+    assert status == "active"
+    assert mechanism.mechanism_id == "mech_request_body_resource_mismatch_authz"

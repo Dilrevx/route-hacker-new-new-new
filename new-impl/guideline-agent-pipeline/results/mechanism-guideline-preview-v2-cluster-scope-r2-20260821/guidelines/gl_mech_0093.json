@@ -1,0 +1,64 @@
+{
+  "cluster_summary": "This cluster contains 18 Netty CVEs covering a range of input parsing and validation flaws, including missing CRLF validation, disabled header validation, insufficient boundary checks, resource exhaustion, memory leaks, and incorrect protocol state handling. The vulnerabilities span HTTP, SMTP, WebSocket, AJP, and binary HTTP parsers.",
+  "created_at": "2026-08-21T09:41:09+00:00",
+  "cve_ids": [
+    "CVE-2020-7611",
+    "CVE-2024-40642"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0018__mech_ssrf_webhook_url_fetch",
+  "guideline_id": "gl_mech_0093",
+  "guideline_text": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets.",
+  "mechanism": {
+    "aliases": [
+      "webhook SSRF",
+      "callback URL fetch",
+      "user controlled URL fetch",
+      "outbound HTTP client SSRF"
+    ],
+    "family": "ssrf",
+    "mechanism_id": "mech_ssrf_webhook_url_fetch",
+    "missing_guard": "scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request",
+    "name": "attacker-controlled webhook or callback URL fetch",
+    "sink_shape": "outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers",
+    "source_shape": "attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations",
+    "typical_fix": "enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2020-7611",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    18
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 18,
+      "fix_strategy": "Enable header validation by using the default constructor (or passing true) to reject header values containing line terminators.",
+      "members": [
+        "CVE-2020-7611"
+      ],
+      "name": "Disabled header validation flag",
+      "root_cause": "The code explicitly disables HTTP header validation by passing false to the DefaultHttpHeaders constructor, allowing CRLF injection characters."
+    },
+    {
+      "cluster_id": 18,
+      "fix_strategy": "Add per-field character validation using ByteProcessor iterators that throw IllegalArgumentException on disallowed characters.",
+      "members": [
+        "CVE-2024-40642"
+      ],
+      "name": "Missing character validation in binary HTTP parser",
+      "root_cause": "The readRequestHead method extracts field values from binary HTTP without character validation, allowing arbitrary bytes including whitespace and control characters."
+    }
+  ],
+  "tags": [
+    "ssrf",
+    "mech_ssrf_webhook_url_fetch",
+    "webhook SSRF",
+    "callback URL fetch",
+    "user controlled URL fetch",
+    "outbound HTTP client SSRF"
+  ]
+}

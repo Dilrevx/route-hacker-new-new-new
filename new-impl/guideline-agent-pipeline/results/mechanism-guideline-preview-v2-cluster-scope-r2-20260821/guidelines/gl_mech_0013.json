@@ -1,0 +1,76 @@
+{
+  "cluster_summary": "A set of vulnerabilities caused by missing or insufficient validation of user-supplied data used in file path construction, file upload/download, and resource access. Common weaknesses include lack of path canonicalization, absence of file extension/MIME type allow-lists, missing inline disposition allow-lists, and failure to enforce size limits, leading to path traversal, arbitrary file upload, XSS, SSRF, and disk exhaustion.",
+  "created_at": "2026-08-21T09:41:08+00:00",
+  "cve_ids": [
+    "CVE-2022-39207",
+    "CVE-2025-34281",
+    "CVE-2025-60319",
+    "CVE-2026-3187",
+    "CVE-2026-3189"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0004__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0013",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 5 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2022-39207",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    4
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 4,
+      "fix_strategy": "Introduce a configurable allow-list of permitted file extensions and MIME types; reject files not on the list.",
+      "members": [
+        "CVE-2026-3187"
+      ],
+      "name": "Missing file type validation (extension/MIME allow-list) in upload",
+      "root_cause": "File upload handlers accept any file without checking its extension or MIME type against a configured allow-list, allowing arbitrary file types (e.g., SVG, executable scripts) to be stored."
+    },
+    {
+      "cluster_id": 4,
+      "fix_strategy": "Enforce a protocol allow-list (e.g., http/https only) and add authorization checks.",
+      "members": [
+        "CVE-2026-3189",
+        "CVE-2025-60319"
+      ],
+      "name": "SSRF due to missing URL validation and authorization",
+      "root_cause": "Server-side endpoints fetch resources from user-supplied URLs without restricting the protocol or requiring authentication, enabling SSRF attacks."
+    },
+    {
+      "cluster_id": 4,
+      "fix_strategy": "Always set Content-Type to a safe default (e.g., application/octet-stream), add X-Content-Type-Options: nosniff, and for SVG endpoints add Content-Security-Policy: default-src 'none'.",
+      "members": [
+        "CVE-2025-34281",
+        "CVE-2022-39207"
+      ],
+      "name": "Missing security headers on user-uploaded file endpoints",
+      "root_cause": "File serving endpoints do not set Content-Type to a safe value (e.g., application/octet-stream) and lack Content-Security-Policy or X-Content-Type-Options headers, allowing browser execution of active content."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}
