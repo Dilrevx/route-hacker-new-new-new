@@ -138,6 +138,22 @@ def is_generated_frontend_toolchain_path(path: Path, source_dir: Path) -> bool:
     return False
 
 
+def is_generated_maven_build_scan_workspace_path(path: Path, source_dir: Path) -> bool:
+    """Recognize Gradle Enterprise's generated Maven build-scan workspace ID.
+
+    The Maven extension writes this identifier into ``.mvn`` after a build.
+    It is cache/build-scan state rather than a source or Maven configuration
+    input.  The match is intentionally exact so other ``.mvn`` files remain
+    subject to source-integrity verification.
+    """
+
+    return path.relative_to(source_dir).parts == (
+        ".mvn",
+        ".gradle-enterprise",
+        "gradle-enterprise-workspace-id",
+    )
+
+
 def source_integrity_snapshot(source_dir: Path) -> dict[str, Any]:
     """Hash non-generated source content before and after a repair build.
 
@@ -164,6 +180,8 @@ def source_integrity_snapshot(source_dir: Path) -> dict[str, Any]:
         if any(part in SOURCE_INTEGRITY_IGNORED_DIRECTORIES for part in relative.parts):
             continue
         if is_generated_frontend_toolchain_path(path, source_dir):
+            continue
+        if is_generated_maven_build_scan_workspace_path(path, source_dir):
             continue
         if relative.name in SOURCE_INTEGRITY_IGNORED_FILENAMES:
             continue

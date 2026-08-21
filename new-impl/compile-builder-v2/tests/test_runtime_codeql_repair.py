@@ -9,6 +9,7 @@ from route_hacker.runtime.codeql_repair import (
     apply_repair_decision,
     build_repair_packet,
     classify_build_failure,
+    compare_source_integrity,
     heuristic_repair_decision,
     historical_retry_java_home,
     redact_text,
@@ -336,6 +337,14 @@ def test_source_integrity_snapshot_ignores_generated_outputs_and_detects_source_
     frontend_dependency = source / "module" / "node_modules" / "demo" / "index.js"
     frontend_dependency.parent.mkdir(parents=True)
     frontend_dependency.write_text("generated dependency\n", encoding="utf-8")
+    maven_build_scan_workspace = (
+        source
+        / ".mvn"
+        / ".gradle-enterprise"
+        / "gradle-enterprise-workspace-id"
+    )
+    maven_build_scan_workspace.parent.mkdir(parents=True)
+    maven_build_scan_workspace.write_text("generated workspace ID\n", encoding="utf-8")
     generated_only = source_integrity_snapshot(source)
 
     from route_hacker.runtime.codeql_repair import compare_source_integrity
@@ -351,6 +360,33 @@ def test_source_integrity_snapshot_ignores_generated_outputs_and_detects_source_
     assert changed["verified"] is False
     assert changed["reason"] == "non_generated_source_content_changed_during_build"
     assert changed["changed_paths"] == ["src/Main.java"]
+
+
+def test_source_integrity_snapshot_keeps_maven_config_but_ignores_build_scan_workspace_id(
+    tmp_path: Path,
+):
+    source = tmp_path / "source"
+    workspace_id = (
+        source
+        / ".mvn"
+        / ".gradle-enterprise"
+        / "gradle-enterprise-workspace-id"
+    )
+    workspace_id.parent.mkdir(parents=True)
+    maven_config = source / ".mvn" / "extensions.xml"
+    maven_config.write_text("<extensions />\n", encoding="utf-8")
+    before = source_integrity_snapshot(source)
+
+    workspace_id.write_text("generated workspace ID\n", encoding="utf-8")
+    generated_only = compare_source_integrity(before, source_integrity_snapshot(source))
+
+    assert generated_only["verified"] is True
+
+    maven_config.write_text("<extensions changed='true' />\n", encoding="utf-8")
+    changed = compare_source_integrity(before, source_integrity_snapshot(source))
+
+    assert changed["verified"] is False
+    assert changed["changed_paths"] == [".mvn/extensions.xml"]
 
 
 def test_source_integrity_snapshot_keeps_plain_node_source_directory_in_scope(tmp_path: Path):
