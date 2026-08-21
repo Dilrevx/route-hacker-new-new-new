@@ -227,14 +227,19 @@ Committed preview outputs:
 - `results/guideline-v2-r3-badcase12-regression-20260821/` records the r3
   same-identity regression on the same 12 old P3C64 Top-100 misses. r3 reaches
   Top-100 5/12, Top-200 7/12, and Top-500 9/12. It is the best current
-  single-guideline candidate, but still should be evaluated with
-  `baseline-plus-override` or another regression gate before replacing the
-  historical query policy.
+  single-guideline candidate, but it is not strong enough for hard replacement
+  without a regression gate.
+- Remote diagnostic run
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/hcvr-guideline-v2-badcase30-20260821T0505/v2-r3-baseline-plus-override-covered12-gpu6-20260821T183746/`
+  tested same-candidate max-score fusion between the baseline guideline and
+  the r3 override. It kept Top-100 at 5/12 but dropped Top-200 to 6/12 and
+  Top-500 to 8/12. Use this mode for diagnostics, not as the next default full
+  143-case policy.
 
 The r1/r2/r3 bad-case regressions are useful but not yet sufficient for a full
 replacement run. Treat them as evidence that mechanism-scoped guidelines help
 some old misses and that attribution quality still needs a regression gate or
-fusion policy before full paper-eval replacement.
+offline list-level fusion policy before full paper-eval replacement.
 
 For model A/B evaluation, always pass the same `--identity-file` to every run.
 `--selection all --limit N` without `--identity-file` selects the first N
@@ -278,9 +283,11 @@ Use `--guideline-mode baseline-plus-override` for regression-sensitive
 experiments. In that mode the runner embeds both the original baseline
 guideline and the released override guideline, scores every candidate by the
 maximum similarity across the two query vectors, and records the winning
-`query_label` plus per-query scores in `recall_results.jsonl`. This is the
-preferred next full-143 experiment because the r3 sidecar recovers several old
-misses but is not monotonic enough to justify hard replacement.
+`query_label` plus per-query scores in `recall_results.jsonl`. A 12-case smoke
+test showed that this same-score-space max operation is diagnostic but not a
+good default fusion policy. Prefer separate baseline and override recall runs
+followed by list-level RRF or candidate union when trying to preserve old hits
+while adding mechanism-specific recoveries.
 
 Outputs:
 
