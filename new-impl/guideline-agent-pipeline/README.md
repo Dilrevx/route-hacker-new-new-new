@@ -224,12 +224,17 @@ Committed preview outputs:
   explicit unsafe URI scheme open-redirect mechanism. This keeps redirect URI
   validation cases from falling into the broader webhook/SSRF bucket while
   preserving the r2 sub-pattern attribution changes.
+- `results/guideline-v2-r3-badcase12-regression-20260821/` records the r3
+  same-identity regression on the same 12 old P3C64 Top-100 misses. r3 reaches
+  Top-100 5/12, Top-200 7/12, and Top-500 9/12. It is the best current
+  single-guideline candidate, but still should be evaluated with
+  `baseline-plus-override` or another regression gate before replacing the
+  historical query policy.
 
-The r1 bad-case regression is useful but not yet sufficient for a full
-replacement run. Treat it as evidence that mechanism-scoped guidelines help
-some old misses and that attribution quality still needs a regression gate.
-Run r3 on the same 12 identities first, then decide whether to rerun the full
-143-case evaluation.
+The r1/r2/r3 bad-case regressions are useful but not yet sufficient for a full
+replacement run. Treat them as evidence that mechanism-scoped guidelines help
+some old misses and that attribution quality still needs a regression gate or
+fusion policy before full paper-eval replacement.
 
 For model A/B evaluation, always pass the same `--identity-file` to every run.
 `--selection all --limit N` without `--identity-file` selects the first N
@@ -242,6 +247,7 @@ CUDA_VISIBLE_DEVICES=0 python new-impl/guideline-agent-pipeline/scripts/recall_g
   --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
   --identity-file /path/to/paper_eval_143_identities.jsonl \
   --guideline-file /path/to/guideline_overrides.jsonl \
+  --guideline-mode baseline-plus-override \
   --output-dir /path/to/run/p3c64-recall30 \
   --repo-cache /path/to/run/repo-cache \
   --snapshot-root /path/to/run/snapshots \
@@ -264,6 +270,17 @@ CUDA_VISIBLE_DEVICES=0 python new-impl/guideline-agent-pipeline/scripts/recall_g
 Use it to attach offline guideline-clustering output without mutating the
 dataset. Recalled `selected_cases.jsonl` rows carry the exact guideline used by
 retrieval so the audit stage can reuse the same text.
+
+`--guideline-mode` defaults to `override`, which preserves the historical
+single-query behavior: when `--guideline-file` is supplied, the released
+sidecar guideline replaces the broad dataset/template guideline for that case.
+Use `--guideline-mode baseline-plus-override` for regression-sensitive
+experiments. In that mode the runner embeds both the original baseline
+guideline and the released override guideline, scores every candidate by the
+maximum similarity across the two query vectors, and records the winning
+`query_label` plus per-query scores in `recall_results.jsonl`. This is the
+preferred next full-143 experiment because the r3 sidecar recovers several old
+misses but is not monotonic enough to justify hard replacement.
 
 Outputs:
 

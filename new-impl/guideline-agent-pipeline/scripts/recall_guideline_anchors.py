@@ -468,10 +468,25 @@ def embed_documents(embedder: Embedder, texts: list[str], batch_size: int) -> li
     return vectors
 
 
+def build_guideline_queries(case: dict[str, Any], guideline_mode: str) -> list[dict[str, str]]:
+    primary = build_guideline(case)
+    queries = [{"label": "primary", "text": primary}]
+    if guideline_mode != "baseline-plus-override":
+        return queries
+
+    baseline = case.get("_baseline_guideline")
+    if not isinstance(baseline, str) or not baseline.strip() or baseline.strip() == primary.strip():
+        return queries
+    return [
+        {"label": "baseline", "text": baseline.strip()},
+        {"label": "override", "text": primary},
+    ]
+
+
 def rank_candidates(
     *,
     embedder: Embedder,
-    query_text: str,
+    query_items: list[dict[str, str]],
     candidates: list[dict[str, Any]],
     batch_size: int,
     text_max_chars: int,
@@ -480,8 +495,10 @@ def rank_candidates(
     timings: dict[str, float] = {}
     if not candidates:
         return [], timings
+    if not query_items:
+        raise ValueError("at least one guideline query is required")
     step_started = time.time()
-    query_vector = embedder.embed_queries([query_text])[0]
+    query_vectors = embedder.embed_queries([item["text"] for item in query_items])
     timings["query_embedding_seconds"] = round(time.time() - step_started, 3)
     step_started = time.time()
     texts = [candidate_text(candidate, text_max_chars) for candidate in candidates]
@@ -493,7 +510,19 @@ def rank_candidates(
     scored = []
     for candidate, vector in zip(candidates, vectors):
         row = {key: value for key, value in candidate.items() if key != "text"}
-        row["score"] = dot(query_vector, vector)
+        query_scores = [
+            (index, query_items[index]["label"], dot(query_vector, vector))
+            for index, query_vector in enumerate(query_vectors)
+        ]
+        best_index, best_label, best_score = max(query_scores, key=lambda item: item[2])
+        row["score"] = best_score
+        row["query_label"] = best_label
+        row["query_index"] = best_index
+        if len(query_scores) > 1:
+            row["query_scores"] = {
+                label: score
+                for _, label, score in query_scores
+            }
         scored.append(row)
     scored.sort(key=lambda row: (-float(row["score"]), str(row["anchor_id"])))
     for rank, row in enumerate(scored[:top_k], start=1):
@@ -519,6 +548,7 @@ def recall_case(
     batch_size: int,
     text_max_chars: int,
     top_k: int,
+    guideline_mode: str,
 ) -> dict[str, Any]:
     started = time.time()
     timings: dict[str, float] = {}
@@ -542,11 +572,12 @@ def recall_case(
     )
     timings["slice_seconds"] = round(time.time() - step_started, 3)
     step_started = time.time()
-    guideline = build_guideline(case)
+    guideline_queries = build_guideline_queries(case, guideline_mode)
+    guideline = guideline_queries[-1]["text"]
     timings["guideline_seconds"] = round(time.time() - step_started, 3)
     top, rank_timings = rank_candidates(
         embedder=embedder,
-        query_text=guideline,
+        query_items=guideline_queries,
         candidates=candidates,
         batch_size=batch_size,
         text_max_chars=text_max_chars,
@@ -570,6 +601,8 @@ def recall_case(
         "cwe_ids": (case.get("classification") or {}).get("cwe_ids") or [],
         "snapshot": str(snapshot),
         "guideline": guideline,
+        "guideline_mode": guideline_mode,
+        "guideline_queries": guideline_queries,
         "candidate_count": len(candidates),
         "known_anchor_count": len(truth_anchors),
         "best_known_anchor_rank": best_hit_rank,
@@ -581,8 +614,14 @@ def recall_case(
 
 
 def selected_anchor_row(case_result: dict[str, Any], rank: int) -> dict[str, Any] | None:
+    guideline_by_label = {
+        str(item.get("label")): str(item.get("text"))
+        for item in case_result.get("guideline_queries") or []
+        if item.get("label") and item.get("text")
+    }
     for anchor in case_result.get("top_anchors") or []:
         if int(anchor.get("rank") or 0) == rank:
+            query_label = str(anchor.get("query_label") or "")
             return {
                 "identity_key": case_result["identity_key"],
                 "case_id": case_result.get("case_id"),
@@ -590,7 +629,8 @@ def selected_anchor_row(case_result: dict[str, Any], rank: int) -> dict[str, Any
                 "checkout_revision": case_result["checkout_revision"],
                 "hcvr_type": case_result.get("hcvr_type"),
                 "snapshot": case_result.get("snapshot"),
-                "guideline": case_result.get("guideline"),
+                "guideline": guideline_by_label.get(query_label) or case_result.get("guideline"),
+                "guideline_query_label": query_label or None,
                 **anchor,
             }
     return None
@@ -648,6 +688,16 @@ def main() -> None:
             "Rows may contain guideline_text, retrieval_guideline, audit_guideline, "
             "or guideline. Overrides generated broad track templates without "
             "modifying the dataset."
+        ),
+    )
+    parser.add_argument(
+        "--guideline-mode",
+        choices=("override", "baseline-plus-override"),
+        default="override",
+        help=(
+            "override ranks with the single released guideline. "
+            "baseline-plus-override ranks each candidate by the max score from "
+            "the original dataset/template guideline and the override guideline."
         ),
     )
     parser.add_argument("--output-dir", type=Path, required=True)
@@ -717,6 +767,9 @@ def main() -> None:
     )
     guideline_file = args.guideline_file.resolve() if args.guideline_file else None
     guideline_override_count = 0
+    if args.guideline_mode == "baseline-plus-override":
+        for case in cases:
+            case["_baseline_guideline"] = build_guideline(case)
     if guideline_file is not None:
         guideline_override_count = apply_guideline_overrides(
             cases,
@@ -762,6 +815,7 @@ def main() -> None:
                 batch_size=args.embedding_batch_size,
                 text_max_chars=args.text_max_chars,
                 top_k=args.top_k,
+                guideline_mode=args.guideline_mode,
             ): case
             for case in cases
         }
@@ -813,6 +867,7 @@ def main() -> None:
         "cases_file": str(args.cases_file.resolve()) if args.cases_file else None,
         "identity_file": str(args.identity_file.resolve()) if args.identity_file else None,
         "guideline_file": str(guideline_file) if guideline_file else None,
+        "guideline_mode": args.guideline_mode,
         "guideline_override_count": guideline_override_count,
         "limit": args.limit,
         "skip": args.skip,
