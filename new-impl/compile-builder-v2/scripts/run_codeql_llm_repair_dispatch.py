@@ -15,6 +15,7 @@ import copy
 import hashlib
 import json
 import os
+import shlex
 import socket
 import ssl
 import subprocess
@@ -24,6 +25,7 @@ import threading
 import time
 import urllib.error
 import urllib.request
+import urllib.parse
 from collections import Counter, defaultdict
 from concurrent.futures import FIRST_COMPLETED, Future, ThreadPoolExecutor, wait
 from datetime import datetime, timezone
@@ -109,6 +111,78 @@ def sha256_file(path: Path) -> str:
 
 def stable_path(path: Path) -> str:
     return str(path.resolve())
+
+
+def verified_gradle_user_home_for_receipt(
+    *,
+    failed_receipt: Mapping[str, Any],
+    verified_gradle_user_home: Path | None,
+) -> tuple[Path | None, dict[str, Any] | None]:
+    """Validate an operator-provided Gradle cache against a wrapper's URL.
+
+    The repair model never chooses a cache path.  When an invocation provides
+    a trusted local Gradle user home, the dispatcher accepts it only for a
+    Gradle-wrapper build whose source-declared distribution archive is present
+    in that cache.  The selected archive digest is retained in the receipt.
+    """
+
+    if verified_gradle_user_home is None:
+        return None, None
+    planned_command = failed_receipt.get("planned_codeql_database_command")
+    if not isinstance(planned_command, list) or not all(
+        isinstance(token, str) for token in planned_command
+    ):
+        return None, None
+    try:
+        command_index = planned_command.index("--command")
+    except ValueError:
+        return None, None
+    if command_index + 1 >= len(planned_command):
+        return None, None
+    build_command = shlex.split(planned_command[command_index + 1])
+    if not any(Path(token).name == "gradlew" for token in build_command):
+        return None, None
+
+    source_dir = Path(str(failed_receipt["source_dir"]))
+    properties = source_dir / "gradle" / "wrapper" / "gradle-wrapper.properties"
+    if not properties.is_file():
+        raise RepairValidationError(
+            "Gradle wrapper build has no gradle-wrapper.properties for cache verification"
+        )
+    distribution_url = next(
+        (
+            line.partition("=")[2].strip().replace(r"\:", ":")
+            for line in properties.read_text(encoding="utf-8", errors="replace").splitlines()
+            if line.strip().startswith("distributionUrl=")
+        ),
+        "",
+    )
+    archive_name = Path(urllib.parse.urlparse(distribution_url).path).name
+    if not archive_name:
+        raise RepairValidationError(
+            "Gradle wrapper distributionUrl does not identify an archive"
+        )
+    cache_root = verified_gradle_user_home.resolve()
+    if not cache_root.is_dir():
+        raise RepairValidationError("verified Gradle user home is not a directory")
+    matches = sorted(
+        path
+        for path in (cache_root / "wrapper" / "dists").rglob(archive_name)
+        if path.is_file()
+    )
+    if len(matches) != 1:
+        raise RepairValidationError(
+            "verified Gradle user home must contain exactly one wrapper distribution "
+            f"archive for {archive_name}; found {len(matches)}"
+        )
+    archive = matches[0].resolve()
+    return cache_root, {
+        "source": stable_path(cache_root),
+        "distribution_url": distribution_url,
+        "archive_name": archive_name,
+        "archive_path": stable_path(archive),
+        "archive_sha256": sha256_file(archive),
+    }
 
 
 def read_jsonl(paths: Iterable[Path]) -> list[dict[str, Any]]:
@@ -895,7 +969,8 @@ def run_case(
     codeql_inactivity_timeout_seconds: float | None,
     approved_java_homes: list[str],
     approved_maven_homes: list[str],
-    dry_run: bool,
+    verified_gradle_user_home: Path | None = None,
+    dry_run: bool = False,
 ) -> dict[str, Any]:
     case_id = str(failed_receipt["case_id"])
     case_dir = output_dir / "cases" / safe_name(case_id) / f"attempt-{attempt_number:03d}"
@@ -916,6 +991,10 @@ def run_case(
         expected_revision,
         source_receipt,
         expected_case_id=case_id,
+    )
+    verified_gradle_home, gradle_cache_evidence = verified_gradle_user_home_for_receipt(
+        failed_receipt=failed_receipt,
+        verified_gradle_user_home=verified_gradle_user_home,
     )
     packet = build_repair_packet(
         failed_receipt,
@@ -953,6 +1032,7 @@ def run_case(
             "new_attempt_database_only": True,
             "retrieval_and_target_data_not_consumed": True,
         },
+        "verified_gradle_cache": gradle_cache_evidence,
     }
     if not source_evidence["verified"]:
         return {
@@ -1154,6 +1234,7 @@ def run_case(
             approved_java_homes=approved_java_homes,
             approved_maven_homes=approved_maven_homes,
             source_receipt=execution_source_receipt,
+            verified_gradle_user_home_source=verified_gradle_home,
             isolate_build_home=True,
             historical_toolchain_receipt=failed_receipt,
         )
@@ -1251,6 +1332,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--approved-java-home", action="append", default=[])
     parser.add_argument("--approved-maven-home", action="append", default=[])
     parser.add_argument(
+        "--verified-gradle-user-home",
+        type=Path,
+        help=(
+            "Trusted local Gradle user home. For Gradle-wrapper builds, it must "
+            "contain exactly one archive matching the source-declared distributionUrl; "
+            "the verified cache is copied into each isolated attempt."
+        ),
+    )
+    parser.add_argument(
         "--claude-command",
         default=DEFAULT_CLAUDE_COMMAND,
         help="Executable for the constrained structured-output model call.",
@@ -1341,6 +1431,11 @@ def main() -> int:
 
     approved_java_homes = [stable_path(Path(path)) for path in args.approved_java_home]
     approved_maven_homes = [stable_path(Path(path)) for path in args.approved_maven_home]
+    verified_gradle_user_home = (
+        args.verified_gradle_user_home.resolve()
+        if args.verified_gradle_user_home is not None
+        else None
+    )
     output_dir = args.output_dir.resolve()
     ledger = output_dir / "w1_llm_repair_receipts.jsonl"
     summary_path = output_dir / "summary.json"
@@ -1489,6 +1584,7 @@ def main() -> int:
                     codeql_inactivity_timeout_seconds=args.codeql_inactivity_timeout_seconds,
                     approved_java_homes=approved_java_homes,
                     approved_maven_homes=approved_maven_homes,
+                    verified_gradle_user_home=verified_gradle_user_home,
                     dry_run=args.dry_run,
                 )
 
@@ -1558,6 +1654,11 @@ def main() -> int:
         "failed_receipts": [{"path": stable_path(path), "sha256": sha256_file(path)} for path in failed_paths],
         "source_receipts": [{"path": stable_path(path), "sha256": sha256_file(path)} for path in source_paths],
         "prior_ledger": {"path": stable_path(prior_ledger), "sha256": sha256_file(prior_ledger)},
+        "verified_gradle_user_home": (
+            stable_path(verified_gradle_user_home)
+            if verified_gradle_user_home is not None
+            else None
+        ),
     }
     final["configuration"] = {
         "max_workers": args.max_workers,

@@ -111,6 +111,148 @@ def repair_packet() -> dict:
     }
 
 
+def gradle_failed_receipt(source: Path, case_id: str, revision: str) -> dict:
+    receipt = failed_receipt(source, case_id, revision)
+    (source / "gradle" / "wrapper").mkdir(parents=True)
+    (source / "gradle" / "wrapper" / "gradle-wrapper.properties").write_text(
+        "distributionUrl=https\\://services.gradle.org/distributions/gradle-7.3.3-bin.zip\n",
+        encoding="utf-8",
+    )
+    receipt["planned_codeql_database_command"][-1] = "bash ./gradlew build -x test"
+    return receipt
+
+
+def test_verified_gradle_cache_matches_wrapper_distribution(tmp_path: Path) -> None:
+    source = tmp_path / "source"
+    source.mkdir()
+    receipt = gradle_failed_receipt(source, "v8:gradle-cache", "abc123")
+    cache = tmp_path / "gradle-cache"
+    archive = (
+        cache
+        / "wrapper"
+        / "dists"
+        / "gradle-7.3.3-bin"
+        / "wrapper-hash"
+        / "gradle-7.3.3-bin.zip"
+    )
+    archive.parent.mkdir(parents=True)
+    archive.write_bytes(b"trusted-gradle-distribution")
+
+    selected, evidence = dispatcher.verified_gradle_user_home_for_receipt(
+        failed_receipt=receipt,
+        verified_gradle_user_home=cache,
+    )
+
+    assert selected == cache.resolve()
+    assert evidence == {
+        "source": str(cache.resolve()),
+        "distribution_url": "https://services.gradle.org/distributions/gradle-7.3.3-bin.zip",
+        "archive_name": "gradle-7.3.3-bin.zip",
+        "archive_path": str(archive.resolve()),
+        "archive_sha256": hashlib.sha256(archive.read_bytes()).hexdigest(),
+    }
+
+
+def test_verified_gradle_cache_rejects_missing_wrapper_distribution(tmp_path: Path) -> None:
+    source = tmp_path / "source"
+    source.mkdir()
+    receipt = gradle_failed_receipt(source, "v8:gradle-cache-missing", "abc123")
+    cache = tmp_path / "gradle-cache"
+    cache.mkdir()
+
+    with pytest.raises(
+        RepairValidationError,
+        match="must contain exactly one wrapper distribution archive",
+    ):
+        dispatcher.verified_gradle_user_home_for_receipt(
+            failed_receipt=receipt,
+            verified_gradle_user_home=cache,
+        )
+
+
+def test_verified_gradle_cache_is_ignored_for_non_gradle_build(tmp_path: Path) -> None:
+    source = tmp_path / "source"
+    source.mkdir()
+    receipt = failed_receipt(source, "v8:maven-cache", "abc123")
+    cache = tmp_path / "gradle-cache"
+    cache.mkdir()
+
+    assert dispatcher.verified_gradle_user_home_for_receipt(
+        failed_receipt=receipt,
+        verified_gradle_user_home=cache,
+    ) == (None, None)
+
+
+def test_controller_forwards_verified_gradle_cache_to_isolated_attempt(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = tmp_path / "source"
+    source.mkdir()
+    case_id = "v8:gradle-cache-forwarding"
+    source_row = source_receipt(source, case_id, "abc123")
+    failed = gradle_failed_receipt(source, case_id, "abc123")
+    prior = deterministic_completion(failed, source_row)
+    cache = tmp_path / "gradle-cache"
+    archive = (
+        cache
+        / "wrapper"
+        / "dists"
+        / "gradle-7.3.3-bin"
+        / "wrapper-hash"
+        / "gradle-7.3.3-bin.zip"
+    )
+    archive.parent.mkdir(parents=True)
+    archive.write_bytes(b"trusted-gradle-distribution")
+    observed: dict[str, object] = {}
+
+    def fake_invoke_model(**kwargs: object) -> dict:
+        decision = {
+            "actions": [{"kind": "retry_same_command"}],
+            "rationale": "Use the verified local wrapper distribution.",
+        }
+        return {
+            "command": ["fake-model"],
+            "bounded_process": {"returncode": 0, "timed_out": False},
+            "output_path": str(kwargs["output_path"]),
+            "raw_text": json.dumps({"type": "result", "structured_output": decision}),
+        }
+
+    def fake_execute_repair_attempt(
+        receipt: dict,
+        decision: dict,
+        **kwargs: object,
+    ) -> dict:
+        observed.update(kwargs)
+        return {"status": "codeql_db_repaired", "database_valid": True}
+
+    monkeypatch.setattr(dispatcher, "invoke_model", fake_invoke_model)
+    monkeypatch.setattr(dispatcher, "execute_repair_attempt", fake_execute_repair_attempt)
+
+    result = dispatcher.run_case(
+        failed_receipt=failed,
+        source_receipt=source_row,
+        prior_completion=prior,
+        output_dir=tmp_path / "output",
+        attempt_number=1,
+        claude_command="fake-model",
+        openai_bridge_url=None,
+        openai_model="fake-model",
+        model_timeout_seconds=10,
+        codeql_timeout_seconds=10,
+        codeql_inactivity_timeout_seconds=None,
+        approved_java_homes=[],
+        approved_maven_homes=[],
+        verified_gradle_user_home=cache,
+    )
+
+    assert result["status"] == "codeql_db_repaired"
+    assert observed["verified_gradle_user_home_source"] == cache.resolve()
+    assert result["verified_gradle_cache"]["archive_sha256"] == hashlib.sha256(
+        archive.read_bytes()
+    ).hexdigest()
+
+
 def test_llm_prompt_is_redacted_and_command_has_tools_disabled(tmp_path: Path) -> None:
     source = tmp_path / "source"
     source.mkdir()
