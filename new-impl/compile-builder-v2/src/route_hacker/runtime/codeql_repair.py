@@ -34,6 +34,7 @@ SOURCE_INTEGRITY_IGNORED_DIRECTORIES = frozenset(
         ".git",
         ".gradle",
         "build",
+        "node_modules",
         "out",
         "target",
     }
@@ -116,14 +117,35 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+def is_generated_frontend_toolchain_path(path: Path, source_dir: Path) -> bool:
+    """Recognize the Node runtime directory downloaded by frontend build plugins.
+
+    ``frontend-maven-plugin`` commonly installs a complete Node runtime below a
+    project-local ``node/`` directory. The directory is build output only when
+    it contains the runtime executable together with both npm launchers. A
+    plain source directory named ``node`` does not satisfy this shape and
+    remains protected by the source-integrity check.
+    """
+
+    relative = path.relative_to(source_dir)
+    prefix = source_dir
+    for part in relative.parts:
+        prefix /= part
+        if part != "node" or not prefix.is_dir():
+            continue
+        if all((prefix / executable).is_file() for executable in ("node", "npm", "npx")):
+            return True
+    return False
+
+
 def source_integrity_snapshot(source_dir: Path) -> dict[str, Any]:
     """Hash non-generated source content before and after a repair build.
 
-    Maven/Gradle output directories and the Maven Shade/Flatten plugins'
-    fixed generated metadata files are intentionally excluded because a
-    compilation may create them. Any other change is evidence that the build
-    altered benchmark input and therefore cannot qualify as an admissible
-    repaired database.
+    Maven/Gradle output directories, frontend dependency/runtime downloads, and
+    the Maven Shade/Flatten plugins' fixed generated metadata files are
+    intentionally excluded because a compilation may create them. Any other
+    change is evidence that the build altered benchmark input and therefore
+    cannot qualify as an admissible repaired database.
     """
 
     files: dict[str, str] = {}
@@ -140,6 +162,8 @@ def source_integrity_snapshot(source_dir: Path) -> dict[str, Any]:
     for path in sorted(source_dir.rglob("*")):
         relative = path.relative_to(source_dir)
         if any(part in SOURCE_INTEGRITY_IGNORED_DIRECTORIES for part in relative.parts):
+            continue
+        if is_generated_frontend_toolchain_path(path, source_dir):
             continue
         if relative.name in SOURCE_INTEGRITY_IGNORED_FILENAMES:
             continue

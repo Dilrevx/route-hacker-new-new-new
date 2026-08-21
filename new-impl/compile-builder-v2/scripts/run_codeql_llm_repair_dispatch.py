@@ -77,6 +77,15 @@ MAX_MODEL_TRANSPORT_ATTEMPTS = 2
 MAX_BUILD_FEEDBACK_REPLAN_ATTEMPTS = 1
 
 
+def append_unique(values: list[str], additions: Iterable[str]) -> list[str]:
+    """Append action arguments in their original order without duplication."""
+
+    for item in additions:
+        if item not in values:
+            values.append(item)
+    return values
+
+
 def normalize_openai_base_url(bridge_url: str) -> str:
     """Return the OpenAI-compatible base URL without duplicating its version path."""
 
@@ -575,6 +584,11 @@ def merge_repair_decisions(
     incremental_actions = incremental_decision.get("actions")
     if not isinstance(previous_actions, list) or not isinstance(incremental_actions, list):
         raise RepairValidationError("validated repair decision lacks actions")
+    if all(
+        isinstance(action, Mapping) and action.get("kind") == "retry_same_command"
+        for action in incremental_actions
+    ):
+        return dict(previous_decision)
 
     merged_actions = [
         dict(action)
@@ -603,7 +617,7 @@ def merge_repair_decisions(
             if existing is None:
                 merged_actions.append(dict(action))
             else:
-                existing["args"] = _append_unique(
+                existing["args"] = append_unique(
                     list(existing.get("args", [])),
                     list(action.get("args", [])),
                 )

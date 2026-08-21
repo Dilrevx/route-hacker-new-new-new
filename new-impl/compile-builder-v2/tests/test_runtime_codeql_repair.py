@@ -329,6 +329,13 @@ def test_source_integrity_snapshot_ignores_generated_outputs_and_detects_source_
     shade_metadata.write_text("<project />\n", encoding="utf-8")
     flattened_metadata = source / "module" / ".flattened-pom.xml"
     flattened_metadata.write_text("<project />\n", encoding="utf-8")
+    frontend_runtime = source / "module" / "node"
+    frontend_runtime.mkdir()
+    for executable in ("node", "npm", "npx"):
+        (frontend_runtime / executable).write_text("# generated runtime\n", encoding="utf-8")
+    frontend_dependency = source / "module" / "node_modules" / "demo" / "index.js"
+    frontend_dependency.parent.mkdir(parents=True)
+    frontend_dependency.write_text("generated dependency\n", encoding="utf-8")
     generated_only = source_integrity_snapshot(source)
 
     from route_hacker.runtime.codeql_repair import compare_source_integrity
@@ -344,6 +351,23 @@ def test_source_integrity_snapshot_ignores_generated_outputs_and_detects_source_
     assert changed["verified"] is False
     assert changed["reason"] == "non_generated_source_content_changed_during_build"
     assert changed["changed_paths"] == ["src/Main.java"]
+
+
+def test_source_integrity_snapshot_keeps_plain_node_source_directory_in_scope(tmp_path: Path):
+    source = tmp_path / "source"
+    plain_node_source = source / "node" / "config.js"
+    plain_node_source.parent.mkdir(parents=True)
+    plain_node_source.write_text("module.exports = {};\n", encoding="utf-8")
+    before = source_integrity_snapshot(source)
+
+    plain_node_source.write_text("module.exports = { changed: true };\n", encoding="utf-8")
+
+    from route_hacker.runtime.codeql_repair import compare_source_integrity
+
+    changed = compare_source_integrity(before, source_integrity_snapshot(source))
+
+    assert changed["verified"] is False
+    assert changed["changed_paths"] == ["node/config.js"]
 
 
 def test_execute_repair_rejects_database_when_build_changes_source_content(

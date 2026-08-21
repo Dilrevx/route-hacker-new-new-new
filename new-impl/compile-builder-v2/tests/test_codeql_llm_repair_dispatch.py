@@ -796,6 +796,58 @@ def test_controller_does_not_reexecute_a_repeated_build_feedback_decision(
     assert len(result["decision_rounds"]) == 1
 
 
+def test_merge_repair_decisions_merges_feedback_build_arguments() -> None:
+    previous = {
+        "actions": [
+            {"kind": "append_build_args", "args": ["-Dcheckstyle.skip=true"]},
+        ],
+        "rationale": "Skip the quality gate.",
+    }
+    incremental = {
+        "actions": [
+            {"kind": "append_build_args", "args": ["-Denforcer.skip=true"]},
+        ],
+        "rationale": "Skip the enforcer.",
+    }
+
+    merged = dispatcher.merge_repair_decisions(
+        previous,
+        incremental,
+        approved_java_homes=[],
+        approved_maven_homes=[],
+    )
+
+    assert merged["actions"] == [
+        {
+            "kind": "append_build_args",
+            "args": ["-Dcheckstyle.skip=true", "-Denforcer.skip=true"],
+        }
+    ]
+
+
+def test_merge_repair_decisions_keeps_previous_plan_for_retry_only_feedback() -> None:
+    previous = {
+        "actions": [
+            {"kind": "set_maven_heap", "value": "-Xmx4g"},
+        ],
+        "rationale": "Increase the approved heap.",
+    }
+    incremental = {
+        "actions": [{"kind": "retry_same_command"}],
+        "rationale": "Retry the same command.",
+    }
+
+    assert (
+        dispatcher.merge_repair_decisions(
+            previous,
+            incremental,
+            approved_java_homes=[],
+            approved_maven_homes=[],
+        )
+        == previous
+    )
+
+
 def test_controller_has_distinct_worker_failure_status() -> None:
     source = SCRIPT.read_text(encoding="utf-8")
 
