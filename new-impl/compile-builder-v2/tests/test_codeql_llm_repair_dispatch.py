@@ -804,6 +804,85 @@ def test_controller_replans_once_from_fresh_failed_build_evidence(
     assert "previous cumulative decision remains in effect" in prompts[1]
 
 
+def test_controller_records_feedback_no_safe_action_as_terminal_refusal(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = tmp_path / "source"
+    source.mkdir()
+    case_id = "v8:feedback-no-safe-action"
+    source_row = source_receipt(source, case_id, "abc123")
+    failed = failed_receipt(source, case_id, "abc123")
+    prior = deterministic_completion(failed, source_row)
+    executed_decisions: list[dict] = []
+    invocation_count = 0
+
+    def fake_invoke_model(**kwargs: object) -> dict:
+        nonlocal invocation_count
+        invocation_count += 1
+        decision = (
+            {
+                "actions": [{"kind": "append_build_args", "args": ["-Dcheckstyle.skip=true"]}],
+                "rationale": "Skip the failed quality gate.",
+            }
+            if invocation_count == 1
+            else {
+                "actions": [{"kind": "no_safe_action"}],
+                "rationale": "No further approved repair action is justified.",
+            }
+        )
+        return {
+            "command": ["fake-model"],
+            "bounded_process": {"returncode": 0, "timed_out": False},
+            "output_path": str(kwargs["output_path"]),
+            "raw_text": json.dumps({"type": "result", "structured_output": decision}),
+        }
+
+    def fake_execute_repair_attempt(
+        receipt: dict,
+        decision: dict,
+        **_kwargs: object,
+    ) -> dict:
+        executed_decisions.append(decision)
+        packet = dispatcher.build_repair_packet(
+            receipt,
+            approved_java_homes=[],
+            approved_maven_homes=[],
+            source_receipt=source_row,
+        )
+        return {"status": "repair_attempt_failed", "packet": packet}
+
+    monkeypatch.setattr(dispatcher, "invoke_model", fake_invoke_model)
+    monkeypatch.setattr(dispatcher, "execute_repair_attempt", fake_execute_repair_attempt)
+
+    result = dispatcher.run_case(
+        failed_receipt=failed,
+        source_receipt=source_row,
+        prior_completion=prior,
+        output_dir=tmp_path / "output",
+        attempt_number=1,
+        claude_command="fake-model",
+        openai_bridge_url=None,
+        openai_model="fake-model",
+        model_timeout_seconds=10,
+        codeql_timeout_seconds=10,
+        codeql_inactivity_timeout_seconds=None,
+        approved_java_homes=[],
+        approved_maven_homes=[],
+        dry_run=False,
+    )
+
+    assert result["status"] == "no_safe_llm_repair"
+    assert result["reason"] == "feedback_no_safe_action_after_build_failure"
+    assert result["build_feedback_replan_count"] == 1
+    assert len(result["model_invocations"]) == 2
+    assert len(result["repair_attempts"]) == 2
+    assert len(executed_decisions) == 1
+    assert result["validated_decision"]["actions"] == [{"kind": "no_safe_action"}]
+    assert result["previous_cumulative_decision"] == executed_decisions[0]
+    assert result["repair_attempts"][1]["feedback_terminal_refusal"] is True
+
+
 def test_controller_retries_one_transport_failure_before_validating_decision(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,

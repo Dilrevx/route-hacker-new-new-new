@@ -1150,6 +1150,47 @@ def run_case(
                 active_prompt = build_repair_correction_prompt(active_packet, error_text)
         assert validated is not None
         assert model_receipt is not None
+        if validated["actions"] == [{"kind": "no_safe_action"}]:
+            decision_path = (
+                case_dir / "validated-decision.json"
+                if decision_round == 0
+                else case_dir / f"validated-decision-feedback-{decision_round:03d}.json"
+            )
+            write_json(decision_path, validated)
+            round_record = {
+                "decision_round": decision_round,
+                "feedback_from_prior_build_failure": decision_round > 0,
+                "packet_sha256": active_packet["packet_sha256"],
+                "validated_decision_sha256": stable_json_sha256(validated),
+                "validated_decision_path": stable_path(decision_path),
+                "incremental_decision": validated,
+                "validated_decision": validated,
+                "model_invocation_index": len(model_invocations) - 1,
+                "proposal_validation_errors": round_validation_errors,
+            }
+            if cumulative_decision is not None:
+                round_record["feedback_terminal_refusal"] = True
+                round_record["previous_cumulative_decision"] = cumulative_decision
+            decision_rounds.append(round_record)
+            result = {
+                **base,
+                "status": "no_safe_llm_repair",
+                "model_invocation": model_receipt,
+                "model_invocations": model_invocations,
+                "proposal_validation_errors": validation_errors,
+                "validated_decision": validated,
+                "decision_rounds": decision_rounds,
+            }
+            if cumulative_decision is not None:
+                result.update(
+                    {
+                        "reason": "feedback_no_safe_action_after_build_failure",
+                        "previous_cumulative_decision": cumulative_decision,
+                        "repair_attempts": decision_rounds,
+                        "build_feedback_replan_count": decision_round,
+                    }
+                )
+            return result
         executed_decision = merge_repair_decisions(
             cumulative_decision,
             validated,
@@ -1186,17 +1227,6 @@ def run_case(
             "model_invocation_index": len(model_invocations) - 1,
             "proposal_validation_errors": round_validation_errors,
         }
-        if executed_decision["actions"] == [{"kind": "no_safe_action"}]:
-            decision_rounds.append(round_record)
-            return {
-                **base,
-                "status": "no_safe_llm_repair",
-                "model_invocation": model_receipt,
-                "model_invocations": model_invocations,
-                "proposal_validation_errors": validation_errors,
-                "validated_decision": executed_decision,
-                "decision_rounds": decision_rounds,
-            }
         attempt_dir = (
             case_dir / "codeql-attempt"
             if decision_round == 0
