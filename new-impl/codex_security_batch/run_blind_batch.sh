@@ -7,6 +7,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+TIMEOUT_RUNNER="$SCRIPT_DIR/run_with_timeout.py"
 
 RUN_ROOT="${CODEX_SECURITY_RUN_ROOT:-${TMPDIR:-/tmp}/route-hacker-codex-security}"
 CONTROL_ROOT="${CODEX_SECURITY_CONTROL_ROOT:-$RUN_ROOT/control}"
@@ -32,6 +33,7 @@ TRAEX_BIN="${CODEX_SECURITY_TRAEX_BIN:-traex}"
 PLUGIN_DIR="${CODEX_SECURITY_PLUGIN_DIR:-}"
 MAX_NEW_CASES="${CODEX_SECURITY_MAX_NEW_CASES:-}"
 OUTER_PARALLELISM="${CODEX_SECURITY_OUTER_PARALLELISM:-1}"
+CASE_TIMEOUT_SECONDS="${CODEX_SECURITY_CASE_TIMEOUT_SECONDS:-115200}"
 
 mkdir -p "$BATCH_DIR"/{inputs,outputs} "$REPO_CACHE" "$LOG_DIR" "$STATE_DIR"
 chmod 700 "$CONTROL_ROOT" "$CONTROL" "$RUNTIME_ROOT" "$BATCH_DIR" \
@@ -238,6 +240,7 @@ PY
     echo "SCOPE=full_repository"
     echo "MODEL=$CODEX_MODEL"
     echo "EFFORT=$CODEX_EFFORT"
+    echo "CASE_TIMEOUT_SECONDS=$CASE_TIMEOUT_SECONDS"
     if [[ "$USE_TRAEX_WRAPPER" == "1" ]]; then
       echo "CODEX_EXEC_MODE=traex-wrapper"
     else
@@ -260,9 +263,11 @@ PY
     CODEX_CLI_PATH="$WRAPPER" \
     CODEX_SECURITY_PLUGIN_DIR="$PLUGIN_DIR" \
     CODEX_SECURITY_TRAEX_BIN="$TRAEX_BIN" \
-      "${cmd[@]}" >>"$log" 2>&1
+      python3 "$TIMEOUT_RUNNER" --timeout-seconds "$CASE_TIMEOUT_SECONDS" \
+        --log "$log" --case-id "$case_id" -- "${cmd[@]}"
   else
-    "${cmd[@]}" >>"$log" 2>&1
+    python3 "$TIMEOUT_RUNNER" --timeout-seconds "$CASE_TIMEOUT_SECONDS" \
+      --log "$log" --case-id "$case_id" -- "${cmd[@]}"
   fi
   status=$?
   set -e
@@ -286,6 +291,7 @@ record = {
     "case_id": row["case_id"],
     "status": "accepted" if status == 0 else ("partial_artifacts" if has_core else "failed"),
     "exit_code": status,
+    "timed_out": status == 124,
     "elapsed_seconds": int(elapsed),
     "output_dir": out,
     "log": log,
@@ -388,6 +394,13 @@ validate_config() {
       *[!0-9]*) fail "invalid CODEX_SECURITY_MAX_NEW_CASES=$MAX_NEW_CASES" ;;
     esac
   fi
+
+  case "$CASE_TIMEOUT_SECONDS" in
+    ''|*[!0-9]*) fail "invalid CODEX_SECURITY_CASE_TIMEOUT_SECONDS=$CASE_TIMEOUT_SECONDS" ;;
+  esac
+  [[ "$CASE_TIMEOUT_SECONDS" -ge 1 ]] || \
+    fail "invalid CODEX_SECURITY_CASE_TIMEOUT_SECONDS=$CASE_TIMEOUT_SECONDS"
+  [[ -x "$TIMEOUT_RUNNER" ]] || fail "timeout runner is not executable: $TIMEOUT_RUNNER"
 
   if [[ "$USE_TRAEX_WRAPPER" == "1" ]]; then
     [[ -n "$WRAPPER" && -x "$WRAPPER" ]] || fail "CODEX_SECURITY_WRAPPER must be executable"

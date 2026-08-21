@@ -68,6 +68,8 @@ export CODEX_SECURITY_MODEL=gpt-5.6-terra
 export CODEX_SECURITY_EFFORT=high
 export CODEX_SECURITY_OUTER_PARALLELISM=2
 export CODEX_SECURITY_MAX_NEW_CASES=10
+# Per-case wall-clock limit; default is 115200 seconds (32 hours).
+export CODEX_SECURITY_CASE_TIMEOUT_SECONDS=115200
 
 bash new-impl/codex_security_batch/run_blind_batch.sh
 ```
@@ -190,4 +192,8 @@ export CODEX_SECURITY_CONTINUE_AFTER_AUTH_ERROR=1
 - Do not commit `control/`, `runtime/`, scanner outputs, or auth material.
 - Use `CODEX_SECURITY_MAX_NEW_CASES` for budgeted top-ups.
 - Use `CODEX_SECURITY_OUTER_PARALLELISM=2` as the current practical default.
+- The default `CODEX_SECURITY_CASE_TIMEOUT_SECONDS=115200` gives each case a
+  32-hour wall-clock limit. On timeout, the runner terminates the scan process
+  group, preserves any emitted artifacts, and continues with the next queue
+  entry.
 - Preserve output attempts and logs; they are the audit evidence trail.
