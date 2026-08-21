@@ -220,11 +220,15 @@ Committed preview outputs:
   mechanisms for request-body resource mismatch authorization, temporary
   directory create-delete-mkdir TOCTOU, and privileged server-side capability
   exposure.
+- `results/mechanism-guideline-preview-v2-cluster-scope-r3-20260821/` adds an
+  explicit unsafe URI scheme open-redirect mechanism. This keeps redirect URI
+  validation cases from falling into the broader webhook/SSRF bucket while
+  preserving the r2 sub-pattern attribution changes.
 
 The r1 bad-case regression is useful but not yet sufficient for a full
 replacement run. Treat it as evidence that mechanism-scoped guidelines help
 some old misses and that attribution quality still needs a regression gate.
-Run r2 on the same 12 identities first, then decide whether to rerun the full
+Run r3 on the same 12 identities first, then decide whether to rerun the full
 143-case evaluation.
 
 For model A/B evaluation, always pass the same `--identity-file` to every run.

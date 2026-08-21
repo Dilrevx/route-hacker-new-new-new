@@ -37,6 +37,17 @@
       "typical_fix": "disable automatic redirects or revalidate every redirect hop against the same allowlist and address policy"
     },
     {
+      "mechanism_id": "mech_open_redirect_unsafe_uri_scheme",
+      "name": "open redirect through unsafe URI scheme validation",
+      "family": "open_redirect",
+      "aliases": ["unsafe redirect URI scheme", "javascript URI redirect", "data URI redirect", "redirect_uri scheme bypass"],
+      "keywords": ["open redirect", "redirect uri", "redirect_uri", "redirect target", "uri scheme", "scheme", "javascript:", "data:", "valid redirect", "allowed redirect", "wildcard pattern", "url validation"],
+      "source_shape": "attacker-controlled redirect targets, callback URLs, return URLs, OAuth redirect_uri values, or browser navigation destinations",
+      "sink_shape": "redirect responses, Location headers, OAuth/OIDC/SAML redirect validation, or browser-followed navigation targets",
+      "missing_guard": "the redirect target is accepted without constraining the final scheme and destination to trusted browser-safe values",
+      "typical_fix": "validate redirect targets with an explicit safe-scheme and destination allowlist after decoding and normalization"
+    },
+    {
       "mechanism_id": "mech_template_expression_untrusted_eval",
       "name": "untrusted template or expression evaluation",
       "family": "code_or_template_injection",

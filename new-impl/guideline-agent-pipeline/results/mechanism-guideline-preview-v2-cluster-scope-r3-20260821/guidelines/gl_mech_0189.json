@@ -1,0 +1,122 @@
+{
+  "cluster_summary": "This cluster covers a variety of authentication and authorization vulnerabilities, including user enumeration via distinct error messages, insecure password storage and hashing, insufficient password strength validation, missing ownership checks on operations, password reset token flaws, and other implementation errors.",
+  "created_at": "2026-08-21T10:07:21+00:00",
+  "cve_ids": [
+    "CVE-2014-2064",
+    "CVE-2020-5229",
+    "CVE-2021-21253",
+    "CVE-2021-25958",
+    "CVE-2022-23619",
+    "CVE-2022-41933",
+    "CVE-2023-32699",
+    "CVE-2023-3423",
+    "CVE-2024-39846",
+    "CVE-2025-8548",
+    "CVE-2026-22794",
+    "CVE-2026-24467"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0035__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0189",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 12 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2014-2064",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    35
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 35,
+      "fix_strategy": "Replace all user-existence-dependent responses with a generic message or behavior, such as always returning a success message regardless of account existence.",
+      "members": [
+        "CVE-2025-8548",
+        "CVE-2022-23619",
+        "CVE-2014-2064"
+      ],
+      "name": "Distinct error responses revealing user existence",
+      "root_cause": "The application returns different error messages or statuses for existing versus non-existing users, allowing an attacker to enumerate valid accounts."
+    },
+    {
+      "cluster_id": 35,
+      "fix_strategy": "Use a strong adaptive hashing algorithm (e.g., BCrypt, PBKDF2) with a unique random salt per password, and hash on storage; never store plaintext or decryptable passwords.",
+      "members": [
+        "CVE-2022-41933",
+        "CVE-2024-39846",
+        "CVE-2020-5229",
+        "CVE-2021-21253"
+      ],
+      "name": "Plaintext or weakly hashed password storage",
+      "root_cause": "Passwords are stored in plaintext or hashed with a weak algorithm (MD5, SHA-256 without salt) or with a predictable salt, enabling offline cracking or direct credential theft."
+    },
+    {
+      "cluster_id": 35,
+      "fix_strategy": "Impose a strict password policy with required character classes (uppercase, lowercase, digit, special), minimum length, and optionally prevent reuse of the current password. Validate programmatically in all code paths.",
+      "members": [
+        "CVE-2023-3423"
+      ],
+      "name": "Insufficient password complexity enforcement",
+      "root_cause": "The application lacks proper validation of password strength (character classes, length, reuse) before accepting or storing the password, allowing weak or easily guessable passwords."
+    },
+    {
+      "cluster_id": 35,
+      "fix_strategy": "Remove exception details from user-facing error messages; log the exception server-side and return a generic error message.",
+      "members": [
+        "CVE-2021-25958"
+      ],
+      "name": "Unfiltered exception details in error messages",
+      "root_cause": "Error messages include raw exception details (e.g., stack traces, database metadata) which leak sensitive implementation information to the user."
+    },
+    {
+      "cluster_id": 35,
+      "fix_strategy": "Generate long cryptographically random tokens with a short expiration, invalidate all previous tokens for a user on new request, and enforce rate limiting.",
+      "members": [
+        "CVE-2026-24467"
+      ],
+      "name": "Weak password reset token generation without expiry or revocation",
+      "root_cause": "Password reset tokens are short, predictable, and never expire or invalidated, allowing brute-force or accumulation of valid tokens."
+    },
+    {
+      "cluster_id": 35,
+      "fix_strategy": "Use a server-configured base URL and validate the provided origin against it; reject mismatches.",
+      "members": [
+        "CVE-2026-22794"
+      ],
+      "name": "Unvalidated Origin header in URL construction",
+      "root_cause": "The application uses the client-supplied Origin header directly as the base URL for password reset links without verification, allowing an attacker to redirect tokens to a malicious domain."
+    },
+    {
+      "cluster_id": 35,
+      "fix_strategy": "Reject input with length exceeding a defined maximum before performing the hash.",
+      "members": [
+        "CVE-2023-32699"
+      ],
+      "name": "Missing length validation before cryptographic hash",
+      "root_cause": "User-supplied input is passed directly to an expensive hash function (MD5) without enforcing a maximum length, allowing resource exhaustion via oversized input."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

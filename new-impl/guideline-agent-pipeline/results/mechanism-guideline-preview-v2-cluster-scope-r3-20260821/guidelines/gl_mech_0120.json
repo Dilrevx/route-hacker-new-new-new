@@ -1,0 +1,56 @@
+{
+  "cluster_summary": "This cluster comprises vulnerabilities where size or length fields from untrusted binary input are used to allocate memory or control operations without adequate validation. Common flaws include missing upper bounds, integer overflow in arithmetic, invalid back-reference offsets, and improper handling of edge cases, leading to memory exhaustion, data leaks, or denial of service.",
+  "created_at": "2026-08-21T10:07:21+00:00",
+  "cve_ids": [
+    "CVE-2019-3559"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0021__pending_mech_cluster_21_infinite_loop_from_unhandled_unknown_protocol_type",
+  "guideline_id": "gl_mech_0120",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Throw an exception on unknown type to halt parsing..",
+  "mechanism": {
+    "aliases": [
+      "sends",
+      "values",
+      "identifier",
+      "via",
+      "list",
+      "unhandled"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_21_infinite_loop_from_unhandled_unknown_protocol_type",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Infinite loop from unhandled unknown protocol type",
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Throw an exception on unknown type to halt parsing."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2019-3559",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    21
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 21,
+      "fix_strategy": "Throw an exception on unknown type to halt parsing.",
+      "members": [
+        "CVE-2019-3559"
+      ],
+      "name": "Infinite loop from unhandled unknown protocol type",
+      "root_cause": "When a parser encounters an unknown field type, the default case does nothing, causing the parse position to remain unchanged and leading to an infinite loop."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_21_infinite_loop_from_unhandled_unknown_protocol_type",
+    "sends",
+    "values",
+    "identifier",
+    "via"
+  ]
+}

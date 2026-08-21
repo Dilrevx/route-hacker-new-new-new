@@ -1,0 +1,54 @@
+{
+  "cluster_summary": "The majority of these vulnerabilities stem from using untrusted user input (e.g., sort column names, order fields, filter parameters) directly in SQL or HQL queries without allow-list validation, enabling injection. One case has a validation timing flaw, two involve incomplete structural validation of HQL queries, one misses a configuration check for sorting obfuscated fields, and one is an algorithmic complexity issue unrelated to injection.",
+  "created_at": "2026-08-21T10:07:21+00:00",
+  "cve_ids": [
+    "CVE-2016-4040"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0012__mech_state_precondition_missing_before_effect",
+  "guideline_id": "gl_mech_0061",
+  "guideline_text": "Trace requests or events that select an operation, workflow step, account, resource, or state transition into sensitive state changes, billing effects, entitlement changes, resource consumption, or workflow transitions. Report code paths where the required lifecycle state, quota, ownership state, or operation ordering is not enforced before the effect. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should validate the required state immediately before the effect and make the check and mutation atomic when needed.",
+  "mechanism": {
+    "aliases": [
+      "business state precondition",
+      "state transition guard",
+      "lifecycle check",
+      "quota check"
+    ],
+    "family": "business_logic",
+    "mechanism_id": "mech_state_precondition_missing_before_effect",
+    "missing_guard": "the required lifecycle state, quota, ownership state, or operation ordering is not enforced before the effect",
+    "name": "missing business-state precondition before sensitive effect",
+    "sink_shape": "sensitive state changes, billing effects, entitlement changes, resource consumption, or workflow transitions",
+    "source_shape": "requests or events that select an operation, workflow step, account, resource, or state transition",
+    "typical_fix": "validate the required state immediately before the effect and make the check and mutation atomic when needed"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2016-4040",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    12
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 12,
+      "fix_strategy": "Introduce an allow-list of valid column names and enforce it before query construction; also restrict sort direction to 'ASC'/'DESC'.",
+      "members": [
+        "CVE-2016-4040"
+      ],
+      "name": "Missing allow-list validation for ORDER BY column names",
+      "root_cause": "User-supplied column or sort direction is directly interpolated into the ORDER BY clause without restricting input to a predefined set of safe identifiers."
+    }
+  ],
+  "tags": [
+    "business_logic",
+    "mech_state_precondition_missing_before_effect",
+    "business state precondition",
+    "state transition guard",
+    "lifecycle check",
+    "quota check"
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "cluster_summary": "A collection of vulnerabilities where the application fails to enforce proper authorization checks, allowing unauthorized access to resources. The issues include missing checks on REST endpoints (both for actions and data retrieval), incorrect tenant scoping in queries and authorization, oversight of access rights for deleted documents and revisions, and lack of access control configuration for new wiki spaces.",
+  "created_at": "2026-08-21T10:07:21+00:00",
+  "cve_ids": [
+    "CVE-2023-29208",
+    "CVE-2023-37911",
+    "CVE-2025-27604",
+    "CVE-2025-29924",
+    "CVE-2025-29925",
+    "CVE-2025-46554",
+    "CVE-2026-33137"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0038__mech_object_owner_scope_missing_authz",
+  "guideline_id": "gl_mech_0202",
+  "guideline_text": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where the authorization decision is not bound to both the current principal and the exact resource or tenant being affected. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 7 historical CVE example(s), not as a project-specific signature. A safe implementation should check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation.",
+  "mechanism": {
+    "aliases": [
+      "object ownership authorization",
+      "tenant scope check",
+      "IDOR",
+      "resource scoped authorization"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_object_owner_scope_missing_authz",
+    "missing_guard": "the authorization decision is not bound to both the current principal and the exact resource or tenant being affected",
+    "name": "missing object-owner or tenant-scope authorization",
+    "sink_shape": "sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource",
+    "source_shape": "attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets",
+    "typical_fix": "check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2023-29208",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    38
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 38,
+      "fix_strategy": "Inject an authorization manager and call checkAccess() or hasAccess() with the appropriate right (e.g., VIEW, ADMIN) before performing the operation or including data in the response.",
+      "members": [
+        "CVE-2026-33137",
+        "CVE-2025-46554"
+      ],
+      "name": "Missing authorization checks on REST endpoints and data retrieval operations",
+      "root_cause": "The code does not perform authentication/authorization checks before executing sensitive operations or returning data via REST endpoints, leaving resources accessible to unauthorized users."
+    },
+    {
+      "cluster_id": 38,
+      "fix_strategy": "Explicitly set the current entity reference to the target resource's wiki before performing authorization checks, and scope database queries to the intended wiki using methods like setWiki().",
+      "members": [
+        "CVE-2025-29924",
+        "CVE-2025-29925"
+      ],
+      "name": "Missing tenant scoping in authorization checks and queries",
+      "root_cause": "Authorization checks or data queries are performed without properly scoping to the target wiki/tenant context, causing the application to use the default (main) wiki's settings or data instead of the intended tenant's, leading to cross-tenant information exposure."
+    },
+    {
+      "cluster_id": 38,
+      "fix_strategy": "Add authorization checks specific to the non-current state, such as calling recycleBinStore.hasAccess() for deleted documents or checkAccess() on the DocumentRevisionProvider before returning the content.",
+      "members": [
+        "CVE-2023-29208",
+        "CVE-2023-37911"
+      ],
+      "name": "Missing authorization checks for non-current document states (deleted documents and revisions)",
+      "root_cause": "The code assumes that authorization checks on the current document version are sufficient and does not verify access rights when retrieving deleted documents from the recycle bin or historical revisions, allowing unauthorized access to sensitive content."
+    },
+    {
+      "cluster_id": 38,
+      "fix_strategy": "Create a WebPreferences document for the space with appropriate viewRights, and set the hidden property to true on all internal data documents at creation time.",
+      "members": [
+        "CVE-2025-27604"
+      ],
+      "name": "Missing access control configuration for wiki spaces and internal documents",
+      "root_cause": "A new application space is created without defining a WebPreferences document to restrict access, and internal data documents are not marked as hidden, causing the wiki default (public access) to apply and expose sensitive documents to unauthenticated users."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_object_owner_scope_missing_authz",
+    "object ownership authorization",
+    "tenant scope check",
+    "IDOR",
+    "resource scoped authorization"
+  ]
+}

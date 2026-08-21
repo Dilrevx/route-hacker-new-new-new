@@ -1,0 +1,58 @@
+{
+  "cluster_summary": "This cluster covers injection vulnerabilities (JDBC parameter injection, JNDI scheme injection, SQL injection) caused by incomplete blacklists, missing scheme or prefix validation, or direct string concatenation of user input into sensitive constructs. The majority of issues stem from assuming user-controlled data is safe when building JDBC URLs or SQL queries without proper validation, canonicalization, or parameterization.",
+  "created_at": "2026-08-21T10:07:21+00:00",
+  "cve_ids": [
+    "CVE-2025-62420",
+    "CVE-2025-64163",
+    "CVE-2026-3960"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0011__mech_open_redirect_unsafe_uri_scheme",
+  "guideline_id": "gl_mech_0051",
+  "guideline_text": "Trace attacker-controlled redirect targets, callback URLs, return URLs, OAuth redirect_uri values, or browser navigation destinations into redirect responses, Location headers, OAuth/OIDC/SAML redirect validation, or browser-followed navigation targets. Report code paths where the redirect target is accepted without constraining the final scheme and destination to trusted browser-safe values. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should validate redirect targets with an explicit safe-scheme and destination allowlist after decoding and normalization.",
+  "mechanism": {
+    "aliases": [
+      "unsafe redirect URI scheme",
+      "javascript URI redirect",
+      "data URI redirect",
+      "redirect_uri scheme bypass"
+    ],
+    "family": "open_redirect",
+    "mechanism_id": "mech_open_redirect_unsafe_uri_scheme",
+    "missing_guard": "the redirect target is accepted without constraining the final scheme and destination to trusted browser-safe values",
+    "name": "open redirect through unsafe URI scheme validation",
+    "sink_shape": "redirect responses, Location headers, OAuth/OIDC/SAML redirect validation, or browser-followed navigation targets",
+    "source_shape": "attacker-controlled redirect targets, callback URLs, return URLs, OAuth redirect_uri values, or browser navigation destinations",
+    "typical_fix": "validate redirect targets with an explicit safe-scheme and destination allowlist after decoding and normalization"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2025-62420",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    11
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 11,
+      "fix_strategy": "Expand the blacklist to cover all known dangerous parameters and protocols, apply the check after full URL assembly and URL-decoding, and use robust regex that matches parameter names regardless of context.",
+      "members": [
+        "CVE-2026-3960",
+        "CVE-2025-64163",
+        "CVE-2025-62420"
+      ],
+      "name": "Incomplete or misapplied blacklist for JDBC connection parameters",
+      "root_cause": "The application relies on a blacklist to filter dangerous JDBC URL parameters, but the blacklist is missing entries (e.g., socketFactory, autoDeserialize, iiop), applied too early (before URL assembly or decoding), or uses overly restrictive regex patterns, allowing bypass."
+    }
+  ],
+  "tags": [
+    "open_redirect",
+    "mech_open_redirect_unsafe_uri_scheme",
+    "unsafe redirect URI scheme",
+    "javascript URI redirect",
+    "data URI redirect",
+    "redirect_uri scheme bypass"
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "cluster_summary": "Multiple vulnerabilities arise from failing to enforce upper bounds on user-controlled size parameters (query limits, object indices) or from neglecting to check field metadata (types like Password, Email) before exposing data through queries, exports, REST APIs, and diffs. These omissions lead to resource exhaustion or unauthorized disclosure of sensitive information.",
+  "created_at": "2026-08-21T10:07:21+00:00",
+  "cve_ids": [
+    "CVE-2023-26470"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0033__pending_mech_cluster_33_unbounded_memory_allocation_from_user_controlled_object_index",
+  "guideline_id": "gl_mech_0184",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Replace the dense list with a sparse map (e.g., ConcurrentSkipListMap) so that only non-null entries consume memory..",
+  "mechanism": {
+    "aliases": [
+      "null",
+      "array",
+      "materializing",
+      "sets",
+      "bounds",
+      "load"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_33_unbounded_memory_allocation_from_user_controlled_object_index",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Unbounded memory allocation from user-controlled object index",
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Replace the dense list with a sparse map (e.g., ConcurrentSkipListMap) so that only non-null entries consume memory."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2023-26470",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    33
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 33,
+      "fix_strategy": "Replace the dense list with a sparse map (e.g., ConcurrentSkipListMap) so that only non-null entries consume memory.",
+      "members": [
+        "CVE-2023-26470"
+      ],
+      "name": "Unbounded memory allocation from user-controlled object index",
+      "root_cause": "A dense list (ArrayList) is used to store objects indexed by user-controlled number, causing allocation of null entries up to that index without an upper-bound check, leading to heap exhaustion."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_33_unbounded_memory_allocation_from_user_controlled_object_index",
+    "null",
+    "array",
+    "materializing",
+    "sets"
+  ]
+}

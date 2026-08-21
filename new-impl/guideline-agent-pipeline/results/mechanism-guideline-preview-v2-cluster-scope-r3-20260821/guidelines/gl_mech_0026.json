@@ -1,0 +1,72 @@
+{
+  "cluster_summary": "This cluster covers multiple distinct vulnerability types including OS command injection via shell metacharacters and argument separator issues, credential leakage from git URLs in build outputs, null byte injection into process execution, and missing access controls for privileged operations such as Docker socket mounting and command whitelisting.",
+  "created_at": "2026-08-21T10:07:21+00:00",
+  "cve_ids": [
+    "CVE-2020-5242",
+    "CVE-2022-29184",
+    "CVE-2022-39205"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0006__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0026",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2020-5242",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    6
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 6,
+      "fix_strategy": "Insert a '--' token before user-controlled positional arguments to end option parsing, or validate input format to reject patterns that could be options.",
+      "members": [
+        "CVE-2022-29184"
+      ],
+      "name": "Command option injection via missing argument separator",
+      "root_cause": "User-supplied strings are passed as arguments to a subprocess without a stop-parsing delimiter (like '--'), allowing special characters to introduce additional command options."
+    },
+    {
+      "cluster_id": 6,
+      "fix_strategy": "Replace IP-based check with a per-instance random token passed in the callback URL.",
+      "members": [
+        "CVE-2022-39205"
+      ],
+      "name": "Authentication bypass via spoofed header IP check",
+      "root_cause": "Authentication relies on client IP derived from a user-controlled HTTP header, allowing spoofing."
+    },
+    {
+      "cluster_id": 6,
+      "fix_strategy": "Implement a whitelist of allowed commands that is consulted before execution.",
+      "members": [
+        "CVE-2020-5242"
+      ],
+      "name": "Missing command whitelist before execution",
+      "root_cause": "No authorization check is performed before executing user-supplied commands, allowing arbitrary command execution."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

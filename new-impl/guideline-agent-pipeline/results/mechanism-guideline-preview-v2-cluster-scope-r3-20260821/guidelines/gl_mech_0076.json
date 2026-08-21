@@ -1,0 +1,84 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities stemming from improper handling of user-controllable data in LDAP operations, including missing or incorrect escaping in LDAP filter construction, unbounded recursion during alias dereferencing, credential disclosure in logs, and cross-site scripting via LDAP attribute values. Two outliers involve unrelated SQL injection and database validation bypass.",
+  "created_at": "2026-08-21T10:07:21+00:00",
+  "cve_ids": [
+    "CVE-2014-125083",
+    "CVE-2015-1169",
+    "CVE-2015-1849",
+    "CVE-2020-5246",
+    "CVE-2025-27497"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0015__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0076",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 5 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2014-125083",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    15
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 15,
+      "fix_strategy": "Use a dedicated LDAP filter encoding function (RFC 2254 / RFC 4515) to escape all metacharacters before interpolation.",
+      "members": [
+        "CVE-2015-1169",
+        "CVE-2020-5246"
+      ],
+      "name": "Missing or improper LDAP filter escaping",
+      "root_cause": "User-controlled input is inserted into LDAP search filter strings without proper escaping of special characters, or with incorrect encoding (e.g., DN encoding instead of filter encoding), or with incomplete escape tables that fail to cover all metacharacters."
+    },
+    {
+      "cluster_id": 15,
+      "fix_strategy": "Maintain a per-request set of visited DNs and skip already processed aliases.",
+      "members": [
+        "CVE-2025-27497"
+      ],
+      "name": "Unbounded recursion in LDAP alias dereferencing",
+      "root_cause": "The alias resolution logic recursively follows alias entries without tracking visited nodes, causing infinite recursion on cycles."
+    },
+    {
+      "cluster_id": 15,
+      "fix_strategy": "Mask credential values before logging (e.g., replace with '***').",
+      "members": [
+        "CVE-2015-1849"
+      ],
+      "name": "LDAP credential disclosure in logs",
+      "root_cause": "LDAP environment properties including the bind password are logged in plaintext without masking."
+    },
+    {
+      "cluster_id": 15,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2014-125083"
+      ],
+      "name": "Inadequate input sanitization and output handling in LDAP-related code",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "cluster_summary": "The cluster comprises vulnerabilities where the system incorrectly uses the document's stored author identity for authorization decisions or inadvertently overwrites it during automated operations, leading to privilege escalation. Many also involve missing authorization checks before sensitive state-changing operations on documents.",
+  "created_at": "2026-08-21T10:07:21+00:00",
+  "cve_ids": [
+    "CVE-2023-29510",
+    "CVE-2023-49280",
+    "CVE-2024-21648",
+    "CVE-2024-31983",
+    "CVE-2024-37898",
+    "CVE-2024-37899"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0037__mech_object_owner_scope_missing_authz",
+  "guideline_id": "gl_mech_0198",
+  "guideline_text": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where the authorization decision is not bound to both the current principal and the exact resource or tenant being affected. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 6 historical CVE example(s), not as a project-specific signature. A safe implementation should check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation.",
+  "mechanism": {
+    "aliases": [
+      "object ownership authorization",
+      "tenant scope check",
+      "IDOR",
+      "resource scoped authorization"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_object_owner_scope_missing_authz",
+    "missing_guard": "the authorization decision is not bound to both the current principal and the exact resource or tenant being affected",
+    "name": "missing object-owner or tenant-scope authorization",
+    "sink_shape": "sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource",
+    "source_shape": "attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets",
+    "typical_fix": "check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2023-29510",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    37
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 37,
+      "fix_strategy": "Preserve the existing content author by using setOriginalMetadataAuthor instead of setAuthorReference during automated saves.",
+      "members": [
+        "CVE-2024-37899"
+      ],
+      "name": "Content author overwritten during automated operations",
+      "root_cause": "Automated saves (e.g., rename, disable user) set the document's content author to the acting user, granting that user the privileges associated with the original author for embedded scripts."
+    },
+    {
+      "cluster_id": 37,
+      "fix_strategy": "Add an explicit authorization check (e.g., access control, content inspection) before performing the operation.",
+      "members": [
+        "CVE-2024-21648",
+        "CVE-2024-31983",
+        "CVE-2024-37898",
+        "CVE-2023-49280"
+      ],
+      "name": "Missing authorization check before state-changing operations",
+      "root_cause": "Sensitive operations (rollback, translation access, document override, content-based actions) execute without verifying the current user's permissions on the target resource or its content."
+    },
+    {
+      "cluster_id": 37,
+      "fix_strategy": "Add the missing USER case and require Right.SCRIPT on the document author before allowing registration.",
+      "members": [
+        "CVE-2023-29510"
+      ],
+      "name": "Incomplete authorization switch case for translation scopes",
+      "root_cause": "A switch statement for translation registration lacks a case for USER scope, falling through to a no-op and allowing unprivileged users to register translations that execute as privileged content."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_object_owner_scope_missing_authz",
+    "object ownership authorization",
+    "tenant scope check",
+    "IDOR",
+    "resource scoped authorization"
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "cluster_summary": "This cluster comprises vulnerabilities resulting from insecure defaults in XML processing. The majority involve XML parsers that do not disable DTD processing or external entity resolution, enabling XXE attacks. Other issues include insecure deserialization via XMLDecoder, XSLT extension function abuse, resource exhaustion from missing EOF checks, variable interpolation leaking system properties, and NTLM credential exposure through namespace URI resolution.",
+  "created_at": "2026-08-21T10:07:21+00:00",
+  "cve_ids": [
+    "CVE-2024-56324"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0000__mech_path_traversal_missing_canonical_prefix",
+  "guideline_id": "gl_mech_0002",
+  "guideline_text": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under the intended base directory before the file operation. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check.",
+  "mechanism": {
+    "aliases": [
+      "path traversal",
+      "directory traversal",
+      "Zip Slip",
+      "archive entry traversal",
+      "canonical path bypass"
+    ],
+    "family": "filesystem",
+    "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+    "missing_guard": "the normalized absolute path is not checked to remain under the intended base directory before the file operation",
+    "name": "path traversal through missing canonical prefix check",
+    "sink_shape": "file read, write, delete, extraction, or resource-loading APIs",
+    "source_shape": "attacker-controlled filenames, archive entries, path fragments, or resource names",
+    "typical_fix": "normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2024-56324",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    0
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 0,
+      "fix_strategy": "Explicitly disable DTD declarations and external entity resolution by setting appropriate features on the parser factory (e.g., disallow-doctype-decl, external-general-entities=false, external-parameter-entities=false, FEATURE_SECURE_PROCESSING, ACCESS_EXTERNAL_DTD empty) or by providing a restrictive EntityResolver that blocks external resources.",
+      "members": [
+        "CVE-2024-56324"
+      ],
+      "name": "Missing secure parser configuration against external entity resolution",
+      "root_cause": "XML parser factories (DocumentBuilderFactory, SAXParserFactory, XMLInputFactory, SAXBuilder, etc.) are instantiated with default settings that permit DTD processing and external entity resolution. The code fails to disable these unsafe features before parsing untrusted XML input."
+    }
+  ],
+  "tags": [
+    "filesystem",
+    "mech_path_traversal_missing_canonical_prefix",
+    "path traversal",
+    "directory traversal",
+    "Zip Slip",
+    "archive entry traversal"
+  ]
+}

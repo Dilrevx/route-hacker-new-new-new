@@ -1,0 +1,62 @@
+{
+  "cluster_summary": "Multiple vulnerabilities where sensitive credentials, tokens, encryption keys, or secrets are written to logs in plaintext due to lack of sanitization, masking, or redaction. The sensitive data flows directly into log sinks via string concatenation, serialized structured output, exception messages, or incomplete redaction configurations, leading to persistent leakage in log files.",
+  "created_at": "2026-08-21T10:07:21+00:00",
+  "cve_ids": [
+    "CVE-2023-28630",
+    "CVE-2025-49009"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0008__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0037",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2023-28630",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    8
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 8,
+      "fix_strategy": "Remove the sensitive value from the log message or apply regex-based redaction to replace secrets with a constant placeholder before logging.",
+      "members": [
+        "CVE-2025-49009"
+      ],
+      "name": "Direct string interpolation of sensitive values without redaction",
+      "root_cause": "The code concatenates or logs sensitive strings (e.g., access tokens, secret keys, command outputs) directly into log messages without any masking or placeholder substitution, assuming the log channel is safe."
+    },
+    {
+      "cluster_id": 8,
+      "fix_strategy": "Catch the specific ProcessInitException and re-throw a sanitized exception that discards the environment variables, logging only the command name and exit code separately.",
+      "members": [
+        "CVE-2023-28630"
+      ],
+      "name": "Leakage of environment variable secrets in exception messages",
+      "root_cause": "When a subprocess fails to initialize, the exception thrown includes the full shell environment (containing plaintext credentials like MYSQL_PWD) in its message or cause chain, and the exception is surfaced to logs or UI without sanitization."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

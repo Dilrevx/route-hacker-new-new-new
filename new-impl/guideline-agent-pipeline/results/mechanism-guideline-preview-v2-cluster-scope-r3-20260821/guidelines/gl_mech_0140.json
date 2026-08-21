@@ -1,0 +1,90 @@
+{
+  "cluster_summary": "A wide range of cross-site scripting (XSS) vulnerabilities caused by failing to neutralize user-supplied data—either through HTML entity encoding, input sanitization, or input validation—before it is embedded in web pages. The cluster includes reflected, stored, and JSONP-based XSS, with fixes ranging from global input filters to per-field encoding and strict allowlist validation.",
+  "created_at": "2026-08-21T10:07:21+00:00",
+  "cve_ids": [
+    "CVE-2014-2065",
+    "CVE-2016-1181",
+    "CVE-2018-25097",
+    "CVE-2020-21316",
+    "CVE-2020-36634",
+    "CVE-2020-36635",
+    "CVE-2022-4513",
+    "CVE-2022-4859",
+    "CVE-2023-7166",
+    "CVE-2023-7171",
+    "CVE-2024-21550"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0025__mech_bean_property_reflection_escape",
+  "guideline_id": "gl_mech_0140",
+  "guideline_text": "Trace attacker-controlled property names, bean paths, binding keys, or conversion metadata into bean introspection, property-copy, nested binding, conversion, or reflective access APIs. Report code paths where dangerous meta-properties, nested class-loader paths, or reflective properties are not suppressed before binding. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 11 historical CVE example(s), not as a project-specific signature. A safe implementation should denylist dangerous meta-properties, restrict nested binding, and avoid exposing reflective class-loader reachable fields.",
+  "mechanism": {
+    "aliases": [
+      "BeanUtils property injection",
+      "bean introspection",
+      "classloader property escape",
+      "nested property binding"
+    ],
+    "family": "reflection_or_binding",
+    "mechanism_id": "mech_bean_property_reflection_escape",
+    "missing_guard": "dangerous meta-properties, nested class-loader paths, or reflective properties are not suppressed before binding",
+    "name": "bean property reflection escape",
+    "sink_shape": "bean introspection, property-copy, nested binding, conversion, or reflective access APIs",
+    "source_shape": "attacker-controlled property names, bean paths, binding keys, or conversion metadata",
+    "typical_fix": "denylist dangerous meta-properties, restrict nested binding, and avoid exposing reflective class-loader reachable fields"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2014-2065",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    25
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 25,
+      "fix_strategy": "Apply HTML entity encoding (e.g., StringEscapeUtils.escapeHtml4, fn:escapeXml, writer.writeText, or template auto-escaping) either at the point of output or before persistence to ensure safe rendering.",
+      "members": [
+        "CVE-2022-4513"
+      ],
+      "name": "missing HTML entity encoding in output rendering",
+      "root_cause": "Assumption that user-controlled data (stored or reflected) is safe for direct inclusion in HTML pages without any encoding."
+    },
+    {
+      "cluster_id": 25,
+      "fix_strategy": "Apply input validation (regex allowlist, @Pattern, bean validation) or sanitization (Jsoup.clean, OWASP HTML Sanitizer, tag stripping) to reject or neutralize dangerous HTML characters before they are stored or reflected.",
+      "members": [
+        "CVE-2020-36635",
+        "CVE-2023-7171",
+        "CVE-2020-36634",
+        "CVE-2014-2065",
+        "CVE-2024-21550",
+        "CVE-2023-7166",
+        "CVE-2022-4859",
+        "CVE-2020-21316",
+        "CVE-2018-25097"
+      ],
+      "name": "missing input validation/sanitization using allowlists or tag stripping",
+      "root_cause": "Trust that user input contains only safe characters; no validation or sanitization is performed before storage or reflection, allowing injection of HTML/JavaScript."
+    },
+    {
+      "cluster_id": 25,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2016-1181"
+      ],
+      "name": "missing HTML encoding or sanitization of user input before rendering",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "reflection_or_binding",
+    "mech_bean_property_reflection_escape",
+    "BeanUtils property injection",
+    "bean introspection",
+    "classloader property escape",
+    "nested property binding"
+  ]
+}

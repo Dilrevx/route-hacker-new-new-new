@@ -1,0 +1,66 @@
+{
+  "cluster_summary": "This cluster consists of 22 CVEs related to cross-site scripting (XSS) vulnerabilities in web applications that generate or process HTML/JavaScript content. The common coding mistakes include missing or incomplete output encoding for different contexts, insufficient regex-based filters for dangerous attributes, improper handling of DOM nodes during sanitization, missing allowlists for tags and URI schemes, and incorrect normalization of malformed input, allowing injection of malicious scripts.",
+  "created_at": "2026-08-21T10:07:21+00:00",
+  "cve_ids": [
+    "CVE-2019-10219",
+    "CVE-2023-29201",
+    "CVE-2023-29528"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0016__mech_privileged_server_side_capability_exposed",
+  "guideline_id": "gl_mech_0082",
+  "guideline_text": "Trace lower-privilege script, template, macro, plugin, or API callers that can invoke privileged server-side capabilities into server-side include, template rendering, servlet dispatch, raw object access, internal file reads, or privileged framework APIs. Report code paths where a higher privilege check is not enforced at the API entry point before exposing the server-side capability. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should check the required higher privilege at the exposed API boundary and return no sensitive result when the caller lacks that privilege.",
+  "mechanism": {
+    "aliases": [
+      "missing programming rights check",
+      "privileged API exposure",
+      "server-side include capability exposure",
+      "lower privilege script capability"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_privileged_server_side_capability_exposed",
+    "missing_guard": "a higher privilege check is not enforced at the API entry point before exposing the server-side capability",
+    "name": "privileged server-side capability exposed to lower privilege context",
+    "sink_shape": "server-side include, template rendering, servlet dispatch, raw object access, internal file reads, or privileged framework APIs",
+    "source_shape": "lower-privilege script, template, macro, plugin, or API callers that can invoke privileged server-side capabilities",
+    "typical_fix": "check the required higher privilege at the exposed API boundary and return no sensitive result when the caller lacks that privilege"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2019-10219",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    16
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 16,
+      "fix_strategy": "Iterate over all child nodes using fragment.childNodes() or similar, handle each node type appropriately, and use descending loop for removal from live NodeList.",
+      "members": [
+        "CVE-2019-10219",
+        "CVE-2023-29528"
+      ],
+      "name": "Incomplete DOM node handling in sanitization",
+      "root_cause": "The sanitization logic incorrectly assumes that only certain child nodes (e.g., first child, element nodes) need processing, ignoring comments, multiple children, or live NodeList behavior."
+    },
+    {
+      "cluster_id": 16,
+      "fix_strategy": "Replace deny-list with an allow-list of safe elements and attributes, removing any not in the allow-list.",
+      "members": [
+        "CVE-2023-29201"
+      ],
+      "name": "Missing allowlist for tags/attributes",
+      "root_cause": "The sanitization uses a deny-list of specific tags instead of an allow-list, allowing many dangerous tags and attributes to pass."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_privileged_server_side_capability_exposed",
+    "missing programming rights check",
+    "privileged API exposure",
+    "server-side include capability exposure",
+    "lower privilege script capability"
+  ]
+}

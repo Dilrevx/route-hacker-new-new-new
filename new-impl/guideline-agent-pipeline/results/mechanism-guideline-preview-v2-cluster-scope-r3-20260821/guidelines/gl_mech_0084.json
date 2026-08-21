@@ -1,0 +1,58 @@
+{
+  "cluster_summary": "This cluster consists of 22 CVEs related to cross-site scripting (XSS) vulnerabilities in web applications that generate or process HTML/JavaScript content. The common coding mistakes include missing or incomplete output encoding for different contexts, insufficient regex-based filters for dangerous attributes, improper handling of DOM nodes during sanitization, missing allowlists for tags and URI schemes, and incorrect normalization of malformed input, allowing injection of malicious scripts.",
+  "created_at": "2026-08-21T10:07:21+00:00",
+  "cve_ids": [
+    "CVE-2022-28367",
+    "CVE-2022-29577"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0016__pending_mech_cluster_16_incomplete_dom_node_handling_in_sanitization",
+  "guideline_id": "gl_mech_0084",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should Iterate over all child nodes using fragment.childNodes() or similar, handle each node type appropriately, and use descending loop for removal from live NodeList..",
+  "mechanism": {
+    "aliases": [
+      "order",
+      "need",
+      "logic",
+      "context",
+      "childcount-1",
+      "length-1"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_16_incomplete_dom_node_handling_in_sanitization",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Incomplete DOM node handling in sanitization",
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Iterate over all child nodes using fragment.childNodes() or similar, handle each node type appropriately, and use descending loop for removal from live NodeList."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2022-28367",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    16
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 16,
+      "fix_strategy": "Iterate over all child nodes using fragment.childNodes() or similar, handle each node type appropriately, and use descending loop for removal from live NodeList.",
+      "members": [
+        "CVE-2022-28367",
+        "CVE-2022-29577"
+      ],
+      "name": "Incomplete DOM node handling in sanitization",
+      "root_cause": "The sanitization logic incorrectly assumes that only certain child nodes (e.g., first child, element nodes) need processing, ignoring comments, multiple children, or live NodeList behavior."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_16_incomplete_dom_node_handling_in_sanitization",
+    "order",
+    "need",
+    "logic",
+    "context"
+  ]
+}

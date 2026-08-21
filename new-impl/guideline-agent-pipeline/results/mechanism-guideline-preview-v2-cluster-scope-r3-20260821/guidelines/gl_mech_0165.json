@@ -1,0 +1,52 @@
+{
+  "cluster_summary": "User-controlled string values are directly interpolated into HTML markup or templates without context-appropriate HTML entity escaping. This allows injection of arbitrary HTML or JavaScript, resulting in stored or reflected cross-site scripting (XSS). The fix applies HTML encoding using utilities like StringEscapeUtils.escapeHtml(), SafeHtmlUtils.htmlEscape(), markup formatters, or template auto-escaping to neutralize dangerous characters.",
+  "created_at": "2026-08-21T10:07:21+00:00",
+  "cve_ids": [
+    "CVE-2023-28629"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0029__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0165",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2023-28629",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    29
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 29,
+      "fix_strategy": "Apply HTML entity encoding to all user-controlled values before they are embedded in HTML output. Use library-specific escaping functions (e.g., StringEscapeUtils.escapeHtml(), SafeHtmlUtils.htmlEscape(), markupFormatter.translate()) or enable template auto-escaping (e.g., rename .ftl to .ftlh) and use manual escaping where required.",
+      "members": [
+        "CVE-2023-28629"
+      ],
+      "name": "Unescaped user data in HTML rendering contexts",
+      "root_cause": "The code assumes that user-supplied data (e.g., project names, email addresses, notes, artifact names) is safe for direct HTML interpolation. It lacks output encoding when concatenating into HTML strings, building DOM via innerHTML, or rendering in templates (FreeMarker, Jelly, localized messages)."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

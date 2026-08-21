@@ -1,0 +1,56 @@
+{
+  "cluster_summary": "This cluster contains 12 cryptographic vulnerabilities covering several distinct coding errors: non-constant-time comparisons that enable timing oracles, use of weak hash algorithms (SHA-1) for digital signatures, insufficient validation of DER-encoded signature structure, missing checks for empty signature sets, missing public key commitment verification, signature verification over wrong payload, acceptance of short key identifiers, and lack of DH subgroup validation. Each vulnerability allows an attacker to bypass cryptographic security guarantees.",
+  "created_at": "2026-08-21T10:07:21+00:00",
+  "cve_ids": [
+    "CVE-2026-5588"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0026__pending_mech_cluster_26_empty_signature_set_allowed_in_verification_loop",
+  "guideline_id": "gl_mech_0148",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Track whether any non-null verifier was checked; return success only if no failure and at least one check occurred..",
+  "mechanism": {
+    "aliases": [
+      "null",
+      "track",
+      "allowing",
+      "asn1",
+      "whether",
+      "identifier"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_26_empty_signature_set_allowed_in_verification_loop",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Empty signature set allowed in verification loop",
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Track whether any non-null verifier was checked; return success only if no failure and at least one check occurred."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-5588",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    26
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 26,
+      "fix_strategy": "Track whether any non-null verifier was checked; return success only if no failure and at least one check occurred.",
+      "members": [
+        "CVE-2026-5588"
+      ],
+      "name": "Empty signature set allowed in verification loop",
+      "root_cause": "Verification loop iterates over verifiers, skipping null ones, and returns success if no failure recorded, without ensuring at least one verifier was used."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_26_empty_signature_set_allowed_in_verification_loop",
+    "null",
+    "track",
+    "allowing",
+    "asn1"
+  ]
+}

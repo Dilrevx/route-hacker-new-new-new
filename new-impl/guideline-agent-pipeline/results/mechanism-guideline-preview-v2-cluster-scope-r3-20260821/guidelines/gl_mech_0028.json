@@ -1,0 +1,54 @@
+{
+  "cluster_summary": "This cluster covers multiple distinct vulnerability types including OS command injection via shell metacharacters and argument separator issues, credential leakage from git URLs in build outputs, null byte injection into process execution, and missing access controls for privileged operations such as Docker socket mounting and command whitelisting.",
+  "created_at": "2026-08-21T10:07:21+00:00",
+  "cve_ids": [
+    "CVE-2021-43286"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0006__mech_open_redirect_unsafe_uri_scheme",
+  "guideline_id": "gl_mech_0028",
+  "guideline_text": "Trace attacker-controlled redirect targets, callback URLs, return URLs, OAuth redirect_uri values, or browser navigation destinations into redirect responses, Location headers, OAuth/OIDC/SAML redirect validation, or browser-followed navigation targets. Report code paths where the redirect target is accepted without constraining the final scheme and destination to trusted browser-safe values. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should validate redirect targets with an explicit safe-scheme and destination allowlist after decoding and normalization.",
+  "mechanism": {
+    "aliases": [
+      "unsafe redirect URI scheme",
+      "javascript URI redirect",
+      "data URI redirect",
+      "redirect_uri scheme bypass"
+    ],
+    "family": "open_redirect",
+    "mechanism_id": "mech_open_redirect_unsafe_uri_scheme",
+    "missing_guard": "the redirect target is accepted without constraining the final scheme and destination to trusted browser-safe values",
+    "name": "open redirect through unsafe URI scheme validation",
+    "sink_shape": "redirect responses, Location headers, OAuth/OIDC/SAML redirect validation, or browser-followed navigation targets",
+    "source_shape": "attacker-controlled redirect targets, callback URLs, return URLs, OAuth redirect_uri values, or browser navigation destinations",
+    "typical_fix": "validate redirect targets with an explicit safe-scheme and destination allowlist after decoding and normalization"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2021-43286",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    6
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 6,
+      "fix_strategy": "Insert a '--' token before user-controlled positional arguments to end option parsing, or validate input format to reject patterns that could be options.",
+      "members": [
+        "CVE-2021-43286"
+      ],
+      "name": "Command option injection via missing argument separator",
+      "root_cause": "User-supplied strings are passed as arguments to a subprocess without a stop-parsing delimiter (like '--'), allowing special characters to introduce additional command options."
+    }
+  ],
+  "tags": [
+    "open_redirect",
+    "mech_open_redirect_unsafe_uri_scheme",
+    "unsafe redirect URI scheme",
+    "javascript URI redirect",
+    "data URI redirect",
+    "redirect_uri scheme bypass"
+  ]
+}
