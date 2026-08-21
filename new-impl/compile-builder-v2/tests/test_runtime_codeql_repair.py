@@ -1149,6 +1149,33 @@ def test_apply_repair_can_isolate_maven_user_home_without_changing_build_command
     )
 
 
+def test_apply_repair_preserves_maven_heap_when_isolating_build_home(tmp_path):
+    receipt = failed_receipt(tmp_path)
+    build_home = tmp_path / "attempt-build-home"
+    (build_home / ".m2" / "repository").mkdir(parents=True)
+    (build_home / ".gradle").mkdir()
+    decision = validate_repair_decision(
+        {
+            "actions": [{"kind": "set_maven_heap", "value": "-Xmx4g"}],
+            "rationale": "The build needs additional heap.",
+        },
+        approved_java_homes=[],
+        approved_maven_homes=[],
+    )
+
+    _command, env, _applied = apply_repair_decision(
+        receipt["planned_codeql_database_command"],
+        decision,
+        attempt_database_dir=tmp_path / "new-attempt-db",
+        approved_java_homes=[],
+        approved_maven_homes=[],
+        isolated_build_home=build_home,
+    )
+
+    assert "-Xmx4g" in env["MAVEN_OPTS"]
+    assert f"-Duser.home={build_home}" in env["MAVEN_OPTS"]
+
+
 def test_apply_repair_redirects_explicit_maven_repository_to_isolated_home(tmp_path):
     receipt = failed_receipt(tmp_path)
     receipt["planned_codeql_database_command"][-1] = (
