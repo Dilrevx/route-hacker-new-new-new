@@ -129,6 +129,85 @@ def test_scorecard_accepts_same_identity_recall_budget_evidence():
     assert scorecard["judge_evidence"]["status"] == "missing"
 
 
+def test_scorecard_inherits_recall_when_sidecar_text_is_equivalent():
+    module = load_module()
+    recall_summary = {
+        "same_identity_set": True,
+        "same_identity_order": True,
+        "common_count": 10,
+        "left_label": "r7-measured",
+        "right_label": "old-baseline",
+        "primary_budget": 100,
+        "metrics_on_common_identities": {
+            "hit_at_100": {
+                "left_count": 7,
+                "right_count": 5,
+                "delta_count": 2,
+                "left_rate": 0.7,
+                "right_rate": 0.5,
+                "delta_rate": 0.2,
+            }
+        },
+    }
+    equivalence = {
+        "recall_consumed_text_equivalent": True,
+        "same_key_set": True,
+        "left_label": "r7-sidecar",
+        "right_label": "r8-sidecar",
+        "left_count": 2,
+        "right_count": 2,
+        "common_count": 2,
+        "changed_text_count": 0,
+    }
+
+    scorecard = module.build_scorecard(
+        release_summary=release_summary(),
+        group_summary=group_summary(),
+        judge_summary=None,
+        recall_summary=recall_summary,
+        recall_equivalence=equivalence,
+        release_label="r-test",
+        desired_delta_rate=0.10,
+    )
+
+    recall_claim = next(item for item in scorecard["claim_boundaries"] if item["claim"] == "embedding_recall_improvement")
+    assert scorecard["recall_evidence"]["status"] == "inherited_same_identity_by_sidecar_equivalence"
+    assert scorecard["recall_equivalence_evidence"]["status"] == "valid_consumed_text_equivalence"
+    assert recall_claim["status"] == "supported_for_reported_budgets"
+    assert "inherited by sidecar equivalence" in recall_claim["caveat"]
+
+
+def test_scorecard_does_not_inherit_recall_when_sidecar_text_differs():
+    module = load_module()
+    recall_summary = {
+        "same_identity_set": True,
+        "same_identity_order": True,
+        "common_count": 10,
+        "left_label": "r7-measured",
+        "right_label": "old-baseline",
+        "primary_budget": 100,
+        "metrics_on_common_identities": {},
+    }
+    equivalence = {
+        "recall_consumed_text_equivalent": False,
+        "same_key_set": True,
+        "changed_text_count": 1,
+    }
+
+    scorecard = module.build_scorecard(
+        release_summary=release_summary(),
+        group_summary=group_summary(),
+        judge_summary=None,
+        recall_summary=recall_summary,
+        recall_equivalence=equivalence,
+        release_label="r-test",
+        desired_delta_rate=0.10,
+    )
+
+    assert scorecard["recall_evidence"]["status"] == "invalid_sidecar_equivalence"
+    assert scorecard["recall_equivalence_evidence"]["status"] == "invalid_consumed_text_difference"
+
+
 def test_cli_writes_json_and_markdown(tmp_path: Path):
     release_path = tmp_path / "release.json"
     group_path = tmp_path / "group.json"
@@ -136,6 +215,7 @@ def test_cli_writes_json_and_markdown(tmp_path: Path):
     recall_path = tmp_path / "recall.json"
     output_json = tmp_path / "scorecard.json"
     output_md = tmp_path / "README.md"
+    equivalence_path = tmp_path / "equivalence.json"
     release_path.write_text(json.dumps(release_summary()), encoding="utf-8")
     group_path.write_text(json.dumps(group_summary()), encoding="utf-8")
     judge_path.write_text(json.dumps(judge_summary()), encoding="utf-8")
@@ -146,6 +226,16 @@ def test_cli_writes_json_and_markdown(tmp_path: Path):
                 "same_identity_order": False,
                 "common_count": 1,
                 "metrics_on_common_identities": {},
+            }
+        ),
+        encoding="utf-8",
+    )
+    equivalence_path.write_text(
+        json.dumps(
+            {
+                "recall_consumed_text_equivalent": True,
+                "same_key_set": True,
+                "changed_text_count": 0,
             }
         ),
         encoding="utf-8",
@@ -163,6 +253,8 @@ def test_cli_writes_json_and_markdown(tmp_path: Path):
             str(judge_path),
             "--recall-comparison",
             str(recall_path),
+            "--recall-equivalence",
+            str(equivalence_path),
             "--release-label",
             "fixture-release",
             "--output-json",
@@ -180,6 +272,8 @@ def test_cli_writes_json_and_markdown(tmp_path: Path):
     scorecard = json.loads(output_json.read_text(encoding="utf-8"))
     assert scorecard["release_label"] == "fixture-release"
     assert scorecard["recall_evidence"]["status"] == "invalid_identity_mismatch"
+    assert scorecard["recall_equivalence_evidence"]["status"] == "valid_consumed_text_equivalence"
     markdown = output_md.read_text(encoding="utf-8")
     assert "HCVR Guideline Experiment Scorecard" in markdown
     assert "invalid_identity_mismatch" in markdown
+    assert "Sidecar Equivalence" in markdown

@@ -53,6 +53,37 @@ def budget_metrics(recall_summary: dict[str, Any]) -> list[dict[str, Any]]:
     return rows
 
 
+def equivalence_evidence(recall_equivalence: dict[str, Any] | None) -> dict[str, Any]:
+    if not recall_equivalence:
+        return {
+            "status": "missing",
+            "recall_consumed_text_equivalent": None,
+            "message": "No guideline sidecar equivalence report was provided.",
+        }
+
+    equivalent = bool(recall_equivalence.get("recall_consumed_text_equivalent"))
+    status = "valid_consumed_text_equivalence" if equivalent else "invalid_consumed_text_difference"
+    message = (
+        "The released sidecar has the same recall-consumed identity keys and guideline text as the measured sidecar."
+        if equivalent
+        else "The released sidecar changes recall-consumed identity keys or guideline text; rerun recall before inheriting metrics."
+    )
+    return {
+        "status": status,
+        "recall_consumed_text_equivalent": equivalent,
+        "same_key_set": bool(recall_equivalence.get("same_key_set")),
+        "left_label": recall_equivalence.get("left_label"),
+        "right_label": recall_equivalence.get("right_label"),
+        "left_count": recall_equivalence.get("left_count"),
+        "right_count": recall_equivalence.get("right_count"),
+        "common_count": recall_equivalence.get("common_count"),
+        "changed_text_count": recall_equivalence.get("changed_text_count"),
+        "left_sha256": recall_equivalence.get("left_sha256"),
+        "right_sha256": recall_equivalence.get("right_sha256"),
+        "message": message,
+    }
+
+
 def metric_sort_key(name: str) -> tuple[int, str]:
     if name.startswith("hit_at_"):
         suffix = name.removeprefix("hit_at_")
@@ -138,6 +169,7 @@ def claim_boundaries(
     structural: dict[str, Any],
     judge: dict[str, Any],
     recall: dict[str, Any],
+    equivalence: dict[str, Any],
     desired_delta_rate: float,
 ) -> list[dict[str, Any]]:
     boundaries: list[dict[str, Any]] = [
@@ -158,7 +190,7 @@ def claim_boundaries(
         },
     ]
 
-    if recall["status"] != "valid_same_identity":
+    if recall["status"] not in {"valid_same_identity", "inherited_same_identity_by_sidecar_equivalence"}:
         boundaries.append(
             {
                 "claim": "embedding_recall_improvement",
@@ -182,7 +214,12 @@ def claim_boundaries(
                 f"Hit@{row['budget']} delta {row['delta_count']} cases / {pct(row['delta_rate'])}"
                 for row in qualifying
             ],
-            "caveat": "This claim is about the evaluated embedding plus guideline/query configuration, not guideline taxonomy quality alone.",
+            "caveat": (
+                "This claim is inherited by sidecar equivalence and still depends on the unchanged identity file, "
+                "snapshots, candidate slicing, embedding backend, and ranking parameters."
+                if equivalence["status"] == "valid_consumed_text_equivalence"
+                else "This claim is about the evaluated embedding plus guideline/query configuration, not guideline taxonomy quality alone."
+            ),
         }
     )
     return boundaries
@@ -194,12 +231,30 @@ def build_scorecard(
     group_summary: dict[str, Any],
     judge_summary: dict[str, Any] | None,
     recall_summary: dict[str, Any] | None,
+    recall_equivalence: dict[str, Any] | None = None,
     release_label: str,
     desired_delta_rate: float,
 ) -> dict[str, Any]:
     structural = structural_evidence(group_summary)
     judge = judge_evidence(judge_summary)
     recall = recall_evidence(recall_summary)
+    equivalence = equivalence_evidence(recall_equivalence)
+    if recall["status"] == "valid_same_identity" and equivalence["status"] == "valid_consumed_text_equivalence":
+        recall = dict(recall)
+        recall["status"] = "inherited_same_identity_by_sidecar_equivalence"
+        recall["message"] = (
+            "Recall metrics are inherited from an existing same-identity A/B because the release sidecar is "
+            "equivalent under recall-consumed identity keys and guideline text. This is not a fresh recall run."
+        )
+        recall["equivalence_left_label"] = equivalence.get("left_label")
+        recall["equivalence_right_label"] = equivalence.get("right_label")
+    elif recall["status"] == "valid_same_identity" and equivalence["status"] == "invalid_consumed_text_difference":
+        recall = dict(recall)
+        recall["status"] = "invalid_sidecar_equivalence"
+        recall["message"] = (
+            "A recall comparison was provided, but the requested release sidecar changes recall-consumed "
+            "identity keys or guideline text. Rerun recall for this release before making retrieval claims."
+        )
     return {
         "schema_version": "hcvr_guideline_experiment_scorecard.v1",
         "release_label": release_label,
@@ -215,10 +270,12 @@ def build_scorecard(
         "structural_evidence": structural,
         "judge_evidence": judge,
         "recall_evidence": recall,
+        "recall_equivalence_evidence": equivalence,
         "claim_boundaries": claim_boundaries(
             structural=structural,
             judge=judge,
             recall=recall,
+            equivalence=equivalence,
             desired_delta_rate=desired_delta_rate,
         ),
         "method_policy": [
@@ -235,6 +292,7 @@ def write_markdown(path: Path, scorecard: dict[str, Any], desired_delta_rate: fl
     structural = scorecard["structural_evidence"]
     judge = scorecard["judge_evidence"]
     recall = scorecard["recall_evidence"]
+    equivalence = scorecard["recall_equivalence_evidence"]
     lines = [
         "# HCVR Guideline Experiment Scorecard",
         "",
@@ -267,9 +325,14 @@ def write_markdown(path: Path, scorecard: dict[str, Any], desired_delta_rate: fl
             f"| Embedding recall | {recall['status']} | "
             f"common identities {recall.get('common_count', 0)} | {recall['message']} |"
         ),
+        (
+            f"| Recall sidecar equivalence | {equivalence['status']} | "
+            f"changed consumed texts {equivalence.get('changed_text_count', 'n/a')} | "
+            f"{equivalence['message']} |"
+        ),
         "",
     ]
-    if recall["status"] == "valid_same_identity":
+    if recall["status"] in {"valid_same_identity", "inherited_same_identity_by_sidecar_equivalence"}:
         lines.extend(
             [
                 "## Recall Budget Deltas",
@@ -289,6 +352,21 @@ def write_markdown(path: Path, scorecard: dict[str, Any], desired_delta_rate: fl
         mrr = recall.get("mrr") or {}
         lines.append(f"| MRR | {fmt(mrr.get('left'), 6)} | {fmt(mrr.get('right'), 6)} | {fmt(mrr.get('delta'), 6)} | n/a |")
         lines.append("")
+
+    if equivalence["status"] != "missing":
+        lines.extend(
+            [
+                "## Sidecar Equivalence",
+                "",
+                f"- Compared sidecars: `{equivalence.get('left_label')}` vs `{equivalence.get('right_label')}`",
+                f"- Same key set: {equivalence.get('same_key_set')}",
+                f"- Changed consumed guideline texts: {equivalence.get('changed_text_count')}",
+                f"- Recall-consumed text equivalent: {equivalence.get('recall_consumed_text_equivalent')}",
+                "",
+                "This evidence only covers the guideline text passed into retrieval. It does not cover changes to identities, source snapshots, slicing, embedding service, adapter weights, or ranking parameters.",
+                "",
+            ]
+        )
 
     lines.extend(["## Claim Boundaries", ""])
     for item in scorecard["claim_boundaries"]:
@@ -323,6 +401,7 @@ def main() -> None:
     parser.add_argument("--group-summary", type=Path, required=True)
     parser.add_argument("--judge-summary", type=Path)
     parser.add_argument("--recall-comparison", type=Path)
+    parser.add_argument("--recall-equivalence", type=Path)
     parser.add_argument("--release-label", default="guideline-release")
     parser.add_argument("--desired-delta-rate", type=float, default=0.10)
     parser.add_argument("--output-json", type=Path, required=True)
@@ -334,6 +413,7 @@ def main() -> None:
         group_summary=read_json(args.group_summary),
         judge_summary=read_json(args.judge_summary) if args.judge_summary else None,
         recall_summary=read_json(args.recall_comparison) if args.recall_comparison else None,
+        recall_equivalence=read_json(args.recall_equivalence) if args.recall_equivalence else None,
         release_label=args.release_label,
         desired_delta_rate=args.desired_delta_rate,
     )

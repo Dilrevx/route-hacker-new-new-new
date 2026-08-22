@@ -18,10 +18,10 @@
       "status": "supported_as_advisory_diagnostic"
     },
     {
-      "caveat": "No recall A/B summary was provided; do not make embedding recall claims.",
+      "caveat": "This claim is inherited by sidecar equivalence and still depends on the unchanged identity file, snapshots, candidate slicing, embedding backend, and ranking parameters.",
       "claim": "embedding_recall_improvement",
       "evidence": [],
-      "status": "missing_or_invalid_evidence"
+      "status": "not_supported_at_desired_delta"
     }
   ],
   "judge_evidence": {
@@ -52,13 +52,101 @@
     "Treat recall numbers as evidence for a specific embedding plus guideline/query configuration.",
     "Require same identity sets for paper-facing recall deltas."
   ],
+  "recall_equivalence_evidence": {
+    "changed_text_count": 0,
+    "common_count": 189,
+    "left_count": 189,
+    "left_label": "guideline-v2-r7-evidence-gated-sidecar",
+    "left_sha256": "047e5e0db178ba150a23c9e8f2a2487eda569b20b5ed319a9e32c720038690ad",
+    "message": "The released sidecar has the same recall-consumed identity keys and guideline text as the measured sidecar.",
+    "recall_consumed_text_equivalent": true,
+    "right_count": 189,
+    "right_label": "guideline-v2-r8-release-ready-sidecar",
+    "right_sha256": "a45ead53711756d7c27bbbd692d2b9446cd3ce1bf7417939fdb1e901f8f6abf2",
+    "same_key_set": true,
+    "status": "valid_consumed_text_equivalence"
+  },
   "recall_evidence": {
-    "budgets": [],
-    "common_count": 0,
-    "message": "No recall A/B summary was provided; do not make embedding recall claims.",
-    "same_identity_order": null,
-    "same_identity_set": null,
-    "status": "missing"
+    "budgets": [
+      {
+        "budget": 30,
+        "delta_count": 2,
+        "delta_rate": 0.013986013986013986,
+        "left_count": 47,
+        "left_rate": 0.32867132867132864,
+        "right_count": 45,
+        "right_rate": 0.3146853146853147
+      },
+      {
+        "budget": 50,
+        "delta_count": 2,
+        "delta_rate": 0.013986013986013986,
+        "left_count": 58,
+        "left_rate": 0.40559440559440557,
+        "right_count": 56,
+        "right_rate": 0.3916083916083916
+      },
+      {
+        "budget": 100,
+        "delta_count": 3,
+        "delta_rate": 0.02097902097902098,
+        "left_count": 76,
+        "left_rate": 0.5314685314685315,
+        "right_count": 73,
+        "right_rate": 0.5104895104895105
+      },
+      {
+        "budget": 150,
+        "delta_count": 2,
+        "delta_rate": 0.013986013986013986,
+        "left_count": 85,
+        "left_rate": 0.5944055944055944,
+        "right_count": 83,
+        "right_rate": 0.5804195804195804
+      },
+      {
+        "budget": 200,
+        "delta_count": 3,
+        "delta_rate": 0.02097902097902098,
+        "left_count": 87,
+        "left_rate": 0.6083916083916084,
+        "right_count": 84,
+        "right_rate": 0.5874125874125874
+      },
+      {
+        "budget": 300,
+        "delta_count": 5,
+        "delta_rate": 0.03496503496503497,
+        "left_count": 96,
+        "left_rate": 0.6713286713286714,
+        "right_count": 91,
+        "right_rate": 0.6363636363636364
+      },
+      {
+        "budget": 500,
+        "delta_count": 3,
+        "delta_rate": 0.02097902097902098,
+        "left_count": 106,
+        "left_rate": 0.7412587412587412,
+        "right_count": 103,
+        "right_rate": 0.7202797202797203
+      }
+    ],
+    "common_count": 143,
+    "equivalence_left_label": "guideline-v2-r7-evidence-gated-sidecar",
+    "equivalence_right_label": "guideline-v2-r8-release-ready-sidecar",
+    "left_label": "r7-evidence-gated-full143-p3c64",
+    "message": "Recall metrics are inherited from an existing same-identity A/B because the release sidecar is equivalent under recall-consumed identity keys and guideline text. This is not a fresh recall run.",
+    "mrr": {
+      "delta": 0.008536312417000924,
+      "left": 0.09706409187715234,
+      "right": 0.08852777946015142
+    },
+    "primary_budget": 100,
+    "right_label": "old-p3c64-full143-baseline",
+    "same_identity_order": true,
+    "same_identity_set": true,
+    "status": "inherited_same_identity_by_sidecar_equivalence"
   },
   "release": {
     "active_attribution_count": 360,

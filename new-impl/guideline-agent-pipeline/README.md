@@ -529,11 +529,17 @@ and template/expression groups.
 
 The r8 experiment scorecard is committed under
 `results/guideline-v2-r8-release-ready-scorecard-20260823/`. It records the
-same release and judge evidence, and intentionally marks embedding recall
-improvement as `missing_or_invalid_evidence` because no fresh same-identity r8
-recall comparison has been run. Use this scorecard as the paper-facing handoff
-for the current guideline-quality state; run a new same-identity recall A/B
-before claiming that r8 improves retrieval.
+same release and judge evidence, plus the sidecar-equivalence check under
+`results/guideline-v2-r8-vs-r7-sidecar-equivalence-20260823/`. The r8 sidecar
+file hash differs from r7, but the actual `identity_key -> guideline text`
+mapping consumed by recall is identical: 189 shared keys and 0 changed
+consumed texts. Therefore the scorecard marks recall evidence as
+`inherited_same_identity_by_sidecar_equivalence`: r8 inherits the already
+measured r7 same-identity P3C64 recall table under unchanged identity file,
+snapshots, slicing, embedding backend, adapter weights, and ranking parameters.
+This is not a fresh r8 recall run. A fresh same-identity recall A/B is still
+required if any consumed sidecar text, identity set, source snapshot, slicing
+logic, embedding service, adapter state, or ranking parameter changes.
 
 Build a cautious experiment scorecard when reporting a guideline iteration:
 
@@ -563,6 +569,40 @@ three facts separate:
 Use the scorecard as the handoff artifact for paper discussion. It is not part
 of online retrieval, does not call a model, and must not be used to introduce
 keyword routing or hidden per-case fixes.
+
+When a release changes only review metadata or release boundary files but keeps
+the recall-consumed sidecar text unchanged, generate an explicit equivalence
+artifact instead of rerunning a full 143-case recall job:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/compare_guideline_sidecars.py \
+  --left /path/to/measured-release/guideline_overrides.jsonl \
+  --right /path/to/current-release/guideline_overrides.jsonl \
+  --left-label measured-sidecar \
+  --right-label current-sidecar \
+  --output-json /path/to/sidecar-equivalence/summary.json \
+  --output-md /path/to/sidecar-equivalence/README.md
+```
+
+Then pass both the measured same-identity recall comparison and the equivalence
+summary into the scorecard:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/summarize_guideline_experiment.py \
+  --release-summary /path/to/current-release/summary.json \
+  --group-summary /path/to/current-group-eval/summary.json \
+  --judge-summary /path/to/current-judge-summary/summary.json \
+  --recall-comparison /path/to/measured-same-identity-recall-comparison.json \
+  --recall-equivalence /path/to/sidecar-equivalence/summary.json \
+  --release-label current-release \
+  --output-json /path/to/scorecard.json \
+  --output-md /path/to/README.md
+```
+
+Only use this inheritance path when `recall_consumed_text_equivalent=true` and
+the measured recall comparison itself has `same_identity_set=true`. It proves
+query-side equivalence for the recall runner; it does not prove semantic
+guideline quality and does not replace TraeX/human review.
 
 To inspect whether bad cases look like guideline-quality failures or
 embedding/candidate-recall failures, join a guideline group report with a recall
