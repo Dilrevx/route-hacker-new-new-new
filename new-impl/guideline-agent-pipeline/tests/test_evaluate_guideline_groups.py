@@ -254,4 +254,8 @@ def test_write_judge_pack_for_flagged_groups(tmp_path: Path):
     assert [row["guideline_id"] for row in rows] == ["gl_mech_0001"]
     assert (judge_dir / "prompts" / "gl_mech_0001.md").is_file()
     assert "Return JSON only" in (judge_dir / "prompts" / "gl_mech_0001.md").read_text(encoding="utf-8")
-    assert (judge_dir / "run_traex_judge.sh").is_file()
+    runner = (judge_dir / "run_traex_judge.sh").read_text(encoding="utf-8")
+    assert "TRAE_JUDGE_CONCURRENCY" in runner
+    assert 'OUT_DIR="${1:-judge_outputs}"' in runner
+    assert 'xargs -n 1 -P "$CONCURRENCY"' in runner
+    assert runner.index('OUT_DIR="${1:-judge_outputs}"') < runner.index("export OUT_DIR")

@@ -1,0 +1,21 @@
+{
+  "decision": "split",
+  "coherence_score": 0.68,
+  "coverage_score": 0.72,
+  "actionability_score": 0.74,
+  "retrieval_query_quality": 0.71,
+  "main_issue": "Most cases fit archive-entry path traversal caused by resolving an untrusted entry name outside the extraction root, but CVE-2023-37460 is a distinct symlink-following overwrite mechanism: lexical or canonical containment can succeed while a previously created archive-controlled symlink redirects a later write.",
+  "suggested_guideline": "Archive extraction path traversal: trace archive entry names into destination-path resolution and file, directory, link, or metadata operations. Report flows where an entry name can resolve outside the extraction root because the implementation fails to normalize and canonicalize the candidate destination, or fails to verify that the resolved destination remains contained by the intended extraction directory before performing the effect. The fix should resolve the entry against a canonical extraction root and reject destinations outside that root before creating parents, links, files, or applying metadata.",
+  "split_suggestions": [
+    "Archive entry traversal: untrusted ZIP/TAR/JAR/APK entry names containing traversal or separator variants resolve outside the extraction root because containment is absent or incorrectly implemented.",
+    "Archive symlink overwrite: an archive-created or preexisting symbolic link remains within the lexical extraction path, but a later regular-file extraction follows that link and writes outside the intended destination."
+  ],
+  "evidence_notes": [
+    "CVE-2022-4065: TestNG constructs new File(tempDir, jeName) from a JAR entry and copies it without validating the normalized destination, directly supporting the traversal submechanism.",
+    "CVE-2018-1002200: Plexus resolves entryName with FileUtils.resolveFile(dir, entryName), then creates or writes the resolved target without containment validation, directly supporting the traversal submechanism.",
+    "CVE-2023-37460: Plexus reportedly performs canonical containment checking but does not prevent writing to an existing symbolic-link target; this requires a separate link-resolution and write-target integrity rule.",
+    "CVE-2022-25842, CVE-2022-39367, and CVE-2022-26049 have only review-entry provenance in the payload, not source-level mechanism evidence; they cannot independently substantiate the proposed canonical-prefix formulation.",
+    "CVE-2022-4494 and CVE-2022-4594 have CWE-22 labels and extraction-adjacent anchors but no trace evidence here; validate their source-to-sink paths before retaining them in either subgroup.",
+    "The current wording overgeneralizes beyond extraction and mixes path containment with resource, principal, and object binding, which weakens the audit query for this otherwise archive-focused group."
+  ]
+}

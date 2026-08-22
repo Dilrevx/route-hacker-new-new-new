@@ -1,0 +1,15 @@
+{
+  "decision": "needs_evidence",
+  "coherence_score": 0.58,
+  "coverage_score": 0.5,
+  "actionability_score": 0.88,
+  "retrieval_query_quality": 0.82,
+  "main_issue": "The Axis case directly supports an attacker-controlled JNDI name reaching lookup through an incomplete scheme denylist, but the DataEase case provides only patch-backed retrieval provenance and no source, sink, guard, or exploit-path evidence tying it to JNDI or remote lookup.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "CVE-2023-51441: environment[jndiName] is filtered by an incomplete protocol denylist and then passed to InitialContext.lookup(name); omitted IIOP/CORBANAME schemes support the stated untrusted-JNDI-target mechanism.",
+    "CVE-2025-58045: supplied evidence identifies Impala.getJdbc and Db2.getJdbc as review-entry spans, but does not establish attacker control, JDBC URL construction, remote connection behavior, or any JNDI/naming-context sink.",
+    "The cluster summary mixes JDBC parameter injection, JNDI scheme injection, and SQL string concatenation. These are distinct mechanisms and cannot serve as supporting evidence for this JNDI-focused guideline without per-case traces."
+  ]
+}
