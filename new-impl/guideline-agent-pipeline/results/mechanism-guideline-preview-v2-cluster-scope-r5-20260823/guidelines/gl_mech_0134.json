@@ -1,0 +1,54 @@
+{
+  "cluster_summary": "This cluster covers vulnerabilities where error pages incorporate user-controllable data (error messages, stack traces, query parameters) into HTML responses without proper output encoding, leading to cross-site scripting or information disclosure, as well as a memory exhaustion issue from unbounded caching of attacker-influenced error pages.",
+  "created_at": "2026-08-22T18:31:03+00:00",
+  "cve_ids": [
+    "CVE-2011-4344"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0024__mech_ssrf_webhook_url_fetch",
+  "guideline_id": "gl_mech_0134",
+  "guideline_text": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets.",
+  "mechanism": {
+    "aliases": [
+      "webhook SSRF",
+      "callback URL fetch",
+      "user controlled URL fetch",
+      "outbound HTTP client SSRF"
+    ],
+    "family": "ssrf",
+    "mechanism_id": "mech_ssrf_webhook_url_fetch",
+    "missing_guard": "scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request",
+    "name": "attacker-controlled webhook or callback URL fetch",
+    "sink_shape": "outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers",
+    "source_shape": "attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations",
+    "typical_fix": "enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2011-4344",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    24
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 24,
+      "fix_strategy": "Apply HTML escaping to the data (e.g., using StringEscapeUtils.escapeHtml4 or HtmlEscapers) before inserting it into the HTML template.",
+      "members": [
+        "CVE-2011-4344"
+      ],
+      "name": "Missing HTML escaping of user-controllable error content leading to XSS",
+      "root_cause": "User-controlled data (error messages or exception stack traces) is embedded directly into an HTML response without HTML entity encoding, allowing injection of arbitrary HTML/JavaScript."
+    }
+  ],
+  "tags": [
+    "ssrf",
+    "mech_ssrf_webhook_url_fetch",
+    "webhook SSRF",
+    "callback URL fetch",
+    "user controlled URL fetch",
+    "outbound HTTP client SSRF"
+  ]
+}

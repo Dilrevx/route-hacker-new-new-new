@@ -1,0 +1,56 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where untrusted input (serialized data, JSON, configuration) specifies a class name that is then loaded or instantiated without sufficient validation—either an allowlist or a comprehensive blocklist. Most members involve incomplete deny-lists in polymorphic deserialization frameworks, allowing instantiation of dangerous gadget classes. A few members involve missing allowlists in reflective instantiation or resource exhaustion from recursive collection structures.",
+  "created_at": "2026-08-22T18:31:03+00:00",
+  "cve_ids": [
+    "CVE-2021-43859"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0009__pending_mech_cluster_9_resource_exhaustion_via_recursive_collection_references_during_deseria",
+  "guideline_id": "gl_mech_0046",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Monitor cumulative time when adding elements during deserialization; abort if exceeds threshold..",
+  "mechanism": {
+    "aliases": [
+      "set",
+      "complexity",
+      "hashmap",
+      "throw",
+      "computation",
+      "enforced"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_9_resource_exhaustion_via_recursive_collection_references_during_deseria",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Resource exhaustion via recursive collection references during deserialization",
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Monitor cumulative time when adding elements during deserialization; abort if exceeds threshold."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2021-43859",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    9
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 9,
+      "fix_strategy": "Monitor cumulative time when adding elements during deserialization; abort if exceeds threshold.",
+      "members": [
+        "CVE-2021-43859"
+      ],
+      "name": "Resource exhaustion via recursive collection references during deserialization",
+      "root_cause": "When deserializing untrusted input, the library constructs collection objects whose hashCode method recursively traverses references. An attacker can inject self-referencing structures causing exponential time complexity without any time or depth bound."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_9_resource_exhaustion_via_recursive_collection_references_during_deseria",
+    "set",
+    "complexity",
+    "hashmap",
+    "throw"
+  ]
+}

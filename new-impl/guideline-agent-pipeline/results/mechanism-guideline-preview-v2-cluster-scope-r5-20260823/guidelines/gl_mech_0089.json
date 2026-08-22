@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "This cluster contains CVEs where input parsing or deserialization code lacks proper termination conditions or recursion depth limits, leading to infinite loops or stack exhaustion from crafted input. The vulnerabilities arise from assumptions about input structure (sequential indices, shallow nesting, single wrapper arrays) that are not enforced, allowing attackers to cause resource exhaustion.",
+  "created_at": "2026-08-22T18:31:03+00:00",
+  "cve_ids": [
+    "CVE-2022-42003",
+    "CVE-2022-42004"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0017__mech_deserialization_untrusted_type_graph",
+  "guideline_id": "gl_mech_0089",
+  "guideline_text": "Trace untrusted serialized bytes, object streams, pickles, marshaled payloads, or type metadata into deserializers that instantiate classes, reconstruct object graphs, or invoke callbacks during object creation. Report code paths where allowed classes, object types, and construction side effects are not constrained before deserialization. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should use type allowlists, safe codecs, signature checks, or data-only formats instead of general object deserialization.",
+  "mechanism": {
+    "aliases": [
+      "unsafe deserialization",
+      "ObjectInputStream.readObject",
+      "pickle load",
+      "marshal load",
+      "serializer type metadata"
+    ],
+    "family": "deserialization",
+    "mechanism_id": "mech_deserialization_untrusted_type_graph",
+    "missing_guard": "allowed classes, object types, and construction side effects are not constrained before deserialization",
+    "name": "untrusted deserialization with attacker-controlled type graph",
+    "sink_shape": "deserializers that instantiate classes, reconstruct object graphs, or invoke callbacks during object creation",
+    "source_shape": "untrusted serialized bytes, object streams, pickles, marshaled payloads, or type metadata",
+    "typical_fix": "use type allowlists, safe codecs, signature checks, or data-only formats instead of general object deserialization"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2022-42003",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    17
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 17,
+      "fix_strategy": "Add a configurable depth limit check before recursing into a new nesting level; throw an exception if limit is exceeded. For array unwrapping, detect consecutive START_ARRAY tokens and reject.",
+      "members": [
+        "CVE-2022-42004",
+        "CVE-2022-42003"
+      ],
+      "name": "Missing recursion depth limit in parsing/deserialization",
+      "root_cause": "The code does not enforce a maximum nesting depth when recursively processing nested structures (arrays, objects), allowing attacker-controlled input with deep nesting to cause stack overflow."
+    }
+  ],
+  "tags": [
+    "deserialization",
+    "mech_deserialization_untrusted_type_graph",
+    "unsafe deserialization",
+    "ObjectInputStream.readObject",
+    "pickle load",
+    "marshal load"
+  ]
+}

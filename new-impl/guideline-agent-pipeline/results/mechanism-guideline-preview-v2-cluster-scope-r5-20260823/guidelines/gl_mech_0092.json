@@ -1,0 +1,58 @@
+{
+  "cluster_summary": "This cluster contains CVEs where input parsing or deserialization code lacks proper termination conditions or recursion depth limits, leading to infinite loops or stack exhaustion from crafted input. The vulnerabilities arise from assumptions about input structure (sequential indices, shallow nesting, single wrapper arrays) that are not enforced, allowing attackers to cause resource exhaustion.",
+  "created_at": "2026-08-22T18:31:03+00:00",
+  "cve_ids": [
+    "CVE-2025-53864",
+    "CVE-2026-29062"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0017__pending_mech_cluster_17_missing_recursion_depth_limit_in_parsing_deserialization",
+  "guideline_id": "gl_mech_0092",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should Add a configurable depth limit check before recursing into a new nesting level; throw an exception if limit is exceeded. For array unwrapping, detect consecutive START_ARRAY tokens and reject..",
+  "mechanism": {
+    "aliases": [
+      "set",
+      "throw",
+      "createchildobjectcontext",
+      "beyond",
+      "recursive-descent",
+      "exceeded"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_17_missing_recursion_depth_limit_in_parsing_deserialization",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing recursion depth limit in parsing/deserialization",
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Add a configurable depth limit check before recursing into a new nesting level; throw an exception if limit is exceeded. For array unwrapping, detect consecutive START_ARRAY tokens and reject."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2025-53864",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    17
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 17,
+      "fix_strategy": "Add a configurable depth limit check before recursing into a new nesting level; throw an exception if limit is exceeded. For array unwrapping, detect consecutive START_ARRAY tokens and reject.",
+      "members": [
+        "CVE-2026-29062",
+        "CVE-2025-53864"
+      ],
+      "name": "Missing recursion depth limit in parsing/deserialization",
+      "root_cause": "The code does not enforce a maximum nesting depth when recursively processing nested structures (arrays, objects), allowing attacker-controlled input with deep nesting to cause stack overflow."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_17_missing_recursion_depth_limit_in_parsing_deserialization",
+    "set",
+    "throw",
+    "createchildobjectcontext",
+    "beyond"
+  ]
+}

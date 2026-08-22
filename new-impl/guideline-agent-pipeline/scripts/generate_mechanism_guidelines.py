@@ -484,7 +484,7 @@ def build_guideline_text(mechanism: Mechanism, member_count: int) -> str:
     return (
         f"Trace {mechanism.source_shape} into {mechanism.sink_shape}. "
         f"Report code paths where {mechanism.missing_guard}. "
-        f"Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. "
+        f"Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. "
         f"Treat this as a reusable mechanism-level pattern derived from {member_count} historical CVE example(s), not as a project-specific signature. "
         f"A safe implementation should {mechanism.typical_fix}."
     )
@@ -571,6 +571,7 @@ def write_outputs(
     clustering: dict[str, Any],
     case_lookup: dict[str, list[dict[str, Any]]],
     group_scope: str,
+    include_pending_overrides: bool = False,
 ) -> dict[str, Any]:
     if output_dir.exists() and any(output_dir.iterdir()):
         raise FileExistsError(f"refusing to overwrite non-empty output directory: {output_dir}")
@@ -596,6 +597,7 @@ def write_outputs(
         )
         guideline_file = guidelines_dir / f"{guideline_id}.json"
         write_json(guideline_file, payload)
+        is_pending = mechanism.family == "pending_review" or mechanism.mechanism_id.startswith("pending_mech_")
         guideline_rows.append(
             {
                 "guideline_id": guideline_id,
@@ -610,6 +612,8 @@ def write_outputs(
                 "guideline_preview": preview_text(payload["guideline_text"]),
             }
         )
+        if is_pending and not include_pending_overrides:
+            continue
         for cve_id in payload["cve_ids"]:
             for case in case_lookup.get(cve_id, []):
                 key = str(case.get("identity_key") or case.get("new_unified_case_id") or "")
@@ -653,6 +657,7 @@ def write_outputs(
         "pending_review_count": pending,
         "guideline_count": len(guideline_rows),
         "override_count": len(override_rows),
+        "pending_overrides_included": include_pending_overrides,
         "files": {
             "mechanism_candidates": "mechanism_candidates.jsonl",
             "guideline_overrides": "guideline_overrides.jsonl" if override_rows else None,
@@ -688,6 +693,7 @@ def write_readme(
         f"- Active lexicon attributions: {summary['active_attribution_count']}",
         f"- Pending review attributions: {summary['pending_review_count']}",
         f"- Recall sidecar rows: {summary['override_count']}",
+        f"- Pending review included in recall sidecar: {summary['pending_overrides_included']}",
         "",
         "## Guideline Preview",
         "",
@@ -739,6 +745,7 @@ def generate(args: argparse.Namespace) -> dict[str, Any]:
         clustering=clustering,
         case_lookup=load_case_lookup(args.cases_file),
         group_scope=args.group_scope,
+        include_pending_overrides=args.include_pending_overrides,
     )
 
 
@@ -755,6 +762,15 @@ def main() -> None:
     parser.add_argument("--cases-file", type=Path, help="Optional HCVR case JSONL used to emit guideline_overrides.jsonl.")
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--min-score", type=float, default=2.0, help="Minimum lexicon alignment score for active attribution.")
+    parser.add_argument(
+        "--include-pending-overrides",
+        action="store_true",
+        help=(
+            "Also emit pending_review guidelines into guideline_overrides.jsonl. "
+            "By default, pending groups remain in the release for review but are "
+            "excluded from recall sidecars to avoid query pollution."
+        ),
+    )
     parser.add_argument(
         "--group-scope",
         choices=GROUP_SCOPES,

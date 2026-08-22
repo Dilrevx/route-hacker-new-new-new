@@ -1,0 +1,54 @@
+{
+  "cluster_summary": "A collection of authentication and authorization vulnerabilities where tokens or credentials are not properly validated, either cryptographically, temporally, or through binding checks, leading to bypass, impersonation, or unauthorized access.",
+  "created_at": "2026-08-22T18:31:03+00:00",
+  "cve_ids": [
+    "CVE-2023-25558"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0023__mech_open_redirect_unsafe_uri_scheme",
+  "guideline_id": "gl_mech_0130",
+  "guideline_text": "Trace attacker-controlled redirect targets, callback URLs, return URLs, OAuth redirect_uri values, or browser navigation destinations into redirect responses, Location headers, OAuth/OIDC/SAML redirect validation, or browser-followed navigation targets. Report code paths where the redirect target is accepted without constraining the final scheme and destination to trusted browser-safe values. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should validate redirect targets with an explicit safe-scheme and destination allowlist after decoding and normalization.",
+  "mechanism": {
+    "aliases": [
+      "unsafe redirect URI scheme",
+      "javascript URI redirect",
+      "data URI redirect",
+      "redirect_uri scheme bypass"
+    ],
+    "family": "open_redirect",
+    "mechanism_id": "mech_open_redirect_unsafe_uri_scheme",
+    "missing_guard": "the redirect target is accepted without constraining the final scheme and destination to trusted browser-safe values",
+    "name": "open redirect through unsafe URI scheme validation",
+    "sink_shape": "redirect responses, Location headers, OAuth/OIDC/SAML redirect validation, or browser-followed navigation targets",
+    "source_shape": "attacker-controlled redirect targets, callback URLs, return URLs, OAuth redirect_uri values, or browser navigation destinations",
+    "typical_fix": "validate redirect targets with an explicit safe-scheme and destination allowlist after decoding and normalization"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2023-25558",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    23
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 23,
+      "fix_strategy": "Generate and verify state/nonce parameters and implement PKCE with code verifier and challenge.",
+      "members": [
+        "CVE-2023-25558"
+      ],
+      "name": "Missing session binding in OAuth/OIDC flows",
+      "root_cause": "The OAuth/OIDC implementation does not enforce state, nonce, or PKCE parameters that bind the authorization request to the token exchange, allowing code injection, CSRF, or replay."
+    }
+  ],
+  "tags": [
+    "open_redirect",
+    "mech_open_redirect_unsafe_uri_scheme",
+    "unsafe redirect URI scheme",
+    "javascript URI redirect",
+    "data URI redirect",
+    "redirect_uri scheme bypass"
+  ]
+}

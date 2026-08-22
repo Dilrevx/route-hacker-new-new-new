@@ -147,6 +147,137 @@ def test_cli_writes_guidelines_and_case_sidecar(tmp_path: Path):
     assert "webhook" not in jndi_guideline.lower()
 
 
+def test_guideline_text_uses_mechanism_guard_without_generic_binding_boilerplate():
+    module = load_module()
+    authz = module.Mechanism(
+        mechanism_id="mech_object_owner_scope_missing_authz",
+        name="missing object-owner or tenant-scope authorization",
+        family="authorization",
+        aliases=(),
+        keywords=(),
+        source_shape="attacker-selected object IDs",
+        sink_shape="sensitive resource mutations",
+        missing_guard="the authorization decision is not bound to the exact resource being mutated",
+        typical_fix="bind the checked resource identity to the mutation",
+    )
+    sql = module.Mechanism(
+        mechanism_id="mech_sql_dynamic_query",
+        name="dynamic SQL construction from untrusted values",
+        family="injection",
+        aliases=(),
+        keywords=(),
+        source_shape="attacker-controlled query fields",
+        sink_shape="SQL statement construction",
+        missing_guard="values are concatenated into SQL syntax before parameter binding",
+        typical_fix="use bound parameters or strict allowlists for structural SQL fragments",
+    )
+
+    authz_text = module.build_guideline_text(authz, 2)
+    sql_text = module.build_guideline_text(sql, 2)
+
+    assert "same source-to-sink path" in authz_text
+    assert "bound to the exact resource" in authz_text
+    assert "same resource, principal, destination, or object" not in authz_text
+    assert "same resource, principal, destination, or object" not in sql_text
+    assert "bound parameters" in sql_text
+
+
+def test_pending_review_guidelines_are_not_recall_overrides_by_default(tmp_path: Path):
+    module = load_module()
+    item = module.WorkItem(
+        cluster_id=77,
+        cluster_name="Unclassified mechanism",
+        cluster_summary="A narrow issue that does not match the current mechanism lexicon.",
+        sub_pattern_name="Novel parser state confusion",
+        sub_pattern_root_cause="Parser state is confused after a rare transition.",
+        sub_pattern_fix_strategy="Validate the parser state before the transition.",
+        members=("CVE-2099-7701",),
+        source_kind="sub_pattern",
+    )
+    mechanism = module.pending_mechanism(item, "novel parser state confusion")
+    case_lookup = {
+        "CVE-2099-7701": [
+            {
+                "identity_key": "example__project::CVE-2099-7701",
+                "new_unified_case_id": "case::pending",
+                "vulnerability": {"id": "CVE-2099-7701"},
+            }
+        ]
+    }
+    output = tmp_path / "release"
+
+    summary = module.write_outputs(
+        output_dir=output,
+        candidates=[
+            {
+                "status": "pending_review",
+                "mechanism_id": mechanism.mechanism_id,
+            }
+        ],
+        grouped={"cluster_0077__pending": [item]},
+        mechanisms_by_group={"cluster_0077__pending": mechanism},
+        clustering={"method": "test"},
+        case_lookup=case_lookup,
+        group_scope="cluster-mechanism",
+    )
+
+    assert summary["guideline_count"] == 1
+    assert summary["pending_review_count"] == 1
+    assert summary["override_count"] == 0
+    assert summary["pending_overrides_included"] is False
+    assert (output / "guidelines" / "gl_mech_0001.json").is_file()
+    assert not (output / "guideline_overrides.jsonl").exists()
+
+
+def test_pending_review_overrides_can_be_included_for_ablation(tmp_path: Path):
+    module = load_module()
+    item = module.WorkItem(
+        cluster_id=78,
+        cluster_name="Unclassified mechanism",
+        cluster_summary="A narrow issue that does not match the current mechanism lexicon.",
+        sub_pattern_name="Novel parser state confusion",
+        sub_pattern_root_cause="Parser state is confused after a rare transition.",
+        sub_pattern_fix_strategy="Validate the parser state before the transition.",
+        members=("CVE-2099-7801",),
+        source_kind="sub_pattern",
+    )
+    mechanism = module.pending_mechanism(item, "novel parser state confusion")
+    case_lookup = {
+        "CVE-2099-7801": [
+            {
+                "identity_key": "example__project::CVE-2099-7801",
+                "new_unified_case_id": "case::pending",
+                "vulnerability": {"id": "CVE-2099-7801"},
+            }
+        ]
+    }
+    output = tmp_path / "release"
+
+    summary = module.write_outputs(
+        output_dir=output,
+        candidates=[
+            {
+                "status": "pending_review",
+                "mechanism_id": mechanism.mechanism_id,
+            }
+        ],
+        grouped={"cluster_0078__pending": [item]},
+        mechanisms_by_group={"cluster_0078__pending": mechanism},
+        clustering={"method": "test"},
+        case_lookup=case_lookup,
+        group_scope="cluster-mechanism",
+        include_pending_overrides=True,
+    )
+
+    assert summary["override_count"] == 1
+    assert summary["pending_overrides_included"] is True
+    overrides = [
+        json.loads(line)
+        for line in (output / "guideline_overrides.jsonl").read_text(encoding="utf-8").splitlines()
+    ]
+    assert overrides[0]["identity_key"] == "example__project::CVE-2099-7801"
+
+
 def test_sub_pattern_evidence_takes_precedence_over_broad_cluster_summary():
     module = load_module()
     lexicon = module.load_lexicon(LEXICON)

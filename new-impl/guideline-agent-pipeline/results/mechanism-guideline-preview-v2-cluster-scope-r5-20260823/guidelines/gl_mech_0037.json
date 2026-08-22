@@ -1,0 +1,58 @@
+{
+  "cluster_summary": "Multiple vulnerabilities where sensitive credentials, tokens, encryption keys, or secrets are written to logs in plaintext due to lack of sanitization, masking, or redaction. The sensitive data flows directly into log sinks via string concatenation, serialized structured output, exception messages, or incomplete redaction configurations, leading to persistent leakage in log files.",
+  "created_at": "2026-08-22T18:31:03+00:00",
+  "cve_ids": [
+    "CVE-2024-11165",
+    "CVE-2025-48955"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0008__pending_mech_cluster_8_direct_string_interpolation_of_sensitive_values_without_redaction",
+  "guideline_id": "gl_mech_0037",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should Remove the sensitive value from the log message or apply regex-based redaction to replace secrets with a constant placeholder before logging..",
+  "mechanism": {
+    "aliases": [
+      "logging",
+      "sig",
+      "key",
+      "plaintext",
+      "persist",
+      "bufferedreader"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_8_direct_string_interpolation_of_sensitive_values_without_redaction",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Direct string interpolation of sensitive values without redaction",
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Remove the sensitive value from the log message or apply regex-based redaction to replace secrets with a constant placeholder before logging."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2024-11165",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    8
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 8,
+      "fix_strategy": "Remove the sensitive value from the log message or apply regex-based redaction to replace secrets with a constant placeholder before logging.",
+      "members": [
+        "CVE-2025-48955",
+        "CVE-2024-11165"
+      ],
+      "name": "Direct string interpolation of sensitive values without redaction",
+      "root_cause": "The code concatenates or logs sensitive strings (e.g., access tokens, secret keys, command outputs) directly into log messages without any masking or placeholder substitution, assuming the log channel is safe."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_8_direct_string_interpolation_of_sensitive_values_without_redaction",
+    "logging",
+    "sig",
+    "key",
+    "plaintext"
+  ]
+}

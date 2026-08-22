@@ -1,0 +1,68 @@
+{
+  "cluster_summary": "The cluster involves vulnerabilities where temporary files or directories are created with default permissions that are world-readable, or where directory creation uses a non-atomic sequence enabling TOCTOU races. The root cause is using older Java APIs (File.createTempFile, File.mkdir) or non-temporary file creation APIs without explicitly setting restrictive owner-only permissions. The fix strategies involve switching to atomic APIs like Files.createTempDirectory/Files.createTempFile with owner-only permissions, explicitly setting permissions, or checking return values of permission-setting calls.",
+  "created_at": "2026-08-22T18:31:02+00:00",
+  "cve_ids": [
+    "CVE-2021-21290",
+    "CVE-2021-21364",
+    "CVE-2022-24913",
+    "CVE-2025-24790"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0001__mech_object_owner_scope_missing_authz",
+  "guideline_id": "gl_mech_0003",
+  "guideline_text": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where the authorization decision is not bound to both the current principal and the exact resource or tenant being affected. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 4 historical CVE example(s), not as a project-specific signature. A safe implementation should check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation.",
+  "mechanism": {
+    "aliases": [
+      "object ownership authorization",
+      "tenant scope check",
+      "IDOR",
+      "resource scoped authorization"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_object_owner_scope_missing_authz",
+    "missing_guard": "the authorization decision is not bound to both the current principal and the exact resource or tenant being affected",
+    "name": "missing object-owner or tenant-scope authorization",
+    "sink_shape": "sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource",
+    "source_shape": "attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets",
+    "typical_fix": "check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2021-21290",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    1
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 1,
+      "fix_strategy": "Replace File.createTempFile() with java.nio.file.Files.createTempFile(), which defaults to owner-only (0600) permissions, or immediately call setReadable/setWritable with owner-only flags after creation, optionally checking return values.",
+      "members": [
+        "CVE-2022-24913",
+        "CVE-2021-21364",
+        "CVE-2021-21290"
+      ],
+      "name": "Insecure default permissions on temporary files created with File.createTempFile",
+      "root_cause": "The code uses java.io.File.createTempFile() which on Unix-like systems creates temporary files with default umask-based permissions (often world-readable). No subsequent permission hardening is applied, leaving sensitive spooled data accessible to other local users."
+    },
+    {
+      "cluster_id": 1,
+      "fix_strategy": "Pass an explicit PosixFilePermissions attribute set (e.g., OWNER_READ, OWNER_WRITE) to Files.createFile(), or open the file with a restrictive permission mask before writing; also validate permissions on subsequent reads.",
+      "members": [
+        "CVE-2025-24790"
+      ],
+      "name": "Sensitive file creation without explicit restrictive permissions using non-temporary APIs",
+      "root_cause": "Sensitive data (e.g., credential caches, token files) is written to a file created via Files.createFile() or Credentials.writeTokenStorageFile() without specifying explicit file permissions. The file inherits the process umask, typically resulting in world-readable permissions."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_object_owner_scope_missing_authz",
+    "object ownership authorization",
+    "tenant scope check",
+    "IDOR",
+    "resource scoped authorization"
+  ]
+}

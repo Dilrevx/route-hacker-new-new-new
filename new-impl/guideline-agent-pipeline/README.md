@@ -211,6 +211,11 @@ guard, and typical fix text. Unknown work items are written as
 LLM reviewer that proposes new entries from those pending rows. The online
 recall runner consumes the released `guideline_overrides.jsonl` sidecar and
 does not infer mechanism words from advisory regexes.
+By default, `pending_review` guidelines stay in the release for human and
+LLM-as-judge review but are excluded from `guideline_overrides.jsonl`, because
+they are not yet stable retrieval queries. Use `--include-pending-overrides`
+only for an explicit ablation that measures the cost of letting unresolved
+guidelines enter recall.
 
 Committed preview outputs:
 
@@ -253,7 +258,7 @@ offline list-level fusion policy before full paper-eval replacement.
 
 ## Guideline Quality Evaluation
 
-Evaluate guideline generation on two separate axes:
+Evaluate guideline generation on three separate axes:
 
 ```text
 guideline release
@@ -268,6 +273,9 @@ actionability fields. These fields catch broad or incomplete guideline groups,
 but they are not the definition of a good mechanism. A valid mechanism can cut
 across multiple CWE labels, and a high-purity label bucket can still be too
 generic to guide audit.
+Do not tune the generator to satisfy these flags mechanically. Treat them as a
+queue for semantic review, then decide from source/sink shape, missing guard,
+exploit precondition, and safe fix evidence.
 
 Run the structural checker and emit a TraeX judge pack:
 
@@ -322,6 +330,40 @@ This keeps the online recall path clean: no runtime regex fallback and no
 hidden label-based routing. Judge output is advisory evidence for the next
 guideline iteration; retrieval claims still require same-identity embedding
 recall runs.
+
+The r4 TraeX judge run over 20 flagged guideline groups is committed under
+`results/guideline-v2-r4-group-eval-20260823/llm_judge_pack/judge_summary/`.
+It parsed all 20 outputs with no missing or invalid files, but returned
+`accept=0`, `revise=8`, `split=7`, and `needs_evidence=5`. The dominant
+failures were mechanism/evidence mismatch, overly generic guideline wording,
+and pending groups entering retrieval as if they were stable mechanisms. The
+next generation policy is therefore:
+
+1. Keep mechanism naming in offline release artifacts and sidecars; do not add
+   online regex fallback or hidden label routing.
+2. Let mechanism lexicon fields carry the specific guard semantics instead of
+   appending a universal authorization/resource-binding sentence to every
+   guideline.
+3. Keep `pending_review` groups visible for semantic review, but exclude them
+   from the default recall sidecar until the mechanism evidence is sufficient.
+
+The r5 policy removes the universal resource/principal/destination/object
+binding boilerplate and excludes `pending_review` guidelines from the default
+recall sidecar. The generated release is committed under
+`results/mechanism-guideline-preview-v2-cluster-scope-r5-20260823/`: 202
+guidelines, 237 active attributions, 89 pending-review attributions, 153 recall
+sidecar rows, and no pending-review sidecar rows by default. Its group eval is
+under `results/guideline-v2-r5-group-eval-20260823/`: 68 groups join to unified
+case metadata, 134 are source-only historical groups, weighted HCVR purity is
+0.7568, and weighted CWE purity is 0.8676. The r5 TraeX judge run parsed all
+20 outputs with no missing or invalid files and returned `accept=0`,
+`revise=8`, `split=4`, `needs_evidence=8`, and low-score `18/20`. Treat this
+as evidence that r5 cleaned the release policy but did not solve guideline
+quality. The remaining high-priority issues are wrong mechanism attribution,
+insufficient case evidence, and pending groups that still need specific
+source/sink/guard wording before they become stable recall queries. Do not
+optimize the generator toward fixed judge keywords or structural flags; use the
+judge notes as reading order for the next evidence-driven mechanism split.
 
 For model A/B evaluation, always pass the same `--identity-file` to every run.
 `--selection all --limit N` without `--identity-file` selects the first N

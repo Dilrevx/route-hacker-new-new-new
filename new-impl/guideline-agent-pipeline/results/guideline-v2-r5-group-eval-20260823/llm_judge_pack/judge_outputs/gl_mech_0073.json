@@ -1,0 +1,16 @@
+{
+  "decision": "revise",
+  "coherence_score": 0.78,
+  "coverage_score": 0.58,
+  "actionability_score": 0.24,
+  "retrieval_query_quality": 0.32,
+  "main_issue": "The assigned cases are consistently SQL-injection related, but the guideline is over-broad, introduces unrelated mechanisms, and recommends fragile escaping or blacklist filtering instead of parameter binding and strict structural allowlisting.",
+  "suggested_guideline": "Identify SQL statements assembled from attacker-controlled request values, filters, identifiers, sort fields, or configuration values. Flag paths where untrusted values are concatenated into SQL syntax, including predicates, LIKE patterns, IN lists, ORDER BY fields, or dialect-specific fragments. Require prepared-statement parameter binding for data values. Where SQL structure cannot be parameterized, require a closed allowlist that maps user-visible options to fixed trusted SQL fragments. Verify the validation or binding occurs on the same path immediately before query execution.",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "All three listed cases have CWE-89 labels and SQL/query-builder or SQL-dialect anchor locations, supporting an SQL-construction mechanism.",
+    "No vulnerability descriptions, patch diffs, source excerpts, or trace evidence are supplied, so the exact source fields, execution sinks, and project-specific fixes cannot be confirmed.",
+    "The cluster summary mentions regex backtracking, OS command injection, and Elasticsearch-query denial of service, but those mechanisms are not represented by the three assigned case examples and should be removed from this guideline.",
+    "Escaping quote/comment characters and blacklist filtering are insufficient general SQL-injection defenses and should not be presented as the safe implementation."
+  ]
+}

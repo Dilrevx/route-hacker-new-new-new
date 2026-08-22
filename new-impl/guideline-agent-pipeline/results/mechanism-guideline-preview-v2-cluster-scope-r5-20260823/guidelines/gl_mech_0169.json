@@ -1,0 +1,55 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where user-controlled data is embedded into web output (HTML, JavaScript, XML) without proper context-specific escaping, leading to cross-site scripting (XSS) or code injection. The root cause is the assumption that untrusted data is safe for direct inclusion in the output, without applying appropriate encoding for the target context (HTML entity, JavaScript string, XML attribute). The fixes involve using escaping functions or safe DOM APIs to ensure data is treated as text, not executable code.",
+  "created_at": "2026-08-22T18:31:03+00:00",
+  "cve_ids": [
+    "CVE-2023-31544"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0030__mech_xml_external_entity_resolution",
+  "guideline_id": "gl_mech_0169",
+  "guideline_text": "Trace attacker-controlled or externally supplied XML documents, SOAP messages, XML reports, configuration files, XPath inputs, or XSLT stylesheets into XML parser, XPath, transformer, schema, or SOAP/XML utility code that parses or transforms those documents. Report code paths where DTD declarations, external general entities, external parameter entities, external schema access, or external stylesheet access are not disabled or constrained on the exact parser/transformer instance. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should disable DOCTYPE and external entity processing, restrict external-access properties, and install a resolver or parser configuration that rejects external resource resolution before parsing.",
+  "mechanism": {
+    "aliases": [
+      "XXE",
+      "XML external entity",
+      "external entity resolution",
+      "DTD processing",
+      "DocumentBuilderFactory external entities"
+    ],
+    "family": "xml_external_resource_resolution",
+    "mechanism_id": "mech_xml_external_entity_resolution",
+    "missing_guard": "DTD declarations, external general entities, external parameter entities, external schema access, or external stylesheet access are not disabled or constrained on the exact parser/transformer instance",
+    "name": "unsafe XML parser external entity or DTD resolution",
+    "sink_shape": "XML parser, XPath, transformer, schema, or SOAP/XML utility code that parses or transforms those documents",
+    "source_shape": "attacker-controlled or externally supplied XML documents, SOAP messages, XML reports, configuration files, XPath inputs, or XSLT stylesheets",
+    "typical_fix": "disable DOCTYPE and external entity processing, restrict external-access properties, and install a resolver or parser configuration that rejects external resource resolution before parsing"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2023-31544",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    30
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 30,
+      "fix_strategy": "Use programmatic DOM creation (createElement, setInnerText) instead of string concatenation to automatically encode text content.",
+      "members": [
+        "CVE-2023-31544"
+      ],
+      "name": "Unsafe DOM construction via string concatenation",
+      "root_cause": "HTML is built by concatenating untrusted strings directly into a string buffer that is then set as innerHTML, without encoding or safe DOM manipulation."
+    }
+  ],
+  "tags": [
+    "xml_external_resource_resolution",
+    "mech_xml_external_entity_resolution",
+    "XXE",
+    "XML external entity",
+    "external entity resolution",
+    "DTD processing"
+  ]
+}

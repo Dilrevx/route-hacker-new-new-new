@@ -1,0 +1,59 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where untrusted input (serialized data, JSON, configuration) specifies a class name that is then loaded or instantiated without sufficient validation—either an allowlist or a comprehensive blocklist. Most members involve incomplete deny-lists in polymorphic deserialization frameworks, allowing instantiation of dangerous gadget classes. A few members involve missing allowlists in reflective instantiation or resource exhaustion from recursive collection structures.",
+  "created_at": "2026-08-22T18:31:03+00:00",
+  "cve_ids": [
+    "CVE-2018-12022",
+    "CVE-2018-12023",
+    "CVE-2019-14439"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0009__mech_jndi_untrusted_lookup_target",
+  "guideline_id": "gl_mech_0043",
+  "guideline_text": "Trace attacker-controlled names, URLs, headers, configuration values, or lookup keys into JNDI, LDAP, RMI, naming-context, or remote lookup APIs. Report code paths where the lookup scheme, authority, object factory, object type, and network destination are not constrained before lookup. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should bind lookup inputs to trusted constants or allowlists, restrict schemes and destinations, and disable remote object factories.",
+  "mechanism": {
+    "aliases": [
+      "JNDI lookup",
+      "LDAP lookup",
+      "RMI lookup",
+      "InitialContext.lookup",
+      "naming context lookup"
+    ],
+    "family": "remote_lookup_or_ssrf",
+    "mechanism_id": "mech_jndi_untrusted_lookup_target",
+    "missing_guard": "the lookup scheme, authority, object factory, object type, and network destination are not constrained before lookup",
+    "name": "attacker-controlled JNDI lookup target",
+    "sink_shape": "JNDI, LDAP, RMI, naming-context, or remote lookup APIs",
+    "source_shape": "attacker-controlled names, URLs, headers, configuration values, or lookup keys",
+    "typical_fix": "bind lookup inputs to trusted constants or allowlists, restrict schemes and destinations, and disable remote object factories"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2018-12022",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    9
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 9,
+      "fix_strategy": "Add the missing dangerous class names to the static blocklist (e.g., DEFAULT_NO_DESER_CLASS_NAMES) and maintain an up-to-date comprehensive blocklist.",
+      "members": [
+        "CVE-2019-14439",
+        "CVE-2018-12023",
+        "CVE-2018-12022"
+      ],
+      "name": "Incomplete blocklist in polymorphic deserialization frameworks",
+      "root_cause": "Deserialization frameworks rely on a static deny-list of dangerous classes to prevent instantiation of gadget chains, but the list is incomplete, allowing attackers to specify unlisted dangerous classes that can trigger arbitrary code execution, JNDI injection, or XXE."
+    }
+  ],
+  "tags": [
+    "remote_lookup_or_ssrf",
+    "mech_jndi_untrusted_lookup_target",
+    "JNDI lookup",
+    "LDAP lookup",
+    "RMI lookup",
+    "InitialContext.lookup"
+  ]
+}

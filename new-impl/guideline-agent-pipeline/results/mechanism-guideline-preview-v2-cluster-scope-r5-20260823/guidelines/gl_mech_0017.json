@@ -1,0 +1,60 @@
+{
+  "cluster_summary": "A set of vulnerabilities caused by missing or insufficient validation of user-supplied data used in file path construction, file upload/download, and resource access. Common weaknesses include lack of path canonicalization, absence of file extension/MIME type allow-lists, missing inline disposition allow-lists, and failure to enforce size limits, leading to path traversal, arbitrary file upload, XSS, SSRF, and disk exhaustion.",
+  "created_at": "2026-08-22T18:31:02+00:00",
+  "cve_ids": [
+    "CVE-2025-32951",
+    "CVE-2025-32960",
+    "CVE-2025-32961"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0004__pending_mech_cluster_4_missing_allow_list_for_inline_content_disposition_leading_to_xss",
+  "guideline_id": "gl_mech_0017",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should Introduce a configurable allow-list of safe extensions for inline serving; default to attachment for all others..",
+  "mechanism": {
+    "aliases": [
+      "set",
+      "whether",
+      "decides",
+      "content-disposition",
+      "variable",
+      "cross-site"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_4_missing_allow_list_for_inline_content_disposition_leading_to_xss",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing allow-list for inline Content-Disposition leading to XSS",
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Introduce a configurable allow-list of safe extensions for inline serving; default to attachment for all others."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2025-32951",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    4
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 4,
+      "fix_strategy": "Introduce a configurable allow-list of safe extensions for inline serving; default to attachment for all others.",
+      "members": [
+        "CVE-2025-32951",
+        "CVE-2025-32960",
+        "CVE-2025-32961"
+      ],
+      "name": "Missing allow-list for inline Content-Disposition leading to XSS",
+      "root_cause": "The download endpoint sets Content-Disposition: inline based on file extension without an allow-list, allowing browsers to execute user-uploaded HTML/SVG as active content."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_4_missing_allow_list_for_inline_content_disposition_leading_to_xss",
+    "set",
+    "whether",
+    "decides",
+    "content-disposition"
+  ]
+}
