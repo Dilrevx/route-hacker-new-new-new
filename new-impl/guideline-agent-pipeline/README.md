@@ -365,6 +365,35 @@ source/sink/guard wording before they become stable recall queries. Do not
 optimize the generator toward fixed judge keywords or structural flags; use the
 judge notes as reading order for the next evidence-driven mechanism split.
 
+Build a cautious experiment scorecard when reporting a guideline iteration:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/summarize_guideline_experiment.py \
+  --release-summary new-impl/guideline-agent-pipeline/results/mechanism-guideline-preview-v2-cluster-scope-r5-20260823/summary.json \
+  --group-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r5-group-eval-20260823/summary.json \
+  --judge-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r5-group-eval-20260823/llm_judge_pack/judge_summary/summary.json \
+  --release-label guideline-v2-r5 \
+  --output-json /path/to/scorecard.json \
+  --output-md /path/to/README.md
+```
+
+Add `--recall-comparison /path/to/same_identity_comparison.json` only when the
+new guideline release has been evaluated against a baseline on the same frozen
+identity file. Without that input, the scorecard deliberately reports recall
+evidence as missing. If the comparison says the identity sets differ, the
+scorecard marks the recall evidence invalid for paper-facing claims. This keeps
+three facts separate:
+
+- structural sanity describes whether the guideline release is internally
+  reviewable;
+- TraeX LLM-as-judge describes semantic mechanism quality and review priority;
+- same-identity recall A/B describes one embedding plus guideline/query
+  configuration.
+
+Use the scorecard as the handoff artifact for paper discussion. It is not part
+of online retrieval, does not call a model, and must not be used to introduce
+keyword routing or hidden per-case fixes.
+
 For model A/B evaluation, always pass the same `--identity-file` to every run.
 `--selection all --limit N` without `--identity-file` selects the first N
 accepted cases in `new_unified_cases.v1.jsonl`; that is useful for quick smoke
