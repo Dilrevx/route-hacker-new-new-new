@@ -71,6 +71,11 @@ The detailed bad-case note is
   - Summarizes TraeX/LLM judge outputs into decision counts, score averages,
     and prioritized guideline rows needing revision, splitting, merging, or
     more evidence.
+- `scripts/build_guideline_revision_backlog.py`
+  - Joins judge output with recall-alignment diagnostics into a guideline
+    revision backlog.
+  - Produces a review artifact only: it does not update released guidelines,
+    change ranking, or add fallback rules.
 - `scripts/derive_guideline_from_audit.py`
   - Converts a successful risk audit report into a generalized guideline track.
   - Emits both `guideline_tracks.yaml` and a cve_clustering-style guideline
@@ -415,6 +420,40 @@ unless the recall table was generated with the same guideline sidecar being
 evaluated. A clean guideline group with weak recall points toward embedding,
 candidate slicing, or query wording; a mixed or pending group should be fixed
 as guideline evidence before blaming the embedder.
+
+Build a revision backlog from the semantic judge and recall-alignment outputs:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/build_guideline_revision_backlog.py \
+  --judge-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r5-group-eval-20260823/llm_judge_pack/judge_summary/summary.json \
+  --judge-report new-impl/guideline-agent-pipeline/results/guideline-v2-r5-group-eval-20260823/llm_judge_pack/judge_summary/judge_report.jsonl \
+  --alignment-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r5-recall-alignment-20260823/summary.json \
+  --alignment-report new-impl/guideline-agent-pipeline/results/guideline-v2-r5-recall-alignment-20260823/group_recall_alignment.jsonl \
+  --output-dir /path/to/guideline-revision-backlog
+```
+
+The backlog separates review actions including:
+
+- `split_mechanism_boundary` for groups whose CVE evidence mixes reusable
+  mechanisms;
+- `revise_mechanism_text_from_evidence` for groups with the right scope but
+  wrong or overly broad source/sink/guard wording;
+- `collect_source_sink_guard_evidence` for groups whose evidence is too thin to
+  support a stable guideline;
+- `inspect_embedding_candidate_or_query_mismatch` for clean groups that still
+  miss under the recall budget.
+- `inspect_same_identity_recall_regression` for clean groups where the current
+  recall run regresses against a same-identity baseline;
+- `fix_recall_identity_join_or_run_coverage` for groups whose assigned cases do
+  not appear in the recall table;
+- `review_guideline_group_evidence` and `manual_review` for lower-confidence
+  rows that need human source inspection before becoming release changes.
+
+Judge-suggested guideline text is marked
+`review_candidate_not_release`. It should be reread against source evidence
+before entering `guideline_overrides.jsonl`; do not copy it directly into a
+release and do not turn suggested phrases or example misses into runtime
+matching rules.
 
 For model A/B evaluation, always pass the same `--identity-file` to every run.
 `--selection all --limit N` without `--identity-file` selects the first N
