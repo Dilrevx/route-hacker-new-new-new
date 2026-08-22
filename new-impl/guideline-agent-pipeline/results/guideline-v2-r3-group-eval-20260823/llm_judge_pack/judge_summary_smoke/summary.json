@@ -1,0 +1,21 @@
+{
+  "accepted_count": 0,
+  "average_scores": {
+    "actionability_score": 0.1,
+    "coherence_score": 0.58,
+    "coverage_score": 0.08,
+    "retrieval_query_quality": 0.05
+  },
+  "decision_counts": {
+    "revise": 1
+  },
+  "invalid_output_count": 0,
+  "judge_input_count": 20,
+  "judge_output_dir": "new-impl/guideline-agent-pipeline/results/guideline-v2-r3-group-eval-20260823/llm_judge_pack/judge_outputs_smoke",
+  "low_score_count": 1,
+  "low_score_threshold": 0.6,
+  "missing_output_count": 19,
+  "needs_revision_count": 1,
+  "parsed_count": 1,
+  "schema_version": "hcvr_guideline_llm_judge_summary.v1"
+}

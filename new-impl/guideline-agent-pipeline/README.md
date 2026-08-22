@@ -61,6 +61,16 @@ The detailed bad-case note is
     `README.md`.
   - Recomputes Hit@K and MRR from merged results.
   - Marks identity-file rows with missing shard outputs as missing cases.
+- `scripts/evaluate_guideline_groups.py`
+  - Evaluates the guideline release itself, independent of embedding recall.
+  - Reports coverage, source-only groups, mixed HCVR/CWE sanity checks, and
+    actionability fields.
+  - Optionally emits a TraeX LLM-as-judge prompt pack for semantic mechanism
+    review.
+- `scripts/summarize_guideline_judge_outputs.py`
+  - Summarizes TraeX/LLM judge outputs into decision counts, score averages,
+    and prioritized guideline rows needing revision, splitting, merging, or
+    more evidence.
 - `scripts/derive_guideline_from_audit.py`
   - Converts a successful risk audit report into a generalized guideline track.
   - Emits both `guideline_tracks.yaml` and a cve_clustering-style guideline
@@ -296,7 +306,16 @@ Run the generated judge pack with TraeX:
 
 ```bash
 cd new-impl/guideline-agent-pipeline/results/guideline-v2-r3-group-eval-20260823/llm_judge_pack
-TRAE_JUDGE_TIMEOUT=30m ./run_traex_judge.sh judge_outputs
+TRAE_JUDGE_TIMEOUT_SECONDS=1800 ./run_traex_judge.sh judge_outputs
+```
+
+Summarize the judge outputs after the run:
+
+```bash
+python ../../../scripts/summarize_guideline_judge_outputs.py \
+  --judge-inputs judge_inputs.jsonl \
+  --judge-output-dir judge_outputs \
+  --output-dir judge_summary
 ```
 
 This keeps the online recall path clean: no runtime regex fallback and no

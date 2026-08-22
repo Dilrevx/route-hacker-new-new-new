@@ -7,7 +7,16 @@ Judgment target: whether the guideline captures a coherent reusable vulnerabilit
 Run from this directory:
 
 ```bash
-TRAE_JUDGE_TIMEOUT=30m ./run_traex_judge.sh judge_outputs
+TRAE_JUDGE_TIMEOUT_SECONDS=1800 ./run_traex_judge.sh judge_outputs
+```
+
+Summarize completed judge outputs:
+
+```bash
+python ../../../scripts/summarize_guideline_judge_outputs.py \
+  --judge-inputs judge_inputs.jsonl \
+  --judge-output-dir judge_outputs \
+  --output-dir judge_summary
 ```
 
 For a single group:

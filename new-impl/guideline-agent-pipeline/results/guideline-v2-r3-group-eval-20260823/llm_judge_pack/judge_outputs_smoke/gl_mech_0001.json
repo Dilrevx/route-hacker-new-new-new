@@ -1,0 +1,22 @@
+{
+  "decision": "revise",
+  "coherence_score": 0.58,
+  "coverage_score": 0.08,
+  "actionability_score": 0.1,
+  "retrieval_query_quality": 0.05,
+  "main_issue": "The supplied guideline describes general object deserialization with attacker-controlled type graphs, but the evidenced cases primarily concern unsafe XML parser configuration that permits DTD/external-entity processing (XXE). The source shape, sensitive behavior, required guard, and safe fixes are materially different.",
+  "suggested_guideline": "Trace attacker-controlled or externally supplied XML documents into XML parsing, XPath, transformation, or SOAP/XML utility code. Flag DocumentBuilderFactory, SAXParserFactory, XMLInputFactory, TransformerFactory, XPath-related parsers, or equivalent XML parser construction that parses untrusted input while allowing DTD declarations, external general entities, external parameter entities, external schema access, or external stylesheet access. Confirm the parser instance used at the parse/transform sink receives the hardening configuration before parsing, including disabling DOCTYPE/DTD and external entities where supported, restricting external-access properties, and/or installing a resolver that rejects external resource resolution. A safe fix must be bound to the actual parser or transformer instance used for the untrusted document; merely adding a helper or resolver without attaching it to the sink is insufficient.",
+  "split_suggestions": [
+    "Unsafe XML parsing with external entity or DTD resolution (XXE, SSRF, local-file disclosure)",
+    "XML transformation, XPath, and XMLDecoder-specific unsafe behaviors, including extension-function access or object construction",
+    "Other XML-processing robustness issues such as EOF/resource-exhaustion handling, variable interpolation, or namespace-triggered credential exposure"
+  ],
+  "evidence_notes": [
+    "allure-framework__allure2 CVE-2025-52888 directly evidences default DocumentBuilderFactory/DocumentBuilder parsing of result XML without an entity resolver or external-entity restriction; this is an XXE parser-hardening case, not object deserialization.",
+    "bonitasoft__bonita-connector-webservice CVE-2020-36640, dbeaver__dbeaver CVE-2021-3836, and gturri__axmlrpc CVE-2020-36641 are CWE-611-labelled and their XML utility/parser anchors are consistent with the XXE submechanism, although the payload lacks source-level traces.",
+    "apache__cxf-fediz CVE-2018-8038 and archimatetool__archi CVE-2023-40235 provide only hunk locations and no mechanism evidence in this payload; they need source or patch evidence before inclusion in a narrow XXE guideline.",
+    "aws_amplify__aws_sdk_android CVE-2022-4725 and htmlunit__htmlunit CVE-2023-26119 are explicitly review-entry retrieval labels rather than exploit proof. Their XPath/XML and XSLT anchors may belong to XML-processing security, but the payload does not establish that they share XXE behavior.",
+    "The cluster summary itself identifies several distinct XML mechanisms, including XMLDecoder deserialization, XSLT extension functions, resource exhaustion, system-property interpolation, and NTLM exposure. Those mechanisms should not be covered by one XXE parser-hardening guideline.",
+    "The group reports 12 assigned cases but supplies evidence for only 8 examples, so the remaining four cases require inspection before accepting group-wide coverage claims."
+  ]
+}
