@@ -527,6 +527,14 @@ is still member-level source/sink/guard evidence and mechanism boundary
 precision, especially for broad SSRF, XML, temporary-resource, authorization,
 and template/expression groups.
 
+The r8 experiment scorecard is committed under
+`results/guideline-v2-r8-release-ready-scorecard-20260823/`. It records the
+same release and judge evidence, and intentionally marks embedding recall
+improvement as `missing_or_invalid_evidence` because no fresh same-identity r8
+recall comparison has been run. Use this scorecard as the paper-facing handoff
+for the current guideline-quality state; run a new same-identity recall A/B
+before claiming that r8 improves retrieval.
+
 Build a cautious experiment scorecard when reporting a guideline iteration:
 
 ```bash
