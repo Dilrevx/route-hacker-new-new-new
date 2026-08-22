@@ -253,7 +253,10 @@ def test_write_judge_pack_for_flagged_groups(tmp_path: Path):
     rows = [json.loads(line) for line in (judge_dir / "judge_inputs.jsonl").read_text(encoding="utf-8").splitlines()]
     assert [row["guideline_id"] for row in rows] == ["gl_mech_0001"]
     assert (judge_dir / "prompts" / "gl_mech_0001.md").is_file()
+    assert (judge_dir / "judge_rubric.v1.md").is_file()
     assert "Return JSON only" in (judge_dir / "prompts" / "gl_mech_0001.md").read_text(encoding="utf-8")
+    assert "Guideline Semantic Judge Rubric" in (judge_dir / "prompts" / "gl_mech_0001.md").read_text(encoding="utf-8")
+    assert "judgment criteria can be reviewed and versioned" in (judge_dir / "README.md").read_text(encoding="utf-8")
     runner = (judge_dir / "run_traex_judge.sh").read_text(encoding="utf-8")
     assert "TRAE_JUDGE_CONCURRENCY" in runner
     assert 'OUT_DIR="${1:-judge_outputs}"' in runner

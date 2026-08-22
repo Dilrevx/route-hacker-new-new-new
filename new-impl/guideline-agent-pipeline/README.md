@@ -290,6 +290,7 @@ python new-impl/guideline-agent-pipeline/scripts/evaluate_guideline_groups.py \
   --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
   --output-dir new-impl/guideline-agent-pipeline/results/guideline-v2-r3-group-eval-20260823 \
   --judge-pack-dir new-impl/guideline-agent-pipeline/results/guideline-v2-r3-group-eval-20260823/llm_judge_pack \
+  --judge-rubric new-impl/guideline-agent-pipeline/guidelines/judge_rubric.v1.md \
   --judge-group-filter flagged \
   --judge-max-groups 20
 ```
@@ -314,6 +315,9 @@ or `needs_evidence`. The target is semantic guideline quality: whether the
 group shares a reusable root-cause mechanism, whether the guideline names the
 right source, sink, missing guard, and fix, and whether the text is a useful
 retrieval/audit query. It does not judge embedding recall ranks.
+The rubric lives in `guidelines/judge_rubric.v1.md`; update and version that
+file when the semantic review standard changes, rather than burying new scoring
+criteria inside the generator.
 
 Run the generated judge pack with TraeX:
 

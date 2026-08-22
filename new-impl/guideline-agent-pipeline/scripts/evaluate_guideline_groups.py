@@ -429,28 +429,13 @@ def write_readme(output_dir: Path, summary: dict[str, Any], group_rows: list[dic
     output_dir.joinpath("README.md").write_text("\n".join(lines), encoding="utf-8")
 
 
-def judge_prompt(item: dict[str, Any]) -> str:
+DEFAULT_JUDGE_RUBRIC = Path(__file__).parents[1] / "guidelines" / "judge_rubric.v1.md"
+
+
+def judge_prompt(item: dict[str, Any], rubric: str) -> str:
     return "\n".join(
         [
-            "You are judging a reusable security-audit guideline group.",
-            "",
-            "Evaluate whether the guideline accurately describes a coherent vulnerability mechanism shared by the listed cases.",
-            "Do not evaluate embedding recall, rank, or whether known anchors were hit.",
-            "Do not require all cases to share the same CWE or dataset label; those labels are only weak context.",
-            "Prefer mechanism-level judgments: source shape, sink shape, missing guard, exploit precondition, and safe fix.",
-            "",
-            "Return JSON only with this schema:",
-            "{",
-            '  "decision": "accept|revise|split|merge|needs_evidence",',
-            '  "coherence_score": 0.0,',
-            '  "coverage_score": 0.0,',
-            '  "actionability_score": 0.0,',
-            '  "retrieval_query_quality": 0.0,',
-            '  "main_issue": "short explanation",',
-            '  "suggested_guideline": "rewrite if decision is revise or split",',
-            '  "split_suggestions": ["submechanism A", "submechanism B"],',
-            '  "evidence_notes": ["case-level evidence or missing evidence"]',
-            "}",
+            rubric.strip(),
             "",
             "Guideline group payload:",
             json.dumps(item, ensure_ascii=False, indent=2, sort_keys=True),
@@ -481,8 +466,10 @@ def write_judge_pack(
     group_rows: list[dict[str, Any]],
     group_filter: str,
     max_groups: int,
+    rubric_path: Path = DEFAULT_JUDGE_RUBRIC,
 ) -> None:
     judge_dir.mkdir(parents=True, exist_ok=True)
+    rubric = rubric_path.read_text(encoding="utf-8")
     rows = []
     prompts_dir = judge_dir / "prompts"
     prompts_dir.mkdir(parents=True, exist_ok=True)
@@ -510,8 +497,10 @@ def write_judge_pack(
             "case_examples": row["judge_case_examples"],
         }
         prompt_path = prompts_dir / f"{row['guideline_id']}.md"
-        prompt_path.write_text(judge_prompt(item), encoding="utf-8")
+        prompt_path.write_text(judge_prompt(item, rubric), encoding="utf-8")
         rows.append({**item, "prompt_file": str(prompt_path.relative_to(judge_dir))})
+    rubric_dest = judge_dir / rubric_path.name
+    rubric_dest.write_text(rubric, encoding="utf-8")
     write_jsonl(judge_dir / "judge_inputs.jsonl", rows)
     script_lines = [
         "#!/usr/bin/env bash",
@@ -554,6 +543,7 @@ def write_judge_pack(
         "# LLM Judge Pack",
         "",
         "This pack is for semantic guideline-group review. It is intentionally separate from embedding recall evaluation and from the structural HCVR/CWE sanity checker.",
+        f"The prompt rubric is stored in `{rubric_dest.name}` so the judgment criteria can be reviewed and versioned independently from code.",
         "",
         "Judgment target: whether the guideline captures a coherent reusable vulnerability mechanism across the listed cases, and whether the text is actionable as an audit query.",
         "",
@@ -595,6 +585,12 @@ def main() -> None:
     parser.add_argument("--judge-pack-dir", type=Path)
     parser.add_argument("--judge-group-filter", choices=("flagged", "evaluated", "all"), default="flagged")
     parser.add_argument("--judge-max-groups", type=int, default=20)
+    parser.add_argument(
+        "--judge-rubric",
+        type=Path,
+        default=DEFAULT_JUDGE_RUBRIC,
+        help="Markdown rubric prepended to every TraeX judge prompt.",
+    )
     args = parser.parse_args()
     if args.output_dir.exists() and any(args.output_dir.iterdir()):
         raise FileExistsError(f"refusing to overwrite non-empty output directory: {args.output_dir}")
@@ -635,6 +631,7 @@ def main() -> None:
             group_rows=group_rows,
             group_filter=args.judge_group_filter,
             max_groups=args.judge_max_groups,
+            rubric_path=args.judge_rubric,
         )
     print(json.dumps(summary, ensure_ascii=False, sort_keys=True))
 
