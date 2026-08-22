@@ -1,0 +1,37 @@
+{
+  "existing_mechanism_count": 16,
+  "policy": [
+    "This file is not a lexicon release and is not consumed by recall.",
+    "Every candidate mechanism or revision requires source-evidence review before promotion.",
+    "Recall investigation tasks must preserve same-identity evaluation boundaries."
+  ],
+  "proposal_count": 50,
+  "proposal_kind_counts": {
+    "candidate_mechanism_revision": 8,
+    "candidate_new_mechanism": 9,
+    "evidence_collection_task": 8,
+    "recall_investigation_task": 25
+  },
+  "review_status_counts": {
+    "needs_case_evidence": 8,
+    "needs_human_source_validation": 17,
+    "needs_same_identity_recall_debug": 25
+  },
+  "schema_version": "hcvr_mechanism_lexicon_proposals.v1",
+  "touched_existing_mechanisms": [
+    "mech_bean_property_reflection_escape",
+    "mech_deserialization_untrusted_type_graph",
+    "mech_jndi_untrusted_lookup_target",
+    "mech_missing_authentication_before_privileged_action",
+    "mech_object_owner_scope_missing_authz",
+    "mech_open_redirect_unsafe_uri_scheme",
+    "mech_path_traversal_missing_canonical_prefix",
+    "mech_privileged_server_side_capability_exposed",
+    "mech_request_body_resource_mismatch_authz",
+    "mech_ssrf_webhook_url_fetch",
+    "mech_temp_file_delete_mkdir_race",
+    "mech_template_expression_untrusted_eval",
+    "mech_toctou_mutable_object_reuse",
+    "mech_xml_external_entity_resolution"
+  ]
+}

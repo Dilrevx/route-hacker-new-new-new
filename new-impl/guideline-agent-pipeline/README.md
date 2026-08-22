@@ -76,6 +76,11 @@ The detailed bad-case note is
     revision backlog.
   - Produces a review artifact only: it does not update released guidelines,
     change ranking, or add fallback rules.
+- `scripts/propose_mechanism_lexicon_updates.py`
+  - Converts a revision backlog into review-only candidate lexicon updates and
+    recall investigation tasks.
+  - Proposed text is never consumed by recall until it is manually promoted into
+    a versioned lexicon and rerun through same-identity evaluation.
 - `scripts/derive_guideline_from_audit.py`
   - Converts a successful risk audit report into a generalized guideline track.
   - Emits both `guideline_tracks.yaml` and a cve_clustering-style guideline
@@ -458,6 +463,20 @@ Judge-suggested guideline text is marked
 before entering `guideline_overrides.jsonl`; do not copy it directly into a
 release and do not turn suggested phrases or example misses into runtime
 matching rules.
+
+Convert the backlog into review-only mechanism lexicon proposals:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/propose_mechanism_lexicon_updates.py \
+  --revision-backlog new-impl/guideline-agent-pipeline/results/guideline-v2-r5-revision-backlog-20260823/revision_backlog.jsonl \
+  --lexicon new-impl/guideline-agent-pipeline/guidelines/mechanism_lexicon.seed.json \
+  --output-dir /path/to/lexicon-proposals
+```
+
+This proposal file is the handoff to the next guideline-design round. It can
+name candidate mechanisms suggested by TraeX judge feedback, but those entries
+are `release_ready=false` until a reviewer confirms they generalize beyond the
+motivating cases and a fresh same-identity recall run confirms the effect.
 
 For model A/B evaluation, always pass the same `--identity-file` to every run.
 `--selection all --limit N` without `--identity-file` selects the first N
