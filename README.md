@@ -44,8 +44,10 @@ cases are recorded as `no_finding_candidate`. The case-level outcomes are 40
 `same_vulnerability`, 16 `related_but_different`, 64
 `different_vulnerability`, 13 `insufficient_evidence`, and 10
 `no_finding_candidate`. Thus the full-queue LLM-judged same-vulnerability count
-is 40/143; this remains an LLM semantic judgment rather than an independently
-confirmed CVE recall rate or a runtime reproduction result.
+is **40/143 = 27.97%**. For this one-historical-CVE-per-case benchmark, we use
+this as the **direct Codex Security LLM-judged semantic accuracy**. It remains
+an LLM semantic judgment rather than an independently confirmed CVE recall rate
+or a runtime reproduction result.
 
 The earlier 45-case overlap-only adjudication remains in the repository as a
 historical sanity check. It must not be used as the main 143-case result.

@@ -88,6 +88,8 @@ def main() -> None:
         "finding_verdict_counts": dict(finding_counts),
         "same_vulnerability_cases": counts["same_vulnerability"],
         "no_finding_candidate_cases": counts["no_finding_candidate"],
+        "llm_judged_semantic_accuracy": counts["same_vulnerability"] / len(rows) if rows else 0.0,
+        "llm_judged_semantic_accuracy_percent": round(100 * counts["same_vulnerability"] / len(rows), 2) if rows else 0.0,
     }
     (args.out_dir / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     fields = ["case_id", "rank", "identity_key", "historical_cve", "case_verdict", "confidence", "matching_finding_ids", "selected_findings", "reasoning"]
@@ -110,6 +112,7 @@ def main() -> None:
         "This post-scan review supplies every canonical Codex Security finding for every case with a finding artifact to the LLM judge. Cases without a finding artifact or with zero findings are marked `no_finding_candidate` without an LLM call.",
         "",
         f"- Cases reviewed: {len(rows)}",
+        f"- LLM-judged semantic accuracy (same historical CVE): {counts['same_vulnerability']}/{len(rows)} ({100 * counts['same_vulnerability'] / len(rows):.2f}%)",
         f"- `same_vulnerability`: {counts['same_vulnerability']}",
         f"- `related_but_different`: {counts['related_but_different']}",
         f"- `different_vulnerability`: {counts['different_vulnerability']}",
