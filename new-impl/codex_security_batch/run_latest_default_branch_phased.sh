@@ -1,16 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Run the first N latest-default-branch Apache audits with native Codex
-# Security, then hand only the remaining queue entries to the TraeX wrapper.
-# The two phases share state, so phase two never repeats terminal native rows.
+# Optionally run the first N latest-default-branch Apache audits with native
+# Codex Security, then run the remaining queue through the TraeX wrapper.
+# A native phase is deliberately optional: the default is TraeX-only so a
+# depleted native Codex quota cannot stall the whole queue.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 RUNNER="$SCRIPT_DIR/run_blind_batch.sh"
 
 RUN_ROOT="${CODEX_SECURITY_RUN_ROOT:?CODEX_SECURITY_RUN_ROOT is required}"
 QUEUE="${CODEX_SECURITY_QUEUE:-$RUN_ROOT/control/queue.jsonl}"
-NATIVE_CASES="${CODEX_SECURITY_NATIVE_CASES:-10}"
+NATIVE_CASES="${CODEX_SECURITY_NATIVE_CASES:-0}"
 MODEL="${CODEX_SECURITY_MODEL:-gpt-5.5}"
 EFFORT="${CODEX_SECURITY_EFFORT:-high}"
 WRAPPER="${CODEX_SECURITY_WRAPPER:?CODEX_SECURITY_WRAPPER is required}"
@@ -18,8 +19,8 @@ TRAE_BIN="${CODEX_SECURITY_TRAEX_BIN:-traex}"
 PLUGIN_DIR="${CODEX_SECURITY_PLUGIN_DIR:-}"
 NATIVE_QUEUE="$RUN_ROOT/control/native-first-${NATIVE_CASES}-queue.jsonl"
 
-[[ "$NATIVE_CASES" =~ ^[1-9][0-9]*$ ]] || {
-  echo "CODEX_SECURITY_NATIVE_CASES must be a positive integer" >&2
+[[ "$NATIVE_CASES" =~ ^[0-9]+$ ]] || {
+  echo "CODEX_SECURITY_NATIVE_CASES must be a non-negative integer" >&2
   exit 64
 }
 [[ -x "$WRAPPER" ]] || {
@@ -31,29 +32,32 @@ command -v "$TRAE_BIN" >/dev/null || {
   exit 64
 }
 
-# The native phase must always be restricted to the first N rank-ordered rows,
-# including after a restart.  The TraeX phase then reads the complete queue and
-# skips those rows through their terminal state markers.
-head -n "$NATIVE_CASES" "$QUEUE" >"$NATIVE_QUEUE"
-[[ "$(wc -l <"$NATIVE_QUEUE" | tr -d ' ')" == "$NATIVE_CASES" ]] || {
-  echo "queue has fewer than $NATIVE_CASES rows: $QUEUE" >&2
-  exit 64
-}
+if [[ "$NATIVE_CASES" -gt 0 ]]; then
+  # Native work is restricted to rank-ordered rows. The runner's terminal
+  # markers ensure the subsequent TraeX pass never repeats completed native
+  # rows. Use a separate invocation when concurrent native/TraeX scheduling
+  # is desired, because the runner's state lock is intentionally exclusive.
+  head -n "$NATIVE_CASES" "$QUEUE" >"$NATIVE_QUEUE"
+  [[ "$(wc -l <"$NATIVE_QUEUE" | tr -d ' ')" == "$NATIVE_CASES" ]] || {
+    echo "queue has fewer than $NATIVE_CASES rows: $QUEUE" >&2
+    exit 64
+  }
 
-echo "phase=native cases=1-$NATIVE_CASES model=$MODEL effort=$EFFORT"
-env \
-  CODEX_SECURITY_RUN_ROOT="$RUN_ROOT" \
-  CODEX_SECURITY_QUEUE="$NATIVE_QUEUE" \
-  CODEX_SECURITY_MODEL="$MODEL" \
-  CODEX_SECURITY_EFFORT="$EFFORT" \
-  CODEX_SECURITY_OUTER_PARALLELISM="${CODEX_SECURITY_OUTER_PARALLELISM:-2}" \
-  CODEX_SECURITY_MAX_NEW_CASES="$NATIVE_CASES" \
-  CODEX_SECURITY_USE_TRAEX_WRAPPER=0 \
-  "$RUNNER"
+  echo "phase=native cases=1-$NATIVE_CASES model=$MODEL effort=$EFFORT"
+  env \
+    CODEX_SECURITY_RUN_ROOT="$RUN_ROOT" \
+    CODEX_SECURITY_QUEUE="$NATIVE_QUEUE" \
+    CODEX_SECURITY_MODEL="$MODEL" \
+    CODEX_SECURITY_EFFORT="$EFFORT" \
+    CODEX_SECURITY_OUTER_PARALLELISM="${CODEX_SECURITY_OUTER_PARALLELISM:-2}" \
+    CODEX_SECURITY_MAX_NEW_CASES="$NATIVE_CASES" \
+    CODEX_SECURITY_USE_TRAEX_WRAPPER=0 \
+    "$RUNNER"
+else
+  echo "phase=native skipped (CODEX_SECURITY_NATIVE_CASES=0)"
+fi
 
-# The native runner returns only after all slots it started are terminal.
-# Its state markers make the TraeX phase skip exactly those first N rows.
-echo "phase=traex cases=$((NATIVE_CASES + 1))-end model=$MODEL effort=$EFFORT"
+echo "phase=traex cases=all-nonterminal model=$MODEL effort=$EFFORT"
 env \
   CODEX_SECURITY_RUN_ROOT="$RUN_ROOT" \
   CODEX_SECURITY_QUEUE="$QUEUE" \

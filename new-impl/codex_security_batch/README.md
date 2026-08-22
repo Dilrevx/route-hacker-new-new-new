@@ -93,6 +93,26 @@ wrapper that dispatches the inner agent call through TraeX. The wrapper must be
 provided by the local environment; this module does not store credentials,
 tokens, or generated login state.
 
+For the Apache latest-default-branch queue, use the dedicated launcher with
+`CODEX_SECURITY_NATIVE_CASES=0` when native Codex quota is unavailable. This
+skips native work and schedules every non-terminal queue row through the TraeX
+wrapper; it never waits behind a native phase barrier.
+
+```bash
+export CODEX_SECURITY_RUN_ROOT=/path/to/apache-latest-default-run
+export CODEX_SECURITY_QUEUE=$CODEX_SECURITY_RUN_ROOT/control/queue.jsonl
+export CODEX_SECURITY_MODEL=gpt-5.5
+export CODEX_SECURITY_EFFORT=high
+export CODEX_SECURITY_OUTER_PARALLELISM=4
+export CODEX_SECURITY_CASE_TIMEOUT_SECONDS=43200
+export CODEX_SECURITY_NATIVE_CASES=0
+export CODEX_SECURITY_WRAPPER=/path/to/codex-security-traex-wrapper.sh
+export CODEX_SECURITY_TRAEX_BIN=/path/to/traex
+export CODEX_SECURITY_PLUGIN_DIR=/path/to/codex-security/_bundled_plugin
+
+bash new-impl/codex_security_batch/run_latest_default_branch_phased.sh
+```
+
 ```bash
 export CODEX_SECURITY_USE_TRAEX_WRAPPER=1
 export CODEX_SECURITY_WRAPPER=/path/to/codex-security-traex-plugin-aware-wrapper.sh
