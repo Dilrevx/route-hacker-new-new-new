@@ -394,6 +394,28 @@ Use the scorecard as the handoff artifact for paper discussion. It is not part
 of online retrieval, does not call a model, and must not be used to introduce
 keyword routing or hidden per-case fixes.
 
+To inspect whether bad cases look like guideline-quality failures or
+embedding/candidate-recall failures, join a guideline group report with a recall
+rank table:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/diagnose_guideline_recall_alignment.py \
+  --group-report new-impl/guideline-agent-pipeline/results/guideline-v2-r5-group-eval-20260823/group_report.jsonl \
+  --case-assignments new-impl/guideline-agent-pipeline/results/guideline-v2-r5-group-eval-20260823/case_assignments.jsonl \
+  --recall-results new-impl/guideline-agent-pipeline/results/p3c64-fixed143-paper-eval-20260820/p3c64_case_rank_table.jsonl \
+  --recall-label p3c64-current-guideline-baseline-control \
+  --baseline-results new-impl/guideline-agent-pipeline/results/p3c64-fixed143-paper-eval-20260820/qwen4b_case_rank_table.jsonl \
+  --baseline-label qwen3-embedding-4b \
+  --primary-budget 100 \
+  --output-dir /path/to/guideline-recall-alignment
+```
+
+Read the alignment report as a diagnosis, not as a guideline-v2 recall result,
+unless the recall table was generated with the same guideline sidecar being
+evaluated. A clean guideline group with weak recall points toward embedding,
+candidate slicing, or query wording; a mixed or pending group should be fixed
+as guideline evidence before blaming the embedder.
+
 For model A/B evaluation, always pass the same `--identity-file` to every run.
 `--selection all --limit N` without `--identity-file` selects the first N
 accepted cases in `new_unified_cases.v1.jsonl`; that is useful for quick smoke
