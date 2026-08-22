@@ -205,8 +205,7 @@ The current checked-in snapshot is under
 `build_semantic_judge_packets.py`, `run_semantic_judge.py`, and
 `summarize_semantic_judge.py` form a separate LLM-as-a-judge stage. This stage
 may use CVE descriptions, reviewed GT rationale, anchors, and trace nodes only
-after the repository-level audit is complete. It uses reported-location/anchor
-overlap solely to limit the review queue, then asks whether each reported
+after the repository-level audit is complete. It asks whether each reported
 finding actually has the same vulnerable behavior, attack surface, root cause,
 and harmful effect as the historical CVE. Shared files, nearby lines, CWE, or
 component names are explicitly insufficient.
@@ -231,6 +230,13 @@ python3 new-impl/codex_security_batch/run_semantic_judge.py \
 python3 new-impl/codex_security_batch/summarize_semantic_judge.py \
   --run-dir <judge-run> --out-dir <result-snapshot>/semantic-cve-adjudication
 ```
+
+For the full-queue evaluation, use `--all-findings --cases <snapshot>/cases.csv`
+in the packet-building command. It creates a judge packet for every case with
+canonical findings and supplies every emitted finding from that case; it does
+not use GT location overlap to filter candidates. Cases with no canonical
+findings are represented in the manifest as `no_finding_candidate` and do not
+consume an LLM call.
 
 ## Guards
 

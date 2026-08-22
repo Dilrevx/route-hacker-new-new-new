@@ -120,6 +120,7 @@ def main() -> None:
         raise SystemExit("parallelism and timeout must be positive")
     manifest_path = args.run_dir / "manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest = [row for row in manifest if row.get("judge_required", True)]
     if args.case_id:
         wanted = set(args.case_id)
         manifest = [row for row in manifest if row["case_id"] in wanted]

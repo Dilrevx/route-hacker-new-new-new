@@ -88,6 +88,15 @@ def finding_for_judge(finding: dict[str, Any]) -> dict[str, Any]:
         "preventiveControls", "locations",
     )
     result = {key: finding.get(key) for key in keep if finding.get(key) not in (None, "", [], {})}
+    # Some Codex Security artifact producers omit findingId. Give the judge a
+    # stable, source-derived identifier instead of asking it to invent one.
+    if not result.get("findingId"):
+        result["findingId"] = (
+            finding.get("ruleId")
+            or (finding.get("identity") or {}).get("anchor")
+            or finding.get("title")
+            or "unidentified-finding"
+        )
     evidence = []
     for raw in finding.get("codeEvidence", []) if isinstance(finding.get("codeEvidence"), list) else []:
         if not isinstance(raw, dict):
@@ -146,8 +155,10 @@ def gt_for_judge(case: dict[str, Any]) -> dict[str, Any]:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--case-alignment", required=True, type=Path)
-    parser.add_argument("--finding-alignment", required=True, type=Path)
+    parser.add_argument("--case-alignment", type=Path)
+    parser.add_argument("--finding-alignment", type=Path)
+    parser.add_argument("--cases", type=Path, help="143-case exported cases.csv, required with --all-findings.")
+    parser.add_argument("--all-findings", action="store_true", help="Build one packet per case with every canonical finding.")
     parser.add_argument("--unified-cases", required=True, type=Path)
     parser.add_argument("--records", required=True, type=Path)
     parser.add_argument("--out-dir", required=True, type=Path)
@@ -156,15 +167,33 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    selected_cases = {
-        row["case_id"]: row
-        for row in read_csv(args.case_alignment)
-        if row.get("case_relation") == "any_reported_location_anchor_hit"
-    }
-    selected_findings: dict[str, set[str]] = defaultdict(set)
-    for row in read_csv(args.finding_alignment):
-        if row.get("case_id") in selected_cases and row.get("any_reported_location_anchor_overlap") == "True":
-            selected_findings[row["case_id"]].add(row["finding_id"])
+    if args.all_findings:
+        if args.cases is None:
+            raise SystemExit("--cases is required with --all-findings")
+        selected_cases = {row["case_id"]: row for row in read_csv(args.cases)}
+        selected_findings: dict[str, set[str] | None] = {case_id: None for case_id in selected_cases}
+        selection_note = (
+            "Full 143-case post-scan review: every canonical Codex Security finding emitted for this case is supplied. "
+            "No location/anchor filtering selected the findings."
+        )
+        selection_label = "all canonical findings"
+    else:
+        if args.case_alignment is None or args.finding_alignment is None:
+            raise SystemExit("--case-alignment and --finding-alignment are required unless --all-findings is used")
+        selected_cases = {
+            row["case_id"]: row
+            for row in read_csv(args.case_alignment)
+            if row.get("case_relation") == "any_reported_location_anchor_hit"
+        }
+        selected_findings = defaultdict(set)
+        for row in read_csv(args.finding_alignment):
+            if row.get("case_id") in selected_cases and row.get("any_reported_location_anchor_overlap") == "True":
+                selected_findings[row["case_id"]].add(row["finding_id"])
+        selection_note = (
+            "Post-scan selection: the following findings had at least one reported location overlapping a GT recall anchor. "
+            "This is a review-scope filter, not evidence of semantic equivalence."
+        )
+        selection_label = "findings selected by reported-location overlap"
 
     gt_by_identity = {row.get("identity_key"): row for row in read_jsonl(args.unified_cases) if row.get("identity_key")}
     records: dict[str, dict[str, Any]] = {}
@@ -180,19 +209,38 @@ def main() -> None:
     manifest: list[dict[str, Any]] = []
 
     for case_id, alignment in sorted(selected_cases.items(), key=lambda pair: int(pair[1].get("rank") or 0)):
-        identity = alignment.get("identity_key")
+        identity = alignment.get("identity_key") or f"{alignment.get('repo_key', '')}::{alignment.get('vulnerability_id', '')}"
         gt = gt_by_identity.get(identity)
         artifact = (records.get(case_id, {}).get("artifacts") or {}).get("findings.json")
-        if gt is None or not artifact or not Path(artifact).exists():
-            raise SystemExit(f"missing GT or canonical finding artifact for {case_id}")
+        if gt is None:
+            raise SystemExit(f"missing GT for {case_id}")
+        if not artifact or not Path(artifact).exists():
+            manifest.append({
+                "case_id": case_id, "rank": alignment.get("rank"), "identity_key": identity,
+                "historical_cve": (gt.get("vulnerability") or {}).get("id"),
+                "selected_findings": [], "judge_required": False,
+                "automatic_verdict": "no_finding_candidate",
+                "automatic_reason": "No canonical findings.json artifact was available after the blind scan.",
+            })
+            continue
         document = json.loads(Path(artifact).read_text(encoding="utf-8"))
         wanted = selected_findings[case_id]
-        findings = [finding_for_judge(item) for item in document.get("findings", []) if item.get("findingId") in wanted]
+        findings = [
+            finding_for_judge(item) for item in document.get("findings", [])
+            if wanted is None or item.get("findingId") in wanted
+        ]
         if not findings:
-            raise SystemExit(f"no selected canonical findings for {case_id}")
+            manifest.append({
+                "case_id": case_id, "rank": alignment.get("rank"), "identity_key": identity,
+                "historical_cve": (gt.get("vulnerability") or {}).get("id"),
+                "selected_findings": [], "judge_required": False,
+                "automatic_verdict": "no_finding_candidate",
+                "automatic_reason": "Codex Security emitted a canonical findings.json artifact with zero findings.",
+            })
+            continue
         packet = {
             "case_id": case_id,
-            "selection_note": "Post-scan selection: the following findings had at least one reported location overlapping a GT recall anchor. This is a review-scope filter, not evidence of semantic equivalence.",
+            "selection_note": selection_note,
             "ground_truth_historical_cve": gt_for_judge(gt),
             "codex_security_findings_to_compare": findings,
         }
@@ -208,7 +256,8 @@ def main() -> None:
             "rank": alignment.get("rank"),
             "identity_key": identity,
             "historical_cve": (gt.get("vulnerability") or {}).get("id"),
-            "selected_findings": [item.get("findingId") for item in findings],
+            "selected_findings": [item.get("findingId") for item in findings if item.get("findingId")],
+            "judge_required": True,
             "packet": str(packet_path),
             "prompt": str(prompt_path),
         })
@@ -216,13 +265,15 @@ def main() -> None:
     (args.out_dir / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     (args.out_dir / "README.md").write_text(
         "# Post-scan semantic CVE adjudication packets\n\n"
-        f"- Cases: {len(manifest)}\n"
-        f"- Findings selected by reported-location overlap: {sum(len(x['selected_findings']) for x in manifest)}\n"
-        "- Selection uses GT only after blind scans; semantic equivalence is decided by an LLM judge.\n"
-        "- Packets retain GT rationale and structured finding evidence. Do not treat packet selection as a recall metric.\n",
+        f"- Cases represented: {len(manifest)}\n"
+        f"- Cases requiring LLM judge: {sum(1 for x in manifest if x.get('judge_required'))}\n"
+        f"- Findings supplied to judge: {sum(len(x['selected_findings']) for x in manifest)} ({selection_label})\n"
+        f"- Automatic no-finding cases: {sum(1 for x in manifest if not x.get('judge_required'))}\n"
+        "- GT is used only after blind scans; semantic equivalence is decided by an LLM judge when a finding exists.\n"
+        "- Packets retain GT rationale and structured finding evidence. Do not treat LLM judgments as source-level CVE confirmation.\n",
         encoding="utf-8",
     )
-    print(json.dumps({"cases": len(manifest), "findings": sum(len(x["selected_findings"]) for x in manifest), "out_dir": str(args.out_dir)}))
+    print(json.dumps({"cases": len(manifest), "judge_cases": sum(1 for x in manifest if x.get("judge_required")), "findings": sum(len(x["selected_findings"]) for x in manifest), "out_dir": str(args.out_dir)}))
 
 
 if __name__ == "__main__":
