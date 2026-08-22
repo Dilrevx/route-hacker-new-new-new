@@ -241,6 +241,69 @@ replacement run. Treat them as evidence that mechanism-scoped guidelines help
 some old misses and that attribution quality still needs a regression gate or
 offline list-level fusion policy before full paper-eval replacement.
 
+## Guideline Quality Evaluation
+
+Evaluate guideline generation on two separate axes:
+
+```text
+guideline release
+  -> structural sanity check over joined unified-case metadata
+  -> semantic LLM-as-judge review over grouped CVE evidence
+  -> same-identity embedding recall evaluation
+```
+
+The structural checker is deliberately limited. It reports coverage,
+source-only groups, small groups, mixed HCVR/CWE labels, and missing
+actionability fields. These fields catch broad or incomplete guideline groups,
+but they are not the definition of a good mechanism. A valid mechanism can cut
+across multiple CWE labels, and a high-purity label bucket can still be too
+generic to guide audit.
+
+Run the structural checker and emit a TraeX judge pack:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/evaluate_guideline_groups.py \
+  --release-dir new-impl/guideline-agent-pipeline/results/mechanism-guideline-preview-v2-cluster-scope-r3-20260821 \
+  --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
+  --output-dir new-impl/guideline-agent-pipeline/results/guideline-v2-r3-group-eval-20260823 \
+  --judge-pack-dir new-impl/guideline-agent-pipeline/results/guideline-v2-r3-group-eval-20260823/llm_judge_pack \
+  --judge-group-filter flagged \
+  --judge-max-groups 20
+```
+
+Outputs:
+
+```text
+/path/to/group-eval/
+  summary.json
+  group_report.jsonl
+  group_report.tsv
+  case_assignments.jsonl
+  README.md
+  llm_judge_pack/
+    judge_inputs.jsonl
+    prompts/
+    run_traex_judge.sh
+```
+
+The LLM judge prompt asks for JSON with `accept`, `revise`, `split`, `merge`,
+or `needs_evidence`. The target is semantic guideline quality: whether the
+group shares a reusable root-cause mechanism, whether the guideline names the
+right source, sink, missing guard, and fix, and whether the text is a useful
+retrieval/audit query. It does not judge embedding recall ranks.
+
+Run the generated judge pack with TraeX:
+
+```bash
+cd new-impl/guideline-agent-pipeline/results/guideline-v2-r3-group-eval-20260823/llm_judge_pack
+TRAE_JUDGE_TIMEOUT=30m ./run_traex_judge.sh judge_outputs
+```
+
+This keeps the online recall path clean: no runtime regex fallback and no
+hidden label-based routing. Judge output is advisory evidence for the next
+guideline iteration; retrieval claims still require same-identity embedding
+recall runs.
+
 For model A/B evaluation, always pass the same `--identity-file` to every run.
 `--selection all --limit N` without `--identity-file` selects the first N
 accepted cases in `new_unified_cases.v1.jsonl`; that is useful for quick smoke
