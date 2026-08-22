@@ -1,0 +1,53 @@
+{
+  "cluster_summary": "A collection of vulnerabilities where protocol parsers (HTTP, email, AJP, etc.) fail to validate user-supplied input for control characters, enforce protocol-specific constraints, or limit resource consumption, leading to CRLF injection, request smuggling, denial of service, or email header manipulation.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2025-15282"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0041__mech_ssrf_redirect_following_client",
+  "guideline_id": "gl_mech_0189",
+  "guideline_text": "Trace attacker-controlled URLs or server-controlled redirect responses into HTTP clients that automatically follow redirects or reuse a previously validated URL decision. Report code paths where the final redirected scheme, host, port, and resolved address are not revalidated before the sensitive network request. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should disable automatic redirects or revalidate every redirect hop against the same allowlist and address policy.",
+  "mechanism": {
+    "aliases": [
+      "redirect-follow SSRF",
+      "HTTP redirect SSRF",
+      "Location header SSRF"
+    ],
+    "family": "ssrf",
+    "mechanism_id": "mech_ssrf_redirect_following_client",
+    "missing_guard": "the final redirected scheme, host, port, and resolved address are not revalidated before the sensitive network request",
+    "name": "SSRF through redirect-following client",
+    "required_keywords": [],
+    "sink_shape": "HTTP clients that automatically follow redirects or reuse a previously validated URL decision",
+    "source_shape": "attacker-controlled URLs or server-controlled redirect responses",
+    "typical_fix": "disable automatic redirects or revalidate every redirect hop against the same allowlist and address policy"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2025-15282",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    41
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 41,
+      "fix_strategy": "Add validation to reject or strip CR/LF characters in header values, either by enabling built-in validation (e.g., DefaultHttpHeaders with validation) or by adding explicit character checks before header construction.",
+      "members": [
+        "CVE-2025-15282"
+      ],
+      "name": "CRLF injection due to missing header value validation",
+      "root_cause": "The code assumes that user-controlled header values are safe and does not sanitize or reject carriage return (\\r) and line feed (\\n) characters before inserting them into protocol headers (HTTP, SSE, SMTP, etc.)."
+    }
+  ],
+  "tags": [
+    "ssrf",
+    "mech_ssrf_redirect_following_client",
+    "redirect-follow SSRF",
+    "HTTP redirect SSRF",
+    "Location header SSRF"
+  ]
+}

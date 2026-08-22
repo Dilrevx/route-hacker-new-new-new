@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "This cluster contains 25 CVEs where user-controlled input is processed without proper validation, leading to code injection, prototype pollution, stack overflow, infinite loops, ReDoS, and resource exhaustion. The vulnerabilities arise from missing bounds checks, missing escaping, insufficient key validation, and unsafe recursion patterns across various libraries.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2026-27601"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0022__pending_mech_cluster_22_missing_recursion_depth_limits_in_iterative_processing",
+  "guideline_id": "gl_mech_0099",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Replace recursion with iterative explicit stack or worklist patterns, imposing depth limits..",
+  "mechanism": {
+    "aliases": [
+      "nested",
+      "missing-depth-limit",
+      "flatten",
+      "utility-function",
+      "compares",
+      "exceed"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_22_missing_recursion_depth_limits_in_iterative_processing",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing recursion depth limits in iterative processing",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Replace recursion with iterative explicit stack or worklist patterns, imposing depth limits."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-27601",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    22
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 22,
+      "fix_strategy": "Replace recursion with iterative explicit stack or worklist patterns, imposing depth limits.",
+      "members": [
+        "CVE-2026-27601"
+      ],
+      "name": "Missing recursion depth limits in iterative processing",
+      "root_cause": "Recursive functions process user-controlled nested data without depth bounds, allowing stack overflow."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_22_missing_recursion_depth_limits_in_iterative_processing",
+    "nested",
+    "missing-depth-limit",
+    "flatten",
+    "utility-function"
+  ]
+}

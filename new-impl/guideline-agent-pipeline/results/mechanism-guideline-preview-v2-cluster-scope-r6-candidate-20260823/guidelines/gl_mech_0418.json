@@ -1,0 +1,59 @@
+{
+  "cluster_summary": "The code fails to verify that user-supplied identifiers (such as user IDs, resource IDs, or workspace IDs) are properly authenticated, owned by the requester, or correctly formatted before using them to access or return data. This leads to unauthorized access to private resources, data exposure, and path traversal attacks.",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2026-23486",
+    "CVE-2026-41243"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0092__pending_mech_cluster_92_excessive_data_exposure_via_missing_field_level_selection",
+  "guideline_id": "gl_mech_0418",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should Explicitly restrict the select clause to only non-sensitive public fields when querying data that may be returned to users without full authorization. For ORM includes, specify a select object that whitelists allowed fields..",
+  "mechanism": {
+    "aliases": [
+      "fetches",
+      "image",
+      "authorization",
+      "attributes",
+      "excessive",
+      "metadata"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_92_excessive_data_exposure_via_missing_field_level_selection",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Excessive data exposure via missing field-level selection",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Explicitly restrict the select clause to only non-sensitive public fields when querying data that may be returned to users without full authorization. For ORM includes, specify a select object that whitelists allowed fields."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-23486",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    92
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 92,
+      "fix_strategy": "Explicitly restrict the select clause to only non-sensitive public fields when querying data that may be returned to users without full authorization. For ORM includes, specify a select object that whitelists allowed fields.",
+      "members": [
+        "CVE-2026-23486",
+        "CVE-2026-41243"
+      ],
+      "name": "Excessive data exposure via missing field-level selection",
+      "root_cause": "Database queries return all fields from a table or include entire related objects (e.g., `author: true`) without specifying which fields are safe to expose. Sensitive attributes (e.g., passwords, roles, tokens) are thus leaked to unauthorized users."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_92_excessive_data_exposure_via_missing_field_level_selection",
+    "fetches",
+    "image",
+    "authorization",
+    "attributes"
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where user-controlled file paths or path components are used in file operations without proper validation. Many cases lack canonicalization and containment checks against an allowlist of allowed directories, enabling directory traversal. Others have incomplete input validation for dangerous patterns (e.g., traversal sequences, shell metacharacters, file URL host) or incomplete allowlisting of parameters that bypass existing safeguards. The fixes involve adding canonicalization, prefix checks, input sanitization, and correcting whitelist logic.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2026-10277",
+    "CVE-2026-22171",
+    "CVE-2026-27522",
+    "CVE-2026-29611",
+    "CVE-2026-32026",
+    "CVE-2026-32030",
+    "CVE-2026-32846",
+    "CVE-2026-33581",
+    "CVE-2026-34510",
+    "CVE-2026-41370",
+    "CVE-2026-41389",
+    "CVE-2026-43533",
+    "CVE-2026-44996",
+    "CVE-2026-7875"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0044__mech_path_traversal_missing_canonical_prefix",
+  "guideline_id": "gl_mech_0202",
+  "guideline_text": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under the intended base directory before the file operation. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 14 historical CVE example(s), not as a project-specific signature. A safe implementation should normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check.",
+  "mechanism": {
+    "aliases": [
+      "path traversal",
+      "directory traversal",
+      "Zip Slip",
+      "archive entry traversal",
+      "canonical path bypass"
+    ],
+    "family": "filesystem",
+    "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+    "missing_guard": "the normalized absolute path is not checked to remain under the intended base directory before the file operation",
+    "name": "path traversal through missing canonical prefix check",
+    "required_keywords": [],
+    "sink_shape": "file read, write, delete, extraction, or resource-loading APIs",
+    "source_shape": "attacker-controlled filenames, archive entries, path fragments, or resource names",
+    "typical_fix": "normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-10277",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    44
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 44,
+      "fix_strategy": "Canonicalize the resolved path (e.g., path.resolve) and check that it starts with one of the allowed root directories. Reject paths that do not match.",
+      "members": [
+        "CVE-2026-10277",
+        "CVE-2026-27522",
+        "CVE-2026-29611",
+        "CVE-2026-32026",
+        "CVE-2026-32030",
+        "CVE-2026-41370",
+        "CVE-2026-43533",
+        "CVE-2026-44996",
+        "CVE-2026-7875"
+      ],
+      "name": "Missing canonicalization and containment check against allowed root directories",
+      "root_cause": "Code concatenates user-supplied paths with a base directory and uses the result without resolving the absolute path or verifying it stays within the intended base. This allows path traversal via '..' or absolute paths."
+    },
+    {
+      "cluster_id": 44,
+      "fix_strategy": "Add validation functions to detect and reject paths containing traversal sequences, shell metacharacters, non-local hosts in file:// URLs, or UNC paths. For temp filenames, use cryptographically random identifiers and reject path separators.",
+      "members": [
+        "CVE-2026-32846",
+        "CVE-2026-34510",
+        "CVE-2026-22171"
+      ],
+      "name": "Insufficient validation for dangerous path components",
+      "root_cause": "Code fails to reject user-supplied path components that contain traversal sequences (..), home directory (~), shell metacharacters, or non-local file URLs/UNC paths, allowing arbitrary file access or command injection."
+    },
+    {
+      "cluster_id": 44,
+      "fix_strategy": "Ensure all relevant input parameters are included in the normalization allowlist. For whitelist construction, do not add user-controlled paths to allowed roots, and use exact (case-sensitive) matching when trusting built-in tools.",
+      "members": [
+        "CVE-2026-33581",
+        "CVE-2026-41389"
+      ],
+      "name": "Incomplete allowlisting of parameters or trusted sources",
+      "root_cause": "The code relies on an allowlist of parameter keys that undergo path normalization, but the list is incomplete, allowing attackers to bypass via untracked parameters. Alternatively, the whitelist of allowed directories or trusted tools is constructed incorrectly (e.g., adding user-specified parent directories, case-insensitive tool name matching), expanding the attack surface."
+    }
+  ],
+  "tags": [
+    "filesystem",
+    "mech_path_traversal_missing_canonical_prefix",
+    "path traversal",
+    "directory traversal",
+    "Zip Slip",
+    "archive entry traversal"
+  ]
+}

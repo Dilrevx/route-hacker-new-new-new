@@ -1,0 +1,53 @@
+{
+  "cluster_summary": "This cluster consists of vulnerabilities where network protocol code either fails to validate size/length fields from external input, leading to buffer overflows or unbounded allocation, or mismanages resource cleanup and lifecycle, causing leaks or accounting imbalances, or handles errors in a way that leads to resource abuse or security bypass.",
+  "created_at": "2026-08-22T20:04:51+00:00",
+  "cve_ids": [
+    "CVE-2014-3488"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0062__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0320",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "required_keywords": [],
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2014-3488",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    62
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 62,
+      "fix_strategy": "Add validation of length/size against minimum and maximum allowed values, ensure non-negative checks, and reallocate buffers when needed.",
+      "members": [
+        "CVE-2014-3488"
+      ],
+      "name": "Missing bounds check on size/length fields from network input or external callback",
+      "root_cause": "Code assumes that length or buffer size values from network packets or external callbacks are safe without validation, leading to buffer overflows, integer underflows, unbounded memory allocation, or infinite loops when reallocation is not performed."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

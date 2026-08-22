@@ -1,0 +1,83 @@
+{
+  "cluster_summary": "The cluster comprises vulnerabilities where user-controlled input is used to construct URLs (redirect targets, server-side fetch URLs, navigation destinations, or URL query strings) without adequate validation or encoding. This leads to open redirect, server-side request forgery (SSRF), cross-site scripting (XSS), token leakage, and exposure of sensitive data. The root causes include missing host allowlist checks, incomplete URL parsing allowing bypasses, and failure to encode or filter sensitive data.",
+  "created_at": "2026-08-22T20:04:50+00:00",
+  "cve_ids": [
+    "CVE-2014-4172",
+    "CVE-2026-40074",
+    "CVE-2026-42140",
+    "CVE-2026-45739"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0037__mech_ssrf_redirect_following_client",
+  "guideline_id": "gl_mech_0187",
+  "guideline_text": "Trace attacker-controlled URLs or server-controlled redirect responses into HTTP clients that automatically follow redirects or reuse a previously validated URL decision. Report code paths where the final redirected scheme, host, port, and resolved address are not revalidated before the sensitive network request. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 4 historical CVE example(s), not as a project-specific signature. A safe implementation should disable automatic redirects or revalidate every redirect hop against the same allowlist and address policy.",
+  "mechanism": {
+    "aliases": [
+      "redirect-follow SSRF",
+      "HTTP redirect SSRF",
+      "Location header SSRF"
+    ],
+    "family": "ssrf",
+    "mechanism_id": "mech_ssrf_redirect_following_client",
+    "missing_guard": "the final redirected scheme, host, port, and resolved address are not revalidated before the sensitive network request",
+    "name": "SSRF through redirect-following client",
+    "required_keywords": [],
+    "sink_shape": "HTTP clients that automatically follow redirects or reuse a previously validated URL decision",
+    "source_shape": "attacker-controlled URLs or server-controlled redirect responses",
+    "typical_fix": "disable automatic redirects or revalidate every redirect hop against the same allowlist and address policy"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2014-4172",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    37
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 37,
+      "fix_strategy": "Add allowlist validation (e.g., URLSecurityManager, url_has_allowed_host_and_scheme) or compare the URL's origin/host against the current request's origin or a configured list of trusted hosts.",
+      "members": [
+        "CVE-2026-42140"
+      ],
+      "name": "Missing host/domain allowlist validation for redirect and server-side requests",
+      "root_cause": "Code assumes user-controlled URL is safe and does not validate the destination host against a whitelist of trusted domains or the current origin before using it in a redirect or server-side request."
+    },
+    {
+      "cluster_id": 37,
+      "fix_strategy": "Exclude sensitive headers (e.g., Authorization) from URL persistence, or remove all headers from URL sharing.",
+      "members": [
+        "CVE-2026-45739"
+      ],
+      "name": "Exposure of sensitive data in browser URL query string",
+      "root_cause": "Code stores all editing data, including sensitive HTTP headers, into the browser's URL query string via history.replaceState without filtering out sensitive fields."
+    },
+    {
+      "cluster_id": 37,
+      "fix_strategy": "Encode all user-supplied parameter values using URL encoding (e.g., URLEncoder.encode) before appending to the query string.",
+      "members": [
+        "CVE-2014-4172"
+      ],
+      "name": "Missing URL encoding of user-supplied parameter values",
+      "root_cause": "Code directly concatenates user-controlled parameter values into a URL query string without encoding special characters, allowing injection of additional parameters or URL structure."
+    },
+    {
+      "cluster_id": 37,
+      "fix_strategy": "Validate the redirect location by attempting to set it in a Headers object (which throws on invalid) and catch errors early; wrap redirect handling in try-catch.",
+      "members": [
+        "CVE-2026-40074"
+      ],
+      "name": "Missing validation of redirect location HTTP header value",
+      "root_cause": "Code passes user-controlled redirect location directly to the HTTP response without validating that the string conforms to header field value rules, causing unhandled exceptions when invalid characters are present."
+    }
+  ],
+  "tags": [
+    "ssrf",
+    "mech_ssrf_redirect_following_client",
+    "redirect-follow SSRF",
+    "HTTP redirect SSRF",
+    "Location header SSRF"
+  ]
+}

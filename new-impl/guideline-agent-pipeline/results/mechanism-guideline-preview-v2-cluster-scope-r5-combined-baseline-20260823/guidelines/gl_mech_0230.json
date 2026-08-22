@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "The workspace .env file loading function applies all key-value pairs to the process environment without filtering out variables that control critical runtime behavior, such as resource directories, API endpoints, security toggles, and connector routing. An attacker with write access to the workspace can override these variables by adding them to the .env file, leading to redirection of trusted resources or network traffic. The fix requires adding a blocklist of variable names, prefixes, and suffixes that are rejected when loading untrusted .env files.",
+  "created_at": "2026-08-22T20:04:50+00:00",
+  "cve_ids": [
+    "CVE-2026-6830"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0045__pending_mech_cluster_45_missing_blocklist_for_sensitive_environment_variables_in_workspace_en",
+  "guideline_id": "gl_mech_0230",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should add the required guard and bind it to the exact sensitive effect.",
+  "mechanism": {
+    "aliases": [
+      "one",
+      "os.environ",
+      "violating",
+      "causing",
+      "active",
+      "network"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_45_missing_blocklist_for_sensitive_environment_variables_in_workspace_en",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "missing blocklist for sensitive environment variables in workspace .env loading",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "add the required guard and bind it to the exact sensitive effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-6830",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    45
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 45,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2026-6830"
+      ],
+      "name": "missing blocklist for sensitive environment variables in workspace .env loading",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_45_missing_blocklist_for_sensitive_environment_variables_in_workspace_en",
+    "one",
+    "os.environ",
+    "violating",
+    "causing"
+  ]
+}

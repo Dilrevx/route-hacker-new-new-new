@@ -1,0 +1,69 @@
+{
+  "cluster_summary": "The cluster consists of vulnerabilities where tool authorization policies are bypassed due to insufficient identity validation, missing allowlists, and lack of authentication checks, alongside sensitive data exposure through insecure logging and parameter passing. These issues stem from assuming input trustworthiness and failing to enforce consistent security boundaries across tool loading, policy enforcement, and output handling.",
+  "created_at": "2026-08-22T20:04:49+00:00",
+  "cve_ids": [
+    "CVE-2026-32898",
+    "CVE-2026-41378",
+    "CVE-2026-42282",
+    "CVE-2026-44998",
+    "CVE-2026-5616"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0012__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0041",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 5 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "required_keywords": [],
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-32898",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    12
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 12,
+      "fix_strategy": "Introduce per-provider allowlists, remove untrusted metadata-based classification, apply authorization policy functions to all tool sources (including bundled), and add authentication checks before returning sensitive tools.",
+      "members": [
+        "CVE-2026-32898",
+        "CVE-2026-41378",
+        "CVE-2026-44998",
+        "CVE-2026-5616"
+      ],
+      "name": "Missing allowlists and pre-authorization checks",
+      "root_cause": "Code assumes default access or relies solely on deny-lists, lacks strict allowlists for safe tools, skips authentication before loading privileged tools, and fails to apply policy filtering to bundled tool sources."
+    },
+    {
+      "cluster_id": 12,
+      "fix_strategy": "Use redaction utilities when logging tool call arguments, and replace sensitive parameters (e.g., mnemonics) with opaque identifiers retrieved from an encrypted local store.",
+      "members": [
+        "CVE-2026-42282"
+      ],
+      "name": "Sensitive data exposure through logs and parameters",
+      "root_cause": "Secrets and credentials are serialized directly into log messages without redaction or passed as plaintext in function parameters, exposing them to transport layers, logs, and telemetry."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

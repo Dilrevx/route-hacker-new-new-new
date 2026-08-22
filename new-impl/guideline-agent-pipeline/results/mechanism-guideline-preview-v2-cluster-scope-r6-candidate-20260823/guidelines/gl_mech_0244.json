@@ -1,0 +1,53 @@
+{
+  "cluster_summary": "This cluster includes 37 CVEs in XWiki where user-controlled input is embedded into template outputs (wiki syntax, HTML, URLs, scripts) without proper escaping or context-aware handling. The root causes vary: missing HTML escaping, missing wiki syntax escaping, missing URL encoding, missing validation, incomplete escaping functions, or improper use of rendering macros. All lead to injection of wiki macros, Velocity, Groovy, or HTML/JavaScript with server-side privileges.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2022-36093"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0053__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0244",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "required_keywords": [],
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2022-36093",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    53
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 53,
+      "fix_strategy": "Check that the template name ends with '.vm' and return HTTP 400 if not.",
+      "members": [
+        "CVE-2022-36093"
+      ],
+      "name": "Missing file extension validation",
+      "root_cause": "User-controlled parameter is used as a template file path without verifying that the filename ends with '.vm', enabling inclusion of arbitrary templates."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

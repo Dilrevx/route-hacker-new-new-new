@@ -1,0 +1,59 @@
+{
+  "cluster_summary": "This cluster covers authorization vulnerabilities where the application fails to properly validate sender identity, trust boundaries, or access policies. The majority of issues stem from using mutable or partial identifiers for authorization, treating empty allowlists as permissive, missing authorization gates on secondary event types, or incorrectly merging authorization contexts. The cluster also includes a few distinct sub-patterns such as pre-authentication crypto work and stale queued action validation.",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2026-31998",
+    "CVE-2026-34506"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0080__pending_mech_cluster_80_empty_allowlist_treated_as_permissive",
+  "guideline_id": "gl_mech_0368",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should Make empty allowlists fail closed: return false when the allowlist is empty. For route-level allowlists, preserve the explicit empty list and do not fall back to wildcard..",
+  "mechanism": {
+    "aliases": [
+      "teams",
+      "sender",
+      "fails",
+      "downstream",
+      "dmpolicy",
+      "allowlist"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_80_empty_allowlist_treated_as_permissive",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Empty allowlist treated as permissive",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Make empty allowlists fail closed: return false when the allowlist is empty. For route-level allowlists, preserve the explicit empty list and do not fall back to wildcard."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-31998",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    80
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 80,
+      "fix_strategy": "Make empty allowlists fail closed: return false when the allowlist is empty. For route-level allowlists, preserve the explicit empty list and do not fall back to wildcard.",
+      "members": [
+        "CVE-2026-31998",
+        "CVE-2026-34506"
+      ],
+      "name": "Empty allowlist treated as permissive",
+      "root_cause": "Authorization functions returned true when the allowlist was empty, assuming an empty list means unrestricted access instead of denying all."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_80_empty_allowlist_treated_as_permissive",
+    "teams",
+    "sender",
+    "fails",
+    "downstream"
+  ]
+}

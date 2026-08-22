@@ -1,0 +1,56 @@
+{
+  "cluster_summary": "Multiple vulnerabilities arise from deserialization or class loading mechanisms that fail to properly validate the types being instantiated. Attackers can supply arbitrary class names, either through polymorphic deserialization, reflection, or metadata fields, leading to instantiation of dangerous gadgets or unauthorized objects. The predominant pattern involves an incomplete blocklist that misses known dangerous classes, while other cases involve no validation at all or flawed filtering logic.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2018-14720"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0015__mech_xml_external_entity_resolution",
+  "guideline_id": "gl_mech_0059",
+  "guideline_text": "Trace attacker-controlled or externally supplied XML documents, SOAP messages, XML reports, configuration files, XPath inputs, or XSLT stylesheets into XML parser, XPath, transformer, schema, or SOAP/XML utility code that parses or transforms those documents. Report code paths where DTD declarations, external general entities, external parameter entities, external schema access, or external stylesheet access are not disabled or constrained on the exact parser/transformer instance. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should disable DOCTYPE and external entity processing, restrict external-access properties, and install a resolver or parser configuration that rejects external resource resolution before parsing.",
+  "mechanism": {
+    "aliases": [
+      "XXE",
+      "XML external entity",
+      "external entity resolution",
+      "DTD processing",
+      "DocumentBuilderFactory external entities"
+    ],
+    "family": "xml_external_resource_resolution",
+    "mechanism_id": "mech_xml_external_entity_resolution",
+    "missing_guard": "DTD declarations, external general entities, external parameter entities, external schema access, or external stylesheet access are not disabled or constrained on the exact parser/transformer instance",
+    "name": "unsafe XML parser external entity or DTD resolution",
+    "required_keywords": [],
+    "sink_shape": "XML parser, XPath, transformer, schema, or SOAP/XML utility code that parses or transforms those documents",
+    "source_shape": "attacker-controlled or externally supplied XML documents, SOAP messages, XML reports, configuration files, XPath inputs, or XSLT stylesheets",
+    "typical_fix": "disable DOCTYPE and external entity processing, restrict external-access properties, and install a resolver or parser configuration that rejects external resource resolution before parsing"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2018-14720",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    15
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 15,
+      "fix_strategy": "Extend the blacklist by adding missing dangerous class names, and ideally move to an allowlist approach.",
+      "members": [
+        "CVE-2018-14720"
+      ],
+      "name": "Incomplete blacklist for polymorphic deserialization",
+      "root_cause": "The deserialization framework uses a static blacklist of dangerous classes (DEFAULT_NO_DESER_CLASS_NAMES) that is not exhaustive, allowing attackers to use unlisted gadget classes."
+    }
+  ],
+  "tags": [
+    "xml_external_resource_resolution",
+    "mech_xml_external_entity_resolution",
+    "XXE",
+    "XML external entity",
+    "external entity resolution",
+    "DTD processing"
+  ]
+}

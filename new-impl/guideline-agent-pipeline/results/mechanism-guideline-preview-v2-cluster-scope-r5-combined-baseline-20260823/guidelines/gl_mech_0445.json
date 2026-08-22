@@ -1,0 +1,59 @@
+{
+  "cluster_summary": "This cluster covers vulnerabilities related to improper generation, storage, and validation of passwords and secrets. Issues include using weak pseudorandom number generators for tokens, inadequate password hashing (unsalted or weak algorithms), missing input length and complexity validation, and information exposure through exception messages.",
+  "created_at": "2026-08-22T20:04:52+00:00",
+  "cve_ids": [
+    "CVE-2020-5229",
+    "CVE-2022-41933"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0091__pending_mech_cluster_91_insecure_password_storage",
+  "guideline_id": "gl_mech_0445",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should Use strong adaptive hash functions like bcrypt, scrypt, or Argon2 with random per-user salts; migrate existing weak hashes to the new scheme while retaining backward compatibility..",
+  "mechanism": {
+    "aliases": [
+      "users",
+      "cryptographically",
+      "input",
+      "strong",
+      "field",
+      "those"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_91_insecure_password_storage",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Insecure password storage",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Use strong adaptive hash functions like bcrypt, scrypt, or Argon2 with random per-user salts; migrate existing weak hashes to the new scheme while retaining backward compatibility."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2020-5229",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    91
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 91,
+      "fix_strategy": "Use strong adaptive hash functions like bcrypt, scrypt, or Argon2 with random per-user salts; migrate existing weak hashes to the new scheme while retaining backward compatibility.",
+      "members": [
+        "CVE-2020-5229",
+        "CVE-2022-41933"
+      ],
+      "name": "Insecure password storage",
+      "root_cause": "Passwords are stored without proper cryptographic hashing: using broken algorithms (MD5), unsalted hashes (SHA-256), or plaintext. This allows attackers with database access to crack passwords efficiently."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_91_insecure_password_storage",
+    "users",
+    "cryptographically",
+    "input",
+    "strong"
+  ]
+}

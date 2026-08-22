@@ -1,0 +1,131 @@
+{
+  "cluster_summary": "A collection of vulnerabilities where user-controlled input is passed to a template engine or expression language evaluator without proper sanitization, escaping, or restriction of dangerous features, allowing injection of arbitrary expressions that can lead to code execution, file access, or information disclosure.",
+  "created_at": "2026-08-22T20:04:49+00:00",
+  "cve_ids": [
+    "CVE-2010-5327",
+    "CVE-2020-11002",
+    "CVE-2020-26282",
+    "CVE-2020-5245",
+    "CVE-2021-21244",
+    "CVE-2021-3644",
+    "CVE-2021-41269",
+    "CVE-2022-24881",
+    "CVE-2022-46166",
+    "CVE-2023-29213",
+    "CVE-2023-51387",
+    "CVE-2023-51388",
+    "CVE-2024-41667",
+    "CVE-2025-35036"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0019__mech_template_expression_untrusted_eval",
+  "guideline_id": "gl_mech_0071",
+  "guideline_text": "Trace attacker-controlled template text, expression strings, macro content, or rendering parameters into template engines, expression evaluators, macro renderers, or scriptable configuration evaluators. Report code paths where untrusted expression content is evaluated without sandboxing, escaping, allowlisting, or disabling reflective execution features. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 14 historical CVE example(s), not as a project-specific signature. A safe implementation should separate data from templates, sandbox expression evaluation, and disable reflection or method invocation features for untrusted input.",
+  "mechanism": {
+    "aliases": [
+      "template injection",
+      "expression language injection",
+      "SpEL injection",
+      "OGNL injection",
+      "Velocity macro injection",
+      "FreeMarker template injection"
+    ],
+    "family": "code_or_template_injection",
+    "mechanism_id": "mech_template_expression_untrusted_eval",
+    "missing_guard": "untrusted expression content is evaluated without sandboxing, escaping, allowlisting, or disabling reflective execution features",
+    "name": "untrusted template or expression evaluation",
+    "required_keywords": [],
+    "sink_shape": "template engines, expression evaluators, macro renderers, or scriptable configuration evaluators",
+    "source_shape": "attacker-controlled template text, expression strings, macro content, or rendering parameters",
+    "typical_fix": "separate data from templates, sandbox expression evaluation, and disable reflection or method invocation features for untrusted input"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2010-5327",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    19
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 19,
+      "fix_strategy": "Escape these characters in user input before constructing the message template.",
+      "members": [
+        "CVE-2020-11002",
+        "CVE-2020-26282",
+        "CVE-2020-5245"
+      ],
+      "name": "Missing escaping in Bean Validation message templates",
+      "root_cause": "User input is interpolated into EL-interpolated message templates without escaping special characters ('{', '}', '$', '\\') that activate expression evaluation."
+    },
+    {
+      "cluster_id": 19,
+      "fix_strategy": "Replace the default interpolator with one that does not evaluate EL (e.g., ParameterMessageInterpolator) or use static message strings.",
+      "members": [
+        "CVE-2021-21244",
+        "CVE-2021-41269",
+        "CVE-2025-35036"
+      ],
+      "name": "Unsafe default EL evaluation in Bean Validation messages",
+      "root_cause": "The default message interpolator in Bean Validation evaluates EL expressions in user-controlled messages, trusting input that may contain expressions."
+    },
+    {
+      "cluster_id": 19,
+      "fix_strategy": "Configure the template engine with a restricted class resolver (e.g., TemplateClassResolver.SAFER_RESOLVER) or implement a custom sandbox.",
+      "members": [
+        "CVE-2010-5327",
+        "CVE-2022-24881",
+        "CVE-2024-41667"
+      ],
+      "name": "FreeMarker unrestricted class resolution",
+      "root_cause": "The FreeMarker template engine's default class resolver allows instantiation of arbitrary Java classes, enabling code execution from user-controlled templates."
+    },
+    {
+      "cluster_id": 19,
+      "fix_strategy": "Restrict the feature set to safe features only (e.g., If, Assignment, Let, StringInterpolation) using Options.FEATURE_SET.",
+      "members": [
+        "CVE-2023-51387",
+        "CVE-2023-51388"
+      ],
+      "name": "AviatorScript feature set too permissive",
+      "root_cause": "AviatorScript's default feature set includes dangerous capabilities like object instantiation and static method calls."
+    },
+    {
+      "cluster_id": 19,
+      "fix_strategy": "Replace StandardEvaluationContext with SimpleEvaluationContext that only permits read-only property access.",
+      "members": [
+        "CVE-2022-46166"
+      ],
+      "name": "SpEL unrestricted evaluation context",
+      "root_cause": "Use of StandardEvaluationContext in SpEL evaluation allows arbitrary method invocation on root objects."
+    },
+    {
+      "cluster_id": 19,
+      "fix_strategy": "Validate and sanitize input, implement allowlist of safe expressions before evaluation.",
+      "members": [
+        "CVE-2023-29213"
+      ],
+      "name": "General EL injection via unsanitized input to evaluator",
+      "root_cause": "User-controlled input is passed directly to an expression language evaluator (e.g., Velocity, Groovy) without validation or sanitization."
+    },
+    {
+      "cluster_id": 19,
+      "fix_strategy": "Use a global regex that matches any vault expression anywhere in the input string.",
+      "members": [
+        "CVE-2021-3644"
+      ],
+      "name": "Vault expression smuggling via incomplete parsing",
+      "root_cause": "The parser only extracts the first delimited expression from an attribute value, allowing malicious vault expressions to be hidden after a non-sensitive expression."
+    }
+  ],
+  "tags": [
+    "code_or_template_injection",
+    "mech_template_expression_untrusted_eval",
+    "template injection",
+    "expression language injection",
+    "SpEL injection",
+    "OGNL injection"
+  ]
+}

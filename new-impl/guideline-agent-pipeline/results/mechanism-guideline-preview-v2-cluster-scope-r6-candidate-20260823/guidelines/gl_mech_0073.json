@@ -1,0 +1,59 @@
+{
+  "cluster_summary": "A collection of vulnerabilities where user-controlled input is passed to a template engine or expression language evaluator without proper sanitization, escaping, or restriction of dangerous features, allowing injection of arbitrary expressions that can lead to code execution, file access, or information disclosure.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2020-12668",
+    "CVE-2025-59340",
+    "CVE-2026-25526"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0019__mech_bean_property_reflection_escape",
+  "guideline_id": "gl_mech_0073",
+  "guideline_text": "Trace attacker-controlled property names, bean paths, binding keys, or conversion metadata into bean introspection, property-copy, nested binding, conversion, or reflective access APIs. Report code paths where dangerous meta-properties, nested class-loader paths, or reflective properties are not suppressed before binding. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should denylist dangerous meta-properties, restrict nested binding, and avoid exposing reflective class-loader reachable fields.",
+  "mechanism": {
+    "aliases": [
+      "BeanUtils property injection",
+      "bean introspection",
+      "classloader property escape",
+      "nested property binding"
+    ],
+    "family": "reflection_or_binding",
+    "mechanism_id": "mech_bean_property_reflection_escape",
+    "missing_guard": "dangerous meta-properties, nested class-loader paths, or reflective properties are not suppressed before binding",
+    "name": "bean property reflection escape",
+    "required_keywords": [],
+    "sink_shape": "bean introspection, property-copy, nested binding, conversion, or reflective access APIs",
+    "source_shape": "attacker-controlled property names, bean paths, binding keys, or conversion metadata",
+    "typical_fix": "denylist dangerous meta-properties, restrict nested binding, and avoid exposing reflective class-loader reachable fields"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2020-12668",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    19
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 19,
+      "fix_strategy": "Extend the set of restricted classes, add base object checks in property access, and route property resolution through the sandbox-aware interpreter.",
+      "members": [
+        "CVE-2020-12668",
+        "CVE-2025-59340",
+        "CVE-2026-25526"
+      ],
+      "name": "Jinjava sandbox bypass via incomplete restrictions",
+      "root_cause": "The Jinjava template engine's sandbox restrictions are incomplete, allowing access to reflection classes, interpreter objects, or direct method reflection that bypasses checks."
+    }
+  ],
+  "tags": [
+    "reflection_or_binding",
+    "mech_bean_property_reflection_escape",
+    "BeanUtils property injection",
+    "bean introspection",
+    "classloader property escape",
+    "nested property binding"
+  ]
+}

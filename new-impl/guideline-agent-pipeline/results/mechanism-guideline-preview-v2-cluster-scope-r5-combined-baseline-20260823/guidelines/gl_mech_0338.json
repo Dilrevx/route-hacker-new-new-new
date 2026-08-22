@@ -1,0 +1,59 @@
+{
+  "cluster_summary": "A cluster of vulnerabilities where user-supplied command arguments are insufficiently validated against allowlists or safe-bin policies, leading to bypass of intended restrictions via dangerous flags, wrapper chains, inconsistent approval display, shell expansion, or filesystem oracle leaks.",
+  "created_at": "2026-08-22T20:04:51+00:00",
+  "cve_ids": [
+    "CVE-2026-31995",
+    "CVE-2026-47274"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0065__pending_mech_cluster_65_insufficient_input_sanitization_before_process_execution",
+  "guideline_id": "gl_mech_0338",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should Validate or sanitize user input against a allowlist of safe values, reject dangerous characters, use absolute paths for external commands, and avoid shell fallback..",
+  "mechanism": {
+    "aliases": [
+      "invocation",
+      "values",
+      "bin",
+      "input",
+      "uncontrolled-search-path-element",
+      "interprets"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_65_insufficient_input_sanitization_before_process_execution",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Insufficient input sanitization before process execution",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Validate or sanitize user input against a allowlist of safe values, reject dangerous characters, use absolute paths for external commands, and avoid shell fallback."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-31995",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    65
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 65,
+      "fix_strategy": "Validate or sanitize user input against a allowlist of safe values, reject dangerous characters, use absolute paths for external commands, and avoid shell fallback.",
+      "members": [
+        "CVE-2026-31995",
+        "CVE-2026-47274"
+      ],
+      "name": "Insufficient input sanitization before process execution",
+      "root_cause": "User-controlled input passes directly to process execution APIs without validation or sanitization for dangerous constructs such as file paths, NUL characters, shell metacharacters, or uncontrolled PATH variables."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_65_insufficient_input_sanitization_before_process_execution",
+    "invocation",
+    "values",
+    "bin",
+    "input"
+  ]
+}

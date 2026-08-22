@@ -1,0 +1,65 @@
+{
+  "cluster_summary": "This cluster covers vulnerabilities where input parsing code makes unchecked assumptions about string characteristics (null-termination, quote delimiters) and integer sizes (minimum length, maximum value, non-zero record size). These assumptions lead to out-of-bounds reads, heap buffer overflows, integer underflow/overflow, and infinite loops. Fixes require adding explicit validation checks before performing memory operations or arithmetic.",
+  "created_at": "2026-08-22T20:04:50+00:00",
+  "cve_ids": [
+    "CVE-2026-25884",
+    "CVE-2026-32889",
+    "CVE-2026-8086",
+    "CVE-2026-8087",
+    "CVE-2026-8212",
+    "CVE-2026-8213"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0040__mech_toctou_mutable_object_reuse",
+  "guideline_id": "gl_mech_0201",
+  "guideline_text": "Trace mutable files, paths, objects, identities, request fields, or shared state that are checked before use into sensitive file, state, permission, memory, or resource effects that depend on the earlier check. Report code paths where the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 6 historical CVE example(s), not as a project-specific signature. A safe implementation should bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary.",
+  "mechanism": {
+    "aliases": [
+      "TOCTOU",
+      "check then use race",
+      "double fetch",
+      "stale object reuse"
+    ],
+    "family": "race_or_lifecycle",
+    "mechanism_id": "mech_toctou_mutable_object_reuse",
+    "missing_guard": "the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect",
+    "name": "time-of-check to time-of-use on mutable object",
+    "required_keywords": [],
+    "sink_shape": "sensitive file, state, permission, memory, or resource effects that depend on the earlier check",
+    "source_shape": "mutable files, paths, objects, identities, request fields, or shared state that are checked before use",
+    "typical_fix": "bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-25884",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    40
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 40,
+      "fix_strategy": "Validate string length and content (e.g., check for null terminator presence, leading/trailing quotes) before using them in memory operations; use explicit lengths or bounds checks to prevent over-reads and overflows.",
+      "members": [
+        "CVE-2026-25884",
+        "CVE-2026-32889",
+        "CVE-2026-8087",
+        "CVE-2026-8086",
+        "CVE-2026-8212",
+        "CVE-2026-8213"
+      ],
+      "name": "Unchecked assumptions on string terminator and quote delimiters",
+      "root_cause": "Code assumes that parsed strings are always null-terminated, enclosed in double quotes, or have a specific minimal length without verifying these properties, causing out-of-bounds reads, heap overflows, or infinite loops when the assumption fails."
+    }
+  ],
+  "tags": [
+    "race_or_lifecycle",
+    "mech_toctou_mutable_object_reuse",
+    "TOCTOU",
+    "check then use race",
+    "double fetch",
+    "stale object reuse"
+  ]
+}

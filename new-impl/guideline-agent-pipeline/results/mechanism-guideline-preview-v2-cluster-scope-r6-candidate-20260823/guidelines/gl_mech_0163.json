@@ -1,0 +1,61 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where sensitive data (passwords, emails) is exposed due to missing type-based filtering, obfuscation, or redaction. It also includes issues with stale cached configuration and specific logic errors in metadata handling and cleanup, leading to unauthorized disclosure of protected information.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2023-34467",
+    "CVE-2024-31464",
+    "CVE-2025-54124"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0034__pending_mech_cluster_34_missing_type_based_filtering_for_sensitive_fields",
+  "guideline_id": "gl_mech_0163",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should Before including a field in a query, output, or serialization, check its property class type; skip or redact/obfuscate if the type is sensitive (Password, Email) and relevant configuration is enabled..",
+  "mechanism": {
+    "aliases": [
+      "deleted",
+      "possibly",
+      "allowlist",
+      "format",
+      "reject",
+      "placeholder"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_34_missing_type_based_filtering_for_sensitive_fields",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "missing type-based filtering for sensitive fields",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Before including a field in a query, output, or serialization, check its property class type; skip or redact/obfuscate if the type is sensitive (Password, Email) and relevant configuration is enabled."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2023-34467",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    34
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 34,
+      "fix_strategy": "Before including a field in a query, output, or serialization, check its property class type; skip or redact/obfuscate if the type is sensitive (Password, Email) and relevant configuration is enabled.",
+      "members": [
+        "CVE-2023-34467",
+        "CVE-2024-31464",
+        "CVE-2025-54124"
+      ],
+      "name": "missing type-based filtering for sensitive fields",
+      "root_cause": "Code assumes all fields or properties can be safely included in queries, displays, exports, or diffs without checking their data type (e.g., Password, Email) and applying appropriate redaction/obfuscation."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_34_missing_type_based_filtering_for_sensitive_fields",
+    "deleted",
+    "possibly",
+    "allowlist",
+    "format"
+  ]
+}

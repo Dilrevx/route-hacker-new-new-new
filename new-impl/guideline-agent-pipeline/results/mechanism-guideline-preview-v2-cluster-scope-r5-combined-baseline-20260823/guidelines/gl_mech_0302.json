@@ -1,0 +1,75 @@
+{
+  "cluster_summary": "This cluster comprises 26 cross-site scripting (XSS) vulnerabilities caused by insufficient handling of user-supplied input. The common flaw is that user input is reflected or stored without proper HTML encoding, sanitization, or validation, allowing injection of arbitrary HTML/JavaScript. Fixes range from adding global input sanitization filters to per-field encoding, input validation, and removal of insecure features like JSONP.",
+  "created_at": "2026-08-22T20:04:51+00:00",
+  "cve_ids": [
+    "CVE-2020-15231",
+    "CVE-2023-7166",
+    "CVE-2026-10567"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0058__mech_request_body_resource_mismatch_authz",
+  "guideline_id": "gl_mech_0302",
+  "guideline_text": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources. Report code paths where the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation.",
+  "mechanism": {
+    "aliases": [
+      "path parameter authorization mismatch",
+      "request body resource mismatch",
+      "bulk operation target mismatch",
+      "namespace sync authorization bypass"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_request_body_resource_mismatch_authz",
+    "missing_guard": "the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check",
+    "name": "request-body resource identifiers bypass path-scoped authorization",
+    "required_keywords": [],
+    "sink_shape": "bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources",
+    "source_shape": "attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body",
+    "typical_fix": "validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2020-15231",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    58
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 58,
+      "fix_strategy": "Add server-side validation (regex, pattern annotation, URL validation) that rejects input containing HTML special characters or enforces an allow-list of safe characters.",
+      "members": [
+        "CVE-2023-7166"
+      ],
+      "name": "Input validation for HTML metacharacters missing",
+      "root_cause": "The application did not validate user input to reject characters used in HTML injection (e.g., <, >, \", '). Input was accepted as-is and later rendered, allowing injection."
+    },
+    {
+      "cluster_id": 58,
+      "fix_strategy": "Either validate the callback parameter against a strict whitelist of valid JavaScript identifiers and set safe content-type, or completely remove JSONP support.",
+      "members": [
+        "CVE-2020-15231"
+      ],
+      "name": "Unvalidated JSONP callback parameter",
+      "root_cause": "The JSONP callback parameter was directly reflected in the HTTP response as a JavaScript function name without validation or proper content-type, enabling arbitrary script execution."
+    },
+    {
+      "cluster_id": 58,
+      "fix_strategy": "Replace the global boolean flag with a configurable list of URL patterns; apply HTML escaping to deserialized strings only when the request URI matches a pattern, allowing selective protection.",
+      "members": [
+        "CVE-2026-10567"
+      ],
+      "name": "Disabled default HTML escaping in Jackson deserialization",
+      "root_cause": "A global configuration flag controlling HTML escaping for Jackson deserialization was disabled by default, so user input from JSON was not escaped when deserialized and later used in HTML output."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_request_body_resource_mismatch_authz",
+    "path parameter authorization mismatch",
+    "request body resource mismatch",
+    "bulk operation target mismatch",
+    "namespace sync authorization bypass"
+  ]
+}

@@ -221,6 +221,13 @@ guard, and typical fix text. Unknown work items are written as
 LLM reviewer that proposes new entries from those pending rows. The online
 recall runner consumes the released `guideline_overrides.jsonl` sidecar and
 does not infer mechanism words from advisory regexes.
+Lexicon entries may also declare `required_keywords`, a list of evidence groups
+where each group is a string or a list of alternative strings. This is an
+offline attribution constraint: a mechanism participates only when every group
+has at least one phrase present in the CVE evidence text. Use it to prevent
+generic terms such as `filter`, `escape`, or `length` from pulling unrelated
+clusters into LDAP, SQL, or binary-length mechanisms. Do not use it as an
+online source-code scanner or as a hidden case-specific fallback.
 By default, `pending_review` guidelines stay in the release for human and
 LLM-as-judge review but are excluded from `guideline_overrides.jsonl`, because
 they are not yet stable retrieval queries. Use `--include-pending-overrides`
@@ -260,6 +267,17 @@ Committed preview outputs:
   the r3 override. It kept Top-100 at 5/12 but dropped Top-200 to 6/12 and
   Top-500 to 8/12. Use this mode for diagnostics, not as the next default full
   143-case policy.
+- `results/mechanism-guideline-preview-v2-cluster-scope-r5-combined-baseline-20260823/`
+  is a same-input seed-only baseline for the combined 97-cluster input. It is
+  used only to compare r6 candidate lexicon behavior against the same source
+  artifacts.
+- `results/mechanism-guideline-preview-v2-cluster-scope-r6-candidate-20260823/`
+  adds `guidelines/mechanism_lexicon.candidate_r6.json` through
+  `--extra-lexicon`. The candidate lexicon introduces review-only mechanism
+  entries for LDAP filter injection, HTML sanitizer policy gaps, binary
+  length/resource bounds, authentication artifact validation, dynamic SQL
+  fragments, inline Content-Disposition XSS, temporary-resource permissions,
+  and archive symlink extraction escape.
 
 The r1/r2/r3 bad-case regressions are useful but not yet sufficient for a full
 replacement run. Treat them as evidence that mechanism-scoped guidelines help
@@ -378,6 +396,27 @@ insufficient case evidence, and pending groups that still need specific
 source/sink/guard wording before they become stable recall queries. Do not
 optimize the generator toward fixed judge keywords or structural flags; use the
 judge notes as reading order for the next evidence-driven mechanism split.
+
+The r6 candidate iteration keeps the same generator policy and loads a separate
+candidate lexicon file instead of overwriting the seed lexicon:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/generate_mechanism_guidelines.py \
+  --clusters .tmp/guideline_inputs/refined_clusters_combined.json \
+  --structured .tmp/guideline_inputs/structured_cves_combined.jsonl \
+  --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
+  --lexicon new-impl/guideline-agent-pipeline/guidelines/mechanism_lexicon.seed.json \
+  --extra-lexicon new-impl/guideline-agent-pipeline/guidelines/mechanism_lexicon.candidate_r6.json \
+  --output-dir new-impl/guideline-agent-pipeline/results/mechanism-guideline-preview-v2-cluster-scope-r6-candidate-20260823
+```
+
+On the same combined input, r6 candidate reduces pending attributions from 212
+to 148 and increases recall sidecar rows from 232 to 252. The structural purity
+stays effectively flat against the seed-only combined baseline: weighted HCVR
+purity `0.8297 -> 0.8297`, weighted CWE purity `0.9179 -> 0.9142`, mixed HCVR
+groups `8 -> 10`, and mixed CWE groups stays `7 -> 7`. Interpret this as a
+coverage-expansion candidate that needs TraeX judge review and a same-identity
+recall rerun before any paper-facing recall claim.
 
 Build a cautious experiment scorecard when reporting a guideline iteration:
 

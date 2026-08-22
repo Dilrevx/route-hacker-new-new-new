@@ -1,0 +1,97 @@
+{
+  "cluster_summary": "This cluster contains 40 CVEs covering various cryptographic implementation errors, including missing input validation (buffer offsets, shift amounts), timing side-channel vulnerabilities, use of insecure algorithms/modes (ECB, SHA-1), missing parameter validation (DH public key, DSA parameters, point-on-curve), certificate/trust anchor validation issues, signature encoding malleability, arithmetic errors (carry propagation, integer overflow), infinite loops in modular arithmetic, flawed verification logic, missing error handling, lossy byte-to-string conversion, caching logic flaws, and SSH protocol sequence number mishandling. Each vulnerability arises from a specific coding mistake that weakens the security guarantee of cryptographic operations.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2016-1000345",
+    "CVE-2016-1000346",
+    "CVE-2017-13098",
+    "CVE-2024-23953",
+    "CVE-2025-59432",
+    "CVE-2025-70887",
+    "CVE-2026-33896",
+    "CVE-2026-41207",
+    "CVE-2026-4600",
+    "CVE-2026-4601"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0046__mech_toctou_mutable_object_reuse",
+  "guideline_id": "gl_mech_0211",
+  "guideline_text": "Trace mutable files, paths, objects, identities, request fields, or shared state that are checked before use into sensitive file, state, permission, memory, or resource effects that depend on the earlier check. Report code paths where the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 10 historical CVE example(s), not as a project-specific signature. A safe implementation should bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary.",
+  "mechanism": {
+    "aliases": [
+      "TOCTOU",
+      "check then use race",
+      "double fetch",
+      "stale object reuse"
+    ],
+    "family": "race_or_lifecycle",
+    "mechanism_id": "mech_toctou_mutable_object_reuse",
+    "missing_guard": "the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect",
+    "name": "time-of-check to time-of-use on mutable object",
+    "required_keywords": [],
+    "sink_shape": "sensitive file, state, permission, memory, or resource effects that depend on the earlier check",
+    "source_shape": "mutable files, paths, objects, identities, request fields, or shared state that are checked before use",
+    "typical_fix": "bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2016-1000345",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    46
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 46,
+      "fix_strategy": "Use constant-time comparisons (MessageDigest.isEqual), per-instance copies of S-box, exponent blinding, reorder operations to verify MAC before decryption, add length checks.",
+      "members": [
+        "CVE-2017-13098",
+        "CVE-2016-1000345",
+        "CVE-2024-23953",
+        "CVE-2025-59432"
+      ],
+      "name": "Timing side-channel vulnerabilities",
+      "root_cause": "Cryptographic operations use data-dependent timing (static S-box, non-blinded exponentiation, early-exit comparisons, early padding validation) that leaks secret key or plaintext information via observable timing differences."
+    },
+    {
+      "cluster_id": 46,
+      "fix_strategy": "Add input validation checks: verify public key range and subgroup, use appropriate parameter sizes, perform point-on-curve validation, ensure correct number of Miller-Rabin iterations based on actual bitlength, retry on invalid signature components, verify public key hash against output script.",
+      "members": [
+        "CVE-2016-1000346",
+        "CVE-2026-4600",
+        "CVE-2026-4601"
+      ],
+      "name": "Missing validation of cryptographic parameters and keys",
+      "root_cause": "Cryptographic operations accept untrusted inputs (public keys, domain parameters, candidate primes) without validating their properties (subgroup membership, non-triviality, primality strength, point-on-curve), allowing attacks that weaken security."
+    },
+    {
+      "cluster_id": 46,
+      "fix_strategy": "Require full fingerprint for trust anchors, enforce key usage and basicConstraints presence, reject certificates without mandatory extensions.",
+      "members": [
+        "CVE-2025-70887",
+        "CVE-2026-33896"
+      ],
+      "name": "Certificate and trust anchor validation issues",
+      "root_cause": "Certificate chain validation fails to enforce required extensions (keyUsage, extendedKeyUsage, basicConstraints) or accepts weak identifiers (short PGP key ID) that can be forged."
+    },
+    {
+      "cluster_id": 46,
+      "fix_strategy": "Check return values and propagate exceptions instead of silently using result.",
+      "members": [
+        "CVE-2026-41207"
+      ],
+      "name": "Missing error handling on cryptographic operation failure",
+      "root_cause": "Code assumes cryptographic operations (HKDF, export) always succeed and does not check return values, leading to use of zero-filled key material on failure."
+    }
+  ],
+  "tags": [
+    "race_or_lifecycle",
+    "mech_toctou_mutable_object_reuse",
+    "TOCTOU",
+    "check then use race",
+    "double fetch",
+    "stale object reuse"
+  ]
+}

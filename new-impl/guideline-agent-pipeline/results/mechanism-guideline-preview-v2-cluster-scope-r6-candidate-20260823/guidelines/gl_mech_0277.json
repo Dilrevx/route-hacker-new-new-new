@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "File operations (read, write, delete, copy) fail to resolve symbolic links or otherwise canonicalize the final path before checking that it stays within an intended sandbox directory. This allows an attacker to escape containment via symlinks, directory traversal, or TOCTOU races where symlinks are swapped between validation and use. The cluster also includes several distinct variants: insufficient pattern-based blocking, input-sanitization flaws, permission mistakes, validation ordering errors, and a concurrency issue on shared file state.",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2026-41355"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0060__pending_mech_cluster_60_missing_allowlist_or_blocklist_for_sensitive_file_paths",
+  "guideline_id": "gl_mech_0277",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Add a configurable blocklist (regex patterns for dangerous paths) or allowlist (explicit list of allowed paths). Reject operations that match a blocked pattern or are not in the allowed list. For directory copies, exclude dangerous subdirectories via an excludeDirs parameter..",
+  "mechanism": {
+    "aliases": [
+      "out",
+      "allowlist",
+      "reject",
+      "prevent",
+      "inclusion-of-functionality-from-untrusted-control-sphere",
+      "blocklist"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_60_missing_allowlist_or_blocklist_for_sensitive_file_paths",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing allowlist or blocklist for sensitive file paths",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Add a configurable blocklist (regex patterns for dangerous paths) or allowlist (explicit list of allowed paths). Reject operations that match a blocked pattern or are not in the allowed list. For directory copies, exclude dangerous subdirectories via an excludeDirs parameter."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-41355",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    60
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 60,
+      "fix_strategy": "Add a configurable blocklist (regex patterns for dangerous paths) or allowlist (explicit list of allowed paths). Reject operations that match a blocked pattern or are not in the allowed list. For directory copies, exclude dangerous subdirectories via an excludeDirs parameter.",
+      "members": [
+        "CVE-2026-41355"
+      ],
+      "name": "Missing allowlist or blocklist for sensitive file paths",
+      "root_cause": "File operations allow writing to (or reading from) any location under a base directory without checking for known dangerous file names or directories (e.g., .git hooks, pipeline metadata files, executable hook directories, or arbitrary workspace paths). Some cases also lack an allowlist of permissible paths."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_60_missing_allowlist_or_blocklist_for_sensitive_file_paths",
+    "out",
+    "allowlist",
+    "reject",
+    "prevent"
+  ]
+}

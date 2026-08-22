@@ -1,0 +1,65 @@
+{
+  "cluster_summary": "A cluster of vulnerabilities in error page generation where user-controlled input is embedded without escaping (leading to XSS), exception stack traces are exposed (information disclosure), and an unbounded cache keyed by error messages leads to denial of service.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2020-4070",
+    "CVE-2026-33012"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0043__mech_ssrf_webhook_url_fetch",
+  "guideline_id": "gl_mech_0199",
+  "guideline_text": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets.",
+  "mechanism": {
+    "aliases": [
+      "webhook SSRF",
+      "callback URL fetch",
+      "user controlled URL fetch",
+      "outbound HTTP client SSRF"
+    ],
+    "family": "ssrf",
+    "mechanism_id": "mech_ssrf_webhook_url_fetch",
+    "missing_guard": "scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request",
+    "name": "attacker-controlled webhook or callback URL fetch",
+    "required_keywords": [],
+    "sink_shape": "outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers",
+    "source_shape": "attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations",
+    "typical_fix": "enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2020-4070",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    43
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 43,
+      "fix_strategy": "Apply HTML entity encoding (e.g., htmlEscape, StringEscapeUtils.escapeHtml4) to user-controlled strings before inserting them into error responses.",
+      "members": [
+        "CVE-2020-4070"
+      ],
+      "name": "Missing HTML escaping in error messages",
+      "root_cause": "Error page rendering code assumes that the error message and stack trace strings are safe to embed directly into an HTML template without escaping. No HTML entity encoding is applied to user-controlled strings, allowing characters like '<' and '&' to be interpreted as markup."
+    },
+    {
+      "cluster_id": 43,
+      "fix_strategy": "Replace the unbounded ConcurrentHashMap with a bounded cache (e.g., ConcurrentLinkedHashMap with maximumWeightedCapacity) to limit memory consumption.",
+      "members": [
+        "CVE-2026-33012"
+      ],
+      "name": "Unbounded error-page cache leading to denial of service",
+      "root_cause": "The cache uses a ConcurrentHashMap without any eviction policy, and the cache key includes attacker-controlled error message fields, allowing uncontrolled memory allocation and eventual OutOfMemoryError."
+    }
+  ],
+  "tags": [
+    "ssrf",
+    "mech_ssrf_webhook_url_fetch",
+    "webhook SSRF",
+    "callback URL fetch",
+    "user controlled URL fetch",
+    "outbound HTTP client SSRF"
+  ]
+}

@@ -44,6 +44,84 @@ def structured_rows() -> list[dict]:
     ]
 
 
+def minimal_lexicon(mechanism_id: str, name: str) -> dict:
+    return {
+        "schema_version": "hcvr_mechanism_lexicon.v1",
+        "mechanisms": [
+            {
+                "mechanism_id": mechanism_id,
+                "name": name,
+                "family": "test",
+                "aliases": [name],
+                "keywords": [name],
+                "required_keywords": [],
+                "source_shape": "test source",
+                "sink_shape": "test sink",
+                "missing_guard": "test guard is missing",
+                "typical_fix": "add the test guard",
+            }
+        ],
+    }
+
+
+def test_merge_lexicons_keeps_seed_then_extra_order(tmp_path: Path):
+    module = load_module()
+    seed = tmp_path / "seed.json"
+    extra = tmp_path / "extra.json"
+    write_json(seed, minimal_lexicon("mech_seed", "seed mechanism"))
+    write_json(extra, minimal_lexicon("mech_extra", "extra mechanism"))
+
+    mechanisms = module.merge_lexicons([seed, extra])
+
+    assert [mechanism.mechanism_id for mechanism in mechanisms] == ["mech_seed", "mech_extra"]
+
+
+def test_merge_lexicons_rejects_duplicate_mechanism_ids(tmp_path: Path):
+    module = load_module()
+    first = tmp_path / "first.json"
+    second = tmp_path / "second.json"
+    write_json(first, minimal_lexicon("mech_duplicate", "first mechanism"))
+    write_json(second, minimal_lexicon("mech_duplicate", "second mechanism"))
+
+    try:
+        module.merge_lexicons([first, second])
+    except ValueError as exc:
+        assert "duplicate mechanism_id" in str(exc)
+        assert "mech_duplicate" in str(exc)
+    else:
+        raise AssertionError("expected duplicate mechanism_id to fail")
+
+
+def test_required_keywords_gate_generic_keyword_matches():
+    module = load_module()
+    mechanism = module.Mechanism(
+        mechanism_id="mech_ldap_filter_unescaped_input",
+        name="LDAP filter injection",
+        family="directory_query_injection",
+        aliases=(),
+        keywords=("filter", "escape", "ldap"),
+        required_keywords=(("ldap", "dircontext"),),
+        source_shape="attacker-controlled LDAP input",
+        sink_shape="LDAP filter construction",
+        missing_guard="LDAP metacharacters are not escaped",
+        typical_fix="escape values for the LDAP filter context",
+    )
+
+    generic_score, generic_matches = module.score_mechanism(
+        "CSV formula injection due to missing escape of leading formula characters before spreadsheet filter export",
+        mechanism,
+    )
+    ldap_score, ldap_matches = module.score_mechanism(
+        "LDAP search filter construction misses escaping for attacker-controlled usernames",
+        mechanism,
+    )
+
+    assert generic_score == 0.0
+    assert generic_matches == []
+    assert ldap_score > 0.0
+    assert "ldap" in ldap_matches
+
+
 def test_broad_cluster_is_split_by_member_mechanism():
     module = load_module()
     lexicon = module.load_lexicon(LEXICON)
@@ -155,6 +233,7 @@ def test_guideline_text_uses_mechanism_guard_without_generic_binding_boilerplate
         family="authorization",
         aliases=(),
         keywords=(),
+        required_keywords=(),
         source_shape="attacker-selected object IDs",
         sink_shape="sensitive resource mutations",
         missing_guard="the authorization decision is not bound to the exact resource being mutated",
@@ -166,6 +245,7 @@ def test_guideline_text_uses_mechanism_guard_without_generic_binding_boilerplate
         family="injection",
         aliases=(),
         keywords=(),
+        required_keywords=(),
         source_shape="attacker-controlled query fields",
         sink_shape="SQL statement construction",
         missing_guard="values are concatenated into SQL syntax before parameter binding",

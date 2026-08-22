@@ -1,0 +1,110 @@
+{
+  "cluster_summary": "This cluster contains 40 CVEs covering various cryptographic implementation errors, including missing input validation (buffer offsets, shift amounts), timing side-channel vulnerabilities, use of insecure algorithms/modes (ECB, SHA-1), missing parameter validation (DH public key, DSA parameters, point-on-curve), certificate/trust anchor validation issues, signature encoding malleability, arithmetic errors (carry propagation, integer overflow), infinite loops in modular arithmetic, flawed verification logic, missing error handling, lossy byte-to-string conversion, caching logic flaws, and SSH protocol sequence number mishandling. Each vulnerability arises from a specific coding mistake that weakens the security guarantee of cryptographic operations.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2020-25021",
+    "CVE-2020-25022",
+    "CVE-2020-25023",
+    "CVE-2021-41272",
+    "CVE-2026-33895",
+    "CVE-2026-4599",
+    "CVE-2026-4602",
+    "CVE-2026-4603",
+    "CVE-2026-52754",
+    "CVE-2026-5588",
+    "CVE-2026-5598"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0046__mech_binary_length_unbounded_resource_use",
+  "guideline_id": "gl_mech_0209",
+  "guideline_text": "Trace attacker-controlled binary length fields, size counters, frame lengths, offsets, back-references, or decompressed-size metadata into memory allocation, buffer growth, parsing loops, frame handling, decompression, or resource-consuming work. Report code paths where protocol-specific upper bounds, arithmetic overflow checks, structural consistency checks, or expansion limits are absent before allocation or work expansion. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 11 historical CVE example(s), not as a project-specific signature. A safe implementation should enforce explicit size limits, validate arithmetic and offsets before use, reject malformed or oversized records early, and bound decompression or frame-processing work.",
+  "mechanism": {
+    "aliases": [
+      "unbounded length allocation",
+      "binary size field DoS",
+      "frame length resource exhaustion",
+      "decompression size exhaustion"
+    ],
+    "family": "resource_exhaustion_or_bounds",
+    "mechanism_id": "mech_binary_length_unbounded_resource_use",
+    "missing_guard": "protocol-specific upper bounds, arithmetic overflow checks, structural consistency checks, or expansion limits are absent before allocation or work expansion",
+    "name": "unbounded binary length or size field drives resource use",
+    "required_keywords": [
+      [
+        "binary",
+        "frame",
+        "buffer",
+        "allocate",
+        "allocation",
+        "decompress",
+        "compressed",
+        "payload",
+        "offset"
+      ],
+      [
+        "length",
+        "size",
+        "count",
+        "bounds",
+        "overflow"
+      ]
+    ],
+    "sink_shape": "memory allocation, buffer growth, parsing loops, frame handling, decompression, or resource-consuming work",
+    "source_shape": "attacker-controlled binary length fields, size counters, frame lengths, offsets, back-references, or decompressed-size metadata",
+    "typical_fix": "enforce explicit size limits, validate arithmetic and offsets before use, reject malformed or oversized records early, and bound decompression or frame-processing work"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2020-25021",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    46
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 46,
+      "fix_strategy": "Add explicit boundary checks at the start of the function to reject negative values and ensure offset/length are within buffer range; for shifts, check range and handle overflow.",
+      "members": [
+        "CVE-2020-25022",
+        "CVE-2020-25021",
+        "CVE-2020-25023",
+        "CVE-2021-41272"
+      ],
+      "name": "Missing bounds validation on offset and shift parameters",
+      "root_cause": "Functions accept user-supplied offsets, lengths, or shift amounts without validating they are non-negative and within bounds, leading to out-of-bounds memory access or undefined behavior."
+    },
+    {
+      "cluster_id": 46,
+      "fix_strategy": "Validate ASN.1 sequence length, enforce DER canonical encoding by re-encoding and comparing, check scalar canonicality (S < L) for Ed25519.",
+      "members": [
+        "CVE-2026-33895"
+      ],
+      "name": "Encoding and signature malleability",
+      "root_cause": "Signature verification accepts non-canonical encodings (extra ASN.1 elements, non-minimal integers, non-canonical scalars) that produce the same mathematical values, allowing signature malleability."
+    },
+    {
+      "cluster_id": 46,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2026-4602",
+        "CVE-2026-4599",
+        "CVE-2026-4603",
+        "CVE-2026-52754",
+        "CVE-2026-5588",
+        "CVE-2026-5598"
+      ],
+      "name": "Cryptographic implementation flaws: missing checks, side channels, weak algorithms",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "resource_exhaustion_or_bounds",
+    "mech_binary_length_unbounded_resource_use",
+    "unbounded length allocation",
+    "binary size field DoS",
+    "frame length resource exhaustion",
+    "decompression size exhaustion"
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "cluster_summary": "The cluster primarily covers path traversal vulnerabilities in archive extraction caused by insufficient path canonicalization and normalization. Two distinct sub-patterns emerge: one where entry paths are never validated, and another where Windows path features bypass weak traversal checks. Two additional CVEs are unrelated: a TOCTOU race condition and a resource exhaustion issue.",
+  "created_at": "2026-08-22T20:04:49+00:00",
+  "cve_ids": [
+    "CVE-2026-27670",
+    "CVE-2026-28452",
+    "CVE-2026-28453",
+    "CVE-2026-28486",
+    "CVE-2026-29786",
+    "CVE-2026-31802"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0007__mech_path_traversal_missing_canonical_prefix",
+  "guideline_id": "gl_mech_0029",
+  "guideline_text": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under the intended base directory before the file operation. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 6 historical CVE example(s), not as a project-specific signature. A safe implementation should normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check.",
+  "mechanism": {
+    "aliases": [
+      "path traversal",
+      "directory traversal",
+      "Zip Slip",
+      "archive entry traversal",
+      "canonical path bypass"
+    ],
+    "family": "filesystem",
+    "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+    "missing_guard": "the normalized absolute path is not checked to remain under the intended base directory before the file operation",
+    "name": "path traversal through missing canonical prefix check",
+    "required_keywords": [],
+    "sink_shape": "file read, write, delete, extraction, or resource-loading APIs",
+    "source_shape": "attacker-controlled filenames, archive entries, path fragments, or resource names",
+    "typical_fix": "normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-27670",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    7
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 7,
+      "fix_strategy": "Resolve and canonicalize the full path after joining with base directory, then verify that the resolved path starts with the intended extraction root before writing.",
+      "members": [
+        "CVE-2026-28453",
+        "CVE-2026-28486"
+      ],
+      "name": "Unvalidated archive entry paths",
+      "root_cause": "Archive extraction code assumes entry paths are safe and joins them with target directory without canonicalizing or verifying the resulting path remains within the target."
+    },
+    {
+      "cluster_id": 7,
+      "fix_strategy": "Normalize all directory separators to forward slashes, strip drive letter roots, and ensure path splitting and traversal detection handle all possible path forms, including drive-relative paths.",
+      "members": [
+        "CVE-2026-29786",
+        "CVE-2026-31802"
+      ],
+      "name": "Windows-specific path traversal bypass",
+      "root_cause": "Traversal detection logic uses simple string operations (e.g., splitting on '/') without normalizing backslashes or handling drive-relative paths, allowing attackers to bypass checks using Windows path conventions."
+    },
+    {
+      "cluster_id": 7,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2026-27670",
+        "CVE-2026-28452"
+      ],
+      "name": "Missing path canonicalization and normalization in archive extraction",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "filesystem",
+    "mech_path_traversal_missing_canonical_prefix",
+    "path traversal",
+    "directory traversal",
+    "Zip Slip",
+    "archive entry traversal"
+  ]
+}

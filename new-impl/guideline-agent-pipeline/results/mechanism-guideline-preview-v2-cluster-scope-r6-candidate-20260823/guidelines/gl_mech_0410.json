@@ -1,0 +1,83 @@
+{
+  "cluster_summary": "This cluster covers vulnerabilities related to improper generation, storage, and validation of passwords and secrets. Issues include using weak pseudorandom number generators for tokens, inadequate password hashing (unsalted or weak algorithms), missing input length and complexity validation, and information exposure through exception messages.",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2020-15181",
+    "CVE-2021-21253",
+    "CVE-2021-25958",
+    "CVE-2023-32699"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0091__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0410",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 4 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "required_keywords": [],
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2020-15181",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    91
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 91,
+      "fix_strategy": "Replace weak random generation with cryptographically secure random generators (SecureRandom) or use random salts from adaptive hashing functions (BCrypt).",
+      "members": [
+        "CVE-2020-15181"
+      ],
+      "name": "Weak or deterministic randomness for secret generation",
+      "root_cause": "Code uses non-cryptographic PRNG (java.util.Random) or static/default salts for generating sensitive tokens, passwords, or reset keys, making outputs predictable to attackers who can brute-force seed space or guess salt."
+    },
+    {
+      "cluster_id": 91,
+      "fix_strategy": "Use strong adaptive hash functions like bcrypt, scrypt, or Argon2 with random per-user salts; migrate existing weak hashes to the new scheme while retaining backward compatibility.",
+      "members": [
+        "CVE-2021-21253"
+      ],
+      "name": "Insecure password storage",
+      "root_cause": "Passwords are stored without proper cryptographic hashing: using broken algorithms (MD5), unsalted hashes (SHA-256), or plaintext. This allows attackers with database access to crack passwords efficiently."
+    },
+    {
+      "cluster_id": 91,
+      "fix_strategy": "Add explicit server-side validation for password length, character class requirements, and strength checks before any database operation or cryptographic operation.",
+      "members": [
+        "CVE-2023-32699"
+      ],
+      "name": "Missing input validation for password length or complexity",
+      "root_cause": "Code does not validate password length or complexity before processing (e.g., storing, hashing, or updating), leading to resource exhaustion, weak passwords being accepted, or bypass of security constraints."
+    },
+    {
+      "cluster_id": 91,
+      "fix_strategy": "Sanitize exception messages by not appending exception.toString() to user-facing output; also pre-validate input length to prevent the exception from occurring.",
+      "members": [
+        "CVE-2021-25958"
+      ],
+      "name": "Information exposure through exception messages",
+      "root_cause": "When a database write fails due to user-controlled input (e.g., overly long password), the exception message containing internal schema details is included in error logs or responses, leaking sensitive information."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

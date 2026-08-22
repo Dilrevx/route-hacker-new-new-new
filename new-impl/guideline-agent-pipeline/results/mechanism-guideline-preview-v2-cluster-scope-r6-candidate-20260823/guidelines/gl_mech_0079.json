@@ -1,0 +1,59 @@
+{
+  "cluster_summary": "This cluster comprises 16 CVEs that all involve insufficient validation or sanitization of user-controlled input before it is used in critical operations such as shell command execution, subprocess argument construction, filesystem path operations, and output rendering. The vulnerabilities manifest as command injection, argument injection, path traversal, credential disclosure, ANSI escape injection, and regex bypass, but they share a common deficiency in treating untrusted input as safe in different contexts.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2026-49959",
+    "CVE-2026-6951"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0020__pending_mech_cluster_20_command_injection_via_malicious_git_configuration",
+  "guideline_id": "gl_mech_0079",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should Override dangerous Git config options with empty values and unset environment variables (e.g., GIT_ASKPASS, GIT_TERMINAL_PROMPT) to prevent Git from executing external commands via configuration..",
+  "mechanism": {
+    "aliases": [
+      "fails",
+      "causing",
+      "arguments",
+      "subprocesses",
+      "code-injection",
+      "comprehensive"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_20_command_injection_via_malicious_git_configuration",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Command Injection via Malicious Git Configuration",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Override dangerous Git config options with empty values and unset environment variables (e.g., GIT_ASKPASS, GIT_TERMINAL_PROMPT) to prevent Git from executing external commands via configuration."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-49959",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    20
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 20,
+      "fix_strategy": "Override dangerous Git config options with empty values and unset environment variables (e.g., GIT_ASKPASS, GIT_TERMINAL_PROMPT) to prevent Git from executing external commands via configuration.",
+      "members": [
+        "CVE-2026-49959",
+        "CVE-2026-6951"
+      ],
+      "name": "Command Injection via Malicious Git Configuration",
+      "root_cause": "The application invokes Git subprocesses on repositories where an attacker can control the .git/config file. Git directives like core.fsmonitor, credential.helper, and protocol.ext.allow can execute arbitrary commands during standard Git operations such as status, fetch, or clone."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_20_command_injection_via_malicious_git_configuration",
+    "fails",
+    "causing",
+    "arguments",
+    "subprocesses"
+  ]
+}

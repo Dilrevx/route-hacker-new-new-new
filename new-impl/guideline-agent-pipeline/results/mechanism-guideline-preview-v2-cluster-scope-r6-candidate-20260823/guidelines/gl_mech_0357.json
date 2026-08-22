@@ -1,0 +1,70 @@
+{
+  "cluster_summary": "Multiple endpoints and data publications fail to verify that users have appropriate access to the requested resources. This includes missing validation of parent-child resource relationships, using incorrect permission levels, lacking authentication on sensitive data endpoints, failing to project out sensitive fields, trusting client-supplied identifiers for ownership, stale authorization caches, user-supplied projection bypass, and unvalidated webhook URLs leading to SSRF.",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2026-25742"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0079__mech_inline_content_disposition_xss",
+  "guideline_id": "gl_mech_0357",
+  "guideline_text": "Trace stored or user-uploaded file content, MIME metadata, filenames, or request parameters that choose inline versus attachment rendering into HTTP file-download responses, browser-rendered attachments, content-disposition headers, or content-type selection. Report code paths where browser-renderable content is served inline without an allowlist, forced attachment disposition, safe content type, or content sniffing protection. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should force attachment for untrusted content unless an allowlisted safe type is proven, set safe content types and nosniff headers, and separate trusted preview paths from raw downloads.",
+  "mechanism": {
+    "aliases": [
+      "inline content disposition XSS",
+      "unsafe file download disposition",
+      "stored file rendered inline",
+      "browser-rendered upload"
+    ],
+    "family": "content_rendering",
+    "mechanism_id": "mech_inline_content_disposition_xss",
+    "missing_guard": "browser-renderable content is served inline without an allowlist, forced attachment disposition, safe content type, or content sniffing protection",
+    "name": "browser-rendered file download through unsafe inline content disposition",
+    "required_keywords": [
+      [
+        "content-disposition",
+        "inline",
+        "attachment",
+        "download"
+      ],
+      [
+        "xss",
+        "browser",
+        "render",
+        "mime",
+        "content type",
+        "upload"
+      ]
+    ],
+    "sink_shape": "HTTP file-download responses, browser-rendered attachments, content-disposition headers, or content-type selection",
+    "source_shape": "stored or user-uploaded file content, MIME metadata, filenames, or request parameters that choose inline versus attachment rendering",
+    "typical_fix": "force attachment for untrusted content unless an allowlisted safe type is proven, set safe content types and nosniff headers, and separate trusted preview paths from raw downloads"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-25742",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    79
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 79,
+      "fix_strategy": "Invalidate cached flags when the configuration is updated, and add runtime checks of the current configuration in authorization gates.",
+      "members": [
+        "CVE-2026-25742"
+      ],
+      "name": "Stale authorization cache after configuration change",
+      "root_cause": "Authorization decisions are cached based on stale configuration values and not invalidated when the governing configuration changes."
+    }
+  ],
+  "tags": [
+    "content_rendering",
+    "mech_inline_content_disposition_xss",
+    "inline content disposition XSS",
+    "unsafe file download disposition",
+    "stored file rendered inline",
+    "browser-rendered upload"
+  ]
+}

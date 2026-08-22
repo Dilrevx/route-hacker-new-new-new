@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities related to improper handling of IP addresses in proxy header parsing, canonicalization, and rate-limiting key generation. Common mistakes include assuming the first element of X-Forwarded-For is the client IP, failing to canonicalize IPv4-mapped IPv6 addresses, misclassifying loopback addresses from proxies, and using full IPv6 addresses as rate-limiting keys without subnet masking.",
+  "created_at": "2026-08-22T20:04:52+00:00",
+  "cve_ids": [
+    "CVE-2026-35656"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0077__pending_mech_cluster_77_incorrect_client_ip_extraction_from_x_forwarded_for_header_due_to_ass",
+  "guideline_id": "gl_mech_0385",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Parse from the rightmost entry, skip trusted proxy IPs, and discard loopback addresses when the remote address is not loopback..",
+  "mechanism": {
+    "aliases": [
+      "entry",
+      "proxies",
+      "addresses",
+      "forwarded-for",
+      "client",
+      "auth-bypass"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_77_incorrect_client_ip_extraction_from_x_forwarded_for_header_due_to_ass",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Incorrect client IP extraction from X-Forwarded-For header due to assumption of first value and missing trust/loopback filtering",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Parse from the rightmost entry, skip trusted proxy IPs, and discard loopback addresses when the remote address is not loopback."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-35656",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    77
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 77,
+      "fix_strategy": "Parse from the rightmost entry, skip trusted proxy IPs, and discard loopback addresses when the remote address is not loopback.",
+      "members": [
+        "CVE-2026-35656"
+      ],
+      "name": "Incorrect client IP extraction from X-Forwarded-For header due to assumption of first value and missing trust/loopback filtering",
+      "root_cause": "Code assumes first or leftmost value in X-Forwarded-For is the client IP, but proxies append real IP to the end; additionally, no filtering of trusted proxies or loopback addresses."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_77_incorrect_client_ip_extraction_from_x_forwarded_for_header_due_to_ass",
+    "entry",
+    "proxies",
+    "addresses",
+    "forwarded-for"
+  ]
+}

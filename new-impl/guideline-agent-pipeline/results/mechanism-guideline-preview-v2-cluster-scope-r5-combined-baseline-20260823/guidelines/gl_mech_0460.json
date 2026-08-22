@@ -1,0 +1,65 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where account modification endpoints (password, email, user role, contact) lack required verification steps such as re-authentication (current password or MFA), ownership confirmation, or token claim validation. The common coding mistake is assuming a valid session alone is sufficient authorization for sensitive actions, without additional proof of identity or ownership. One outlier involves a NoSQL injection vulnerability in password verification.",
+  "created_at": "2026-08-22T20:04:52+00:00",
+  "cve_ids": [
+    "CVE-2026-23480",
+    "CVE-2026-49141"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0095__mech_object_owner_scope_missing_authz",
+  "guideline_id": "gl_mech_0460",
+  "guideline_text": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where the authorization decision is not bound to both the current principal and the exact resource or tenant being affected. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation.",
+  "mechanism": {
+    "aliases": [
+      "object ownership authorization",
+      "tenant scope check",
+      "IDOR",
+      "resource scoped authorization"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_object_owner_scope_missing_authz",
+    "missing_guard": "the authorization decision is not bound to both the current principal and the exact resource or tenant being affected",
+    "name": "missing object-owner or tenant-scope authorization",
+    "required_keywords": [],
+    "sink_shape": "sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource",
+    "source_shape": "attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets",
+    "typical_fix": "check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-23480",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    95
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 95,
+      "fix_strategy": "Add ownership check (reject if target id != current user id unless superadmin) and require originalPassword when password is provided.",
+      "members": [
+        "CVE-2026-23480"
+      ],
+      "name": "Missing ownership verification and re-authentication in user update",
+      "root_cause": "The upsertUser endpoint does not verify that the authenticated user owns the target account and makes the current password check optional, allowing any authenticated user to modify another user's account and change password without proof of current credentials."
+    },
+    {
+      "cluster_id": 95,
+      "fix_strategy": "Add a database query to verify that the contact exists and belongs to the specified account before proceeding.",
+      "members": [
+        "CVE-2026-49141"
+      ],
+      "name": "Missing tenant ownership validation in contact update",
+      "root_cause": "The automation engine accepts a caller-supplied contact_id without verifying that the contact belongs to the caller's account, and the service-role client bypasses row-level security."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_object_owner_scope_missing_authz",
+    "object ownership authorization",
+    "tenant scope check",
+    "IDOR",
+    "resource scoped authorization"
+  ]
+}

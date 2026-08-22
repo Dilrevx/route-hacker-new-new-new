@@ -1,0 +1,59 @@
+{
+  "cluster_summary": "This cluster comprises vulnerabilities where file parsers fail to validate user-controlled integer values (offsets, sizes, counts) before using them in memory writes, loop bounds, or decompression. The lack of bounds checking allows attackers to trigger out-of-bounds writes, infinite loops, memory exhaustion, or CPU exhaustion via crafted files.",
+  "created_at": "2026-08-22T20:04:50+00:00",
+  "cve_ids": [
+    "CVE-2026-27809",
+    "CVE-2026-9669"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0039__pending_mech_cluster_39_missing_error_handling_in_decompression_leading_to_crash_or_buffer_ov",
+  "guideline_id": "gl_mech_0195",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should Wrap decompression calls in try/except blocks with fallback, and add a state flag to prevent reuse after an error..",
+  "mechanism": {
+    "aliases": [
+      "input",
+      "malformed",
+      "out-of-bounds",
+      "causing",
+      "channel",
+      "uncaught-exception"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_39_missing_error_handling_in_decompression_leading_to_crash_or_buffer_ov",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing error handling in decompression leading to crash or buffer overflow",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Wrap decompression calls in try/except blocks with fallback, and add a state flag to prevent reuse after an error."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-27809",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    39
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 39,
+      "fix_strategy": "Wrap decompression calls in try/except blocks with fallback, and add a state flag to prevent reuse after an error.",
+      "members": [
+        "CVE-2026-27809",
+        "CVE-2026-9669"
+      ],
+      "name": "Missing error handling in decompression leading to crash or buffer overflow",
+      "root_cause": "Decompression routines do not handle malformed data gracefully: exceptions are uncaught, or the decompressor state is reused after an error, leading to crashes or stack buffer overflows."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_39_missing_error_handling_in_decompression_leading_to_crash_or_buffer_ov",
+    "input",
+    "malformed",
+    "out-of-bounds",
+    "causing"
+  ]
+}

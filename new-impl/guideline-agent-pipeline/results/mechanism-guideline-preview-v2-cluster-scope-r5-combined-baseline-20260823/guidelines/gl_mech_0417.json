@@ -1,0 +1,77 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where user-supplied URLs are passed to browser navigation or external command execution functions without sufficient validation. Missing checks on URL schemes, IP ranges, protocol allowlists, and trust of message sources allow SSRF, command injection, local file access, and unauthorized operations. The cluster includes missing pre-navigation validation, post-interaction re-validation, OS command execution mistakes, insecure trust of messages, and a race condition outlier.",
+  "created_at": "2026-08-22T20:04:52+00:00",
+  "cve_ids": [
+    "CVE-2026-43573",
+    "CVE-2026-43580",
+    "CVE-2026-45245",
+    "CVE-2026-5370"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0084__mech_ssrf_webhook_url_fetch",
+  "guideline_id": "gl_mech_0417",
+  "guideline_text": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 4 historical CVE example(s), not as a project-specific signature. A safe implementation should enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets.",
+  "mechanism": {
+    "aliases": [
+      "webhook SSRF",
+      "callback URL fetch",
+      "user controlled URL fetch",
+      "outbound HTTP client SSRF"
+    ],
+    "family": "ssrf",
+    "mechanism_id": "mech_ssrf_webhook_url_fetch",
+    "missing_guard": "scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request",
+    "name": "attacker-controlled webhook or callback URL fetch",
+    "required_keywords": [],
+    "sink_shape": "outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers",
+    "source_shape": "attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations",
+    "typical_fix": "enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-43573",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    84
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 84,
+      "fix_strategy": "After each interaction, enumerate all open tabs or listen for navigation events, then assert that the final URL matches the SSRF policy.",
+      "members": [
+        "CVE-2026-43573",
+        "CVE-2026-43580"
+      ],
+      "name": "Missing post-interaction URL re-validation",
+      "root_cause": "Code does not re-validate the resulting URL after a browser interaction (click, type, press) that may trigger navigation, allowing delayed or new-tab navigation to bypass SSRF policy."
+    },
+    {
+      "cluster_id": 84,
+      "fix_strategy": "Use restricted communication channels (chrome.runtime.sendMessage), check event.isTrusted, and require per-call user confirmation for sensitive agent actions.",
+      "members": [
+        "CVE-2026-45245"
+      ],
+      "name": "Insecure trust of message/event sources",
+      "root_cause": "Code trusts events or messages from untrusted sources (window.postMessage, untrusted events, agent tool calls) without verifying origin or user consent, leading to unauthorized actions."
+    },
+    {
+      "cluster_id": 84,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2026-5370"
+      ],
+      "name": "Trusting untrusted URLs in browser navigation and OS command execution",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "ssrf",
+    "mech_ssrf_webhook_url_fetch",
+    "webhook SSRF",
+    "callback URL fetch",
+    "user controlled URL fetch",
+    "outbound HTTP client SSRF"
+  ]
+}

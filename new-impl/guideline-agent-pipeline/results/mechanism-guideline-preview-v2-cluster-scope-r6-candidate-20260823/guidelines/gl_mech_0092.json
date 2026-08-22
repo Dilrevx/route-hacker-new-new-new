@@ -1,0 +1,59 @@
+{
+  "cluster_summary": "This cluster comprises 15 CVEs where user-controlled data is insufficiently validated or sanitized before being used in code generation, resource consumption, or template rendering operations. The vulnerabilities lead to code injection, resource exhaustion, or bypass of security boundaries. Common patterns include missing own-property checks, lack of AST validation, unsanitized identifier interpolation, and improper resource limit enforcement.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2026-41242",
+    "CVE-2026-4800"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0021__pending_mech_cluster_21_unsanitized_identifier_interpolation_in_code_generation",
+  "guideline_id": "gl_mech_0092",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should Validate identifier strings against a regex pattern for valid variable names, or sanitize by removing non-word characters; also restrict merge operations to own properties..",
+  "mechanism": {
+    "aliases": [
+      "inject",
+      "resource",
+      "commas",
+      "code-injection",
+      "compilation",
+      "template"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_21_unsanitized_identifier_interpolation_in_code_generation",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Unsanitized identifier interpolation in code generation",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Validate identifier strings against a regex pattern for valid variable names, or sanitize by removing non-word characters; also restrict merge operations to own properties."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-41242",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    21
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 21,
+      "fix_strategy": "Validate identifier strings against a regex pattern for valid variable names, or sanitize by removing non-word characters; also restrict merge operations to own properties.",
+      "members": [
+        "CVE-2026-41242",
+        "CVE-2026-4800"
+      ],
+      "name": "Unsanitized identifier interpolation in code generation",
+      "root_cause": "User-controlled strings (import names, protobuf type names, import key names) are directly interpolated into generated JavaScript code without verification that they are valid identifiers, enabling code injection via special characters."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_21_unsanitized_identifier_interpolation_in_code_generation",
+    "inject",
+    "resource",
+    "commas",
+    "code-injection"
+  ]
+}

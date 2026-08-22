@@ -1,0 +1,274 @@
+{
+  "cluster_summary": "The cluster predominantly consists of XML External Entity (XXE) vulnerabilities caused by using default Java XML parser configurations that permit external entity processing, DTD declarations, or external DTD loading. The majority of CVEs are due to missing explicit disabling of these features on SAX, DOM, StAX, or JAXB parsers. A few distinct members involve other XML-related issues: system property substitution, XML name validation, XMLDecoder deserialization, and removal of a vulnerable third-party library.",
+  "created_at": "2026-08-22T20:04:49+00:00",
+  "cve_ids": [
+    "CVE-2010-3260",
+    "CVE-2013-6447",
+    "CVE-2014-125087",
+    "CVE-2014-3490",
+    "CVE-2014-3682",
+    "CVE-2014-8125",
+    "CVE-2015-7326",
+    "CVE-2016-15011",
+    "CVE-2016-15026",
+    "CVE-2017-2582",
+    "CVE-2017-7545",
+    "CVE-2018-1000632",
+    "CVE-2018-15531",
+    "CVE-2018-20433",
+    "CVE-2018-8038",
+    "CVE-2019-16941",
+    "CVE-2019-5748",
+    "CVE-2020-10683",
+    "CVE-2020-10990",
+    "CVE-2020-13692",
+    "CVE-2020-15232",
+    "CVE-2020-25020",
+    "CVE-2020-36640",
+    "CVE-2020-36641",
+    "CVE-2021-21250",
+    "CVE-2021-21266",
+    "CVE-2021-23792",
+    "CVE-2021-27736",
+    "CVE-2021-33950",
+    "CVE-2021-3836",
+    "CVE-2021-3869",
+    "CVE-2021-3878",
+    "CVE-2021-41098",
+    "CVE-2021-4295",
+    "CVE-2021-47621",
+    "CVE-2022-0198",
+    "CVE-2022-0219",
+    "CVE-2022-0239",
+    "CVE-2022-0265",
+    "CVE-2022-24898",
+    "CVE-2022-41967",
+    "CVE-2022-4607",
+    "CVE-2022-4725",
+    "CVE-2023-26119",
+    "CVE-2023-27480",
+    "CVE-2023-40235",
+    "CVE-2023-41034",
+    "CVE-2023-4218",
+    "CVE-2023-46502",
+    "CVE-2024-28109",
+    "CVE-2024-28198",
+    "CVE-2024-31573",
+    "CVE-2024-36404",
+    "CVE-2024-38374",
+    "CVE-2024-52807",
+    "CVE-2024-56322",
+    "CVE-2024-56324",
+    "CVE-2024-58335",
+    "CVE-2024-6441",
+    "CVE-2025-27136",
+    "CVE-2025-31487",
+    "CVE-2025-47293",
+    "CVE-2025-52888",
+    "CVE-2025-54992",
+    "CVE-2025-59952",
+    "CVE-2025-59954",
+    "CVE-2025-62193",
+    "CVE-2025-64518",
+    "CVE-2025-68463",
+    "CVE-2026-24400",
+    "CVE-2026-29039",
+    "CVE-2026-35000",
+    "CVE-2026-38429",
+    "CVE-2026-40165"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0010__mech_xml_external_entity_resolution",
+  "guideline_id": "gl_mech_0034",
+  "guideline_text": "Trace attacker-controlled or externally supplied XML documents, SOAP messages, XML reports, configuration files, XPath inputs, or XSLT stylesheets into XML parser, XPath, transformer, schema, or SOAP/XML utility code that parses or transforms those documents. Report code paths where DTD declarations, external general entities, external parameter entities, external schema access, or external stylesheet access are not disabled or constrained on the exact parser/transformer instance. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 74 historical CVE example(s), not as a project-specific signature. A safe implementation should disable DOCTYPE and external entity processing, restrict external-access properties, and install a resolver or parser configuration that rejects external resource resolution before parsing.",
+  "mechanism": {
+    "aliases": [
+      "XXE",
+      "XML external entity",
+      "external entity resolution",
+      "DTD processing",
+      "DocumentBuilderFactory external entities"
+    ],
+    "family": "xml_external_resource_resolution",
+    "mechanism_id": "mech_xml_external_entity_resolution",
+    "missing_guard": "DTD declarations, external general entities, external parameter entities, external schema access, or external stylesheet access are not disabled or constrained on the exact parser/transformer instance",
+    "name": "unsafe XML parser external entity or DTD resolution",
+    "required_keywords": [],
+    "sink_shape": "XML parser, XPath, transformer, schema, or SOAP/XML utility code that parses or transforms those documents",
+    "source_shape": "attacker-controlled or externally supplied XML documents, SOAP messages, XML reports, configuration files, XPath inputs, or XSLT stylesheets",
+    "typical_fix": "disable DOCTYPE and external entity processing, restrict external-access properties, and install a resolver or parser configuration that rejects external resource resolution before parsing"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2010-3260",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    10
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 10,
+      "fix_strategy": "Explicitly set features on the parser factory such as disallowing DOCTYPE declarations, disabling external general/parameter entities, and enabling secure processing before parsing.",
+      "members": [
+        "CVE-2010-3260",
+        "CVE-2013-6447",
+        "CVE-2014-125087",
+        "CVE-2014-3682",
+        "CVE-2014-8125",
+        "CVE-2015-7326",
+        "CVE-2016-15011",
+        "CVE-2016-15026",
+        "CVE-2018-15531",
+        "CVE-2018-20433",
+        "CVE-2018-8038",
+        "CVE-2019-5748",
+        "CVE-2020-10990",
+        "CVE-2020-15232",
+        "CVE-2020-25020",
+        "CVE-2020-36640",
+        "CVE-2020-36641",
+        "CVE-2021-21250",
+        "CVE-2021-21266",
+        "CVE-2021-23792",
+        "CVE-2021-33950",
+        "CVE-2021-3836",
+        "CVE-2021-4295",
+        "CVE-2022-0198",
+        "CVE-2021-47621",
+        "CVE-2022-0265",
+        "CVE-2022-0239",
+        "CVE-2022-24898"
+      ],
+      "name": "Missing explicit feature flags to disable external entities",
+      "root_cause": "XML parser is instantiated with default factory settings that allow external entity resolution, DOCTYPE declarations, and DTD loading; no security features are explicitly set on the factory before parsing untrusted input."
+    },
+    {
+      "cluster_id": 10,
+      "fix_strategy": "Replace direct factory instantiation with a secure factory (e.g., SAXReader.createDefault(), PGXmlFactoryFactory) or a centralized secure parsing method that automatically disables all dangerous features.",
+      "members": [
+        "CVE-2020-13692",
+        "CVE-2021-27736",
+        "CVE-2021-3878",
+        "CVE-2021-3869",
+        "CVE-2022-0219"
+      ],
+      "name": "Using a pre-configured secure factory or centralized parser method",
+      "root_cause": "Default XML parser factories (e.g., DocumentBuilderFactory.newInstance()) are used directly without any security configuration, leaving external entity processing enabled."
+    },
+    {
+      "cluster_id": 10,
+      "fix_strategy": "Set a custom entity resolver on the XMLReader that returns empty input or throws an exception for external entities, preventing resolution.",
+      "members": [
+        "CVE-2021-41098"
+      ],
+      "name": "Providing a custom entity resolver to block external entities",
+      "root_cause": "SAX parser is used without setting a custom entity resolver, so it uses the default resolver that resolves external entities."
+    },
+    {
+      "cluster_id": 10,
+      "fix_strategy": "Explicitly set DocumentBuilderFactory features (e.g., FEATURE_SECURE_PROCESSING, disallow-doctype-decl) when the parameter is false, instead of only checking the parameter value.",
+      "members": [
+        "CVE-2014-3490"
+      ],
+      "name": "Configuration logic error: parameter to disable XXE not enforced",
+      "root_cause": "A user-controlled boolean parameter intended to disable XXE is checked but the corresponding security features are not applied to the DocumentBuilderFactory, leaving external entity processing enabled."
+    },
+    {
+      "cluster_id": 10,
+      "fix_strategy": "Replace the manual try-catch block with a secure default configuration (e.g., SAXReader.createDefault()) that does not rely on risky feature settings or exception handling.",
+      "members": [
+        "CVE-2020-10683"
+      ],
+      "name": "Silent failure of feature application due to caught exceptions",
+      "root_cause": "The code attempts to disable external entities by setting SAX features, but if the features are not supported, the SAXException is caught and ignored, leaving the parser in its insecure default state."
+    },
+    {
+      "cluster_id": 10,
+      "fix_strategy": "Remove the vulnerable feature and its dependency entirely to eliminate the code path that performs unsafe XML parsing.",
+      "members": [
+        "CVE-2017-7545"
+      ],
+      "name": "Removal of vulnerable third-party library",
+      "root_cause": "The application integrates a third-party library (jbpmmigration) that parses untrusted XML with insecure default settings, allowing XXE."
+    },
+    {
+      "cluster_id": 10,
+      "fix_strategy": "Remove the call to the system property resolution function from the SAML parsing code, so that attribute values and element text are returned unchanged.",
+      "members": [
+        "CVE-2017-2582"
+      ],
+      "name": "Unsanitized system property substitution in SAML data",
+      "root_cause": "User-controlled SAML attribute values and element text are passed through a function that resolves system property placeholders, allowing an attacker to exfiltrate system properties."
+    },
+    {
+      "cluster_id": 10,
+      "fix_strategy": "Validate name strings against XML NCName/QName regular expressions before constructing QName or Namespace objects, throwing an IllegalArgumentException on invalid names.",
+      "members": [
+        "CVE-2018-1000632"
+      ],
+      "name": "Missing XML name validation leading to injection",
+      "root_cause": "User-supplied strings are used to construct XML element/attribute names without validating they conform to XML name specifications (NCName), enabling injection of illegal characters or namespace prefixes."
+    },
+    {
+      "cluster_id": 10,
+      "fix_strategy": "Replace the use of XMLDecoder with a safe XML parser (e.g., JDOM) that only extracts predetermined attributes, preventing arbitrary object instantiation.",
+      "members": [
+        "CVE-2019-16941"
+      ],
+      "name": "Deserialization of untrusted XML with XMLDecoder",
+      "root_cause": "Untrusted XML input is deserialized using Java's XMLDecoder, which can instantiate arbitrary classes and invoke methods, leading to arbitrary code execution."
+    },
+    {
+      "cluster_id": 10,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2022-41967",
+        "CVE-2022-4607",
+        "CVE-2022-4725",
+        "CVE-2023-26119",
+        "CVE-2023-27480",
+        "CVE-2023-40235",
+        "CVE-2023-41034",
+        "CVE-2023-4218",
+        "CVE-2023-46502",
+        "CVE-2024-28109",
+        "CVE-2024-28198",
+        "CVE-2024-31573",
+        "CVE-2024-36404",
+        "CVE-2024-38374",
+        "CVE-2024-52807",
+        "CVE-2024-56324",
+        "CVE-2024-56322",
+        "CVE-2024-58335",
+        "CVE-2024-6441",
+        "CVE-2025-27136",
+        "CVE-2025-31487",
+        "CVE-2025-47293",
+        "CVE-2025-52888",
+        "CVE-2025-54992",
+        "CVE-2025-59954",
+        "CVE-2025-59952",
+        "CVE-2025-62193",
+        "CVE-2025-64518",
+        "CVE-2025-68463",
+        "CVE-2026-24400",
+        "CVE-2026-29039",
+        "CVE-2026-35000",
+        "CVE-2026-38429",
+        "CVE-2026-40165"
+      ],
+      "name": "Insecure XML parser configuration allowing external entity resolution",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "xml_external_resource_resolution",
+    "mech_xml_external_entity_resolution",
+    "XXE",
+    "XML external entity",
+    "external entity resolution",
+    "DTD processing"
+  ]
+}

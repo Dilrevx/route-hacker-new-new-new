@@ -1,0 +1,113 @@
+{
+  "cluster_summary": "Multiple vulnerabilities in a browser sandboxing system arise from the assumption that network isolation (e.g., loopback) is sufficient for security, leading to missing authentication on critical endpoints, improper token scoping, misconfigured network bindings, and stale authorization caches. These issues allow local or network attackers to gain unauthorized access to browser debugging, VNC, code-server, and profile management functions.",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2026-22174",
+    "CVE-2026-28395",
+    "CVE-2026-28458",
+    "CVE-2026-28468",
+    "CVE-2026-28485",
+    "CVE-2026-32064",
+    "CVE-2026-35653",
+    "CVE-2026-35659",
+    "CVE-2026-42302",
+    "CVE-2026-43575",
+    "CVE-2026-43581"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0083__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0378",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 11 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "required_keywords": [],
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-22174",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    83
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 83,
+      "fix_strategy": "Add mandatory authentication (random bearer tokens, passwords) to all HTTP/WebSocket/VNC endpoints, reject unauthenticated requests with HTTP 401.",
+      "members": [
+        "CVE-2026-28458",
+        "CVE-2026-28468",
+        "CVE-2026-28485",
+        "CVE-2026-32064",
+        "CVE-2026-42302"
+      ],
+      "name": "Missing authentication on loopback/local services",
+      "root_cause": "The code assumes that binding services to loopback (127.0.0.1) or relying on network isolation is a sufficient security boundary, so authentication tokens are not required or enforced."
+    },
+    {
+      "cluster_id": 83,
+      "fix_strategy": "Derive a per-port HMAC token from the gateway token, include it only when the target matches a known relay port, and verify the relay responds with the expected browser identifier.",
+      "members": [
+        "CVE-2026-22174"
+      ],
+      "name": "Improper scoping of authentication tokens for loopback communications",
+      "root_cause": "The code unconditionally injects the raw gateway authentication token into all loopback HTTP headers, assuming loopback is trustworthy, without verifying the destination is a known relay or scoping the token."
+    },
+    {
+      "cluster_id": 83,
+      "fix_strategy": "Fix loopback detection to exclude wildcards; require and auto-derive source IP ranges for socat relays; abort startup if not configured.",
+      "members": [
+        "CVE-2026-28395",
+        "CVE-2026-43581"
+      ],
+      "name": "Incorrect network interface binding or classification",
+      "root_cause": "Functions that check for loopback addresses incorrectly treat wildcard addresses (0.0.0.0, ::) as loopback, or services bind to all interfaces without mandatory source IP filtering."
+    },
+    {
+      "cluster_id": 83,
+      "fix_strategy": "Clear relevant authorization caches after every profile mutation operation; use explicit context parameters instead of global state.",
+      "members": [
+        "CVE-2026-35653"
+      ],
+      "name": "Stale authorization cache after configuration mutation",
+      "root_cause": "The authorization subsystem caches resolved profiles and configuration in global static variables, which are not cleared when profiles are mutated via the reset-profile endpoint."
+    },
+    {
+      "cluster_id": 83,
+      "fix_strategy": "Prefer resolved host/port from SRV/A/AAAA records; return null if missing; caller checks null and omits route instead of falling back to TXT metadata.",
+      "members": [
+        "CVE-2026-35659"
+      ],
+      "name": "Trust of unauthenticated network metadata",
+      "root_cause": "Code falls back to unauthenticated TXT records from Bonjour/DNS-SD when SRV resolution fails, assuming they are trustworthy."
+    },
+    {
+      "cluster_id": 83,
+      "fix_strategy": "Reinstall authentication middleware before route definitions; add an explicit auth guard inside the handler.",
+      "members": [
+        "CVE-2026-43575"
+      ],
+      "name": "Authentication middleware bypass due to route registration order",
+      "root_cause": "A route handler is registered on the Express app before the authentication middleware is installed, allowing unauthenticated access to that endpoint."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

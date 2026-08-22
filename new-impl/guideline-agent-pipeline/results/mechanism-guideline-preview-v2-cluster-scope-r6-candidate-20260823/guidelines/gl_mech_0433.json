@@ -1,0 +1,87 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where authorization logic is omitted or insufficient, allowing unauthorized access to resources or privilege escalation. The issues span object retrieval (missing filters), field updates (missing privilege checks), privileged actions (missing role checks), and authorization functions (missing return values).",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2026-27953",
+    "CVE-2026-34203",
+    "CVE-2026-34406",
+    "CVE-2026-40474",
+    "CVE-2026-44263"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0096__mech_request_body_resource_mismatch_authz",
+  "guideline_id": "gl_mech_0433",
+  "guideline_text": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources. Report code paths where the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 5 historical CVE example(s), not as a project-specific signature. A safe implementation should validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation.",
+  "mechanism": {
+    "aliases": [
+      "path parameter authorization mismatch",
+      "request body resource mismatch",
+      "bulk operation target mismatch",
+      "namespace sync authorization bypass"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_request_body_resource_mismatch_authz",
+    "missing_guard": "the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check",
+    "name": "request-body resource identifiers bypass path-scoped authorization",
+    "required_keywords": [],
+    "sink_shape": "bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources",
+    "source_shape": "attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body",
+    "typical_fix": "validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-27953",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    96
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 96,
+      "fix_strategy": "Override get_queryset to filter by user, use get_object() with permission checks, enforce parent-child relationship validation, and unify error responses to avoid information disclosure.",
+      "members": [
+        "CVE-2026-44263"
+      ],
+      "name": "Missing ownership/permission filter on object queries",
+      "root_cause": "API endpoints directly return or retrieve objects without filtering by user's permissions or ownership, allowing any authenticated user to access objects they should not see."
+    },
+    {
+      "cluster_id": 96,
+      "fix_strategy": "Add granular scopes that separate personal data from permission fields, set privileged fields as read-only for non-privileged users, and enforce create-only fields on update.",
+      "members": [
+        "CVE-2026-34406"
+      ],
+      "name": "Missing privilege escalation guard on self-update operations",
+      "root_cause": "When users update their own resources, the system allows modifying sensitive fields (permissions, privileged attributes, immutable foreign keys) without verifying the user's role or field immutability."
+    },
+    {
+      "cluster_id": 96,
+      "fix_strategy": "Add the appropriate permission mixin (e.g., WgerPermissionMixin) or an explicit role guard (e.g., if not request.user.is_staff: return 403).",
+      "members": [
+        "CVE-2026-40474"
+      ],
+      "name": "Missing authorization check for privileged actions",
+      "root_cause": "Code that performs privileged actions (e.g., modifying server-wide settings, adding scripts) does not check if the user has the required role, either because the permission mixin is missing or the role check is omitted."
+    },
+    {
+      "cluster_id": 96,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2026-27953",
+        "CVE-2026-34203"
+      ],
+      "name": "Missing authorization guards in API operations",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_request_body_resource_mismatch_authz",
+    "path parameter authorization mismatch",
+    "request body resource mismatch",
+    "bulk operation target mismatch",
+    "namespace sync authorization bypass"
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "cluster_summary": "This cluster contains 40 CVEs covering various cryptographic implementation errors, including missing input validation (buffer offsets, shift amounts), timing side-channel vulnerabilities, use of insecure algorithms/modes (ECB, SHA-1), missing parameter validation (DH public key, DSA parameters, point-on-curve), certificate/trust anchor validation issues, signature encoding malleability, arithmetic errors (carry propagation, integer overflow), infinite loops in modular arithmetic, flawed verification logic, missing error handling, lossy byte-to-string conversion, caching logic flaws, and SSH protocol sequence number mishandling. Each vulnerability arises from a specific coding mistake that weakens the security guarantee of cryptographic operations.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2016-1000342",
+    "CVE-2020-8929"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0046__mech_path_traversal_missing_canonical_prefix",
+  "guideline_id": "gl_mech_0210",
+  "guideline_text": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under the intended base directory before the file operation. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check.",
+  "mechanism": {
+    "aliases": [
+      "path traversal",
+      "directory traversal",
+      "Zip Slip",
+      "archive entry traversal",
+      "canonical path bypass"
+    ],
+    "family": "filesystem",
+    "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+    "missing_guard": "the normalized absolute path is not checked to remain under the intended base directory before the file operation",
+    "name": "path traversal through missing canonical prefix check",
+    "required_keywords": [],
+    "sink_shape": "file read, write, delete, extraction, or resource-loading APIs",
+    "source_shape": "attacker-controlled filenames, archive entries, path fragments, or resource names",
+    "typical_fix": "normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2016-1000342",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    46
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 46,
+      "fix_strategy": "Validate ASN.1 sequence length, enforce DER canonical encoding by re-encoding and comparing, check scalar canonicality (S < L) for Ed25519.",
+      "members": [
+        "CVE-2016-1000342"
+      ],
+      "name": "Encoding and signature malleability",
+      "root_cause": "Signature verification accepts non-canonical encodings (extra ASN.1 elements, non-minimal integers, non-canonical scalars) that produce the same mathematical values, allowing signature malleability."
+    },
+    {
+      "cluster_id": 46,
+      "fix_strategy": "Replace String key with a custom byte array wrapper implementing value-based equality.",
+      "members": [
+        "CVE-2020-8929"
+      ],
+      "name": "Lossy byte array to string conversion for key lookup",
+      "root_cause": "Arbitrary byte arrays are converted to UTF-8 strings for use as map keys, causing lossy mapping (invalid sequences become replacement characters) and potential key collisions."
+    }
+  ],
+  "tags": [
+    "filesystem",
+    "mech_path_traversal_missing_canonical_prefix",
+    "path traversal",
+    "directory traversal",
+    "Zip Slip",
+    "archive entry traversal"
+  ]
+}

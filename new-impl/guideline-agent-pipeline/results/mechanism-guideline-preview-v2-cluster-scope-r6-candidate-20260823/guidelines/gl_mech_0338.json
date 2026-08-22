@@ -1,0 +1,67 @@
+{
+  "cluster_summary": "This cluster contains 39 CVEs that expose authentication and authorization weaknesses in webhook and API endpoints. The vulnerabilities arise from missing or insufficient validation of tokens and secrets, over-reliance on untrusted headers or loopback IPs for authentication bypass, timing side-channels from non-constant-time comparisons, missing rate limiting on authentication attempts, resource exhaustion due to body parsing before authentication, insufficient replay protection and deduplication, missing control flow termination, ambiguous routing logic, fail-open defaults on missing security configuration, cached secrets not refreshed after rotation, and missing pre-authentication concurrency throttling.",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2026-33579",
+    "CVE-2026-33580",
+    "CVE-2026-41354"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0074__mech_object_owner_scope_missing_authz",
+  "guideline_id": "gl_mech_0338",
+  "guideline_text": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where the authorization decision is not bound to both the current principal and the exact resource or tenant being affected. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation.",
+  "mechanism": {
+    "aliases": [
+      "object ownership authorization",
+      "tenant scope check",
+      "IDOR",
+      "resource scoped authorization"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_object_owner_scope_missing_authz",
+    "missing_guard": "the authorization decision is not bound to both the current principal and the exact resource or tenant being affected",
+    "name": "missing object-owner or tenant-scope authorization",
+    "required_keywords": [],
+    "sink_shape": "sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource",
+    "source_shape": "attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets",
+    "typical_fix": "check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-33579",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    74
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 74,
+      "fix_strategy": "Add a per-IP rate limiter that checks and records failures before processing authentication; return HTTP 429 when threshold exceeded; reset on success.",
+      "members": [
+        "CVE-2026-33579",
+        "CVE-2026-33580"
+      ],
+      "name": "Missing Rate Limiting on Authentication Failures",
+      "root_cause": "Authentication endpoints do not track or throttle repeated invalid attempts per client IP, enabling brute-force attacks on secrets or passwords."
+    },
+    {
+      "cluster_id": 74,
+      "fix_strategy": "Canonicalize inputs (strip query, decode and re-encode signatures), include target path, account ID, chat/sender context in dedup keys, use persistent stores for processed IDs, and validate origin headers against allowlists.",
+      "members": [
+        "CVE-2026-41354"
+      ],
+      "name": "Insufficient Replay Protection and Deduplication",
+      "root_cause": "Replay detection or deduplication keys are based on non-canonical, unstable, or insufficiently scoped data (e.g., full URL with query, non-canonical signature encoding, missing target/context identifiers), allowing replay attacks or unintended event suppression."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_object_owner_scope_missing_authz",
+    "object ownership authorization",
+    "tenant scope check",
+    "IDOR",
+    "resource scoped authorization"
+  ]
+}

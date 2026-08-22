@@ -1,0 +1,61 @@
+{
+  "cluster_summary": "This cluster comprises vulnerabilities where file parsers fail to validate user-controlled integer values (offsets, sizes, counts) before using them in memory writes, loop bounds, or decompression. The lack of bounds checking allows attackers to trigger out-of-bounds writes, infinite loops, memory exhaustion, or CPU exhaustion via crafted files.",
+  "created_at": "2026-08-22T20:04:50+00:00",
+  "cve_ids": [
+    "CVE-2026-27888",
+    "CVE-2026-28351",
+    "CVE-2026-40192"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0039__pending_mech_cluster_39_unbounded_decompression_output_causing_memory_exhaustion",
+  "guideline_id": "gl_mech_0199",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should Add a maximum output size limit and raise an exception if the decompressed data exceeds the limit..",
+  "mechanism": {
+    "aliases": [
+      "input",
+      "enforcing",
+      "causing",
+      "buffer",
+      "in-memory",
+      "malicious"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_39_unbounded_decompression_output_causing_memory_exhaustion",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Unbounded decompression output causing memory exhaustion",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Add a maximum output size limit and raise an exception if the decompressed data exceeds the limit."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-27888",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    39
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 39,
+      "fix_strategy": "Add a maximum output size limit and raise an exception if the decompressed data exceeds the limit.",
+      "members": [
+        "CVE-2026-27888",
+        "CVE-2026-28351",
+        "CVE-2026-40192"
+      ],
+      "name": "Unbounded decompression output causing memory exhaustion",
+      "root_cause": "Decompression routines (FlateDecode, RunLengthDecode, gzip) do not impose a limit on the size of decompressed output, allowing a decompression bomb to exhaust memory."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_39_unbounded_decompression_output_causing_memory_exhaustion",
+    "input",
+    "enforcing",
+    "causing",
+    "buffer"
+  ]
+}

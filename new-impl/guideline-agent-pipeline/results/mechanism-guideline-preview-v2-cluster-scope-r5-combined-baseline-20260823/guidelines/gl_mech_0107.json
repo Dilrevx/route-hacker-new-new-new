@@ -1,0 +1,66 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where user-controlled input is incorporated into LDAP search filters or distinguished names without proper escaping of special characters, allowing LDAP injection attacks. The majority of cases lack any escaping mechanism, while one case uses an inappropriate encoding (DN encoding) that fails to neutralize filter metacharacters. Two outliers involve unrelated vulnerabilities: credential leakage in logs and unbounded recursion in alias resolution.",
+  "created_at": "2026-08-22T20:04:49+00:00",
+  "cve_ids": [
+    "CVE-2020-5246",
+    "CVE-2025-27497"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0024__mech_jndi_untrusted_lookup_target",
+  "guideline_id": "gl_mech_0107",
+  "guideline_text": "Trace attacker-controlled names, URLs, headers, configuration values, or lookup keys into JNDI, LDAP, RMI, naming-context, or remote lookup APIs. Report code paths where the lookup scheme, authority, object factory, object type, and network destination are not constrained before lookup. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should bind lookup inputs to trusted constants or allowlists, restrict schemes and destinations, and disable remote object factories.",
+  "mechanism": {
+    "aliases": [
+      "JNDI lookup",
+      "LDAP lookup",
+      "RMI lookup",
+      "InitialContext.lookup",
+      "naming context lookup"
+    ],
+    "family": "remote_lookup_or_ssrf",
+    "mechanism_id": "mech_jndi_untrusted_lookup_target",
+    "missing_guard": "the lookup scheme, authority, object factory, object type, and network destination are not constrained before lookup",
+    "name": "attacker-controlled JNDI lookup target",
+    "required_keywords": [],
+    "sink_shape": "JNDI, LDAP, RMI, naming-context, or remote lookup APIs",
+    "source_shape": "attacker-controlled names, URLs, headers, configuration values, or lookup keys",
+    "typical_fix": "bind lookup inputs to trusted constants or allowlists, restrict schemes and destinations, and disable remote object factories"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2020-5246",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    24
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 24,
+      "fix_strategy": "Apply an appropriate LDAP escaping function (e.g., hex-encoding according to RFC2254 or using a library like FilterEncoder) to all user-controlled values before inserting them into the filter or DN string. Ensure centralized, consistent escaping across all call sites.",
+      "members": [
+        "CVE-2020-5246"
+      ],
+      "name": "Absent LDAP special character escaping in filter/DN construction",
+      "root_cause": "User-supplied input is directly concatenated or substituted into LDAP filter strings or DN components without any escaping of LDAP special characters (such as '(', ')', '*', backslash, null). The code assumes the input is safe, but it can contain characters that alter the filter logic."
+    },
+    {
+      "cluster_id": 24,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2025-27497"
+      ],
+      "name": "Insufficient escaping of LDAP special characters in filter and DN construction",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "remote_lookup_or_ssrf",
+    "mech_jndi_untrusted_lookup_target",
+    "JNDI lookup",
+    "LDAP lookup",
+    "RMI lookup",
+    "InitialContext.lookup"
+  ]
+}

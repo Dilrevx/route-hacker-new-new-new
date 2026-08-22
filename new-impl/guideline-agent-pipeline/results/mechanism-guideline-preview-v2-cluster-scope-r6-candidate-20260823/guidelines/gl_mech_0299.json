@@ -1,0 +1,63 @@
+{
+  "cluster_summary": "A cluster of vulnerabilities where user-supplied command arguments are insufficiently validated against allowlists or safe-bin policies, leading to bypass of intended restrictions via dangerous flags, wrapper chains, inconsistent approval display, shell expansion, or filesystem oracle leaks.",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2026-27566",
+    "CVE-2026-29608",
+    "CVE-2026-32023",
+    "CVE-2026-35666"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0065__pending_mech_cluster_65_incomplete_wrapper_resolution_and_authorization",
+  "guideline_id": "gl_mech_0299",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 4 historical CVE example(s), not as a project-specific signature. A safe implementation should Add missing wrappers to the recognized list, implement recursive unwrapping of wrapper chains, enforce depth limits, and correctly persist the inner executable path..",
+  "mechanism": {
+    "aliases": [
+      "nested",
+      "fails",
+      "correctly",
+      "bash",
+      "first",
+      "arguments"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_65_incomplete_wrapper_resolution_and_authorization",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Incomplete wrapper resolution and authorization",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Add missing wrappers to the recognized list, implement recursive unwrapping of wrapper chains, enforce depth limits, and correctly persist the inner executable path."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-27566",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    65
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 65,
+      "fix_strategy": "Add missing wrappers to the recognized list, implement recursive unwrapping of wrapper chains, enforce depth limits, and correctly persist the inner executable path.",
+      "members": [
+        "CVE-2026-27566",
+        "CVE-2026-29608",
+        "CVE-2026-32023",
+        "CVE-2026-35666"
+      ],
+      "name": "Incomplete wrapper resolution and authorization",
+      "root_cause": "The authorization code fails to properly identify and resolve dispatch wrappers (env, timeout, time, busybox, etc.) to the inner executable or fails to enforce depth limits, allowing nested wrapper chains to bypass approval checks."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_65_incomplete_wrapper_resolution_and_authorization",
+    "nested",
+    "fails",
+    "correctly",
+    "bash"
+  ]
+}

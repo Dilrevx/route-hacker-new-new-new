@@ -1,0 +1,173 @@
+{
+  "cluster_summary": "This cluster covers authorization vulnerabilities where the application fails to properly validate sender identity, trust boundaries, or access policies. The majority of issues stem from using mutable or partial identifiers for authorization, treating empty allowlists as permissive, missing authorization gates on secondary event types, or incorrectly merging authorization contexts. The cluster also includes a few distinct sub-patterns such as pre-authentication crypto work and stale queued action validation.",
+  "created_at": "2026-08-22T20:04:52+00:00",
+  "cve_ids": [
+    "CVE-2017-5603",
+    "CVE-2022-39302",
+    "CVE-2026-22170",
+    "CVE-2026-28446",
+    "CVE-2026-28448",
+    "CVE-2026-32006",
+    "CVE-2026-35620",
+    "CVE-2026-35627",
+    "CVE-2026-35637",
+    "CVE-2026-35642",
+    "CVE-2026-35649",
+    "CVE-2026-35670",
+    "CVE-2026-40502",
+    "CVE-2026-41301",
+    "CVE-2026-41329",
+    "CVE-2026-41374",
+    "CVE-2026-41381",
+    "CVE-2026-41382",
+    "CVE-2026-42438",
+    "CVE-2026-43535",
+    "CVE-2026-43566",
+    "CVE-2026-6729",
+    "CVE-2026-6823",
+    "CVE-2026-7551"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0080__mech_object_owner_scope_missing_authz",
+  "guideline_id": "gl_mech_0396",
+  "guideline_text": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where the authorization decision is not bound to both the current principal and the exact resource or tenant being affected. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 24 historical CVE example(s), not as a project-specific signature. A safe implementation should check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation.",
+  "mechanism": {
+    "aliases": [
+      "object ownership authorization",
+      "tenant scope check",
+      "IDOR",
+      "resource scoped authorization"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_object_owner_scope_missing_authz",
+    "missing_guard": "the authorization decision is not bound to both the current principal and the exact resource or tenant being affected",
+    "name": "missing object-owner or tenant-scope authorization",
+    "required_keywords": [],
+    "sink_shape": "sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource",
+    "source_shape": "attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets",
+    "typical_fix": "check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2017-5603",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    80
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 80,
+      "fix_strategy": "Replace mutable/partial identifiers with immutable unique IDs (e.g., numeric user ID, full MXID, canonical phone number) and normalize inputs before comparison.",
+      "members": [
+        "CVE-2026-28446",
+        "CVE-2026-35670"
+      ],
+      "name": "Authorization based on mutable or incomplete identifiers",
+      "root_cause": "Code used user-controlled mutable attributes (display name, username, room name) or partial identity components instead of immutable unique identifiers, allowing spoofing or impersonation."
+    },
+    {
+      "cluster_id": 80,
+      "fix_strategy": "Make empty allowlists fail closed: return false when the allowlist is empty. For route-level allowlists, preserve the explicit empty list and do not fall back to wildcard.",
+      "members": [
+        "CVE-2026-22170",
+        "CVE-2026-35649"
+      ],
+      "name": "Empty allowlist treated as permissive",
+      "root_cause": "Authorization functions returned true when the allowlist was empty, assuming an empty list means unrestricted access instead of denying all."
+    },
+    {
+      "cluster_id": 80,
+      "fix_strategy": "Separate DM and group allowlist composition; exclude pairing-store entries from group checks and use only explicit groupAllowFrom or fallback allowFrom.",
+      "members": [
+        "CVE-2026-32006"
+      ],
+      "name": "Cross-context allowlist contamination (DM/group merge)",
+      "root_cause": "DM pairing-store entries were incorrectly included in group allowlist evaluation, allowing DM-approved users to bypass group authorization."
+    },
+    {
+      "cluster_id": 80,
+      "fix_strategy": "Validate that the 'from' field matches the user's own bare JID before accepting the carbon; discard if mismatch.",
+      "members": [
+        "CVE-2017-5603"
+      ],
+      "name": "Missing origin verification in forwarded messages (XMPP carbons)",
+      "root_cause": "Code assumed incoming carbon messages were legitimately forwarded by the server without verifying that the 'from' attribute equals the user's own JID."
+    },
+    {
+      "cluster_id": 80,
+      "fix_strategy": "Reorder operations: enforce sender authorization (allowlist/pairing) before any cryptographic processing; add rate limiting and payload size checks.",
+      "members": [
+        "CVE-2026-35627",
+        "CVE-2026-41301"
+      ],
+      "name": "Cryptographic operations performed before sender authorization",
+      "root_cause": "Expensive cryptographic work (signature verification, decryption) was done before checking sender policy, enabling unauthenticated resource exhaustion."
+    },
+    {
+      "cluster_id": 80,
+      "fix_strategy": "Add a 'remote_invocable' attribute to each command (default false for sensitive commands) and check against an admin-configured allowlist before allowing remote invocation.",
+      "members": [
+        "CVE-2026-40502"
+      ],
+      "name": "Missing remote invocation authorization for slash commands",
+      "root_cause": "All slash commands were treated as remotely invocable by default with no per-command authorization check, allowing remote execution of administrative commands."
+    },
+    {
+      "cluster_id": 80,
+      "fix_strategy": "Add preflight authorization checks (DM policy, allowlist, group policy, guild ID verification) before processing each event type or endpoint, consistent with the message handler logic.",
+      "members": [
+        "CVE-2022-39302",
+        "CVE-2026-35620",
+        "CVE-2026-35637",
+        "CVE-2026-35642"
+      ],
+      "name": "Missing authorization checks on secondary event handlers and endpoints",
+      "root_cause": "Developers assumed that certain event types (reactions, callbacks, verification requests, etc.) or endpoints did not require the same authorization checks as primary messages, leaving them unprotected."
+    },
+    {
+      "cluster_id": 80,
+      "fix_strategy": "Add a context field (ForceSenderIsOwnerFalse) that forces senderIsOwner to false when the operation is an exec-event heartbeat.",
+      "members": [
+        "CVE-2026-41329"
+      ],
+      "name": "Privilege escalation via inherited owner context in heartbeat",
+      "root_cause": "Heartbeat execution context incorrectly inherited owner privileges from the session delivery target, bypassing intended restrictions."
+    },
+    {
+      "cluster_id": 80,
+      "fix_strategy": "After checking allowFrom, immediately return denied if the list is set and the sender is not in it, without falling back to subsequent checks.",
+      "members": [
+        "CVE-2026-28448"
+      ],
+      "name": "Authorization allowlist bypass via fallback to open access",
+      "root_cause": "When an allowFrom list was set, the code fell through to role checks and then open access instead of denying immediately if the sender was not in the list."
+    },
+    {
+      "cluster_id": 80,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2026-41374",
+        "CVE-2026-41381",
+        "CVE-2026-41382",
+        "CVE-2026-42438",
+        "CVE-2026-43535",
+        "CVE-2026-43566",
+        "CVE-2026-6729",
+        "CVE-2026-6823",
+        "CVE-2026-7551"
+      ],
+      "name": "Inadequate sender authorization checks on identity and event handling",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_object_owner_scope_missing_authz",
+    "object ownership authorization",
+    "tenant scope check",
+    "IDOR",
+    "resource scoped authorization"
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities in a GraphQL and LiveQuery system where input validation, depth limits, authorization checks, and concurrency safety are absent or incomplete. Attackers can cause denial of service, leak information, or trigger race conditions. The fixes involve adding explicit validation, limits, authorization checks, and per-subscriber cloning.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2024-40094",
+    "CVE-2026-30241",
+    "CVE-2026-33421",
+    "CVE-2026-33498",
+    "CVE-2026-33508",
+    "CVE-2026-34595",
+    "CVE-2026-39857"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0033__mech_object_owner_scope_missing_authz",
+  "guideline_id": "gl_mech_0155",
+  "guideline_text": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where the authorization decision is not bound to both the current principal and the exact resource or tenant being affected. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 7 historical CVE example(s), not as a project-specific signature. A safe implementation should check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation.",
+  "mechanism": {
+    "aliases": [
+      "object ownership authorization",
+      "tenant scope check",
+      "IDOR",
+      "resource scoped authorization"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_object_owner_scope_missing_authz",
+    "missing_guard": "the authorization decision is not bound to both the current principal and the exact resource or tenant being affected",
+    "name": "missing object-owner or tenant-scope authorization",
+    "required_keywords": [],
+    "sink_shape": "sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource",
+    "source_shape": "attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets",
+    "typical_fix": "check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2024-40094",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    33
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 33,
+      "fix_strategy": "Add maximum depth and field count limits during query normalization or validation, and propagate existing depth limit configuration to subscription handlers.",
+      "members": [
+        "CVE-2024-40094",
+        "CVE-2026-30241",
+        "CVE-2026-33498",
+        "CVE-2026-33508"
+      ],
+      "name": "Missing depth/field limits on query processing",
+      "root_cause": "The code does not impose limits on the depth or number of fields in GraphQL queries, introspection, and subscription documents, allowing deeply nested or complex queries to cause excessive resource consumption."
+    },
+    {
+      "cluster_id": 33,
+      "fix_strategy": "Add explicit authorization checks that validate the user's identity and permissions before allowing subscription to protected fields, delivering events based on pointer permissions, or executing distinct queries on field values.",
+      "members": [
+        "CVE-2026-33421",
+        "CVE-2026-39857"
+      ],
+      "name": "Missing authorization checks before security-sensitive operations",
+      "root_cause": "The code assumes that other mechanisms (e.g., stripping field values, projection) are sufficient, and does not explicitly check user permissions for watching specific fields, delivering events, or performing distinct queries on restricted fields."
+    },
+    {
+      "cluster_id": 33,
+      "fix_strategy": "Use Array.isArray to enforce that the value is a true Array before processing.",
+      "members": [
+        "CVE-2026-34595"
+      ],
+      "name": "Missing array type validation for logical operators",
+      "root_cause": "The code assumes that the value of $or, $and, $nor is always an Array, without validating the type, allowing array-like objects to bypass security checks."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_object_owner_scope_missing_authz",
+    "object ownership authorization",
+    "tenant scope check",
+    "IDOR",
+    "resource scoped authorization"
+  ]
+}

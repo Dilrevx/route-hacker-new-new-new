@@ -1,0 +1,68 @@
+{
+  "cluster_summary": "This cluster covers vulnerabilities where user-supplied data is used to construct database connection URLs, load classes, or configure resources without adequate validation, allowing attackers to inject dangerous parameters, load arbitrary classes, or trigger deserialization and SSRF. The fixes involve adding blacklists, encoding, type checks, or prefix validation.",
+  "created_at": "2026-08-22T20:04:49+00:00",
+  "cve_ids": [
+    "CVE-2022-39312",
+    "CVE-2025-62419",
+    "CVE-2025-6507"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0027__mech_deserialization_untrusted_type_graph",
+  "guideline_id": "gl_mech_0115",
+  "guideline_text": "Trace untrusted serialized bytes, object streams, pickles, marshaled payloads, or type metadata into deserializers that instantiate classes, reconstruct object graphs, or invoke callbacks during object creation. Report code paths where allowed classes, object types, and construction side effects are not constrained before deserialization. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should use type allowlists, safe codecs, signature checks, or data-only formats instead of general object deserialization.",
+  "mechanism": {
+    "aliases": [
+      "unsafe deserialization",
+      "ObjectInputStream.readObject",
+      "pickle load",
+      "marshal load",
+      "serializer type metadata"
+    ],
+    "family": "deserialization",
+    "mechanism_id": "mech_deserialization_untrusted_type_graph",
+    "missing_guard": "allowed classes, object types, and construction side effects are not constrained before deserialization",
+    "name": "untrusted deserialization with attacker-controlled type graph",
+    "required_keywords": [],
+    "sink_shape": "deserializers that instantiate classes, reconstruct object graphs, or invoke callbacks during object creation",
+    "source_shape": "untrusted serialized bytes, object streams, pickles, marshaled payloads, or type metadata",
+    "typical_fix": "use type allowlists, safe codecs, signature checks, or data-only formats instead of general object deserialization"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2022-39312",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    27
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 27,
+      "fix_strategy": "Add a blocklist check for dangerous parameters (e.g., autoDeserialize, socketFactory) or use URI encoding to prevent injection.",
+      "members": [
+        "CVE-2022-39312",
+        "CVE-2025-62419"
+      ],
+      "name": "Basic JDBC URL parameter injection",
+      "root_cause": "User-supplied data (host, port, database name, extra parameters) is concatenated directly into a JDBC URL without any validation or encoding, allowing injection of arbitrary connection parameters."
+    },
+    {
+      "cluster_id": 27,
+      "fix_strategy": "Improve regex to match all parameter patterns, iteratively decode URL, or use safe glob-to-regex conversion.",
+      "members": [
+        "CVE-2025-6507"
+      ],
+      "name": "Bypass of JDBC parameter validation via insufficient decoding or regex",
+      "root_cause": "Existing validation (blacklist) can be bypassed by URL-encoding, double-encoding, or inadequate regex that fails to capture all parameter syntax variants."
+    }
+  ],
+  "tags": [
+    "deserialization",
+    "mech_deserialization_untrusted_type_graph",
+    "unsafe deserialization",
+    "ObjectInputStream.readObject",
+    "pickle load",
+    "marshal load"
+  ]
+}

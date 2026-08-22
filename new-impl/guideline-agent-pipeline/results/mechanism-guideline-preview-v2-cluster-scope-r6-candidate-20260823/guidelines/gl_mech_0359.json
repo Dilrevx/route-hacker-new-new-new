@@ -1,0 +1,103 @@
+{
+  "cluster_summary": "Multiple endpoints and data publications fail to verify that users have appropriate access to the requested resources. This includes missing validation of parent-child resource relationships, using incorrect permission levels, lacking authentication on sensitive data endpoints, failing to project out sensitive fields, trusting client-supplied identifiers for ownership, stale authorization caches, user-supplied projection bypass, and unvalidated webhook URLs leading to SSRF.",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2026-25561",
+    "CVE-2026-25563",
+    "CVE-2026-25564",
+    "CVE-2026-25565",
+    "CVE-2026-25567",
+    "CVE-2026-25859",
+    "CVE-2026-33888",
+    "CVE-2026-41454",
+    "CVE-2026-41455"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0079__mech_object_owner_scope_missing_authz",
+  "guideline_id": "gl_mech_0359",
+  "guideline_text": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where the authorization decision is not bound to both the current principal and the exact resource or tenant being affected. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 9 historical CVE example(s), not as a project-specific signature. A safe implementation should check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation.",
+  "mechanism": {
+    "aliases": [
+      "object ownership authorization",
+      "tenant scope check",
+      "IDOR",
+      "resource scoped authorization"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_object_owner_scope_missing_authz",
+    "missing_guard": "the authorization decision is not bound to both the current principal and the exact resource or tenant being affected",
+    "name": "missing object-owner or tenant-scope authorization",
+    "required_keywords": [],
+    "sink_shape": "sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource",
+    "source_shape": "attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets",
+    "typical_fix": "check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-25561",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    79
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 79,
+      "fix_strategy": "After fetching the child resource, verify that its parent ID matches the provided parent ID, or query with a combined filter that ensures the child belongs to the specified parent.",
+      "members": [
+        "CVE-2026-25561",
+        "CVE-2026-25563",
+        "CVE-2026-25564"
+      ],
+      "name": "Missing hierarchical ownership validation",
+      "root_cause": "Code assumes user-supplied parent and child resource IDs are consistent without verifying that the child actually belongs to the parent. No cross-reference check is performed before authorization."
+    },
+    {
+      "cluster_id": 79,
+      "fix_strategy": "Replace the authorization check with a function that enforces the correct permission level (e.g., write permission instead of read permission, admin role instead of member role, or respect global configuration constraints).",
+      "members": [
+        "CVE-2026-25565",
+        "CVE-2026-25859",
+        "CVE-2026-41454"
+      ],
+      "name": "Missing permission level checks",
+      "root_cause": "Code uses a lower privilege level check (read access or membership) instead of the required higher privilege (write access or admin role)."
+    },
+    {
+      "cluster_id": 79,
+      "fix_strategy": "Replace the user-supplied identifier with the authenticated user's ID from the server-side session.",
+      "members": [
+        "CVE-2026-25567"
+      ],
+      "name": "Client-controlled identifier for resource ownership",
+      "root_cause": "The endpoint accepts a user-supplied identifier for the resource author/owner instead of enforcing the authenticated user's identity."
+    },
+    {
+      "cluster_id": 79,
+      "fix_strategy": "Always apply the admin-configured projection regardless of any user-supplied projection; remove the condition that skips it.",
+      "members": [
+        "CVE-2026-33888"
+      ],
+      "name": "Authorization bypass via user-supplied projection",
+      "root_cause": "User-supplied query parameter (project) is processed before access control, pre-populating a state that causes the admin-configured security restriction to be skipped."
+    },
+    {
+      "cluster_id": 79,
+      "fix_strategy": "Validate URL to allow only http/https and reject private/loopback addresses; also enforce appropriate authorization for integration management.",
+      "members": [
+        "CVE-2026-41455"
+      ],
+      "name": "Server-side request forgery due to unvalidated webhook URL",
+      "root_cause": "User-supplied URL is used for outbound HTTP requests without validating scheme and host, allowing requests to internal addresses."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_object_owner_scope_missing_authz",
+    "object ownership authorization",
+    "tenant scope check",
+    "IDOR",
+    "resource scoped authorization"
+  ]
+}

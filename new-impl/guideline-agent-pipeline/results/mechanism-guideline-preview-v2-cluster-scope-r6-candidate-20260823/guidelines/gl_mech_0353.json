@@ -1,0 +1,53 @@
+{
+  "cluster_summary": "The cluster comprises vulnerabilities in OAuth2 and OIDC clients where the callback processing fails to properly validate or bind security parameters such as state, nonce, and PKCE challenge/verifier, enabling attacks including cross-site request forgery, authorization code injection, and secret leakage. Some members also involve mass assignment and vault misconfiguration related to OAuth flows.",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2026-42073"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0078__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0353",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "required_keywords": [],
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-42073",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    78
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 78,
+      "fix_strategy": "Ensure state is generated per-session, stored in session, and validated against the request state before any further processing. Bind state to session identity to prevent cross-session reuse.",
+      "members": [
+        "CVE-2026-42073"
+      ],
+      "name": "Missing OAuth state parameter validation",
+      "root_cause": "The OAuth callback handler either does not compare the state parameter from the request against the value stored in the user session, or does not bind the state to the session, allowing an attacker to inject a valid state from another session or skip validation entirely."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

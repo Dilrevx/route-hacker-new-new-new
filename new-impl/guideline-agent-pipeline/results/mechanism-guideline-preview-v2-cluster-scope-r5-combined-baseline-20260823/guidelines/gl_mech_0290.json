@@ -1,0 +1,103 @@
+{
+  "cluster_summary": "This cluster contains 19 CVEs primarily in parsing, decompression, and memory management code. Common mistakes include trusting untrusted size fields for allocation without validation, integer overflow in size arithmetic, and various logical errors such as missing type validation, unbounded recursion, and incorrect buffer offset handling. These vulnerabilities can lead to denial of service, out-of-bounds reads/writes, or memory exhaustion.",
+  "created_at": "2026-08-22T20:04:51+00:00",
+  "cve_ids": [
+    "CVE-2020-28371",
+    "CVE-2023-34453",
+    "CVE-2023-34454",
+    "CVE-2024-36114",
+    "CVE-2024-7254",
+    "CVE-2025-66566",
+    "CVE-2025-67721",
+    "CVE-2026-21452",
+    "CVE-2026-41988"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0056__mech_toctou_mutable_object_reuse",
+  "guideline_id": "gl_mech_0290",
+  "guideline_text": "Trace mutable files, paths, objects, identities, request fields, or shared state that are checked before use into sensitive file, state, permission, memory, or resource effects that depend on the earlier check. Report code paths where the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 9 historical CVE example(s), not as a project-specific signature. A safe implementation should bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary.",
+  "mechanism": {
+    "aliases": [
+      "TOCTOU",
+      "check then use race",
+      "double fetch",
+      "stale object reuse"
+    ],
+    "family": "race_or_lifecycle",
+    "mechanism_id": "mech_toctou_mutable_object_reuse",
+    "missing_guard": "the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect",
+    "name": "time-of-check to time-of-use on mutable object",
+    "required_keywords": [],
+    "sink_shape": "sensitive file, state, permission, memory, or resource effects that depend on the earlier check",
+    "source_shape": "mutable files, paths, objects, identities, request fields, or shared state that are checked before use",
+    "typical_fix": "bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2020-28371",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    56
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 56,
+      "fix_strategy": "Validate size against available input buffer, impose absolute maximum limits, or switch to chunked/streaming allocation.",
+      "members": [
+        "CVE-2026-21452"
+      ],
+      "name": "Unvalidated size from input used for memory allocation",
+      "root_cause": "Code trusts externally provided size/length values (e.g., container size, chunk length, payload length) and allocates memory without verifying that the size is reasonable or that the input contains enough data."
+    },
+    {
+      "cluster_id": 56,
+      "fix_strategy": "Use safe arithmetic (e.g., subtraction-based checks or explicit overflow detection) before using computed sizes.",
+      "members": [
+        "CVE-2020-28371",
+        "CVE-2023-34453",
+        "CVE-2023-34454",
+        "CVE-2024-36114"
+      ],
+      "name": "Integer overflow in size/length arithmetic",
+      "root_cause": "Multiplication or addition of controlled lengths without overflow detection leads to negative or truncated size, bypassing bounds checks or causing undersized allocation."
+    },
+    {
+      "cluster_id": 56,
+      "fix_strategy": "Reject zero offset or explicitly zero-fill the output region when match distance is zero.",
+      "members": [
+        "CVE-2025-66566",
+        "CVE-2025-67721"
+      ],
+      "name": "Missing validation of match offset in decompression",
+      "root_cause": "Decompression code allows zero match distance/offset, which either copies from the same position (no-op leaving stale data) or reads from current output pointer, leading to data leakage or out-of-bounds."
+    },
+    {
+      "cluster_id": 56,
+      "fix_strategy": "Make the recursive method private to prevent external invocation or add explicit depth limit.",
+      "members": [
+        "CVE-2024-7254"
+      ],
+      "name": "Unbounded recursion in parsing nested unknown fields",
+      "root_cause": "Missing recursion depth limit when parsing nested groups as unknown fields, allowing attacker-controlled input to cause stack overflow."
+    },
+    {
+      "cluster_id": 56,
+      "fix_strategy": "Always use contentOffset() and contentLength() for slicing; add bounds checks before buffer writes.",
+      "members": [
+        "CVE-2026-41988"
+      ],
+      "name": "Missing offset validation in buffer operations",
+      "root_cause": "Code fails to use or validate buffer offset/length when reading for error messages or writing fixed-size blocks, leading to inclusion of out-of-scope memory or out-of-bounds writes."
+    }
+  ],
+  "tags": [
+    "race_or_lifecycle",
+    "mech_toctou_mutable_object_reuse",
+    "TOCTOU",
+    "check then use race",
+    "double fetch",
+    "stale object reuse"
+  ]
+}

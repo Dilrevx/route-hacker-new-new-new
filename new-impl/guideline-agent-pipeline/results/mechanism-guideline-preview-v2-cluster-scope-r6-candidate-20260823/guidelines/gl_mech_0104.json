@@ -1,0 +1,59 @@
+{
+  "cluster_summary": "This cluster contains 25 CVEs where user-controlled input is processed without proper validation, leading to code injection, prototype pollution, stack overflow, infinite loops, ReDoS, and resource exhaustion. The vulnerabilities arise from missing bounds checks, missing escaping, insufficient key validation, and unsafe recursion patterns across various libraries.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2026-23956",
+    "CVE-2026-33671"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0022__pending_mech_cluster_22_unvalidated_regex_pattern_size_and_complexity_leading_to_redos",
+  "guideline_id": "gl_mech_0104",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should Make regex serialization opt-in via feature flag; introduce recursion limits and detect overlapping alternatives..",
+  "mechanism": {
+    "aliases": [
+      "detect",
+      "nested",
+      "memory-allocation",
+      "causing",
+      "non-matching",
+      "extremely"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_22_unvalidated_regex_pattern_size_and_complexity_leading_to_redos",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Unvalidated regex pattern size and complexity leading to ReDoS",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Make regex serialization opt-in via feature flag; introduce recursion limits and detect overlapping alternatives."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-23956",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    22
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 22,
+      "fix_strategy": "Make regex serialization opt-in via feature flag; introduce recursion limits and detect overlapping alternatives.",
+      "members": [
+        "CVE-2026-23956",
+        "CVE-2026-33671"
+      ],
+      "name": "Unvalidated regex pattern size and complexity leading to ReDoS",
+      "root_cause": "User-controlled regex patterns are compiled without restricting size or complexity, enabling catastrophic backtracking."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_22_unvalidated_regex_pattern_size_and_complexity_leading_to_redos",
+    "detect",
+    "nested",
+    "memory-allocation",
+    "causing"
+  ]
+}

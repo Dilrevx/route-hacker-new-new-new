@@ -1,0 +1,55 @@
+{
+  "cluster_summary": "Multiple vulnerabilities in a browser sandboxing system arise from the assumption that network isolation (e.g., loopback) is sufficient for security, leading to missing authentication on critical endpoints, improper token scoping, misconfigured network bindings, and stale authorization caches. These issues allow local or network attackers to gain unauthorized access to browser debugging, VNC, code-server, and profile management functions.",
+  "created_at": "2026-08-22T20:04:52+00:00",
+  "cve_ids": [
+    "CVE-2026-43576"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0083__mech_open_redirect_unsafe_uri_scheme",
+  "guideline_id": "gl_mech_0412",
+  "guideline_text": "Trace attacker-controlled redirect targets, callback URLs, return URLs, OAuth redirect_uri values, or browser navigation destinations into redirect responses, Location headers, OAuth/OIDC/SAML redirect validation, or browser-followed navigation targets. Report code paths where the redirect target is accepted without constraining the final scheme and destination to trusted browser-safe values. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should validate redirect targets with an explicit safe-scheme and destination allowlist after decoding and normalization.",
+  "mechanism": {
+    "aliases": [
+      "unsafe redirect URI scheme",
+      "javascript URI redirect",
+      "data URI redirect",
+      "redirect_uri scheme bypass"
+    ],
+    "family": "open_redirect",
+    "mechanism_id": "mech_open_redirect_unsafe_uri_scheme",
+    "missing_guard": "the redirect target is accepted without constraining the final scheme and destination to trusted browser-safe values",
+    "name": "open redirect through unsafe URI scheme validation",
+    "required_keywords": [],
+    "sink_shape": "redirect responses, Location headers, OAuth/OIDC/SAML redirect validation, or browser-followed navigation targets",
+    "source_shape": "attacker-controlled redirect targets, callback URLs, return URLs, OAuth redirect_uri values, or browser navigation destinations",
+    "typical_fix": "validate redirect targets with an explicit safe-scheme and destination allowlist after decoding and normalization"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-43576",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    83
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 83,
+      "fix_strategy": "Add validation calls (e.g., assertCdpEndpointAllowed) for WebSocket URLs; separate SSRF policies for CDP health checks and browser navigation.",
+      "members": [
+        "CVE-2026-43576"
+      ],
+      "name": "SSRF due to missing or incorrect URL validation/policy",
+      "root_cause": "WebSocket URLs from user input or service responses are not validated against an SSRF policy, or user-configured CDP hostnames are incorrectly merged into the browser navigation allowlist."
+    }
+  ],
+  "tags": [
+    "open_redirect",
+    "mech_open_redirect_unsafe_uri_scheme",
+    "unsafe redirect URI scheme",
+    "javascript URI redirect",
+    "data URI redirect",
+    "redirect_uri scheme bypass"
+  ]
+}

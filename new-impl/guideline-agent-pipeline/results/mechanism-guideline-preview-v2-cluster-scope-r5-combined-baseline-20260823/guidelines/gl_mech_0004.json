@@ -1,0 +1,55 @@
+{
+  "cluster_summary": "This cluster consists of vulnerabilities in Java and Python libraries where temporary files or directories are created using non-atomic operations (e.g., create, delete, mkdir sequence) that introduce TOCTOU race conditions, or using APIs that default to overly permissive permissions (world-readable), allowing local attackers to read sensitive data or perform symlink attacks. Additional variants include failing to verify permission changes, manually setting overly permissive permissions, and using predictable file names that enable race attacks.",
+  "created_at": "2026-08-22T20:04:49+00:00",
+  "cve_ids": [
+    "CVE-2013-2035"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0000__mech_toctou_mutable_object_reuse",
+  "guideline_id": "gl_mech_0004",
+  "guideline_text": "Trace mutable files, paths, objects, identities, request fields, or shared state that are checked before use into sensitive file, state, permission, memory, or resource effects that depend on the earlier check. Report code paths where the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary.",
+  "mechanism": {
+    "aliases": [
+      "TOCTOU",
+      "check then use race",
+      "double fetch",
+      "stale object reuse"
+    ],
+    "family": "race_or_lifecycle",
+    "mechanism_id": "mech_toctou_mutable_object_reuse",
+    "missing_guard": "the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect",
+    "name": "time-of-check to time-of-use on mutable object",
+    "required_keywords": [],
+    "sink_shape": "sensitive file, state, permission, memory, or resource effects that depend on the earlier check",
+    "source_shape": "mutable files, paths, objects, identities, request fields, or shared state that are checked before use",
+    "typical_fix": "bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2013-2035",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    0
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 0,
+      "fix_strategy": "Use File.createTempFile(prefix, suffix, directory) to generate a unique, unpredictable filename and set deleteOnExit for cleanup, eliminating the predictability and race window.",
+      "members": [
+        "CVE-2013-2035"
+      ],
+      "name": "Predictable temporary file name leading to TOCTOU race",
+      "root_cause": "The code constructs a predictable temporary file name from library name and version and writes to /tmp without atomic creation, allowing a local attacker to create a symlink at the predicted path before the write, leading to arbitrary file write."
+    }
+  ],
+  "tags": [
+    "race_or_lifecycle",
+    "mech_toctou_mutable_object_reuse",
+    "TOCTOU",
+    "check then use race",
+    "double fetch",
+    "stale object reuse"
+  ]
+}

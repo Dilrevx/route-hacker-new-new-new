@@ -1,0 +1,63 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where user-controlled input is incorporated into LDAP search filters or distinguished names without proper escaping of special characters, allowing LDAP injection attacks. The majority of cases lack any escaping mechanism, while one case uses an inappropriate encoding (DN encoding) that fails to neutralize filter metacharacters. Two outliers involve unrelated vulnerabilities: credential leakage in logs and unbounded recursion in alias resolution.",
+  "created_at": "2026-08-22T20:04:49+00:00",
+  "cve_ids": [
+    "CVE-2015-1849",
+    "CVE-2022-24832"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0024__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0108",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "required_keywords": [],
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2015-1849",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    24
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 24,
+      "fix_strategy": "Apply an appropriate LDAP escaping function (e.g., hex-encoding according to RFC2254 or using a library like FilterEncoder) to all user-controlled values before inserting them into the filter or DN string. Ensure centralized, consistent escaping across all call sites.",
+      "members": [
+        "CVE-2022-24832"
+      ],
+      "name": "Absent LDAP special character escaping in filter/DN construction",
+      "root_cause": "User-supplied input is directly concatenated or substituted into LDAP filter strings or DN components without any escaping of LDAP special characters (such as '(', ')', '*', backslash, null). The code assumes the input is safe, but it can contain characters that alter the filter logic."
+    },
+    {
+      "cluster_id": 24,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2015-1849"
+      ],
+      "name": "Insufficient escaping of LDAP special characters in filter and DN construction",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

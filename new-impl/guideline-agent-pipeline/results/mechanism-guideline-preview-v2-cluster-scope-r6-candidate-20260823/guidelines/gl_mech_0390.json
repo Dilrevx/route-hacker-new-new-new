@@ -1,0 +1,77 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where authentication or authorization mechanisms are incomplete, allowing unauthorized access. The flaws include missing checks for user suspension status, missing authentication enforcement, insufficient permission and role checks, and missing network origin restrictions for sensitive endpoints.",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2026-34999",
+    "CVE-2026-40525",
+    "CVE-2026-41487",
+    "CVE-2026-47101",
+    "CVE-2026-49973"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0085__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0390",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 5 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "required_keywords": [],
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-34999",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    85
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 85,
+      "fix_strategy": "Replace optional token extraction with mandatory authentication that raises 401 if token is missing; for API key configuration, raise an exception if key is not set and require header to match.",
+      "members": [
+        "CVE-2026-34999",
+        "CVE-2026-40525"
+      ],
+      "name": "Missing authentication enforcement in proxy endpoints",
+      "root_cause": "The code uses optional token extraction (e.g., verify_auth) that does not enforce authentication before processing requests, allowing unauthenticated access when token is missing or configuration is empty."
+    },
+    {
+      "cluster_id": 85,
+      "fix_strategy": "Add proper authorization checks requiring the correct permission level (e.g., update instead of read) and verify the caller's role (e.g., proxy admin) before processing the operation.",
+      "members": [
+        "CVE-2026-41487",
+        "CVE-2026-47101"
+      ],
+      "name": "Insufficient permission and role checks in sensitive operations",
+      "root_cause": "Sensitive endpoints check incorrect permission scopes (read instead of update) or fail to verify caller's role before allowing privileged actions (e.g., setting allowed_routes)."
+    },
+    {
+      "cluster_id": 85,
+      "fix_strategy": "Add a check for loopback/private IP or require an environment variable to allow open onboarding.",
+      "members": [
+        "CVE-2026-49973"
+      ],
+      "name": "Missing network origin restriction for first-run password setup",
+      "root_cause": "An unauthenticated password set endpoint does not validate the client's network origin, allowing remote attackers to set the password."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

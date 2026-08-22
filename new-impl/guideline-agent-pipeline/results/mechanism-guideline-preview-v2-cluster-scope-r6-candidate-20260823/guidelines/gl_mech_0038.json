@@ -1,0 +1,58 @@
+{
+  "cluster_summary": "A cluster of vulnerabilities in a JavaScript sandbox where attackers can escape due to (1) incomplete blocklists or allowlists that fail to restrict dangerous properties, builtin modules, or APIs, and (2) missing explicit isolation of JavaScript runtime features such as the `this` context, `Function` constructor, constructor properties, handler prototypes, proxy traps, and Promise species.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2026-47131",
+    "CVE-2026-47140"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0011__mech_path_traversal_missing_canonical_prefix",
+  "guideline_id": "gl_mech_0038",
+  "guideline_text": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under the intended base directory before the file operation. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check.",
+  "mechanism": {
+    "aliases": [
+      "path traversal",
+      "directory traversal",
+      "Zip Slip",
+      "archive entry traversal",
+      "canonical path bypass"
+    ],
+    "family": "filesystem",
+    "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+    "missing_guard": "the normalized absolute path is not checked to remain under the intended base directory before the file operation",
+    "name": "path traversal through missing canonical prefix check",
+    "required_keywords": [],
+    "sink_shape": "file read, write, delete, extraction, or resource-loading APIs",
+    "source_shape": "attacker-controlled filenames, archive entries, path fragments, or resource names",
+    "typical_fix": "normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-47131",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    11
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 11,
+      "fix_strategy": "Add the missing entries to the blocklist or allowlist, or improve the filtering logic (e.g., prefix matching, family checks) to cover all dangerous variants.",
+      "members": [
+        "CVE-2026-47131",
+        "CVE-2026-47140"
+      ],
+      "name": "Incomplete blocklist or allowlist for restricted features",
+      "root_cause": "The sandbox relies on a list of blocked or allowed items (properties, builtin modules, syscalls, APIs) but the list is incomplete, often missing internal or alternative variants, leading to bypass."
+    }
+  ],
+  "tags": [
+    "filesystem",
+    "mech_path_traversal_missing_canonical_prefix",
+    "path traversal",
+    "directory traversal",
+    "Zip Slip",
+    "archive entry traversal"
+  ]
+}

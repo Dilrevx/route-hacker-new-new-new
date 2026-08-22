@@ -1,0 +1,77 @@
+{
+  "cluster_summary": "This cluster contains 40 CVEs primarily related to Server-Side Request Forgery (SSRF) due to missing or incomplete validation of user-supplied URLs before making outbound HTTP requests. It also includes issues with TLS certificate validation, credential exposure, authorization context confusion, regular expression denial of service, and concurrency race conditions. The common thread is inadequate security checks in network-facing operations.",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2025-55150",
+    "CVE-2025-55151",
+    "CVE-2025-55161",
+    "CVE-2026-0560",
+    "CVE-2026-10690",
+    "CVE-2026-33440",
+    "CVE-2026-40072",
+    "CVE-2026-41297"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0070__mech_open_redirect_unsafe_uri_scheme",
+  "guideline_id": "gl_mech_0322",
+  "guideline_text": "Trace attacker-controlled redirect targets, callback URLs, return URLs, OAuth redirect_uri values, or browser navigation destinations into redirect responses, Location headers, OAuth/OIDC/SAML redirect validation, or browser-followed navigation targets. Report code paths where the redirect target is accepted without constraining the final scheme and destination to trusted browser-safe values. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 8 historical CVE example(s), not as a project-specific signature. A safe implementation should validate redirect targets with an explicit safe-scheme and destination allowlist after decoding and normalization.",
+  "mechanism": {
+    "aliases": [
+      "unsafe redirect URI scheme",
+      "javascript URI redirect",
+      "data URI redirect",
+      "redirect_uri scheme bypass"
+    ],
+    "family": "open_redirect",
+    "mechanism_id": "mech_open_redirect_unsafe_uri_scheme",
+    "missing_guard": "the redirect target is accepted without constraining the final scheme and destination to trusted browser-safe values",
+    "name": "open redirect through unsafe URI scheme validation",
+    "required_keywords": [],
+    "sink_shape": "redirect responses, Location headers, OAuth/OIDC/SAML redirect validation, or browser-followed navigation targets",
+    "source_shape": "attacker-controlled redirect targets, callback URLs, return URLs, OAuth redirect_uri values, or browser navigation destinations",
+    "typical_fix": "validate redirect targets with an explicit safe-scheme and destination allowlist after decoding and normalization"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2025-55150",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    70
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 70,
+      "fix_strategy": "Add a validation function that checks the URL scheme (allow only http/https), resolves the hostname to IP addresses, and rejects requests to private, loopback, link-local, or cloud metadata IP ranges. Optionally require a domain allowlist.",
+      "members": [
+        "CVE-2025-55150",
+        "CVE-2025-55151",
+        "CVE-2025-55161",
+        "CVE-2026-0560",
+        "CVE-2026-10690"
+      ],
+      "name": "Missing URL host and IP validation before outbound HTTP requests",
+      "root_cause": "The code assumes user-supplied URLs are safe and performs no validation of the hostname, IP address, or scheme before making outbound HTTP requests. There is no allowlist of allowed hosts or blocklist of private/internal IP ranges."
+    },
+    {
+      "cluster_id": 70,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2026-33440",
+        "CVE-2026-40072",
+        "CVE-2026-41297"
+      ],
+      "name": "Missing pre-request validation and secure configuration in network operations",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "open_redirect",
+    "mech_open_redirect_unsafe_uri_scheme",
+    "unsafe redirect URI scheme",
+    "javascript URI redirect",
+    "data URI redirect",
+    "redirect_uri scheme bypass"
+  ]
+}

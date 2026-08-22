@@ -1,0 +1,75 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where account modification endpoints (password, email, user role, contact) lack required verification steps such as re-authentication (current password or MFA), ownership confirmation, or token claim validation. The common coding mistake is assuming a valid session alone is sufficient authorization for sensitive actions, without additional proof of identity or ownership. One outlier involves a NoSQL injection vulnerability in password verification.",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2026-31874",
+    "CVE-2026-33124",
+    "CVE-2026-40352"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0095__mech_request_body_resource_mismatch_authz",
+  "guideline_id": "gl_mech_0430",
+  "guideline_text": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources. Report code paths where the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation.",
+  "mechanism": {
+    "aliases": [
+      "path parameter authorization mismatch",
+      "request body resource mismatch",
+      "bulk operation target mismatch",
+      "namespace sync authorization bypass"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_request_body_resource_mismatch_authz",
+    "missing_guard": "the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check",
+    "name": "request-body resource identifiers bypass path-scoped authorization",
+    "required_keywords": [],
+    "sink_shape": "bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources",
+    "source_shape": "attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body",
+    "typical_fix": "validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-31874",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    95
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 95,
+      "fix_strategy": "Add a required field for current password (or MFA) and verify it before applying the change; optionally invalidate prior tokens.",
+      "members": [
+        "CVE-2026-33124"
+      ],
+      "name": "Missing re-authentication for sensitive account attribute changes",
+      "root_cause": "API endpoints for changing password or email do not require the current password (or MFA) before allowing the change, assuming a valid session is sufficient authorization."
+    },
+    {
+      "cluster_id": 95,
+      "fix_strategy": "Remove the role field from the request DTO and set a safe default role (e.g., MEMBER) in the service call.",
+      "members": [
+        "CVE-2026-31874"
+      ],
+      "name": "Privilege escalation via user-controlled role on registration",
+      "root_cause": "The registration endpoint accepts a user-controlled role parameter and uses it directly without server-side override or allow-list, allowing privilege escalation."
+    },
+    {
+      "cluster_id": 95,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2026-40352"
+      ],
+      "name": "Missing authorization and authentication checks in account management",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_request_body_resource_mismatch_authz",
+    "path parameter authorization mismatch",
+    "request body resource mismatch",
+    "bulk operation target mismatch",
+    "namespace sync authorization bypass"
+  ]
+}

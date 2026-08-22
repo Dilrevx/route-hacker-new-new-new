@@ -1,0 +1,55 @@
+{
+  "cluster_summary": "A set of vulnerabilities where the code fails to verify that the current user has the required access rights (view, edit, admin) before exposing or modifying data, leading to unauthorized access or privilege escalation. The missing checks occur in various contexts: retrieval of documents, revisions, history, listing, and performing state-changing actions like rollback, creation, import, and edits involving sensitive fields.",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2024-45591"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0073__mech_request_body_resource_mismatch_authz",
+  "guideline_id": "gl_mech_0335",
+  "guideline_text": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources. Report code paths where the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation.",
+  "mechanism": {
+    "aliases": [
+      "path parameter authorization mismatch",
+      "request body resource mismatch",
+      "bulk operation target mismatch",
+      "namespace sync authorization bypass"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_request_body_resource_mismatch_authz",
+    "missing_guard": "the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check",
+    "name": "request-body resource identifiers bypass path-scoped authorization",
+    "required_keywords": [],
+    "sink_shape": "bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources",
+    "source_shape": "attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body",
+    "typical_fix": "validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2024-45591",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    73
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 73,
+      "fix_strategy": "Before returning the resource data, call authorizationManager.checkAccess(Right.VIEW, documentReference) and skip or deny access if the check fails. For listings, apply the check to the parent entity (e.g., wiki reference) or to each item as appropriate.",
+      "members": [
+        "CVE-2024-45591"
+      ],
+      "name": "missing per-resource VIEW authorization on data retrieval",
+      "root_cause": "The code assumes that query results or retrieved resources are safe to expose without re-verifying the current user's VIEW permission on each specific document, revision, or wiki. This occurs in collection responses, deleted document views, revision access, page history endpoints, page listing, and document title retrieval."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_request_body_resource_mismatch_authz",
+    "path parameter authorization mismatch",
+    "request body resource mismatch",
+    "bulk operation target mismatch",
+    "namespace sync authorization bypass"
+  ]
+}

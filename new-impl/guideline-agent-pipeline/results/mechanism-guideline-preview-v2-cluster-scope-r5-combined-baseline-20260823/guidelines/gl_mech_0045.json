@@ -1,0 +1,65 @@
+{
+  "cluster_summary": "The cluster contains vulnerabilities arising from insufficient input validation when parsing dependency specifications, lack of integrity checks for downloaded packages, and flawed security policies for transitive dependency script execution. These issues can lead to arbitrary code execution, supply chain attacks, or bypass of intended security restrictions.",
+  "created_at": "2026-08-22T20:04:49+00:00",
+  "cve_ids": [
+    "CVE-2025-69264",
+    "CVE-2026-31900"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0013__mech_ssrf_webhook_url_fetch",
+  "guideline_id": "gl_mech_0045",
+  "guideline_text": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets.",
+  "mechanism": {
+    "aliases": [
+      "webhook SSRF",
+      "callback URL fetch",
+      "user controlled URL fetch",
+      "outbound HTTP client SSRF"
+    ],
+    "family": "ssrf",
+    "mechanism_id": "mech_ssrf_webhook_url_fetch",
+    "missing_guard": "scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request",
+    "name": "attacker-controlled webhook or callback URL fetch",
+    "required_keywords": [],
+    "sink_shape": "outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers",
+    "source_shape": "attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations",
+    "typical_fix": "enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2025-69264",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    13
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 13,
+      "fix_strategy": "Add a configuration flag 'blockExoticSubdeps' and check if dependency is transitive and source is exotic, then reject.",
+      "members": [
+        "CVE-2025-69264"
+      ],
+      "name": "Transitive exotic dependency lifecycle script bypass",
+      "root_cause": "Assumption that blocking lifecycle scripts at root level via onlyBuiltDependencies prevents script execution from all dependencies; git-hosted dependencies execute prepare scripts during fetch phase, and no mechanism restricts transitive dependencies from using exotic protocols."
+    },
+    {
+      "cluster_id": 13,
+      "fix_strategy": "Replace overly permissive regex with a stricter one that only matches standard version specifiers and rejects strings containing '@' or other non-version syntax.",
+      "members": [
+        "CVE-2026-31900"
+      ],
+      "name": "Insufficient regex validation allowing direct URL injection in package version specifier",
+      "root_cause": "Regex used to validate package version string is overly permissive, allowing characters like '@' that enable direct URL references, leading to arbitrary package installation."
+    }
+  ],
+  "tags": [
+    "ssrf",
+    "mech_ssrf_webhook_url_fetch",
+    "webhook SSRF",
+    "callback URL fetch",
+    "user controlled URL fetch",
+    "outbound HTTP client SSRF"
+  ]
+}

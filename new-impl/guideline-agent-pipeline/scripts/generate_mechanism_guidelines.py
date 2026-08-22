@@ -109,6 +109,7 @@ class Mechanism:
     family: str
     aliases: tuple[str, ...]
     keywords: tuple[str, ...]
+    required_keywords: tuple[tuple[str, ...], ...]
     source_shape: str
     sink_shape: str
     missing_guard: str
@@ -202,6 +203,7 @@ def load_lexicon(path: Path) -> list[Mechanism]:
                 family=str(item.get("family") or "").strip(),
                 aliases=tuple(str(v).strip() for v in item.get("aliases") or [] if str(v).strip()),
                 keywords=tuple(str(v).strip().lower() for v in item.get("keywords") or [] if str(v).strip()),
+                required_keywords=parse_required_keywords(item.get("required_keywords")),
                 source_shape=str(item.get("source_shape") or "").strip(),
                 sink_shape=str(item.get("sink_shape") or "").strip(),
                 missing_guard=str(item.get("missing_guard") or "").strip(),
@@ -210,6 +212,40 @@ def load_lexicon(path: Path) -> list[Mechanism]:
         )
     if not mechanisms:
         raise ValueError(f"lexicon has no mechanisms: {path}")
+    return mechanisms
+
+
+def parse_required_keywords(raw: Any) -> tuple[tuple[str, ...], ...]:
+    groups: list[tuple[str, ...]] = []
+    if not raw:
+        return ()
+    if not isinstance(raw, list):
+        raise ValueError("required_keywords must be a list of strings or string lists")
+    for value in raw:
+        if isinstance(value, str):
+            terms = (value.strip().lower(),)
+        elif isinstance(value, list):
+            terms = tuple(str(item).strip().lower() for item in value if str(item).strip())
+        else:
+            raise ValueError("required_keywords entries must be strings or string lists")
+        if terms:
+            groups.append(terms)
+    return tuple(groups)
+
+
+def merge_lexicons(paths: list[Path]) -> list[Mechanism]:
+    mechanisms: list[Mechanism] = []
+    seen: set[str] = set()
+    duplicates: list[str] = []
+    for path in paths:
+        for mechanism in load_lexicon(path):
+            if mechanism.mechanism_id in seen:
+                duplicates.append(mechanism.mechanism_id)
+                continue
+            seen.add(mechanism.mechanism_id)
+            mechanisms.append(mechanism)
+    if duplicates:
+        raise ValueError(f"duplicate mechanism_id across lexicons: {sorted(duplicates)[:10]}")
     return mechanisms
 
 
@@ -320,6 +356,9 @@ def phrase_present(phrase: str, text: str) -> bool:
 
 def score_mechanism(text: str, mechanism: Mechanism) -> tuple[float, list[str]]:
     lowered = text.lower()
+    for required_group in mechanism.required_keywords:
+        if not any(phrase_present(keyword, lowered) for keyword in required_group):
+            return 0.0, []
     matches: list[str] = []
     score = 0.0
     for keyword in mechanism.keywords:
@@ -361,6 +400,7 @@ def pending_mechanism(item: WorkItem, text: str) -> Mechanism:
         family="pending_review",
         aliases=tuple(terms[:6]),
         keywords=tuple(terms),
+        required_keywords=(),
         source_shape="attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
         sink_shape="the sensitive operation or security boundary described by the member CVEs",
         missing_guard="the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
@@ -528,6 +568,7 @@ def build_guideline_payload(
             "name": mechanism.name,
             "family": mechanism.family,
             "aliases": list(mechanism.aliases),
+            "required_keywords": [list(group) for group in mechanism.required_keywords],
             "source_shape": mechanism.source_shape,
             "sink_shape": mechanism.sink_shape,
             "missing_guard": mechanism.missing_guard,
@@ -715,9 +756,11 @@ def write_readme(
     if pending:
         lines.extend(["## Pending Review", ""])
         for row in pending[:20]:
+            cluster_id = row.get("cluster_id", "unknown")
+            sub_pattern_name = row.get("sub_pattern_name") or row.get("mechanism_name") or "unknown"
             lines.append(
-                f"- cluster {row['cluster_id']} / {row['sub_pattern_name']}: "
-                f"{row['mechanism_name']} ({row['member_count']} CVE)"
+                f"- cluster {cluster_id} / {sub_pattern_name}: "
+                f"{row.get('mechanism_name', 'unknown')} ({row.get('member_count', 0)} CVE)"
             )
         lines.append("")
     output_dir.joinpath("README.md").write_text("\n".join(lines), encoding="utf-8")
@@ -726,7 +769,7 @@ def write_readme(
 def generate(args: argparse.Namespace) -> dict[str, Any]:
     clustering = read_json(args.clusters)
     structured = load_structured(args.structured)
-    lexicon = load_lexicon(args.lexicon)
+    lexicon = merge_lexicons([args.lexicon, *args.extra_lexicon])
     items = list(iter_work_items(clustering))
     if not items:
         raise ValueError(f"no cluster or sub-pattern work items in {args.clusters}")
@@ -758,6 +801,13 @@ def main() -> None:
         type=Path,
         default=Path(__file__).parents[1] / "guidelines" / "mechanism_lexicon.seed.json",
         help="Versioned mechanism lexicon JSON.",
+    )
+    parser.add_argument(
+        "--extra-lexicon",
+        type=Path,
+        action="append",
+        default=[],
+        help="Additional review-approved mechanism lexicon JSON. May be repeated.",
     )
     parser.add_argument("--cases-file", type=Path, help="Optional HCVR case JSONL used to emit guideline_overrides.jsonl.")
     parser.add_argument("--output-dir", type=Path, required=True)

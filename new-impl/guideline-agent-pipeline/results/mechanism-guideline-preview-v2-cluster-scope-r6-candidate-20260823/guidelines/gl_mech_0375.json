@@ -1,0 +1,95 @@
+{
+  "cluster_summary": "This cluster contains 40 authentication/authorization vulnerabilities where the root cause is either a missing authorization check in a specific code path, improper scope assignment or propagation, flawed token/credential validation or lifecycle management, or insufficient validation of client-supplied data used in authorization decisions. Two outliers involve business logic flaws in resource limits and state management rather than direct authorization bypasses.",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2017-4952",
+    "CVE-2026-32042",
+    "CVE-2026-34512",
+    "CVE-2026-35638",
+    "CVE-2026-35639",
+    "CVE-2026-35645",
+    "CVE-2026-35657",
+    "CVE-2026-35663",
+    "CVE-2026-35669",
+    "CVE-2026-41298",
+    "CVE-2026-41352",
+    "CVE-2026-41394",
+    "CVE-2026-41908",
+    "CVE-2026-53982"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0082__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0375",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 14 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "required_keywords": [],
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2017-4952",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    82
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 82,
+      "fix_strategy": "Add the missing authorization check before performing the operation, such as verifying the caller's scope, role, device pairing, or ownership of the target resource.",
+      "members": [
+        "CVE-2017-4952",
+        "CVE-2026-32042",
+        "CVE-2026-35639",
+        "CVE-2026-35657",
+        "CVE-2026-35663",
+        "CVE-2026-41298",
+        "CVE-2026-41352",
+        "CVE-2026-41908"
+      ],
+      "name": "Missing authorization checks in code paths",
+      "root_cause": "The code assumed that either the request was legitimate, a check in another path was sufficient, or that a configuration flag or authentication status alone granted authorization, without performing the necessary authorization check (scope, role, pairing, ownership) in that specific code path."
+    },
+    {
+      "cluster_id": 82,
+      "fix_strategy": "Correct the scope assignment logic: differentiate scopes based on authentication method, remove hardcoded elevated scopes, ensure scope clearing conditions cover all relevant auth methods, and propagate requested scopes only after validation.",
+      "members": [
+        "CVE-2026-34512",
+        "CVE-2026-35638",
+        "CVE-2026-35645",
+        "CVE-2026-35669",
+        "CVE-2026-41394"
+      ],
+      "name": "Improper scope assignment or propagation",
+      "root_cause": "Scopes were incorrectly assigned, not cleared based on authentication method, or hardcoded to elevated privilege levels without considering the caller's actual authorization, allowing privilege escalation."
+    },
+    {
+      "cluster_id": 82,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2026-53982"
+      ],
+      "name": "Missing authorization checks and flawed scope/credential logic",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

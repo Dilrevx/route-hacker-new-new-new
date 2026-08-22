@@ -1,0 +1,55 @@
+{
+  "cluster_summary": "This cluster comprises vulnerabilities in a document management system where privilege escalation arises from improper handling of document author identity during save operations, missing authorization checks on sensitive API methods and state-changing actions, and use of non-contextual permission checks that ignore current user context or dropped permissions. A distinct error handling flaw can also bypass authorization enforcement.",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2024-37899"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0072__mech_toctou_mutable_object_reuse",
+  "guideline_id": "gl_mech_0332",
+  "guideline_text": "Trace mutable files, paths, objects, identities, request fields, or shared state that are checked before use into sensitive file, state, permission, memory, or resource effects that depend on the earlier check. Report code paths where the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary.",
+  "mechanism": {
+    "aliases": [
+      "TOCTOU",
+      "check then use race",
+      "double fetch",
+      "stale object reuse"
+    ],
+    "family": "race_or_lifecycle",
+    "mechanism_id": "mech_toctou_mutable_object_reuse",
+    "missing_guard": "the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect",
+    "name": "time-of-check to time-of-use on mutable object",
+    "required_keywords": [],
+    "sink_shape": "sensitive file, state, permission, memory, or resource effects that depend on the earlier check",
+    "source_shape": "mutable files, paths, objects, identities, request fields, or shared state that are checked before use",
+    "typical_fix": "bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2024-37899",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    72
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 72,
+      "fix_strategy": "Ensure that during document save operations the author reference is correctly updated to the current user or the legitimate author, and that authorization checks use the current user's identity or the properly updated author field.",
+      "members": [
+        "CVE-2024-37899"
+      ],
+      "name": "Incorrect author identity during document save or authorization check",
+      "root_cause": "The code either fails to update the document's author reference to the current user when saving edited content, or uses a stale author field (e.g., content author, effective author) for authorization decisions, allowing a lower-privileged user to inherit higher privileges from the original author."
+    }
+  ],
+  "tags": [
+    "race_or_lifecycle",
+    "mech_toctou_mutable_object_reuse",
+    "TOCTOU",
+    "check then use race",
+    "double fetch",
+    "stale object reuse"
+  ]
+}

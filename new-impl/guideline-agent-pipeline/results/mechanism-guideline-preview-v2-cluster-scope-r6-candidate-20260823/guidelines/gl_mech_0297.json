@@ -1,0 +1,91 @@
+{
+  "cluster_summary": "A cluster of vulnerabilities where user-supplied command arguments are insufficiently validated against allowlists or safe-bin policies, leading to bypass of intended restrictions via dangerous flags, wrapper chains, inconsistent approval display, shell expansion, or filesystem oracle leaks.",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2022-39243",
+    "CVE-2026-22168",
+    "CVE-2026-27183",
+    "CVE-2026-28463",
+    "CVE-2026-31992",
+    "CVE-2026-32052",
+    "CVE-2026-43530"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0065__mech_toctou_mutable_object_reuse",
+  "guideline_id": "gl_mech_0297",
+  "guideline_text": "Trace mutable files, paths, objects, identities, request fields, or shared state that are checked before use into sensitive file, state, permission, memory, or resource effects that depend on the earlier check. Report code paths where the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 7 historical CVE example(s), not as a project-specific signature. A safe implementation should bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary.",
+  "mechanism": {
+    "aliases": [
+      "TOCTOU",
+      "check then use race",
+      "double fetch",
+      "stale object reuse"
+    ],
+    "family": "race_or_lifecycle",
+    "mechanism_id": "mech_toctou_mutable_object_reuse",
+    "missing_guard": "the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect",
+    "name": "time-of-check to time-of-use on mutable object",
+    "required_keywords": [],
+    "sink_shape": "sensitive file, state, permission, memory, or resource effects that depend on the earlier check",
+    "source_shape": "mutable files, paths, objects, identities, request fields, or shared state that are checked before use",
+    "typical_fix": "bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2022-39243",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    65
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 65,
+      "fix_strategy": "Add missing wrappers to the recognized list, implement recursive unwrapping of wrapper chains, enforce depth limits, and correctly persist the inner executable path.",
+      "members": [
+        "CVE-2026-27183",
+        "CVE-2026-31992",
+        "CVE-2026-43530"
+      ],
+      "name": "Incomplete wrapper resolution and authorization",
+      "root_cause": "The authorization code fails to properly identify and resolve dispatch wrappers (env, timeout, time, busybox, etc.) to the inner executable or fails to enforce depth limits, allowing nested wrapper chains to bypass approval checks."
+    },
+    {
+      "cluster_id": 65,
+      "fix_strategy": "Validate or sanitize user input against a allowlist of safe values, reject dangerous characters, use absolute paths for external commands, and avoid shell fallback.",
+      "members": [
+        "CVE-2022-39243"
+      ],
+      "name": "Insufficient input sanitization before process execution",
+      "root_cause": "User-controlled input passes directly to process execution APIs without validation or sanitization for dangerous constructs such as file paths, NUL characters, shell metacharacters, or uncontrolled PATH variables."
+    },
+    {
+      "cluster_id": 65,
+      "fix_strategy": "Validate consistency between rawCommand and the actual command array, and use the full argv for display when trailing positional arguments exist.",
+      "members": [
+        "CVE-2026-22168",
+        "CVE-2026-32052"
+      ],
+      "name": "Approval display mismatch with actual command arguments",
+      "root_cause": "The approval mechanism uses a user-supplied rawCommand or inline shell snippet that does not match the full command array, allowing hidden arguments or shell positional parameters to execute unintended commands."
+    },
+    {
+      "cluster_id": 65,
+      "fix_strategy": "Escape each token with single quotes before passing to the shell to prevent expansion.",
+      "members": [
+        "CVE-2026-28463"
+      ],
+      "name": "Shell expansion bypass of allowlist",
+      "root_cause": "The allowlist validation checks the raw command string before shell expansion, but execution passes the same string to a shell that expands globs and environment variables, allowing smuggling of file paths."
+    }
+  ],
+  "tags": [
+    "race_or_lifecycle",
+    "mech_toctou_mutable_object_reuse",
+    "TOCTOU",
+    "check then use race",
+    "double fetch",
+    "stale object reuse"
+  ]
+}
