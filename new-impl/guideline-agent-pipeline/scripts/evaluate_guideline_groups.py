@@ -187,7 +187,7 @@ def summarize_case_for_judge(case: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def load_guideline_payloads(release_dir: Path) -> list[dict[str, Any]]:
+def load_guideline_payloads(release_dir: Path, *, include_review_queue: bool = False) -> list[dict[str, Any]]:
     index_path = release_dir / "index.json"
     if not index_path.is_file():
         raise FileNotFoundError(f"missing release index: {index_path}")
@@ -201,6 +201,27 @@ def load_guideline_payloads(release_dir: Path) -> list[dict[str, Any]]:
         if not guideline_path.is_file():
             raise FileNotFoundError(f"missing guideline payload: {guideline_path}")
         payloads.append(read_json(guideline_path))
+    if include_review_queue:
+        review_queue_path = release_dir / "review_queue.jsonl"
+        if review_queue_path.is_file():
+            for row in read_jsonl(review_queue_path):
+                mechanism = row.get("mechanism") or {}
+                review_id = str(row.get("review_id") or row.get("guideline_group_key") or "")
+                if not review_id:
+                    continue
+                payloads.append(
+                    {
+                        "guideline_id": review_id,
+                        "guideline_group_key": row.get("guideline_group_key"),
+                        "guideline_text": row.get("guideline_text"),
+                        "mechanism": mechanism,
+                        "source_cluster_ids": row.get("source_cluster_ids") or [],
+                        "cve_ids": row.get("cve_ids") or [],
+                        "cluster_summary": row.get("cluster_summary"),
+                        "release_status": row.get("release_status") or {"status": "review_only"},
+                        "schema_version": "hcvr_audit_guideline.review_queue.v1",
+                    }
+                )
     return payloads
 
 
@@ -237,9 +258,10 @@ def evaluate_release(
     cases_file: Path | None,
     min_purity: float,
     singleton_soft_cap: int,
+    include_review_queue: bool = False,
 ) -> tuple[dict[str, Any], list[dict[str, Any]], list[dict[str, Any]]]:
     by_identity, by_case_id, by_cve = load_cases(cases_file)
-    payloads = load_guideline_payloads(release_dir)
+    payloads = load_guideline_payloads(release_dir, include_review_queue=include_review_queue)
     override_links, unresolved_override_links = load_override_case_links(release_dir, by_identity, by_case_id)
     candidates_path = release_dir / "mechanism_candidates.jsonl"
     pending_candidate_count = 0
@@ -318,6 +340,9 @@ def evaluate_release(
         mech_id = str(mechanism.get("mechanism_id") or "")
         if family == "pending_review" or mech_id.startswith("pending_mech_"):
             flags.append("pending_review")
+        release_status = payload.get("release_status") or {}
+        if release_status.get("status") == "review_only" or release_status.get("release_ready") is False:
+            flags.append("review_only")
         flagged_counts.update(flags)
         group_rows.append(
             {
@@ -365,6 +390,7 @@ def evaluate_release(
         "assigned_unique_case_count": len(unique_assigned_cases),
         "case_coverage_rate": (len(unique_assigned_cases) / total_cases if total_cases else None),
         "pending_candidate_count": pending_candidate_count,
+        "include_review_queue": include_review_queue,
         "small_group_count": flagged_counts.get("small_group", 0),
         "source_only_no_case_metadata_count": flagged_counts.get("source_only_no_case_metadata", 0),
         "mixed_hcvr_group_count": flagged_counts.get("mixed_hcvr", 0),
@@ -410,6 +436,7 @@ def write_readme(output_dir: Path, summary: dict[str, Any], group_rows: list[dic
         f"- Assigned unique cases: {summary['assigned_unique_case_count']} / {summary['total_case_count'] or 'unknown'}",
         f"- Case coverage rate: {summary['case_coverage_rate'] if summary['case_coverage_rate'] is not None else 'unknown'}",
         f"- Pending candidate rows: {summary['pending_candidate_count']}",
+        f"- Review queue included: {summary['include_review_queue']}",
         f"- Small groups: {summary['small_group_count']}",
         f"- Mixed HCVR groups: {summary['mixed_hcvr_group_count']}",
         f"- Mixed CWE groups: {summary['mixed_cwe_group_count']}",
@@ -634,6 +661,11 @@ def main() -> None:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--min-purity", type=float, default=0.67)
     parser.add_argument("--singleton-soft-cap", type=int, default=1)
+    parser.add_argument(
+        "--include-review-queue",
+        action="store_true",
+        help="Also include review_queue.jsonl rows in the structural report and optional judge pack.",
+    )
     parser.add_argument("--judge-pack-dir", type=Path)
     parser.add_argument("--judge-group-filter", choices=("flagged", "evaluated", "all", "balanced"), default="balanced")
     parser.add_argument("--judge-max-groups", type=int, default=20)
@@ -651,6 +683,7 @@ def main() -> None:
         cases_file=args.cases_file,
         min_purity=args.min_purity,
         singleton_soft_cap=args.singleton_soft_cap,
+        include_review_queue=args.include_review_queue,
     )
     args.output_dir.mkdir(parents=True, exist_ok=True)
     write_json(args.output_dir / "summary.json", summary)

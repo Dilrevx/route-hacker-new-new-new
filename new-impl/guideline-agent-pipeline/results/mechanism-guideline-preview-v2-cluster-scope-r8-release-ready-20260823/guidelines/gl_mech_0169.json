@@ -1,0 +1,63 @@
+{
+  "cluster_summary": "This cluster comprises vulnerabilities where the application fails to enforce proper access control, including missing authentication on endpoints (allowing unauthenticated access), missing resource-scoped authorization (IDOR) where user-supplied identifiers are not verified, missing permission annotations on controller methods, and logic errors in authorization conditions. These flaws enable unauthorized access to sensitive data or privileged operations.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2026-25999"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0093__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0169",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "required_keywords": [],
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 2,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 1,
+    "total_member_count": 1,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2026-25999",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    93
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 93,
+      "fix_strategy": "Add authentication checks (e.g., servlet filter, token validation, override needAppToken, enable HTTP Basic) or remove the vulnerable endpoints entirely.",
+      "members": [
+        "CVE-2026-25999"
+      ],
+      "name": "Missing authentication on endpoints",
+      "root_cause": "The application exposed HTTP endpoints without any authentication mechanism, assuming internal network or implicit protection. No credential validation was performed before processing requests."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "cluster_summary": "This cluster contains 40 authentication/authorization vulnerabilities where the root cause is either a missing authorization check in a specific code path, improper scope assignment or propagation, flawed token/credential validation or lifecycle management, or insufficient validation of client-supplied data used in authorization decisions. Two outliers involve business logic flaws in resource limits and state management rather than direct authorization bypasses.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2026-33577",
+    "CVE-2026-34512",
+    "CVE-2026-35662",
+    "CVE-2026-41909",
+    "CVE-2026-44997",
+    "CVE-2026-8629"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0082__mech_object_owner_scope_missing_authz",
+  "guideline_id": "gl_mech_0150",
+  "guideline_text": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where the authorization decision is not bound to both the current principal and the exact resource or tenant being affected. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 6 historical CVE example(s), not as a project-specific signature. A safe implementation should check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation.",
+  "mechanism": {
+    "aliases": [
+      "object ownership authorization",
+      "tenant scope check",
+      "IDOR",
+      "resource scoped authorization"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_object_owner_scope_missing_authz",
+    "missing_guard": "the authorization decision is not bound to both the current principal and the exact resource or tenant being affected",
+    "name": "missing object-owner or tenant-scope authorization",
+    "required_keywords": [],
+    "sink_shape": "sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource",
+    "source_shape": "attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets",
+    "typical_fix": "check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 2,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 6,
+    "total_member_count": 6,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2026-33577",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    82
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 82,
+      "fix_strategy": "Add the missing authorization check before performing the operation, such as verifying the caller's scope, role, device pairing, or ownership of the target resource.",
+      "members": [
+        "CVE-2026-35662",
+        "CVE-2026-41909",
+        "CVE-2026-44997"
+      ],
+      "name": "Missing authorization checks in code paths",
+      "root_cause": "The code assumed that either the request was legitimate, a check in another path was sufficient, or that a configuration flag or authentication status alone granted authorization, without performing the necessary authorization check (scope, role, pairing, ownership) in that specific code path."
+    },
+    {
+      "cluster_id": 82,
+      "fix_strategy": "Correct the scope assignment logic: differentiate scopes based on authentication method, remove hardcoded elevated scopes, ensure scope clearing conditions cover all relevant auth methods, and propagate requested scopes only after validation.",
+      "members": [
+        "CVE-2026-33577",
+        "CVE-2026-34512"
+      ],
+      "name": "Improper scope assignment or propagation",
+      "root_cause": "Scopes were incorrectly assigned, not cleared based on authentication method, or hardcoded to elevated privilege levels without considering the caller's actual authorization, allowing privilege escalation."
+    },
+    {
+      "cluster_id": 82,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2026-8629"
+      ],
+      "name": "Missing authorization checks and flawed scope/credential logic",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_object_owner_scope_missing_authz",
+    "object ownership authorization",
+    "tenant scope check",
+    "IDOR",
+    "resource scoped authorization"
+  ]
+}

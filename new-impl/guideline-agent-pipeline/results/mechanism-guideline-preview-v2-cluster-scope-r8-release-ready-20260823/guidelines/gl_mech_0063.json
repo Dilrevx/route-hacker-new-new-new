@@ -1,0 +1,65 @@
+{
+  "cluster_summary": "The cluster comprises vulnerabilities where user-controlled input is used to construct URLs (redirect targets, server-side fetch URLs, navigation destinations, or URL query strings) without adequate validation or encoding. This leads to open redirect, server-side request forgery (SSRF), cross-site scripting (XSS), token leakage, and exposure of sensitive data. The root causes include missing host allowlist checks, incomplete URL parsing allowing bypasses, and failure to encode or filter sensitive data.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2026-3327"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0037__mech_request_body_resource_mismatch_authz",
+  "guideline_id": "gl_mech_0063",
+  "guideline_text": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources. Report code paths where the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation.",
+  "mechanism": {
+    "aliases": [
+      "path parameter authorization mismatch",
+      "request body resource mismatch",
+      "bulk operation target mismatch",
+      "namespace sync authorization bypass"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_request_body_resource_mismatch_authz",
+    "missing_guard": "the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check",
+    "name": "request-body resource identifiers bypass path-scoped authorization",
+    "required_keywords": [],
+    "sink_shape": "bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources",
+    "source_shape": "attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body",
+    "typical_fix": "validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 2,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 1,
+    "total_member_count": 1,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2026-3327",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    37
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 37,
+      "fix_strategy": "Add allowlist validation (e.g., URLSecurityManager, url_has_allowed_host_and_scheme) or compare the URL's origin/host against the current request's origin or a configured list of trusted hosts.",
+      "members": [
+        "CVE-2026-3327"
+      ],
+      "name": "Missing host/domain allowlist validation for redirect and server-side requests",
+      "root_cause": "Code assumes user-controlled URL is safe and does not validate the destination host against a whitelist of trusted domains or the current origin before using it in a redirect or server-side request."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_request_body_resource_mismatch_authz",
+    "path parameter authorization mismatch",
+    "request body resource mismatch",
+    "bulk operation target mismatch",
+    "namespace sync authorization bypass"
+  ]
+}

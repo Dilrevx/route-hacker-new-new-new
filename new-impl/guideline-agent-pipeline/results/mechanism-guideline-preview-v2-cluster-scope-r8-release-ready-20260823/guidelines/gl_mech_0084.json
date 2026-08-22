@@ -1,0 +1,82 @@
+{
+  "cluster_summary": "This cluster covers cross-site scripting (XSS) vulnerabilities arising from user-controlled data being inserted into the DOM via innerHTML, dangerouslySetInnerHTML, or markdown-to-HTML pipelines without proper sanitization or escaping. The root cause is the assumption that user input is safe for HTML context. Fix strategies range from using textContent or HTML encoding for plain text, adding DOMPurify or rehype-sanitize for HTML content, escaping attributes in custom renderers, to replacing dangerouslySetInnerHTML with JSX expressions or using DOM APIs with URL validation.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2026-27612"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0050__mech_sql_dynamic_query_untrusted_fragment",
+  "guideline_id": "gl_mech_0084",
+  "guideline_text": "Trace attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values into SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters. Report code paths where values or structural fragments are concatenated into SQL syntax without parameter binding or a strict allowlist for identifiers and operators. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should use bound parameters for values, allowlist structural SQL fragments, and keep untrusted data out of query syntax.",
+  "mechanism": {
+    "aliases": [
+      "SQL injection",
+      "SQL concatenation",
+      "dynamic SQL injection",
+      "untrusted query fragment"
+    ],
+    "family": "sql_injection",
+    "mechanism_id": "mech_sql_dynamic_query_untrusted_fragment",
+    "missing_guard": "values or structural fragments are concatenated into SQL syntax without parameter binding or a strict allowlist for identifiers and operators",
+    "name": "dynamic SQL query construction from untrusted fragments",
+    "required_keywords": [
+      [
+        "sql",
+        "jdbc",
+        "statement",
+        "preparedstatement",
+        "query"
+      ],
+      [
+        "concatenate",
+        "concat",
+        "interpolation",
+        "fragment",
+        "parameter",
+        "where",
+        "order by"
+      ]
+    ],
+    "sink_shape": "SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters",
+    "source_shape": "attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values",
+    "typical_fix": "use bound parameters for values, allowlist structural SQL fragments, and keep untrusted data out of query syntax"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 2,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 1,
+    "total_member_count": 1,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2026-27612",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    50
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 50,
+      "fix_strategy": "Replace dangerouslySetInnerHTML with standard JSX expression rendering (e.g., {repo}) to let React automatically escape HTML entities.",
+      "members": [
+        "CVE-2026-27612"
+      ],
+      "name": "Misuse of dangerouslySetInnerHTML for user input in React",
+      "root_cause": "User input used directly in the dangerouslySetInnerHTML prop without using React's built-in auto-escaping."
+    }
+  ],
+  "tags": [
+    "sql_injection",
+    "mech_sql_dynamic_query_untrusted_fragment",
+    "SQL injection",
+    "SQL concatenation",
+    "dynamic SQL injection",
+    "untrusted query fragment"
+  ]
+}

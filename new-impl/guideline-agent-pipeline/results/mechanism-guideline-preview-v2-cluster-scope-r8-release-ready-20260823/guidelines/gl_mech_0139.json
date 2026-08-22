@@ -1,0 +1,91 @@
+{
+  "cluster_summary": "Multiple endpoints and data publications fail to verify that users have appropriate access to the requested resources. This includes missing validation of parent-child resource relationships, using incorrect permission levels, lacking authentication on sensitive data endpoints, failing to project out sensitive fields, trusting client-supplied identifiers for ownership, stale authorization caches, user-supplied projection bypass, and unvalidated webhook URLs leading to SSRF.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2026-25561",
+    "CVE-2026-25564",
+    "CVE-2026-25566",
+    "CVE-2026-25567",
+    "CVE-2026-25568",
+    "CVE-2026-30843"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0079__mech_request_body_resource_mismatch_authz",
+  "guideline_id": "gl_mech_0139",
+  "guideline_text": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources. Report code paths where the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 6 historical CVE example(s), not as a project-specific signature. A safe implementation should validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation.",
+  "mechanism": {
+    "aliases": [
+      "path parameter authorization mismatch",
+      "request body resource mismatch",
+      "bulk operation target mismatch",
+      "namespace sync authorization bypass"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_request_body_resource_mismatch_authz",
+    "missing_guard": "the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check",
+    "name": "request-body resource identifiers bypass path-scoped authorization",
+    "required_keywords": [],
+    "sink_shape": "bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources",
+    "source_shape": "attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body",
+    "typical_fix": "validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 2,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 6,
+    "total_member_count": 6,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2026-25561",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    79
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 79,
+      "fix_strategy": "After fetching the child resource, verify that its parent ID matches the provided parent ID, or query with a combined filter that ensures the child belongs to the specified parent.",
+      "members": [
+        "CVE-2026-25561",
+        "CVE-2026-25564",
+        "CVE-2026-25566",
+        "CVE-2026-30843"
+      ],
+      "name": "Missing hierarchical ownership validation",
+      "root_cause": "Code assumes user-supplied parent and child resource IDs are consistent without verifying that the child actually belongs to the parent. No cross-reference check is performed before authorization."
+    },
+    {
+      "cluster_id": 79,
+      "fix_strategy": "Replace the authorization check with a function that enforces the correct permission level (e.g., write permission instead of read permission, admin role instead of member role, or respect global configuration constraints).",
+      "members": [
+        "CVE-2026-25568"
+      ],
+      "name": "Missing permission level checks",
+      "root_cause": "Code uses a lower privilege level check (read access or membership) instead of the required higher privilege (write access or admin role)."
+    },
+    {
+      "cluster_id": 79,
+      "fix_strategy": "Replace the user-supplied identifier with the authenticated user's ID from the server-side session.",
+      "members": [
+        "CVE-2026-25567"
+      ],
+      "name": "Client-controlled identifier for resource ownership",
+      "root_cause": "The endpoint accepts a user-supplied identifier for the resource author/owner instead of enforcing the authenticated user's identity."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_request_body_resource_mismatch_authz",
+    "path parameter authorization mismatch",
+    "request body resource mismatch",
+    "bulk operation target mismatch",
+    "namespace sync authorization bypass"
+  ]
+}

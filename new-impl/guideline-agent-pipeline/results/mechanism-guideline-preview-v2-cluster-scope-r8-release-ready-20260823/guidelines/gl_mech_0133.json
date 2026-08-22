@@ -1,0 +1,88 @@
+{
+  "cluster_summary": "The cluster contains CVE entries where user-supplied input is used to construct file paths without proper validation. The vulnerabilities arise either from a lack of canonicalization and containment check after path concatenation, or from insufficient sanitization of user input to remove path separators and traversal sequences. Both issues allow directory traversal, enabling attackers to read or write files outside intended directories.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2026-23481",
+    "CVE-2026-23482",
+    "CVE-2026-23485",
+    "CVE-2026-30942",
+    "CVE-2026-34745",
+    "CVE-2026-39844",
+    "CVE-2026-45225",
+    "CVE-2026-8754"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0076__mech_path_traversal_missing_canonical_prefix",
+  "guideline_id": "gl_mech_0133",
+  "guideline_text": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under the intended base directory before the file operation. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 8 historical CVE example(s), not as a project-specific signature. A safe implementation should normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check.",
+  "mechanism": {
+    "aliases": [
+      "path traversal",
+      "directory traversal",
+      "Zip Slip",
+      "archive entry traversal",
+      "canonical path bypass"
+    ],
+    "family": "filesystem",
+    "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+    "missing_guard": "the normalized absolute path is not checked to remain under the intended base directory before the file operation",
+    "name": "path traversal through missing canonical prefix check",
+    "required_keywords": [],
+    "sink_shape": "file read, write, delete, extraction, or resource-loading APIs",
+    "source_shape": "attacker-controlled filenames, archive entries, path fragments, or resource names",
+    "typical_fix": "normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 3,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 8,
+    "total_member_count": 8,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2026-23481",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    76
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 76,
+      "fix_strategy": "Canonicalize the resolved path (e.g., using path.resolve) and perform a containment check (e.g., path.isInside) to ensure the final path is a subdirectory of the intended base directory.",
+      "members": [
+        "CVE-2026-23485",
+        "CVE-2026-23481",
+        "CVE-2026-23482"
+      ],
+      "name": "Missing path canonicalization and containment check after path concatenation",
+      "root_cause": "Code performs path concatenation (e.g., joining a base directory with user input) without canonicalizing the resulting path or verifying it remains within an allowed base directory, assuming the concatenation alone confines the path."
+    },
+    {
+      "cluster_id": 76,
+      "fix_strategy": "Sanitize the user input by either rejecting any input containing path separators or traversal sequences, or extracting only the intended filename component (e.g., using basename extraction that handles both forward and backslashes), then optionally perform canonicalization and containment verification.",
+      "members": [
+        "CVE-2026-30942",
+        "CVE-2026-34745",
+        "CVE-2026-39844",
+        "CVE-2026-45225",
+        "CVE-2026-8754"
+      ],
+      "name": "Missing input sanitization to remove path separators and traversal sequences",
+      "root_cause": "Code directly uses user-supplied strings (filenames, checksums, etc.) in file path construction without removing or rejecting path separators (/, \\) and traversal sequences (..), assuming the input is safe."
+    }
+  ],
+  "tags": [
+    "filesystem",
+    "mech_path_traversal_missing_canonical_prefix",
+    "path traversal",
+    "directory traversal",
+    "Zip Slip",
+    "archive entry traversal"
+  ]
+}

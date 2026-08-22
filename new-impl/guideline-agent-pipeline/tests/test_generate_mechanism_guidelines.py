@@ -262,7 +262,7 @@ def test_guideline_text_uses_mechanism_guard_without_generic_binding_boilerplate
     assert "bound parameters" in sql_text
 
 
-def test_pending_review_guidelines_are_not_recall_overrides_by_default(tmp_path: Path):
+def test_pending_review_guidelines_are_review_queue_only_by_default(tmp_path: Path):
     module = load_module()
     item = module.WorkItem(
         cluster_id=77,
@@ -290,8 +290,15 @@ def test_pending_review_guidelines_are_not_recall_overrides_by_default(tmp_path:
         output_dir=output,
         candidates=[
             {
+                "guideline_group_key": "cluster_0077__pending",
                 "status": "pending_review",
                 "mechanism_id": mechanism.mechanism_id,
+                "mechanism_name": mechanism.name,
+                "mechanism_family": mechanism.family,
+                "members": ["CVE-2099-7701"],
+                "member_count": 1,
+                "evidence_supported": False,
+                "evidence_role_count": 0,
             }
         ],
         grouped={"cluster_0077__pending": [item]},
@@ -301,12 +308,71 @@ def test_pending_review_guidelines_are_not_recall_overrides_by_default(tmp_path:
         group_scope="cluster-mechanism",
     )
 
-    assert summary["guideline_count"] == 1
+    assert summary["guideline_count"] == 0
+    assert summary["release_ready_guideline_count"] == 0
+    assert summary["review_queue_count"] == 1
     assert summary["pending_review_count"] == 1
     assert summary["override_count"] == 0
+    assert summary["pending_guidelines_included"] is False
     assert summary["pending_overrides_included"] is False
-    assert (output / "guidelines" / "gl_mech_0001.json").is_file()
+    assert not (output / "guidelines" / "gl_mech_0001.json").exists()
+    review_rows = [
+        json.loads(line)
+        for line in (output / "review_queue.jsonl").read_text(encoding="utf-8").splitlines()
+    ]
+    assert review_rows[0]["release_status"]["blockers"] == [
+        "pending_mechanism_needs_review",
+        "no_member_level_evidence_support",
+    ]
     assert not (output / "guideline_overrides.jsonl").exists()
+
+
+def test_pending_review_guidelines_can_be_included_for_judge_ablation(tmp_path: Path):
+    module = load_module()
+    item = module.WorkItem(
+        cluster_id=79,
+        cluster_name="Unclassified mechanism",
+        cluster_summary="A narrow issue that does not match the current mechanism lexicon.",
+        sub_pattern_name="Novel parser state confusion",
+        sub_pattern_root_cause="Parser state is confused after a rare transition.",
+        sub_pattern_fix_strategy="Validate the parser state before the transition.",
+        members=("CVE-2099-7901",),
+        source_kind="sub_pattern",
+    )
+    mechanism = module.pending_mechanism(item, "novel parser state confusion")
+    output = tmp_path / "release"
+
+    summary = module.write_outputs(
+        output_dir=output,
+        candidates=[
+            {
+                "guideline_group_key": "cluster_0079__pending",
+                "status": "pending_review",
+                "mechanism_id": mechanism.mechanism_id,
+                "mechanism_name": mechanism.name,
+                "mechanism_family": mechanism.family,
+                "members": ["CVE-2099-7901"],
+                "member_count": 1,
+                "evidence_supported": False,
+                "evidence_role_count": 0,
+            }
+        ],
+        grouped={"cluster_0079__pending": [item]},
+        mechanisms_by_group={"cluster_0079__pending": mechanism},
+        clustering={"method": "test"},
+        case_lookup={},
+        group_scope="cluster-mechanism",
+        include_pending_guidelines=True,
+    )
+
+    assert summary["guideline_count"] == 1
+    assert summary["release_ready_guideline_count"] == 0
+    assert summary["review_only_guideline_count"] == 1
+    assert summary["review_queue_count"] == 0
+    assert summary["pending_guidelines_included"] is True
+    payload = json.loads((output / "guidelines" / "gl_mech_0001.json").read_text(encoding="utf-8"))
+    assert payload["release_status"]["release_ready"] is False
+    assert "pending_mechanism_needs_review" in payload["release_status"]["blockers"]
 
 
 def test_pending_review_overrides_can_be_included_for_ablation(tmp_path: Path):
@@ -337,8 +403,15 @@ def test_pending_review_overrides_can_be_included_for_ablation(tmp_path: Path):
         output_dir=output,
         candidates=[
             {
+                "guideline_group_key": "cluster_0078__pending",
                 "status": "pending_review",
                 "mechanism_id": mechanism.mechanism_id,
+                "mechanism_name": mechanism.name,
+                "mechanism_family": mechanism.family,
+                "members": ["CVE-2099-7801"],
+                "member_count": 1,
+                "evidence_supported": False,
+                "evidence_role_count": 0,
             }
         ],
         grouped={"cluster_0078__pending": [item]},
@@ -349,7 +422,9 @@ def test_pending_review_overrides_can_be_included_for_ablation(tmp_path: Path):
         include_pending_overrides=True,
     )
 
+    assert summary["guideline_count"] == 1
     assert summary["override_count"] == 1
+    assert summary["pending_guidelines_included"] is True
     assert summary["pending_overrides_included"] is True
     overrides = [
         json.loads(line)

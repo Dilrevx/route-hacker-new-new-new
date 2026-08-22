@@ -1,0 +1,75 @@
+{
+  "cluster_summary": "A set of vulnerabilities where the code fails to verify that the current user has the required access rights (view, edit, admin) before exposing or modifying data, leading to unauthorized access or privilege escalation. The missing checks occur in various contexts: retrieval of documents, revisions, history, listing, and performing state-changing actions like rollback, creation, import, and edits involving sensitive fields.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2023-37911",
+    "CVE-2024-21648"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0073__mech_object_owner_scope_missing_authz",
+  "guideline_id": "gl_mech_0122",
+  "guideline_text": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where the authorization decision is not bound to both the current principal and the exact resource or tenant being affected. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation.",
+  "mechanism": {
+    "aliases": [
+      "object ownership authorization",
+      "tenant scope check",
+      "IDOR",
+      "resource scoped authorization"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_object_owner_scope_missing_authz",
+    "missing_guard": "the authorization decision is not bound to both the current principal and the exact resource or tenant being affected",
+    "name": "missing object-owner or tenant-scope authorization",
+    "required_keywords": [],
+    "sink_shape": "sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource",
+    "source_shape": "attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets",
+    "typical_fix": "check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 2,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 2,
+    "total_member_count": 2,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2023-37911",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    73
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 73,
+      "fix_strategy": "Before returning the resource data, call authorizationManager.checkAccess(Right.VIEW, documentReference) and skip or deny access if the check fails. For listings, apply the check to the parent entity (e.g., wiki reference) or to each item as appropriate.",
+      "members": [
+        "CVE-2023-37911"
+      ],
+      "name": "missing per-resource VIEW authorization on data retrieval",
+      "root_cause": "The code assumes that query results or retrieved resources are safe to expose without re-verifying the current user's VIEW permission on each specific document, revision, or wiki. This occurs in collection responses, deleted document views, revision access, page history endpoints, page listing, and document title retrieval."
+    },
+    {
+      "cluster_id": 73,
+      "fix_strategy": "Add an explicit authorization check (e.g., hasAccess(Right.EDIT), hasAccess(Right.ADMIN), or hasAccess(Right.CREATE_WIKI)) before executing the operation, throwing an access denied exception if the user lacks the required permission.",
+      "members": [
+        "CVE-2024-21648"
+      ],
+      "name": "missing authorization on write/administrative operations",
+      "root_cause": "The code assumes that having basic access rights (e.g., edit, change request) or no restrictions is sufficient to perform administrative actions such as rollback, wiki creation, and XAR import, without re-validating the user's current permissions or checking for higher-level rights (EDIT, ADMIN)."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_object_owner_scope_missing_authz",
+    "object ownership authorization",
+    "tenant scope check",
+    "IDOR",
+    "resource scoped authorization"
+  ]
+}

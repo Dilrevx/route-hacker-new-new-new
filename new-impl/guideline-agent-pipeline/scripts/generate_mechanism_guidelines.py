@@ -21,6 +21,8 @@ from typing import Any, Iterable
 
 
 GROUP_SCOPES = ("mechanism", "cluster-mechanism", "sub-pattern")
+RELEASE_MIN_MEMBER_SUPPORT_RATE = 1.0
+RELEASE_MIN_EVIDENCE_ROLES = 2
 
 TEXT_FIELDS = (
     "vuln_type",
@@ -706,6 +708,7 @@ def build_guideline_payload(
     group_scope: str,
     mechanism: Mechanism,
     items: list[WorkItem],
+    release_status: dict[str, Any],
     source_method: str,
     source_fingerprint: str,
 ) -> dict[str, Any]:
@@ -740,6 +743,7 @@ def build_guideline_payload(
         "source_cluster_ids": cluster_ids,
         "source_method": source_method,
         "source_fingerprint": source_fingerprint,
+        "release_status": release_status,
         "cve_ids": member_ids,
         "cluster_summary": " / ".join(sorted({item.cluster_summary for item in items if item.cluster_summary}))[:1000],
         "sub_patterns": sub_patterns,
@@ -749,6 +753,59 @@ def build_guideline_payload(
         "embeddings": {},
         "schema_version": "hcvr_audit_guideline.v2",
         "created_at": utc_now(),
+    }
+
+
+def group_candidate_rows(candidates: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
+    by_group: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for row in candidates:
+        by_group[str(row.get("guideline_group_key") or "")].append(row)
+    return by_group
+
+
+def release_status_for_group(mechanism: Mechanism, candidate_rows: list[dict[str, Any]]) -> dict[str, Any]:
+    total_members = sum(int(row.get("member_count") or 0) for row in candidate_rows)
+    supported_members = sum(
+        int(row.get("member_count") or 0)
+        for row in candidate_rows
+        if row.get("status") == "active" and row.get("evidence_supported")
+    )
+    unsupported_members = sorted(
+        {
+            str(member)
+            for row in candidate_rows
+            if not (row.get("status") == "active" and row.get("evidence_supported"))
+            for member in row.get("members") or []
+            if str(member or "")
+        }
+    )
+    role_counts = [
+        int(row.get("evidence_role_count") or 0)
+        for row in candidate_rows
+        if row.get("status") == "active" and row.get("evidence_supported")
+    ]
+    support_rate = supported_members / total_members if total_members else 0.0
+    blockers: list[str] = []
+    is_pending = mechanism.family == "pending_review" or mechanism.mechanism_id.startswith("pending_mech_")
+    if is_pending:
+        blockers.append("pending_mechanism_needs_review")
+    if total_members <= 0:
+        blockers.append("no_members")
+    if supported_members <= 0:
+        blockers.append("no_member_level_evidence_support")
+    elif support_rate < RELEASE_MIN_MEMBER_SUPPORT_RATE:
+        blockers.append("partial_member_level_evidence_support")
+    if role_counts and min(role_counts) < RELEASE_MIN_EVIDENCE_ROLES:
+        blockers.append("insufficient_evidence_role_coverage")
+    return {
+        "release_ready": not blockers,
+        "status": "release_ready" if not blockers else "review_only",
+        "blockers": blockers,
+        "member_support_rate": round(support_rate, 4),
+        "supported_member_count": supported_members,
+        "total_member_count": total_members,
+        "unsupported_members": unsupported_members,
+        "min_evidence_role_count": min(role_counts) if role_counts else 0,
     }
 
 
@@ -775,6 +832,7 @@ def write_outputs(
     clustering: dict[str, Any],
     case_lookup: dict[str, list[dict[str, Any]]],
     group_scope: str,
+    include_pending_guidelines: bool = False,
     include_pending_overrides: bool = False,
 ) -> dict[str, Any]:
     if output_dir.exists() and any(output_dir.iterdir()):
@@ -786,16 +844,51 @@ def write_outputs(
     fingerprint = sha256_text("\n".join(all_members))
 
     guideline_rows: list[dict[str, Any]] = []
+    review_queue_rows: list[dict[str, Any]] = []
     override_map: dict[str, dict[str, Any]] = {}
+    candidate_rows_by_group = group_candidate_rows(candidates)
+    if include_pending_overrides:
+        include_pending_guidelines = True
+    guideline_index = 0
     for idx, group_key in enumerate(sorted(grouped), start=1):
         mechanism = mechanisms_by_group[group_key]
-        guideline_id = f"gl_mech_{idx:04d}"
+        release_status = release_status_for_group(mechanism, candidate_rows_by_group.get(group_key, []))
+        emit_guideline = bool(release_status["release_ready"]) or include_pending_guidelines
+        if not emit_guideline:
+            member_ids = sorted({member for item in grouped[group_key] for member in item.members})
+            review_queue_rows.append(
+                {
+                    "review_id": f"review_mech_{idx:04d}",
+                    "guideline_group_key": group_key,
+                    "guideline_text": build_guideline_text(mechanism, len(member_ids)),
+                    "mechanism": {
+                        "mechanism_id": mechanism.mechanism_id,
+                        "name": mechanism.name,
+                        "family": mechanism.family,
+                        "source_shape": mechanism.source_shape,
+                        "sink_shape": mechanism.sink_shape,
+                        "missing_guard": mechanism.missing_guard,
+                        "typical_fix": mechanism.typical_fix,
+                    },
+                    "source_cluster_ids": sorted({item.cluster_id for item in grouped[group_key]}),
+                    "cve_ids": member_ids,
+                    "cluster_summary": " / ".join(
+                        sorted({item.cluster_summary for item in grouped[group_key] if item.cluster_summary})
+                    )[:1000],
+                    "release_status": release_status,
+                    "candidate_rows": candidate_rows_by_group.get(group_key, []),
+                }
+            )
+            continue
+        guideline_index += 1
+        guideline_id = f"gl_mech_{guideline_index:04d}"
         payload = build_guideline_payload(
             guideline_id=guideline_id,
             guideline_group_key=group_key,
             group_scope=group_scope,
             mechanism=mechanism,
             items=grouped[group_key],
+            release_status=release_status,
             source_method=source_method,
             source_fingerprint=fingerprint,
         )
@@ -810,13 +903,16 @@ def write_outputs(
                 "mechanism_id": mechanism.mechanism_id,
                 "mechanism_name": mechanism.name,
                 "mechanism_family": mechanism.family,
+                "release_ready": release_status["release_ready"],
+                "release_blockers": release_status["blockers"],
+                "member_support_rate": release_status["member_support_rate"],
                 "source_cluster_ids": payload["source_cluster_ids"],
                 "cve_count": len(payload["cve_ids"]),
                 "top_tags": payload["tags"][:8],
                 "guideline_preview": preview_text(payload["guideline_text"]),
             }
         )
-        if is_pending and not include_pending_overrides:
+        if (is_pending or not release_status["release_ready"]) and not include_pending_overrides:
             continue
         for cve_id in payload["cve_ids"]:
             for case in case_lookup.get(cve_id, []):
@@ -850,6 +946,8 @@ def write_outputs(
 
     active = sum(1 for row in candidates if row["status"] == "active")
     pending = sum(1 for row in candidates if row["status"] == "pending_review")
+    release_ready_guidelines = sum(1 for row in guideline_rows if row["release_ready"])
+    review_only_guidelines = len(guideline_rows) - release_ready_guidelines
     summary = {
         "schema_version": "hcvr_mechanism_guideline_release.v1",
         "created_at": utc_now(),
@@ -860,15 +958,22 @@ def write_outputs(
         "active_attribution_count": active,
         "pending_review_count": pending,
         "guideline_count": len(guideline_rows),
+        "release_ready_guideline_count": release_ready_guidelines,
+        "review_only_guideline_count": review_only_guidelines,
+        "review_queue_count": len(review_queue_rows),
         "override_count": len(override_rows),
+        "pending_guidelines_included": include_pending_guidelines,
         "pending_overrides_included": include_pending_overrides,
         "files": {
             "mechanism_candidates": "mechanism_candidates.jsonl",
+            "review_queue": "review_queue.jsonl" if review_queue_rows else None,
             "guideline_overrides": "guideline_overrides.jsonl" if override_rows else None,
             "index": "index.json",
         },
     }
     write_jsonl(output_dir / "mechanism_candidates.jsonl", candidates)
+    if review_queue_rows:
+        write_jsonl(output_dir / "review_queue.jsonl", review_queue_rows)
     if override_rows:
         write_jsonl(output_dir / "guideline_overrides.jsonl", override_rows)
     write_json(output_dir / "index.json", {"summary": summary, "items": guideline_rows})
@@ -896,7 +1001,11 @@ def write_readme(
         f"- Group scope: `{summary['group_scope']}`",
         f"- Active lexicon attributions: {summary['active_attribution_count']}",
         f"- Pending review attributions: {summary['pending_review_count']}",
+        f"- Release-ready guidelines: {summary['release_ready_guideline_count']}",
+        f"- Review-only guidelines in index: {summary['review_only_guideline_count']}",
+        f"- Review queue rows outside index: {summary['review_queue_count']}",
         f"- Recall sidecar rows: {summary['override_count']}",
+        f"- Pending review included in guideline index: {summary['pending_guidelines_included']}",
         f"- Pending review included in recall sidecar: {summary['pending_overrides_included']}",
         "",
         "## Guideline Preview",
@@ -910,6 +1019,7 @@ def write_readme(
                 f"- Mechanism: `{row['mechanism_id']}`",
                 f"- Group: `{row['guideline_group_key']}`",
                 f"- Family: `{row['mechanism_family']}`",
+                f"- Release ready: `{row['release_ready']}`",
                 f"- CVEs: {row['cve_count']}",
                 f"- Preview: {row['guideline_preview']}",
                 "",
@@ -918,6 +1028,12 @@ def write_readme(
     pending = [row for row in candidates if row["status"] == "pending_review"]
     if pending:
         lines.extend(["## Pending Review", ""])
+        lines.append(
+            "Pending rows are review-only by default. They stay in `mechanism_candidates.jsonl` "
+            "and `review_queue.jsonl`, but are not emitted into `guidelines/`, `index.json`, "
+            "or `guideline_overrides.jsonl` unless the ablation flags are used."
+        )
+        lines.append("")
         for row in pending[:20]:
             cluster_id = row.get("cluster_id", "unknown")
             sub_pattern_name = row.get("sub_pattern_name") or row.get("mechanism_name") or "unknown"
@@ -951,6 +1067,7 @@ def generate(args: argparse.Namespace) -> dict[str, Any]:
         clustering=clustering,
         case_lookup=load_case_lookup(args.cases_file),
         group_scope=args.group_scope,
+        include_pending_guidelines=args.include_pending_guidelines,
         include_pending_overrides=args.include_pending_overrides,
     )
 
@@ -976,12 +1093,20 @@ def main() -> None:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--min-score", type=float, default=2.0, help="Minimum lexicon alignment score for active attribution.")
     parser.add_argument(
+        "--include-pending-guidelines",
+        action="store_true",
+        help=(
+            "Also write pending_review mechanisms into guidelines/ and index.json for review ablations. "
+            "By default, pending groups stay in mechanism_candidates.jsonl/review_queue.jsonl only."
+        ),
+    )
+    parser.add_argument(
         "--include-pending-overrides",
         action="store_true",
         help=(
             "Also emit pending_review guidelines into guideline_overrides.jsonl. "
-            "By default, pending groups remain in the release for review but are "
-            "excluded from recall sidecars to avoid query pollution."
+            "This implies --include-pending-guidelines. By default, pending groups stay "
+            "outside the release index and recall sidecars to avoid query pollution."
         ),
     )
     parser.add_argument(

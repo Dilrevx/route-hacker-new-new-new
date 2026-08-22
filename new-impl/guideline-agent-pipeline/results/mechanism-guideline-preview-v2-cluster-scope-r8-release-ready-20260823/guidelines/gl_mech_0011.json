@@ -1,0 +1,172 @@
+{
+  "cluster_summary": "This cluster consists of vulnerabilities in archive extraction (ZIP, TAR, RAR) that allow directory traversal, arbitrary file write, or infinite loops. The most common root cause is the assumption that entry names are safe relative paths without canonicalization, enabling '..' sequences to escape the extraction directory. Other variants include insufficient string-based prefix checks, missing backslash normalization, symlink bypass, and missing cycle/null checks causing infinite loops.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2018-1002200",
+    "CVE-2018-1002201",
+    "CVE-2018-20227",
+    "CVE-2020-35460",
+    "CVE-2020-36628",
+    "CVE-2021-39180",
+    "CVE-2022-21675",
+    "CVE-2022-25842",
+    "CVE-2022-26049",
+    "CVE-2022-31195",
+    "CVE-2022-39367",
+    "CVE-2022-4065",
+    "CVE-2022-4493",
+    "CVE-2022-4494",
+    "CVE-2022-4583",
+    "CVE-2022-4594",
+    "CVE-2022-4772",
+    "CVE-2022-4878",
+    "CVE-2023-35946",
+    "CVE-2023-35947",
+    "CVE-2023-37476",
+    "CVE-2023-40827",
+    "CVE-2023-40828",
+    "CVE-2023-48299",
+    "CVE-2024-21633",
+    "CVE-2024-22779",
+    "CVE-2024-24043",
+    "CVE-2024-24569",
+    "CVE-2024-39118",
+    "CVE-2024-49771",
+    "CVE-2025-32779",
+    "CVE-2025-67030",
+    "CVE-2025-70952",
+    "CVE-2026-28208",
+    "CVE-2026-32719",
+    "CVE-2026-39973",
+    "CVE-2026-40180",
+    "CVE-2026-41245"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0004__mech_path_traversal_missing_canonical_prefix",
+  "guideline_id": "gl_mech_0011",
+  "guideline_text": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under the intended base directory before the file operation. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 38 historical CVE example(s), not as a project-specific signature. A safe implementation should normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check.",
+  "mechanism": {
+    "aliases": [
+      "path traversal",
+      "directory traversal",
+      "Zip Slip",
+      "archive entry traversal",
+      "canonical path bypass"
+    ],
+    "family": "filesystem",
+    "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+    "missing_guard": "the normalized absolute path is not checked to remain under the intended base directory before the file operation",
+    "name": "path traversal through missing canonical prefix check",
+    "required_keywords": [],
+    "sink_shape": "file read, write, delete, extraction, or resource-loading APIs",
+    "source_shape": "attacker-controlled filenames, archive entries, path fragments, or resource names",
+    "typical_fix": "normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 3,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 38,
+    "total_member_count": 38,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2018-1002200",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    4
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 4,
+      "fix_strategy": "Canonicalize both the base directory and the resolved file path, then verify that the canonical file path starts with the canonical base directory path (using getCanonicalPath() or toPath().normalize() and Path.startsWith).",
+      "members": [
+        "CVE-2018-1002201",
+        "CVE-2018-1002200",
+        "CVE-2018-20227",
+        "CVE-2020-35460",
+        "CVE-2020-36628",
+        "CVE-2021-39180",
+        "CVE-2022-21675",
+        "CVE-2022-25842",
+        "CVE-2022-26049",
+        "CVE-2022-31195",
+        "CVE-2022-39367",
+        "CVE-2022-4065",
+        "CVE-2022-4493",
+        "CVE-2022-4494",
+        "CVE-2022-4583",
+        "CVE-2022-4772",
+        "CVE-2022-4878",
+        "CVE-2023-37476",
+        "CVE-2023-40827",
+        "CVE-2023-40828",
+        "CVE-2023-48299",
+        "CVE-2024-22779",
+        "CVE-2024-39118",
+        "CVE-2025-32779",
+        "CVE-2025-67030",
+        "CVE-2026-32719",
+        "CVE-2026-39973",
+        "CVE-2026-40180"
+      ],
+      "name": "Canonicalization-based path containment check",
+      "root_cause": "Code assumes concatenating the output directory with the archive entry name yields a safe path, without canonicalizing or verifying the resolved path stays within the intended directory."
+    },
+    {
+      "cluster_id": 4,
+      "fix_strategy": "Reject entry names containing '..' or leading slashes, or fall back to a safe filename if traversal patterns are detected.",
+      "members": [
+        "CVE-2022-4594",
+        "CVE-2023-35947",
+        "CVE-2023-35946",
+        "CVE-2024-21633",
+        "CVE-2024-24043"
+      ],
+      "name": "Blacklist-based entry name validation",
+      "root_cause": "Code assumes archive entry names are safe but does not validate them; missing rejection of traversal sequences like '..' or absolute paths."
+    },
+    {
+      "cluster_id": 4,
+      "fix_strategy": "Replace string-based prefix check with java.nio.file.Path.startsWith or component-wise comparison after canonicalization.",
+      "members": [
+        "CVE-2024-24569",
+        "CVE-2024-49771",
+        "CVE-2025-70952"
+      ],
+      "name": "Insufficient path component comparison using string prefix",
+      "root_cause": "Code uses String.startsWith on canonical paths to check containment, which can be bypassed by sibling directories sharing a common prefix."
+    },
+    {
+      "cluster_id": 4,
+      "fix_strategy": "Normalize all backslashes to forward slashes before any path operations.",
+      "members": [
+        "CVE-2026-28208"
+      ],
+      "name": "Missing backslash normalization before path canonicalization",
+      "root_cause": "On Unix, backslashes are not path separators, so canonicalization checks do not detect traversal via backslash sequences; the code later interprets backslashes as separators."
+    },
+    {
+      "cluster_id": 4,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2026-41245"
+      ],
+      "name": "Missing or insufficient path canonicalization and validation in archive extraction",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "filesystem",
+    "mech_path_traversal_missing_canonical_prefix",
+    "path traversal",
+    "directory traversal",
+    "Zip Slip",
+    "archive entry traversal"
+  ]
+}

@@ -1,0 +1,4251 @@
+{
+  "items": [
+    {
+      "cve_count": 10,
+      "file_name": "gl_mech_0001.json",
+      "guideline_group_key": "cluster_0000__mech_temp_file_delete_mkdir_race",
+      "guideline_id": "gl_mech_0001",
+      "guideline_preview": "Trace temporary file or directory names created in shared writable locations into manual temporary directory creation sequences such as createTempFile, delete, then mkdir or mkdirs. Report code paths where the temporary path is released bet",
+      "mechanism_family": "race_or_lifecycle",
+      "mechanism_id": "mech_temp_file_delete_mkdir_race",
+      "mechanism_name": "temporary directory create-delete-mkdir TOCTOU race",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        0
+      ],
+      "top_tags": [
+        "race_or_lifecycle",
+        "mech_temp_file_delete_mkdir_race",
+        "temporary directory TOCTOU",
+        "createTempFile delete mkdir race",
+        "file-delete-mkdir temporary directory race"
+      ]
+    },
+    {
+      "cve_count": 11,
+      "file_name": "gl_mech_0002.json",
+      "guideline_group_key": "cluster_0000__mech_temp_resource_insecure_permissions",
+      "guideline_id": "gl_mech_0002",
+      "guideline_preview": "Trace temporary files or directories created for sensitive data, build artifacts, credentials, extracted content, or intermediate processing into filesystem creation APIs that inherit broad default permissions or fail to apply owner-only pe",
+      "mechanism_family": "filesystem",
+      "mechanism_id": "mech_temp_resource_insecure_permissions",
+      "mechanism_name": "temporary resource created with insecure permissions",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        0
+      ],
+      "top_tags": [
+        "filesystem",
+        "mech_temp_resource_insecure_permissions",
+        "insecure temporary file permissions",
+        "world-readable temp file",
+        "temporary directory permissions",
+        "File.createTempFile permissions"
+      ]
+    },
+    {
+      "cve_count": 7,
+      "file_name": "gl_mech_0003.json",
+      "guideline_group_key": "cluster_0002__mech_inline_content_disposition_xss",
+      "guideline_id": "gl_mech_0003",
+      "guideline_preview": "Trace stored or user-uploaded file content, MIME metadata, filenames, or request parameters that choose inline versus attachment rendering into HTTP file-download responses, browser-rendered attachments, content-disposition headers, or cont",
+      "mechanism_family": "content_rendering",
+      "mechanism_id": "mech_inline_content_disposition_xss",
+      "mechanism_name": "browser-rendered file download through unsafe inline content disposition",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        2
+      ],
+      "top_tags": [
+        "content_rendering",
+        "mech_inline_content_disposition_xss",
+        "inline content disposition XSS",
+        "unsafe file download disposition",
+        "stored file rendered inline",
+        "browser-rendered upload"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0004.json",
+      "guideline_group_key": "cluster_0002__mech_object_owner_scope_missing_authz",
+      "guideline_id": "gl_mech_0004",
+      "guideline_preview": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_object_owner_scope_missing_authz",
+      "mechanism_name": "missing object-owner or tenant-scope authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        2
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_object_owner_scope_missing_authz",
+        "object ownership authorization",
+        "tenant scope check",
+        "IDOR",
+        "resource scoped authorization"
+      ]
+    },
+    {
+      "cve_count": 48,
+      "file_name": "gl_mech_0005.json",
+      "guideline_group_key": "cluster_0002__mech_path_traversal_missing_canonical_prefix",
+      "guideline_id": "gl_mech_0005",
+      "guideline_preview": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under",
+      "mechanism_family": "filesystem",
+      "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+      "mechanism_name": "path traversal through missing canonical prefix check",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        2
+      ],
+      "top_tags": [
+        "filesystem",
+        "mech_path_traversal_missing_canonical_prefix",
+        "path traversal",
+        "directory traversal",
+        "Zip Slip",
+        "archive entry traversal"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0006.json",
+      "guideline_group_key": "cluster_0002__mech_request_body_resource_mismatch_authz",
+      "guideline_id": "gl_mech_0006",
+      "guideline_preview": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_request_body_resource_mismatch_authz",
+      "mechanism_name": "request-body resource identifiers bypass path-scoped authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        2
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_request_body_resource_mismatch_authz",
+        "path parameter authorization mismatch",
+        "request body resource mismatch",
+        "bulk operation target mismatch",
+        "namespace sync authorization bypass"
+      ]
+    },
+    {
+      "cve_count": 4,
+      "file_name": "gl_mech_0007.json",
+      "guideline_group_key": "cluster_0002__mech_ssrf_webhook_url_fetch",
+      "guideline_id": "gl_mech_0007",
+      "guideline_preview": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host,",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_webhook_url_fetch",
+      "mechanism_name": "attacker-controlled webhook or callback URL fetch",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        2
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_webhook_url_fetch",
+        "webhook SSRF",
+        "callback URL fetch",
+        "user controlled URL fetch",
+        "outbound HTTP client SSRF"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0008.json",
+      "guideline_group_key": "cluster_0002__mech_temp_file_delete_mkdir_race",
+      "guideline_id": "gl_mech_0008",
+      "guideline_preview": "Trace temporary file or directory names created in shared writable locations into manual temporary directory creation sequences such as createTempFile, delete, then mkdir or mkdirs. Report code paths where the temporary path is released bet",
+      "mechanism_family": "race_or_lifecycle",
+      "mechanism_id": "mech_temp_file_delete_mkdir_race",
+      "mechanism_name": "temporary directory create-delete-mkdir TOCTOU race",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        2
+      ],
+      "top_tags": [
+        "race_or_lifecycle",
+        "mech_temp_file_delete_mkdir_race",
+        "temporary directory TOCTOU",
+        "createTempFile delete mkdir race",
+        "file-delete-mkdir temporary directory race"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0009.json",
+      "guideline_group_key": "cluster_0002__mech_template_expression_untrusted_eval",
+      "guideline_id": "gl_mech_0009",
+      "guideline_preview": "Trace attacker-controlled template text, expression strings, macro content, or rendering parameters into template engines, expression evaluators, macro renderers, or scriptable configuration evaluators. Report code paths where untrusted exp",
+      "mechanism_family": "code_or_template_injection",
+      "mechanism_id": "mech_template_expression_untrusted_eval",
+      "mechanism_name": "untrusted template or expression evaluation",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        2
+      ],
+      "top_tags": [
+        "code_or_template_injection",
+        "mech_template_expression_untrusted_eval",
+        "template injection",
+        "expression language injection",
+        "SpEL injection",
+        "OGNL injection"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0010.json",
+      "guideline_group_key": "cluster_0004__mech_archive_symlink_extraction_escape",
+      "guideline_id": "gl_mech_0010",
+      "guideline_preview": "Trace attacker-controlled archive entries, symlink entries, link targets, or extraction order into archive extraction code that creates links, opens output files, or writes entry contents into the extraction tree. Report code paths where la",
+      "mechanism_family": "filesystem",
+      "mechanism_id": "mech_archive_symlink_extraction_escape",
+      "mechanism_name": "archive extraction escape through symlink-following writes",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        4
+      ],
+      "top_tags": [
+        "filesystem",
+        "mech_archive_symlink_extraction_escape",
+        "archive symlink traversal",
+        "symlink overwrite during extraction",
+        "tar symlink escape",
+        "zip symlink escape"
+      ]
+    },
+    {
+      "cve_count": 38,
+      "file_name": "gl_mech_0011.json",
+      "guideline_group_key": "cluster_0004__mech_path_traversal_missing_canonical_prefix",
+      "guideline_id": "gl_mech_0011",
+      "guideline_preview": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under",
+      "mechanism_family": "filesystem",
+      "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+      "mechanism_name": "path traversal through missing canonical prefix check",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        4
+      ],
+      "top_tags": [
+        "filesystem",
+        "mech_path_traversal_missing_canonical_prefix",
+        "path traversal",
+        "directory traversal",
+        "Zip Slip",
+        "archive entry traversal"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0012.json",
+      "guideline_group_key": "cluster_0005__mech_html_sanitizer_policy_gap",
+      "guideline_id": "gl_mech_0012",
+      "guideline_preview": "Trace attacker-controlled markup, HTML fragments, rich text, comments, DOM nodes, style blocks, attributes, or URI values into HTML cleaners, SafeHtml validators, DOM sanitizers, rich-text renderers, or browser-rendered sanitized output. Re",
+      "mechanism_family": "html_sanitization",
+      "mechanism_id": "mech_html_sanitizer_policy_gap",
+      "mechanism_name": "HTML sanitizer policy gap or inactive allowlist",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        5
+      ],
+      "top_tags": [
+        "html_sanitization",
+        "mech_html_sanitizer_policy_gap",
+        "HTML sanitizer bypass",
+        "SafeHtml policy gap",
+        "missing sanitizer allowlist",
+        "restricted cleaner bypass"
+      ]
+    },
+    {
+      "cve_count": 5,
+      "file_name": "gl_mech_0013.json",
+      "guideline_group_key": "cluster_0006__mech_archive_symlink_extraction_escape",
+      "guideline_id": "gl_mech_0013",
+      "guideline_preview": "Trace attacker-controlled archive entries, symlink entries, link targets, or extraction order into archive extraction code that creates links, opens output files, or writes entry contents into the extraction tree. Report code paths where la",
+      "mechanism_family": "filesystem",
+      "mechanism_id": "mech_archive_symlink_extraction_escape",
+      "mechanism_name": "archive extraction escape through symlink-following writes",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        6
+      ],
+      "top_tags": [
+        "filesystem",
+        "mech_archive_symlink_extraction_escape",
+        "archive symlink traversal",
+        "symlink overwrite during extraction",
+        "tar symlink escape",
+        "zip symlink escape"
+      ]
+    },
+    {
+      "cve_count": 14,
+      "file_name": "gl_mech_0014.json",
+      "guideline_group_key": "cluster_0006__mech_path_traversal_missing_canonical_prefix",
+      "guideline_id": "gl_mech_0014",
+      "guideline_preview": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under",
+      "mechanism_family": "filesystem",
+      "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+      "mechanism_name": "path traversal through missing canonical prefix check",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        6
+      ],
+      "top_tags": [
+        "filesystem",
+        "mech_path_traversal_missing_canonical_prefix",
+        "path traversal",
+        "directory traversal",
+        "Zip Slip",
+        "archive entry traversal"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0015.json",
+      "guideline_group_key": "cluster_0006__mech_temp_file_delete_mkdir_race",
+      "guideline_id": "gl_mech_0015",
+      "guideline_preview": "Trace temporary file or directory names created in shared writable locations into manual temporary directory creation sequences such as createTempFile, delete, then mkdir or mkdirs. Report code paths where the temporary path is released bet",
+      "mechanism_family": "race_or_lifecycle",
+      "mechanism_id": "mech_temp_file_delete_mkdir_race",
+      "mechanism_name": "temporary directory create-delete-mkdir TOCTOU race",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        6
+      ],
+      "top_tags": [
+        "race_or_lifecycle",
+        "mech_temp_file_delete_mkdir_race",
+        "temporary directory TOCTOU",
+        "createTempFile delete mkdir race",
+        "file-delete-mkdir temporary directory race"
+      ]
+    },
+    {
+      "cve_count": 6,
+      "file_name": "gl_mech_0016.json",
+      "guideline_group_key": "cluster_0007__mech_path_traversal_missing_canonical_prefix",
+      "guideline_id": "gl_mech_0016",
+      "guideline_preview": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under",
+      "mechanism_family": "filesystem",
+      "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+      "mechanism_name": "path traversal through missing canonical prefix check",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        7
+      ],
+      "top_tags": [
+        "filesystem",
+        "mech_path_traversal_missing_canonical_prefix",
+        "path traversal",
+        "directory traversal",
+        "Zip Slip",
+        "archive entry traversal"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0017.json",
+      "guideline_group_key": "cluster_0008__mech_deserialization_untrusted_type_graph",
+      "guideline_id": "gl_mech_0017",
+      "guideline_preview": "Trace untrusted serialized bytes, object streams, pickles, marshaled payloads, or type metadata into deserializers that instantiate classes, reconstruct object graphs, or invoke callbacks during object creation. Report code paths where allo",
+      "mechanism_family": "deserialization",
+      "mechanism_id": "mech_deserialization_untrusted_type_graph",
+      "mechanism_name": "untrusted deserialization with attacker-controlled type graph",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        8
+      ],
+      "top_tags": [
+        "deserialization",
+        "mech_deserialization_untrusted_type_graph",
+        "unsafe deserialization",
+        "ObjectInputStream.readObject",
+        "pickle load",
+        "marshal load"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0018.json",
+      "guideline_group_key": "cluster_0009__mech_binary_length_unbounded_resource_use",
+      "guideline_id": "gl_mech_0018",
+      "guideline_preview": "Trace attacker-controlled binary length fields, size counters, frame lengths, offsets, back-references, or decompressed-size metadata into memory allocation, buffer growth, parsing loops, frame handling, decompression, or resource-consuming",
+      "mechanism_family": "resource_exhaustion_or_bounds",
+      "mechanism_id": "mech_binary_length_unbounded_resource_use",
+      "mechanism_name": "unbounded binary length or size field drives resource use",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        9
+      ],
+      "top_tags": [
+        "resource_exhaustion_or_bounds",
+        "mech_binary_length_unbounded_resource_use",
+        "unbounded length allocation",
+        "binary size field DoS",
+        "frame length resource exhaustion",
+        "decompression size exhaustion"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0019.json",
+      "guideline_group_key": "cluster_0009__mech_html_sanitizer_policy_gap",
+      "guideline_id": "gl_mech_0019",
+      "guideline_preview": "Trace attacker-controlled markup, HTML fragments, rich text, comments, DOM nodes, style blocks, attributes, or URI values into HTML cleaners, SafeHtml validators, DOM sanitizers, rich-text renderers, or browser-rendered sanitized output. Re",
+      "mechanism_family": "html_sanitization",
+      "mechanism_id": "mech_html_sanitizer_policy_gap",
+      "mechanism_name": "HTML sanitizer policy gap or inactive allowlist",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        9
+      ],
+      "top_tags": [
+        "html_sanitization",
+        "mech_html_sanitizer_policy_gap",
+        "HTML sanitizer bypass",
+        "SafeHtml policy gap",
+        "missing sanitizer allowlist",
+        "restricted cleaner bypass"
+      ]
+    },
+    {
+      "cve_count": 5,
+      "file_name": "gl_mech_0020.json",
+      "guideline_group_key": "cluster_0009__mech_xml_external_entity_resolution",
+      "guideline_id": "gl_mech_0020",
+      "guideline_preview": "Trace attacker-controlled or externally supplied XML documents, SOAP messages, XML reports, configuration files, XPath inputs, or XSLT stylesheets into XML parser, XPath, transformer, schema, or SOAP/XML utility code that parses or transfor",
+      "mechanism_family": "xml_external_resource_resolution",
+      "mechanism_id": "mech_xml_external_entity_resolution",
+      "mechanism_name": "unsafe XML parser external entity or DTD resolution",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        9
+      ],
+      "top_tags": [
+        "xml_external_resource_resolution",
+        "mech_xml_external_entity_resolution",
+        "XXE",
+        "XML external entity",
+        "external entity resolution",
+        "DTD processing"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0021.json",
+      "guideline_group_key": "cluster_0010__mech_template_expression_untrusted_eval",
+      "guideline_id": "gl_mech_0021",
+      "guideline_preview": "Trace attacker-controlled template text, expression strings, macro content, or rendering parameters into template engines, expression evaluators, macro renderers, or scriptable configuration evaluators. Report code paths where untrusted exp",
+      "mechanism_family": "code_or_template_injection",
+      "mechanism_id": "mech_template_expression_untrusted_eval",
+      "mechanism_name": "untrusted template or expression evaluation",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        10
+      ],
+      "top_tags": [
+        "code_or_template_injection",
+        "mech_template_expression_untrusted_eval",
+        "template injection",
+        "expression language injection",
+        "SpEL injection",
+        "OGNL injection"
+      ]
+    },
+    {
+      "cve_count": 66,
+      "file_name": "gl_mech_0022.json",
+      "guideline_group_key": "cluster_0010__mech_xml_external_entity_resolution",
+      "guideline_id": "gl_mech_0022",
+      "guideline_preview": "Trace attacker-controlled or externally supplied XML documents, SOAP messages, XML reports, configuration files, XPath inputs, or XSLT stylesheets into XML parser, XPath, transformer, schema, or SOAP/XML utility code that parses or transfor",
+      "mechanism_family": "xml_external_resource_resolution",
+      "mechanism_id": "mech_xml_external_entity_resolution",
+      "mechanism_name": "unsafe XML parser external entity or DTD resolution",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        10
+      ],
+      "top_tags": [
+        "xml_external_resource_resolution",
+        "mech_xml_external_entity_resolution",
+        "XXE",
+        "XML external entity",
+        "external entity resolution",
+        "DTD processing"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0023.json",
+      "guideline_group_key": "cluster_0011__mech_bean_property_reflection_escape",
+      "guideline_id": "gl_mech_0023",
+      "guideline_preview": "Trace attacker-controlled property names, bean paths, binding keys, or conversion metadata into bean introspection, property-copy, nested binding, conversion, or reflective access APIs. Report code paths where dangerous meta-properties, nes",
+      "mechanism_family": "reflection_or_binding",
+      "mechanism_id": "mech_bean_property_reflection_escape",
+      "mechanism_name": "bean property reflection escape",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        11
+      ],
+      "top_tags": [
+        "reflection_or_binding",
+        "mech_bean_property_reflection_escape",
+        "BeanUtils property injection",
+        "bean introspection",
+        "classloader property escape",
+        "nested property binding"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0024.json",
+      "guideline_group_key": "cluster_0011__mech_ssrf_webhook_url_fetch",
+      "guideline_id": "gl_mech_0024",
+      "guideline_preview": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host,",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_webhook_url_fetch",
+      "mechanism_name": "attacker-controlled webhook or callback URL fetch",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        11
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_webhook_url_fetch",
+        "webhook SSRF",
+        "callback URL fetch",
+        "user controlled URL fetch",
+        "outbound HTTP client SSRF"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0025.json",
+      "guideline_group_key": "cluster_0011__mech_state_precondition_missing_before_effect",
+      "guideline_id": "gl_mech_0025",
+      "guideline_preview": "Trace requests or events that select an operation, workflow step, account, resource, or state transition into sensitive state changes, billing effects, entitlement changes, resource consumption, or workflow transitions. Report code paths wh",
+      "mechanism_family": "business_logic",
+      "mechanism_id": "mech_state_precondition_missing_before_effect",
+      "mechanism_name": "missing business-state precondition before sensitive effect",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        11
+      ],
+      "top_tags": [
+        "business_logic",
+        "mech_state_precondition_missing_before_effect",
+        "business state precondition",
+        "state transition guard",
+        "lifecycle check",
+        "quota check"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0026.json",
+      "guideline_group_key": "cluster_0012__mech_ssrf_webhook_url_fetch",
+      "guideline_id": "gl_mech_0026",
+      "guideline_preview": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host,",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_webhook_url_fetch",
+      "mechanism_name": "attacker-controlled webhook or callback URL fetch",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        12
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_webhook_url_fetch",
+        "webhook SSRF",
+        "callback URL fetch",
+        "user controlled URL fetch",
+        "outbound HTTP client SSRF"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0027.json",
+      "guideline_group_key": "cluster_0014__mech_authentication_artifact_incomplete_validation",
+      "guideline_id": "gl_mech_0027",
+      "guideline_preview": "Trace externally supplied authentication artifacts such as JWTs, SAML responses, OAuth authorization codes, bearer tokens, session cookies, or client credentials into session creation, identity binding, privilege assignment, protected API a",
+      "mechanism_family": "authentication",
+      "mechanism_id": "mech_authentication_artifact_incomplete_validation",
+      "mechanism_name": "authentication artifact accepted without complete validation",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        14
+      ],
+      "top_tags": [
+        "authentication",
+        "mech_authentication_artifact_incomplete_validation",
+        "JWT validation bypass",
+        "SAML validation bypass",
+        "OAuth token validation bypass",
+        "session artifact validation bypass"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0028.json",
+      "guideline_group_key": "cluster_0014__mech_request_body_resource_mismatch_authz",
+      "guideline_id": "gl_mech_0028",
+      "guideline_preview": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_request_body_resource_mismatch_authz",
+      "mechanism_name": "request-body resource identifiers bypass path-scoped authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        14
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_request_body_resource_mismatch_authz",
+        "path parameter authorization mismatch",
+        "request body resource mismatch",
+        "bulk operation target mismatch",
+        "namespace sync authorization bypass"
+      ]
+    },
+    {
+      "cve_count": 3,
+      "file_name": "gl_mech_0029.json",
+      "guideline_group_key": "cluster_0014__mech_ssrf_redirect_following_client",
+      "guideline_id": "gl_mech_0029",
+      "guideline_preview": "Trace attacker-controlled URLs or server-controlled redirect responses into HTTP clients that automatically follow redirects or reuse a previously validated URL decision. Report code paths where the final redirected scheme, host, port, and",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_redirect_following_client",
+      "mechanism_name": "SSRF through redirect-following client",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        14
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_redirect_following_client",
+        "redirect-follow SSRF",
+        "HTTP redirect SSRF",
+        "Location header SSRF"
+      ]
+    },
+    {
+      "cve_count": 13,
+      "file_name": "gl_mech_0030.json",
+      "guideline_group_key": "cluster_0014__mech_ssrf_webhook_url_fetch",
+      "guideline_id": "gl_mech_0030",
+      "guideline_preview": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host,",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_webhook_url_fetch",
+      "mechanism_name": "attacker-controlled webhook or callback URL fetch",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        14
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_webhook_url_fetch",
+        "webhook SSRF",
+        "callback URL fetch",
+        "user controlled URL fetch",
+        "outbound HTTP client SSRF"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0031.json",
+      "guideline_group_key": "cluster_0014__mech_state_precondition_missing_before_effect",
+      "guideline_id": "gl_mech_0031",
+      "guideline_preview": "Trace requests or events that select an operation, workflow step, account, resource, or state transition into sensitive state changes, billing effects, entitlement changes, resource consumption, or workflow transitions. Report code paths wh",
+      "mechanism_family": "business_logic",
+      "mechanism_id": "mech_state_precondition_missing_before_effect",
+      "mechanism_name": "missing business-state precondition before sensitive effect",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        14
+      ],
+      "top_tags": [
+        "business_logic",
+        "mech_state_precondition_missing_before_effect",
+        "business state precondition",
+        "state transition guard",
+        "lifecycle check",
+        "quota check"
+      ]
+    },
+    {
+      "cve_count": 7,
+      "file_name": "gl_mech_0032.json",
+      "guideline_group_key": "cluster_0015__mech_deserialization_untrusted_type_graph",
+      "guideline_id": "gl_mech_0032",
+      "guideline_preview": "Trace untrusted serialized bytes, object streams, pickles, marshaled payloads, or type metadata into deserializers that instantiate classes, reconstruct object graphs, or invoke callbacks during object creation. Report code paths where allo",
+      "mechanism_family": "deserialization",
+      "mechanism_id": "mech_deserialization_untrusted_type_graph",
+      "mechanism_name": "untrusted deserialization with attacker-controlled type graph",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        15
+      ],
+      "top_tags": [
+        "deserialization",
+        "mech_deserialization_untrusted_type_graph",
+        "unsafe deserialization",
+        "ObjectInputStream.readObject",
+        "pickle load",
+        "marshal load"
+      ]
+    },
+    {
+      "cve_count": 3,
+      "file_name": "gl_mech_0033.json",
+      "guideline_group_key": "cluster_0015__mech_jndi_untrusted_lookup_target",
+      "guideline_id": "gl_mech_0033",
+      "guideline_preview": "Trace attacker-controlled names, URLs, headers, configuration values, or lookup keys into JNDI, LDAP, RMI, naming-context, or remote lookup APIs. Report code paths where the lookup scheme, authority, object factory, object type, and network",
+      "mechanism_family": "remote_lookup_or_ssrf",
+      "mechanism_id": "mech_jndi_untrusted_lookup_target",
+      "mechanism_name": "attacker-controlled JNDI lookup target",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        15
+      ],
+      "top_tags": [
+        "remote_lookup_or_ssrf",
+        "mech_jndi_untrusted_lookup_target",
+        "JNDI lookup",
+        "LDAP lookup",
+        "RMI lookup",
+        "InitialContext.lookup"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0034.json",
+      "guideline_group_key": "cluster_0015__mech_xml_external_entity_resolution",
+      "guideline_id": "gl_mech_0034",
+      "guideline_preview": "Trace attacker-controlled or externally supplied XML documents, SOAP messages, XML reports, configuration files, XPath inputs, or XSLT stylesheets into XML parser, XPath, transformer, schema, or SOAP/XML utility code that parses or transfor",
+      "mechanism_family": "xml_external_resource_resolution",
+      "mechanism_id": "mech_xml_external_entity_resolution",
+      "mechanism_name": "unsafe XML parser external entity or DTD resolution",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        15
+      ],
+      "top_tags": [
+        "xml_external_resource_resolution",
+        "mech_xml_external_entity_resolution",
+        "XXE",
+        "XML external entity",
+        "external entity resolution",
+        "DTD processing"
+      ]
+    },
+    {
+      "cve_count": 15,
+      "file_name": "gl_mech_0035.json",
+      "guideline_group_key": "cluster_0016__mech_deserialization_untrusted_type_graph",
+      "guideline_id": "gl_mech_0035",
+      "guideline_preview": "Trace untrusted serialized bytes, object streams, pickles, marshaled payloads, or type metadata into deserializers that instantiate classes, reconstruct object graphs, or invoke callbacks during object creation. Report code paths where allo",
+      "mechanism_family": "deserialization",
+      "mechanism_id": "mech_deserialization_untrusted_type_graph",
+      "mechanism_name": "untrusted deserialization with attacker-controlled type graph",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        16
+      ],
+      "top_tags": [
+        "deserialization",
+        "mech_deserialization_untrusted_type_graph",
+        "unsafe deserialization",
+        "ObjectInputStream.readObject",
+        "pickle load",
+        "marshal load"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0036.json",
+      "guideline_group_key": "cluster_0017__mech_authentication_artifact_incomplete_validation",
+      "guideline_id": "gl_mech_0036",
+      "guideline_preview": "Trace externally supplied authentication artifacts such as JWTs, SAML responses, OAuth authorization codes, bearer tokens, session cookies, or client credentials into session creation, identity binding, privilege assignment, protected API a",
+      "mechanism_family": "authentication",
+      "mechanism_id": "mech_authentication_artifact_incomplete_validation",
+      "mechanism_name": "authentication artifact accepted without complete validation",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        17
+      ],
+      "top_tags": [
+        "authentication",
+        "mech_authentication_artifact_incomplete_validation",
+        "JWT validation bypass",
+        "SAML validation bypass",
+        "OAuth token validation bypass",
+        "session artifact validation bypass"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0037.json",
+      "guideline_group_key": "cluster_0017__mech_object_owner_scope_missing_authz",
+      "guideline_id": "gl_mech_0037",
+      "guideline_preview": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_object_owner_scope_missing_authz",
+      "mechanism_name": "missing object-owner or tenant-scope authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        17
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_object_owner_scope_missing_authz",
+        "object ownership authorization",
+        "tenant scope check",
+        "IDOR",
+        "resource scoped authorization"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0038.json",
+      "guideline_group_key": "cluster_0017__mech_request_body_resource_mismatch_authz",
+      "guideline_id": "gl_mech_0038",
+      "guideline_preview": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_request_body_resource_mismatch_authz",
+      "mechanism_name": "request-body resource identifiers bypass path-scoped authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        17
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_request_body_resource_mismatch_authz",
+        "path parameter authorization mismatch",
+        "request body resource mismatch",
+        "bulk operation target mismatch",
+        "namespace sync authorization bypass"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0039.json",
+      "guideline_group_key": "cluster_0018__mech_deserialization_untrusted_type_graph",
+      "guideline_id": "gl_mech_0039",
+      "guideline_preview": "Trace untrusted serialized bytes, object streams, pickles, marshaled payloads, or type metadata into deserializers that instantiate classes, reconstruct object graphs, or invoke callbacks during object creation. Report code paths where allo",
+      "mechanism_family": "deserialization",
+      "mechanism_id": "mech_deserialization_untrusted_type_graph",
+      "mechanism_name": "untrusted deserialization with attacker-controlled type graph",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        18
+      ],
+      "top_tags": [
+        "deserialization",
+        "mech_deserialization_untrusted_type_graph",
+        "unsafe deserialization",
+        "ObjectInputStream.readObject",
+        "pickle load",
+        "marshal load"
+      ]
+    },
+    {
+      "cve_count": 16,
+      "file_name": "gl_mech_0040.json",
+      "guideline_group_key": "cluster_0019__mech_template_expression_untrusted_eval",
+      "guideline_id": "gl_mech_0040",
+      "guideline_preview": "Trace attacker-controlled template text, expression strings, macro content, or rendering parameters into template engines, expression evaluators, macro renderers, or scriptable configuration evaluators. Report code paths where untrusted exp",
+      "mechanism_family": "code_or_template_injection",
+      "mechanism_id": "mech_template_expression_untrusted_eval",
+      "mechanism_name": "untrusted template or expression evaluation",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        19
+      ],
+      "top_tags": [
+        "code_or_template_injection",
+        "mech_template_expression_untrusted_eval",
+        "template injection",
+        "expression language injection",
+        "SpEL injection",
+        "OGNL injection"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0041.json",
+      "guideline_group_key": "cluster_0020__mech_path_traversal_missing_canonical_prefix",
+      "guideline_id": "gl_mech_0041",
+      "guideline_preview": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under",
+      "mechanism_family": "filesystem",
+      "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+      "mechanism_name": "path traversal through missing canonical prefix check",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        20
+      ],
+      "top_tags": [
+        "filesystem",
+        "mech_path_traversal_missing_canonical_prefix",
+        "path traversal",
+        "directory traversal",
+        "Zip Slip",
+        "archive entry traversal"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0042.json",
+      "guideline_group_key": "cluster_0021__mech_binary_length_unbounded_resource_use",
+      "guideline_id": "gl_mech_0042",
+      "guideline_preview": "Trace attacker-controlled binary length fields, size counters, frame lengths, offsets, back-references, or decompressed-size metadata into memory allocation, buffer growth, parsing loops, frame handling, decompression, or resource-consuming",
+      "mechanism_family": "resource_exhaustion_or_bounds",
+      "mechanism_id": "mech_binary_length_unbounded_resource_use",
+      "mechanism_name": "unbounded binary length or size field drives resource use",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        21
+      ],
+      "top_tags": [
+        "resource_exhaustion_or_bounds",
+        "mech_binary_length_unbounded_resource_use",
+        "unbounded length allocation",
+        "binary size field DoS",
+        "frame length resource exhaustion",
+        "decompression size exhaustion"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0043.json",
+      "guideline_group_key": "cluster_0021__mech_template_expression_untrusted_eval",
+      "guideline_id": "gl_mech_0043",
+      "guideline_preview": "Trace attacker-controlled template text, expression strings, macro content, or rendering parameters into template engines, expression evaluators, macro renderers, or scriptable configuration evaluators. Report code paths where untrusted exp",
+      "mechanism_family": "code_or_template_injection",
+      "mechanism_id": "mech_template_expression_untrusted_eval",
+      "mechanism_name": "untrusted template or expression evaluation",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        21
+      ],
+      "top_tags": [
+        "code_or_template_injection",
+        "mech_template_expression_untrusted_eval",
+        "template injection",
+        "expression language injection",
+        "SpEL injection",
+        "OGNL injection"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0044.json",
+      "guideline_group_key": "cluster_0022__mech_binary_length_unbounded_resource_use",
+      "guideline_id": "gl_mech_0044",
+      "guideline_preview": "Trace attacker-controlled binary length fields, size counters, frame lengths, offsets, back-references, or decompressed-size metadata into memory allocation, buffer growth, parsing loops, frame handling, decompression, or resource-consuming",
+      "mechanism_family": "resource_exhaustion_or_bounds",
+      "mechanism_id": "mech_binary_length_unbounded_resource_use",
+      "mechanism_name": "unbounded binary length or size field drives resource use",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        22
+      ],
+      "top_tags": [
+        "resource_exhaustion_or_bounds",
+        "mech_binary_length_unbounded_resource_use",
+        "unbounded length allocation",
+        "binary size field DoS",
+        "frame length resource exhaustion",
+        "decompression size exhaustion"
+      ]
+    },
+    {
+      "cve_count": 8,
+      "file_name": "gl_mech_0045.json",
+      "guideline_group_key": "cluster_0024__mech_ldap_filter_unescaped_input",
+      "guideline_id": "gl_mech_0045",
+      "guideline_preview": "Trace attacker-controlled usernames, account names, directory attributes, filter fragments, distinguished names, or LDAP query parameters into LDAP search filters, distinguished-name construction, directory queries, or LDAP bind/search oper",
+      "mechanism_family": "directory_query_injection",
+      "mechanism_id": "mech_ldap_filter_unescaped_input",
+      "mechanism_name": "LDAP filter or distinguished-name injection through unescaped input",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        24
+      ],
+      "top_tags": [
+        "directory_query_injection",
+        "mech_ldap_filter_unescaped_input",
+        "LDAP injection",
+        "LDAP filter injection",
+        "distinguished name injection",
+        "unescaped LDAP filter"
+      ]
+    },
+    {
+      "cve_count": 6,
+      "file_name": "gl_mech_0046.json",
+      "guideline_group_key": "cluster_0026__mech_jndi_untrusted_lookup_target",
+      "guideline_id": "gl_mech_0046",
+      "guideline_preview": "Trace attacker-controlled names, URLs, headers, configuration values, or lookup keys into JNDI, LDAP, RMI, naming-context, or remote lookup APIs. Report code paths where the lookup scheme, authority, object factory, object type, and network",
+      "mechanism_family": "remote_lookup_or_ssrf",
+      "mechanism_id": "mech_jndi_untrusted_lookup_target",
+      "mechanism_name": "attacker-controlled JNDI lookup target",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        26
+      ],
+      "top_tags": [
+        "remote_lookup_or_ssrf",
+        "mech_jndi_untrusted_lookup_target",
+        "JNDI lookup",
+        "LDAP lookup",
+        "RMI lookup",
+        "InitialContext.lookup"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0047.json",
+      "guideline_group_key": "cluster_0027__mech_deserialization_untrusted_type_graph",
+      "guideline_id": "gl_mech_0047",
+      "guideline_preview": "Trace untrusted serialized bytes, object streams, pickles, marshaled payloads, or type metadata into deserializers that instantiate classes, reconstruct object graphs, or invoke callbacks during object creation. Report code paths where allo",
+      "mechanism_family": "deserialization",
+      "mechanism_id": "mech_deserialization_untrusted_type_graph",
+      "mechanism_name": "untrusted deserialization with attacker-controlled type graph",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        27
+      ],
+      "top_tags": [
+        "deserialization",
+        "mech_deserialization_untrusted_type_graph",
+        "unsafe deserialization",
+        "ObjectInputStream.readObject",
+        "pickle load",
+        "marshal load"
+      ]
+    },
+    {
+      "cve_count": 5,
+      "file_name": "gl_mech_0048.json",
+      "guideline_group_key": "cluster_0027__mech_jndi_untrusted_lookup_target",
+      "guideline_id": "gl_mech_0048",
+      "guideline_preview": "Trace attacker-controlled names, URLs, headers, configuration values, or lookup keys into JNDI, LDAP, RMI, naming-context, or remote lookup APIs. Report code paths where the lookup scheme, authority, object factory, object type, and network",
+      "mechanism_family": "remote_lookup_or_ssrf",
+      "mechanism_id": "mech_jndi_untrusted_lookup_target",
+      "mechanism_name": "attacker-controlled JNDI lookup target",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        27
+      ],
+      "top_tags": [
+        "remote_lookup_or_ssrf",
+        "mech_jndi_untrusted_lookup_target",
+        "JNDI lookup",
+        "LDAP lookup",
+        "RMI lookup",
+        "InitialContext.lookup"
+      ]
+    },
+    {
+      "cve_count": 10,
+      "file_name": "gl_mech_0049.json",
+      "guideline_group_key": "cluster_0027__mech_sql_dynamic_query_untrusted_fragment",
+      "guideline_id": "gl_mech_0049",
+      "guideline_preview": "Trace attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values into SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters. Report code path",
+      "mechanism_family": "sql_injection",
+      "mechanism_id": "mech_sql_dynamic_query_untrusted_fragment",
+      "mechanism_name": "dynamic SQL query construction from untrusted fragments",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        27
+      ],
+      "top_tags": [
+        "sql_injection",
+        "mech_sql_dynamic_query_untrusted_fragment",
+        "SQL injection",
+        "SQL concatenation",
+        "dynamic SQL injection",
+        "untrusted query fragment"
+      ]
+    },
+    {
+      "cve_count": 4,
+      "file_name": "gl_mech_0050.json",
+      "guideline_group_key": "cluster_0027__mech_ssrf_webhook_url_fetch",
+      "guideline_id": "gl_mech_0050",
+      "guideline_preview": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host,",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_webhook_url_fetch",
+      "mechanism_name": "attacker-controlled webhook or callback URL fetch",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        27
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_webhook_url_fetch",
+        "webhook SSRF",
+        "callback URL fetch",
+        "user controlled URL fetch",
+        "outbound HTTP client SSRF"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0051.json",
+      "guideline_group_key": "cluster_0027__mech_template_expression_untrusted_eval",
+      "guideline_id": "gl_mech_0051",
+      "guideline_preview": "Trace attacker-controlled template text, expression strings, macro content, or rendering parameters into template engines, expression evaluators, macro renderers, or scriptable configuration evaluators. Report code paths where untrusted exp",
+      "mechanism_family": "code_or_template_injection",
+      "mechanism_id": "mech_template_expression_untrusted_eval",
+      "mechanism_name": "untrusted template or expression evaluation",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        27
+      ],
+      "top_tags": [
+        "code_or_template_injection",
+        "mech_template_expression_untrusted_eval",
+        "template injection",
+        "expression language injection",
+        "SpEL injection",
+        "OGNL injection"
+      ]
+    },
+    {
+      "cve_count": 8,
+      "file_name": "gl_mech_0052.json",
+      "guideline_group_key": "cluster_0029__mech_sql_dynamic_query_untrusted_fragment",
+      "guideline_id": "gl_mech_0052",
+      "guideline_preview": "Trace attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values into SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters. Report code path",
+      "mechanism_family": "sql_injection",
+      "mechanism_id": "mech_sql_dynamic_query_untrusted_fragment",
+      "mechanism_name": "dynamic SQL query construction from untrusted fragments",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        29
+      ],
+      "top_tags": [
+        "sql_injection",
+        "mech_sql_dynamic_query_untrusted_fragment",
+        "SQL injection",
+        "SQL concatenation",
+        "dynamic SQL injection",
+        "untrusted query fragment"
+      ]
+    },
+    {
+      "cve_count": 3,
+      "file_name": "gl_mech_0053.json",
+      "guideline_group_key": "cluster_0030__mech_path_traversal_missing_canonical_prefix",
+      "guideline_id": "gl_mech_0053",
+      "guideline_preview": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under",
+      "mechanism_family": "filesystem",
+      "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+      "mechanism_name": "path traversal through missing canonical prefix check",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        30
+      ],
+      "top_tags": [
+        "filesystem",
+        "mech_path_traversal_missing_canonical_prefix",
+        "path traversal",
+        "directory traversal",
+        "Zip Slip",
+        "archive entry traversal"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0054.json",
+      "guideline_group_key": "cluster_0031__mech_toctou_mutable_object_reuse",
+      "guideline_id": "gl_mech_0054",
+      "guideline_preview": "Trace mutable files, paths, objects, identities, request fields, or shared state that are checked before use into sensitive file, state, permission, memory, or resource effects that depend on the earlier check. Report code paths where the c",
+      "mechanism_family": "race_or_lifecycle",
+      "mechanism_id": "mech_toctou_mutable_object_reuse",
+      "mechanism_name": "time-of-check to time-of-use on mutable object",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        31
+      ],
+      "top_tags": [
+        "race_or_lifecycle",
+        "mech_toctou_mutable_object_reuse",
+        "TOCTOU",
+        "check then use race",
+        "double fetch",
+        "stale object reuse"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0055.json",
+      "guideline_group_key": "cluster_0032__mech_deserialization_untrusted_type_graph",
+      "guideline_id": "gl_mech_0055",
+      "guideline_preview": "Trace untrusted serialized bytes, object streams, pickles, marshaled payloads, or type metadata into deserializers that instantiate classes, reconstruct object graphs, or invoke callbacks during object creation. Report code paths where allo",
+      "mechanism_family": "deserialization",
+      "mechanism_id": "mech_deserialization_untrusted_type_graph",
+      "mechanism_name": "untrusted deserialization with attacker-controlled type graph",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        32
+      ],
+      "top_tags": [
+        "deserialization",
+        "mech_deserialization_untrusted_type_graph",
+        "unsafe deserialization",
+        "ObjectInputStream.readObject",
+        "pickle load",
+        "marshal load"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0056.json",
+      "guideline_group_key": "cluster_0033__mech_request_body_resource_mismatch_authz",
+      "guideline_id": "gl_mech_0056",
+      "guideline_preview": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_request_body_resource_mismatch_authz",
+      "mechanism_name": "request-body resource identifiers bypass path-scoped authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        33
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_request_body_resource_mismatch_authz",
+        "path parameter authorization mismatch",
+        "request body resource mismatch",
+        "bulk operation target mismatch",
+        "namespace sync authorization bypass"
+      ]
+    },
+    {
+      "cve_count": 3,
+      "file_name": "gl_mech_0057.json",
+      "guideline_group_key": "cluster_0034__mech_sql_dynamic_query_untrusted_fragment",
+      "guideline_id": "gl_mech_0057",
+      "guideline_preview": "Trace attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values into SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters. Report code path",
+      "mechanism_family": "sql_injection",
+      "mechanism_id": "mech_sql_dynamic_query_untrusted_fragment",
+      "mechanism_name": "dynamic SQL query construction from untrusted fragments",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        34
+      ],
+      "top_tags": [
+        "sql_injection",
+        "mech_sql_dynamic_query_untrusted_fragment",
+        "SQL injection",
+        "SQL concatenation",
+        "dynamic SQL injection",
+        "untrusted query fragment"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0058.json",
+      "guideline_group_key": "cluster_0034__mech_toctou_mutable_object_reuse",
+      "guideline_id": "gl_mech_0058",
+      "guideline_preview": "Trace mutable files, paths, objects, identities, request fields, or shared state that are checked before use into sensitive file, state, permission, memory, or resource effects that depend on the earlier check. Report code paths where the c",
+      "mechanism_family": "race_or_lifecycle",
+      "mechanism_id": "mech_toctou_mutable_object_reuse",
+      "mechanism_name": "time-of-check to time-of-use on mutable object",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        34
+      ],
+      "top_tags": [
+        "race_or_lifecycle",
+        "mech_toctou_mutable_object_reuse",
+        "TOCTOU",
+        "check then use race",
+        "double fetch",
+        "stale object reuse"
+      ]
+    },
+    {
+      "cve_count": 7,
+      "file_name": "gl_mech_0059.json",
+      "guideline_group_key": "cluster_0035__mech_sql_dynamic_query_untrusted_fragment",
+      "guideline_id": "gl_mech_0059",
+      "guideline_preview": "Trace attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values into SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters. Report code path",
+      "mechanism_family": "sql_injection",
+      "mechanism_id": "mech_sql_dynamic_query_untrusted_fragment",
+      "mechanism_name": "dynamic SQL query construction from untrusted fragments",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        35
+      ],
+      "top_tags": [
+        "sql_injection",
+        "mech_sql_dynamic_query_untrusted_fragment",
+        "SQL injection",
+        "SQL concatenation",
+        "dynamic SQL injection",
+        "untrusted query fragment"
+      ]
+    },
+    {
+      "cve_count": 28,
+      "file_name": "gl_mech_0060.json",
+      "guideline_group_key": "cluster_0036__mech_sql_dynamic_query_untrusted_fragment",
+      "guideline_id": "gl_mech_0060",
+      "guideline_preview": "Trace attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values into SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters. Report code path",
+      "mechanism_family": "sql_injection",
+      "mechanism_id": "mech_sql_dynamic_query_untrusted_fragment",
+      "mechanism_name": "dynamic SQL query construction from untrusted fragments",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        36
+      ],
+      "top_tags": [
+        "sql_injection",
+        "mech_sql_dynamic_query_untrusted_fragment",
+        "SQL injection",
+        "SQL concatenation",
+        "dynamic SQL injection",
+        "untrusted query fragment"
+      ]
+    },
+    {
+      "cve_count": 13,
+      "file_name": "gl_mech_0061.json",
+      "guideline_group_key": "cluster_0037__mech_open_redirect_unsafe_uri_scheme",
+      "guideline_id": "gl_mech_0061",
+      "guideline_preview": "Trace attacker-controlled redirect targets, callback URLs, return URLs, OAuth redirect_uri values, or browser navigation destinations into redirect responses, Location headers, OAuth/OIDC/SAML redirect validation, or browser-followed naviga",
+      "mechanism_family": "open_redirect",
+      "mechanism_id": "mech_open_redirect_unsafe_uri_scheme",
+      "mechanism_name": "open redirect through unsafe URI scheme validation",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        37
+      ],
+      "top_tags": [
+        "open_redirect",
+        "mech_open_redirect_unsafe_uri_scheme",
+        "unsafe redirect URI scheme",
+        "javascript URI redirect",
+        "data URI redirect",
+        "redirect_uri scheme bypass"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0062.json",
+      "guideline_group_key": "cluster_0037__mech_path_traversal_missing_canonical_prefix",
+      "guideline_id": "gl_mech_0062",
+      "guideline_preview": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under",
+      "mechanism_family": "filesystem",
+      "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+      "mechanism_name": "path traversal through missing canonical prefix check",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        37
+      ],
+      "top_tags": [
+        "filesystem",
+        "mech_path_traversal_missing_canonical_prefix",
+        "path traversal",
+        "directory traversal",
+        "Zip Slip",
+        "archive entry traversal"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0063.json",
+      "guideline_group_key": "cluster_0037__mech_request_body_resource_mismatch_authz",
+      "guideline_id": "gl_mech_0063",
+      "guideline_preview": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_request_body_resource_mismatch_authz",
+      "mechanism_name": "request-body resource identifiers bypass path-scoped authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        37
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_request_body_resource_mismatch_authz",
+        "path parameter authorization mismatch",
+        "request body resource mismatch",
+        "bulk operation target mismatch",
+        "namespace sync authorization bypass"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0064.json",
+      "guideline_group_key": "cluster_0037__mech_sql_dynamic_query_untrusted_fragment",
+      "guideline_id": "gl_mech_0064",
+      "guideline_preview": "Trace attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values into SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters. Report code path",
+      "mechanism_family": "sql_injection",
+      "mechanism_id": "mech_sql_dynamic_query_untrusted_fragment",
+      "mechanism_name": "dynamic SQL query construction from untrusted fragments",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        37
+      ],
+      "top_tags": [
+        "sql_injection",
+        "mech_sql_dynamic_query_untrusted_fragment",
+        "SQL injection",
+        "SQL concatenation",
+        "dynamic SQL injection",
+        "untrusted query fragment"
+      ]
+    },
+    {
+      "cve_count": 7,
+      "file_name": "gl_mech_0065.json",
+      "guideline_group_key": "cluster_0037__mech_ssrf_redirect_following_client",
+      "guideline_id": "gl_mech_0065",
+      "guideline_preview": "Trace attacker-controlled URLs or server-controlled redirect responses into HTTP clients that automatically follow redirects or reuse a previously validated URL decision. Report code paths where the final redirected scheme, host, port, and",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_redirect_following_client",
+      "mechanism_name": "SSRF through redirect-following client",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        37
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_redirect_following_client",
+        "redirect-follow SSRF",
+        "HTTP redirect SSRF",
+        "Location header SSRF"
+      ]
+    },
+    {
+      "cve_count": 3,
+      "file_name": "gl_mech_0066.json",
+      "guideline_group_key": "cluster_0037__mech_ssrf_webhook_url_fetch",
+      "guideline_id": "gl_mech_0066",
+      "guideline_preview": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host,",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_webhook_url_fetch",
+      "mechanism_name": "attacker-controlled webhook or callback URL fetch",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        37
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_webhook_url_fetch",
+        "webhook SSRF",
+        "callback URL fetch",
+        "user controlled URL fetch",
+        "outbound HTTP client SSRF"
+      ]
+    },
+    {
+      "cve_count": 3,
+      "file_name": "gl_mech_0067.json",
+      "guideline_group_key": "cluster_0038__mech_open_redirect_unsafe_uri_scheme",
+      "guideline_id": "gl_mech_0067",
+      "guideline_preview": "Trace attacker-controlled redirect targets, callback URLs, return URLs, OAuth redirect_uri values, or browser navigation destinations into redirect responses, Location headers, OAuth/OIDC/SAML redirect validation, or browser-followed naviga",
+      "mechanism_family": "open_redirect",
+      "mechanism_id": "mech_open_redirect_unsafe_uri_scheme",
+      "mechanism_name": "open redirect through unsafe URI scheme validation",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        38
+      ],
+      "top_tags": [
+        "open_redirect",
+        "mech_open_redirect_unsafe_uri_scheme",
+        "unsafe redirect URI scheme",
+        "javascript URI redirect",
+        "data URI redirect",
+        "redirect_uri scheme bypass"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0068.json",
+      "guideline_group_key": "cluster_0038__mech_ssrf_redirect_following_client",
+      "guideline_id": "gl_mech_0068",
+      "guideline_preview": "Trace attacker-controlled URLs or server-controlled redirect responses into HTTP clients that automatically follow redirects or reuse a previously validated URL decision. Report code paths where the final redirected scheme, host, port, and",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_redirect_following_client",
+      "mechanism_name": "SSRF through redirect-following client",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        38
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_redirect_following_client",
+        "redirect-follow SSRF",
+        "HTTP redirect SSRF",
+        "Location header SSRF"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0069.json",
+      "guideline_group_key": "cluster_0038__mech_ssrf_webhook_url_fetch",
+      "guideline_id": "gl_mech_0069",
+      "guideline_preview": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host,",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_webhook_url_fetch",
+      "mechanism_name": "attacker-controlled webhook or callback URL fetch",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        38
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_webhook_url_fetch",
+        "webhook SSRF",
+        "callback URL fetch",
+        "user controlled URL fetch",
+        "outbound HTTP client SSRF"
+      ]
+    },
+    {
+      "cve_count": 9,
+      "file_name": "gl_mech_0070.json",
+      "guideline_group_key": "cluster_0039__mech_binary_length_unbounded_resource_use",
+      "guideline_id": "gl_mech_0070",
+      "guideline_preview": "Trace attacker-controlled binary length fields, size counters, frame lengths, offsets, back-references, or decompressed-size metadata into memory allocation, buffer growth, parsing loops, frame handling, decompression, or resource-consuming",
+      "mechanism_family": "resource_exhaustion_or_bounds",
+      "mechanism_id": "mech_binary_length_unbounded_resource_use",
+      "mechanism_name": "unbounded binary length or size field drives resource use",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        39
+      ],
+      "top_tags": [
+        "resource_exhaustion_or_bounds",
+        "mech_binary_length_unbounded_resource_use",
+        "unbounded length allocation",
+        "binary size field DoS",
+        "frame length resource exhaustion",
+        "decompression size exhaustion"
+      ]
+    },
+    {
+      "cve_count": 8,
+      "file_name": "gl_mech_0071.json",
+      "guideline_group_key": "cluster_0040__mech_binary_length_unbounded_resource_use",
+      "guideline_id": "gl_mech_0071",
+      "guideline_preview": "Trace attacker-controlled binary length fields, size counters, frame lengths, offsets, back-references, or decompressed-size metadata into memory allocation, buffer growth, parsing loops, frame handling, decompression, or resource-consuming",
+      "mechanism_family": "resource_exhaustion_or_bounds",
+      "mechanism_id": "mech_binary_length_unbounded_resource_use",
+      "mechanism_name": "unbounded binary length or size field drives resource use",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        40
+      ],
+      "top_tags": [
+        "resource_exhaustion_or_bounds",
+        "mech_binary_length_unbounded_resource_use",
+        "unbounded length allocation",
+        "binary size field DoS",
+        "frame length resource exhaustion",
+        "decompression size exhaustion"
+      ]
+    },
+    {
+      "cve_count": 5,
+      "file_name": "gl_mech_0072.json",
+      "guideline_group_key": "cluster_0041__mech_binary_length_unbounded_resource_use",
+      "guideline_id": "gl_mech_0072",
+      "guideline_preview": "Trace attacker-controlled binary length fields, size counters, frame lengths, offsets, back-references, or decompressed-size metadata into memory allocation, buffer growth, parsing loops, frame handling, decompression, or resource-consuming",
+      "mechanism_family": "resource_exhaustion_or_bounds",
+      "mechanism_id": "mech_binary_length_unbounded_resource_use",
+      "mechanism_name": "unbounded binary length or size field drives resource use",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        41
+      ],
+      "top_tags": [
+        "resource_exhaustion_or_bounds",
+        "mech_binary_length_unbounded_resource_use",
+        "unbounded length allocation",
+        "binary size field DoS",
+        "frame length resource exhaustion",
+        "decompression size exhaustion"
+      ]
+    },
+    {
+      "cve_count": 15,
+      "file_name": "gl_mech_0073.json",
+      "guideline_group_key": "cluster_0042__mech_binary_length_unbounded_resource_use",
+      "guideline_id": "gl_mech_0073",
+      "guideline_preview": "Trace attacker-controlled binary length fields, size counters, frame lengths, offsets, back-references, or decompressed-size metadata into memory allocation, buffer growth, parsing loops, frame handling, decompression, or resource-consuming",
+      "mechanism_family": "resource_exhaustion_or_bounds",
+      "mechanism_id": "mech_binary_length_unbounded_resource_use",
+      "mechanism_name": "unbounded binary length or size field drives resource use",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        42
+      ],
+      "top_tags": [
+        "resource_exhaustion_or_bounds",
+        "mech_binary_length_unbounded_resource_use",
+        "unbounded length allocation",
+        "binary size field DoS",
+        "frame length resource exhaustion",
+        "decompression size exhaustion"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0074.json",
+      "guideline_group_key": "cluster_0042__mech_toctou_mutable_object_reuse",
+      "guideline_id": "gl_mech_0074",
+      "guideline_preview": "Trace mutable files, paths, objects, identities, request fields, or shared state that are checked before use into sensitive file, state, permission, memory, or resource effects that depend on the earlier check. Report code paths where the c",
+      "mechanism_family": "race_or_lifecycle",
+      "mechanism_id": "mech_toctou_mutable_object_reuse",
+      "mechanism_name": "time-of-check to time-of-use on mutable object",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        42
+      ],
+      "top_tags": [
+        "race_or_lifecycle",
+        "mech_toctou_mutable_object_reuse",
+        "TOCTOU",
+        "check then use race",
+        "double fetch",
+        "stale object reuse"
+      ]
+    },
+    {
+      "cve_count": 8,
+      "file_name": "gl_mech_0075.json",
+      "guideline_group_key": "cluster_0044__mech_path_traversal_missing_canonical_prefix",
+      "guideline_id": "gl_mech_0075",
+      "guideline_preview": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under",
+      "mechanism_family": "filesystem",
+      "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+      "mechanism_name": "path traversal through missing canonical prefix check",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        44
+      ],
+      "top_tags": [
+        "filesystem",
+        "mech_path_traversal_missing_canonical_prefix",
+        "path traversal",
+        "directory traversal",
+        "Zip Slip",
+        "archive entry traversal"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0076.json",
+      "guideline_group_key": "cluster_0044__mech_temp_file_delete_mkdir_race",
+      "guideline_id": "gl_mech_0076",
+      "guideline_preview": "Trace temporary file or directory names created in shared writable locations into manual temporary directory creation sequences such as createTempFile, delete, then mkdir or mkdirs. Report code paths where the temporary path is released bet",
+      "mechanism_family": "race_or_lifecycle",
+      "mechanism_id": "mech_temp_file_delete_mkdir_race",
+      "mechanism_name": "temporary directory create-delete-mkdir TOCTOU race",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        44
+      ],
+      "top_tags": [
+        "race_or_lifecycle",
+        "mech_temp_file_delete_mkdir_race",
+        "temporary directory TOCTOU",
+        "createTempFile delete mkdir race",
+        "file-delete-mkdir temporary directory race"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0077.json",
+      "guideline_group_key": "cluster_0045__mech_path_traversal_missing_canonical_prefix",
+      "guideline_id": "gl_mech_0077",
+      "guideline_preview": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under",
+      "mechanism_family": "filesystem",
+      "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+      "mechanism_name": "path traversal through missing canonical prefix check",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        45
+      ],
+      "top_tags": [
+        "filesystem",
+        "mech_path_traversal_missing_canonical_prefix",
+        "path traversal",
+        "directory traversal",
+        "Zip Slip",
+        "archive entry traversal"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0078.json",
+      "guideline_group_key": "cluster_0045__mech_ssrf_redirect_following_client",
+      "guideline_id": "gl_mech_0078",
+      "guideline_preview": "Trace attacker-controlled URLs or server-controlled redirect responses into HTTP clients that automatically follow redirects or reuse a previously validated URL decision. Report code paths where the final redirected scheme, host, port, and",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_redirect_following_client",
+      "mechanism_name": "SSRF through redirect-following client",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        45
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_redirect_following_client",
+        "redirect-follow SSRF",
+        "HTTP redirect SSRF",
+        "Location header SSRF"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0079.json",
+      "guideline_group_key": "cluster_0046__mech_binary_length_unbounded_resource_use",
+      "guideline_id": "gl_mech_0079",
+      "guideline_preview": "Trace attacker-controlled binary length fields, size counters, frame lengths, offsets, back-references, or decompressed-size metadata into memory allocation, buffer growth, parsing loops, frame handling, decompression, or resource-consuming",
+      "mechanism_family": "resource_exhaustion_or_bounds",
+      "mechanism_id": "mech_binary_length_unbounded_resource_use",
+      "mechanism_name": "unbounded binary length or size field drives resource use",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        46
+      ],
+      "top_tags": [
+        "resource_exhaustion_or_bounds",
+        "mech_binary_length_unbounded_resource_use",
+        "unbounded length allocation",
+        "binary size field DoS",
+        "frame length resource exhaustion",
+        "decompression size exhaustion"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0080.json",
+      "guideline_group_key": "cluster_0047__mech_template_expression_untrusted_eval",
+      "guideline_id": "gl_mech_0080",
+      "guideline_preview": "Trace attacker-controlled template text, expression strings, macro content, or rendering parameters into template engines, expression evaluators, macro renderers, or scriptable configuration evaluators. Report code paths where untrusted exp",
+      "mechanism_family": "code_or_template_injection",
+      "mechanism_id": "mech_template_expression_untrusted_eval",
+      "mechanism_name": "untrusted template or expression evaluation",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        47
+      ],
+      "top_tags": [
+        "code_or_template_injection",
+        "mech_template_expression_untrusted_eval",
+        "template injection",
+        "expression language injection",
+        "SpEL injection",
+        "OGNL injection"
+      ]
+    },
+    {
+      "cve_count": 5,
+      "file_name": "gl_mech_0081.json",
+      "guideline_group_key": "cluster_0048__mech_html_sanitizer_policy_gap",
+      "guideline_id": "gl_mech_0081",
+      "guideline_preview": "Trace attacker-controlled markup, HTML fragments, rich text, comments, DOM nodes, style blocks, attributes, or URI values into HTML cleaners, SafeHtml validators, DOM sanitizers, rich-text renderers, or browser-rendered sanitized output. Re",
+      "mechanism_family": "html_sanitization",
+      "mechanism_id": "mech_html_sanitizer_policy_gap",
+      "mechanism_name": "HTML sanitizer policy gap or inactive allowlist",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        48
+      ],
+      "top_tags": [
+        "html_sanitization",
+        "mech_html_sanitizer_policy_gap",
+        "HTML sanitizer bypass",
+        "SafeHtml policy gap",
+        "missing sanitizer allowlist",
+        "restricted cleaner bypass"
+      ]
+    },
+    {
+      "cve_count": 4,
+      "file_name": "gl_mech_0082.json",
+      "guideline_group_key": "cluster_0049__mech_html_sanitizer_policy_gap",
+      "guideline_id": "gl_mech_0082",
+      "guideline_preview": "Trace attacker-controlled markup, HTML fragments, rich text, comments, DOM nodes, style blocks, attributes, or URI values into HTML cleaners, SafeHtml validators, DOM sanitizers, rich-text renderers, or browser-rendered sanitized output. Re",
+      "mechanism_family": "html_sanitization",
+      "mechanism_id": "mech_html_sanitizer_policy_gap",
+      "mechanism_name": "HTML sanitizer policy gap or inactive allowlist",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        49
+      ],
+      "top_tags": [
+        "html_sanitization",
+        "mech_html_sanitizer_policy_gap",
+        "HTML sanitizer bypass",
+        "SafeHtml policy gap",
+        "missing sanitizer allowlist",
+        "restricted cleaner bypass"
+      ]
+    },
+    {
+      "cve_count": 12,
+      "file_name": "gl_mech_0083.json",
+      "guideline_group_key": "cluster_0050__mech_html_sanitizer_policy_gap",
+      "guideline_id": "gl_mech_0083",
+      "guideline_preview": "Trace attacker-controlled markup, HTML fragments, rich text, comments, DOM nodes, style blocks, attributes, or URI values into HTML cleaners, SafeHtml validators, DOM sanitizers, rich-text renderers, or browser-rendered sanitized output. Re",
+      "mechanism_family": "html_sanitization",
+      "mechanism_id": "mech_html_sanitizer_policy_gap",
+      "mechanism_name": "HTML sanitizer policy gap or inactive allowlist",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        50
+      ],
+      "top_tags": [
+        "html_sanitization",
+        "mech_html_sanitizer_policy_gap",
+        "HTML sanitizer bypass",
+        "SafeHtml policy gap",
+        "missing sanitizer allowlist",
+        "restricted cleaner bypass"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0084.json",
+      "guideline_group_key": "cluster_0050__mech_sql_dynamic_query_untrusted_fragment",
+      "guideline_id": "gl_mech_0084",
+      "guideline_preview": "Trace attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values into SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters. Report code path",
+      "mechanism_family": "sql_injection",
+      "mechanism_id": "mech_sql_dynamic_query_untrusted_fragment",
+      "mechanism_name": "dynamic SQL query construction from untrusted fragments",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        50
+      ],
+      "top_tags": [
+        "sql_injection",
+        "mech_sql_dynamic_query_untrusted_fragment",
+        "SQL injection",
+        "SQL concatenation",
+        "dynamic SQL injection",
+        "untrusted query fragment"
+      ]
+    },
+    {
+      "cve_count": 4,
+      "file_name": "gl_mech_0085.json",
+      "guideline_group_key": "cluster_0051__mech_html_sanitizer_policy_gap",
+      "guideline_id": "gl_mech_0085",
+      "guideline_preview": "Trace attacker-controlled markup, HTML fragments, rich text, comments, DOM nodes, style blocks, attributes, or URI values into HTML cleaners, SafeHtml validators, DOM sanitizers, rich-text renderers, or browser-rendered sanitized output. Re",
+      "mechanism_family": "html_sanitization",
+      "mechanism_id": "mech_html_sanitizer_policy_gap",
+      "mechanism_name": "HTML sanitizer policy gap or inactive allowlist",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        51
+      ],
+      "top_tags": [
+        "html_sanitization",
+        "mech_html_sanitizer_policy_gap",
+        "HTML sanitizer bypass",
+        "SafeHtml policy gap",
+        "missing sanitizer allowlist",
+        "restricted cleaner bypass"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0086.json",
+      "guideline_group_key": "cluster_0053__mech_html_sanitizer_policy_gap",
+      "guideline_id": "gl_mech_0086",
+      "guideline_preview": "Trace attacker-controlled markup, HTML fragments, rich text, comments, DOM nodes, style blocks, attributes, or URI values into HTML cleaners, SafeHtml validators, DOM sanitizers, rich-text renderers, or browser-rendered sanitized output. Re",
+      "mechanism_family": "html_sanitization",
+      "mechanism_id": "mech_html_sanitizer_policy_gap",
+      "mechanism_name": "HTML sanitizer policy gap or inactive allowlist",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        53
+      ],
+      "top_tags": [
+        "html_sanitization",
+        "mech_html_sanitizer_policy_gap",
+        "HTML sanitizer bypass",
+        "SafeHtml policy gap",
+        "missing sanitizer allowlist",
+        "restricted cleaner bypass"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0087.json",
+      "guideline_group_key": "cluster_0053__mech_missing_authentication_before_privileged_action",
+      "guideline_id": "gl_mech_0087",
+      "guideline_preview": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller iden",
+      "mechanism_family": "authentication",
+      "mechanism_id": "mech_missing_authentication_before_privileged_action",
+      "mechanism_name": "missing authentication before privileged action",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        53
+      ],
+      "top_tags": [
+        "authentication",
+        "mech_missing_authentication_before_privileged_action",
+        "missing authentication",
+        "unauthenticated privileged action",
+        "missing login check"
+      ]
+    },
+    {
+      "cve_count": 3,
+      "file_name": "gl_mech_0088.json",
+      "guideline_group_key": "cluster_0053__mech_privileged_server_side_capability_exposed",
+      "guideline_id": "gl_mech_0088",
+      "guideline_preview": "Trace lower-privilege script, template, macro, plugin, or API callers that can invoke privileged server-side capabilities into server-side include, template rendering, servlet dispatch, raw object access, internal file reads, or privileged",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_privileged_server_side_capability_exposed",
+      "mechanism_name": "privileged server-side capability exposed to lower privilege context",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        53
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_privileged_server_side_capability_exposed",
+        "missing programming rights check",
+        "privileged API exposure",
+        "server-side include capability exposure",
+        "lower privilege script capability"
+      ]
+    },
+    {
+      "cve_count": 3,
+      "file_name": "gl_mech_0089.json",
+      "guideline_group_key": "cluster_0053__mech_sql_dynamic_query_untrusted_fragment",
+      "guideline_id": "gl_mech_0089",
+      "guideline_preview": "Trace attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values into SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters. Report code path",
+      "mechanism_family": "sql_injection",
+      "mechanism_id": "mech_sql_dynamic_query_untrusted_fragment",
+      "mechanism_name": "dynamic SQL query construction from untrusted fragments",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        53
+      ],
+      "top_tags": [
+        "sql_injection",
+        "mech_sql_dynamic_query_untrusted_fragment",
+        "SQL injection",
+        "SQL concatenation",
+        "dynamic SQL injection",
+        "untrusted query fragment"
+      ]
+    },
+    {
+      "cve_count": 24,
+      "file_name": "gl_mech_0090.json",
+      "guideline_group_key": "cluster_0053__mech_template_expression_untrusted_eval",
+      "guideline_id": "gl_mech_0090",
+      "guideline_preview": "Trace attacker-controlled template text, expression strings, macro content, or rendering parameters into template engines, expression evaluators, macro renderers, or scriptable configuration evaluators. Report code paths where untrusted exp",
+      "mechanism_family": "code_or_template_injection",
+      "mechanism_id": "mech_template_expression_untrusted_eval",
+      "mechanism_name": "untrusted template or expression evaluation",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        53
+      ],
+      "top_tags": [
+        "code_or_template_injection",
+        "mech_template_expression_untrusted_eval",
+        "template injection",
+        "expression language injection",
+        "SpEL injection",
+        "OGNL injection"
+      ]
+    },
+    {
+      "cve_count": 4,
+      "file_name": "gl_mech_0091.json",
+      "guideline_group_key": "cluster_0054__mech_html_sanitizer_policy_gap",
+      "guideline_id": "gl_mech_0091",
+      "guideline_preview": "Trace attacker-controlled markup, HTML fragments, rich text, comments, DOM nodes, style blocks, attributes, or URI values into HTML cleaners, SafeHtml validators, DOM sanitizers, rich-text renderers, or browser-rendered sanitized output. Re",
+      "mechanism_family": "html_sanitization",
+      "mechanism_id": "mech_html_sanitizer_policy_gap",
+      "mechanism_name": "HTML sanitizer policy gap or inactive allowlist",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        54
+      ],
+      "top_tags": [
+        "html_sanitization",
+        "mech_html_sanitizer_policy_gap",
+        "HTML sanitizer bypass",
+        "SafeHtml policy gap",
+        "missing sanitizer allowlist",
+        "restricted cleaner bypass"
+      ]
+    },
+    {
+      "cve_count": 14,
+      "file_name": "gl_mech_0092.json",
+      "guideline_group_key": "cluster_0055__mech_html_sanitizer_policy_gap",
+      "guideline_id": "gl_mech_0092",
+      "guideline_preview": "Trace attacker-controlled markup, HTML fragments, rich text, comments, DOM nodes, style blocks, attributes, or URI values into HTML cleaners, SafeHtml validators, DOM sanitizers, rich-text renderers, or browser-rendered sanitized output. Re",
+      "mechanism_family": "html_sanitization",
+      "mechanism_id": "mech_html_sanitizer_policy_gap",
+      "mechanism_name": "HTML sanitizer policy gap or inactive allowlist",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        55
+      ],
+      "top_tags": [
+        "html_sanitization",
+        "mech_html_sanitizer_policy_gap",
+        "HTML sanitizer bypass",
+        "SafeHtml policy gap",
+        "missing sanitizer allowlist",
+        "restricted cleaner bypass"
+      ]
+    },
+    {
+      "cve_count": 12,
+      "file_name": "gl_mech_0093.json",
+      "guideline_group_key": "cluster_0056__mech_binary_length_unbounded_resource_use",
+      "guideline_id": "gl_mech_0093",
+      "guideline_preview": "Trace attacker-controlled binary length fields, size counters, frame lengths, offsets, back-references, or decompressed-size metadata into memory allocation, buffer growth, parsing loops, frame handling, decompression, or resource-consuming",
+      "mechanism_family": "resource_exhaustion_or_bounds",
+      "mechanism_id": "mech_binary_length_unbounded_resource_use",
+      "mechanism_name": "unbounded binary length or size field drives resource use",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        56
+      ],
+      "top_tags": [
+        "resource_exhaustion_or_bounds",
+        "mech_binary_length_unbounded_resource_use",
+        "unbounded length allocation",
+        "binary size field DoS",
+        "frame length resource exhaustion",
+        "decompression size exhaustion"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0094.json",
+      "guideline_group_key": "cluster_0057__mech_html_sanitizer_policy_gap",
+      "guideline_id": "gl_mech_0094",
+      "guideline_preview": "Trace attacker-controlled markup, HTML fragments, rich text, comments, DOM nodes, style blocks, attributes, or URI values into HTML cleaners, SafeHtml validators, DOM sanitizers, rich-text renderers, or browser-rendered sanitized output. Re",
+      "mechanism_family": "html_sanitization",
+      "mechanism_id": "mech_html_sanitizer_policy_gap",
+      "mechanism_name": "HTML sanitizer policy gap or inactive allowlist",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        57
+      ],
+      "top_tags": [
+        "html_sanitization",
+        "mech_html_sanitizer_policy_gap",
+        "HTML sanitizer bypass",
+        "SafeHtml policy gap",
+        "missing sanitizer allowlist",
+        "restricted cleaner bypass"
+      ]
+    },
+    {
+      "cve_count": 4,
+      "file_name": "gl_mech_0095.json",
+      "guideline_group_key": "cluster_0058__mech_html_sanitizer_policy_gap",
+      "guideline_id": "gl_mech_0095",
+      "guideline_preview": "Trace attacker-controlled markup, HTML fragments, rich text, comments, DOM nodes, style blocks, attributes, or URI values into HTML cleaners, SafeHtml validators, DOM sanitizers, rich-text renderers, or browser-rendered sanitized output. Re",
+      "mechanism_family": "html_sanitization",
+      "mechanism_id": "mech_html_sanitizer_policy_gap",
+      "mechanism_name": "HTML sanitizer policy gap or inactive allowlist",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        58
+      ],
+      "top_tags": [
+        "html_sanitization",
+        "mech_html_sanitizer_policy_gap",
+        "HTML sanitizer bypass",
+        "SafeHtml policy gap",
+        "missing sanitizer allowlist",
+        "restricted cleaner bypass"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0096.json",
+      "guideline_group_key": "cluster_0058__mech_sql_dynamic_query_untrusted_fragment",
+      "guideline_id": "gl_mech_0096",
+      "guideline_preview": "Trace attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values into SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters. Report code path",
+      "mechanism_family": "sql_injection",
+      "mechanism_id": "mech_sql_dynamic_query_untrusted_fragment",
+      "mechanism_name": "dynamic SQL query construction from untrusted fragments",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        58
+      ],
+      "top_tags": [
+        "sql_injection",
+        "mech_sql_dynamic_query_untrusted_fragment",
+        "SQL injection",
+        "SQL concatenation",
+        "dynamic SQL injection",
+        "untrusted query fragment"
+      ]
+    },
+    {
+      "cve_count": 6,
+      "file_name": "gl_mech_0097.json",
+      "guideline_group_key": "cluster_0059__mech_path_traversal_missing_canonical_prefix",
+      "guideline_id": "gl_mech_0097",
+      "guideline_preview": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under",
+      "mechanism_family": "filesystem",
+      "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+      "mechanism_name": "path traversal through missing canonical prefix check",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        59
+      ],
+      "top_tags": [
+        "filesystem",
+        "mech_path_traversal_missing_canonical_prefix",
+        "path traversal",
+        "directory traversal",
+        "Zip Slip",
+        "archive entry traversal"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0098.json",
+      "guideline_group_key": "cluster_0060__mech_archive_symlink_extraction_escape",
+      "guideline_id": "gl_mech_0098",
+      "guideline_preview": "Trace attacker-controlled archive entries, symlink entries, link targets, or extraction order into archive extraction code that creates links, opens output files, or writes entry contents into the extraction tree. Report code paths where la",
+      "mechanism_family": "filesystem",
+      "mechanism_id": "mech_archive_symlink_extraction_escape",
+      "mechanism_name": "archive extraction escape through symlink-following writes",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        60
+      ],
+      "top_tags": [
+        "filesystem",
+        "mech_archive_symlink_extraction_escape",
+        "archive symlink traversal",
+        "symlink overwrite during extraction",
+        "tar symlink escape",
+        "zip symlink escape"
+      ]
+    },
+    {
+      "cve_count": 29,
+      "file_name": "gl_mech_0099.json",
+      "guideline_group_key": "cluster_0060__mech_path_traversal_missing_canonical_prefix",
+      "guideline_id": "gl_mech_0099",
+      "guideline_preview": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under",
+      "mechanism_family": "filesystem",
+      "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+      "mechanism_name": "path traversal through missing canonical prefix check",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        60
+      ],
+      "top_tags": [
+        "filesystem",
+        "mech_path_traversal_missing_canonical_prefix",
+        "path traversal",
+        "directory traversal",
+        "Zip Slip",
+        "archive entry traversal"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0100.json",
+      "guideline_group_key": "cluster_0060__mech_temp_file_delete_mkdir_race",
+      "guideline_id": "gl_mech_0100",
+      "guideline_preview": "Trace temporary file or directory names created in shared writable locations into manual temporary directory creation sequences such as createTempFile, delete, then mkdir or mkdirs. Report code paths where the temporary path is released bet",
+      "mechanism_family": "race_or_lifecycle",
+      "mechanism_id": "mech_temp_file_delete_mkdir_race",
+      "mechanism_name": "temporary directory create-delete-mkdir TOCTOU race",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        60
+      ],
+      "top_tags": [
+        "race_or_lifecycle",
+        "mech_temp_file_delete_mkdir_race",
+        "temporary directory TOCTOU",
+        "createTempFile delete mkdir race",
+        "file-delete-mkdir temporary directory race"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0101.json",
+      "guideline_group_key": "cluster_0060__mech_temp_resource_insecure_permissions",
+      "guideline_id": "gl_mech_0101",
+      "guideline_preview": "Trace temporary files or directories created for sensitive data, build artifacts, credentials, extracted content, or intermediate processing into filesystem creation APIs that inherit broad default permissions or fail to apply owner-only pe",
+      "mechanism_family": "filesystem",
+      "mechanism_id": "mech_temp_resource_insecure_permissions",
+      "mechanism_name": "temporary resource created with insecure permissions",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        60
+      ],
+      "top_tags": [
+        "filesystem",
+        "mech_temp_resource_insecure_permissions",
+        "insecure temporary file permissions",
+        "world-readable temp file",
+        "temporary directory permissions",
+        "File.createTempFile permissions"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0102.json",
+      "guideline_group_key": "cluster_0060__mech_toctou_mutable_object_reuse",
+      "guideline_id": "gl_mech_0102",
+      "guideline_preview": "Trace mutable files, paths, objects, identities, request fields, or shared state that are checked before use into sensitive file, state, permission, memory, or resource effects that depend on the earlier check. Report code paths where the c",
+      "mechanism_family": "race_or_lifecycle",
+      "mechanism_id": "mech_toctou_mutable_object_reuse",
+      "mechanism_name": "time-of-check to time-of-use on mutable object",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        60
+      ],
+      "top_tags": [
+        "race_or_lifecycle",
+        "mech_toctou_mutable_object_reuse",
+        "TOCTOU",
+        "check then use race",
+        "double fetch",
+        "stale object reuse"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0103.json",
+      "guideline_group_key": "cluster_0061__mech_binary_length_unbounded_resource_use",
+      "guideline_id": "gl_mech_0103",
+      "guideline_preview": "Trace attacker-controlled binary length fields, size counters, frame lengths, offsets, back-references, or decompressed-size metadata into memory allocation, buffer growth, parsing loops, frame handling, decompression, or resource-consuming",
+      "mechanism_family": "resource_exhaustion_or_bounds",
+      "mechanism_id": "mech_binary_length_unbounded_resource_use",
+      "mechanism_name": "unbounded binary length or size field drives resource use",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        61
+      ],
+      "top_tags": [
+        "resource_exhaustion_or_bounds",
+        "mech_binary_length_unbounded_resource_use",
+        "unbounded length allocation",
+        "binary size field DoS",
+        "frame length resource exhaustion",
+        "decompression size exhaustion"
+      ]
+    },
+    {
+      "cve_count": 4,
+      "file_name": "gl_mech_0104.json",
+      "guideline_group_key": "cluster_0062__mech_binary_length_unbounded_resource_use",
+      "guideline_id": "gl_mech_0104",
+      "guideline_preview": "Trace attacker-controlled binary length fields, size counters, frame lengths, offsets, back-references, or decompressed-size metadata into memory allocation, buffer growth, parsing loops, frame handling, decompression, or resource-consuming",
+      "mechanism_family": "resource_exhaustion_or_bounds",
+      "mechanism_id": "mech_binary_length_unbounded_resource_use",
+      "mechanism_name": "unbounded binary length or size field drives resource use",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        62
+      ],
+      "top_tags": [
+        "resource_exhaustion_or_bounds",
+        "mech_binary_length_unbounded_resource_use",
+        "unbounded length allocation",
+        "binary size field DoS",
+        "frame length resource exhaustion",
+        "decompression size exhaustion"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0105.json",
+      "guideline_group_key": "cluster_0062__mech_state_precondition_missing_before_effect",
+      "guideline_id": "gl_mech_0105",
+      "guideline_preview": "Trace requests or events that select an operation, workflow step, account, resource, or state transition into sensitive state changes, billing effects, entitlement changes, resource consumption, or workflow transitions. Report code paths wh",
+      "mechanism_family": "business_logic",
+      "mechanism_id": "mech_state_precondition_missing_before_effect",
+      "mechanism_name": "missing business-state precondition before sensitive effect",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        62
+      ],
+      "top_tags": [
+        "business_logic",
+        "mech_state_precondition_missing_before_effect",
+        "business state precondition",
+        "state transition guard",
+        "lifecycle check",
+        "quota check"
+      ]
+    },
+    {
+      "cve_count": 4,
+      "file_name": "gl_mech_0106.json",
+      "guideline_group_key": "cluster_0063__mech_privileged_server_side_capability_exposed",
+      "guideline_id": "gl_mech_0106",
+      "guideline_preview": "Trace lower-privilege script, template, macro, plugin, or API callers that can invoke privileged server-side capabilities into server-side include, template rendering, servlet dispatch, raw object access, internal file reads, or privileged",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_privileged_server_side_capability_exposed",
+      "mechanism_name": "privileged server-side capability exposed to lower privilege context",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        63
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_privileged_server_side_capability_exposed",
+        "missing programming rights check",
+        "privileged API exposure",
+        "server-side include capability exposure",
+        "lower privilege script capability"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0107.json",
+      "guideline_group_key": "cluster_0063__mech_template_expression_untrusted_eval",
+      "guideline_id": "gl_mech_0107",
+      "guideline_preview": "Trace attacker-controlled template text, expression strings, macro content, or rendering parameters into template engines, expression evaluators, macro renderers, or scriptable configuration evaluators. Report code paths where untrusted exp",
+      "mechanism_family": "code_or_template_injection",
+      "mechanism_id": "mech_template_expression_untrusted_eval",
+      "mechanism_name": "untrusted template or expression evaluation",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        63
+      ],
+      "top_tags": [
+        "code_or_template_injection",
+        "mech_template_expression_untrusted_eval",
+        "template injection",
+        "expression language injection",
+        "SpEL injection",
+        "OGNL injection"
+      ]
+    },
+    {
+      "cve_count": 3,
+      "file_name": "gl_mech_0108.json",
+      "guideline_group_key": "cluster_0064__mech_privileged_server_side_capability_exposed",
+      "guideline_id": "gl_mech_0108",
+      "guideline_preview": "Trace lower-privilege script, template, macro, plugin, or API callers that can invoke privileged server-side capabilities into server-side include, template rendering, servlet dispatch, raw object access, internal file reads, or privileged",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_privileged_server_side_capability_exposed",
+      "mechanism_name": "privileged server-side capability exposed to lower privilege context",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        64
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_privileged_server_side_capability_exposed",
+        "missing programming rights check",
+        "privileged API exposure",
+        "server-side include capability exposure",
+        "lower privilege script capability"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0109.json",
+      "guideline_group_key": "cluster_0064__mech_template_expression_untrusted_eval",
+      "guideline_id": "gl_mech_0109",
+      "guideline_preview": "Trace attacker-controlled template text, expression strings, macro content, or rendering parameters into template engines, expression evaluators, macro renderers, or scriptable configuration evaluators. Report code paths where untrusted exp",
+      "mechanism_family": "code_or_template_injection",
+      "mechanism_id": "mech_template_expression_untrusted_eval",
+      "mechanism_name": "untrusted template or expression evaluation",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        64
+      ],
+      "top_tags": [
+        "code_or_template_injection",
+        "mech_template_expression_untrusted_eval",
+        "template injection",
+        "expression language injection",
+        "SpEL injection",
+        "OGNL injection"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0110.json",
+      "guideline_group_key": "cluster_0068__mech_request_body_resource_mismatch_authz",
+      "guideline_id": "gl_mech_0110",
+      "guideline_preview": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_request_body_resource_mismatch_authz",
+      "mechanism_name": "request-body resource identifiers bypass path-scoped authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        68
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_request_body_resource_mismatch_authz",
+        "path parameter authorization mismatch",
+        "request body resource mismatch",
+        "bulk operation target mismatch",
+        "namespace sync authorization bypass"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0111.json",
+      "guideline_group_key": "cluster_0068__mech_sql_dynamic_query_untrusted_fragment",
+      "guideline_id": "gl_mech_0111",
+      "guideline_preview": "Trace attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values into SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters. Report code path",
+      "mechanism_family": "sql_injection",
+      "mechanism_id": "mech_sql_dynamic_query_untrusted_fragment",
+      "mechanism_name": "dynamic SQL query construction from untrusted fragments",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        68
+      ],
+      "top_tags": [
+        "sql_injection",
+        "mech_sql_dynamic_query_untrusted_fragment",
+        "SQL injection",
+        "SQL concatenation",
+        "dynamic SQL injection",
+        "untrusted query fragment"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0112.json",
+      "guideline_group_key": "cluster_0069__mech_path_traversal_missing_canonical_prefix",
+      "guideline_id": "gl_mech_0112",
+      "guideline_preview": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under",
+      "mechanism_family": "filesystem",
+      "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+      "mechanism_name": "path traversal through missing canonical prefix check",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        69
+      ],
+      "top_tags": [
+        "filesystem",
+        "mech_path_traversal_missing_canonical_prefix",
+        "path traversal",
+        "directory traversal",
+        "Zip Slip",
+        "archive entry traversal"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0113.json",
+      "guideline_group_key": "cluster_0069__mech_sql_dynamic_query_untrusted_fragment",
+      "guideline_id": "gl_mech_0113",
+      "guideline_preview": "Trace attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values into SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters. Report code path",
+      "mechanism_family": "sql_injection",
+      "mechanism_id": "mech_sql_dynamic_query_untrusted_fragment",
+      "mechanism_name": "dynamic SQL query construction from untrusted fragments",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        69
+      ],
+      "top_tags": [
+        "sql_injection",
+        "mech_sql_dynamic_query_untrusted_fragment",
+        "SQL injection",
+        "SQL concatenation",
+        "dynamic SQL injection",
+        "untrusted query fragment"
+      ]
+    },
+    {
+      "cve_count": 4,
+      "file_name": "gl_mech_0114.json",
+      "guideline_group_key": "cluster_0070__mech_open_redirect_unsafe_uri_scheme",
+      "guideline_id": "gl_mech_0114",
+      "guideline_preview": "Trace attacker-controlled redirect targets, callback URLs, return URLs, OAuth redirect_uri values, or browser navigation destinations into redirect responses, Location headers, OAuth/OIDC/SAML redirect validation, or browser-followed naviga",
+      "mechanism_family": "open_redirect",
+      "mechanism_id": "mech_open_redirect_unsafe_uri_scheme",
+      "mechanism_name": "open redirect through unsafe URI scheme validation",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        70
+      ],
+      "top_tags": [
+        "open_redirect",
+        "mech_open_redirect_unsafe_uri_scheme",
+        "unsafe redirect URI scheme",
+        "javascript URI redirect",
+        "data URI redirect",
+        "redirect_uri scheme bypass"
+      ]
+    },
+    {
+      "cve_count": 3,
+      "file_name": "gl_mech_0115.json",
+      "guideline_group_key": "cluster_0070__mech_request_body_resource_mismatch_authz",
+      "guideline_id": "gl_mech_0115",
+      "guideline_preview": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_request_body_resource_mismatch_authz",
+      "mechanism_name": "request-body resource identifiers bypass path-scoped authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        70
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_request_body_resource_mismatch_authz",
+        "path parameter authorization mismatch",
+        "request body resource mismatch",
+        "bulk operation target mismatch",
+        "namespace sync authorization bypass"
+      ]
+    },
+    {
+      "cve_count": 28,
+      "file_name": "gl_mech_0116.json",
+      "guideline_group_key": "cluster_0070__mech_ssrf_redirect_following_client",
+      "guideline_id": "gl_mech_0116",
+      "guideline_preview": "Trace attacker-controlled URLs or server-controlled redirect responses into HTTP clients that automatically follow redirects or reuse a previously validated URL decision. Report code paths where the final redirected scheme, host, port, and",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_redirect_following_client",
+      "mechanism_name": "SSRF through redirect-following client",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        70
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_redirect_following_client",
+        "redirect-follow SSRF",
+        "HTTP redirect SSRF",
+        "Location header SSRF"
+      ]
+    },
+    {
+      "cve_count": 58,
+      "file_name": "gl_mech_0117.json",
+      "guideline_group_key": "cluster_0070__mech_ssrf_webhook_url_fetch",
+      "guideline_id": "gl_mech_0117",
+      "guideline_preview": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host,",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_webhook_url_fetch",
+      "mechanism_name": "attacker-controlled webhook or callback URL fetch",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        70
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_webhook_url_fetch",
+        "webhook SSRF",
+        "callback URL fetch",
+        "user controlled URL fetch",
+        "outbound HTTP client SSRF"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0118.json",
+      "guideline_group_key": "cluster_0070__mech_toctou_mutable_object_reuse",
+      "guideline_id": "gl_mech_0118",
+      "guideline_preview": "Trace mutable files, paths, objects, identities, request fields, or shared state that are checked before use into sensitive file, state, permission, memory, or resource effects that depend on the earlier check. Report code paths where the c",
+      "mechanism_family": "race_or_lifecycle",
+      "mechanism_id": "mech_toctou_mutable_object_reuse",
+      "mechanism_name": "time-of-check to time-of-use on mutable object",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        70
+      ],
+      "top_tags": [
+        "race_or_lifecycle",
+        "mech_toctou_mutable_object_reuse",
+        "TOCTOU",
+        "check then use race",
+        "double fetch",
+        "stale object reuse"
+      ]
+    },
+    {
+      "cve_count": 10,
+      "file_name": "gl_mech_0119.json",
+      "guideline_group_key": "cluster_0071__mech_path_traversal_missing_canonical_prefix",
+      "guideline_id": "gl_mech_0119",
+      "guideline_preview": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under",
+      "mechanism_family": "filesystem",
+      "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+      "mechanism_name": "path traversal through missing canonical prefix check",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        71
+      ],
+      "top_tags": [
+        "filesystem",
+        "mech_path_traversal_missing_canonical_prefix",
+        "path traversal",
+        "directory traversal",
+        "Zip Slip",
+        "archive entry traversal"
+      ]
+    },
+    {
+      "cve_count": 3,
+      "file_name": "gl_mech_0120.json",
+      "guideline_group_key": "cluster_0072__mech_privileged_server_side_capability_exposed",
+      "guideline_id": "gl_mech_0120",
+      "guideline_preview": "Trace lower-privilege script, template, macro, plugin, or API callers that can invoke privileged server-side capabilities into server-side include, template rendering, servlet dispatch, raw object access, internal file reads, or privileged",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_privileged_server_side_capability_exposed",
+      "mechanism_name": "privileged server-side capability exposed to lower privilege context",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        72
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_privileged_server_side_capability_exposed",
+        "missing programming rights check",
+        "privileged API exposure",
+        "server-side include capability exposure",
+        "lower privilege script capability"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0121.json",
+      "guideline_group_key": "cluster_0072__mech_toctou_mutable_object_reuse",
+      "guideline_id": "gl_mech_0121",
+      "guideline_preview": "Trace mutable files, paths, objects, identities, request fields, or shared state that are checked before use into sensitive file, state, permission, memory, or resource effects that depend on the earlier check. Report code paths where the c",
+      "mechanism_family": "race_or_lifecycle",
+      "mechanism_id": "mech_toctou_mutable_object_reuse",
+      "mechanism_name": "time-of-check to time-of-use on mutable object",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        72
+      ],
+      "top_tags": [
+        "race_or_lifecycle",
+        "mech_toctou_mutable_object_reuse",
+        "TOCTOU",
+        "check then use race",
+        "double fetch",
+        "stale object reuse"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0122.json",
+      "guideline_group_key": "cluster_0073__mech_object_owner_scope_missing_authz",
+      "guideline_id": "gl_mech_0122",
+      "guideline_preview": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_object_owner_scope_missing_authz",
+      "mechanism_name": "missing object-owner or tenant-scope authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        73
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_object_owner_scope_missing_authz",
+        "object ownership authorization",
+        "tenant scope check",
+        "IDOR",
+        "resource scoped authorization"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0123.json",
+      "guideline_group_key": "cluster_0073__mech_ssrf_webhook_url_fetch",
+      "guideline_id": "gl_mech_0123",
+      "guideline_preview": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host,",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_webhook_url_fetch",
+      "mechanism_name": "attacker-controlled webhook or callback URL fetch",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        73
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_webhook_url_fetch",
+        "webhook SSRF",
+        "callback URL fetch",
+        "user controlled URL fetch",
+        "outbound HTTP client SSRF"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0124.json",
+      "guideline_group_key": "cluster_0073__mech_toctou_mutable_object_reuse",
+      "guideline_id": "gl_mech_0124",
+      "guideline_preview": "Trace mutable files, paths, objects, identities, request fields, or shared state that are checked before use into sensitive file, state, permission, memory, or resource effects that depend on the earlier check. Report code paths where the c",
+      "mechanism_family": "race_or_lifecycle",
+      "mechanism_id": "mech_toctou_mutable_object_reuse",
+      "mechanism_name": "time-of-check to time-of-use on mutable object",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        73
+      ],
+      "top_tags": [
+        "race_or_lifecycle",
+        "mech_toctou_mutable_object_reuse",
+        "TOCTOU",
+        "check then use race",
+        "double fetch",
+        "stale object reuse"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0125.json",
+      "guideline_group_key": "cluster_0074__mech_authentication_artifact_incomplete_validation",
+      "guideline_id": "gl_mech_0125",
+      "guideline_preview": "Trace externally supplied authentication artifacts such as JWTs, SAML responses, OAuth authorization codes, bearer tokens, session cookies, or client credentials into session creation, identity binding, privilege assignment, protected API a",
+      "mechanism_family": "authentication",
+      "mechanism_id": "mech_authentication_artifact_incomplete_validation",
+      "mechanism_name": "authentication artifact accepted without complete validation",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        74
+      ],
+      "top_tags": [
+        "authentication",
+        "mech_authentication_artifact_incomplete_validation",
+        "JWT validation bypass",
+        "SAML validation bypass",
+        "OAuth token validation bypass",
+        "session artifact validation bypass"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0126.json",
+      "guideline_group_key": "cluster_0074__mech_missing_authentication_before_privileged_action",
+      "guideline_id": "gl_mech_0126",
+      "guideline_preview": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller iden",
+      "mechanism_family": "authentication",
+      "mechanism_id": "mech_missing_authentication_before_privileged_action",
+      "mechanism_name": "missing authentication before privileged action",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        74
+      ],
+      "top_tags": [
+        "authentication",
+        "mech_missing_authentication_before_privileged_action",
+        "missing authentication",
+        "unauthenticated privileged action",
+        "missing login check"
+      ]
+    },
+    {
+      "cve_count": 3,
+      "file_name": "gl_mech_0127.json",
+      "guideline_group_key": "cluster_0074__mech_request_body_resource_mismatch_authz",
+      "guideline_id": "gl_mech_0127",
+      "guideline_preview": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_request_body_resource_mismatch_authz",
+      "mechanism_name": "request-body resource identifiers bypass path-scoped authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        74
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_request_body_resource_mismatch_authz",
+        "path parameter authorization mismatch",
+        "request body resource mismatch",
+        "bulk operation target mismatch",
+        "namespace sync authorization bypass"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0128.json",
+      "guideline_group_key": "cluster_0074__mech_ssrf_redirect_following_client",
+      "guideline_id": "gl_mech_0128",
+      "guideline_preview": "Trace attacker-controlled URLs or server-controlled redirect responses into HTTP clients that automatically follow redirects or reuse a previously validated URL decision. Report code paths where the final redirected scheme, host, port, and",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_redirect_following_client",
+      "mechanism_name": "SSRF through redirect-following client",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        74
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_redirect_following_client",
+        "redirect-follow SSRF",
+        "HTTP redirect SSRF",
+        "Location header SSRF"
+      ]
+    },
+    {
+      "cve_count": 23,
+      "file_name": "gl_mech_0129.json",
+      "guideline_group_key": "cluster_0074__mech_ssrf_webhook_url_fetch",
+      "guideline_id": "gl_mech_0129",
+      "guideline_preview": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host,",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_webhook_url_fetch",
+      "mechanism_name": "attacker-controlled webhook or callback URL fetch",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        74
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_webhook_url_fetch",
+        "webhook SSRF",
+        "callback URL fetch",
+        "user controlled URL fetch",
+        "outbound HTTP client SSRF"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0130.json",
+      "guideline_group_key": "cluster_0075__mech_object_owner_scope_missing_authz",
+      "guideline_id": "gl_mech_0130",
+      "guideline_preview": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_object_owner_scope_missing_authz",
+      "mechanism_name": "missing object-owner or tenant-scope authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        75
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_object_owner_scope_missing_authz",
+        "object ownership authorization",
+        "tenant scope check",
+        "IDOR",
+        "resource scoped authorization"
+      ]
+    },
+    {
+      "cve_count": 13,
+      "file_name": "gl_mech_0131.json",
+      "guideline_group_key": "cluster_0075__mech_path_traversal_missing_canonical_prefix",
+      "guideline_id": "gl_mech_0131",
+      "guideline_preview": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under",
+      "mechanism_family": "filesystem",
+      "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+      "mechanism_name": "path traversal through missing canonical prefix check",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        75
+      ],
+      "top_tags": [
+        "filesystem",
+        "mech_path_traversal_missing_canonical_prefix",
+        "path traversal",
+        "directory traversal",
+        "Zip Slip",
+        "archive entry traversal"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0132.json",
+      "guideline_group_key": "cluster_0075__mech_ssrf_webhook_url_fetch",
+      "guideline_id": "gl_mech_0132",
+      "guideline_preview": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host,",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_webhook_url_fetch",
+      "mechanism_name": "attacker-controlled webhook or callback URL fetch",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        75
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_webhook_url_fetch",
+        "webhook SSRF",
+        "callback URL fetch",
+        "user controlled URL fetch",
+        "outbound HTTP client SSRF"
+      ]
+    },
+    {
+      "cve_count": 8,
+      "file_name": "gl_mech_0133.json",
+      "guideline_group_key": "cluster_0076__mech_path_traversal_missing_canonical_prefix",
+      "guideline_id": "gl_mech_0133",
+      "guideline_preview": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under",
+      "mechanism_family": "filesystem",
+      "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+      "mechanism_name": "path traversal through missing canonical prefix check",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        76
+      ],
+      "top_tags": [
+        "filesystem",
+        "mech_path_traversal_missing_canonical_prefix",
+        "path traversal",
+        "directory traversal",
+        "Zip Slip",
+        "archive entry traversal"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0134.json",
+      "guideline_group_key": "cluster_0078__mech_authentication_artifact_incomplete_validation",
+      "guideline_id": "gl_mech_0134",
+      "guideline_preview": "Trace externally supplied authentication artifacts such as JWTs, SAML responses, OAuth authorization codes, bearer tokens, session cookies, or client credentials into session creation, identity binding, privilege assignment, protected API a",
+      "mechanism_family": "authentication",
+      "mechanism_id": "mech_authentication_artifact_incomplete_validation",
+      "mechanism_name": "authentication artifact accepted without complete validation",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        78
+      ],
+      "top_tags": [
+        "authentication",
+        "mech_authentication_artifact_incomplete_validation",
+        "JWT validation bypass",
+        "SAML validation bypass",
+        "OAuth token validation bypass",
+        "session artifact validation bypass"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0135.json",
+      "guideline_group_key": "cluster_0078__mech_request_body_resource_mismatch_authz",
+      "guideline_id": "gl_mech_0135",
+      "guideline_preview": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_request_body_resource_mismatch_authz",
+      "mechanism_name": "request-body resource identifiers bypass path-scoped authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        78
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_request_body_resource_mismatch_authz",
+        "path parameter authorization mismatch",
+        "request body resource mismatch",
+        "bulk operation target mismatch",
+        "namespace sync authorization bypass"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0136.json",
+      "guideline_group_key": "cluster_0078__mech_ssrf_redirect_following_client",
+      "guideline_id": "gl_mech_0136",
+      "guideline_preview": "Trace attacker-controlled URLs or server-controlled redirect responses into HTTP clients that automatically follow redirects or reuse a previously validated URL decision. Report code paths where the final redirected scheme, host, port, and",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_redirect_following_client",
+      "mechanism_name": "SSRF through redirect-following client",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        78
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_redirect_following_client",
+        "redirect-follow SSRF",
+        "HTTP redirect SSRF",
+        "Location header SSRF"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0137.json",
+      "guideline_group_key": "cluster_0079__mech_missing_authentication_before_privileged_action",
+      "guideline_id": "gl_mech_0137",
+      "guideline_preview": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller iden",
+      "mechanism_family": "authentication",
+      "mechanism_id": "mech_missing_authentication_before_privileged_action",
+      "mechanism_name": "missing authentication before privileged action",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        79
+      ],
+      "top_tags": [
+        "authentication",
+        "mech_missing_authentication_before_privileged_action",
+        "missing authentication",
+        "unauthenticated privileged action",
+        "missing login check"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0138.json",
+      "guideline_group_key": "cluster_0079__mech_object_owner_scope_missing_authz",
+      "guideline_id": "gl_mech_0138",
+      "guideline_preview": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_object_owner_scope_missing_authz",
+      "mechanism_name": "missing object-owner or tenant-scope authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        79
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_object_owner_scope_missing_authz",
+        "object ownership authorization",
+        "tenant scope check",
+        "IDOR",
+        "resource scoped authorization"
+      ]
+    },
+    {
+      "cve_count": 6,
+      "file_name": "gl_mech_0139.json",
+      "guideline_group_key": "cluster_0079__mech_request_body_resource_mismatch_authz",
+      "guideline_id": "gl_mech_0139",
+      "guideline_preview": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_request_body_resource_mismatch_authz",
+      "mechanism_name": "request-body resource identifiers bypass path-scoped authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        79
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_request_body_resource_mismatch_authz",
+        "path parameter authorization mismatch",
+        "request body resource mismatch",
+        "bulk operation target mismatch",
+        "namespace sync authorization bypass"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0140.json",
+      "guideline_group_key": "cluster_0079__mech_ssrf_webhook_url_fetch",
+      "guideline_id": "gl_mech_0140",
+      "guideline_preview": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host,",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_webhook_url_fetch",
+      "mechanism_name": "attacker-controlled webhook or callback URL fetch",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        79
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_webhook_url_fetch",
+        "webhook SSRF",
+        "callback URL fetch",
+        "user controlled URL fetch",
+        "outbound HTTP client SSRF"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0141.json",
+      "guideline_group_key": "cluster_0080__mech_binary_length_unbounded_resource_use",
+      "guideline_id": "gl_mech_0141",
+      "guideline_preview": "Trace attacker-controlled binary length fields, size counters, frame lengths, offsets, back-references, or decompressed-size metadata into memory allocation, buffer growth, parsing loops, frame handling, decompression, or resource-consuming",
+      "mechanism_family": "resource_exhaustion_or_bounds",
+      "mechanism_id": "mech_binary_length_unbounded_resource_use",
+      "mechanism_name": "unbounded binary length or size field drives resource use",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        80
+      ],
+      "top_tags": [
+        "resource_exhaustion_or_bounds",
+        "mech_binary_length_unbounded_resource_use",
+        "unbounded length allocation",
+        "binary size field DoS",
+        "frame length resource exhaustion",
+        "decompression size exhaustion"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0142.json",
+      "guideline_group_key": "cluster_0080__mech_missing_authentication_before_privileged_action",
+      "guideline_id": "gl_mech_0142",
+      "guideline_preview": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller iden",
+      "mechanism_family": "authentication",
+      "mechanism_id": "mech_missing_authentication_before_privileged_action",
+      "mechanism_name": "missing authentication before privileged action",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        80
+      ],
+      "top_tags": [
+        "authentication",
+        "mech_missing_authentication_before_privileged_action",
+        "missing authentication",
+        "unauthenticated privileged action",
+        "missing login check"
+      ]
+    },
+    {
+      "cve_count": 3,
+      "file_name": "gl_mech_0143.json",
+      "guideline_group_key": "cluster_0080__mech_object_owner_scope_missing_authz",
+      "guideline_id": "gl_mech_0143",
+      "guideline_preview": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_object_owner_scope_missing_authz",
+      "mechanism_name": "missing object-owner or tenant-scope authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        80
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_object_owner_scope_missing_authz",
+        "object ownership authorization",
+        "tenant scope check",
+        "IDOR",
+        "resource scoped authorization"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0144.json",
+      "guideline_group_key": "cluster_0080__mech_ssrf_webhook_url_fetch",
+      "guideline_id": "gl_mech_0144",
+      "guideline_preview": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host,",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_webhook_url_fetch",
+      "mechanism_name": "attacker-controlled webhook or callback URL fetch",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        80
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_webhook_url_fetch",
+        "webhook SSRF",
+        "callback URL fetch",
+        "user controlled URL fetch",
+        "outbound HTTP client SSRF"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0145.json",
+      "guideline_group_key": "cluster_0081__mech_missing_authentication_before_privileged_action",
+      "guideline_id": "gl_mech_0145",
+      "guideline_preview": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller iden",
+      "mechanism_family": "authentication",
+      "mechanism_id": "mech_missing_authentication_before_privileged_action",
+      "mechanism_name": "missing authentication before privileged action",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        81
+      ],
+      "top_tags": [
+        "authentication",
+        "mech_missing_authentication_before_privileged_action",
+        "missing authentication",
+        "unauthenticated privileged action",
+        "missing login check"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0146.json",
+      "guideline_group_key": "cluster_0081__mech_object_owner_scope_missing_authz",
+      "guideline_id": "gl_mech_0146",
+      "guideline_preview": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_object_owner_scope_missing_authz",
+      "mechanism_name": "missing object-owner or tenant-scope authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        81
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_object_owner_scope_missing_authz",
+        "object ownership authorization",
+        "tenant scope check",
+        "IDOR",
+        "resource scoped authorization"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0147.json",
+      "guideline_group_key": "cluster_0081__mech_request_body_resource_mismatch_authz",
+      "guideline_id": "gl_mech_0147",
+      "guideline_preview": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_request_body_resource_mismatch_authz",
+      "mechanism_name": "request-body resource identifiers bypass path-scoped authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        81
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_request_body_resource_mismatch_authz",
+        "path parameter authorization mismatch",
+        "request body resource mismatch",
+        "bulk operation target mismatch",
+        "namespace sync authorization bypass"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0148.json",
+      "guideline_group_key": "cluster_0082__mech_authentication_artifact_incomplete_validation",
+      "guideline_id": "gl_mech_0148",
+      "guideline_preview": "Trace externally supplied authentication artifacts such as JWTs, SAML responses, OAuth authorization codes, bearer tokens, session cookies, or client credentials into session creation, identity binding, privilege assignment, protected API a",
+      "mechanism_family": "authentication",
+      "mechanism_id": "mech_authentication_artifact_incomplete_validation",
+      "mechanism_name": "authentication artifact accepted without complete validation",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        82
+      ],
+      "top_tags": [
+        "authentication",
+        "mech_authentication_artifact_incomplete_validation",
+        "JWT validation bypass",
+        "SAML validation bypass",
+        "OAuth token validation bypass",
+        "session artifact validation bypass"
+      ]
+    },
+    {
+      "cve_count": 9,
+      "file_name": "gl_mech_0149.json",
+      "guideline_group_key": "cluster_0082__mech_missing_authentication_before_privileged_action",
+      "guideline_id": "gl_mech_0149",
+      "guideline_preview": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller iden",
+      "mechanism_family": "authentication",
+      "mechanism_id": "mech_missing_authentication_before_privileged_action",
+      "mechanism_name": "missing authentication before privileged action",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        82
+      ],
+      "top_tags": [
+        "authentication",
+        "mech_missing_authentication_before_privileged_action",
+        "missing authentication",
+        "unauthenticated privileged action",
+        "missing login check"
+      ]
+    },
+    {
+      "cve_count": 6,
+      "file_name": "gl_mech_0150.json",
+      "guideline_group_key": "cluster_0082__mech_object_owner_scope_missing_authz",
+      "guideline_id": "gl_mech_0150",
+      "guideline_preview": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_object_owner_scope_missing_authz",
+      "mechanism_name": "missing object-owner or tenant-scope authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        82
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_object_owner_scope_missing_authz",
+        "object ownership authorization",
+        "tenant scope check",
+        "IDOR",
+        "resource scoped authorization"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0151.json",
+      "guideline_group_key": "cluster_0082__mech_ssrf_webhook_url_fetch",
+      "guideline_id": "gl_mech_0151",
+      "guideline_preview": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host,",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_webhook_url_fetch",
+      "mechanism_name": "attacker-controlled webhook or callback URL fetch",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        82
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_webhook_url_fetch",
+        "webhook SSRF",
+        "callback URL fetch",
+        "user controlled URL fetch",
+        "outbound HTTP client SSRF"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0152.json",
+      "guideline_group_key": "cluster_0083__mech_authentication_artifact_incomplete_validation",
+      "guideline_id": "gl_mech_0152",
+      "guideline_preview": "Trace externally supplied authentication artifacts such as JWTs, SAML responses, OAuth authorization codes, bearer tokens, session cookies, or client credentials into session creation, identity binding, privilege assignment, protected API a",
+      "mechanism_family": "authentication",
+      "mechanism_id": "mech_authentication_artifact_incomplete_validation",
+      "mechanism_name": "authentication artifact accepted without complete validation",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        83
+      ],
+      "top_tags": [
+        "authentication",
+        "mech_authentication_artifact_incomplete_validation",
+        "JWT validation bypass",
+        "SAML validation bypass",
+        "OAuth token validation bypass",
+        "session artifact validation bypass"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0153.json",
+      "guideline_group_key": "cluster_0083__mech_missing_authentication_before_privileged_action",
+      "guideline_id": "gl_mech_0153",
+      "guideline_preview": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller iden",
+      "mechanism_family": "authentication",
+      "mechanism_id": "mech_missing_authentication_before_privileged_action",
+      "mechanism_name": "missing authentication before privileged action",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        83
+      ],
+      "top_tags": [
+        "authentication",
+        "mech_missing_authentication_before_privileged_action",
+        "missing authentication",
+        "unauthenticated privileged action",
+        "missing login check"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0154.json",
+      "guideline_group_key": "cluster_0083__mech_request_body_resource_mismatch_authz",
+      "guideline_id": "gl_mech_0154",
+      "guideline_preview": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_request_body_resource_mismatch_authz",
+      "mechanism_name": "request-body resource identifiers bypass path-scoped authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        83
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_request_body_resource_mismatch_authz",
+        "path parameter authorization mismatch",
+        "request body resource mismatch",
+        "bulk operation target mismatch",
+        "namespace sync authorization bypass"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0155.json",
+      "guideline_group_key": "cluster_0083__mech_ssrf_redirect_following_client",
+      "guideline_id": "gl_mech_0155",
+      "guideline_preview": "Trace attacker-controlled URLs or server-controlled redirect responses into HTTP clients that automatically follow redirects or reuse a previously validated URL decision. Report code paths where the final redirected scheme, host, port, and",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_redirect_following_client",
+      "mechanism_name": "SSRF through redirect-following client",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        83
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_redirect_following_client",
+        "redirect-follow SSRF",
+        "HTTP redirect SSRF",
+        "Location header SSRF"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0156.json",
+      "guideline_group_key": "cluster_0083__mech_ssrf_webhook_url_fetch",
+      "guideline_id": "gl_mech_0156",
+      "guideline_preview": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host,",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_webhook_url_fetch",
+      "mechanism_name": "attacker-controlled webhook or callback URL fetch",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        83
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_webhook_url_fetch",
+        "webhook SSRF",
+        "callback URL fetch",
+        "user controlled URL fetch",
+        "outbound HTTP client SSRF"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0157.json",
+      "guideline_group_key": "cluster_0084__mech_open_redirect_unsafe_uri_scheme",
+      "guideline_id": "gl_mech_0157",
+      "guideline_preview": "Trace attacker-controlled redirect targets, callback URLs, return URLs, OAuth redirect_uri values, or browser navigation destinations into redirect responses, Location headers, OAuth/OIDC/SAML redirect validation, or browser-followed naviga",
+      "mechanism_family": "open_redirect",
+      "mechanism_id": "mech_open_redirect_unsafe_uri_scheme",
+      "mechanism_name": "open redirect through unsafe URI scheme validation",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        84
+      ],
+      "top_tags": [
+        "open_redirect",
+        "mech_open_redirect_unsafe_uri_scheme",
+        "unsafe redirect URI scheme",
+        "javascript URI redirect",
+        "data URI redirect",
+        "redirect_uri scheme bypass"
+      ]
+    },
+    {
+      "cve_count": 3,
+      "file_name": "gl_mech_0158.json",
+      "guideline_group_key": "cluster_0084__mech_ssrf_redirect_following_client",
+      "guideline_id": "gl_mech_0158",
+      "guideline_preview": "Trace attacker-controlled URLs or server-controlled redirect responses into HTTP clients that automatically follow redirects or reuse a previously validated URL decision. Report code paths where the final redirected scheme, host, port, and",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_redirect_following_client",
+      "mechanism_name": "SSRF through redirect-following client",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        84
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_redirect_following_client",
+        "redirect-follow SSRF",
+        "HTTP redirect SSRF",
+        "Location header SSRF"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0159.json",
+      "guideline_group_key": "cluster_0084__mech_ssrf_webhook_url_fetch",
+      "guideline_id": "gl_mech_0159",
+      "guideline_preview": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host,",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_webhook_url_fetch",
+      "mechanism_name": "attacker-controlled webhook or callback URL fetch",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        84
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_webhook_url_fetch",
+        "webhook SSRF",
+        "callback URL fetch",
+        "user controlled URL fetch",
+        "outbound HTTP client SSRF"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0160.json",
+      "guideline_group_key": "cluster_0085__mech_object_owner_scope_missing_authz",
+      "guideline_id": "gl_mech_0160",
+      "guideline_preview": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_object_owner_scope_missing_authz",
+      "mechanism_name": "missing object-owner or tenant-scope authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        85
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_object_owner_scope_missing_authz",
+        "object ownership authorization",
+        "tenant scope check",
+        "IDOR",
+        "resource scoped authorization"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0161.json",
+      "guideline_group_key": "cluster_0085__mech_request_body_resource_mismatch_authz",
+      "guideline_id": "gl_mech_0161",
+      "guideline_preview": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_request_body_resource_mismatch_authz",
+      "mechanism_name": "request-body resource identifiers bypass path-scoped authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        85
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_request_body_resource_mismatch_authz",
+        "path parameter authorization mismatch",
+        "request body resource mismatch",
+        "bulk operation target mismatch",
+        "namespace sync authorization bypass"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0162.json",
+      "guideline_group_key": "cluster_0087__mech_authentication_artifact_incomplete_validation",
+      "guideline_id": "gl_mech_0162",
+      "guideline_preview": "Trace externally supplied authentication artifacts such as JWTs, SAML responses, OAuth authorization codes, bearer tokens, session cookies, or client credentials into session creation, identity binding, privilege assignment, protected API a",
+      "mechanism_family": "authentication",
+      "mechanism_id": "mech_authentication_artifact_incomplete_validation",
+      "mechanism_name": "authentication artifact accepted without complete validation",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        87
+      ],
+      "top_tags": [
+        "authentication",
+        "mech_authentication_artifact_incomplete_validation",
+        "JWT validation bypass",
+        "SAML validation bypass",
+        "OAuth token validation bypass",
+        "session artifact validation bypass"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0163.json",
+      "guideline_group_key": "cluster_0088__mech_ssrf_webhook_url_fetch",
+      "guideline_id": "gl_mech_0163",
+      "guideline_preview": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host,",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_webhook_url_fetch",
+      "mechanism_name": "attacker-controlled webhook or callback URL fetch",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        88
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_webhook_url_fetch",
+        "webhook SSRF",
+        "callback URL fetch",
+        "user controlled URL fetch",
+        "outbound HTTP client SSRF"
+      ]
+    },
+    {
+      "cve_count": 3,
+      "file_name": "gl_mech_0164.json",
+      "guideline_group_key": "cluster_0089__mech_authentication_artifact_incomplete_validation",
+      "guideline_id": "gl_mech_0164",
+      "guideline_preview": "Trace externally supplied authentication artifacts such as JWTs, SAML responses, OAuth authorization codes, bearer tokens, session cookies, or client credentials into session creation, identity binding, privilege assignment, protected API a",
+      "mechanism_family": "authentication",
+      "mechanism_id": "mech_authentication_artifact_incomplete_validation",
+      "mechanism_name": "authentication artifact accepted without complete validation",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        89
+      ],
+      "top_tags": [
+        "authentication",
+        "mech_authentication_artifact_incomplete_validation",
+        "JWT validation bypass",
+        "SAML validation bypass",
+        "OAuth token validation bypass",
+        "session artifact validation bypass"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0165.json",
+      "guideline_group_key": "cluster_0089__mech_ssrf_webhook_url_fetch",
+      "guideline_id": "gl_mech_0165",
+      "guideline_preview": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host,",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_webhook_url_fetch",
+      "mechanism_name": "attacker-controlled webhook or callback URL fetch",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        89
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_webhook_url_fetch",
+        "webhook SSRF",
+        "callback URL fetch",
+        "user controlled URL fetch",
+        "outbound HTTP client SSRF"
+      ]
+    },
+    {
+      "cve_count": 5,
+      "file_name": "gl_mech_0166.json",
+      "guideline_group_key": "cluster_0092__mech_object_owner_scope_missing_authz",
+      "guideline_id": "gl_mech_0166",
+      "guideline_preview": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_object_owner_scope_missing_authz",
+      "mechanism_name": "missing object-owner or tenant-scope authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        92
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_object_owner_scope_missing_authz",
+        "object ownership authorization",
+        "tenant scope check",
+        "IDOR",
+        "resource scoped authorization"
+      ]
+    },
+    {
+      "cve_count": 4,
+      "file_name": "gl_mech_0167.json",
+      "guideline_group_key": "cluster_0092__mech_request_body_resource_mismatch_authz",
+      "guideline_id": "gl_mech_0167",
+      "guideline_preview": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_request_body_resource_mismatch_authz",
+      "mechanism_name": "request-body resource identifiers bypass path-scoped authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        92
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_request_body_resource_mismatch_authz",
+        "path parameter authorization mismatch",
+        "request body resource mismatch",
+        "bulk operation target mismatch",
+        "namespace sync authorization bypass"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0168.json",
+      "guideline_group_key": "cluster_0092__mech_ssrf_webhook_url_fetch",
+      "guideline_id": "gl_mech_0168",
+      "guideline_preview": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host,",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_webhook_url_fetch",
+      "mechanism_name": "attacker-controlled webhook or callback URL fetch",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        92
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_webhook_url_fetch",
+        "webhook SSRF",
+        "callback URL fetch",
+        "user controlled URL fetch",
+        "outbound HTTP client SSRF"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0169.json",
+      "guideline_group_key": "cluster_0093__mech_missing_authentication_before_privileged_action",
+      "guideline_id": "gl_mech_0169",
+      "guideline_preview": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller iden",
+      "mechanism_family": "authentication",
+      "mechanism_id": "mech_missing_authentication_before_privileged_action",
+      "mechanism_name": "missing authentication before privileged action",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        93
+      ],
+      "top_tags": [
+        "authentication",
+        "mech_missing_authentication_before_privileged_action",
+        "missing authentication",
+        "unauthenticated privileged action",
+        "missing login check"
+      ]
+    },
+    {
+      "cve_count": 6,
+      "file_name": "gl_mech_0170.json",
+      "guideline_group_key": "cluster_0093__mech_object_owner_scope_missing_authz",
+      "guideline_id": "gl_mech_0170",
+      "guideline_preview": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_object_owner_scope_missing_authz",
+      "mechanism_name": "missing object-owner or tenant-scope authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        93
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_object_owner_scope_missing_authz",
+        "object ownership authorization",
+        "tenant scope check",
+        "IDOR",
+        "resource scoped authorization"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0171.json",
+      "guideline_group_key": "cluster_0093__mech_request_body_resource_mismatch_authz",
+      "guideline_id": "gl_mech_0171",
+      "guideline_preview": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_request_body_resource_mismatch_authz",
+      "mechanism_name": "request-body resource identifiers bypass path-scoped authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        93
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_request_body_resource_mismatch_authz",
+        "path parameter authorization mismatch",
+        "request body resource mismatch",
+        "bulk operation target mismatch",
+        "namespace sync authorization bypass"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0172.json",
+      "guideline_group_key": "cluster_0093__mech_sql_dynamic_query_untrusted_fragment",
+      "guideline_id": "gl_mech_0172",
+      "guideline_preview": "Trace attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values into SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters. Report code path",
+      "mechanism_family": "sql_injection",
+      "mechanism_id": "mech_sql_dynamic_query_untrusted_fragment",
+      "mechanism_name": "dynamic SQL query construction from untrusted fragments",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        93
+      ],
+      "top_tags": [
+        "sql_injection",
+        "mech_sql_dynamic_query_untrusted_fragment",
+        "SQL injection",
+        "SQL concatenation",
+        "dynamic SQL injection",
+        "untrusted query fragment"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0173.json",
+      "guideline_group_key": "cluster_0094__mech_ssrf_redirect_following_client",
+      "guideline_id": "gl_mech_0173",
+      "guideline_preview": "Trace attacker-controlled URLs or server-controlled redirect responses into HTTP clients that automatically follow redirects or reuse a previously validated URL decision. Report code paths where the final redirected scheme, host, port, and",
+      "mechanism_family": "ssrf",
+      "mechanism_id": "mech_ssrf_redirect_following_client",
+      "mechanism_name": "SSRF through redirect-following client",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        94
+      ],
+      "top_tags": [
+        "ssrf",
+        "mech_ssrf_redirect_following_client",
+        "redirect-follow SSRF",
+        "HTTP redirect SSRF",
+        "Location header SSRF"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0174.json",
+      "guideline_group_key": "cluster_0095__mech_authentication_artifact_incomplete_validation",
+      "guideline_id": "gl_mech_0174",
+      "guideline_preview": "Trace externally supplied authentication artifacts such as JWTs, SAML responses, OAuth authorization codes, bearer tokens, session cookies, or client credentials into session creation, identity binding, privilege assignment, protected API a",
+      "mechanism_family": "authentication",
+      "mechanism_id": "mech_authentication_artifact_incomplete_validation",
+      "mechanism_name": "authentication artifact accepted without complete validation",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        95
+      ],
+      "top_tags": [
+        "authentication",
+        "mech_authentication_artifact_incomplete_validation",
+        "JWT validation bypass",
+        "SAML validation bypass",
+        "OAuth token validation bypass",
+        "session artifact validation bypass"
+      ]
+    },
+    {
+      "cve_count": 1,
+      "file_name": "gl_mech_0175.json",
+      "guideline_group_key": "cluster_0095__mech_missing_authentication_before_privileged_action",
+      "guideline_id": "gl_mech_0175",
+      "guideline_preview": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller iden",
+      "mechanism_family": "authentication",
+      "mechanism_id": "mech_missing_authentication_before_privileged_action",
+      "mechanism_name": "missing authentication before privileged action",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        95
+      ],
+      "top_tags": [
+        "authentication",
+        "mech_missing_authentication_before_privileged_action",
+        "missing authentication",
+        "unauthenticated privileged action",
+        "missing login check"
+      ]
+    },
+    {
+      "cve_count": 2,
+      "file_name": "gl_mech_0176.json",
+      "guideline_group_key": "cluster_0096__mech_object_owner_scope_missing_authz",
+      "guideline_id": "gl_mech_0176",
+      "guideline_preview": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_object_owner_scope_missing_authz",
+      "mechanism_name": "missing object-owner or tenant-scope authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        96
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_object_owner_scope_missing_authz",
+        "object ownership authorization",
+        "tenant scope check",
+        "IDOR",
+        "resource scoped authorization"
+      ]
+    },
+    {
+      "cve_count": 5,
+      "file_name": "gl_mech_0177.json",
+      "guideline_group_key": "cluster_0096__mech_request_body_resource_mismatch_authz",
+      "guideline_id": "gl_mech_0177",
+      "guideline_preview": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those",
+      "mechanism_family": "authorization",
+      "mechanism_id": "mech_request_body_resource_mismatch_authz",
+      "mechanism_name": "request-body resource identifiers bypass path-scoped authorization",
+      "member_support_rate": 1.0,
+      "release_blockers": [],
+      "release_ready": true,
+      "source_cluster_ids": [
+        96
+      ],
+      "top_tags": [
+        "authorization",
+        "mech_request_body_resource_mismatch_authz",
+        "path parameter authorization mismatch",
+        "request body resource mismatch",
+        "bulk operation target mismatch",
+        "namespace sync authorization bypass"
+      ]
+    }
+  ],
+  "summary": {
+    "active_attribution_count": 360,
+    "created_at": "2026-08-22T22:57:05+00:00",
+    "files": {
+      "guideline_overrides": "guideline_overrides.jsonl",
+      "index": "index.json",
+      "mechanism_candidates": "mechanism_candidates.jsonl",
+      "review_queue": "review_queue.jsonl"
+    },
+    "group_scope": "cluster-mechanism",
+    "guideline_count": 177,
+    "override_count": 189,
+    "pending_guidelines_included": false,
+    "pending_overrides_included": false,
+    "pending_review_count": 386,
+    "release_ready_guideline_count": 177,
+    "review_only_guideline_count": 0,
+    "review_queue_count": 386,
+    "schema_version": "hcvr_mechanism_guideline_release.v1",
+    "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+    "source_method": "traditional",
+    "work_item_count": 746
+  }
+}

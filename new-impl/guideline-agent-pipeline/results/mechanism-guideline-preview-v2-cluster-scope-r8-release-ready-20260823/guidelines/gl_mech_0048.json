@@ -1,0 +1,82 @@
+{
+  "cluster_summary": "This cluster covers vulnerabilities where user-supplied data is used to construct database connection URLs, load classes, or configure resources without adequate validation, allowing attackers to inject dangerous parameters, load arbitrary classes, or trigger deserialization and SSRF. The fixes involve adding blacklists, encoding, type checks, or prefix validation.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2024-57971",
+    "CVE-2025-57773",
+    "CVE-2025-58045",
+    "CVE-2025-58046",
+    "CVE-2026-27830"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0027__mech_jndi_untrusted_lookup_target",
+  "guideline_id": "gl_mech_0048",
+  "guideline_text": "Trace attacker-controlled names, URLs, headers, configuration values, or lookup keys into JNDI, LDAP, RMI, naming-context, or remote lookup APIs. Report code paths where the lookup scheme, authority, object factory, object type, and network destination are not constrained before lookup. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 5 historical CVE example(s), not as a project-specific signature. A safe implementation should bind lookup inputs to trusted constants or allowlists, restrict schemes and destinations, and disable remote object factories.",
+  "mechanism": {
+    "aliases": [
+      "JNDI lookup",
+      "LDAP lookup",
+      "RMI lookup",
+      "InitialContext.lookup",
+      "naming context lookup"
+    ],
+    "family": "remote_lookup_or_ssrf",
+    "mechanism_id": "mech_jndi_untrusted_lookup_target",
+    "missing_guard": "the lookup scheme, authority, object factory, object type, and network destination are not constrained before lookup",
+    "name": "attacker-controlled JNDI lookup target",
+    "required_keywords": [],
+    "sink_shape": "JNDI, LDAP, RMI, naming-context, or remote lookup APIs",
+    "source_shape": "attacker-controlled names, URLs, headers, configuration values, or lookup keys",
+    "typical_fix": "bind lookup inputs to trusted constants or allowlists, restrict schemes and destinations, and disable remote object factories"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 3,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 5,
+    "total_member_count": 5,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2024-57971",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    27
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 27,
+      "fix_strategy": "Add a blacklist for JNDI dangerous strings (rmi, ldap, etc.) or enforce an allowed JNDI name prefix (e.g., 'java:comp/env/jdbc/').",
+      "members": [
+        "CVE-2024-57971",
+        "CVE-2025-58046",
+        "CVE-2025-58045",
+        "CVE-2025-57773"
+      ],
+      "name": "JNDI injection via JDBC URL or JNDI name",
+      "root_cause": "Missing validation for JNDI-related prefixes (e.g., rmi, ldap) in JDBC URL parameters or missing enforcement of allowed JNDI name prefixes, allowing attackers to trigger JNDI lookups and deserialization."
+    },
+    {
+      "cluster_id": 27,
+      "fix_strategy": "Replace hex-encoded Java serialization with a safer format (e.g., CSV) that does not involve deserialization, and restrict JNDI remote class loading.",
+      "members": [
+        "CVE-2026-27830"
+      ],
+      "name": "Deserialization of untrusted serialized objects from config property",
+      "root_cause": "Untrusted input (a property string) is deserialized using Java native deserialization without any validation, allowing arbitrary class instantiation."
+    }
+  ],
+  "tags": [
+    "remote_lookup_or_ssrf",
+    "mech_jndi_untrusted_lookup_target",
+    "JNDI lookup",
+    "LDAP lookup",
+    "RMI lookup",
+    "InitialContext.lookup"
+  ]
+}

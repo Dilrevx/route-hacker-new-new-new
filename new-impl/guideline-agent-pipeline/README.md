@@ -236,10 +236,13 @@ has at least one phrase present in the CVE evidence text. Use it to prevent
 generic terms such as `filter`, `escape`, or `length` from pulling unrelated
 clusters into LDAP, SQL, or binary-length mechanisms. Do not use it as an
 online source-code scanner or as a hidden case-specific fallback.
-By default, `pending_review` guidelines stay in the release for human and
-LLM-as-judge review but are excluded from `guideline_overrides.jsonl`, because
-they are not yet stable retrieval queries. Use `--include-pending-overrides`
-only for an explicit ablation that measures the cost of letting unresolved
+By default, `pending_review` work items are not written into `guidelines/`,
+`index.json`, or `guideline_overrides.jsonl`. They remain visible in
+`mechanism_candidates.jsonl` and `review_queue.jsonl` for human and
+TraeX LLM-as-judge review, because they are not yet stable retrieval queries.
+Use `--include-pending-guidelines` only when building a review ablation that
+needs pending rows inside `index.json`; use `--include-pending-overrides` only
+for an explicit ablation that measures the cost of letting unresolved
 guidelines enter recall.
 
 Committed preview outputs:
@@ -347,6 +350,7 @@ python new-impl/guideline-agent-pipeline/scripts/evaluate_guideline_groups.py \
   --output-dir new-impl/guideline-agent-pipeline/results/guideline-v2-r3-group-eval-20260823 \
   --judge-pack-dir new-impl/guideline-agent-pipeline/results/guideline-v2-r3-group-eval-20260823/llm_judge_pack \
   --judge-rubric new-impl/guideline-agent-pipeline/guidelines/judge_rubric.v1.md \
+  --include-review-queue \
   --judge-group-filter balanced \
   --judge-max-groups 20
 ```
@@ -365,6 +369,10 @@ Outputs:
     prompts/
     run_traex_judge.sh
 ```
+
+Without `--include-review-queue`, the structural report evaluates only released
+guidelines in `index.json`. Add `--include-review-queue` when the purpose is
+semantic triage and TraeX should also review withheld pending candidates.
 
 The LLM judge prompt asks for JSON with `accept`, `revise`, `split`, `merge`,
 or `needs_evidence`. The target is semantic guideline quality: whether the
@@ -482,6 +490,28 @@ This is a quality-control improvement, not a recall improvement claim: it
 reduces wrong-mechanism mixing and surfaces thin evidence as pending work, while
 showing that the next bottleneck is still source/sink/guard evidence collection
 and specific wording for pending groups.
+
+The next generator policy tightens the release boundary: only `release_ready`
+guidelines enter `guidelines/`, `index.json`, and the recall sidecar by default.
+Rows with unresolved mechanism evidence are written to `review_queue.jsonl`
+instead. This keeps TraeX LLM-as-judge focused on semantic review material
+without letting low-evidence candidates silently become retrieval queries.
+
+The r8 release-ready run applies that boundary on the same combined input:
+`results/mechanism-guideline-preview-v2-cluster-scope-r8-release-ready-20260823/`
+contains 177 released guidelines, 386 review-queue rows, 746 total mechanism
+candidate rows, and 189 recall sidecar rows. The released-only structural eval
+is under
+`results/guideline-v2-r8-release-ready-released-only-eval-20260823/`: 177
+released guidelines, 56 groups joined to unified case metadata, weighted HCVR
+purity 0.8307, and weighted CWE purity 0.9171. The review-inclusive semantic
+triage eval is under
+`results/guideline-v2-r8-release-ready-group-eval-20260823/`: it sees the same
+563 reviewable rows as r7, marks 386 as `review_only`, and emits a balanced
+20-item TraeX judge pack with 4 evidence-limited, 4 label-mixed, 4 clean
+control, 4 small-group, and 4 source-only examples. Treat this as a release
+hygiene improvement; recall numbers remain the previously recorded full143 r7
+P3C64 same-identity result until a fresh r8 recall run is executed.
 
 Build a cautious experiment scorecard when reporting a guideline iteration:
 

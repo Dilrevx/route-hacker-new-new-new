@@ -1,0 +1,65 @@
+{
+  "cluster_summary": "This cluster contains 40 authentication/authorization vulnerabilities where the root cause is either a missing authorization check in a specific code path, improper scope assignment or propagation, flawed token/credential validation or lifecycle management, or insufficient validation of client-supplied data used in authorization decisions. Two outliers involve business logic flaws in resource limits and state management rather than direct authorization bypasses.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2026-45002"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0082__mech_ssrf_webhook_url_fetch",
+  "guideline_id": "gl_mech_0151",
+  "guideline_text": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets.",
+  "mechanism": {
+    "aliases": [
+      "webhook SSRF",
+      "callback URL fetch",
+      "user controlled URL fetch",
+      "outbound HTTP client SSRF"
+    ],
+    "family": "ssrf",
+    "mechanism_id": "mech_ssrf_webhook_url_fetch",
+    "missing_guard": "scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request",
+    "name": "attacker-controlled webhook or callback URL fetch",
+    "required_keywords": [],
+    "sink_shape": "outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers",
+    "source_shape": "attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations",
+    "typical_fix": "enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 2,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 1,
+    "total_member_count": 1,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2026-45002",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    82
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 82,
+      "fix_strategy": "Sanitize or validate client-supplied data before using it in authorization logic; remove or reject client-supplied authorization-related fields; enforce server-side computation of authorization tokens.",
+      "members": [
+        "CVE-2026-45002"
+      ],
+      "name": "Insufficient validation of client-supplied data for authorization decisions",
+      "root_cause": "User-controlled input (parameters, metadata, template output, token claims) was trusted without sanitization or validation, allowing attackers to inject authorization decisions."
+    }
+  ],
+  "tags": [
+    "ssrf",
+    "mech_ssrf_webhook_url_fetch",
+    "webhook SSRF",
+    "callback URL fetch",
+    "user controlled URL fetch",
+    "outbound HTTP client SSRF"
+  ]
+}

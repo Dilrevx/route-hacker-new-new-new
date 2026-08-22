@@ -1,0 +1,111 @@
+{
+  "cluster_summary": "This cluster encompasses vulnerabilities in tar and zip archive extraction where insufficient validation of member paths, link targets, header fields, and resource limits allows path traversal, arbitrary file writes, denial of service, or race conditions. The flaws commonly arise from missing canonicalization (e.g., os.path.realpath, os.path.normpath), flawed base directory comparison logic, or incomplete input sanitization.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2024-12718",
+    "CVE-2025-15036",
+    "CVE-2025-4435",
+    "CVE-2026-32044",
+    "CVE-2026-40491"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0006__mech_archive_symlink_extraction_escape",
+  "guideline_id": "gl_mech_0013",
+  "guideline_text": "Trace attacker-controlled archive entries, symlink entries, link targets, or extraction order into archive extraction code that creates links, opens output files, or writes entry contents into the extraction tree. Report code paths where later writes can follow an existing or archive-created symbolic link outside the extraction root despite lexical or canonical path containment checks. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 5 historical CVE example(s), not as a project-specific signature. A safe implementation should reject unsafe symlink targets, use no-follow or race-safe filesystem operations for writes, and validate the final opened target remains inside the extraction root.",
+  "mechanism": {
+    "aliases": [
+      "archive symlink traversal",
+      "symlink overwrite during extraction",
+      "tar symlink escape",
+      "zip symlink escape"
+    ],
+    "family": "filesystem",
+    "mechanism_id": "mech_archive_symlink_extraction_escape",
+    "missing_guard": "later writes can follow an existing or archive-created symbolic link outside the extraction root despite lexical or canonical path containment checks",
+    "name": "archive extraction escape through symlink-following writes",
+    "required_keywords": [
+      [
+        "archive",
+        "zip",
+        "tar",
+        "extract",
+        "extraction"
+      ],
+      [
+        "symlink",
+        "symbolic link",
+        "link target",
+        "nofollow"
+      ]
+    ],
+    "sink_shape": "archive extraction code that creates links, opens output files, or writes entry contents into the extraction tree",
+    "source_shape": "attacker-controlled archive entries, symlink entries, link targets, or extraction order",
+    "typical_fix": "reject unsafe symlink targets, use no-follow or race-safe filesystem operations for writes, and validate the final opened target remains inside the extraction root"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 4,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 5,
+    "total_member_count": 5,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2024-12718",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    6
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 6,
+      "fix_strategy": "Canonicalize both the extraction directory and the resolved member path using os.path.realpath or os.path.normpath, then verify the member path starts with the canonical base directory.",
+      "members": [
+        "CVE-2025-15036",
+        "CVE-2026-40491"
+      ],
+      "name": "Missing path canonicalization before extraction (zip/tar slip)",
+      "root_cause": "Code does not canonicalize member paths or link targets before constructing the destination path, allowing path traversal via '..' sequences or absolute paths."
+    },
+    {
+      "cluster_id": 6,
+      "fix_strategy": "Re-apply the extraction filter when fixing directory attributes; skip fixup if the directory has been removed or replaced by a symlink.",
+      "members": [
+        "CVE-2024-12718"
+      ],
+      "name": "Post-extraction symlink race on attribute fixup",
+      "root_cause": "After archive members are extracted, modifications of attributes (timestamps, permissions) follow symlinks without re-validating the target path against the allow-list."
+    },
+    {
+      "cluster_id": 6,
+      "fix_strategy": "After catching the filter exception, check errorlevel: if 0, skip the member instead of proceeding with extraction.",
+      "members": [
+        "CVE-2025-4435"
+      ],
+      "name": "Filter bypass due to errorlevel suppression",
+      "root_cause": "When an extraction filter rejects a member, the exception is caught but extraction continues if TarFile.errorlevel is 0, bypassing the filter."
+    },
+    {
+      "cluster_id": 6,
+      "fix_strategy": "Validate archive metadata (member count, sizes, compression ratio) before extraction; reject non-regular file types and enforce size limits.",
+      "members": [
+        "CVE-2026-32044"
+      ],
+      "name": "Resource exhaustion due to missing limits on archive contents",
+      "root_cause": "No enforcement of limits on member count, individual/total size, compression ratio, or dangerous entry types (FIFO, devices), allowing crafted archives to exhaust resources."
+    }
+  ],
+  "tags": [
+    "filesystem",
+    "mech_archive_symlink_extraction_escape",
+    "archive symlink traversal",
+    "symlink overwrite during extraction",
+    "tar symlink escape",
+    "zip symlink escape"
+  ]
+}

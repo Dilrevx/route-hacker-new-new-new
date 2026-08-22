@@ -206,6 +206,55 @@ def test_evaluate_release_excludes_source_only_groups_from_purity(tmp_path: Path
     assert source_only["flags"] == ["source_only_no_case_metadata"]
 
 
+def test_review_queue_is_only_evaluated_when_requested(tmp_path: Path):
+    module = load_module()
+    cases_file = tmp_path / "cases.jsonl"
+    write_jsonl(cases_file, [case("case-a", "CVE-1", "authorization_bypass", ["CWE-862"])])
+    release = build_release(tmp_path, [], [])
+    write_jsonl(
+        release / "review_queue.jsonl",
+        [
+            {
+                "review_id": "review_mech_0001",
+                "guideline_group_key": "cluster_0001__pending_mech_parser_state",
+                "guideline_text": "Trace parser state into privileged parser transitions.",
+                "mechanism": {
+                    "mechanism_id": "pending_mech_parser_state",
+                    "name": "parser state confusion",
+                    "family": "pending_review",
+                    "source_shape": "attacker-controlled parser state",
+                    "sink_shape": "privileged parser transition",
+                    "missing_guard": "state validation is not enforced",
+                    "typical_fix": "validate parser state before transition",
+                },
+                "cve_ids": ["CVE-1"],
+                "release_status": {"release_ready": False, "status": "review_only"},
+            }
+        ],
+    )
+
+    summary_without_queue, rows_without_queue, _ = module.evaluate_release(
+        release_dir=release,
+        cases_file=cases_file,
+        min_purity=0.67,
+        singleton_soft_cap=1,
+    )
+    summary_with_queue, rows_with_queue, _ = module.evaluate_release(
+        release_dir=release,
+        cases_file=cases_file,
+        min_purity=0.67,
+        singleton_soft_cap=1,
+        include_review_queue=True,
+    )
+
+    assert summary_without_queue["guideline_count"] == 0
+    assert rows_without_queue == []
+    assert summary_with_queue["guideline_count"] == 1
+    assert summary_with_queue["include_review_queue"] is True
+    assert rows_with_queue[0]["guideline_id"] == "review_mech_0001"
+    assert rows_with_queue[0]["flags"] == ["small_group", "pending_review", "review_only"]
+
+
 def test_write_judge_pack_for_flagged_groups(tmp_path: Path):
     module = load_module()
     group_rows = [

@@ -1,0 +1,94 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where user-controlled input is incorporated into LDAP search filters or distinguished names without proper escaping of special characters, allowing LDAP injection attacks. The majority of cases lack any escaping mechanism, while one case uses an inappropriate encoding (DN encoding) that fails to neutralize filter metacharacters. Two outliers involve unrelated vulnerabilities: credential leakage in logs and unbounded recursion in alias resolution.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2015-1169",
+    "CVE-2020-5246",
+    "CVE-2020-5281",
+    "CVE-2021-32651",
+    "CVE-2022-24832",
+    "CVE-2023-33201",
+    "CVE-2026-0636",
+    "CVE-2026-25560"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0024__mech_ldap_filter_unescaped_input",
+  "guideline_id": "gl_mech_0045",
+  "guideline_text": "Trace attacker-controlled usernames, account names, directory attributes, filter fragments, distinguished names, or LDAP query parameters into LDAP search filters, distinguished-name construction, directory queries, or LDAP bind/search operations. Report code paths where LDAP metacharacters and distinguished-name syntax are not escaped or parameterized for the exact LDAP context before the query. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 8 historical CVE example(s), not as a project-specific signature. A safe implementation should use context-specific LDAP filter or DN escaping, parameterized filter construction where available, and allowlist structural query fragments.",
+  "mechanism": {
+    "aliases": [
+      "LDAP injection",
+      "LDAP filter injection",
+      "distinguished name injection",
+      "unescaped LDAP filter"
+    ],
+    "family": "directory_query_injection",
+    "mechanism_id": "mech_ldap_filter_unescaped_input",
+    "missing_guard": "LDAP metacharacters and distinguished-name syntax are not escaped or parameterized for the exact LDAP context before the query",
+    "name": "LDAP filter or distinguished-name injection through unescaped input",
+    "required_keywords": [
+      [
+        "ldap",
+        "dircontext",
+        "ldapsearch",
+        "distinguished name"
+      ]
+    ],
+    "sink_shape": "LDAP search filters, distinguished-name construction, directory queries, or LDAP bind/search operations",
+    "source_shape": "attacker-controlled usernames, account names, directory attributes, filter fragments, distinguished names, or LDAP query parameters",
+    "typical_fix": "use context-specific LDAP filter or DN escaping, parameterized filter construction where available, and allowlist structural query fragments"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 4,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 8,
+    "total_member_count": 8,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2015-1169",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    24
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 24,
+      "fix_strategy": "Replace DN encoding with filter-specific encoding (LdapEncoder.filterEncode) to properly escape LDAP filter special characters.",
+      "members": [
+        "CVE-2015-1169"
+      ],
+      "name": "Misapplied encoding (DN encoding used instead of filter encoding)",
+      "root_cause": "The code uses DN-specific encoding (LdapEncoder.nameEncode) to sanitize user input before inserting into an LDAP filter string. This encoding does not escape filter metacharacters like '*' and parentheses."
+    },
+    {
+      "cluster_id": 24,
+      "fix_strategy": "Apply an appropriate LDAP escaping function (e.g., hex-encoding according to RFC2254 or using a library like FilterEncoder) to all user-controlled values before inserting them into the filter or DN string. Ensure centralized, consistent escaping across all call sites.",
+      "members": [
+        "CVE-2020-5246",
+        "CVE-2020-5281",
+        "CVE-2021-32651",
+        "CVE-2022-24832",
+        "CVE-2023-33201",
+        "CVE-2026-0636",
+        "CVE-2026-25560"
+      ],
+      "name": "Absent LDAP special character escaping in filter/DN construction",
+      "root_cause": "User-supplied input is directly concatenated or substituted into LDAP filter strings or DN components without any escaping of LDAP special characters (such as '(', ')', '*', backslash, null). The code assumes the input is safe, but it can contain characters that alter the filter logic."
+    }
+  ],
+  "tags": [
+    "directory_query_injection",
+    "mech_ldap_filter_unescaped_input",
+    "LDAP injection",
+    "LDAP filter injection",
+    "distinguished name injection",
+    "unescaped LDAP filter"
+  ]
+}
