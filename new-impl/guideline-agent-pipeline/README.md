@@ -513,6 +513,20 @@ control, 4 small-group, and 4 source-only examples. Treat this as a release
 hygiene improvement; recall numbers remain the previously recorded full143 r7
 P3C64 same-identity result until a fresh r8 recall run is executed.
 
+The r8 TraeX judge run is committed under
+`results/guideline-v2-r8-release-ready-group-eval-20260823/llm_judge_pack/`.
+It parsed all 20 outputs with no missing or invalid files and returned
+`accept=2`, `revise=5`, `split=3`, `needs_evidence=10`, and low-score
+`14/20`. The judge-only revision backlog is under
+`llm_judge_pack/revision_backlog_judge_only/`. Its recommended actions are:
+10 `collect_source_sink_guard_evidence`, 5
+`revise_mechanism_text_from_evidence`, 3 `split_mechanism_boundary`, and 2
+`keep_as_control_group`. This is semantic review evidence only. It shows that
+the release boundary is cleaner, while the next guideline-generation bottleneck
+is still member-level source/sink/guard evidence and mechanism boundary
+precision, especially for broad SSRF, XML, temporary-resource, authorization,
+and template/expression groups.
+
 Build a cautious experiment scorecard when reporting a guideline iteration:
 
 ```bash

@@ -1,0 +1,21 @@
+{
+  "decision": "revise",
+  "coherence_score": 0.72,
+  "coverage_score": 0.61,
+  "actionability_score": 0.88,
+  "retrieval_query_quality": 0.86,
+  "main_issue": "The evidenced cases coherently describe archive-entry path traversal leading to writes outside an extraction root, but the cluster summary also includes distinct infinite-loop/null-cycle failures and several listed cases lack source-to-sink evidence. The guideline should be narrowed to archive extraction and explicitly cover separator normalization and symlink-aware containment.",
+  "suggested_guideline": "During archive extraction or import, trace each attacker-controlled entry name through destination-path construction to the filesystem write, link, directory-creation, metadata, or deletion operation. Resolve the entry against the intended extraction root; normalize path separators and canonical or real paths as appropriate; then enforce containment under that root immediately before the sensitive operation. Review string-prefix checks, mixed slash/backslash inputs, absolute paths, drive-qualified paths, and pre-existing or newly created symlinks. A safe fix rejects entries whose resolved target escapes the extraction root and applies the containment check on the exact path used by the sink.",
+  "split_suggestions": [
+    "Archive-entry traversal and arbitrary file write outside the extraction root",
+    "Archive extraction denial of service from cyclic links, null handling, or unbounded extraction loops"
+  ],
+  "evidence_notes": [
+    "TestNG CVE-2022-4065 has a direct JarEntry name -> new File(tempDir, entryName) -> copyFile flow with no normalized destination containment check.",
+    "Plexus Archiver CVE-2018-1002200 resolves archive entryName directly, then creates directories, symlinks, or output files without checking that the target remains under the extraction directory.",
+    "DSpace CVE-2022-31195 provides an archive-entry extraction path and file-write anchors, but the supplied evidence stops before demonstrating the missing containment check at the exact write sink.",
+    "The Alibaba OneAgent, QTIWorks, and Goomph entries are review-entry anchors only; they do not establish the claimed mechanism from the supplied payload.",
+    "The MCPMappingViewer and TJWS2 entries provide only hunks and CWE-22 context, so their source shape and sink relationship require verification before they can support the group.",
+    "The summary's infinite-loop/cycle variants are a separate mechanism from canonical-path traversal and are not covered by the current guideline."
+  ]
+}

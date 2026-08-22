@@ -1,0 +1,20 @@
+{
+  "decision": "needs_evidence",
+  "coherence_score": 0.34,
+  "coverage_score": 0.38,
+  "actionability_score": 0.33,
+  "retrieval_query_quality": 0.22,
+  "main_issue": "The proposed mechanism is too broad and the supplied evidence only substantiates distinct authentication-state failures in two cases; it does not establish that the authorization-bypass cases, JWT/session cases, and claimed cryptographic or timing issues share one source-to-sink guard failure.",
+  "suggested_guideline": "",
+  "split_suggestions": [
+    "Authentication-state acceptance: authentication code accepts an inactive account identifier, anonymous authentication object, invalid remember-me value, expired or otherwise invalid session/token as an authenticated principal; require explicit authenticated/non-anonymous status and current account or token validity before constructing or returning the principal.",
+    "Authorization decision enforcement: an authenticated or attacker-controlled identity reaches a protected resource or operation without a resource-specific permission, tenant, audience, scope, or ownership check at the enforcement point."
+  ],
+  "evidence_notes": [
+    "AuthGuard provides concrete evidence for accepting an inactive identifier because credential validation did not confirm identifier activity before authentication.",
+    "Opencast provides concrete evidence for treating an AnonymousAuthenticationToken and attacker-controlled remember-me username as a valid user identity; the relevant guard is authenticated/non-anonymous token validation before principal construction.",
+    "The Booklore, Taier, Grassroot, Jans, and MeterSphere payloads contain anchors and broad labels but no patch semantics, source excerpts, exploit preconditions, or fix behavior sufficient to determine their mechanism.",
+    "The cluster summary mentions timing side channels, weak PRNGs, cryptographic operations, and untrusted algorithms, but no listed case evidence supports including these mechanisms in this guideline.",
+    "The generic query terms such as resource identities, configuration, isolation, state check, and binding describe many unrelated security defects and do not provide a discriminative audit path."
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "action_counts": {
+    "collect_source_sink_guard_evidence": 10,
+    "keep_as_control_group": 2,
+    "revise_mechanism_text_from_evidence": 5,
+    "split_mechanism_boundary": 3
+  },
+  "alignment_summary": {
+    "baseline_label": null,
+    "joined_recall_case_count": null,
+    "primary_budget": null,
+    "recall_case_count": null,
+    "recall_label": null,
+    "same_identity_baseline": null
+  },
+  "attention_counts": {},
+  "backlog_count": 20,
+  "decision_counts": {
+    "accept": 2,
+    "needs_evidence": 10,
+    "revise": 5,
+    "split": 3
+  },
+  "judge_summary": {
+    "accepted_count": 2,
+    "decision_counts": {
+      "accept": 2,
+      "needs_evidence": 10,
+      "revise": 5,
+      "split": 3
+    },
+    "judge_input_count": 20,
+    "low_score_count": 14,
+    "parsed_count": 20
+  },
+  "policy": [
+    "This backlog ranks review work; it does not update released guidelines.",
+    "Candidate guideline text from a judge remains review_candidate_not_release until source evidence is checked.",
+    "Recall misses on clean guideline groups should first trigger candidate slicing, query wording, or embedding inspection.",
+    "Recall deltas are paper-facing only when the compared rank tables use the same identity set."
+  ],
+  "schema_version": "hcvr_guideline_revision_backlog.v1"
+}
