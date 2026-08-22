@@ -541,6 +541,13 @@ This is not a fresh r8 recall run. A fresh same-identity recall A/B is still
 required if any consumed sidecar text, identity set, source snapshot, slicing
 logic, embedding service, adapter state, or ranking parameter changes.
 
+The current objective-level completion audit is
+`results/guideline-v2-r8-objective-audit-20260823/`. It maps the active
+requirements to concrete artifacts and marks the remaining gaps: r8 is a
+cleaner, recall-compatible release boundary, but the semantic judge sample and
+recall deltas do not yet justify calling the guideline-generation problem
+solved.
+
 Build a cautious experiment scorecard when reporting a guideline iteration:
 
 ```bash
