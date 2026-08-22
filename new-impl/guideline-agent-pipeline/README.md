@@ -29,6 +29,14 @@ Top-200 as `+10 additional recovered cases`, not as `+10 percentage points`.
 The detailed bad-case note is
 `results/p3c64-fixed143-paper-eval-20260820/bad_case_analysis.md`.
 
+Latest r7 guideline-sidecar rerun on the same 143 identities is stored in
+`results/guideline-v2-r7-full143-p3c64-20260823/`. This run keeps the same
+P3C64 query-residual backend and source snapshots, changes only the released
+guideline sidecar, and gives a conservative full143 improvement over the old
+P3C64 baseline: `+2` cases at Top-30, `+3` at Top-100, `+3` at Top-200, and
+`+3` at Top-500. Use this as guideline-generation evidence, not as the
+P3C64-vs-Qwen4B model-improvement claim.
+
 ## Files
 
 - `scripts/run_hcvr_case_anchor_audits.py`
@@ -322,6 +330,13 @@ debugging: query wording, candidate slicing, embedding backend, Top-K budget,
 or list-level fusion. Do not degrade the guideline taxonomy solely to satisfy a
 single embedding model, and do not introduce hidden regex routing or per-case
 fixes.
+
+TraeX LLM-as-a-judge belongs on the semantic-classification side of this split.
+Its rubric should ask whether a guideline names a reusable mechanism with
+coherent source, sink, missing guard, exploit precondition, and fix semantics.
+It should not score embedding rank, known-anchor hit, or Top-K recall, and its
+output should create review/backlog items rather than silently changing the
+released guideline set.
 
 Run the structural checker and emit a TraeX judge pack:
 

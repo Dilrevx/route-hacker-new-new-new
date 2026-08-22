@@ -1,0 +1,147 @@
+{
+  "budgets": [
+    30,
+    50,
+    100,
+    150,
+    200,
+    300,
+    500
+  ],
+  "candidate_count_on_common": {
+    "different_count": 0,
+    "left_total": 1094013,
+    "right_total": 1094013
+  },
+  "common_count": 143,
+  "left_count": 143,
+  "left_label": "r7-evidence-gated-full143-p3c64",
+  "left_only_count": 0,
+  "left_only_sample": [],
+  "metrics_on_common_identities": {
+    "hit_at_100": {
+      "delta_count": 3,
+      "delta_rate": 0.02097902097902098,
+      "left_count": 76,
+      "left_rate": 0.5314685314685315,
+      "right_count": 73,
+      "right_rate": 0.5104895104895105
+    },
+    "hit_at_150": {
+      "delta_count": 2,
+      "delta_rate": 0.013986013986013986,
+      "left_count": 85,
+      "left_rate": 0.5944055944055944,
+      "right_count": 83,
+      "right_rate": 0.5804195804195804
+    },
+    "hit_at_200": {
+      "delta_count": 3,
+      "delta_rate": 0.02097902097902098,
+      "left_count": 87,
+      "left_rate": 0.6083916083916084,
+      "right_count": 84,
+      "right_rate": 0.5874125874125874
+    },
+    "hit_at_30": {
+      "delta_count": 2,
+      "delta_rate": 0.013986013986013986,
+      "left_count": 47,
+      "left_rate": 0.32867132867132864,
+      "right_count": 45,
+      "right_rate": 0.3146853146853147
+    },
+    "hit_at_300": {
+      "delta_count": 5,
+      "delta_rate": 0.03496503496503497,
+      "left_count": 96,
+      "left_rate": 0.6713286713286714,
+      "right_count": 91,
+      "right_rate": 0.6363636363636364
+    },
+    "hit_at_50": {
+      "delta_count": 2,
+      "delta_rate": 0.013986013986013986,
+      "left_count": 58,
+      "left_rate": 0.40559440559440557,
+      "right_count": 56,
+      "right_rate": 0.3916083916083916
+    },
+    "hit_at_500": {
+      "delta_count": 3,
+      "delta_rate": 0.02097902097902098,
+      "left_count": 106,
+      "left_rate": 0.7412587412587412,
+      "right_count": 103,
+      "right_rate": 0.7202797202797203
+    },
+    "mrr": {
+      "delta": 0.008536312417000924,
+      "left": 0.09706409187715234,
+      "right": 0.08852777946015142
+    }
+  },
+  "primary_budget": 100,
+  "primary_budget_crossing": {
+    "both_hit_count": 72,
+    "both_miss_count": 66,
+    "left_only_hit_count": 4,
+    "left_only_hits": [
+      {
+        "cwe_ids": [],
+        "hcvr_type": "iris",
+        "identity_key": "keycloak__keycloak::CVE-2022-4361",
+        "left_candidate_count": 25428,
+        "left_rank": 25,
+        "right_candidate_count": 25428,
+        "right_rank": 2524
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "template_expression_injection",
+        "identity_key": "xwiki__xwiki-commons::CVE-2024-31996",
+        "left_candidate_count": 4878,
+        "left_rank": 40,
+        "right_candidate_count": 4878,
+        "right_rank": 150
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "ssrf",
+        "identity_key": "useplunk__plunk::CVE-2026-32096",
+        "left_candidate_count": 2105,
+        "left_rank": 43,
+        "right_candidate_count": 2105,
+        "right_rank": 106
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "template_expression_injection",
+        "identity_key": "xwiki__xwiki-rendering::CVE-2025-66474",
+        "left_candidate_count": 2254,
+        "left_rank": 71,
+        "right_candidate_count": 2254,
+        "right_rank": 248
+      }
+    ],
+    "right_only_hit_count": 1,
+    "right_only_hits": [
+      {
+        "cwe_ids": [],
+        "hcvr_type": "m9_expansion",
+        "identity_key": "code16__sharp::CVE-2026-53634",
+        "left_candidate_count": 899,
+        "left_rank": 104,
+        "right_candidate_count": 899,
+        "right_rank": 74
+      }
+    ]
+  },
+  "right_count": 143,
+  "right_label": "old-p3c64-full143-baseline",
+  "right_only_count": 0,
+  "right_only_sample": [],
+  "same_identity_order": true,
+  "same_identity_set": true,
+  "schema_version": "hcvr_recall_rank_comparison.v1"
+}
