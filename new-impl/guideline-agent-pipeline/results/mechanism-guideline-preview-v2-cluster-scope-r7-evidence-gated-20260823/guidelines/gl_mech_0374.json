@@ -1,0 +1,59 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where user-supplied data flows into sensitive operations (file I/O, shell execution, SQL queries, database updates, configuration modifications) without proper validation, sanitization, or authorization checks. The issues include path traversal, command injection, SQL injection, mass assignment, and missing authorization for security-critical configuration options.",
+  "created_at": "2026-08-22T20:37:30+00:00",
+  "cve_ids": [
+    "CVE-2026-33076",
+    "CVE-2026-33431"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0069__pending_mech_cluster_69_path_traversal_via_unvalidated_file_path_parameters",
+  "guideline_id": "gl_mech_0374",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should Validate input format (e.g., IP address or domain) and reject inputs containing '..' or other traversal sequences..",
+  "mechanism": {
+    "aliases": [
+      "sends",
+      "base",
+      "extend",
+      "containing",
+      "embedding",
+      "authenticated"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_69_path_traversal_via_unvalidated_file_path_parameters",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Path traversal via unvalidated file path parameters",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Validate input format (e.g., IP address or domain) and reject inputs containing '..' or other traversal sequences."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-33076",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    69
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 69,
+      "fix_strategy": "Validate input format (e.g., IP address or domain) and reject inputs containing '..' or other traversal sequences.",
+      "members": [
+        "CVE-2026-33076",
+        "CVE-2026-33431"
+      ],
+      "name": "Path traversal via unvalidated file path parameters",
+      "root_cause": "User-controlled parameters are used directly in constructing file paths without checking for path traversal sequences or expected format, allowing arbitrary file read/write."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_69_path_traversal_via_unvalidated_file_path_parameters",
+    "sends",
+    "base",
+    "extend",
+    "containing"
+  ]
+}

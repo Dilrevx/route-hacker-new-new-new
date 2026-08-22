@@ -1,0 +1,18 @@
+{
+  "decision": "split",
+  "coherence_score": 0.18,
+  "coverage_score": 0.5,
+  "actionability_score": 0.88,
+  "retrieval_query_quality": 0.82,
+  "main_issue": "The assigned cases do not share the LDAP injection mechanism: the GoCD case is plausibly LDAP filter/DN input handling, while the OpenDJ case concerns unbounded recursive alias dereferencing during search processing.",
+  "suggested_guideline": "LDAP query injection: trace attacker-controlled values into LDAP filter expressions or distinguished-name construction. Report paths where the value is inserted into the exact filter or DN context without context-specific escaping, parameterized construction, or allowlisted structural fragments. Verify that the escaping routine matches the sink context: DN escaping does not protect LDAP filter metacharacters, and filter escaping does not validate attacker-controlled query structure.",
+  "split_suggestions": [
+    "LDAP filter or distinguished-name injection through context-inappropriate or missing escaping",
+    "Unbounded recursive LDAP alias dereferencing caused by missing recursion/cycle/depth guards in search processing"
+  ],
+  "evidence_notes": [
+    "CVE-2022-24832 is labeled CWE-74 and its anchors are LDAP client implementations, which is consistent with LDAP query injection, but the payload provides no source-to-sink diff or trace to confirm the exact vulnerable construction.",
+    "CVE-2025-27497 trace evidence explicitly identifies processSearch recursively re-entering during alias base-entry dereferencing; this is a recursion-control mechanism, not input-to-LDAP-query injection.",
+    "The cluster summary itself identifies alias-resolution recursion as an unrelated outlier, confirming that this assigned group should not remain under the LDAP injection guideline."
+  ]
+}

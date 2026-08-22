@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "A collection of vulnerabilities where user-controlled input is passed to a template engine or expression language evaluator without proper sanitization, escaping, or restriction of dangerous features, allowing injection of arbitrary expressions that can lead to code execution, file access, or information disclosure.",
+  "created_at": "2026-08-22T20:37:28+00:00",
+  "cve_ids": [
+    "CVE-2021-3644"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0019__pending_mech_cluster_19_vault_expression_smuggling_via_incomplete_parsing",
+  "guideline_id": "gl_mech_0098",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Use a global regex that matches any vault expression anywhere in the input string..",
+  "mechanism": {
+    "aliases": [
+      "sensitive",
+      "placed",
+      "thus",
+      "containing",
+      "management-interface",
+      "use"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_19_vault_expression_smuggling_via_incomplete_parsing",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Vault expression smuggling via incomplete parsing",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Use a global regex that matches any vault expression anywhere in the input string."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2021-3644",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    19
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 19,
+      "fix_strategy": "Use a global regex that matches any vault expression anywhere in the input string.",
+      "members": [
+        "CVE-2021-3644"
+      ],
+      "name": "Vault expression smuggling via incomplete parsing",
+      "root_cause": "The parser only extracts the first delimited expression from an attribute value, allowing malicious vault expressions to be hidden after a non-sensitive expression."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_19_vault_expression_smuggling_via_incomplete_parsing",
+    "sensitive",
+    "placed",
+    "thus",
+    "containing"
+  ]
+}

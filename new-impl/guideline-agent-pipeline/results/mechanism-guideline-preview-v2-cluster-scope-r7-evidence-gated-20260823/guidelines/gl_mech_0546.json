@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "These vulnerabilities arise from insufficient validation of external inputs (HTTP headers) and lack of uniform responses in password reset and email verification flows, leading to user enumeration, token leakage, and resource abuse.",
+  "created_at": "2026-08-22T20:37:31+00:00",
+  "cve_ids": [
+    "CVE-2026-33877"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0094__pending_mech_cluster_94_timing_side_channel_user_enumeration",
+  "guideline_id": "gl_mech_0546",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Enforce a constant total response time by measuring wall-clock time at entry and introducing a delay after processing so that the elapsed time equals a configured constant minimum..",
+  "mechanism": {
+    "aliases": [
+      "hide",
+      "body",
+      "adding",
+      "based",
+      "attacker",
+      "wait"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_94_timing_side_channel_user_enumeration",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Timing side-channel user enumeration",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Enforce a constant total response time by measuring wall-clock time at entry and introducing a delay after processing so that the elapsed time equals a configured constant minimum."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-33877",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    94
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 94,
+      "fix_strategy": "Enforce a constant total response time by measuring wall-clock time at entry and introducing a delay after processing so that the elapsed time equals a configured constant minimum.",
+      "members": [
+        "CVE-2026-33877"
+      ],
+      "name": "Timing side-channel user enumeration",
+      "root_cause": "The authentication endpoint performs different operations (e.g., database updates, email sending) on successful user existence vs. failure, causing measurably different response times, and the added fixed delay only on failure paths is insufficient to mask the timing difference."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_94_timing_side_channel_user_enumeration",
+    "hide",
+    "body",
+    "adding",
+    "based"
+  ]
+}

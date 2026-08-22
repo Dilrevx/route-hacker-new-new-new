@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "This cluster contains 39 CVEs that expose authentication and authorization weaknesses in webhook and API endpoints. The vulnerabilities arise from missing or insufficient validation of tokens and secrets, over-reliance on untrusted headers or loopback IPs for authentication bypass, timing side-channels from non-constant-time comparisons, missing rate limiting on authentication attempts, resource exhaustion due to body parsing before authentication, insufficient replay protection and deduplication, missing control flow termination, ambiguous routing logic, fail-open defaults on missing security configuration, cached secrets not refreshed after rotation, and missing pre-authentication concurrency throttling.",
+  "created_at": "2026-08-22T20:37:30+00:00",
+  "cve_ids": [
+    "CVE-2026-33579"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0074__pending_mech_cluster_74_missing_rate_limiting_on_authentication_failures",
+  "guideline_id": "gl_mech_0409",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Add a per-IP rate limiter that checks and records failures before processing authentication; return HTTP 429 when threshold exceeded; reset on success..",
+  "mechanism": {
+    "aliases": [
+      "short",
+      "rate",
+      "records",
+      "create",
+      "error",
+      "attacker"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_74_missing_rate_limiting_on_authentication_failures",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing Rate Limiting on Authentication Failures",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Add a per-IP rate limiter that checks and records failures before processing authentication; return HTTP 429 when threshold exceeded; reset on success."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-33579",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    74
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 74,
+      "fix_strategy": "Add a per-IP rate limiter that checks and records failures before processing authentication; return HTTP 429 when threshold exceeded; reset on success.",
+      "members": [
+        "CVE-2026-33579"
+      ],
+      "name": "Missing Rate Limiting on Authentication Failures",
+      "root_cause": "Authentication endpoints do not track or throttle repeated invalid attempts per client IP, enabling brute-force attacks on secrets or passwords."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_74_missing_rate_limiting_on_authentication_failures",
+    "short",
+    "rate",
+    "records",
+    "create"
+  ]
+}

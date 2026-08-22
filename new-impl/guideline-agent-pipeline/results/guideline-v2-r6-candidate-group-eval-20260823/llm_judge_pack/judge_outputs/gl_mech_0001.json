@@ -1,0 +1,18 @@
+{
+  "decision": "split",
+  "coherence_score": 0.57,
+  "coverage_score": 0.57,
+  "actionability_score": 0.9,
+  "retrieval_query_quality": 0.88,
+  "main_issue": "The guideline precisely captures the createTempFile-delete-mkdir TOCTOU mechanism, but three assigned file-permission/temp-resource cases provide no evidence that they contain this lifecycle race. The cluster summary also conflates race, permissive permissions, failed permission enforcement, and predictable-name mechanisms.",
+  "suggested_guideline": "Submechanism A — temporary-directory lifecycle race: Trace temporary paths in shared or attacker-influenced writable locations through a createTempFile (or equivalent) -> delete -> mkdir/mkdirs sequence. Report paths where deleting the initially created object releases the pathname before directory creation, enabling an attacker to pre-create or replace the object. Prefer an atomic directory-creation API such as Files.createTempDirectory.\n\nSubmechanism B — insecure temporary-resource permissions: Trace temporary files and directories that may hold sensitive data. Report resources created with world-readable, world-writable, inherited, or unchecked permissions when an untrusted local principal can access the same filesystem. Require restrictive creation permissions or verify that permission-setting succeeds before writing sensitive content.",
+  "split_suggestions": [
+    "Temporary directory create-delete-mkdir pathname-reuse TOCTOU race",
+    "Temporary file or directory insecure-permission exposure"
+  ],
+  "evidence_notes": [
+    "CVE-2022-4817, CVE-2018-25068, CVE-2022-3969, and CVE-2021-21363 are patch-backed instances of the exact create-temp-file/delete/mkdir race and support the current guideline.",
+    "CVE-2020-15250, CVE-2022-3952, and CVE-2022-41946 are labeled file_permission_temp_resource, but their supplied evidence only verifies source readiness and anchor provenance; it does not establish a create-delete-mkdir sequence.",
+    "A permission-focused subgroup needs case-specific source or patch evidence showing the resource permissions, sensitive write/read effect, attacker access precondition, and safe restrictive-permission fix."
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "This cluster covers vulnerabilities arising from improper handling of user-supplied data during cookie parsing and output generation. Common issues include missing validation of control characters in Set-Cookie headers, unsafe deserialization of cookie data using pickle, prototype pollution from untrusted cookie names, over-broad whitespace trimming causing normalization bypass, and missing output encoding leading to XSS. These flaws allow attackers to inject arbitrary headers, execute arbitrary code, pollute object prototypes, bypass security prefixes, or perform cross-site scripting.",
+  "created_at": "2026-08-22T20:37:28+00:00",
+  "cve_ids": [
+    "CVE-2026-39410"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0018__pending_mech_cluster_18_over_broad_whitespace_trimming_in_cookie_name_value_normalization",
+  "guideline_id": "gl_mech_0095",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Replace generic .trim() with a custom function that only strips ASCII space (0x20) and horizontal tab (0x09) from both ends..",
+  "mechanism": {
+    "aliases": [
+      "legitimate",
+      "non-breaking",
+      "sends",
+      "encoding",
+      "trimcookiewhitespace",
+      "strips"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_18_over_broad_whitespace_trimming_in_cookie_name_value_normalization",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Over-broad whitespace trimming in cookie name/value normalization",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Replace generic .trim() with a custom function that only strips ASCII space (0x20) and horizontal tab (0x09) from both ends."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-39410",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    18
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 18,
+      "fix_strategy": "Replace generic .trim() with a custom function that only strips ASCII space (0x20) and horizontal tab (0x09) from both ends.",
+      "members": [
+        "CVE-2026-39410"
+      ],
+      "name": "Over-broad whitespace trimming in cookie name/value normalization",
+      "root_cause": "Cookie parsing uses JavaScript's .trim() method which removes all Unicode whitespace, while browsers only consider SP and HTAB as whitespace, allowing an attacker to craft cookie names with non-standard whitespace that bypasses prefix protections."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_18_over_broad_whitespace_trimming_in_cookie_name_value_normalization",
+    "legitimate",
+    "non-breaking",
+    "sends",
+    "encoding"
+  ]
+}

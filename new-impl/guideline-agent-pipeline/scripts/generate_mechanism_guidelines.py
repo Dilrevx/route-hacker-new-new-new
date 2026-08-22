@@ -32,6 +32,13 @@ TEXT_FIELDS = (
     "impact",
 )
 
+EVIDENCE_ROLE_FIELDS = (
+    "source_shape",
+    "sink_shape",
+    "missing_guard",
+    "typical_fix",
+)
+
 STOP_WORDS = {
     "able",
     "about",
@@ -101,6 +108,44 @@ STOP_WORDS = {
     "would",
 }
 
+EVIDENCE_STOP_WORDS = STOP_WORDS | {
+    "absent",
+    "accepted",
+    "access",
+    "add",
+    "allow",
+    "before",
+    "bind",
+    "bound",
+    "check",
+    "checked",
+    "constrain",
+    "constrained",
+    "controlled",
+    "decision",
+    "effect",
+    "enforce",
+    "enforced",
+    "equivalent",
+    "exact",
+    "fail",
+    "guard",
+    "input",
+    "inputs",
+    "missing",
+    "operation",
+    "operations",
+    "required",
+    "safe",
+    "sensitive",
+    "trusted",
+    "untrusted",
+    "validate",
+    "validated",
+    "validation",
+    "values",
+}
+
 
 @dataclass(frozen=True)
 class Mechanism:
@@ -126,6 +171,15 @@ class WorkItem:
     sub_pattern_fix_strategy: str
     members: tuple[str, ...]
     source_kind: str
+
+
+@dataclass(frozen=True)
+class EvidenceSupport:
+    supported: bool
+    role_hits: dict[str, tuple[str, ...]]
+    role_count: int
+    lexicon_score: float
+    lexicon_matches: tuple[str, ...]
 
 
 def utc_now() -> str:
@@ -375,15 +429,105 @@ def score_mechanism(text: str, mechanism: Mechanism) -> tuple[float, list[str]]:
     return score, sorted(set(matches))
 
 
+def ranked_mechanisms(
+    text: str,
+    lexicon: list[Mechanism],
+    *,
+    min_score: float,
+) -> list[tuple[Mechanism, float, list[str]]]:
+    scored = []
+    for mechanism in lexicon:
+        score, matches = score_mechanism(text, mechanism)
+        if score >= min_score:
+            scored.append((mechanism, score, matches))
+    scored.sort(key=lambda item: (-item[1], item[0].mechanism_id))
+    return scored
+
+
 def best_mechanism(text: str, lexicon: list[Mechanism], *, min_score: float) -> tuple[Mechanism | None, float, list[str]]:
-    scored = [(score_mechanism(text, mechanism), mechanism) for mechanism in lexicon]
-    scored.sort(key=lambda item: (-item[0][0], item[1].mechanism_id))
-    if not scored:
+    ranked = ranked_mechanisms(text, lexicon, min_score=0.0)
+    if not ranked:
         return None, 0.0, []
-    (score, matches), mechanism = scored[0]
+    mechanism, score, matches = ranked[0]
     if score < min_score:
         return None, score, matches
     return mechanism, score, matches
+
+
+def evidence_terms(text: str) -> set[str]:
+    return token_set(text) - EVIDENCE_STOP_WORDS
+
+
+def role_evidence_hits(role_text: str, evidence_text: str) -> tuple[str, ...]:
+    role_terms = evidence_terms(role_text)
+    evidence = evidence_terms(evidence_text)
+    return tuple(sorted(role_terms & evidence))
+
+
+def evidence_support(
+    record: dict[str, Any] | None,
+    mechanism: Mechanism,
+    *,
+    lexicon_score: float,
+    lexicon_matches: list[str],
+    min_roles: int = 2,
+    min_terms_per_role: int = 2,
+) -> EvidenceSupport:
+    if not record:
+        return EvidenceSupport(
+            supported=False,
+            role_hits={},
+            role_count=0,
+            lexicon_score=lexicon_score,
+            lexicon_matches=tuple(lexicon_matches),
+        )
+    text = record_text(record)
+    # Required-keyword constraints must be satisfied by the member CVE evidence
+    # itself. Cluster and sub-pattern text can propose a mechanism, but should
+    # not make a member releasable when its own structured evidence is thin.
+    member_score, member_matches = score_mechanism(text, mechanism)
+    if member_score <= 0.0:
+        return EvidenceSupport(
+            supported=False,
+            role_hits={},
+            role_count=0,
+            lexicon_score=member_score,
+            lexicon_matches=tuple(member_matches),
+        )
+    role_hits: dict[str, tuple[str, ...]] = {}
+    for field in EVIDENCE_ROLE_FIELDS:
+        hits = role_evidence_hits(str(getattr(mechanism, field) or ""), text)
+        if len(hits) >= min_terms_per_role:
+            role_hits[field] = hits
+    role_count = len(role_hits)
+    supported = role_count >= min_roles and bool({"sink_shape", "missing_guard"} & set(role_hits))
+    return EvidenceSupport(
+        supported=supported,
+        role_hits=role_hits,
+        role_count=role_count,
+        lexicon_score=member_score,
+        lexicon_matches=tuple(member_matches),
+    )
+
+
+def aggregate_evidence_support(
+    supports: list[EvidenceSupport],
+    *,
+    score: float,
+    matches: list[str],
+) -> EvidenceSupport:
+    role_hits: dict[str, set[str]] = defaultdict(set)
+    for support in supports:
+        for role, hits in support.role_hits.items():
+            role_hits[role].update(hits)
+    aggregated = {role: tuple(sorted(hits)) for role, hits in sorted(role_hits.items())}
+    return EvidenceSupport(
+        supported=bool(supports) and all(support.supported for support in supports),
+        role_hits=aggregated,
+        role_count=len(aggregated),
+        lexicon_score=score,
+        lexicon_matches=tuple(matches),
+    )
 
 
 def top_terms(text: str, *, limit: int = 8) -> list[str]:
@@ -427,7 +571,7 @@ def attributed_work_items(
     lexicon: list[Mechanism],
     *,
     min_score: float,
-) -> list[tuple[WorkItem, Mechanism, str, float, list[str]]]:
+) -> list[tuple[WorkItem, Mechanism, str, float, list[str], EvidenceSupport | None]]:
     """Split a cluster/sub-pattern into mechanism-homogeneous work items.
 
     The cluster remains the source neighborhood, but the emitted guideline
@@ -441,38 +585,52 @@ def attributed_work_items(
     for member in item.members:
         member_item = with_members(item, [member], item.source_kind)
         text = work_item_text(member_item, structured)
-        mechanism, score, matches = best_mechanism(text, lexicon, min_score=min_score)
-        if mechanism is None:
+        selected: tuple[Mechanism, float, list[str], EvidenceSupport] | None = None
+        for mechanism, score, matches in ranked_mechanisms(text, lexicon, min_score=min_score):
+            support = evidence_support(
+                structured.get(member),
+                mechanism,
+                lexicon_score=score,
+                lexicon_matches=matches,
+            )
+            if support.supported:
+                selected = (mechanism, score, matches, support)
+                break
+        if selected is None:
             pending_members.append(member)
             continue
+        mechanism, score, matches, support = selected
         bucket = buckets.setdefault(
             mechanism.mechanism_id,
-            {"mechanism": mechanism, "members": [], "scores": [], "matches": set()},
+            {"mechanism": mechanism, "members": [], "scores": [], "matches": set(), "supports": []},
         )
         bucket["members"].append(member)
         bucket["scores"].append(score)
         bucket["matches"].update(matches)
+        bucket["supports"].append(support)
 
     total_buckets = len(buckets) + (1 if pending_members else 0)
     split_kind = item.source_kind if total_buckets <= 1 else f"{item.source_kind}_mechanism_split"
 
-    output: list[tuple[WorkItem, Mechanism, str, float, list[str]]] = []
+    output: list[tuple[WorkItem, Mechanism, str, float, list[str], EvidenceSupport | None]] = []
     for bucket in buckets.values():
         members = bucket["members"]
         score = sum(bucket["scores"]) / len(bucket["scores"])
+        matches = sorted(bucket["matches"])
         output.append(
             (
                 with_members(item, members, split_kind),
                 bucket["mechanism"],
                 "active",
                 score,
-                sorted(bucket["matches"]),
+                matches,
+                aggregate_evidence_support(bucket["supports"], score=score, matches=matches),
             )
         )
     if pending_members:
         pending_item = with_members(item, pending_members, split_kind)
         text = work_item_text(pending_item, structured)
-        output.append((pending_item, pending_mechanism(pending_item, text), "pending_review", 0.0, []))
+        output.append((pending_item, pending_mechanism(pending_item, text), "pending_review", 0.0, [], None))
     return output
 
 
@@ -490,7 +648,7 @@ def group_items_by_mechanism(
     mechanisms_by_group: dict[str, Mechanism] = {}
     candidates: list[dict[str, Any]] = []
     for item in items:
-        for attributed_item, mechanism, status, score, matches in attributed_work_items(
+        for attributed_item, mechanism, status, score, matches, support in attributed_work_items(
             item,
             structured,
             lexicon,
@@ -515,6 +673,11 @@ def group_items_by_mechanism(
                     "status": status,
                     "alignment_score": round(score, 3),
                     "matched_terms": matches,
+                    "evidence_role_count": support.role_count if support else 0,
+                    "evidence_role_hits": {
+                        role: list(hits) for role, hits in (support.role_hits if support else {}).items()
+                    },
+                    "evidence_supported": bool(support.supported) if support else False,
                 }
             )
     return candidates, grouped, mechanisms_by_group

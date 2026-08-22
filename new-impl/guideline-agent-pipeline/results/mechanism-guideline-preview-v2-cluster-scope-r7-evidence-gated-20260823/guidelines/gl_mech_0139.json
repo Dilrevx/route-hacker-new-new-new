@@ -1,0 +1,98 @@
+{
+  "cluster_summary": "Various CVEs where user-controlled input is passed directly to JNDI lookup functions (Context.lookup, JMXConnectorFactory.connect, etc.) without proper validation of the JNDI scheme or object factory. This allows attackers to inject malicious JNDI URLs (e.g., LDAP, RMI, IIOP) leading to remote code execution, SSRF, or deserialization of untrusted data. The fixes involve adding scheme whitelists or blacklists, or restricting object factory resolution.",
+  "created_at": "2026-08-22T20:37:28+00:00",
+  "cve_ids": [
+    "CVE-2022-24818",
+    "CVE-2023-40743",
+    "CVE-2023-51441",
+    "CVE-2023-51653",
+    "CVE-2025-13467",
+    "CVE-2025-64428"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0026__mech_jndi_untrusted_lookup_target",
+  "guideline_id": "gl_mech_0139",
+  "guideline_text": "Trace attacker-controlled names, URLs, headers, configuration values, or lookup keys into JNDI, LDAP, RMI, naming-context, or remote lookup APIs. Report code paths where the lookup scheme, authority, object factory, object type, and network destination are not constrained before lookup. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 6 historical CVE example(s), not as a project-specific signature. A safe implementation should bind lookup inputs to trusted constants or allowlists, restrict schemes and destinations, and disable remote object factories.",
+  "mechanism": {
+    "aliases": [
+      "JNDI lookup",
+      "LDAP lookup",
+      "RMI lookup",
+      "InitialContext.lookup",
+      "naming context lookup"
+    ],
+    "family": "remote_lookup_or_ssrf",
+    "mechanism_id": "mech_jndi_untrusted_lookup_target",
+    "missing_guard": "the lookup scheme, authority, object factory, object type, and network destination are not constrained before lookup",
+    "name": "attacker-controlled JNDI lookup target",
+    "required_keywords": [],
+    "sink_shape": "JNDI, LDAP, RMI, naming-context, or remote lookup APIs",
+    "source_shape": "attacker-controlled names, URLs, headers, configuration values, or lookup keys",
+    "typical_fix": "bind lookup inputs to trusted constants or allowlists, restrict schemes and destinations, and disable remote object factories"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2022-24818",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    26
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 26,
+      "fix_strategy": "Wrap JNDI lookup in a validation method that checks the name against a whitelist of allowed schemes (no scheme or java: scheme only).",
+      "members": [
+        "CVE-2022-24818"
+      ],
+      "name": "Whitelist JNDI scheme validation",
+      "root_cause": "The code assumes JNDI names from user input are safe and passes them directly to Context.lookup without any validation of the scheme, allowing attackers to use dangerous schemes like ldap or rmi."
+    },
+    {
+      "cluster_id": 26,
+      "fix_strategy": "Add a blacklist check that rejects JNDI names containing dangerous protocols (LDAP, RMI, JMS, etc.) before performing the lookup.",
+      "members": [
+        "CVE-2023-40743"
+      ],
+      "name": "Missing JNDI protocol blacklist (initial)",
+      "root_cause": "The code directly passes user-controlled input to a JNDI lookup without any validation of allowed protocols, leaving the system open to JNDI injection via any scheme."
+    },
+    {
+      "cluster_id": 26,
+      "fix_strategy": "Extend the existing blacklist to include the missing dangerous JNDI schemes.",
+      "members": [
+        "CVE-2023-51441",
+        "CVE-2025-64428"
+      ],
+      "name": "Incomplete JNDI scheme blacklist",
+      "root_cause": "The code employs a blacklist of dangerous JNDI schemes but omits certain schemes (e.g., IIOP, CORBANAME, iiopname) that can still trigger JNDI lookups and lead to remote code execution or SSRF."
+    },
+    {
+      "cluster_id": 26,
+      "fix_strategy": "Set the JVM system property jdk.jndi.object.factoriesFilter to a deny list that prevents dangerous object factories from being loaded.",
+      "members": [
+        "CVE-2023-51653"
+      ],
+      "name": "Unvalidated JMX service URL allowing malicious JNDI object factory",
+      "root_cause": "The code passes a user-controlled URL to JMXConnectorFactory.connect without validating that the URL does not contain malicious JNDI references, allowing attackers to specify a remote object factory for code execution."
+    },
+    {
+      "cluster_id": 26,
+      "fix_strategy": "Install a custom ObjectFactoryBuilder that rejects referrals with non-LDAP URL schemes (only allow ldap:// and ldaps://).",
+      "members": [
+        "CVE-2025-13467"
+      ],
+      "name": "Unvalidated LDAP referral URL allowing arbitrary object instantiation",
+      "root_cause": "The LDAP federation provider trusts referral URLs from the LDAP server without validating they are LDAP URLs, allowing attackers to inject arbitrary URLs that trigger JNDI lookups and instantiate objects via object factories."
+    }
+  ],
+  "tags": [
+    "remote_lookup_or_ssrf",
+    "mech_jndi_untrusted_lookup_target",
+    "JNDI lookup",
+    "LDAP lookup",
+    "RMI lookup",
+    "InitialContext.lookup"
+  ]
+}

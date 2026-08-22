@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where sensitive data (passwords, emails) is exposed due to missing type-based filtering, obfuscation, or redaction. It also includes issues with stale cached configuration and specific logic errors in metadata handling and cleanup, leading to unauthorized disclosure of protected information.",
+  "created_at": "2026-08-22T20:37:28+00:00",
+  "cve_ids": [
+    "CVE-2025-58049"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0034__pending_mech_cluster_34_persisting_sensitive_request_data_in_job_status",
+  "guideline_id": "gl_mech_0192",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Remove the sensitive keys from the context before persisting the job status..",
+  "mechanism": {
+    "aliases": [
+      "job",
+      "sensitive",
+      "remove",
+      "cleaned",
+      "removing",
+      "backups"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_34_persisting_sensitive_request_data_in_job_status",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "persisting sensitive request data in job status",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Remove the sensitive keys from the context before persisting the job status."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2025-58049",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    34
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 34,
+      "fix_strategy": "Remove the sensitive keys from the context before persisting the job status.",
+      "members": [
+        "CVE-2025-58049"
+      ],
+      "name": "persisting sensitive request data in job status",
+      "root_cause": "After export, the request context containing sensitive keys (session, headers, cookies) is not cleaned, leading to persistence in job status."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_34_persisting_sensitive_request_data_in_job_status",
+    "job",
+    "sensitive",
+    "remove",
+    "cleaned"
+  ]
+}

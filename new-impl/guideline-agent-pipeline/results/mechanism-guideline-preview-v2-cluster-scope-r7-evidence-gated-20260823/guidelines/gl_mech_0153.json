@@ -1,0 +1,59 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities related to improper use of cryptographic primitives (weak PRNG, insecure modes, insufficient key protection) and failure to validate trust boundaries in inter-component communication (mutable intents, unverified package identity, side-channel). The former lead to predictable ciphertext, key exposure, or credential compromise; the latter allow injection, redirection, or unauthorized access.",
+  "created_at": "2026-08-22T20:37:28+00:00",
+  "cve_ids": [
+    "CVE-2013-6372",
+    "CVE-2024-39846"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0028__pending_mech_cluster_28_insufficient_protection_of_stored_credentials",
+  "guideline_id": "gl_mech_0153",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should Use strong encryption (e.g., AES) for reversible storage or hashing with salt (PBKDF2) for passwords, and never rely on reversible encoding for security..",
+  "mechanism": {
+    "aliases": [
+      "sensitive",
+      "persistent",
+      "though",
+      "secret.tostring",
+      "jenkins",
+      "encoding"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_28_insufficient_protection_of_stored_credentials",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Insufficient protection of stored credentials",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Use strong encryption (e.g., AES) for reversible storage or hashing with salt (PBKDF2) for passwords, and never rely on reversible encoding for security."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2013-6372",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    28
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Use strong encryption (e.g., AES) for reversible storage or hashing with salt (PBKDF2) for passwords, and never rely on reversible encoding for security.",
+      "members": [
+        "CVE-2013-6372",
+        "CVE-2024-39846"
+      ],
+      "name": "Insufficient protection of stored credentials",
+      "root_cause": "Sensitive data such as passwords or private keys are stored using reversible encoding (base64) or plaintext without proper encryption or hashing, assuming confidentiality."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_28_insufficient_protection_of_stored_credentials",
+    "sensitive",
+    "persistent",
+    "though",
+    "secret.tostring"
+  ]
+}

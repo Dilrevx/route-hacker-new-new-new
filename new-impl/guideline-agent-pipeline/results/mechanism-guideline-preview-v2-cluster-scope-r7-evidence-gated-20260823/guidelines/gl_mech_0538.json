@@ -1,0 +1,59 @@
+{
+  "cluster_summary": "This cluster comprises vulnerabilities where the application fails to enforce proper access control, including missing authentication on endpoints (allowing unauthenticated access), missing resource-scoped authorization (IDOR) where user-supplied identifiers are not verified, missing permission annotations on controller methods, and logic errors in authorization conditions. These flaws enable unauthorized access to sensitive data or privileged operations.",
+  "created_at": "2026-08-22T20:37:31+00:00",
+  "cve_ids": [
+    "CVE-2025-66022",
+    "CVE-2026-23487"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0093__pending_mech_cluster_93_logic_errors_in_authorization_conditions",
+  "guideline_id": "gl_mech_0538",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should Correct the logical condition (e.g., change && to ||, fix name comparison, adjust role check hierarchy)..",
+  "mechanism": {
+    "aliases": [
+      "token",
+      "users",
+      "higher",
+      "sends",
+      "own",
+      "appstoredashboard"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_93_logic_errors_in_authorization_conditions",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Logic errors in authorization conditions",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Correct the logical condition (e.g., change && to ||, fix name comparison, adjust role check hierarchy)."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2025-66022",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    93
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 93,
+      "fix_strategy": "Correct the logical condition (e.g., change && to ||, fix name comparison, adjust role check hierarchy).",
+      "members": [
+        "CVE-2025-66022",
+        "CVE-2026-23487"
+      ],
+      "name": "Logic errors in authorization conditions",
+      "root_cause": "The authorization logic contains flaws such as incorrect logical operators, wrong assumptions about naming conventions, or inverted conditions, causing the guard to be bypassed or misapplied."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_93_logic_errors_in_authorization_conditions",
+    "token",
+    "users",
+    "higher",
+    "sends"
+  ]
+}

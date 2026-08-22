@@ -352,7 +352,7 @@ TRAE_JUDGE_TIMEOUT_SECONDS=1800 ./run_traex_judge.sh judge_outputs
 Summarize the judge outputs after the run:
 
 ```bash
-python ../../../scripts/summarize_guideline_judge_outputs.py \
+python3 ../../../scripts/summarize_guideline_judge_outputs.py \
   --judge-inputs judge_inputs.jsonl \
   --judge-output-dir judge_outputs \
   --output-dir judge_summary
@@ -417,6 +417,33 @@ purity `0.8297 -> 0.8297`, weighted CWE purity `0.9179 -> 0.9142`, mixed HCVR
 groups `8 -> 10`, and mixed CWE groups stays `7 -> 7`. Interpret this as a
 coverage-expansion candidate that needs TraeX judge review and a same-identity
 recall rerun before any paper-facing recall claim.
+
+The r6 TraeX judge run confirms that coverage expansion alone is not enough:
+20/20 judge outputs parsed, with `accept=0`, `split=8`, `revise=4`,
+`needs_evidence=8`, and low-score `17/20`. The recurring failure mode is that
+cluster or sub-pattern text can over-attribute a member to a mechanism even
+when that member's own structured CVE evidence lacks enough source, sink,
+missing-guard, or fix support.
+
+The r7 evidence-gated iteration keeps the r6 candidate lexicon but requires
+member-level structured evidence to support a mechanism before the member can
+enter an active guideline. The gate is generic: it compares the member CVE text
+against the mechanism's source shape, sink shape, missing guard, and typical
+fix fields; it does not use CVE IDs, dataset labels, known anchors, or
+judge-output keywords. If the highest-scoring mechanism lacks member evidence,
+the generator tries the next mechanism; if none is supported, the member becomes
+`pending_review`.
+
+On the same combined input, r7 emits 563 guidelines from 746 work items, with
+360 active attributions, 386 pending-review attributions, and 189 recall
+sidecar rows. Structural quality improves relative to r6 candidate: weighted
+HCVR purity `0.8297 -> 0.8659`, weighted CWE purity `0.9142 -> 0.9245`, and
+mixed HCVR groups `10 -> 8`. The r7 TraeX judge run parsed 20/20 outputs with
+`accept=1`, `split=3`, `revise=4`, `needs_evidence=12`, and low-score `17/20`.
+This is a quality-control improvement, not a recall improvement claim: it
+reduces wrong-mechanism mixing and surfaces thin evidence as pending work, while
+showing that the next bottleneck is still source/sink/guard evidence collection
+and specific wording for pending groups.
 
 Build a cautious experiment scorecard when reporting a guideline iteration:
 

@@ -1,0 +1,89 @@
+{
+  "claim_boundaries": [
+    {
+      "caveat": "Purity and flags are weak diagnostics; mechanism quality still needs semantic review.",
+      "claim": "guideline_classification_quality",
+      "evidence": [
+        "group structural summary",
+        "source-only and pending-review accounting"
+      ],
+      "status": "supported_as_advisory_diagnostic"
+    },
+    {
+      "caveat": "Judge outputs rank review priority and cannot be converted into hardcoded routing.",
+      "claim": "semantic_guideline_quality",
+      "evidence": [
+        "LLM-as-judge summary"
+      ],
+      "status": "supported_as_advisory_diagnostic"
+    },
+    {
+      "caveat": "No recall A/B summary was provided; do not make embedding recall claims.",
+      "claim": "embedding_recall_improvement",
+      "evidence": [],
+      "status": "missing_or_invalid_evidence"
+    }
+  ],
+  "judge_evidence": {
+    "accepted_count": 1,
+    "average_scores": {
+      "actionability_score": 0.647,
+      "coherence_score": 0.5620000000000002,
+      "coverage_score": 0.476,
+      "retrieval_query_quality": 0.4715000000000001
+    },
+    "decision_counts": {
+      "accept": 1,
+      "needs_evidence": 12,
+      "revise": 4,
+      "split": 3
+    },
+    "invalid_output_count": 0,
+    "judge_input_count": 20,
+    "low_score_count": 17,
+    "message": "LLM-as-judge output is semantic review evidence; it must not become keyword routing or a hidden optimization target.",
+    "missing_output_count": 0,
+    "parsed_count": 20,
+    "status": "advisory_semantic_diagnostic"
+  },
+  "method_policy": [
+    "Optimize guideline wording and grouping from source/sink/guard evidence, not from keyword checks.",
+    "Use bad recall cases as regression and motivation data, not as per-case hardcoded fixes.",
+    "Treat recall numbers as evidence for a specific embedding plus guideline/query configuration.",
+    "Require same identity sets for paper-facing recall deltas."
+  ],
+  "recall_evidence": {
+    "budgets": [],
+    "common_count": 0,
+    "message": "No recall A/B summary was provided; do not make embedding recall claims.",
+    "same_identity_order": null,
+    "same_identity_set": null,
+    "status": "missing"
+  },
+  "release": {
+    "active_attribution_count": 360,
+    "guideline_count": 563,
+    "override_count": 189,
+    "pending_overrides_included": false,
+    "pending_review_count": 386,
+    "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+    "work_item_count": 746
+  },
+  "release_label": "guideline-v2-r7-evidence-gated",
+  "schema_version": "hcvr_guideline_experiment_scorecard.v1",
+  "structural_evidence": {
+    "assigned_unique_case_count": 276,
+    "case_coverage_rate": 0.4144144144144144,
+    "evaluated_group_count": 119,
+    "guideline_count": 563,
+    "message": "Structural labels are triage signals for guideline grouping, not hard pass/fail gates.",
+    "mixed_cwe_group_count": 8,
+    "mixed_hcvr_group_count": 8,
+    "pending_candidate_count": 386,
+    "source_only_group_count": 444,
+    "status": "advisory_structural_diagnostic",
+    "total_case_count": 666,
+    "weighted_cwe_purity": 0.9245177536231886,
+    "weighted_primary_hcvr_purity": 0.8659376811594204
+  }
+}

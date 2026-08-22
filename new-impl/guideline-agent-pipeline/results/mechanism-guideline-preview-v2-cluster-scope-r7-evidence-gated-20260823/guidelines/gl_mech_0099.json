@@ -1,0 +1,58 @@
+{
+  "cluster_summary": "This cluster comprises 16 CVEs that all involve insufficient validation or sanitization of user-controlled input before it is used in critical operations such as shell command execution, subprocess argument construction, filesystem path operations, and output rendering. The vulnerabilities manifest as command injection, argument injection, path traversal, credential disclosure, ANSI escape injection, and regex bypass, but they share a common deficiency in treating untrusted input as safe in different contexts.",
+  "created_at": "2026-08-22T20:37:28+00:00",
+  "cve_ids": [
+    "CVE-2026-42305",
+    "CVE-2026-47092"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0020__mech_path_traversal_missing_canonical_prefix",
+  "guideline_id": "gl_mech_0099",
+  "guideline_text": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under the intended base directory before the file operation. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check.",
+  "mechanism": {
+    "aliases": [
+      "path traversal",
+      "directory traversal",
+      "Zip Slip",
+      "archive entry traversal",
+      "canonical path bypass"
+    ],
+    "family": "filesystem",
+    "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+    "missing_guard": "the normalized absolute path is not checked to remain under the intended base directory before the file operation",
+    "name": "path traversal through missing canonical prefix check",
+    "required_keywords": [],
+    "sink_shape": "file read, write, delete, extraction, or resource-loading APIs",
+    "source_shape": "attacker-controlled filenames, archive entries, path fragments, or resource names",
+    "typical_fix": "normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-42305",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    20
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 20,
+      "fix_strategy": "Add validation for path elements (reject backslash, colon, reserved names, NTFS 8.3 short names), canonicalize paths, and use platform-safe APIs (e.g., pathToFileURL) to prevent traversal and injection.",
+      "members": [
+        "CVE-2026-42305",
+        "CVE-2026-47092"
+      ],
+      "name": "Path Traversal and Insufficient Path Validation",
+      "root_cause": "User-controlled path strings are used in filesystem writes or URI construction without proper validation against platform-specific path syntax (e.g., backslash, colon, reserved names on Windows) or without canonicalization to ensure paths stay within allowed directories."
+    }
+  ],
+  "tags": [
+    "filesystem",
+    "mech_path_traversal_missing_canonical_prefix",
+    "path traversal",
+    "directory traversal",
+    "Zip Slip",
+    "archive entry traversal"
+  ]
+}

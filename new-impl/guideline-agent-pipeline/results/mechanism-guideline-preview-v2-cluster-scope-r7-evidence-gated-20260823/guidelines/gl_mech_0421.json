@@ -1,0 +1,53 @@
+{
+  "cluster_summary": "The cluster comprises vulnerabilities in OAuth2 and OIDC clients where the callback processing fails to properly validate or bind security parameters such as state, nonce, and PKCE challenge/verifier, enabling attacks including cross-site request forgery, authorization code injection, and secret leakage. Some members also involve mass assignment and vault misconfiguration related to OAuth flows.",
+  "created_at": "2026-08-22T20:37:30+00:00",
+  "cve_ids": [
+    "CVE-2026-34511"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0078__mech_ssrf_redirect_following_client",
+  "guideline_id": "gl_mech_0421",
+  "guideline_text": "Trace attacker-controlled URLs or server-controlled redirect responses into HTTP clients that automatically follow redirects or reuse a previously validated URL decision. Report code paths where the final redirected scheme, host, port, and resolved address are not revalidated before the sensitive network request. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should disable automatic redirects or revalidate every redirect hop against the same allowlist and address policy.",
+  "mechanism": {
+    "aliases": [
+      "redirect-follow SSRF",
+      "HTTP redirect SSRF",
+      "Location header SSRF"
+    ],
+    "family": "ssrf",
+    "mechanism_id": "mech_ssrf_redirect_following_client",
+    "missing_guard": "the final redirected scheme, host, port, and resolved address are not revalidated before the sensitive network request",
+    "name": "SSRF through redirect-following client",
+    "required_keywords": [],
+    "sink_shape": "HTTP clients that automatically follow redirects or reuse a previously validated URL decision",
+    "source_shape": "attacker-controlled URLs or server-controlled redirect responses",
+    "typical_fix": "disable automatic redirects or revalidate every redirect hop against the same allowlist and address policy"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-34511",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    78
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 78,
+      "fix_strategy": "Implement PKCE by generating a cryptographically random code_verifier, deriving a code_challenge, and sending the challenge in the authorization request. For token exchange, include the code_verifier. Ensure state and verifier are separate independent random values.",
+      "members": [
+        "CVE-2026-34511"
+      ],
+      "name": "Missing or improper PKCE implementation",
+      "root_cause": "The client fails to implement PKCE (Proof Key for Code Exchange) or misuses the PKCE verifier by reusing it as the state parameter, thereby exposing the secret verifier in the redirect URL."
+    }
+  ],
+  "tags": [
+    "ssrf",
+    "mech_ssrf_redirect_following_client",
+    "redirect-follow SSRF",
+    "HTTP redirect SSRF",
+    "Location header SSRF"
+  ]
+}

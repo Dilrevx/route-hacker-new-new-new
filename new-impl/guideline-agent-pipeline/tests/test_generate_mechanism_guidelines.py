@@ -399,9 +399,124 @@ def test_sub_pattern_evidence_takes_precedence_over_broad_cluster_summary():
     attributed = module.attributed_work_items(item, structured, lexicon, min_score=2.0)
 
     assert len(attributed) == 1
-    _, mechanism, status, _, _ = attributed[0]
+    _, mechanism, status, _, _, support = attributed[0]
     assert status == "active"
     assert mechanism.mechanism_id == "mech_request_body_resource_mismatch_authz"
+    assert support is not None
+    assert support.supported is True
+
+
+def test_member_level_evidence_gate_demotes_cluster_only_matches():
+    module = load_module()
+    mechanism = module.Mechanism(
+        mechanism_id="mech_demo_protocol_state",
+        name="demo protocol state confusion",
+        family="protocol_state",
+        aliases=("protocol state confusion",),
+        keywords=("protocol", "state", "transition", "handshake", "nonce"),
+        required_keywords=(),
+        source_shape="attacker-controlled protocol handshake state",
+        sink_shape="privileged protocol transition handler",
+        missing_guard="nonce and session-state validation are not enforced before the privileged transition",
+        typical_fix="validate the nonce and session state before changing protocol state",
+    )
+    structured = {
+        "CVE-2099-4001": {
+            "cve_id": "CVE-2099-4001",
+            "vuln_type": "missing output encoding",
+            "root_cause": "A user-controlled display name is written to an HTML response without escaping.",
+            "abstract_pattern": "User text reaches browser-rendered output.",
+            "data_flow": "displayName -> render response",
+            "trigger_condition": "The display name contains markup.",
+            "fix_strategy": "Escape HTML before rendering.",
+            "impact": "Cross-site scripting.",
+        }
+    }
+    item = module.WorkItem(
+        cluster_id=40,
+        cluster_name="Protocol state transition and nonce bugs",
+        cluster_summary="Protocol handshake state transition nonce validation bugs.",
+        sub_pattern_name="Protocol state confusion",
+        sub_pattern_root_cause="Protocol handshake state transition misses nonce validation.",
+        sub_pattern_fix_strategy="Validate nonce before privileged protocol transition.",
+        members=("CVE-2099-4001",),
+        source_kind="sub_pattern",
+    )
+
+    attributed = module.attributed_work_items(item, structured, [mechanism], min_score=2.0)
+
+    assert len(attributed) == 1
+    _, selected, status, score, matches, support = attributed[0]
+    assert status == "pending_review"
+    assert selected.mechanism_id.startswith("pending_mech_")
+    assert score == 0.0
+    assert matches == []
+    assert support is None
+
+
+def test_evidence_gate_can_select_lower_scored_supported_mechanism():
+    module = load_module()
+    unsupported_high_score = module.Mechanism(
+        mechanism_id="mech_demo_high_score_cluster_only",
+        name="demo high score cluster only mechanism",
+        family="cluster_only",
+        aliases=("alpha beta gamma delta epsilon",),
+        keywords=("alpha", "beta", "gamma", "delta", "epsilon"),
+        required_keywords=(),
+        source_shape="attacker-controlled alpha beta input",
+        sink_shape="gamma delta privileged sink",
+        missing_guard="epsilon validation is missing before gamma delta effect",
+        typical_fix="validate alpha beta before gamma delta",
+    )
+    supported_lower_score = module.Mechanism(
+        mechanism_id="mech_demo_supported_sql",
+        name="demo supported sql injection",
+        family="sql_injection",
+        aliases=(),
+        keywords=("sql", "query", "jdbc", "preparedstatement"),
+        required_keywords=(),
+        source_shape="attacker-controlled request parameter",
+        sink_shape="SQL query construction and JDBC statement execution",
+        missing_guard="parameter binding or escaping is not enforced before SQL execution",
+        typical_fix="use PreparedStatement bound parameters before executing the query",
+    )
+    structured = {
+        "CVE-2099-4101": {
+            "cve_id": "CVE-2099-4101",
+            "vuln_type": "SQL injection",
+            "root_cause": "The JDBC Statement executes a SQL query built from a request parameter without escaping.",
+            "abstract_pattern": "Attacker-controlled request parameter reaches SQL query construction.",
+            "data_flow": "request parameter -> SQL query string -> JDBC Statement execution",
+            "trigger_condition": "The parameter contains SQL metacharacters.",
+            "fix_strategy": "Use PreparedStatement bound parameters before executing the query.",
+            "impact": "Database data exposure.",
+        }
+    }
+    item = module.WorkItem(
+        cluster_id=41,
+        cluster_name="alpha beta gamma delta epsilon umbrella",
+        cluster_summary="alpha beta gamma delta epsilon broad cluster wording",
+        sub_pattern_name="SQL request parameter query",
+        sub_pattern_root_cause="Request parameter reaches SQL query execution.",
+        sub_pattern_fix_strategy="Use PreparedStatement.",
+        members=("CVE-2099-4101",),
+        source_kind="sub_pattern",
+    )
+
+    attributed = module.attributed_work_items(
+        item,
+        structured,
+        [unsupported_high_score, supported_lower_score],
+        min_score=2.0,
+    )
+
+    assert len(attributed) == 1
+    _, selected, status, _, _, support = attributed[0]
+    assert status == "active"
+    assert selected.mechanism_id == "mech_demo_supported_sql"
+    assert support is not None
+    assert support.supported is True
+    assert support.role_count >= 2
 
 
 def test_xml_external_entity_mechanism_wins_over_deserialization_for_parser_evidence():
@@ -440,7 +555,9 @@ def test_xml_external_entity_mechanism_wins_over_deserialization_for_parser_evid
     attributed = module.attributed_work_items(item, structured, lexicon, min_score=2.0)
 
     assert len(attributed) == 1
-    _, mechanism, status, _, matches = attributed[0]
+    _, mechanism, status, _, matches, support = attributed[0]
     assert status == "active"
     assert mechanism.mechanism_id == "mech_xml_external_entity_resolution"
     assert "documentbuilderfactory" in matches
+    assert support is not None
+    assert support.supported is True

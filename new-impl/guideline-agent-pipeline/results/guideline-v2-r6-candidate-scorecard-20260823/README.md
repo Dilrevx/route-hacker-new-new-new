@@ -13,13 +13,13 @@
 | Axis | Status | Main Evidence | Boundary |
 | --- | --- | --- | --- |
 | Guideline grouping | advisory_structural_diagnostic | 103 evaluated groups, weighted HCVR purity 0.8297, weighted CWE purity 0.9142 | Structural labels are triage signals for guideline grouping, not hard pass/fail gates. |
-| LLM semantic judge | missing | parsed 0/0, accepted 0, low-score 0 | No LLM judge summary was provided; semantic review evidence is missing. |
+| LLM semantic judge | advisory_semantic_diagnostic | parsed 20/20, accepted 0, low-score 17 | LLM-as-judge output is semantic review evidence; it must not become keyword routing or a hidden optimization target. |
 | Embedding recall | missing | common identities 0 | No recall A/B summary was provided; do not make embedding recall claims. |
 
 ## Claim Boundaries
 
 - `guideline_classification_quality`: supported_as_advisory_diagnostic. Evidence: group structural summary; source-only and pending-review accounting. Caveat: Purity and flags are weak diagnostics; mechanism quality still needs semantic review.
-- `semantic_guideline_quality`: missing_evidence. Evidence: none. Caveat: Judge outputs rank review priority and cannot be converted into hardcoded routing.
+- `semantic_guideline_quality`: supported_as_advisory_diagnostic. Evidence: LLM-as-judge summary. Caveat: Judge outputs rank review priority and cannot be converted into hardcoded routing.
 - `embedding_recall_improvement`: missing_or_invalid_evidence. Evidence: none. Caveat: No recall A/B summary was provided; do not make embedding recall claims.
 
 ## Policy

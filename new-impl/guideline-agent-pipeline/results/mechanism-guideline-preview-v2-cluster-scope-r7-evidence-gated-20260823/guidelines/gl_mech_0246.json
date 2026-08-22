@@ -1,0 +1,53 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where user-controlled file paths or path components are used in file operations without proper validation. Many cases lack canonicalization and containment checks against an allowlist of allowed directories, enabling directory traversal. Others have incomplete input validation for dangerous patterns (e.g., traversal sequences, shell metacharacters, file URL host) or incomplete allowlisting of parameters that bypass existing safeguards. The fixes involve adding canonicalization, prefix checks, input sanitization, and correcting whitelist logic.",
+  "created_at": "2026-08-22T20:37:29+00:00",
+  "cve_ids": [
+    "CVE-2026-22171"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0044__mech_temp_file_delete_mkdir_race",
+  "guideline_id": "gl_mech_0246",
+  "guideline_text": "Trace temporary file or directory names created in shared writable locations into manual temporary directory creation sequences such as createTempFile, delete, then mkdir or mkdirs. Report code paths where the temporary path is released between creation and directory creation, allowing another actor to replace or pre-create it before use. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should use an atomic temporary-directory API such as Files.createTempDirectory and avoid delete-then-mkdir sequences.",
+  "mechanism": {
+    "aliases": [
+      "temporary directory TOCTOU",
+      "createTempFile delete mkdir race",
+      "file-delete-mkdir temporary directory race"
+    ],
+    "family": "race_or_lifecycle",
+    "mechanism_id": "mech_temp_file_delete_mkdir_race",
+    "missing_guard": "the temporary path is released between creation and directory creation, allowing another actor to replace or pre-create it before use",
+    "name": "temporary directory create-delete-mkdir TOCTOU race",
+    "required_keywords": [],
+    "sink_shape": "manual temporary directory creation sequences such as createTempFile, delete, then mkdir or mkdirs",
+    "source_shape": "temporary file or directory names created in shared writable locations",
+    "typical_fix": "use an atomic temporary-directory API such as Files.createTempDirectory and avoid delete-then-mkdir sequences"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-22171",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    44
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 44,
+      "fix_strategy": "Add validation functions to detect and reject paths containing traversal sequences, shell metacharacters, non-local hosts in file:// URLs, or UNC paths. For temp filenames, use cryptographically random identifiers and reject path separators.",
+      "members": [
+        "CVE-2026-22171"
+      ],
+      "name": "Insufficient validation for dangerous path components",
+      "root_cause": "Code fails to reject user-supplied path components that contain traversal sequences (..), home directory (~), shell metacharacters, or non-local file URLs/UNC paths, allowing arbitrary file access or command injection."
+    }
+  ],
+  "tags": [
+    "race_or_lifecycle",
+    "mech_temp_file_delete_mkdir_race",
+    "temporary directory TOCTOU",
+    "createTempFile delete mkdir race",
+    "file-delete-mkdir temporary directory race"
+  ]
+}

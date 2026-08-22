@@ -1,0 +1,74 @@
+{
+  "cluster_summary": "Several CVEs involve user-supplied file paths being used in read operations (e.g., template includes, config loading) without proper canonicalization or verification that the resolved path stays within a trusted base directory. This allows path traversal via '..' sequences, absolute paths, or symlinks. One outlier concerns a missing audit event for .pyc file reads, which is unrelated.",
+  "created_at": "2026-08-22T20:37:29+00:00",
+  "cve_ids": [
+    "CVE-2025-1686",
+    "CVE-2026-30952",
+    "CVE-2026-32061",
+    "CVE-2026-34726",
+    "CVE-2026-34730",
+    "CVE-2026-40256"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0059__mech_path_traversal_missing_canonical_prefix",
+  "guideline_id": "gl_mech_0322",
+  "guideline_text": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under the intended base directory before the file operation. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 6 historical CVE example(s), not as a project-specific signature. A safe implementation should normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check.",
+  "mechanism": {
+    "aliases": [
+      "path traversal",
+      "directory traversal",
+      "Zip Slip",
+      "archive entry traversal",
+      "canonical path bypass"
+    ],
+    "family": "filesystem",
+    "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+    "missing_guard": "the normalized absolute path is not checked to remain under the intended base directory before the file operation",
+    "name": "path traversal through missing canonical prefix check",
+    "required_keywords": [],
+    "sink_shape": "file read, write, delete, extraction, or resource-loading APIs",
+    "source_shape": "attacker-controlled filenames, archive entries, path fragments, or resource names",
+    "typical_fix": "normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2025-1686",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    59
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 59,
+      "fix_strategy": "Canonicalize the resolved path using `Path.resolve()` and then apply a containment check (e.g., assert the path starts with the base directory or use `Path.is_relative_to()`) before performing the file operation. Also resolve symlinks to prevent bypasses.",
+      "members": [
+        "CVE-2025-1686",
+        "CVE-2026-32061",
+        "CVE-2026-34726",
+        "CVE-2026-34730"
+      ],
+      "name": "Missing canonicalization and containment",
+      "root_cause": "Code uses user-controlled input as a file path without resolving the path (canonicalization) or checking that the resolved path lies within an allowed base directory. This allows arbitrary file reads through relative path traversal or absolute paths."
+    },
+    {
+      "cluster_id": 59,
+      "fix_strategy": "Replace all containment checks with a robust, path-segment-aware method (e.g., a centralized `isAllowed` helper or `Path.is_relative_to()`) applied uniformly to relative, absolute, and fallback paths. Ensure the check operates on canonicalized (resolved) paths.",
+      "members": [
+        "CVE-2026-30952",
+        "CVE-2026-40256"
+      ],
+      "name": "Insufficient path containment check",
+      "root_cause": "Code includes a containment check but it is either incomplete (not applied to all code paths, early breaks) or uses a flawed string prefix comparison (`str.startswith`) that can be bypassed by paths sharing a common prefix (e.g., `/repo` vs `/repo_outside`)."
+    }
+  ],
+  "tags": [
+    "filesystem",
+    "mech_path_traversal_missing_canonical_prefix",
+    "path traversal",
+    "directory traversal",
+    "Zip Slip",
+    "archive entry traversal"
+  ]
+}

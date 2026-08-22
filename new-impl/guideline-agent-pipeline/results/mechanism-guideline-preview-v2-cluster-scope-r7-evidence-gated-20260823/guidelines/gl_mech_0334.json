@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "This cluster includes vulnerabilities in WebSocket, HTTP/2, and Socket.IO implementations where missing checks on message types, flags, sizes, and connection limits lead to resource exhaustion, memory disclosure, or denial of service. The root causes are assumptions about input structure and lack of bounds on resource consumption, requiring targeted validation and rate/connection/size limits.",
+  "created_at": "2026-08-22T20:37:29+00:00",
+  "cve_ids": [
+    "CVE-2026-32062"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0061__pending_mech_cluster_61_missing_connection_limits_for_unauthenticated_websockets",
+  "guideline_id": "gl_mech_0334",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Add per-IP and total pending connection limits, a timeout for pre-start idle sockets, and a total connection cap..",
+  "mechanism": {
+    "aliases": [
+      "legitimate",
+      "sends",
+      "attacker",
+      "use",
+      "frame",
+      "total"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_61_missing_connection_limits_for_unauthenticated_websockets",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing connection limits for unauthenticated WebSockets",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Add per-IP and total pending connection limits, a timeout for pre-start idle sockets, and a total connection cap."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-32062",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    61
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 61,
+      "fix_strategy": "Add per-IP and total pending connection limits, a timeout for pre-start idle sockets, and a total connection cap.",
+      "members": [
+        "CVE-2026-32062"
+      ],
+      "name": "Missing connection limits for unauthenticated WebSockets",
+      "root_cause": "WebSocket server accepts upgrade requests without authentication or resource limits, allowing unauthenticated clients to hold connections open indefinitely."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_61_missing_connection_limits_for_unauthenticated_websockets",
+    "legitimate",
+    "sends",
+    "attacker",
+    "use"
+  ]
+}

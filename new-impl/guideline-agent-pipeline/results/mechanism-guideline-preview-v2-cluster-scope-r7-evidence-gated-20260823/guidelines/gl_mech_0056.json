@@ -1,0 +1,65 @@
+{
+  "cluster_summary": "A cluster of vulnerabilities in a JavaScript sandbox where attackers can escape due to (1) incomplete blocklists or allowlists that fail to restrict dangerous properties, builtin modules, or APIs, and (2) missing explicit isolation of JavaScript runtime features such as the `this` context, `Function` constructor, constructor properties, handler prototypes, proxy traps, and Promise species.",
+  "created_at": "2026-08-22T20:37:27+00:00",
+  "cve_ids": [
+    "CVE-2026-24118",
+    "CVE-2026-24781",
+    "CVE-2026-39911",
+    "CVE-2026-47208",
+    "CVE-2026-47209"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0011__pending_mech_cluster_11_missing_explicit_sandboxing_of_javascript_runtime_features",
+  "guideline_id": "gl_mech_0056",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 5 historical CVE example(s), not as a project-specific signature. A safe implementation should Add explicit sandboxing steps: pre-evaluation AST transformation to bind `this`, use of `vm.createContext` instead of `Function`, neutralization of constructor property on host arrays before calls, enforcement of a construction token for handler instances, correct receiver handling in proxy traps, and resetting `Symbol.species` before using `Promise.prototype.then`..",
+  "mechanism": {
+    "aliases": [
+      "blocklist",
+      "includes",
+      "documented",
+      "instances",
+      "capture",
+      "runtime"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_11_missing_explicit_sandboxing_of_javascript_runtime_features",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing explicit sandboxing of JavaScript runtime features",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Add explicit sandboxing steps: pre-evaluation AST transformation to bind `this`, use of `vm.createContext` instead of `Function`, neutralization of constructor property on host arrays before calls, enforcement of a construction token for handler instances, correct receiver handling in proxy traps, and resetting `Symbol.species` before using `Promise.prototype.then`."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-24118",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    11
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 11,
+      "fix_strategy": "Add explicit sandboxing steps: pre-evaluation AST transformation to bind `this`, use of `vm.createContext` instead of `Function`, neutralization of constructor property on host arrays before calls, enforcement of a construction token for handler instances, correct receiver handling in proxy traps, and resetting `Symbol.species` before using `Promise.prototype.then`.",
+      "members": [
+        "CVE-2026-24118",
+        "CVE-2026-24781",
+        "CVE-2026-39911",
+        "CVE-2026-47208",
+        "CVE-2026-47209"
+      ],
+      "name": "Missing explicit sandboxing of JavaScript runtime features",
+      "root_cause": "The sandbox fails to intercept or transform specific runtime mechanisms that can be used to access host objects, such as the `this` binding in function expressions, the `Function` constructor, the constructor property on arrays, the constructor property on handler prototypes, the receiver parameter in proxy set traps, and the `Symbol.species` protocol."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_11_missing_explicit_sandboxing_of_javascript_runtime_features",
+    "blocklist",
+    "includes",
+    "documented",
+    "instances"
+  ]
+}

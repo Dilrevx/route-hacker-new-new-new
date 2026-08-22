@@ -1,0 +1,104 @@
+{
+  "cluster_summary": "This cluster comprises path traversal vulnerabilities where user-controlled input is used in file path operations without proper validation, canonicalization, or containment checks. Attackers can read or write files outside intended directories, and in some cases trigger network requests (UNC injection). Fixes involve resolving paths to canonical form and verifying they reside within a base directory, adding trailing separators to prefix checks, or rejecting absolute and UNC paths.",
+  "created_at": "2026-08-22T20:37:30+00:00",
+  "cve_ids": [
+    "CVE-2026-10044",
+    "CVE-2026-10108",
+    "CVE-2026-28675",
+    "CVE-2026-28676",
+    "CVE-2026-33682",
+    "CVE-2026-34515",
+    "CVE-2026-43624",
+    "CVE-2026-44343",
+    "CVE-2026-44716",
+    "CVE-2026-47118",
+    "CVE-2026-48544",
+    "CVE-2026-49136",
+    "CVE-2026-5998"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0075__mech_path_traversal_missing_canonical_prefix",
+  "guideline_id": "gl_mech_0412",
+  "guideline_text": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under the intended base directory before the file operation. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 13 historical CVE example(s), not as a project-specific signature. A safe implementation should normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check.",
+  "mechanism": {
+    "aliases": [
+      "path traversal",
+      "directory traversal",
+      "Zip Slip",
+      "archive entry traversal",
+      "canonical path bypass"
+    ],
+    "family": "filesystem",
+    "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+    "missing_guard": "the normalized absolute path is not checked to remain under the intended base directory before the file operation",
+    "name": "path traversal through missing canonical prefix check",
+    "required_keywords": [],
+    "sink_shape": "file read, write, delete, extraction, or resource-loading APIs",
+    "source_shape": "attacker-controlled filenames, archive entries, path fragments, or resource names",
+    "typical_fix": "normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-10044",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    75
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 75,
+      "fix_strategy": "Canonicalize the constructed path using Path.resolve() or os.path.realpath(), then enforce containment by checking that the resolved path is a child of the base directory using Path.relative_to() or a prefix check with a trailing separator.",
+      "members": [
+        "CVE-2026-10044",
+        "CVE-2026-28675",
+        "CVE-2026-28676",
+        "CVE-2026-43624",
+        "CVE-2026-44716",
+        "CVE-2026-47118",
+        "CVE-2026-5998"
+      ],
+      "name": "Missing canonicalization and containment check",
+      "root_cause": "The code assumes that joining a base directory with user input will stay within that directory, but does not canonicalize the resulting path or verify that it is a child of the base directory. This allows traversal sequences or absolute paths to escape the intended directory."
+    },
+    {
+      "cluster_id": 75,
+      "fix_strategy": "Append os.sep to the base directory path before performing the startswith check, or use pathlib.Path.is_relative_to() for a proper containment check.",
+      "members": [
+        "CVE-2026-10108",
+        "CVE-2026-48544",
+        "CVE-2026-49136"
+      ],
+      "name": "Missing trailing separator in directory prefix comparison",
+      "root_cause": "The code uses str.startswith() to verify that a resolved path is within a base directory, but does not append a trailing separator to the base path. This allows traversal into sibling directories whose names share the same prefix."
+    },
+    {
+      "cluster_id": 75,
+      "fix_strategy": "Add a check to reject input if it is absolute (Path.is_absolute()) or matches unsafe patterns (UNC, drive-relative, etc.) before any filesystem operations.",
+      "members": [
+        "CVE-2026-33682",
+        "CVE-2026-34515"
+      ],
+      "name": "Unchecked absolute or UNC path before path join",
+      "root_cause": "The code does not validate whether the user-supplied input is an absolute path (including UNC paths on Windows) before concatenating it with a base directory. This allows injection of absolute or UNC paths that bypass the intended directory and can trigger network requests (SSRF/NTLM relay)."
+    },
+    {
+      "cluster_id": 75,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2026-44343"
+      ],
+      "name": "Path traversal vulnerabilities due to insufficient input validation and path construction flaws",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "filesystem",
+    "mech_path_traversal_missing_canonical_prefix",
+    "path traversal",
+    "directory traversal",
+    "Zip Slip",
+    "archive entry traversal"
+  ]
+}

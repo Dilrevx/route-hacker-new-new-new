@@ -1,0 +1,19 @@
+{
+  "decision": "needs_evidence",
+  "coherence_score": 0.18,
+  "coverage_score": 0.12,
+  "actionability_score": 0.28,
+  "retrieval_query_quality": 0.14,
+  "main_issue": "The payload provides no case-specific source, patch, or vulnerability description showing that either CVE is caused by insecure creation permissions. The cluster summary instead describes symlink containment, path canonicalization, traversal, and TOCTOU mechanisms, which are materially different from missing restrictive modes.",
+  "suggested_guideline": "",
+  "split_suggestions": [
+    "Sensitive temporary/configuration files created with overly permissive file or directory modes, allowing unauthorized local reads or modification",
+    "Filesystem sandbox escape where validation and use do not resolve or bind the final path, permitting symlink, traversal, or swap attacks"
+  ],
+  "evidence_notes": [
+    "CVE-2026-34450 has only anchors in _beta_builtin_memory_tool.py and a generic retrieval-ground-truth note; no evidence identifies a sensitive file, creation mode, attacker access, or permission-changing patch.",
+    "CVE-2026-45222 has only anchors in daemon/config.ts and the same generic note; no evidence identifies a sensitive file, creation mode, attacker access, or permission-changing patch.",
+    "The stated 0o600/0o700 remediation is actionable only for insecure-mode creation and is unsupported by the supplied examples.",
+    "Symlink/path-containment and TOCTOU findings require different guards: resolve/bind the target beneath the intended root, reject unsafe link traversal where appropriate, and avoid check-then-use path races."
+  ]
+}

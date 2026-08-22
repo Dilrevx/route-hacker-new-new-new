@@ -1,0 +1,56 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where user-supplied data flows into sensitive operations (file I/O, shell execution, SQL queries, database updates, configuration modifications) without proper validation, sanitization, or authorization checks. The issues include path traversal, command injection, SQL injection, mass assignment, and missing authorization for security-critical configuration options.",
+  "created_at": "2026-08-22T20:37:30+00:00",
+  "cve_ids": [
+    "CVE-2026-33077"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0069__mech_path_traversal_missing_canonical_prefix",
+  "guideline_id": "gl_mech_0369",
+  "guideline_text": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under the intended base directory before the file operation. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check.",
+  "mechanism": {
+    "aliases": [
+      "path traversal",
+      "directory traversal",
+      "Zip Slip",
+      "archive entry traversal",
+      "canonical path bypass"
+    ],
+    "family": "filesystem",
+    "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+    "missing_guard": "the normalized absolute path is not checked to remain under the intended base directory before the file operation",
+    "name": "path traversal through missing canonical prefix check",
+    "required_keywords": [],
+    "sink_shape": "file read, write, delete, extraction, or resource-loading APIs",
+    "source_shape": "attacker-controlled filenames, archive entries, path fragments, or resource names",
+    "typical_fix": "normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-33077",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    69
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 69,
+      "fix_strategy": "Validate input format (e.g., IP address or domain) and reject inputs containing '..' or other traversal sequences.",
+      "members": [
+        "CVE-2026-33077"
+      ],
+      "name": "Path traversal via unvalidated file path parameters",
+      "root_cause": "User-controlled parameters are used directly in constructing file paths without checking for path traversal sequences or expected format, allowing arbitrary file read/write."
+    }
+  ],
+  "tags": [
+    "filesystem",
+    "mech_path_traversal_missing_canonical_prefix",
+    "path traversal",
+    "directory traversal",
+    "Zip Slip",
+    "archive entry traversal"
+  ]
+}

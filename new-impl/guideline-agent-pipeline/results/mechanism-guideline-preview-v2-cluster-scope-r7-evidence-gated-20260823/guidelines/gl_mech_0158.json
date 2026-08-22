@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities related to improper use of cryptographic primitives (weak PRNG, insecure modes, insufficient key protection) and failure to validate trust boundaries in inter-component communication (mutable intents, unverified package identity, side-channel). The former lead to predictable ciphertext, key exposure, or credential compromise; the latter allow injection, redirection, or unauthorized access.",
+  "created_at": "2026-08-22T20:37:28+00:00",
+  "cve_ids": [
+    "CVE-2024-48336"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0028__pending_mech_cluster_28_unverified_system_package_identity_for_code_loading",
+  "guideline_id": "gl_mech_0158",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Check ApplicationInfo.FLAG_SYSTEM flag before trusting the package context..",
+  "mechanism": {
+    "aliases": [
+      "errors",
+      "google",
+      "legitimate",
+      "providerinstaller.install",
+      "security-provider-installer",
+      "verifying"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_28_unverified_system_package_identity_for_code_loading",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Unverified system package identity for code loading",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Check ApplicationInfo.FLAG_SYSTEM flag before trusting the package context."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2024-48336",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    28
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Check ApplicationInfo.FLAG_SYSTEM flag before trusting the package context.",
+      "members": [
+        "CVE-2024-48336"
+      ],
+      "name": "Unverified system package identity for code loading",
+      "root_cause": "Code creates package context for a hardcoded package name without verifying it is a system app, allowing a malicious app with same name to provide code."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_28_unverified_system_package_identity_for_code_loading",
+    "errors",
+    "google",
+    "legitimate",
+    "providerinstaller.install"
+  ]
+}

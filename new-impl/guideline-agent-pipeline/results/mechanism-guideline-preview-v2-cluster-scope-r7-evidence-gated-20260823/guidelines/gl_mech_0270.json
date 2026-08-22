@@ -1,0 +1,59 @@
+{
+  "cluster_summary": "These vulnerabilities result from failing to apply proper output encoding when embedding user-controlled data into web content (HTML, XML, JavaScript). The code assumes data is safe and concatenates it directly into output strings, allowing injection of arbitrary markup or script. The fix requires applying context-appropriate escaping (HTML entity, XML entity, or JavaScript string escaping) depending on the output context.",
+  "created_at": "2026-08-22T20:37:29+00:00",
+  "cve_ids": [
+    "CVE-2024-23643",
+    "CVE-2024-23819"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0047__pending_mech_cluster_47_missing_html_entity_escaping",
+  "guideline_id": "gl_mech_0270",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should Apply org.apache.commons.text.StringEscapeUtils.escapeHtml4() to all user-controlled strings before HTML insertion..",
+  "mechanism": {
+    "aliases": [
+      "persistent",
+      "geoserver",
+      "workspace-level",
+      "payload",
+      "encoding",
+      "containing"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_47_missing_html_entity_escaping",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing HTML entity escaping",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Apply org.apache.commons.text.StringEscapeUtils.escapeHtml4() to all user-controlled strings before HTML insertion."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2024-23643",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    47
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 47,
+      "fix_strategy": "Apply org.apache.commons.text.StringEscapeUtils.escapeHtml4() to all user-controlled strings before HTML insertion.",
+      "members": [
+        "CVE-2024-23643",
+        "CVE-2024-23819"
+      ],
+      "name": "Missing HTML entity escaping",
+      "root_cause": "User-controlled strings from catalog are concatenated directly into HTML output without HTML entity encoding, allowing stored XSS."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_47_missing_html_entity_escaping",
+    "persistent",
+    "geoserver",
+    "workspace-level",
+    "payload"
+  ]
+}

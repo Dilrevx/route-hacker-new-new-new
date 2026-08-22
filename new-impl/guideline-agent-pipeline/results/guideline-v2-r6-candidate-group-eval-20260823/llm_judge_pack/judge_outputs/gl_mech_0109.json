@@ -1,0 +1,15 @@
+{
+  "decision": "revise",
+  "coherence_score": 0.94,
+  "coverage_score": 0.88,
+  "actionability_score": 0.68,
+  "retrieval_query_quality": 0.24,
+  "main_issue": "The two cases share a clear ReDoS mechanism, but the guideline body is generic missing-guard language and does not identify the defining source-to-sink path: attacker-controlled regex patterns compiled by a backtracking engine and executed against potentially attacker-influenced or unbounded input.",
+  "suggested_guideline": "Identify code paths that accept a user-, API-, configuration-, or serialized-data-controlled regular-expression pattern; compile it with a backtracking regex engine such as java.util.regex.Pattern; and evaluate it against strings whose size or repetition can be influenced by the caller or dataset. Flag paths that permit arbitrary patterns without a linear-time engine, safe-pattern restrictions, bounded input, or an execution timeout. Prefer a linear-time engine such as RE2/J where regex expressiveness permits it; otherwise constrain supported syntax, validate or reject high-risk constructs, cap candidate input sizes, and enforce an evaluation deadline.",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "CVE-2025-48058 compiles caller-supplied patterns with java.util.regex.Pattern in multiple DataSource listNames implementations and matches them against filenames or stored names; the recorded fix replaces the engine with RE2/J.",
+    "CVE-2025-48059 preserves a constructor-supplied regex, compiles it with java.util.regex.Pattern during criterion filtering, and executes it with matcher(...).find() against element identifiers; the recorded fix likewise replaces the Java backtracking engine.",
+    "Both examples support one shared mechanism: untrusted regex pattern plus Java backtracking evaluation. The unrelated authorization CVE mentioned in the cluster summary must remain excluded from this guideline."
+  ]
+}

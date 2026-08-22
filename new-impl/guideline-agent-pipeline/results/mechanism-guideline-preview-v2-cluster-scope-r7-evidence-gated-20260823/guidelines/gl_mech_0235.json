@@ -1,0 +1,142 @@
+{
+  "cluster_summary": "This cluster includes vulnerabilities where applications fail to enforce upper bounds on the size, count, or complexity of external input before performing memory or disk allocation, leading to resource exhaustion. The missing limits occur in various contexts: HTTP request/response body buffering, delimiter-split operations, numeric parameter validation, disk storage (cache, logs, downloads), type validation, size estimation, and parsing complexity.",
+  "created_at": "2026-08-22T20:37:29+00:00",
+  "cve_ids": [
+    "CVE-2025-13836",
+    "CVE-2026-27729",
+    "CVE-2026-28478",
+    "CVE-2026-29112",
+    "CVE-2026-29609",
+    "CVE-2026-29612",
+    "CVE-2026-32049",
+    "CVE-2026-32689",
+    "CVE-2026-33332",
+    "CVE-2026-35633",
+    "CVE-2026-39313",
+    "CVE-2026-40073",
+    "CVE-2026-40608",
+    "CVE-2026-41408",
+    "CVE-2026-49140"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0042__mech_binary_length_unbounded_resource_use",
+  "guideline_id": "gl_mech_0235",
+  "guideline_text": "Trace attacker-controlled binary length fields, size counters, frame lengths, offsets, back-references, or decompressed-size metadata into memory allocation, buffer growth, parsing loops, frame handling, decompression, or resource-consuming work. Report code paths where protocol-specific upper bounds, arithmetic overflow checks, structural consistency checks, or expansion limits are absent before allocation or work expansion. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 15 historical CVE example(s), not as a project-specific signature. A safe implementation should enforce explicit size limits, validate arithmetic and offsets before use, reject malformed or oversized records early, and bound decompression or frame-processing work.",
+  "mechanism": {
+    "aliases": [
+      "unbounded length allocation",
+      "binary size field DoS",
+      "frame length resource exhaustion",
+      "decompression size exhaustion"
+    ],
+    "family": "resource_exhaustion_or_bounds",
+    "mechanism_id": "mech_binary_length_unbounded_resource_use",
+    "missing_guard": "protocol-specific upper bounds, arithmetic overflow checks, structural consistency checks, or expansion limits are absent before allocation or work expansion",
+    "name": "unbounded binary length or size field drives resource use",
+    "required_keywords": [
+      [
+        "binary",
+        "frame",
+        "buffer",
+        "allocate",
+        "allocation",
+        "decompress",
+        "compressed",
+        "payload",
+        "offset"
+      ],
+      [
+        "length",
+        "size",
+        "count",
+        "bounds",
+        "overflow"
+      ]
+    ],
+    "sink_shape": "memory allocation, buffer growth, parsing loops, frame handling, decompression, or resource-consuming work",
+    "source_shape": "attacker-controlled binary length fields, size counters, frame lengths, offsets, back-references, or decompressed-size metadata",
+    "typical_fix": "enforce explicit size limits, validate arithmetic and offsets before use, reject malformed or oversized records early, and bound decompression or frame-processing work"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2025-13836",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    42
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 42,
+      "fix_strategy": "Enforce a maximum byte limit during streaming (e.g., check Content-Length upfront, or accumulate size per chunk and cancel the stream if exceeded) to prevent unbounded memory allocation.",
+      "members": [
+        "CVE-2025-13836",
+        "CVE-2026-27729",
+        "CVE-2026-28478",
+        "CVE-2026-29609",
+        "CVE-2026-32049",
+        "CVE-2026-35633",
+        "CVE-2026-39313",
+        "CVE-2026-40073",
+        "CVE-2026-40608"
+      ],
+      "name": "Missing size limit on HTTP request/response body buffering",
+      "root_cause": "Code reads the entire HTTP request or response body into memory without checking cumulative size against a limit, assuming the body is small or that Content-Length is reliable."
+    },
+    {
+      "cluster_id": 42,
+      "fix_strategy": "Use lazy splitting (e.g., a splitter that yields elements one by one) or apply an explicit maxsplit limit to avoid eager materialization of a huge list.",
+      "members": [
+        "CVE-2026-32689"
+      ],
+      "name": "Missing limit on delimiter-split operations causing memory amplification",
+      "root_cause": "User-supplied input is split on a delimiter without a maximum count, creating a list that can be orders of magnitude larger than the original input (e.g., splitting an all-delimiter body into millions of empty strings)."
+    },
+    {
+      "cluster_id": 42,
+      "fix_strategy": "Validate the parameter against configured minimum and maximum bounds, clamping or rejecting out-of-range values before use.",
+      "members": [
+        "CVE-2026-29112",
+        "CVE-2026-33332"
+      ],
+      "name": "Missing upper bound validation on user-supplied numeric parameters",
+      "root_cause": "Code uses a numeric parameter (e.g., chunk size, number of sequences, canvas dimensions) directly in allocation or iteration without clamping or validating it to a safe range, allowing extremely large values."
+    },
+    {
+      "cluster_id": 42,
+      "fix_strategy": "Implement rotating file handlers with max size and backup count, LRU eviction for caches, and per-file/per-message byte and count caps for downloads.",
+      "members": [
+        "CVE-2026-41408"
+      ],
+      "name": "Missing resource capacity limits on persistent storage",
+      "root_cause": "Code writes to disk (log files, cache, downloaded media) without any capacity limit or eviction policy, allowing unbounded disk space consumption from repeated or large inputs."
+    },
+    {
+      "cluster_id": 42,
+      "fix_strategy": "Replace isinstance with a strict type check (e.g., type(x) is int) to reject boolean values and ensure only actual integers pass validation.",
+      "members": [
+        "CVE-2026-49140"
+      ],
+      "name": "Insufficient type strictness in size validation",
+      "root_cause": "Using isinstance(x, int) instead of a strict type check (type(x) is int) allows booleans to bypass numeric size limits, since bool is a subclass of int in Python."
+    },
+    {
+      "cluster_id": 42,
+      "fix_strategy": "Estimate the decoded size from the input length without full allocation, and reject before performing the actual decode or processing.",
+      "members": [
+        "CVE-2026-29612"
+      ],
+      "name": "Missing pre-allocation size estimation",
+      "root_cause": "Code decodes or fully processes input (e.g., base64 string) into memory before checking the resulting size against a limit, causing memory exhaustion even if the limit would later reject it."
+    }
+  ],
+  "tags": [
+    "resource_exhaustion_or_bounds",
+    "mech_binary_length_unbounded_resource_use",
+    "unbounded length allocation",
+    "binary size field DoS",
+    "frame length resource exhaustion",
+    "decompression size exhaustion"
+  ]
+}

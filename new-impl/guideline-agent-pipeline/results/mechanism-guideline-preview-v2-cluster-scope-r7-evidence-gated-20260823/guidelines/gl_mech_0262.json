@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "This cluster contains 40 CVEs covering various cryptographic implementation errors, including missing input validation (buffer offsets, shift amounts), timing side-channel vulnerabilities, use of insecure algorithms/modes (ECB, SHA-1), missing parameter validation (DH public key, DSA parameters, point-on-curve), certificate/trust anchor validation issues, signature encoding malleability, arithmetic errors (carry propagation, integer overflow), infinite loops in modular arithmetic, flawed verification logic, missing error handling, lossy byte-to-string conversion, caching logic flaws, and SSH protocol sequence number mishandling. Each vulnerability arises from a specific coding mistake that weakens the security guarantee of cryptographic operations.",
+  "created_at": "2026-08-22T20:37:29+00:00",
+  "cve_ids": [
+    "CVE-2020-8929"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0046__pending_mech_cluster_46_lossy_byte_array_to_string_conversion_for_key_lookup",
+  "guideline_id": "gl_mech_0262",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Replace String key with a custom byte array wrapper implementing value-based equality..",
+  "mechanism": {
+    "aliases": [
+      "deterministic",
+      "encoding",
+      "possible",
+      "byte",
+      "array",
+      "bytes"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_46_lossy_byte_array_to_string_conversion_for_key_lookup",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Lossy byte array to string conversion for key lookup",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Replace String key with a custom byte array wrapper implementing value-based equality."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2020-8929",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    46
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 46,
+      "fix_strategy": "Replace String key with a custom byte array wrapper implementing value-based equality.",
+      "members": [
+        "CVE-2020-8929"
+      ],
+      "name": "Lossy byte array to string conversion for key lookup",
+      "root_cause": "Arbitrary byte arrays are converted to UTF-8 strings for use as map keys, causing lossy mapping (invalid sequences become replacement characters) and potential key collisions."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_46_lossy_byte_array_to_string_conversion_for_key_lookup",
+    "deterministic",
+    "encoding",
+    "possible",
+    "byte"
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where user-controlled input is incorporated into LDAP search filters or distinguished names without proper escaping of special characters, allowing LDAP injection attacks. The majority of cases lack any escaping mechanism, while one case uses an inappropriate encoding (DN encoding) that fails to neutralize filter metacharacters. Two outliers involve unrelated vulnerabilities: credential leakage in logs and unbounded recursion in alias resolution.",
+  "created_at": "2026-08-22T20:37:28+00:00",
+  "cve_ids": [
+    "CVE-2015-1849",
+    "CVE-2025-27497"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0024__pending_mech_cluster_24_insufficient_escaping_of_ldap_special_characters_in_filter_and_dn_con",
+  "guideline_id": "gl_mech_0136",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should add the required guard and bind it to the exact sensitive effect.",
+  "mechanism": {
+    "aliases": [
+      "sensitive",
+      "alias-dereference-handler",
+      "loop-with-unreachable-exit-condition",
+      "base",
+      "encoding",
+      "logs"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_24_insufficient_escaping_of_ldap_special_characters_in_filter_and_dn_con",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Insufficient escaping of LDAP special characters in filter and DN construction",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "add the required guard and bind it to the exact sensitive effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2015-1849",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    24
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 24,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2015-1849",
+        "CVE-2025-27497"
+      ],
+      "name": "Insufficient escaping of LDAP special characters in filter and DN construction",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_24_insufficient_escaping_of_ldap_special_characters_in_filter_and_dn_con",
+    "sensitive",
+    "alias-dereference-handler",
+    "loop-with-unreachable-exit-condition",
+    "base"
+  ]
+}

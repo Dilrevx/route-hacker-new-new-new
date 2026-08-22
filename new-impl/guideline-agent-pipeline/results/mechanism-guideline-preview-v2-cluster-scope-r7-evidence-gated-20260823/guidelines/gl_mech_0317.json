@@ -1,0 +1,69 @@
+{
+  "cluster_summary": "This cluster comprises 26 cross-site scripting (XSS) vulnerabilities caused by insufficient handling of user-supplied input. The common flaw is that user input is reflected or stored without proper HTML encoding, sanitization, or validation, allowing injection of arbitrary HTML/JavaScript. Fixes range from adding global input sanitization filters to per-field encoding, input validation, and removal of insecure features like JSONP.",
+  "created_at": "2026-08-22T20:37:29+00:00",
+  "cve_ids": [
+    "CVE-2021-33561",
+    "CVE-2025-8550",
+    "CVE-2025-8551",
+    "CVE-2025-8552",
+    "CVE-2025-8553",
+    "CVE-2025-8554",
+    "CVE-2025-8555"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0058__pending_mech_cluster_58_global_servlet_filter_for_input_sanitization",
+  "guideline_id": "gl_mech_0317",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 7 historical CVE example(s), not as a project-specific signature. A safe implementation should Add a global servlet filter that wraps the HttpServletRequest and sanitizes all parameter values using Jsoup.clean with a whitelist (e.g., Whitelist.basic()) before they reach controllers..",
+  "mechanism": {
+    "aliases": [
+      "bean",
+      "panel",
+      "out",
+      "payload",
+      "dangerous",
+      "encoding"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_58_global_servlet_filter_for_input_sanitization",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Global servlet filter for input sanitization",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Add a global servlet filter that wraps the HttpServletRequest and sanitizes all parameter values using Jsoup.clean with a whitelist (e.g., Whitelist.basic()) before they reach controllers."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2021-33561",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    58
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 58,
+      "fix_strategy": "Add a global servlet filter that wraps the HttpServletRequest and sanitizes all parameter values using Jsoup.clean with a whitelist (e.g., Whitelist.basic()) before they reach controllers.",
+      "members": [
+        "CVE-2021-33561",
+        "CVE-2025-8550",
+        "CVE-2025-8551",
+        "CVE-2025-8552",
+        "CVE-2025-8553",
+        "CVE-2025-8554",
+        "CVE-2025-8555"
+      ],
+      "name": "Global servlet filter for input sanitization",
+      "root_cause": "The application lacked a centralized input sanitization mechanism; user-supplied parameters were processed and stored/rendered without any filtering of HTML tags or JavaScript, enabling XSS."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_58_global_servlet_filter_for_input_sanitization",
+    "bean",
+    "panel",
+    "out",
+    "payload"
+  ]
+}

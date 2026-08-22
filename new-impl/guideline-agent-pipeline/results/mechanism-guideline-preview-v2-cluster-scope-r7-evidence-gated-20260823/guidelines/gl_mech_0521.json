@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "This cluster contains authentication vulnerabilities where the code fails to correctly await asynchronous password validation, skips required authentication validation on login, suffers from race conditions on single-use token consumption due to non-atomic updates, or omits sanitization of authentication data after retrieval. These flaws can lead to authentication bypass, unauthorized access, or reuse of single-use tokens.",
+  "created_at": "2026-08-22T20:37:31+00:00",
+  "cve_ids": [
+    "CVE-2026-34215"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0090__pending_mech_cluster_90_missing_after_find_sanitization_for_authentication_data",
+  "guideline_id": "gl_mech_0521",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Insert await req.config.authDataManager.runAfterFind(req, user.authData) after removeHiddenProperties and before returning the user object..",
+  "mechanism": {
+    "aliases": [
+      "sensitive",
+      "includes",
+      "knows",
+      "runs",
+      "req.config.authdatamanager.runafterfind",
+      "sanitize"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_90_missing_after_find_sanitization_for_authentication_data",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing after-find sanitization for authentication data",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Insert await req.config.authDataManager.runAfterFind(req, user.authData) after removeHiddenProperties and before returning the user object."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-34215",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    90
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 90,
+      "fix_strategy": "Insert await req.config.authDataManager.runAfterFind(req, user.authData) after removeHiddenProperties and before returning the user object.",
+      "members": [
+        "CVE-2026-34215"
+      ],
+      "name": "Missing after-find sanitization for authentication data",
+      "root_cause": "The handleVerifyPassword handler retrieves user object and runs removeHiddenProperties but omits calling authDataManager.runAfterFind, which strips sensitive authentication fields like MFA secrets and recovery codes."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_90_missing_after_find_sanitization_for_authentication_data",
+    "sensitive",
+    "includes",
+    "knows",
+    "runs"
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "cluster_summary": "This cluster contains 40 authentication/authorization vulnerabilities where the root cause is either a missing authorization check in a specific code path, improper scope assignment or propagation, flawed token/credential validation or lifecycle management, or insufficient validation of client-supplied data used in authorization decisions. Two outliers involve business logic flaws in resource limits and state management rather than direct authorization bypasses.",
+  "created_at": "2026-08-22T20:37:30+00:00",
+  "cve_ids": [
+    "CVE-2026-28472",
+    "CVE-2026-32014",
+    "CVE-2026-32987",
+    "CVE-2026-34503",
+    "CVE-2026-41333",
+    "CVE-2026-41356",
+    "CVE-2026-47713"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0082__pending_mech_cluster_82_token_credential_validation_and_lifecycle_flaws",
+  "guideline_id": "gl_mech_0463",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 7 historical CVE example(s), not as a project-specific signature. A safe implementation should Add proper token validation (e.g., verify claims, check not expired), invalidate tokens after first use, terminate active sessions on credential revocation, and migrate or invalidate tokens on security boundary changes..",
+  "mechanism": {
+    "aliases": [
+      "persistent",
+      "payload",
+      "higher",
+      "node",
+      "remain",
+      "device-auth"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_82_token_credential_validation_and_lifecycle_flaws",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Token/credential validation and lifecycle flaws",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Add proper token validation (e.g., verify claims, check not expired), invalidate tokens after first use, terminate active sessions on credential revocation, and migrate or invalidate tokens on security boundary changes."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-28472",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    82
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 82,
+      "fix_strategy": "Add proper token validation (e.g., verify claims, check not expired), invalidate tokens after first use, terminate active sessions on credential revocation, and migrate or invalidate tokens on security boundary changes.",
+      "members": [
+        "CVE-2026-28472",
+        "CVE-2026-32014",
+        "CVE-2026-32987",
+        "CVE-2026-34503",
+        "CVE-2026-41333",
+        "CVE-2026-41356",
+        "CVE-2026-47713"
+      ],
+      "name": "Token/credential validation and lifecycle flaws",
+      "root_cause": "The code assumed that token presence, signature, or a single use was sufficient; it failed to validate token contents (e.g., claims, scope binding), invalidate tokens after use, revoke sessions on token rotation or device removal, or handle credential transitions properly."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_82_token_credential_validation_and_lifecycle_flaws",
+    "persistent",
+    "payload",
+    "higher",
+    "node"
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "This cluster consists of vulnerabilities in archive extraction (ZIP, TAR, RAR) that allow directory traversal, arbitrary file write, or infinite loops. The most common root cause is the assumption that entry names are safe relative paths without canonicalization, enabling '..' sequences to escape the extraction directory. Other variants include insufficient string-based prefix checks, missing backslash normalization, symlink bypass, and missing cycle/null checks causing infinite loops.",
+  "created_at": "2026-08-22T20:37:27+00:00",
+  "cve_ids": [
+    "CVE-2022-23596"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0004__pending_mech_cluster_4_missing_null_check_on_header_subtype_causing_infinite_loop",
+  "guideline_id": "gl_mech_0028",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Add null check on subHead.getSubType(); if null, break out of the enclosing loop..",
+  "mechanism": {
+    "aliases": [
+      "enclosing",
+      "causes",
+      "missing",
+      "out",
+      "used",
+      "parsed"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_4_missing_null_check_on_header_subtype_causing_infinite_loop",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing null check on header subtype causing infinite loop",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Add null check on subHead.getSubType(); if null, break out of the enclosing loop."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2022-23596",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    4
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 4,
+      "fix_strategy": "Add null check on subHead.getSubType(); if null, break out of the enclosing loop.",
+      "members": [
+        "CVE-2022-23596"
+      ],
+      "name": "Missing null check on header subtype causing infinite loop",
+      "root_cause": "Code assumes SubBlockHeader.getSubType() always returns non-null; a crafted archive causing null leads to unhandled exception and infinite loop."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_4_missing_null_check_on_header_subtype_causing_infinite_loop",
+    "enclosing",
+    "causes",
+    "missing",
+    "out"
+  ]
+}

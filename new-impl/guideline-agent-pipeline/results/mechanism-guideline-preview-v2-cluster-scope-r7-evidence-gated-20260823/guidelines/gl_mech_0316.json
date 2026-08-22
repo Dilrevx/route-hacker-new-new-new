@@ -1,0 +1,59 @@
+{
+  "cluster_summary": "This cluster comprises 26 cross-site scripting (XSS) vulnerabilities caused by insufficient handling of user-supplied input. The common flaw is that user input is reflected or stored without proper HTML encoding, sanitization, or validation, allowing injection of arbitrary HTML/JavaScript. Fixes range from adding global input sanitization filters to per-field encoding, input validation, and removal of insecure features like JSONP.",
+  "created_at": "2026-08-22T20:37:29+00:00",
+  "cve_ids": [
+    "CVE-2026-10514",
+    "CVE-2026-10567"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0058__pending_mech_cluster_58_disabled_default_html_escaping_in_jackson_deserialization",
+  "guideline_id": "gl_mech_0316",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should Replace the global boolean flag with a configurable list of URL patterns; apply HTML escaping to deserialized strings only when the request URI matches a pattern, allowing selective protection..",
+  "mechanism": {
+    "aliases": [
+      "payload",
+      "manually",
+      "encoding",
+      "body",
+      "xss.escape.all.enabled",
+      "attacker"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_58_disabled_default_html_escaping_in_jackson_deserialization",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Disabled default HTML escaping in Jackson deserialization",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Replace the global boolean flag with a configurable list of URL patterns; apply HTML escaping to deserialized strings only when the request URI matches a pattern, allowing selective protection."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-10514",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    58
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 58,
+      "fix_strategy": "Replace the global boolean flag with a configurable list of URL patterns; apply HTML escaping to deserialized strings only when the request URI matches a pattern, allowing selective protection.",
+      "members": [
+        "CVE-2026-10514",
+        "CVE-2026-10567"
+      ],
+      "name": "Disabled default HTML escaping in Jackson deserialization",
+      "root_cause": "A global configuration flag controlling HTML escaping for Jackson deserialization was disabled by default, so user input from JSON was not escaped when deserialized and later used in HTML output."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_58_disabled_default_html_escaping_in_jackson_deserialization",
+    "payload",
+    "manually",
+    "encoding",
+    "body"
+  ]
+}

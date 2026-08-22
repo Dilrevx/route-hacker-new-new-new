@@ -1,0 +1,63 @@
+{
+  "cluster_summary": "This cluster contains CVEs where user-controlled data is output without proper sanitization or encoding, leading to code injection. The vulnerabilities span three contexts: CSV formula injection due to missing neutralization of leading formula characters, stored cross-site scripting due to missing HTML sanitization before database storage or output, and cross-site scripting via unescaped user data in HTTP response headers.",
+  "created_at": "2026-08-22T20:37:27+00:00",
+  "cve_ids": [
+    "CVE-2023-2258",
+    "CVE-2025-22978",
+    "CVE-2026-39424",
+    "CVE-2026-9673"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0005__pending_mech_cluster_5_csv_formula_injection_due_to_missing_escape_of_leading_formula_charact",
+  "guideline_id": "gl_mech_0031",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 4 historical CVE example(s), not as a project-specific signature. A safe implementation should Neutralize formula-leading characters by prepending a single quote or tab, or by stripping/replacing them with a regex that handles leading whitespace..",
+  "mechanism": {
+    "aliases": [
+      "includes",
+      "downloads",
+      "workspace",
+      "strip",
+      "logs",
+      "strips"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_5_csv_formula_injection_due_to_missing_escape_of_leading_formula_charact",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "CSV formula injection due to missing escape of leading formula characters",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Neutralize formula-leading characters by prepending a single quote or tab, or by stripping/replacing them with a regex that handles leading whitespace."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2023-2258",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    5
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 5,
+      "fix_strategy": "Neutralize formula-leading characters by prepending a single quote or tab, or by stripping/replacing them with a regex that handles leading whitespace.",
+      "members": [
+        "CVE-2023-2258",
+        "CVE-2025-22978",
+        "CVE-2026-39424",
+        "CVE-2026-9673"
+      ],
+      "name": "CSV formula injection due to missing escape of leading formula characters",
+      "root_cause": "User-controlled data is written directly to CSV cells without escaping or stripping characters (e.g., =, +, -, @) that spreadsheet applications interpret as formula prefixes, allowing arbitrary formula execution."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_5_csv_formula_injection_due_to_missing_escape_of_leading_formula_charact",
+    "includes",
+    "downloads",
+    "workspace",
+    "strip"
+  ]
+}

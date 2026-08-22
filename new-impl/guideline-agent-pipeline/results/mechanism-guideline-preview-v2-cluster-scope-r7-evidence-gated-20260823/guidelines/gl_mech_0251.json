@@ -1,0 +1,53 @@
+{
+  "cluster_summary": "The workspace .env file loading function applies all key-value pairs to the process environment without filtering out variables that control critical runtime behavior, such as resource directories, API endpoints, security toggles, and connector routing. An attacker with write access to the workspace can override these variables by adding them to the .env file, leading to redirection of trusted resources or network traffic. The fix requires adding a blocklist of variable names, prefixes, and suffixes that are rejected when loading untrusted .env files.",
+  "created_at": "2026-08-22T20:37:29+00:00",
+  "cve_ids": [
+    "CVE-2026-44992"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0045__mech_ssrf_redirect_following_client",
+  "guideline_id": "gl_mech_0251",
+  "guideline_text": "Trace attacker-controlled URLs or server-controlled redirect responses into HTTP clients that automatically follow redirects or reuse a previously validated URL decision. Report code paths where the final redirected scheme, host, port, and resolved address are not revalidated before the sensitive network request. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should disable automatic redirects or revalidate every redirect hop against the same allowlist and address policy.",
+  "mechanism": {
+    "aliases": [
+      "redirect-follow SSRF",
+      "HTTP redirect SSRF",
+      "Location header SSRF"
+    ],
+    "family": "ssrf",
+    "mechanism_id": "mech_ssrf_redirect_following_client",
+    "missing_guard": "the final redirected scheme, host, port, and resolved address are not revalidated before the sensitive network request",
+    "name": "SSRF through redirect-following client",
+    "required_keywords": [],
+    "sink_shape": "HTTP clients that automatically follow redirects or reuse a previously validated URL decision",
+    "source_shape": "attacker-controlled URLs or server-controlled redirect responses",
+    "typical_fix": "disable automatic redirects or revalidate every redirect hop against the same allowlist and address policy"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-44992",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    45
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 45,
+      "fix_strategy": "Add a static blocklist set of sensitive variable names, prefixes (e.g., OPENCLAW_), and suffixes (e.g., _API_HOST, _HOMESERVER) to the .env loading logic. Skip any variable whose key matches an entry in the blocklist before applying it to the environment.",
+      "members": [
+        "CVE-2026-44992"
+      ],
+      "name": "unrestricted environment variable override from workspace .env",
+      "root_cause": "The code loads environment variables from a workspace-local .env file and sets them in process.env without any blocklist or allowlist validation, assuming all variables from an untrusted source are safe. This allows attackers to override sensitive variables controlling resource paths, endpoint URLs, and runtime behavior."
+    }
+  ],
+  "tags": [
+    "ssrf",
+    "mech_ssrf_redirect_following_client",
+    "redirect-follow SSRF",
+    "HTTP redirect SSRF",
+    "Location header SSRF"
+  ]
+}

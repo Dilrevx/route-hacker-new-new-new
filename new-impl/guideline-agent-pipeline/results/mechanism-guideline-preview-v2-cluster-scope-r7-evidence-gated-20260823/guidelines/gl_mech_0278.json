@@ -1,0 +1,120 @@
+{
+  "cluster_summary": "This cluster covers cross-site scripting (XSS) vulnerabilities arising from user-controlled data being inserted into the DOM via innerHTML, dangerouslySetInnerHTML, or markdown-to-HTML pipelines without proper sanitization or escaping. The root cause is the assumption that user input is safe for HTML context. Fix strategies range from using textContent or HTML encoding for plain text, adding DOMPurify or rehype-sanitize for HTML content, escaping attributes in custom renderers, to replacing dangerouslySetInnerHTML with JSX expressions or using DOM APIs with URL validation.",
+  "created_at": "2026-08-22T20:37:29+00:00",
+  "cve_ids": [
+    "CVE-2025-15632",
+    "CVE-2026-23516",
+    "CVE-2026-27737",
+    "CVE-2026-27974",
+    "CVE-2026-28509",
+    "CVE-2026-3050",
+    "CVE-2026-30830",
+    "CVE-2026-32626",
+    "CVE-2026-32890",
+    "CVE-2026-41318",
+    "CVE-2026-44264",
+    "CVE-2026-44369"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0050__mech_html_sanitizer_policy_gap",
+  "guideline_id": "gl_mech_0278",
+  "guideline_text": "Trace attacker-controlled markup, HTML fragments, rich text, comments, DOM nodes, style blocks, attributes, or URI values into HTML cleaners, SafeHtml validators, DOM sanitizers, rich-text renderers, or browser-rendered sanitized output. Report code paths where the active sanitizer policy does not allowlist dangerous elements, attributes, URI schemes, DOM child nodes, comments, or malformed inputs before rendering. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 12 historical CVE example(s), not as a project-specific signature. A safe implementation should activate the restrictive sanitizer for the relevant mode, enforce element/attribute/URI allowlists after parsing, and add regression tests for the bypass form.",
+  "mechanism": {
+    "aliases": [
+      "HTML sanitizer bypass",
+      "SafeHtml policy gap",
+      "missing sanitizer allowlist",
+      "restricted cleaner bypass"
+    ],
+    "family": "html_sanitization",
+    "mechanism_id": "mech_html_sanitizer_policy_gap",
+    "missing_guard": "the active sanitizer policy does not allowlist dangerous elements, attributes, URI schemes, DOM child nodes, comments, or malformed inputs before rendering",
+    "name": "HTML sanitizer policy gap or inactive allowlist",
+    "required_keywords": [
+      [
+        "html",
+        "sanitize",
+        "sanitizer",
+        "safehtml",
+        "cleaner",
+        "dompurify",
+        "antisamy",
+        "bleach"
+      ]
+    ],
+    "sink_shape": "HTML cleaners, SafeHtml validators, DOM sanitizers, rich-text renderers, or browser-rendered sanitized output",
+    "source_shape": "attacker-controlled markup, HTML fragments, rich text, comments, DOM nodes, style blocks, attributes, or URI values",
+    "typical_fix": "activate the restrictive sanitizer for the relevant mode, enforce element/attribute/URI allowlists after parsing, and add regression tests for the bypass form"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2025-15632",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    50
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 50,
+      "fix_strategy": "Replace innerHTML with textContent, or apply HTML entity encoding (escapeHtml/encodeHTML5) before assignment.",
+      "members": [
+        "CVE-2026-27974"
+      ],
+      "name": "Missing HTML escaping in innerHTML assignments for plain text",
+      "root_cause": "User input assumed safe and directly assigned to innerHTML, causing HTML interpretation of text that should be treated as plain text."
+    },
+    {
+      "cluster_id": 50,
+      "fix_strategy": "Add a sanitization step (rehype-sanitize, DOMPurify) after rendering, or escape attribute values (src, alt, title) in custom markdown renderers.",
+      "members": [
+        "CVE-2025-15632",
+        "CVE-2026-28509",
+        "CVE-2026-32626",
+        "CVE-2026-41318",
+        "CVE-2026-44264",
+        "CVE-2026-44369"
+      ],
+      "name": "Missing sanitization in markdown-to-HTML rendering pipeline",
+      "root_cause": "Markdown renderer configured to allow raw HTML (rehypeRaw, custom renderers) without applying a sanitization plugin or escaping attribute values in custom templates."
+    },
+    {
+      "cluster_id": 50,
+      "fix_strategy": "Apply DOMPurify.sanitize with an allow-list of safe tags/attributes before assignment, and optionally add sandbox attributes.",
+      "members": [
+        "CVE-2026-27737",
+        "CVE-2026-3050",
+        "CVE-2026-23516"
+      ],
+      "name": "Unsanitized HTML injection via innerHTML/dangerouslySetInnerHTML",
+      "root_cause": "User-controlled HTML content (including SVG, email HTML, rich text) directly assigned to innerHTML or dangerouslySetInnerHTML without any sanitization."
+    },
+    {
+      "cluster_id": 50,
+      "fix_strategy": "Post-process the generated HTML to strip event handler attributes (on*) and dangerous URI schemes (javascript:, data:text/html).",
+      "members": [
+        "CVE-2026-30830"
+      ],
+      "name": "Missing HTML attribute escaping in string-concatenated HTML",
+      "root_cause": "User input inserted into attribute values via string interpolation without escaping quotes, allowing attribute injection and event handler injection."
+    },
+    {
+      "cluster_id": 50,
+      "fix_strategy": "Use DOM APIs to set text content (e.g., textContent) and validate the URL against an allowed protocol list before setting img src.",
+      "members": [
+        "CVE-2026-32890"
+      ],
+      "name": "User-controlled URL injected via innerHTML without validation",
+      "root_cause": "External API response (avatar URL) assigned to innerHTML without escaping or validating the URL, assuming it is safe."
+    }
+  ],
+  "tags": [
+    "html_sanitization",
+    "mech_html_sanitizer_policy_gap",
+    "HTML sanitizer bypass",
+    "SafeHtml policy gap",
+    "missing sanitizer allowlist",
+    "restricted cleaner bypass"
+  ]
+}

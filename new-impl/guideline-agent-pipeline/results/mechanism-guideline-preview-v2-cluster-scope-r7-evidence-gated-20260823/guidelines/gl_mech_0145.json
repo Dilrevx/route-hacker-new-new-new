@@ -1,0 +1,65 @@
+{
+  "cluster_summary": "This cluster covers vulnerabilities where user-supplied data is used to construct database connection URLs, load classes, or configure resources without adequate validation, allowing attackers to inject dangerous parameters, load arbitrary classes, or trigger deserialization and SSRF. The fixes involve adding blacklists, encoding, type checks, or prefix validation.",
+  "created_at": "2026-08-22T20:37:28+00:00",
+  "cve_ids": [
+    "CVE-2022-39312",
+    "CVE-2024-23833",
+    "CVE-2024-47074",
+    "CVE-2024-47881",
+    "CVE-2025-48999"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0027__pending_mech_cluster_27_basic_jdbc_url_parameter_injection",
+  "guideline_id": "gl_mech_0145",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 5 historical CVE example(s), not as a project-specific signature. A safe implementation should Add a blocklist check for dangerous parameters (e.g., autoDeserialize, socketFactory) or use URI encoding to prevent injection..",
+  "mechanism": {
+    "aliases": [
+      "blocklist",
+      "allowlist",
+      "includes",
+      "payloads",
+      "sql",
+      "dangerous"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_27_basic_jdbc_url_parameter_injection",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Basic JDBC URL parameter injection",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Add a blocklist check for dangerous parameters (e.g., autoDeserialize, socketFactory) or use URI encoding to prevent injection."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2022-39312",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    27
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 27,
+      "fix_strategy": "Add a blocklist check for dangerous parameters (e.g., autoDeserialize, socketFactory) or use URI encoding to prevent injection.",
+      "members": [
+        "CVE-2022-39312",
+        "CVE-2024-23833",
+        "CVE-2024-47074",
+        "CVE-2024-47881",
+        "CVE-2025-48999"
+      ],
+      "name": "Basic JDBC URL parameter injection",
+      "root_cause": "User-supplied data (host, port, database name, extra parameters) is concatenated directly into a JDBC URL without any validation or encoding, allowing injection of arbitrary connection parameters."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_27_basic_jdbc_url_parameter_injection",
+    "blocklist",
+    "allowlist",
+    "includes",
+    "payloads"
+  ]
+}

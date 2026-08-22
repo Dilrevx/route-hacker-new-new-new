@@ -1,0 +1,98 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where untrusted or user-controlled input is used to construct file paths without proper sanitization, basename extraction, or canonicalization, allowing path traversal attacks. The root causes include assuming input is safe, missing checks for directory separators and traversal sequences, and lack of containment verification. Fix strategies involve extracting basenames, filtering path components, canonicalizing paths, and using allow-lists.",
+  "created_at": "2026-08-22T20:37:30+00:00",
+  "cve_ids": [
+    "CVE-2026-11416",
+    "CVE-2026-27699",
+    "CVE-2026-27825",
+    "CVE-2026-27884",
+    "CVE-2026-28462",
+    "CVE-2026-33236",
+    "CVE-2026-40027",
+    "CVE-2026-42078",
+    "CVE-2026-42080",
+    "CVE-2026-45242"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0071__mech_path_traversal_missing_canonical_prefix",
+  "guideline_id": "gl_mech_0386",
+  "guideline_text": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under the intended base directory before the file operation. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 10 historical CVE example(s), not as a project-specific signature. A safe implementation should normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check.",
+  "mechanism": {
+    "aliases": [
+      "path traversal",
+      "directory traversal",
+      "Zip Slip",
+      "archive entry traversal",
+      "canonical path bypass"
+    ],
+    "family": "filesystem",
+    "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+    "missing_guard": "the normalized absolute path is not checked to remain under the intended base directory before the file operation",
+    "name": "path traversal through missing canonical prefix check",
+    "required_keywords": [],
+    "sink_shape": "file read, write, delete, extraction, or resource-loading APIs",
+    "source_shape": "attacker-controlled filenames, archive entries, path fragments, or resource names",
+    "typical_fix": "normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-11416",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    71
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 71,
+      "fix_strategy": "Canonicalize the final path using Path.resolve() and assert it is a subpath of the allowed base directory using is_relative_to() or equivalent.",
+      "members": [
+        "CVE-2026-27825",
+        "CVE-2026-28462",
+        "CVE-2026-42078",
+        "CVE-2026-42080"
+      ],
+      "name": "Missing path canonicalization and containment check",
+      "root_cause": "The code assumes a user-supplied or external path will remain within a base directory without canonicalizing it (e.g., resolving symlinks) or verifying containment after path resolution."
+    },
+    {
+      "cluster_id": 71,
+      "fix_strategy": "Extract the basename from the filename using path parsing (e.g., PurePosixPath(name).name) and validate that it contains no path separators. Reject or skip files that are not simple basenames. Optionally combine with canonicalization.",
+      "members": [
+        "CVE-2026-11416",
+        "CVE-2026-27699",
+        "CVE-2026-40027"
+      ],
+      "name": "Missing basename extraction from untrusted filenames",
+      "root_cause": "The code assumes that filenames obtained from external sources (cloud storage, FTP, database) are simple names without directory separators, and directly concatenates them with a base directory without extracting the basename."
+    },
+    {
+      "cluster_id": 71,
+      "fix_strategy": "Parse path components using a path library (e.g., PurePosixPath) to filter out '.' and '..' parts, or validate that components contain no directory separators or parent references, then canonicalize the final path.",
+      "members": [
+        "CVE-2026-27884",
+        "CVE-2026-33236"
+      ],
+      "name": "Missing sanitization of path components for traversal sequences",
+      "root_cause": "The code assumes that individual path components (e.g., from SMB file paths or XML attributes) will not contain traversal sequences like '..' or '.' and does not filter or validate them before path joining."
+    },
+    {
+      "cluster_id": 71,
+      "fix_strategy": "Replace the user-controlled directory with a hardcoded safe default path, ignoring the user parameter entirely.",
+      "members": [
+        "CVE-2026-45242"
+      ],
+      "name": "Unrestricted output directory via user-controlled path",
+      "root_cause": "The code accepts a user-controlled directory path and uses it directly for file write operations without any validation or canonicalization, assuming it is safe."
+    }
+  ],
+  "tags": [
+    "filesystem",
+    "mech_path_traversal_missing_canonical_prefix",
+    "path traversal",
+    "directory traversal",
+    "Zip Slip",
+    "archive entry traversal"
+  ]
+}

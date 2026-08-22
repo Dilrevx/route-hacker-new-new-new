@@ -1,0 +1,75 @@
+{
+  "cluster_summary": "A collection of vulnerabilities where user-controlled environment variable overrides are passed to subprocesses without adequate sanitization. The code lacks comprehensive blocklists or allowlists for dangerous variables (e.g., LD_PRELOAD, NODE_OPTIONS, SHELLOPTS, HOME) that can alter process execution, bypass security controls, or lead to arbitrary code injection. Fixes involve adding centralized sanitization functions that block or allowlist specific variables depending on context.",
+  "created_at": "2026-08-22T20:37:29+00:00",
+  "cve_ids": [
+    "CVE-2026-22177",
+    "CVE-2026-32003",
+    "CVE-2026-32056",
+    "CVE-2026-35650",
+    "CVE-2026-4039",
+    "CVE-2026-41330",
+    "CVE-2026-41357",
+    "CVE-2026-41384",
+    "CVE-2026-43584",
+    "CVE-2026-44995"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0052__pending_mech_cluster_52_missing_blocklist_allowlist_for_dangerous_environment_variables",
+  "guideline_id": "gl_mech_0287",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 10 historical CVE example(s), not as a project-specific signature. A safe implementation should Implement a centralized sanitization function that filters environment variable overrides against a comprehensive blocklist of dangerous variable names and/or an allowlist of safe variables. For specific contexts (e.g., shell wrapper), restrict overrides to a safe allowlist. Apply the filter before merging into the process environment..",
+  "mechanism": {
+    "aliases": [
+      "blocklist",
+      "zshenv",
+      "includes",
+      "restrict",
+      "long",
+      "trimmed"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_52_missing_blocklist_allowlist_for_dangerous_environment_variables",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing blocklist/allowlist for dangerous environment variables",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Implement a centralized sanitization function that filters environment variable overrides against a comprehensive blocklist of dangerous variable names and/or an allowlist of safe variables. For specific contexts (e.g., shell wrapper), restrict overrides to a safe allowlist. Apply the filter before merging into the process environment."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-22177",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    52
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 52,
+      "fix_strategy": "Implement a centralized sanitization function that filters environment variable overrides against a comprehensive blocklist of dangerous variable names and/or an allowlist of safe variables. For specific contexts (e.g., shell wrapper), restrict overrides to a safe allowlist. Apply the filter before merging into the process environment.",
+      "members": [
+        "CVE-2026-22177",
+        "CVE-2026-32003",
+        "CVE-2026-32056",
+        "CVE-2026-35650",
+        "CVE-2026-4039",
+        "CVE-2026-41330",
+        "CVE-2026-41357",
+        "CVE-2026-41384",
+        "CVE-2026-43584",
+        "CVE-2026-44995"
+      ],
+      "name": "Missing blocklist/allowlist for dangerous environment variables",
+      "root_cause": "Code assumes user-controlled environment variable overrides are safe and does not filter out known dangerous variables that can alter process behavior or execute arbitrary code. Blocklists are incomplete or missing, and allowlists are not enforced in contexts like shell wrappers or SSH forwarding."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_52_missing_blocklist_allowlist_for_dangerous_environment_variables",
+    "blocklist",
+    "zshenv",
+    "includes",
+    "restrict"
+  ]
+}

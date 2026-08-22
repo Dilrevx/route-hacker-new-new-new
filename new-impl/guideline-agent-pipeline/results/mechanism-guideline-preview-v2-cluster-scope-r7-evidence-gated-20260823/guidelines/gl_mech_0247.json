@@ -1,0 +1,63 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where user-controlled file paths or path components are used in file operations without proper validation. Many cases lack canonicalization and containment checks against an allowlist of allowed directories, enabling directory traversal. Others have incomplete input validation for dangerous patterns (e.g., traversal sequences, shell metacharacters, file URL host) or incomplete allowlisting of parameters that bypass existing safeguards. The fixes involve adding canonicalization, prefix checks, input sanitization, and correcting whitelist logic.",
+  "created_at": "2026-08-22T20:37:29+00:00",
+  "cve_ids": [
+    "CVE-2026-33581",
+    "CVE-2026-41366",
+    "CVE-2026-41389",
+    "CVE-2026-43532"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0044__pending_mech_cluster_44_incomplete_allowlisting_of_parameters_or_trusted_sources",
+  "guideline_id": "gl_mech_0247",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 4 historical CVE example(s), not as a project-specific signature. A safe implementation should Ensure all relevant input parameters are included in the normalization allowlist. For whitelist construction, do not add user-controlled paths to allowed roots, and use exact (case-sensitive) matching when trusting built-in tools..",
+  "mechanism": {
+    "aliases": [
+      "allowlist",
+      "sensitive",
+      "now",
+      "workspace",
+      "payload",
+      "base"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_44_incomplete_allowlisting_of_parameters_or_trusted_sources",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Incomplete allowlisting of parameters or trusted sources",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Ensure all relevant input parameters are included in the normalization allowlist. For whitelist construction, do not add user-controlled paths to allowed roots, and use exact (case-sensitive) matching when trusting built-in tools."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-33581",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    44
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 44,
+      "fix_strategy": "Ensure all relevant input parameters are included in the normalization allowlist. For whitelist construction, do not add user-controlled paths to allowed roots, and use exact (case-sensitive) matching when trusting built-in tools.",
+      "members": [
+        "CVE-2026-33581",
+        "CVE-2026-43532",
+        "CVE-2026-41366",
+        "CVE-2026-41389"
+      ],
+      "name": "Incomplete allowlisting of parameters or trusted sources",
+      "root_cause": "The code relies on an allowlist of parameter keys that undergo path normalization, but the list is incomplete, allowing attackers to bypass via untracked parameters. Alternatively, the whitelist of allowed directories or trusted tools is constructed incorrectly (e.g., adding user-specified parent directories, case-insensitive tool name matching), expanding the attack surface."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_44_incomplete_allowlisting_of_parameters_or_trusted_sources",
+    "allowlist",
+    "sensitive",
+    "now",
+    "workspace"
+  ]
+}

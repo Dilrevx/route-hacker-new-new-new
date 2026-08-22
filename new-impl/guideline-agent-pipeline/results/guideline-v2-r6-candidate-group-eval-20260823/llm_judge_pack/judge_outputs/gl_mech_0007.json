@@ -1,0 +1,16 @@
+{
+  "decision": "revise",
+  "coherence_score": 0.78,
+  "coverage_score": 0.72,
+  "actionability_score": 0.86,
+  "retrieval_query_quality": 0.18,
+  "main_issue": "The sole case supports a specific recipe-transfer invariant—rejecting fake slots before transfer—not the guideline's broad generic pattern spanning authorization, isolation, resource binding, and arbitrary sensitive effects.",
+  "suggested_guideline": "Audit recipe or inventory transfer paths that derive source, input, or output slot sets from transfer metadata. Before validating capacity, matching items, or performing the transfer, reject any Slot for which Slot.isFake() is true in every validation path that can authorize the transfer, including shared slot validation and handler-specific transfer-info validation. A fake/output slot must not be treated as a normal mutable inventory slot; otherwise a crafted transfer can violate the inventory-state assumptions used by the transfer operation. Safe fixes consistently return a transfer error when either the recipe slots or inventory slots include a fake slot.",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "The only supplied case, CVE-2024-41565 in JustEnoughItems, is described as a recipe-transfer fake/output-slot business-state precondition.",
+    "Anchors identify RecipeTransferUtil.validateSlots and BasicRecipeTransferHandler.validateTransferInfo; the stated safe fix adds Slot.isFake() checks in both methods.",
+    "Claims about permission checks, Bundle behavior, duplicate packets, unauthorized extraction, and state desynchronization appear only in the broad cluster summary and are unsupported by the one case payload.",
+    "The current retrieval language is too generic to retrieve this mechanism reliably because it omits slot, inventory transfer, fake slot, output slot, and Slot.isFake() concepts."
+  ]
+}

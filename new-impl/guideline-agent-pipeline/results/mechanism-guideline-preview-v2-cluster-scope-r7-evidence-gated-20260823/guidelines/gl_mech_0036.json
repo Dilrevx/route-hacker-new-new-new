@@ -1,0 +1,59 @@
+{
+  "cluster_summary": "This cluster encompasses vulnerabilities in tar and zip archive extraction where insufficient validation of member paths, link targets, header fields, and resource limits allows path traversal, arbitrary file writes, denial of service, or race conditions. The flaws commonly arise from missing canonicalization (e.g., os.path.realpath, os.path.normpath), flawed base directory comparison logic, or incomplete input sanitization.",
+  "created_at": "2026-08-22T20:37:27+00:00",
+  "cve_ids": [
+    "CVE-2025-8194",
+    "CVE-2025-8291"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0006__pending_mech_cluster_6_input_parsing_validation_errors_header_fields",
+  "guideline_id": "gl_mech_0036",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should Add input validation: reject negative values, verify ZIP64 offset and signature, and use a context flag to conditionally apply type normalization..",
+  "mechanism": {
+    "aliases": [
+      "conditionally",
+      "loop-with-unreachable-exit-condition",
+      "location",
+      "member",
+      "compute",
+      "containing"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_6_input_parsing_validation_errors_header_fields",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Input parsing validation errors (header fields)",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Add input validation: reject negative values, verify ZIP64 offset and signature, and use a context flag to conditionally apply type normalization."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2025-8194",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    6
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 6,
+      "fix_strategy": "Add input validation: reject negative values, verify ZIP64 offset and signature, and use a context flag to conditionally apply type normalization.",
+      "members": [
+        "CVE-2025-8194",
+        "CVE-2025-8291"
+      ],
+      "name": "Input parsing validation errors (header fields)",
+      "root_cause": "Missing validation of header fields such as negative offsets, unverified ZIP64 offsets, or context-insensitive type conversion (AREGTYPE→DIRTYPE) during multi-block header parsing."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_6_input_parsing_validation_errors_header_fields",
+    "conditionally",
+    "loop-with-unreachable-exit-condition",
+    "location",
+    "member"
+  ]
+}

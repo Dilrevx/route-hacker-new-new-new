@@ -1,0 +1,58 @@
+{
+  "cluster_summary": "The workspace .env file loading function applies all key-value pairs to the process environment without filtering out variables that control critical runtime behavior, such as resource directories, API endpoints, security toggles, and connector routing. An attacker with write access to the workspace can override these variables by adding them to the .env file, leading to redirection of trusted resources or network traffic. The fix requires adding a blocklist of variable names, prefixes, and suffixes that are rejected when loading untrusted .env files.",
+  "created_at": "2026-08-22T20:37:29+00:00",
+  "cve_ids": [
+    "CVE-2026-41336",
+    "CVE-2026-41396"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0045__mech_path_traversal_missing_canonical_prefix",
+  "guideline_id": "gl_mech_0250",
+  "guideline_text": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under the intended base directory before the file operation. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check.",
+  "mechanism": {
+    "aliases": [
+      "path traversal",
+      "directory traversal",
+      "Zip Slip",
+      "archive entry traversal",
+      "canonical path bypass"
+    ],
+    "family": "filesystem",
+    "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+    "missing_guard": "the normalized absolute path is not checked to remain under the intended base directory before the file operation",
+    "name": "path traversal through missing canonical prefix check",
+    "required_keywords": [],
+    "sink_shape": "file read, write, delete, extraction, or resource-loading APIs",
+    "source_shape": "attacker-controlled filenames, archive entries, path fragments, or resource names",
+    "typical_fix": "normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-41336",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    45
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 45,
+      "fix_strategy": "Add a static blocklist set of sensitive variable names, prefixes (e.g., OPENCLAW_), and suffixes (e.g., _API_HOST, _HOMESERVER) to the .env loading logic. Skip any variable whose key matches an entry in the blocklist before applying it to the environment.",
+      "members": [
+        "CVE-2026-41336",
+        "CVE-2026-41396"
+      ],
+      "name": "unrestricted environment variable override from workspace .env",
+      "root_cause": "The code loads environment variables from a workspace-local .env file and sets them in process.env without any blocklist or allowlist validation, assuming all variables from an untrusted source are safe. This allows attackers to override sensitive variables controlling resource paths, endpoint URLs, and runtime behavior."
+    }
+  ],
+  "tags": [
+    "filesystem",
+    "mech_path_traversal_missing_canonical_prefix",
+    "path traversal",
+    "directory traversal",
+    "Zip Slip",
+    "archive entry traversal"
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "This cluster covers vulnerabilities arising from insufficient validation or sanitization of input data when constructing DOM attributes, URLs, or URL templates. The flaws include missing context-specific sanitization, lack of decoding before pattern checks, absence of attribute name whitelisting, and failure to validate URL schemes or path components. Attackers can bypass security checks to inject malicious code or traverse paths.",
+  "created_at": "2026-08-22T20:37:29+00:00",
+  "cve_ids": [
+    "CVE-2026-41691"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0054__pending_mech_cluster_54_missing_input_validation_for_template_interpolation_in_url_constructi",
+  "guideline_id": "gl_mech_0299",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Introduce a safe interpolation function that validates each segment against a whitelist of allowed characters (alphanumeric, underscore, hyphen, dot, plus) and rejects values containing path separators, URL structure characters, control characters, or exceeding 128 characters..",
+  "mechanism": {
+    "aliases": [
+      "filesystem",
+      "encoding",
+      "interpolated",
+      "containing",
+      "files",
+      "lng"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_54_missing_input_validation_for_template_interpolation_in_url_constructi",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing input validation for template interpolation in URL construction",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Introduce a safe interpolation function that validates each segment against a whitelist of allowed characters (alphanumeric, underscore, hyphen, dot, plus) and rejects values containing path separators, URL structure characters, control characters, or exceeding 128 characters."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-41691",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    54
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 54,
+      "fix_strategy": "Introduce a safe interpolation function that validates each segment against a whitelist of allowed characters (alphanumeric, underscore, hyphen, dot, plus) and rejects values containing path separators, URL structure characters, control characters, or exceeding 128 characters.",
+      "members": [
+        "CVE-2026-41691"
+      ],
+      "name": "Missing input validation for template interpolation in URL construction",
+      "root_cause": "The code assumes user-provided language and namespace values are safe to embed directly into URL templates without encoding, validation, or path sanitization, allowing path traversal and URL structure injection."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_54_missing_input_validation_for_template_interpolation_in_url_constructi",
+    "filesystem",
+    "encoding",
+    "interpolated",
+    "containing"
+  ]
+}

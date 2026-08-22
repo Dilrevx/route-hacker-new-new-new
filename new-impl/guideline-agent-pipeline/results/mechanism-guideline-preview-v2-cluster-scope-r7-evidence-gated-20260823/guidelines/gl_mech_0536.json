@@ -1,0 +1,72 @@
+{
+  "cluster_summary": "This cluster comprises vulnerabilities where the application fails to enforce proper access control, including missing authentication on endpoints (allowing unauthenticated access), missing resource-scoped authorization (IDOR) where user-supplied identifiers are not verified, missing permission annotations on controller methods, and logic errors in authorization conditions. These flaws enable unauthorized access to sensitive data or privileged operations.",
+  "created_at": "2026-08-22T20:37:31+00:00",
+  "cve_ids": [
+    "CVE-2026-28230"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0093__mech_sql_dynamic_query_untrusted_fragment",
+  "guideline_id": "gl_mech_0536",
+  "guideline_text": "Trace attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values into SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters. Report code paths where values or structural fragments are concatenated into SQL syntax without parameter binding or a strict allowlist for identifiers and operators. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should use bound parameters for values, allowlist structural SQL fragments, and keep untrusted data out of query syntax.",
+  "mechanism": {
+    "aliases": [
+      "SQL injection",
+      "SQL concatenation",
+      "dynamic SQL injection",
+      "untrusted query fragment"
+    ],
+    "family": "sql_injection",
+    "mechanism_id": "mech_sql_dynamic_query_untrusted_fragment",
+    "missing_guard": "values or structural fragments are concatenated into SQL syntax without parameter binding or a strict allowlist for identifiers and operators",
+    "name": "dynamic SQL query construction from untrusted fragments",
+    "required_keywords": [
+      [
+        "sql",
+        "jdbc",
+        "statement",
+        "preparedstatement",
+        "query"
+      ],
+      [
+        "concatenate",
+        "concat",
+        "interpolation",
+        "fragment",
+        "parameter",
+        "where",
+        "order by"
+      ]
+    ],
+    "sink_shape": "SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters",
+    "source_shape": "attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values",
+    "typical_fix": "use bound parameters for values, allowlist structural SQL fragments, and keep untrusted data out of query syntax"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-28230",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    93
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 93,
+      "fix_strategy": "Add authorization checks before accessing the resource, such as comparing owner IDs, adding scope parameters to queries, verifying membership in a workspace, or checking specific permissions like READ on the object.",
+      "members": [
+        "CVE-2026-28230"
+      ],
+      "name": "Missing resource-scoped authorization (IDOR / missing ownership or scope)",
+      "root_cause": "The code uses user-supplied resource identifiers without verifying that the authenticated user has the required ownership, membership, or permission on that specific resource. The assumption is that the identifier alone is sufficient for authorization."
+    }
+  ],
+  "tags": [
+    "sql_injection",
+    "mech_sql_dynamic_query_untrusted_fragment",
+    "SQL injection",
+    "SQL concatenation",
+    "dynamic SQL injection",
+    "untrusted query fragment"
+  ]
+}

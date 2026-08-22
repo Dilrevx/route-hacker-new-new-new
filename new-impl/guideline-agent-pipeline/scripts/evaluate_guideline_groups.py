@@ -556,7 +556,7 @@ def write_judge_pack(
         "Summarize completed judge outputs:",
         "",
         "```bash",
-        "python ../../../scripts/summarize_guideline_judge_outputs.py \\",
+        "python3 ../../../scripts/summarize_guideline_judge_outputs.py \\",
         "  --judge-inputs judge_inputs.jsonl \\",
         "  --judge-output-dir judge_outputs \\",
         "  --output-dir judge_summary",

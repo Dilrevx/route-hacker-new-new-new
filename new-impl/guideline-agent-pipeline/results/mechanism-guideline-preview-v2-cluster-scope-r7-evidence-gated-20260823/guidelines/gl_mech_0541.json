@@ -1,0 +1,67 @@
+{
+  "cluster_summary": "This cluster comprises vulnerabilities where the application fails to enforce proper access control, including missing authentication on endpoints (allowing unauthenticated access), missing resource-scoped authorization (IDOR) where user-supplied identifiers are not verified, missing permission annotations on controller methods, and logic errors in authorization conditions. These flaws enable unauthorized access to sensitive data or privileged operations.",
+  "created_at": "2026-08-22T20:37:31+00:00",
+  "cve_ids": [
+    "CVE-2022-31190",
+    "CVE-2023-38494",
+    "CVE-2026-2010",
+    "CVE-2026-26004",
+    "CVE-2026-34832",
+    "CVE-2026-7303"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0093__pending_mech_cluster_93_missing_resource_scoped_authorization_idor_missing_ownership_or_scope",
+  "guideline_id": "gl_mech_0541",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 6 historical CVE example(s), not as a project-specific signature. A safe implementation should Add authorization checks before accessing the resource, such as comparing owner IDs, adding scope parameters to queries, verifying membership in a workspace, or checking specific permissions like READ on the object..",
+  "mechanism": {
+    "aliases": [
+      "workspace",
+      "sensitive",
+      "withdrawn",
+      "item",
+      "users",
+      "belong"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_93_missing_resource_scoped_authorization_idor_missing_ownership_or_scope",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing resource-scoped authorization (IDOR / missing ownership or scope)",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Add authorization checks before accessing the resource, such as comparing owner IDs, adding scope parameters to queries, verifying membership in a workspace, or checking specific permissions like READ on the object."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2022-31190",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    93
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 93,
+      "fix_strategy": "Add authorization checks before accessing the resource, such as comparing owner IDs, adding scope parameters to queries, verifying membership in a workspace, or checking specific permissions like READ on the object.",
+      "members": [
+        "CVE-2022-31190",
+        "CVE-2023-38494",
+        "CVE-2026-2010",
+        "CVE-2026-26004",
+        "CVE-2026-34832",
+        "CVE-2026-7303"
+      ],
+      "name": "Missing resource-scoped authorization (IDOR / missing ownership or scope)",
+      "root_cause": "The code uses user-supplied resource identifiers without verifying that the authenticated user has the required ownership, membership, or permission on that specific resource. The assumption is that the identifier alone is sufficient for authorization."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_93_missing_resource_scoped_authorization_idor_missing_ownership_or_scope",
+    "workspace",
+    "sensitive",
+    "withdrawn",
+    "item"
+  ]
+}

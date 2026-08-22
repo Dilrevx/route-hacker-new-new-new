@@ -12,8 +12,10 @@
     {
       "caveat": "Judge outputs rank review priority and cannot be converted into hardcoded routing.",
       "claim": "semantic_guideline_quality",
-      "evidence": [],
-      "status": "missing_evidence"
+      "evidence": [
+        "LLM-as-judge summary"
+      ],
+      "status": "supported_as_advisory_diagnostic"
     },
     {
       "caveat": "No recall A/B summary was provided; do not make embedding recall claims.",
@@ -23,9 +25,25 @@
     }
   ],
   "judge_evidence": {
-    "judge_input_count": 0,
-    "message": "No LLM judge summary was provided; semantic review evidence is missing.",
-    "status": "missing"
+    "accepted_count": 0,
+    "average_scores": {
+      "actionability_score": 0.6994999999999999,
+      "coherence_score": 0.4544999999999998,
+      "coverage_score": 0.418,
+      "retrieval_query_quality": 0.5365
+    },
+    "decision_counts": {
+      "needs_evidence": 8,
+      "revise": 4,
+      "split": 8
+    },
+    "invalid_output_count": 0,
+    "judge_input_count": 20,
+    "low_score_count": 17,
+    "message": "LLM-as-judge output is semantic review evidence; it must not become keyword routing or a hidden optimization target.",
+    "missing_output_count": 0,
+    "parsed_count": 20,
+    "status": "advisory_semantic_diagnostic"
   },
   "method_policy": [
     "Optimize guideline wording and grouping from source/sink/guard evidence, not from keyword checks.",

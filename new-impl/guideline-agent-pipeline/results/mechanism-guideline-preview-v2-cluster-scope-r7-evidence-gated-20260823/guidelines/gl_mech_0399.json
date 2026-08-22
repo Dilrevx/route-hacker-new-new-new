@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "A set of vulnerabilities where the code fails to verify that the current user has the required access rights (view, edit, admin) before exposing or modifying data, leading to unauthorized access or privilege escalation. The missing checks occur in various contexts: retrieval of documents, revisions, history, listing, and performing state-changing actions like rollback, creation, import, and edits involving sensitive fields.",
+  "created_at": "2026-08-22T20:37:30+00:00",
+  "cve_ids": [
+    "CVE-2023-49280"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0073__pending_mech_cluster_73_missing_content_sensitive_authorization_for_editing_documents_with_pa",
+  "guideline_id": "gl_mech_0399",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Before granting edit with change request, load the target document, iterate over its XObjects, and if any property class is a PasswordClass, deny the operation..",
+  "mechanism": {
+    "aliases": [
+      "sensitive",
+      "users",
+      "modification",
+      "containing",
+      "create",
+      "exposure"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_73_missing_content_sensitive_authorization_for_editing_documents_with_pa",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "missing content-sensitive authorization for editing documents with password fields",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Before granting edit with change request, load the target document, iterate over its XObjects, and if any property class is a PasswordClass, deny the operation."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2023-49280",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    73
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 73,
+      "fix_strategy": "Before granting edit with change request, load the target document, iterate over its XObjects, and if any property class is a PasswordClass, deny the operation.",
+      "members": [
+        "CVE-2023-49280"
+      ],
+      "name": "missing content-sensitive authorization for editing documents with password fields",
+      "root_cause": "The code assumed that having the ChangeRequest right and view right on a page is sufficient to allow editing via change request, without checking whether the page contains sensitive fields (e.g., password fields). This could lead to inadvertent exposure of protected data in exported artifacts."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_73_missing_content_sensitive_authorization_for_editing_documents_with_pa",
+    "sensitive",
+    "users",
+    "modification",
+    "containing"
+  ]
+}

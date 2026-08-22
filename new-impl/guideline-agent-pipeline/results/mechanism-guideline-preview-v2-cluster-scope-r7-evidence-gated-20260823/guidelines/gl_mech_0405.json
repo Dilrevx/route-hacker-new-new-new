@@ -1,0 +1,171 @@
+{
+  "cluster_summary": "This cluster contains 39 CVEs that expose authentication and authorization weaknesses in webhook and API endpoints. The vulnerabilities arise from missing or insufficient validation of tokens and secrets, over-reliance on untrusted headers or loopback IPs for authentication bypass, timing side-channels from non-constant-time comparisons, missing rate limiting on authentication attempts, resource exhaustion due to body parsing before authentication, insufficient replay protection and deduplication, missing control flow termination, ambiguous routing logic, fail-open defaults on missing security configuration, cached secrets not refreshed after rotation, and missing pre-authentication concurrency throttling.",
+  "created_at": "2026-08-22T20:37:30+00:00",
+  "cve_ids": [
+    "CVE-2026-27493",
+    "CVE-2026-27577",
+    "CVE-2026-27578",
+    "CVE-2026-28449",
+    "CVE-2026-28464",
+    "CVE-2026-28469",
+    "CVE-2026-29606",
+    "CVE-2026-29613",
+    "CVE-2026-32896",
+    "CVE-2026-32980",
+    "CVE-2026-33580",
+    "CVE-2026-35618",
+    "CVE-2026-35623",
+    "CVE-2026-35628",
+    "CVE-2026-35640",
+    "CVE-2026-35646",
+    "CVE-2026-41337",
+    "CVE-2026-41343",
+    "CVE-2026-41351",
+    "CVE-2026-41362",
+    "CVE-2026-41402",
+    "CVE-2026-44109",
+    "CVE-2026-45005"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0074__mech_ssrf_webhook_url_fetch",
+  "guideline_id": "gl_mech_0405",
+  "guideline_text": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 23 historical CVE example(s), not as a project-specific signature. A safe implementation should enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets.",
+  "mechanism": {
+    "aliases": [
+      "webhook SSRF",
+      "callback URL fetch",
+      "user controlled URL fetch",
+      "outbound HTTP client SSRF"
+    ],
+    "family": "ssrf",
+    "mechanism_id": "mech_ssrf_webhook_url_fetch",
+    "missing_guard": "scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request",
+    "name": "attacker-controlled webhook or callback URL fetch",
+    "required_keywords": [],
+    "sink_shape": "outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers",
+    "source_shape": "attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations",
+    "typical_fix": "enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-27493",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    74
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 74,
+      "fix_strategy": "Add explicit cryptographic validation of the token or secret (e.g., JWT signature, cookie validation, shared secret comparison) and verify required claims (e.g., sub, principal) against expected values. Reject requests that fail validation.",
+      "members": [
+        "CVE-2026-27493",
+        "CVE-2026-27578",
+        "CVE-2026-27577"
+      ],
+      "name": "Missing Token or Secret Validation",
+      "root_cause": "Code assumes existence of a token or secret is sufficient for authentication, but does not cryptographically verify its validity or match required claims against a trusted store or configuration."
+    },
+    {
+      "cluster_id": 74,
+      "fix_strategy": "Remove unconditional trust in headers and loopback IPs. Use configured public URLs, enforce authentication for all requests, or validate headers against a configured allowlist of trusted proxies.",
+      "members": [
+        "CVE-2026-29606",
+        "CVE-2026-29613",
+        "CVE-2026-32896",
+        "CVE-2026-41337"
+      ],
+      "name": "Authentication Bypass via Untrusted Headers or Loopback Trust",
+      "root_cause": "Code trusts client-controlled HTTP headers (X-Forwarded-For, Host, etc.) or IP-based loopback checks to skip authentication, without verifying the source or requiring explicit credentials."
+    },
+    {
+      "cluster_id": 74,
+      "fix_strategy": "Replace direct string comparison with a constant-time comparison function (e.g., crypto.timingSafeEqual) that processes all inputs fully regardless of match position.",
+      "members": [
+        "CVE-2026-28464"
+      ],
+      "name": "Timing Side-Channel via Non-Constant-Time Comparison",
+      "root_cause": "Secret comparison (e.g., token, HMAC) uses early length checks or non-constant-time operators (===, !==), allowing an attacker to infer secret values through response time measurements."
+    },
+    {
+      "cluster_id": 74,
+      "fix_strategy": "Add a per-IP rate limiter that checks and records failures before processing authentication; return HTTP 429 when threshold exceeded; reset on success.",
+      "members": [
+        "CVE-2026-33580",
+        "CVE-2026-35623",
+        "CVE-2026-35628",
+        "CVE-2026-35646"
+      ],
+      "name": "Missing Rate Limiting on Authentication Failures",
+      "root_cause": "Authentication endpoints do not track or throttle repeated invalid attempts per client IP, enabling brute-force attacks on secrets or passwords."
+    },
+    {
+      "cluster_id": 74,
+      "fix_strategy": "Reorder processing: validate authentication token/signature before reading the body; enforce strict body size and time limits; reject requests missing required headers early.",
+      "members": [
+        "CVE-2026-32980",
+        "CVE-2026-35640"
+      ],
+      "name": "Resource Exhaustion via Pre-Authentication Body Parsing",
+      "root_cause": "Request body is read, buffered, and/or parsed (JSON) before authentication validation, allowing unauthenticated attackers to consume server resources by sending large or slow payloads."
+    },
+    {
+      "cluster_id": 74,
+      "fix_strategy": "Canonicalize inputs (strip query, decode and re-encode signatures), include target path, account ID, chat/sender context in dedup keys, use persistent stores for processed IDs, and validate origin headers against allowlists.",
+      "members": [
+        "CVE-2026-28449",
+        "CVE-2026-35618",
+        "CVE-2026-41351",
+        "CVE-2026-41362",
+        "CVE-2026-41402"
+      ],
+      "name": "Insufficient Replay Protection and Deduplication",
+      "root_cause": "Replay detection or deduplication keys are based on non-canonical, unstable, or insufficiently scoped data (e.g., full URL with query, non-canonical signature encoding, missing target/context identifiers), allowing replay attacks or unintended event suppression."
+    },
+    {
+      "cluster_id": 74,
+      "fix_strategy": "Collect all matching targets; reject the request if the number of matches is not exactly one; otherwise process the unique match.",
+      "members": [
+        "CVE-2026-28469"
+      ],
+      "name": "Ambiguous Webhook Routing Allowing Cross-Account Context Misrouting",
+      "root_cause": "Routing selects the first webhook target that passes verification, without ensuring exactly one match; multiple targets sharing the same route can cause incorrect authorization context."
+    },
+    {
+      "cluster_id": 74,
+      "fix_strategy": "Change defaults to false (reject); add startup validation that logs errors if required configuration is missing; ensure blank tokens are rejected.",
+      "members": [
+        "CVE-2026-44109"
+      ],
+      "name": "Fail-Open Default on Missing Security Configuration",
+      "root_cause": "Security-senstitive functions return true (allow) when required encryption keys or tokens are missing or blank, instead of rejecting."
+    },
+    {
+      "cluster_id": 74,
+      "fix_strategy": "Re-resolve the secret on every request or implement cache invalidation to ensure the latest value is used.",
+      "members": [
+        "CVE-2026-45005"
+      ],
+      "name": "Cached Secret Not Revalidated on Rotation",
+      "root_cause": "Secrets resolved from configuration are cached indefinitely (e.g., in WeakMap) and not refreshed when the secret is rotated, allowing use of stale credentials."
+    },
+    {
+      "cluster_id": 74,
+      "fix_strategy": "Introduce a per-key in-flight request limiter at the entry point that rejects excess concurrent requests (HTTP 429) before any body processing or authentication.",
+      "members": [
+        "CVE-2026-41343"
+      ],
+      "name": "Missing Pre-Authentication Concurrency Throttling",
+      "root_cause": "No shared in-flight request limit is imposed before authentication, allowing unauthenticated attackers to exhaust server resources by sending many concurrent requests."
+    }
+  ],
+  "tags": [
+    "ssrf",
+    "mech_ssrf_webhook_url_fetch",
+    "webhook SSRF",
+    "callback URL fetch",
+    "user controlled URL fetch",
+    "outbound HTTP client SSRF"
+  ]
+}

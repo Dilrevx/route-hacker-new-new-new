@@ -1,0 +1,19 @@
+{
+  "decision": "split",
+  "coherence_score": 0.12,
+  "coverage_score": 0.08,
+  "actionability_score": 0.52,
+  "retrieval_query_quality": 0.2,
+  "main_issue": "The assigned cases do not evidence SSRF through an HTTP client following redirects. One passes an attacker-controlled location into an HTTP Location response header (open redirect); the other passes a configured or user-controlled PlantUML server URL into a renderer without trusted-domain validation (direct SSRF). Neither trace establishes an automatic redirect-following hop or missing per-hop revalidation.",
+  "suggested_guideline": "Split into separate mechanism guidelines: (1) Open redirect: trace attacker-controlled navigation targets into HTTP Location headers or framework redirect responses; require URL parsing and an explicit same-origin or destination allowlist policy where redirects must remain internal. (2) Direct SSRF through configurable remote service URLs: trace user- or tenant-controlled service endpoints into server-side renderers or HTTP-capable integrations; parse the URL and enforce trusted scheme, host, port, and resolved-address policy immediately before the network-capable handoff.",
+  "split_suggestions": [
+    "Open redirect through unvalidated attacker-controlled Location header or framework redirect target",
+    "Direct SSRF through unvalidated configurable remote renderer or integration endpoint"
+  ],
+  "evidence_notes": [
+    "sveltejs__kit::CVE-2026-40074: redirect() stores caller-provided location and respond converts it to redirect_response; this is a response-navigation sink, not an outbound HTTP client or redirect-following flow.",
+    "xwiki-contrib__macro-plantuml::CVE-2026-42140: computeServer passes an unvalidated server URL to plantUMLRenderer.renderDiagram; the stated fix adds URL parsing and trusted-domain validation, evidencing direct destination-policy SSRF.",
+    "No case evidence identifies an HTTP client configured to follow redirects, a redirect response received by that client, or a sensitive request made after an unchecked redirect hop.",
+    "The claim of 3 historical CVE examples is unsupported by the supplied payload, which contains 2 assigned cases."
+  ]
+}

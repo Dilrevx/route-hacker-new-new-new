@@ -1,0 +1,72 @@
+{
+  "cluster_summary": "The cluster comprises vulnerabilities where user-controlled input is used to construct URLs (redirect targets, server-side fetch URLs, navigation destinations, or URL query strings) without adequate validation or encoding. This leads to open redirect, server-side request forgery (SSRF), cross-site scripting (XSS), token leakage, and exposure of sensitive data. The root causes include missing host allowlist checks, incomplete URL parsing allowing bypasses, and failure to encode or filter sensitive data.",
+  "created_at": "2026-08-22T20:37:28+00:00",
+  "cve_ids": [
+    "CVE-2014-4172"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0037__mech_sql_dynamic_query_untrusted_fragment",
+  "guideline_id": "gl_mech_0207",
+  "guideline_text": "Trace attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values into SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters. Report code paths where values or structural fragments are concatenated into SQL syntax without parameter binding or a strict allowlist for identifiers and operators. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should use bound parameters for values, allowlist structural SQL fragments, and keep untrusted data out of query syntax.",
+  "mechanism": {
+    "aliases": [
+      "SQL injection",
+      "SQL concatenation",
+      "dynamic SQL injection",
+      "untrusted query fragment"
+    ],
+    "family": "sql_injection",
+    "mechanism_id": "mech_sql_dynamic_query_untrusted_fragment",
+    "missing_guard": "values or structural fragments are concatenated into SQL syntax without parameter binding or a strict allowlist for identifiers and operators",
+    "name": "dynamic SQL query construction from untrusted fragments",
+    "required_keywords": [
+      [
+        "sql",
+        "jdbc",
+        "statement",
+        "preparedstatement",
+        "query"
+      ],
+      [
+        "concatenate",
+        "concat",
+        "interpolation",
+        "fragment",
+        "parameter",
+        "where",
+        "order by"
+      ]
+    ],
+    "sink_shape": "SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters",
+    "source_shape": "attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values",
+    "typical_fix": "use bound parameters for values, allowlist structural SQL fragments, and keep untrusted data out of query syntax"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2014-4172",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    37
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 37,
+      "fix_strategy": "Encode all user-supplied parameter values using URL encoding (e.g., URLEncoder.encode) before appending to the query string.",
+      "members": [
+        "CVE-2014-4172"
+      ],
+      "name": "Missing URL encoding of user-supplied parameter values",
+      "root_cause": "Code directly concatenates user-controlled parameter values into a URL query string without encoding special characters, allowing injection of additional parameters or URL structure."
+    }
+  ],
+  "tags": [
+    "sql_injection",
+    "mech_sql_dynamic_query_untrusted_fragment",
+    "SQL injection",
+    "SQL concatenation",
+    "dynamic SQL injection",
+    "untrusted query fragment"
+  ]
+}

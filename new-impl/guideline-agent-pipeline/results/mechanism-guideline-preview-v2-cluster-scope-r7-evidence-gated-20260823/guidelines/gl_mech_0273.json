@@ -1,0 +1,90 @@
+{
+  "cluster_summary": "This cluster covers XSS vulnerabilities where user-supplied URLs are inserted into HTML attributes (href, src) or navigation sinks without proper validation of the URI scheme to block dangerous protocols like javascript:. It also includes cases where URLs are embedded into HTML strings without escaping (causing HTML injection) and where double quotes in URLs are not escaped (causing attribute injection). The root cause is the assumption that user-provided URLs are safe to use directly in HTML or navigation contexts.",
+  "created_at": "2026-08-22T20:37:29+00:00",
+  "cve_ids": [
+    "CVE-2023-0301",
+    "CVE-2026-31876",
+    "CVE-2026-3455",
+    "CVE-2026-35451",
+    "CVE-2026-39964"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0048__mech_html_sanitizer_policy_gap",
+  "guideline_id": "gl_mech_0273",
+  "guideline_text": "Trace attacker-controlled markup, HTML fragments, rich text, comments, DOM nodes, style blocks, attributes, or URI values into HTML cleaners, SafeHtml validators, DOM sanitizers, rich-text renderers, or browser-rendered sanitized output. Report code paths where the active sanitizer policy does not allowlist dangerous elements, attributes, URI schemes, DOM child nodes, comments, or malformed inputs before rendering. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 5 historical CVE example(s), not as a project-specific signature. A safe implementation should activate the restrictive sanitizer for the relevant mode, enforce element/attribute/URI allowlists after parsing, and add regression tests for the bypass form.",
+  "mechanism": {
+    "aliases": [
+      "HTML sanitizer bypass",
+      "SafeHtml policy gap",
+      "missing sanitizer allowlist",
+      "restricted cleaner bypass"
+    ],
+    "family": "html_sanitization",
+    "mechanism_id": "mech_html_sanitizer_policy_gap",
+    "missing_guard": "the active sanitizer policy does not allowlist dangerous elements, attributes, URI schemes, DOM child nodes, comments, or malformed inputs before rendering",
+    "name": "HTML sanitizer policy gap or inactive allowlist",
+    "required_keywords": [
+      [
+        "html",
+        "sanitize",
+        "sanitizer",
+        "safehtml",
+        "cleaner",
+        "dompurify",
+        "antisamy",
+        "bleach"
+      ]
+    ],
+    "sink_shape": "HTML cleaners, SafeHtml validators, DOM sanitizers, rich-text renderers, or browser-rendered sanitized output",
+    "source_shape": "attacker-controlled markup, HTML fragments, rich text, comments, DOM nodes, style blocks, attributes, or URI values",
+    "typical_fix": "activate the restrictive sanitizer for the relevant mode, enforce element/attribute/URI allowlists after parsing, and add regression tests for the bypass form"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2023-0301",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    48
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 48,
+      "fix_strategy": "Validate the URL scheme against an allowlist (e.g., http, https) or use a sanitization function that rejects script-capable protocols; only allow safe schemes; otherwise drop the attribute or use a placeholder.",
+      "members": [
+        "CVE-2023-0301",
+        "CVE-2026-35451",
+        "CVE-2026-39964"
+      ],
+      "name": "Missing URI scheme allowlist in href/src and navigation sinks",
+      "root_cause": "The code assumes user-supplied URL strings are safe HTTP/HTTPS links without validating the URI scheme, allowing dangerous schemes like javascript: to be used in href, src, window.location, or window.open."
+    },
+    {
+      "cluster_id": 48,
+      "fix_strategy": "Use DOM API methods (e.g., createElement, setAttribute) to construct elements safely, ensuring automatic encoding, or apply proper HTML entity encoding before insertion.",
+      "members": [
+        "CVE-2026-31876"
+      ],
+      "name": "Missing HTML escaping in URL interpolation into HTML string",
+      "root_cause": "User-supplied URL is concatenated directly into an HTML string (e.g., srcdoc attribute) without HTML-escaping special characters, allowing injection of arbitrary HTML tags and scripts."
+    },
+    {
+      "cluster_id": 48,
+      "fix_strategy": "Encode double quotes as &quot; HTML entities and properly HTML-encode the entire attribute value using a trusted encoding function.",
+      "members": [
+        "CVE-2026-3455"
+      ],
+      "name": "Missing double-quote escaping in href attribute interpolation",
+      "root_cause": "User-controlled URL is inserted into an HTML attribute value (href) without escaping double quote characters, allowing attackers to break out of the attribute and inject arbitrary HTML attributes or scripts."
+    }
+  ],
+  "tags": [
+    "html_sanitization",
+    "mech_html_sanitizer_policy_gap",
+    "HTML sanitizer bypass",
+    "SafeHtml policy gap",
+    "missing sanitizer allowlist",
+    "restricted cleaner bypass"
+  ]
+}

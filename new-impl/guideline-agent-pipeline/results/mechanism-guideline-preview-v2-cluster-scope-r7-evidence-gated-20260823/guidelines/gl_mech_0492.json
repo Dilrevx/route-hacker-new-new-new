@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "This cluster contains five distinct vulnerabilities where sensitive data—such as authentication tokens, private keys, credentials in URLs, and deployment details—are exposed due to missing or incomplete redaction, authorization checks, or secret isolation. Each vulnerability arises from a different coding oversight but all lead to information disclosure.",
+  "created_at": "2026-08-22T20:37:31+00:00",
+  "cve_ids": [
+    "CVE-2026-41339"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0086__pending_mech_cluster_86_missing_authorization_check_for_sensitive_fields_in_snapshot",
+  "guideline_id": "gl_mech_0492",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Add an includeSensitive parameter to the function and only populate sensitive fields when the caller's scopes include ADMIN_SCOPE..",
+  "mechanism": {
+    "aliases": [
+      "sensitive",
+      "includes",
+      "users",
+      "payload",
+      "sends",
+      "filesystem"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_86_missing_authorization_check_for_sensitive_fields_in_snapshot",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing authorization check for sensitive fields in snapshot",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Add an includeSensitive parameter to the function and only populate sensitive fields when the caller's scopes include ADMIN_SCOPE."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-41339",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    86
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 86,
+      "fix_strategy": "Add an includeSensitive parameter to the function and only populate sensitive fields when the caller's scopes include ADMIN_SCOPE.",
+      "members": [
+        "CVE-2026-41339"
+      ],
+      "name": "Missing authorization check for sensitive fields in snapshot",
+      "root_cause": "The buildGatewaySnapshot() function unconditionally includes sensitive fields (configPath, stateDir, authMode) assuming all authenticated clients are authorized, with no scope-based access control."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_86_missing_authorization_check_for_sensitive_fields_in_snapshot",
+    "sensitive",
+    "includes",
+    "users",
+    "payload"
+  ]
+}

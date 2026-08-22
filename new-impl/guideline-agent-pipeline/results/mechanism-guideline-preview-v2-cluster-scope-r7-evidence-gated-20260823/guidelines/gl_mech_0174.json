@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "The cluster includes vulnerabilities where untrusted user input is passed to dangerous functions like eval, exec, pickle.load, or f-string formatting without proper sanitization or restrictions, allowing arbitrary code execution. The root cause is the assumption that input is safe due to internal trust or incomplete validation. Fix strategies vary from whitelist-based replacement to removing vulnerable endpoints.",
+  "created_at": "2026-08-22T20:37:28+00:00",
+  "cve_ids": [
+    "CVE-2026-41900"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0032__pending_mech_cluster_32_command_injection_in_container_execution",
+  "guideline_id": "gl_mech_0174",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Replace with a hardened service that uses Docker API directly without shell and adds input validation..",
+  "mechanism": {
+    "aliases": [
+      "escape",
+      "assumed",
+      "sandbox",
+      "shell",
+      "used",
+      "system-shell"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_32_command_injection_in_container_execution",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Command injection in container execution",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Replace with a hardened service that uses Docker API directly without shell and adds input validation."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-41900",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    32
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 32,
+      "fix_strategy": "Replace with a hardened service that uses Docker API directly without shell and adds input validation.",
+      "members": [
+        "CVE-2026-41900"
+      ],
+      "name": "Command injection in container execution",
+      "root_cause": "User-supplied code and language strings passed to a container execution function that constructs shell commands without escaping."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_32_command_injection_in_container_execution",
+    "escape",
+    "assumed",
+    "sandbox",
+    "shell"
+  ]
+}
