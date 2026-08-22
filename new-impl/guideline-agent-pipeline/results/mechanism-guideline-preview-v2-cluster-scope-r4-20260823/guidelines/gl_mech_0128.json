@@ -1,0 +1,54 @@
+{
+  "cluster_summary": "The cluster comprises vulnerabilities where the application fails to properly manage session lifecycle, authentication state validation, or token consumption, leading to session fixation, unauthorized access, replay attacks, or denial of service. Common root causes include missing invalidation of sessions or tokens, failure to re-validate against current configuration, and unsafe reuse of mutable objects.",
+  "created_at": "2026-08-22T17:56:09+00:00",
+  "cve_ids": [
+    "CVE-2020-1732"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0022__mech_object_owner_scope_missing_authz",
+  "guideline_id": "gl_mech_0128",
+  "guideline_text": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where the authorization decision is not bound to both the current principal and the exact resource or tenant being affected. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation.",
+  "mechanism": {
+    "aliases": [
+      "object ownership authorization",
+      "tenant scope check",
+      "IDOR",
+      "resource scoped authorization"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_object_owner_scope_missing_authz",
+    "missing_guard": "the authorization decision is not bound to both the current principal and the exact resource or tenant being affected",
+    "name": "missing object-owner or tenant-scope authorization",
+    "sink_shape": "sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource",
+    "source_shape": "attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets",
+    "typical_fix": "check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2020-1732",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    22
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 22,
+      "fix_strategy": "Replace the shared instance with a Supplier that creates a new instance per request, ensuring per-request isolation.",
+      "members": [
+        "CVE-2020-1732"
+      ],
+      "name": "Thread-unsafe reuse of mutable authentication handler",
+      "root_cause": "A shared ServerAuthModule instance is reused across concurrent requests without synchronization, allowing race conditions that corrupt authentication state."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_object_owner_scope_missing_authz",
+    "object ownership authorization",
+    "tenant scope check",
+    "IDOR",
+    "resource scoped authorization"
+  ]
+}

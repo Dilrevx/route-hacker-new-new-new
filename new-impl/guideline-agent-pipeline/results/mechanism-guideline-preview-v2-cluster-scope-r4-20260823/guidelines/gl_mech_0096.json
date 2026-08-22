@@ -1,0 +1,52 @@
+{
+  "cluster_summary": "This cluster contains 18 Netty CVEs covering a range of input parsing and validation flaws, including missing CRLF validation, disabled header validation, insufficient boundary checks, resource exhaustion, memory leaks, and incorrect protocol state handling. The vulnerabilities span HTTP, SMTP, WebSocket, AJP, and binary HTTP parsers.",
+  "created_at": "2026-08-22T17:56:09+00:00",
+  "cve_ids": [
+    "CVE-2020-7622"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0018__mech_ssrf_redirect_following_client",
+  "guideline_id": "gl_mech_0096",
+  "guideline_text": "Trace attacker-controlled URLs or server-controlled redirect responses into HTTP clients that automatically follow redirects or reuse a previously validated URL decision. Report code paths where the final redirected scheme, host, port, and resolved address are not revalidated before the sensitive network request. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should disable automatic redirects or revalidate every redirect hop against the same allowlist and address policy.",
+  "mechanism": {
+    "aliases": [
+      "redirect-follow SSRF",
+      "HTTP redirect SSRF",
+      "Location header SSRF"
+    ],
+    "family": "ssrf",
+    "mechanism_id": "mech_ssrf_redirect_following_client",
+    "missing_guard": "the final redirected scheme, host, port, and resolved address are not revalidated before the sensitive network request",
+    "name": "SSRF through redirect-following client",
+    "sink_shape": "HTTP clients that automatically follow redirects or reuse a previously validated URL decision",
+    "source_shape": "attacker-controlled URLs or server-controlled redirect responses",
+    "typical_fix": "disable automatic redirects or revalidate every redirect hop against the same allowlist and address policy"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2020-7622",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    18
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 18,
+      "fix_strategy": "Enable header validation by using the default constructor (or passing true) to reject header values containing line terminators.",
+      "members": [
+        "CVE-2020-7622"
+      ],
+      "name": "Disabled header validation flag",
+      "root_cause": "The code explicitly disables HTTP header validation by passing false to the DefaultHttpHeaders constructor, allowing CRLF injection characters."
+    }
+  ],
+  "tags": [
+    "ssrf",
+    "mech_ssrf_redirect_following_client",
+    "redirect-follow SSRF",
+    "HTTP redirect SSRF",
+    "Location header SSRF"
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where untrusted input (serialized data, JSON, configuration) specifies a class name that is then loaded or instantiated without sufficient validation—either an allowlist or a comprehensive blocklist. Most members involve incomplete deny-lists in polymorphic deserialization frameworks, allowing instantiation of dangerous gadget classes. A few members involve missing allowlists in reflective instantiation or resource exhaustion from recursive collection structures.",
+  "created_at": "2026-08-22T17:56:09+00:00",
+  "cve_ids": [
+    "CVE-2018-14718",
+    "CVE-2018-14719",
+    "CVE-2018-14720",
+    "CVE-2018-14721",
+    "CVE-2018-19360",
+    "CVE-2018-19361",
+    "CVE-2018-19362",
+    "CVE-2020-10650",
+    "CVE-2021-29505"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0009__mech_xml_external_entity_resolution",
+  "guideline_id": "gl_mech_0044",
+  "guideline_text": "Trace attacker-controlled or externally supplied XML documents, SOAP messages, XML reports, configuration files, XPath inputs, or XSLT stylesheets into XML parser, XPath, transformer, schema, or SOAP/XML utility code that parses or transforms those documents. Report code paths where DTD declarations, external general entities, external parameter entities, external schema access, or external stylesheet access are not disabled or constrained on the exact parser/transformer instance. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 9 historical CVE example(s), not as a project-specific signature. A safe implementation should disable DOCTYPE and external entity processing, restrict external-access properties, and install a resolver or parser configuration that rejects external resource resolution before parsing.",
+  "mechanism": {
+    "aliases": [
+      "XXE",
+      "XML external entity",
+      "external entity resolution",
+      "DTD processing",
+      "DocumentBuilderFactory external entities"
+    ],
+    "family": "xml_external_resource_resolution",
+    "mechanism_id": "mech_xml_external_entity_resolution",
+    "missing_guard": "DTD declarations, external general entities, external parameter entities, external schema access, or external stylesheet access are not disabled or constrained on the exact parser/transformer instance",
+    "name": "unsafe XML parser external entity or DTD resolution",
+    "sink_shape": "XML parser, XPath, transformer, schema, or SOAP/XML utility code that parses or transforms those documents",
+    "source_shape": "attacker-controlled or externally supplied XML documents, SOAP messages, XML reports, configuration files, XPath inputs, or XSLT stylesheets",
+    "typical_fix": "disable DOCTYPE and external entity processing, restrict external-access properties, and install a resolver or parser configuration that rejects external resource resolution before parsing"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2018-14718",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    9
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 9,
+      "fix_strategy": "Add the missing dangerous class names to the static blocklist (e.g., DEFAULT_NO_DESER_CLASS_NAMES) and maintain an up-to-date comprehensive blocklist.",
+      "members": [
+        "CVE-2021-29505",
+        "CVE-2020-10650",
+        "CVE-2018-19361",
+        "CVE-2018-19362",
+        "CVE-2018-19360",
+        "CVE-2018-14719",
+        "CVE-2018-14721",
+        "CVE-2018-14720",
+        "CVE-2018-14718"
+      ],
+      "name": "Incomplete blocklist in polymorphic deserialization frameworks",
+      "root_cause": "Deserialization frameworks rely on a static deny-list of dangerous classes to prevent instantiation of gadget chains, but the list is incomplete, allowing attackers to specify unlisted dangerous classes that can trigger arbitrary code execution, JNDI injection, or XXE."
+    }
+  ],
+  "tags": [
+    "xml_external_resource_resolution",
+    "mech_xml_external_entity_resolution",
+    "XXE",
+    "XML external entity",
+    "external entity resolution",
+    "DTD processing"
+  ]
+}

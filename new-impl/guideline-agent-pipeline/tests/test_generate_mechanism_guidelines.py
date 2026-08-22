@@ -191,3 +191,45 @@ def test_sub_pattern_evidence_takes_precedence_over_broad_cluster_summary():
     _, mechanism, status, _, _ = attributed[0]
     assert status == "active"
     assert mechanism.mechanism_id == "mech_request_body_resource_mismatch_authz"
+
+
+def test_xml_external_entity_mechanism_wins_over_deserialization_for_parser_evidence():
+    module = load_module()
+    lexicon = module.load_lexicon(LEXICON)
+    structured = {
+        "CVE-2099-3001": {
+            "cve_id": "CVE-2099-3001",
+            "vuln_type": "XML external entity processing in report parser",
+            "root_cause": (
+                "A default DocumentBuilderFactory parses attacker supplied XML "
+                "without disabling DTD processing, external general entities, "
+                "or external parameter entities."
+            ),
+            "abstract_pattern": "Untrusted XML reaches a parser that resolves external entities.",
+            "data_flow": "uploaded XML report -> DocumentBuilderFactory -> DocumentBuilder.parse",
+            "trigger_condition": "The XML document contains a DOCTYPE with an external entity.",
+            "fix_strategy": "Disable DOCTYPE and external entity resolution on the parser factory.",
+            "impact": "Local file disclosure or SSRF through XML entity resolution.",
+        }
+    }
+    item = module.WorkItem(
+        cluster_id=1,
+        cluster_name="XML processing bugs",
+        cluster_summary=(
+            "XML parser bugs include XXE, XMLDecoder deserialization, XSLT extension "
+            "function abuse, and other XML-processing problems."
+        ),
+        sub_pattern_name="Unsafe XML parser external entity resolution",
+        sub_pattern_root_cause="Default parser allows external entity resolution.",
+        sub_pattern_fix_strategy="Disable DTD and external entities.",
+        members=("CVE-2099-3001",),
+        source_kind="sub_pattern",
+    )
+
+    attributed = module.attributed_work_items(item, structured, lexicon, min_score=2.0)
+
+    assert len(attributed) == 1
+    _, mechanism, status, _, matches = attributed[0]
+    assert status == "active"
+    assert mechanism.mechanism_id == "mech_xml_external_entity_resolution"
+    assert "documentbuilderfactory" in matches

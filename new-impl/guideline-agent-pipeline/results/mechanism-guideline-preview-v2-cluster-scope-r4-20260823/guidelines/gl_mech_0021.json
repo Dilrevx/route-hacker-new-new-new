@@ -1,0 +1,88 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where user-supplied URLs or redirect targets are used in server-side network operations (redirects, HTTP requests, OS commands, DNS) without proper validation, allowing attackers to redirect users to malicious sites, perform SSRF, leak credentials, or execute commands.",
+  "created_at": "2026-08-22T17:56:08+00:00",
+  "cve_ids": [
+    "CVE-2022-23618",
+    "CVE-2022-31193",
+    "CVE-2022-4361",
+    "CVE-2023-29204",
+    "CVE-2023-32068",
+    "CVE-2025-32970",
+    "CVE-2025-7949",
+    "CVE-2025-8813",
+    "CVE-2026-11477",
+    "CVE-2026-25534"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0005__mech_open_redirect_unsafe_uri_scheme",
+  "guideline_id": "gl_mech_0021",
+  "guideline_text": "Trace attacker-controlled redirect targets, callback URLs, return URLs, OAuth redirect_uri values, or browser navigation destinations into redirect responses, Location headers, OAuth/OIDC/SAML redirect validation, or browser-followed navigation targets. Report code paths where the redirect target is accepted without constraining the final scheme and destination to trusted browser-safe values. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 10 historical CVE example(s), not as a project-specific signature. A safe implementation should validate redirect targets with an explicit safe-scheme and destination allowlist after decoding and normalization.",
+  "mechanism": {
+    "aliases": [
+      "unsafe redirect URI scheme",
+      "javascript URI redirect",
+      "data URI redirect",
+      "redirect_uri scheme bypass"
+    ],
+    "family": "open_redirect",
+    "mechanism_id": "mech_open_redirect_unsafe_uri_scheme",
+    "missing_guard": "the redirect target is accepted without constraining the final scheme and destination to trusted browser-safe values",
+    "name": "open redirect through unsafe URI scheme validation",
+    "sink_shape": "redirect responses, Location headers, OAuth/OIDC/SAML redirect validation, or browser-followed navigation targets",
+    "source_shape": "attacker-controlled redirect targets, callback URLs, return URLs, OAuth redirect_uri values, or browser navigation destinations",
+    "typical_fix": "validate redirect targets with an explicit safe-scheme and destination allowlist after decoding and normalization"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2022-23618",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    5
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 5,
+      "fix_strategy": "Validate redirect target using domain allow-list, exact prefix check with context path, or remove the redirect feature.",
+      "members": [
+        "CVE-2026-11477",
+        "CVE-2025-8813",
+        "CVE-2025-32970",
+        "CVE-2022-31193",
+        "CVE-2022-23618",
+        "CVE-2023-29204",
+        "CVE-2023-32068",
+        "CVE-2022-4361"
+      ],
+      "name": "Server-side open redirect via insufficient URL validation",
+      "root_cause": "User-supplied redirect target is accepted without proper validation (naive prefix match, missing domain allow-list, incomplete regex) allowing redirection to external domains."
+    },
+    {
+      "cluster_id": 5,
+      "fix_strategy": "Resolve hostname to IP address before checking, or use a more robust host parser that handles edge cases.",
+      "members": [
+        "CVE-2026-25534"
+      ],
+      "name": "SSRF due to hostname resolution and parsing bypass",
+      "root_cause": "Validation relies on hostname string checks without resolving to IP, or uses a host parser that returns null for certain hostnames, allowing bypass."
+    },
+    {
+      "cluster_id": 5,
+      "fix_strategy": "Remove the client-side redirect script or validate the redirect target.",
+      "members": [
+        "CVE-2025-7949"
+      ],
+      "name": "Client-side open redirect via window.location assignment",
+      "root_cause": "User-supplied query parameter is directly assigned to window.location without validation, allowing attacker-controlled URLs."
+    }
+  ],
+  "tags": [
+    "open_redirect",
+    "mech_open_redirect_unsafe_uri_scheme",
+    "unsafe redirect URI scheme",
+    "javascript URI redirect",
+    "data URI redirect",
+    "redirect_uri scheme bypass"
+  ]
+}

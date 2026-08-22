@@ -1,0 +1,54 @@
+{
+  "cluster_summary": "A collection of 18 vulnerabilities where HTTP endpoints lack proper authentication or authorization checks. The root causes span missing authentication guards, missing permission annotations, missing object-level ownership verification, insufficient privilege validation, and other authorization bypass issues, allowing unauthenticated or unauthorized access to sensitive operations.",
+  "created_at": "2026-08-22T17:56:09+00:00",
+  "cve_ids": [
+    "CVE-2024-43397"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0034__mech_request_body_resource_mismatch_authz",
+  "guideline_id": "gl_mech_0188",
+  "guideline_text": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources. Report code paths where the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation.",
+  "mechanism": {
+    "aliases": [
+      "path parameter authorization mismatch",
+      "request body resource mismatch",
+      "bulk operation target mismatch",
+      "namespace sync authorization bypass"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_request_body_resource_mismatch_authz",
+    "missing_guard": "the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check",
+    "name": "request-body resource identifiers bypass path-scoped authorization",
+    "sink_shape": "bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources",
+    "source_shape": "attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body",
+    "typical_fix": "validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2024-43397",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    34
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 34,
+      "fix_strategy": "Add validation that each identifier in the request body matches the path parameters before processing the permission check.",
+      "members": [
+        "CVE-2024-43397"
+      ],
+      "name": "Missing validation of resource identifiers against path parameters",
+      "root_cause": "In bulk operations, the request body contains resource identifiers that are not validated to match the resource identified by the URL path, allowing the operation to bypass path-based authorization checks."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_request_body_resource_mismatch_authz",
+    "path parameter authorization mismatch",
+    "request body resource mismatch",
+    "bulk operation target mismatch",
+    "namespace sync authorization bypass"
+  ]
+}

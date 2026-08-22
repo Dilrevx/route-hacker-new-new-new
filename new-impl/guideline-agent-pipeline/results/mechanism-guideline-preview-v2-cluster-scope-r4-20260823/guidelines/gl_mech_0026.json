@@ -1,0 +1,54 @@
+{
+  "cluster_summary": "This cluster covers multiple distinct vulnerability types including OS command injection via shell metacharacters and argument separator issues, credential leakage from git URLs in build outputs, null byte injection into process execution, and missing access controls for privileged operations such as Docker socket mounting and command whitelisting.",
+  "created_at": "2026-08-22T17:56:08+00:00",
+  "cve_ids": [
+    "CVE-2022-39206"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0006__mech_object_owner_scope_missing_authz",
+  "guideline_id": "gl_mech_0026",
+  "guideline_text": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where the authorization decision is not bound to both the current principal and the exact resource or tenant being affected. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation.",
+  "mechanism": {
+    "aliases": [
+      "object ownership authorization",
+      "tenant scope check",
+      "IDOR",
+      "resource scoped authorization"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_object_owner_scope_missing_authz",
+    "missing_guard": "the authorization decision is not bound to both the current principal and the exact resource or tenant being affected",
+    "name": "missing object-owner or tenant-scope authorization",
+    "sink_shape": "sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource",
+    "source_shape": "attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets",
+    "typical_fix": "check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2022-39206",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    6
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 6,
+      "fix_strategy": "Make socket mounting configurable, defaulting to off, and only mount when explicitly enabled.",
+      "members": [
+        "CVE-2022-39206"
+      ],
+      "name": "Unconditional mount of privileged host resource",
+      "root_cause": "Host Docker socket is unconditionally mounted into job containers without any access control, allowing container escape."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_object_owner_scope_missing_authz",
+    "object ownership authorization",
+    "tenant scope check",
+    "IDOR",
+    "resource scoped authorization"
+  ]
+}

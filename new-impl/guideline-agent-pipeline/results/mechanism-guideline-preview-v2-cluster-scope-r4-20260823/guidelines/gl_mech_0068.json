@@ -1,0 +1,78 @@
+{
+  "cluster_summary": "A set of SQL injection vulnerabilities where user-controlled input is concatenated directly into SQL query strings without using parameterized queries, prepared statements, or proper escaping, allowing attackers to inject arbitrary SQL commands.",
+  "created_at": "2026-08-22T17:56:09+00:00",
+  "cve_ids": [
+    "CVE-2014-125038",
+    "CVE-2014-125047",
+    "CVE-2014-125074",
+    "CVE-2014-125075",
+    "CVE-2015-10020",
+    "CVE-2015-10034",
+    "CVE-2015-10037",
+    "CVE-2015-10047",
+    "CVE-2015-10048",
+    "CVE-2015-10061",
+    "CVE-2015-10068",
+    "CVE-2015-10076"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0013__pending_mech_cluster_13_direct_string_concatenation_into_sql_query",
+  "guideline_id": "gl_mech_0068",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 12 historical CVE example(s), not as a project-specific signature. A safe implementation should Replace string concatenation with parameterized queries using placeholders (?, :name) and binding methods such as setString(), setInt(), setObject(), or ORM-specific equivalents like Ebean Expr.eq or JPQL setParameter..",
+  "mechanism": {
+    "aliases": [
+      "concatenated",
+      "leads",
+      "passes",
+      "endereco",
+      "interpolated",
+      "statement.execute"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_13_direct_string_concatenation_into_sql_query",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Direct string concatenation into SQL query",
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Replace string concatenation with parameterized queries using placeholders (?, :name) and binding methods such as setString(), setInt(), setObject(), or ORM-specific equivalents like Ebean Expr.eq or JPQL setParameter."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2014-125038",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    13
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 13,
+      "fix_strategy": "Replace string concatenation with parameterized queries using placeholders (?, :name) and binding methods such as setString(), setInt(), setObject(), or ORM-specific equivalents like Ebean Expr.eq or JPQL setParameter.",
+      "members": [
+        "CVE-2015-10076",
+        "CVE-2015-10048",
+        "CVE-2014-125038",
+        "CVE-2015-10068",
+        "CVE-2015-10061",
+        "CVE-2015-10047",
+        "CVE-2015-10020",
+        "CVE-2015-10034",
+        "CVE-2015-10037",
+        "CVE-2014-125074",
+        "CVE-2014-125075",
+        "CVE-2014-125047"
+      ],
+      "name": "Direct string concatenation into SQL query",
+      "root_cause": "Developers build SQL queries by concatenating user-supplied input directly into the SQL string, assuming it is safe, and execute it via Statement or misuse of PreparedStatement without parameter binding."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_13_direct_string_concatenation_into_sql_query",
+    "concatenated",
+    "leads",
+    "passes",
+    "endereco"
+  ]
+}

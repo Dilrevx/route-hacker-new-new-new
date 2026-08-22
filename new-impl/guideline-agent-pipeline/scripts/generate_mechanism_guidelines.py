@@ -490,6 +490,12 @@ def build_guideline_text(mechanism: Mechanism, member_count: int) -> str:
     )
 
 
+def preview_text(text: str, limit: int = 240) -> str:
+    if len(text) <= limit:
+        return text
+    return text[:limit].rstrip()
+
+
 def build_guideline_payload(
     *,
     guideline_id: str,
@@ -601,7 +607,7 @@ def write_outputs(
                 "source_cluster_ids": payload["source_cluster_ids"],
                 "cve_count": len(payload["cve_ids"]),
                 "top_tags": payload["tags"][:8],
-                "guideline_preview": payload["guideline_text"][:240],
+                "guideline_preview": preview_text(payload["guideline_text"]),
             }
         )
         for cve_id in payload["cve_ids"]:

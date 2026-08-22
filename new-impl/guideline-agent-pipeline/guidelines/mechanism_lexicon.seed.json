@@ -70,6 +70,17 @@
       "typical_fix": "use type allowlists, safe codecs, signature checks, or data-only formats instead of general object deserialization"
     },
     {
+      "mechanism_id": "mech_xml_external_entity_resolution",
+      "name": "unsafe XML parser external entity or DTD resolution",
+      "family": "xml_external_resource_resolution",
+      "aliases": ["XXE", "XML external entity", "external entity resolution", "DTD processing", "DocumentBuilderFactory external entities"],
+      "keywords": ["xxe", "xml", "dtd", "doctype", "external entity", "external entities", "external general entities", "external parameter entities", "entityresolver", "documentbuilderfactory", "saxparserfactory", "xmlinputfactory", "transformerfactory", "xpath", "xslt", "sax", "dom", "schemafactory", "accessExternalDTD", "accessExternalSchema", "disallow-doctype-decl"],
+      "source_shape": "attacker-controlled or externally supplied XML documents, SOAP messages, XML reports, configuration files, XPath inputs, or XSLT stylesheets",
+      "sink_shape": "XML parser, XPath, transformer, schema, or SOAP/XML utility code that parses or transforms those documents",
+      "missing_guard": "DTD declarations, external general entities, external parameter entities, external schema access, or external stylesheet access are not disabled or constrained on the exact parser/transformer instance",
+      "typical_fix": "disable DOCTYPE and external entity processing, restrict external-access properties, and install a resolver or parser configuration that rejects external resource resolution before parsing"
+    },
+    {
       "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
       "name": "path traversal through missing canonical prefix check",
       "family": "filesystem",
