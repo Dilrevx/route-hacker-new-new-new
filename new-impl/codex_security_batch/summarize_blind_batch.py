@@ -8,6 +8,8 @@ import csv
 import hashlib
 import json
 import re
+import sys
+from datetime import datetime
 from collections import Counter
 from pathlib import Path
 from typing import Any
@@ -36,11 +38,26 @@ def parse_args() -> argparse.Namespace:
 
 
 def read_jsonl(path: Path) -> list[dict[str, Any]]:
-    return [
-        json.loads(line)
-        for line in path.read_text(encoding="utf-8").splitlines()
-        if line.strip()
-    ]
+    rows: list[dict[str, Any]] = []
+    for line_number, line in enumerate(
+        path.read_text(encoding="utf-8").splitlines(), start=1
+    ):
+        if not line.strip():
+            continue
+        try:
+            value = json.loads(line)
+        except json.JSONDecodeError:
+            # A runner interrupted during append can leave one physical record
+            # split or truncated.  Preserve valid completed records and let the
+            # state/artifact fallback describe the affected case.
+            print(
+                f"warning: skipped malformed JSONL record {path}:{line_number}",
+                file=sys.stderr,
+            )
+            continue
+        if isinstance(value, dict):
+            rows.append(value)
+    return rows
 
 
 def read_header_fields(path: Path) -> dict[str, str]:
@@ -82,6 +99,52 @@ def terminal_state(case_id: str, state_dir: Path) -> str | None:
     return None
 
 
+def elapsed_from_manifest(manifest: dict[str, Any] | None) -> int | None:
+    """Best-effort elapsed time for an interrupted runner record."""
+    if not manifest:
+        return None
+    scan = manifest.get("scan", {})
+    if not isinstance(scan, dict):
+        return None
+    started = scan.get("startedAt")
+    completed = scan.get("completedAt")
+    if not isinstance(started, str) or not isinstance(completed, str):
+        return None
+    try:
+        start_time = datetime.fromisoformat(started.replace("Z", "+00:00"))
+        completed_time = datetime.fromisoformat(completed.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return max(0, int((completed_time - start_time).total_seconds()))
+
+
+def recover_record_from_artifacts(
+    queue_row: dict[str, Any], header: dict[str, str], state: str | None
+) -> dict[str, Any] | None:
+    """Recover completed core artifacts when an interrupted append lost its JSONL row."""
+    out_value = header.get("OUT")
+    if not out_value:
+        return None
+    out_dir = Path(out_value)
+    core_names = ("scan-manifest.json", "findings.json", "coverage.json")
+    if not all((out_dir / name).is_file() for name in core_names):
+        return None
+    manifest = load_json(str(out_dir / "scan-manifest.json"))
+    return {
+        "rank": queue_row["rank"],
+        "case_id": queue_row["case_id"],
+        "status": "partial_artifacts",
+        "recovered_from_artifacts": True,
+        "elapsed_seconds": elapsed_from_manifest(manifest),
+        "coverage": (load_json(str(out_dir / "coverage.json")) or {}).get("completeness"),
+        "artifacts": {
+            name: str(out_dir / name) if (out_dir / name).is_file() else None
+            for name in ARTIFACT_NAMES
+        },
+        "terminal_state": state,
+    }
+
+
 def portable_case_row(
     queue_row: dict[str, Any],
     record: dict[str, Any] | None,
@@ -94,6 +157,10 @@ def portable_case_row(
     vulnerability_id = queue_row.get("vulnerability_id") or queue_row["repo_key"]
     header = read_header_fields(log_dir / f"{case_id}.log.header")
     state = terminal_state(case_id, state_dir)
+    recovered = False
+    if record is None:
+        record = recover_record_from_artifacts(queue_row, header, state)
+        recovered = record is not None
 
     if record is None:
         status = state or "pending"
@@ -178,6 +245,7 @@ def portable_case_row(
             **queue_row,
             "status": status,
             "record_status": record_status,
+            "recovered_from_artifacts": recovered,
             "model": header.get("MODEL"),
             "effort": header.get("EFFORT"),
             "exec_mode": header.get("CODEX_EXEC_MODE"),
@@ -241,6 +309,7 @@ def build_summary(
         row["producer"] or "unknown" for row in cases if row["record_status"]
     )
     processed = len(cases) - status_counts.get("pending", 0)
+    recovered_cases = sum(1 for row in cases if row.get("recovered_from_artifacts"))
     return {
         "schema": "codex-security-blind-batch-summary.v1",
         "queue": {
@@ -250,6 +319,7 @@ def build_summary(
         "records": {
             "raw_rows": len(read_jsonl(records_path)),
             "unique_cases": sum(1 for row in cases if row["record_status"]),
+            "recovered_from_artifacts": recovered_cases,
             "sha256": sha256(records_path),
         },
         "processed_cases": processed,
@@ -263,8 +333,8 @@ def build_summary(
             int(row["elapsed_seconds"] or 0) for row in cases
         ),
         "boundaries": [
-            "All scans are repository-level blind audits at dataset revisions.",
-            "Dataset vulnerability IDs and types are joined after execution for evaluation bookkeeping.",
+            "All scans are repository-level blind audits at the queue's frozen latest default-branch revisions.",
+            "Unified v2 selects the Apache project set; it does not supply the audited source revision.",
             "Findings are Codex Security candidates and are not runtime-confirmed vulnerabilities.",
             "partial_artifacts means core artifacts exist after a non-zero scanner exit.",
             "No credentials, auth state, local logs, source trees, or absolute artifact paths are included.",
@@ -340,7 +410,8 @@ def write_markdown(path: Path, summary: dict[str, Any], cases: list[dict[str, An
 ## Integrity
 
 - Queue SHA256: `{summary["queue"]["sha256"]}`
-- Raw records: {summary["records"]["raw_rows"]} rows, {summary["records"]["unique_cases"]} unique cases.
+- Raw records: {summary["records"]["raw_rows"]} rows, {summary["records"]["unique_cases"]} cases represented after recovery.
+- Recovered from complete core artifacts after interrupted JSONL appends: {summary["records"]["recovered_from_artifacts"]}.
 - Records SHA256: `{summary["records"]["sha256"]}`
 - Manifest still marked `in_progress`: {", ".join(scan_in_progress) if scan_in_progress else "none"}.
 
@@ -391,6 +462,7 @@ def main() -> int:
             "paper_eval_decision",
             "status",
             "record_status",
+            "recovered_from_artifacts",
             "model",
             "effort",
             "exec_mode",

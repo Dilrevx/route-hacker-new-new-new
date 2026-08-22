@@ -1,0 +1,42 @@
+{
+  "boundaries": [
+    "All scans are repository-level blind audits at the queue's frozen latest default-branch revisions.",
+    "Unified v2 selects the Apache project set; it does not supply the audited source revision.",
+    "Findings are Codex Security candidates and are not runtime-confirmed vulnerabilities.",
+    "partial_artifacts means core artifacts exist after a non-zero scanner exit.",
+    "No credentials, auth state, local logs, source trees, or absolute artifact paths are included."
+  ],
+  "coverage_counts": {
+    "partial": 5
+  },
+  "elapsed_seconds": 4407,
+  "findings_total": 31,
+  "model_counts": {
+    "gpt-5.5": 5
+  },
+  "processed_cases": 5,
+  "producer_counts": {
+    "codex-security-plugin@0.1.20": 5
+  },
+  "queue": {
+    "cases": 44,
+    "sha256": "b1573fec38a96251858eba1f22cbaa9cabc1a5a4dab926458a5be0ff3387fb97"
+  },
+  "records": {
+    "raw_rows": 2,
+    "recovered_from_artifacts": 3,
+    "sha256": "e960d8f69539134217010a9c2e3e910413ca0e573d02df6bb897d4086551a569",
+    "unique_cases": 5
+  },
+  "schema": "codex-security-blind-batch-summary.v1",
+  "severity_counts": {
+    "high": 17,
+    "low": 3,
+    "medium": 11
+  },
+  "status_counts": {
+    "partial_artifacts": 4,
+    "pending": 39,
+    "stopped": 1
+  }
+}

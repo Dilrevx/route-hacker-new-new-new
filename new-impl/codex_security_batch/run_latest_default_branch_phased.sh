@@ -16,6 +16,7 @@ EFFORT="${CODEX_SECURITY_EFFORT:-high}"
 WRAPPER="${CODEX_SECURITY_WRAPPER:?CODEX_SECURITY_WRAPPER is required}"
 TRAE_BIN="${CODEX_SECURITY_TRAEX_BIN:-traex}"
 PLUGIN_DIR="${CODEX_SECURITY_PLUGIN_DIR:-}"
+NATIVE_QUEUE="$RUN_ROOT/control/native-first-${NATIVE_CASES}-queue.jsonl"
 
 [[ "$NATIVE_CASES" =~ ^[1-9][0-9]*$ ]] || {
   echo "CODEX_SECURITY_NATIVE_CASES must be a positive integer" >&2
@@ -30,10 +31,19 @@ command -v "$TRAE_BIN" >/dev/null || {
   exit 64
 }
 
+# The native phase must always be restricted to the first N rank-ordered rows,
+# including after a restart.  The TraeX phase then reads the complete queue and
+# skips those rows through their terminal state markers.
+head -n "$NATIVE_CASES" "$QUEUE" >"$NATIVE_QUEUE"
+[[ "$(wc -l <"$NATIVE_QUEUE" | tr -d ' ')" == "$NATIVE_CASES" ]] || {
+  echo "queue has fewer than $NATIVE_CASES rows: $QUEUE" >&2
+  exit 64
+}
+
 echo "phase=native cases=1-$NATIVE_CASES model=$MODEL effort=$EFFORT"
 env \
   CODEX_SECURITY_RUN_ROOT="$RUN_ROOT" \
-  CODEX_SECURITY_QUEUE="$QUEUE" \
+  CODEX_SECURITY_QUEUE="$NATIVE_QUEUE" \
   CODEX_SECURITY_MODEL="$MODEL" \
   CODEX_SECURITY_EFFORT="$EFFORT" \
   CODEX_SECURITY_OUTER_PARALLELISM="${CODEX_SECURITY_OUTER_PARALLELISM:-2}" \

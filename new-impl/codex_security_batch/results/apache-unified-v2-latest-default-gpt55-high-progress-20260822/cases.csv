@@ -1,0 +1,45 @@
+rank,case_id,repo_key,vulnerability_id,vulnerability_type,paper_eval_decision,status,record_status,recovered_from_artifacts,model,effort,exec_mode,elapsed_seconds,coverage,findings_total,severity_counts,scan_id,scan_status,producer,artifact_presence
+1,apache_master_001,apache__activemq,,latest_default_branch_audit,,partial_artifacts,partial_artifacts,False,gpt-5.5,high,native-codex,1129,partial,6,"{""high"": 3, ""low"": 1, ""medium"": 2}",12dd175a-8327-460a-a8b0-b42fefa9c3c7,completed,codex-security-plugin@0.1.20,"{""coverage.json"": true, ""exports/results.sarif"": true, ""findings.json"": true, ""report.md"": true, ""scan-manifest.json"": true}"
+2,apache_master_002,apache__activemq-artemis,,latest_default_branch_audit,,partial_artifacts,partial_artifacts,True,gpt-5.5,high,native-codex,681,partial,7,"{""high"": 3, ""low"": 1, ""medium"": 3}",2ea75b8d-888b-46f8-82c4-2347c93771d8,completed,codex-security-plugin@0.1.20,"{""coverage.json"": true, ""exports/results.sarif"": false, ""findings.json"": true, ""report.md"": false, ""scan-manifest.json"": true}"
+3,apache_master_003,apache__axis-axis1-java,,latest_default_branch_audit,,partial_artifacts,partial_artifacts,True,gpt-5.5,high,native-codex,0,partial,8,"{""high"": 3, ""low"": 1, ""medium"": 4}",a2dde417-ef19-4e8b-b7ec-3777c02a34a3,completed,codex-security-plugin@0.1.20,"{""coverage.json"": true, ""exports/results.sarif"": false, ""findings.json"": true, ""report.md"": false, ""scan-manifest.json"": true}"
+4,apache_master_004,apache__camel,,latest_default_branch_audit,,stopped,partial_artifacts,True,gpt-5.5,high,native-codex,1182,partial,5,"{""high"": 4, ""medium"": 1}",eb9b7731-c722-405e-87df-ea79bb370664,completed,codex-security-plugin@0.1.20,"{""coverage.json"": true, ""exports/results.sarif"": false, ""findings.json"": true, ""report.md"": false, ""scan-manifest.json"": true}"
+5,apache_master_005,apache__cassandra,,latest_default_branch_audit,,partial_artifacts,partial_artifacts,False,gpt-5.5,high,native-codex,1415,partial,5,"{""high"": 4, ""medium"": 1}",f8f6d5e0-0721-4afc-8145-edb783328c8c,completed,codex-security-plugin@0.1.20,"{""coverage.json"": true, ""exports/results.sarif"": true, ""findings.json"": true, ""report.md"": true, ""scan-manifest.json"": true}"
+6,apache_master_006,apache__commons-beanutils,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+7,apache_master_007,apache__commons-fileupload,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+8,apache_master_008,apache__commons-io,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+9,apache_master_009,apache__commons-text,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+10,apache_master_010,apache__cxf,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+11,apache_master_011,apache__cxf-fediz,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+12,apache_master_012,apache__dolphinscheduler,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+13,apache_master_013,apache__druid,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+14,apache_master_014,apache__dubbo,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+15,apache_master_015,apache__felix-dev,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+16,apache_master_016,apache__flink,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+17,apache_master_017,apache__incubator-seata,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+18,apache_master_018,apache__inlong,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+19,apache_master_019,apache__iotdb,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+20,apache_master_020,apache__iotdb-web-workbench,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+21,apache_master_021,apache__jackrabbit,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+22,apache_master_022,apache__james-project,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+23,apache_master_023,apache__jclouds,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+24,apache_master_024,apache__jena,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+25,apache_master_025,apache__jspwiki,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+26,apache_master_026,apache__kafka,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+27,apache_master_027,apache__karaf,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+28,apache_master_028,apache__kylin,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+29,apache_master_029,apache__linkis,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+30,apache_master_030,apache__mina-sshd,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+31,apache_master_031,apache__myfaces,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+32,apache_master_032,apache__nifi,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+33,apache_master_033,apache__openmeetings,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+34,apache_master_034,apache__openoffice,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+35,apache_master_035,apache__rocketmq,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+36,apache_master_036,apache__shiro,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+37,apache_master_037,apache__sling-org-apache-sling-servlets-resolver,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+38,apache_master_038,apache__sling-org-apache-sling-xss,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+39,apache_master_039,apache__struts,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+40,apache_master_040,apache__superset,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+41,apache_master_041,apache__tapestry-5,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+42,apache_master_042,apache__tika,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+43,apache_master_043,apache__tomcat,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
+44,apache_master_044,apache__uima-uimaj,,latest_default_branch_audit,,pending,,,,,,,,0,{},,,,{}
