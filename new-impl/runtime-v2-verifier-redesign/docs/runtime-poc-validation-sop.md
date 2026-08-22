@@ -10,12 +10,13 @@
 ## Purpose
 
 This SOP captures the workflow pattern used during the Apache latest/default
-ActiveMQ HTTP discovery registry validation. It is a checklist for what agents
-should consider, not a rigid output contract. Individual projects may require
-different runtimes, evidence shapes, and disclosure formats.
+ActiveMQ HTTP discovery registry validation. It is a prompt for what agents can
+consider, not a rigid output contract or a mandatory report schema. Individual
+projects may require different runtimes, evidence shapes, and disclosure
+formats.
 
-The goal is to remind the agent to answer three questions before escalating a
-candidate:
+The goal is to remind the agent to keep three questions visible before
+escalating a candidate:
 
 1. What is the precise vulnerability hypothesis and required attacker control?
 2. Can a stable runtime or focused harness demonstrate the hypothesized
@@ -55,7 +56,8 @@ model.
 ### Step 2: Inspect Source Before Running PoC
 
 Read the target code paths and write down the exact behavioral contract being
-tested. Prefer small snippets over broad paraphrase.
+tested. Prefer small snippets over broad paraphrase when snippets make the
+reasoning easier to review.
 
 Minimum source questions:
 
@@ -80,7 +82,7 @@ For ActiveMQ, the key source facts were:
 
 Avoid starting PoC-agent work from an unstable or unknown environment.
 
-Preferred order:
+Common order:
 
 1. Reuse existing runtime-builder artifacts when the target belongs to an older
    dataset or has already been made runnable.
@@ -260,22 +262,28 @@ template for future cases.
 - Follow-up: Preserve maintainer response and use it to update the case
   classification.
 
-## Checklist
+## Review Prompts
 
-- [ ] Confirm audited revision and, when relevant, default-branch freshness.
-- [ ] Restate vulnerability hypothesis with attacker preconditions.
-- [ ] Read affected source before PoC development.
-- [ ] Reuse or build a stable runtime, preserving revision context.
-- [ ] Emit or preserve evidence that distinguishes environment success from
-      security-relevant behavior.
-- [ ] Verify downstream impact, not only API success.
-- [ ] Test exposure assumptions such as host binding and network reachability.
-- [ ] Search official docs, advisories, issue tracker, and commits for security
-      model and duplicates.
-- [ ] Summarize the result with model-aware reasoning.
-- [ ] Package only portable PoC source and runner files.
-- [ ] Redact or exclude raw logs, source checkouts, build outputs, local paths,
-      and credentials.
-- [ ] Draft disclosure or closure notes with preconditions, evidence, and open
-      questions when useful.
-- [ ] Keep the email unsent until the user performs final review.
+These prompts are reminders, not required fields. Apply the ones that fit the
+target project and adapt the rest.
+
+- Has the audited revision been confirmed? If this is a current-project audit,
+  does the freshness gate matter for this batch?
+- Can the vulnerability hypothesis be stated with attacker preconditions and
+  the intended security boundary?
+- Which affected source paths are worth reading before building a runtime?
+- Is there an existing runtime-builder artifact or small faithful harness that
+  can save time?
+- Does the evidence separate environment success from security-relevant
+  behavior?
+- Is downstream impact visible, or did the PoC only exercise an API?
+- Do exposure assumptions such as host binding, role, network reachability, and
+  optional configuration change the interpretation?
+- Do official docs, advisories, issue trackers, commits, or tests describe the
+  behavior as expected?
+- What source evidence, PoC evidence, and security-model evidence should be
+  preserved for later review?
+- Which raw logs, source checkouts, build outputs, local paths, or credentials
+  should stay out of committed snapshots?
+- Would a disclosure note, hardening note, or closure note help the next
+  reviewer?

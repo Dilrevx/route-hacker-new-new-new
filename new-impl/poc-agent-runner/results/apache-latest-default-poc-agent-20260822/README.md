@@ -34,6 +34,8 @@ excluded from this committed snapshot.
 - `cases.csv` - machine-readable revision-gate and PoC outcome rows.
 - `evidence-snippets.md` - sanitized evidence markers from the completed local
   and remote PoC runs.
+- `process-and-sop-recheck.md` - detailed ActiveMQ process record and SOP-style
+  recheck notes for Artemis, Axis, Camel, and Cassandra.
 
 ## Notes
 
