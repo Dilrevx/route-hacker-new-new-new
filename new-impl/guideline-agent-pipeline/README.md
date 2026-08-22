@@ -305,6 +305,24 @@ Do not tune the generator to satisfy these flags mechanically. Treat them as a
 queue for semantic review, then decide from source/sink shape, missing guard,
 exploit precondition, and safe fix evidence.
 
+The guideline objective has two coupled but separate requirements:
+
+- **Semantic classification quality**: guidelines should describe reusable CVE
+  mechanisms that are general enough to transfer across projects and specific
+  enough to direct an audit. Evaluate this with source evidence, structural
+  sanity checks, and human or TraeX LLM-as-judge review.
+- **Embedding recall compatibility**: those guidelines should also work as
+  queries for a frozen candidate-slicing and embedding backend. Evaluate this
+  only with same-identity recall A/B runs.
+
+Bad recall cases are valid motivation for the next guideline iteration, but
+they are not answer keys. If a guideline group is semantically coherent and its
+source/sink/guard evidence is strong, a miss should first trigger recall-side
+debugging: query wording, candidate slicing, embedding backend, Top-K budget,
+or list-level fusion. Do not degrade the guideline taxonomy solely to satisfy a
+single embedding model, and do not introduce hidden regex routing or per-case
+fixes.
+
 Run the structural checker and emit a TraeX judge pack:
 
 ```bash
@@ -314,7 +332,7 @@ python new-impl/guideline-agent-pipeline/scripts/evaluate_guideline_groups.py \
   --output-dir new-impl/guideline-agent-pipeline/results/guideline-v2-r3-group-eval-20260823 \
   --judge-pack-dir new-impl/guideline-agent-pipeline/results/guideline-v2-r3-group-eval-20260823/llm_judge_pack \
   --judge-rubric new-impl/guideline-agent-pipeline/guidelines/judge_rubric.v1.md \
-  --judge-group-filter flagged \
+  --judge-group-filter balanced \
   --judge-max-groups 20
 ```
 
@@ -341,6 +359,11 @@ retrieval/audit query. It does not judge embedding recall ranks.
 The rubric lives in `guidelines/judge_rubric.v1.md`; update and version that
 file when the semantic review standard changes, rather than burying new scoring
 criteria inside the generator.
+The recommended `balanced` judge filter samples evidence-limited groups,
+label-mixed groups, clean controls, small groups, and source-only groups in
+round-robin order. This keeps judge review from becoming a hardcoded
+bad-case/label-purity test while still surfacing the groups most likely to need
+human attention.
 
 Run the generated judge pack with TraeX:
 

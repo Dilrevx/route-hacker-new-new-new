@@ -14,6 +14,13 @@ from typing import Any, Iterable
 DEFAULT_BUDGETS = (30, 50, 100, 200, 500)
 ACTIONABILITY_FIELDS = ("source_shape", "sink_shape", "missing_guard", "typical_fix")
 JUDGE_DECISIONS = ("accept", "revise", "split", "merge", "needs_evidence")
+BALANCED_JUDGE_BUCKETS = (
+    "evidence_limited",
+    "label_mixed",
+    "clean_control",
+    "small_group",
+    "source_only",
+)
 
 
 def read_json(path: Path) -> Any:
@@ -449,15 +456,58 @@ def select_judge_rows(
     group_filter: str,
     max_groups: int,
 ) -> list[dict[str, Any]]:
+    if max_groups <= 0:
+        return []
     if group_filter == "all":
         candidates = group_rows
     elif group_filter == "flagged":
         candidates = [row for row in group_rows if row["flags"] and row["assigned_case_count"] > 0]
     elif group_filter == "evaluated":
         candidates = [row for row in group_rows if row["assigned_case_count"] > 0]
+    elif group_filter == "balanced":
+        return select_balanced_judge_rows(group_rows, max_groups=max_groups)
     else:
         raise ValueError(f"unsupported judge group filter: {group_filter}")
     return candidates[:max_groups]
+
+
+def judge_review_bucket(row: dict[str, Any]) -> str:
+    flags = set(row.get("flags") or [])
+    assigned = int(row.get("assigned_case_count") or 0)
+    if assigned == 0:
+        return "source_only"
+    if flags & {"pending_review", "incomplete_actionability_fields"}:
+        return "evidence_limited"
+    if flags & {"mixed_hcvr", "mixed_cwe"}:
+        return "label_mixed"
+    if flags & {"small_group"}:
+        return "small_group"
+    return "clean_control"
+
+
+def select_balanced_judge_rows(group_rows: list[dict[str, Any]], *, max_groups: int) -> list[dict[str, Any]]:
+    buckets: dict[str, list[dict[str, Any]]] = {bucket: [] for bucket in BALANCED_JUDGE_BUCKETS}
+    for row in group_rows:
+        buckets[judge_review_bucket(row)].append(row)
+
+    selected: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    while len(selected) < max_groups:
+        before = len(selected)
+        for bucket in BALANCED_JUDGE_BUCKETS:
+            while buckets[bucket]:
+                row = buckets[bucket].pop(0)
+                guideline_id = str(row.get("guideline_id") or "")
+                if guideline_id in seen:
+                    continue
+                selected.append(row)
+                seen.add(guideline_id)
+                break
+            if len(selected) >= max_groups:
+                break
+        if len(selected) == before:
+            break
+    return selected
 
 
 def write_judge_pack(
@@ -494,6 +544,7 @@ def write_judge_pack(
                 "cwe_purity": row["cwe_purity"],
                 "flags": row["flags"],
             },
+            "judge_selection_reason": judge_review_bucket(row),
             "case_examples": row["judge_case_examples"],
         }
         prompt_path = prompts_dir / f"{row['guideline_id']}.md"
@@ -544,6 +595,7 @@ def write_judge_pack(
         "",
         "This pack is for semantic guideline-group review. It is intentionally separate from embedding recall evaluation and from the structural HCVR/CWE sanity checker.",
         f"The prompt rubric is stored in `{rubric_dest.name}` so the judgment criteria can be reviewed and versioned independently from code.",
+        "The default recommended `balanced` filter samples evidence-limited, label-mixed, clean-control, small, and source-only groups in round-robin order, so review does not optimize only for historical bad cases or label-purity flags.",
         "",
         "Judgment target: whether the guideline captures a coherent reusable vulnerability mechanism across the listed cases, and whether the text is actionable as an audit query.",
         "",
@@ -583,7 +635,7 @@ def main() -> None:
     parser.add_argument("--min-purity", type=float, default=0.67)
     parser.add_argument("--singleton-soft-cap", type=int, default=1)
     parser.add_argument("--judge-pack-dir", type=Path)
-    parser.add_argument("--judge-group-filter", choices=("flagged", "evaluated", "all"), default="flagged")
+    parser.add_argument("--judge-group-filter", choices=("flagged", "evaluated", "all", "balanced"), default="balanced")
     parser.add_argument("--judge-max-groups", type=int, default=20)
     parser.add_argument(
         "--judge-rubric",

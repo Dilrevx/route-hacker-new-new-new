@@ -262,3 +262,119 @@ def test_write_judge_pack_for_flagged_groups(tmp_path: Path):
     assert 'OUT_DIR="${1:-judge_outputs}"' in runner
     assert 'xargs -n 1 -P "$CONCURRENCY"' in runner
     assert runner.index('OUT_DIR="${1:-judge_outputs}"') < runner.index("export OUT_DIR")
+
+
+def test_balanced_judge_pack_samples_diagnostics_and_controls(tmp_path: Path):
+    module = load_module()
+    group_rows = [
+        {
+            "guideline_id": "gl_evidence_limited",
+            "guideline_group_key": "cluster_0001__pending",
+            "mechanism_id": "pending_mech_a",
+            "mechanism_name": "pending",
+            "mechanism_family": "pending_review",
+            "assigned_case_count": 4,
+            "source_cve_count": 4,
+            "metadata_cve_count": 4,
+            "primary_hcvr_majority": "ssrf",
+            "primary_hcvr_purity": 1.0,
+            "cwe_majority": "CWE-918",
+            "cwe_purity": 1.0,
+            "flags": ["pending_review"],
+            "guideline_text": "Pending evidence.",
+            "cluster_summary": "Needs source/sink/guard evidence.",
+            "judge_case_examples": [],
+        },
+        {
+            "guideline_id": "gl_label_mixed",
+            "guideline_group_key": "cluster_0002__mech_mixed",
+            "mechanism_id": "mech_mixed",
+            "mechanism_name": "mixed",
+            "mechanism_family": "authz",
+            "assigned_case_count": 5,
+            "source_cve_count": 5,
+            "metadata_cve_count": 5,
+            "primary_hcvr_majority": "authorization_bypass",
+            "primary_hcvr_purity": 0.6,
+            "cwe_majority": "CWE-862",
+            "cwe_purity": 0.6,
+            "flags": ["mixed_hcvr", "mixed_cwe"],
+            "guideline_text": "Mixed labels.",
+            "cluster_summary": "Needs semantic review.",
+            "judge_case_examples": [],
+        },
+        {
+            "guideline_id": "gl_clean",
+            "guideline_group_key": "cluster_0003__mech_clean",
+            "mechanism_id": "mech_clean",
+            "mechanism_name": "clean",
+            "mechanism_family": "authz",
+            "assigned_case_count": 6,
+            "source_cve_count": 6,
+            "metadata_cve_count": 6,
+            "primary_hcvr_majority": "authorization_bypass",
+            "primary_hcvr_purity": 1.0,
+            "cwe_majority": "CWE-862",
+            "cwe_purity": 1.0,
+            "flags": [],
+            "guideline_text": "Clean control.",
+            "cluster_summary": "Control group.",
+            "judge_case_examples": [],
+        },
+        {
+            "guideline_id": "gl_small",
+            "guideline_group_key": "cluster_0004__mech_small",
+            "mechanism_id": "mech_small",
+            "mechanism_name": "small",
+            "mechanism_family": "path",
+            "assigned_case_count": 1,
+            "source_cve_count": 1,
+            "metadata_cve_count": 1,
+            "primary_hcvr_majority": "path_traversal",
+            "primary_hcvr_purity": 1.0,
+            "cwe_majority": "CWE-22",
+            "cwe_purity": 1.0,
+            "flags": ["small_group"],
+            "guideline_text": "Small group.",
+            "cluster_summary": "Single case.",
+            "judge_case_examples": [],
+        },
+        {
+            "guideline_id": "gl_source_only",
+            "guideline_group_key": "cluster_0005__mech_source_only",
+            "mechanism_id": "mech_source_only",
+            "mechanism_name": "source only",
+            "mechanism_family": "deserialization",
+            "assigned_case_count": 0,
+            "source_cve_count": 2,
+            "metadata_cve_count": 0,
+            "primary_hcvr_majority": "",
+            "primary_hcvr_purity": 0.0,
+            "cwe_majority": "",
+            "cwe_purity": 0.0,
+            "flags": ["source_only_no_case_metadata"],
+            "guideline_text": "Source-only historical mechanism.",
+            "cluster_summary": "No unified case metadata.",
+            "judge_case_examples": [],
+        },
+    ]
+
+    judge_dir = tmp_path / "judge"
+    module.write_judge_pack(judge_dir, group_rows=group_rows, group_filter="balanced", max_groups=5)
+
+    rows = [json.loads(line) for line in (judge_dir / "judge_inputs.jsonl").read_text(encoding="utf-8").splitlines()]
+    assert [row["guideline_id"] for row in rows] == [
+        "gl_evidence_limited",
+        "gl_label_mixed",
+        "gl_clean",
+        "gl_small",
+        "gl_source_only",
+    ]
+    assert [row["judge_selection_reason"] for row in rows] == [
+        "evidence_limited",
+        "label_mixed",
+        "clean_control",
+        "small_group",
+        "source_only",
+    ]
+    assert "balanced" in (judge_dir / "README.md").read_text(encoding="utf-8")
