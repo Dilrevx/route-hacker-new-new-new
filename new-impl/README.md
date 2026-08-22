@@ -16,6 +16,16 @@ experiment snapshots for Route-Hacker follow-up work.
 - `hcvr_new_unified_dataset_v2/` — unified HCVR dataset receipts.
 - `repro/` — reproduction utilities and experiment harnesses.
 
+## Runtime And PoC SOPs
+
+- `runtime-v2-verifier-redesign/docs/runtime-poc-validation-sop.md` — SOP for
+  turning current-project audit candidates into stable runtime/PoC evidence,
+  security-model-aware classification, and disclosure-ready artifacts.
+- `runtime-v2-verifier-redesign/docs/runtime-builder-v2.md` — runtime builder
+  design and round-by-round operational record.
+- `poc-agent-runner/docs/poc-agent-technical-architecture-plan.md` — PoC agent
+  architecture and verifier handoff plan.
+
 ## Experiment Result Index
 
 | Result | Path | Contents | Status |
