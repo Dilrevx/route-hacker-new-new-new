@@ -25,7 +25,7 @@
         "recall_equivalence_status=valid_consumed_text_equivalence",
         "primary_budget=100",
         "recall_alignment_joined=28/143",
-        "recall_alignment_attention_counts={'embedding_or_candidate_recall_attention': 44, 'guideline_quality_attention': 121, 'label_mixed_structural_attention': 8, 'missing_recall_rows': 44}",
+        "recall_alignment_attention_counts={'embedding_or_candidate_recall_attention': 6, 'guideline_quality_attention': 121, 'label_mixed_structural_attention': 8, 'missing_recall_rows': 44}",
         "boundary_recall_triage_aligned_boundaries=0",
         "boundary_recall_triage_rank_tables=None"
       ],
@@ -69,7 +69,7 @@
   "overall_status": "not_complete",
   "recall_alignment_evidence": {
     "attention_counts": {
-      "embedding_or_candidate_recall_attention": 44,
+      "embedding_or_candidate_recall_attention": 6,
       "guideline_quality_attention": 121,
       "label_mixed_structural_attention": 8,
       "missing_recall_rows": 44
@@ -120,7 +120,7 @@
         "recall_equivalence_status=valid_consumed_text_equivalence",
         "primary_budget=100",
         "recall_alignment_joined=28/143",
-        "recall_alignment_attention_counts={'embedding_or_candidate_recall_attention': 44, 'guideline_quality_attention': 121, 'label_mixed_structural_attention': 8, 'missing_recall_rows': 44}",
+        "recall_alignment_attention_counts={'embedding_or_candidate_recall_attention': 6, 'guideline_quality_attention': 121, 'label_mixed_structural_attention': 8, 'missing_recall_rows': 44}",
         "boundary_recall_triage_aligned_boundaries=0",
         "boundary_recall_triage_rank_tables=None"
       ],

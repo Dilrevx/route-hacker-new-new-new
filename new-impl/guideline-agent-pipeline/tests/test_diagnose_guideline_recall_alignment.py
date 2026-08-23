@@ -127,6 +127,26 @@ def test_mixed_labels_are_structural_attention_not_cleanliness_blocker():
     assert "mixed_hcvr" not in summary["cleanliness_policy"]["blocking_flags"]
 
 
+def test_missing_recall_rows_are_not_counted_as_embedding_miss():
+    module = load_module()
+    _, group_rows, _ = module.diagnose(
+        group_rows=[clean_group()],
+        assignments={"gl_clean": [{"identity_key": "case-a"}]},
+        recall_rows=[],
+        recall_label="candidate",
+        baseline_rows=None,
+        baseline_label=None,
+        budgets=[100],
+        primary_budget=100,
+        min_purity=0.67,
+    )
+
+    row = group_rows[0]
+    assert row["guideline_clean_enough"] is True
+    assert "missing_recall_rows" in row["attention"]
+    assert "embedding_or_candidate_recall_attention" not in row["attention"]
+
+
 def test_baseline_identity_mismatch_is_debug_only():
     module = load_module()
     summary, _, _ = module.diagnose(

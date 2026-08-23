@@ -215,7 +215,7 @@ def diagnose(
             attention.append("label_mixed_structural_attention")
         if not clean:
             attention.append("guideline_quality_attention")
-        if clean and identities and primary_hits == 0:
+        if clean and joined_count > 0 and primary_hits == 0:
             attention.append("embedding_or_candidate_recall_attention")
         if delta_primary_hits is not None and delta_primary_hits < 0:
             attention.append("recall_regression_attention")
