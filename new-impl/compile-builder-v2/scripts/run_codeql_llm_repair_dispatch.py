@@ -1150,6 +1150,7 @@ def run_case(
     approved_java_homes: list[str],
     approved_maven_homes: list[str],
     verified_gradle_user_home: Path | None = None,
+    maven_mirror_url: str | None = None,
     max_build_feedback_replan_attempts: int = DEFAULT_MAX_BUILD_FEEDBACK_REPLAN_ATTEMPTS,
     max_network_rate_limit_retries: int = DEFAULT_MAX_NETWORK_RATE_LIMIT_RETRIES,
     network_rate_limit_backoff_seconds_base: float = DEFAULT_NETWORK_RATE_LIMIT_BACKOFF_SECONDS,
@@ -1241,6 +1242,12 @@ def run_case(
             "network_rate_limit_backoff_seconds_base": network_rate_limit_backoff_seconds_base,
             "repeated_validated_build_decision_not_reexecuted": True,
             "upstream_http_429_replays_same_validated_command_only": True,
+            "maven_mirror_url": maven_mirror_url,
+            "maven_mirror_scope": (
+                "isolated_attempt_build_home_only"
+                if maven_mirror_url is not None
+                else None
+            ),
             "fresh_redacted_build_log_used_for_replan": True,
             "exact_declared_source_reverified_before_execution": True,
             "source_revision_substitution_forbidden": True,
@@ -1279,6 +1286,7 @@ def run_case(
             source_receipt=execution_source_receipt,
             verified_gradle_user_home_source=verified_gradle_home,
             isolate_build_home=True,
+            maven_mirror_url=maven_mirror_url,
             historical_toolchain_receipt=failed_receipt,
         )
         if (
@@ -1772,6 +1780,14 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--maven-mirror-url",
+        help=(
+            "Explicit unauthenticated HTTPS Maven mirror base URL. The controller "
+            "writes it only to each isolated attempt's ~/.m2/settings.xml and "
+            "records its URL and configuration hash in the attempt receipt."
+        ),
+    )
+    parser.add_argument(
         "--claude-command",
         default=DEFAULT_CLAUDE_COMMAND,
         help="Executable for the constrained structured-output model call.",
@@ -2081,6 +2097,7 @@ def main() -> int:
                     approved_java_homes=approved_java_homes,
                     approved_maven_homes=approved_maven_homes,
                     verified_gradle_user_home=verified_gradle_user_home,
+                    maven_mirror_url=args.maven_mirror_url,
                     max_build_feedback_replan_attempts=args.max_build_feedback_replan_attempts,
                     max_network_rate_limit_retries=args.max_network_rate_limit_retries,
                     network_rate_limit_backoff_seconds_base=args.network_rate_limit_backoff_seconds,

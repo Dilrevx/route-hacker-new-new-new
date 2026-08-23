@@ -1209,6 +1209,70 @@ def test_apply_repair_can_isolate_maven_user_home_without_changing_build_command
     )
 
 
+def test_apply_repair_writes_explicit_maven_mirror_only_inside_isolated_home(tmp_path):
+    receipt = failed_receipt(tmp_path)
+    build_home = tmp_path / "attempt-build-home"
+    (build_home / ".m2" / "repository").mkdir(parents=True)
+    (build_home / ".gradle").mkdir()
+    decision = validate_repair_decision(
+        {"actions": [{"kind": "retry_same_command"}], "rationale": "retry"},
+        approved_java_homes=[],
+        approved_maven_homes=[],
+    )
+
+    _command, _env, applied = apply_repair_decision(
+        receipt["planned_codeql_database_command"],
+        decision,
+        attempt_database_dir=tmp_path / "new-attempt-db",
+        approved_java_homes=[],
+        approved_maven_homes=[],
+        isolated_build_home=build_home,
+        maven_mirror_url="https://maven.aliyun.com/repository/public/",
+    )
+
+    settings = build_home / ".m2" / "settings.xml"
+    assert settings.is_file()
+    assert "https://maven.aliyun.com/repository/public" in settings.read_text()
+    assert applied["verified_environment"]["MAVEN_MIRROR_URL"] == (
+        "https://maven.aliyun.com/repository/public"
+    )
+    assert applied["verified_environment"]["MAVEN_MIRROR_SETTINGS"] == str(settings)
+    assert applied["verified_environment"]["MAVEN_MIRROR_SETTINGS_SHA256"] == (
+        hashlib.sha256(settings.read_bytes()).hexdigest()
+    )
+
+
+@pytest.mark.parametrize(
+    "mirror_url",
+    [
+        "http://mirror.example.test/maven",
+        "https://user:password@mirror.example.test/maven",
+        "https://mirror.example.test/maven?token=secret",
+    ],
+)
+def test_apply_repair_rejects_non_auditable_maven_mirror_urls(tmp_path, mirror_url):
+    receipt = failed_receipt(tmp_path)
+    build_home = tmp_path / "attempt-build-home"
+    (build_home / ".m2" / "repository").mkdir(parents=True)
+    (build_home / ".gradle").mkdir()
+    decision = validate_repair_decision(
+        {"actions": [{"kind": "retry_same_command"}], "rationale": "retry"},
+        approved_java_homes=[],
+        approved_maven_homes=[],
+    )
+
+    with pytest.raises(RepairValidationError, match="Maven mirror URL"):
+        apply_repair_decision(
+            receipt["planned_codeql_database_command"],
+            decision,
+            attempt_database_dir=tmp_path / "new-attempt-db",
+            approved_java_homes=[],
+            approved_maven_homes=[],
+            isolated_build_home=build_home,
+            maven_mirror_url=mirror_url,
+        )
+
+
 def test_apply_repair_preserves_repaired_maven_heap_when_isolating_build_home(tmp_path):
     receipt = failed_receipt(tmp_path)
     build_home = tmp_path / "attempt-build-home"

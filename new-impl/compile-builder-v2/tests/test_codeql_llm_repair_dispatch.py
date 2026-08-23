@@ -335,10 +335,13 @@ def test_controller_forwards_verified_gradle_cache_to_isolated_attempt(
         approved_java_homes=[],
         approved_maven_homes=[],
         verified_gradle_user_home=cache,
+        maven_mirror_url="https://maven.aliyun.com/repository/public",
     )
 
     assert result["status"] == "codeql_db_repaired"
     assert observed["verified_gradle_user_home_source"] == cache.resolve()
+    assert observed["maven_mirror_url"] == "https://maven.aliyun.com/repository/public"
+    assert result["contract"]["maven_mirror_scope"] == "isolated_attempt_build_home_only"
     assert result["verified_gradle_cache"]["archive_sha256"] == hashlib.sha256(
         archive.read_bytes()
     ).hexdigest()

@@ -21,6 +21,8 @@ import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
+from urllib.parse import urlparse
+from xml.sax.saxutils import escape as xml_escape
 
 from route_hacker.runtime.bounded_process import run_bounded_process
 
@@ -678,6 +680,57 @@ def redirect_maven_local_repository(
     return rewritten, replaced
 
 
+def write_isolated_maven_mirror_settings(
+    build_home: Path,
+    mirror_url: str,
+) -> dict[str, str]:
+    """Write an explicit HTTPS mirror config inside one isolated build home.
+
+    This deliberately does not alter the controller host, source tree, or any
+    shared Maven configuration.  It is an execution-level fallback for a
+    documented public-repository outage/rate limit and is recorded with every
+    resulting attempt so mirror-backed builds remain distinguishable from
+    direct-upstream runs.
+    """
+
+    parsed = urlparse(mirror_url)
+    if (
+        parsed.scheme != "https"
+        or not parsed.netloc
+        or parsed.username is not None
+        or parsed.password is not None
+        or parsed.query
+        or parsed.fragment
+    ):
+        raise RepairValidationError(
+            "Maven mirror URL must be an unauthenticated HTTPS base URL"
+        )
+    normalized_url = mirror_url.rstrip("/")
+    settings_path = build_home / ".m2" / "settings.xml"
+    settings_path.write_text(
+        (
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+            "<settings>\n"
+            "  <mirrors>\n"
+            "    <mirror>\n"
+            "      <id>compile-builder-v2-explicit-mirror</id>\n"
+            "      <name>Explicit per-attempt public Maven mirror</name>\n"
+            f"      <url>{xml_escape(normalized_url)}</url>\n"
+            "      <mirrorOf>*</mirrorOf>\n"
+            "    </mirror>\n"
+            "  </mirrors>\n"
+            "</settings>\n"
+        ),
+        encoding="utf-8",
+    )
+    return {
+        "url": normalized_url,
+        "settings_path": str(settings_path),
+        "settings_sha256": sha256_file(settings_path),
+        "scope": "isolated_attempt_build_home_only",
+    }
+
+
 def prepend_maven_clean_goal(build_command: Sequence[str]) -> list[str]:
     """Insert Maven's ``clean`` lifecycle before a supported build lifecycle.
 
@@ -1100,6 +1153,7 @@ def apply_repair_decision(
     approved_ant_homes: Sequence[str] = (),
     verified_gradle_user_home: Path | None = None,
     isolated_build_home: Path | None = None,
+    maven_mirror_url: str | None = None,
     inherited_java_home: str | None = None,
 ) -> tuple[list[str], dict[str, str], dict[str, Any]]:
     """Turn a validated decision into a new isolated CodeQL command and env."""
@@ -1285,6 +1339,20 @@ def apply_repair_decision(
                 "rewritten_maven_repo_local_argument": replaced_maven_repository,
             }
         )
+        if maven_mirror_url is not None:
+            mirror_evidence = write_isolated_maven_mirror_settings(
+                build_home,
+                maven_mirror_url,
+            )
+            verified_environment.update(
+                {
+                    "MAVEN_MIRROR_URL": mirror_evidence["url"],
+                    "MAVEN_MIRROR_SETTINGS": mirror_evidence["settings_path"],
+                    "MAVEN_MIRROR_SETTINGS_SHA256": mirror_evidence["settings_sha256"],
+                }
+            )
+    elif maven_mirror_url is not None:
+        raise RepairValidationError("Maven mirror requires an isolated build home")
     repaired_build_value = shlex.join(build_command)
     if build_inline:
         repaired[build_index] = f"--command={repaired_build_value}"
@@ -1319,6 +1387,7 @@ def execute_repair_attempt(
     verified_maven_repository_source: Path | None = None,
     verified_maven_wrapper_dists_source: Path | None = None,
     isolate_build_home: bool = False,
+    maven_mirror_url: str | None = None,
     historical_toolchain_receipt: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Execute one verified, isolated repair attempt and return an auditable receipt."""
@@ -1439,6 +1508,7 @@ def execute_repair_attempt(
         approved_ant_homes=approved_ant_homes,
         verified_gradle_user_home=attempt_gradle_user_home,
         isolated_build_home=attempt_build_home,
+        maven_mirror_url=maven_mirror_url,
         inherited_java_home=inherited_java_home,
     )
     if Path(applied["source_root"]).resolve() != source_dir.resolve():
@@ -1497,6 +1567,18 @@ def execute_repair_attempt(
         "verified_maven_wrapper_dists_source": (
             str(verified_maven_wrapper_dists_source.resolve())
             if verified_maven_wrapper_dists_source is not None
+            else None
+        ),
+        "maven_mirror": (
+            {
+                "url": applied["verified_environment"]["MAVEN_MIRROR_URL"],
+                "settings_path": applied["verified_environment"]["MAVEN_MIRROR_SETTINGS"],
+                "settings_sha256": applied["verified_environment"][
+                    "MAVEN_MIRROR_SETTINGS_SHA256"
+                ],
+                "scope": "isolated_attempt_build_home_only",
+            }
+            if "MAVEN_MIRROR_URL" in applied["verified_environment"]
             else None
         ),
         "isolated_build_home": (
