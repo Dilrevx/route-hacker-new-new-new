@@ -198,3 +198,49 @@ def test_summarize_list_judge_outputs_computes_hidden_rerank_hit(tmp_path: Path)
     assert len(candidate_rows) == 3
     assert identity_rows[0]["best_known_anchor_judge_rank"] == 1
     assert identity_rows[0]["judge_top_known_anchor_overlap"] is True
+
+
+def test_summarize_list_judge_outputs_excludes_uncovered_identities_from_hit_rate(tmp_path: Path):
+    summarizer = load_module(SUMMARY_SCRIPT, "summarize_recall_candidate_list_judge_outputs")
+    output_dir = tmp_path / "judge_outputs"
+    output_dir.mkdir()
+    (output_dir / "case.shard001.json").write_text(
+        json.dumps(
+            {
+                "candidate_scores": [
+                    {"candidate_id": "C001", "relevance": 0.8, "audit_priority": "high", "rationale": "best"},
+                    {"candidate_id": "C002", "relevance": 0.2, "audit_priority": "low", "rationale": "weak"},
+                ],
+                "top_choices": ["C001"],
+                "confidence": 0.8,
+                "missing_information": [],
+            }
+        ),
+        encoding="utf-8",
+    )
+    judge_inputs = [
+        {
+            "identity_key": "case",
+            "repo_key": "repo",
+            "hcvr_type": "authz",
+            "shard_index": 1,
+            "output_file": "case.shard001.json",
+            "hidden_candidates": [
+                {"candidate_id": "C001", "rank": 1, "score": 0.9, "known_anchor_overlap": False, "file": "A.java"},
+                {"candidate_id": "C002", "rank": 2, "score": 0.8, "known_anchor_overlap": False, "file": "B.java"},
+            ],
+        }
+    ]
+
+    summary, _, identity_rows = summarizer.summarize(
+        judge_inputs=judge_inputs,
+        judge_output_dir=output_dir,
+    )
+
+    assert summary["identity_count"] == 1
+    assert summary["identities_with_known_anchor_candidate"] == 0
+    assert summary["identities_with_scored_known_anchor_candidate"] == 0
+    assert summary["identity_coverage_gap_count"] == 1
+    assert summary["judge_rerank_hit_rate_denominator"] == 0
+    assert summary["judge_rerank_hit_rates"]["top_1"] is None
+    assert identity_rows[0]["judge_top_known_anchor_overlap"] is False

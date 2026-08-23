@@ -1,0 +1,83 @@
+```json
+{
+  "candidate_scores": [
+    {
+      "candidate_id": "C011",
+      "relevance": 0.0,
+      "audit_priority": "none",
+      "rationale": "Spring MVC configuration class (WebMvcConfig) — infrastructure wiring for argument resolvers and MIME mappings. No request body, no resource identifiers, no mutation path.",
+      "key_evidence": ["Imports PageableHandlerMethodArgumentResolver and MimeMappings only — purely config"]
+    },
+    {
+      "candidate_id": "C012",
+      "relevance": 0.0,
+      "audit_priority": "none",
+      "rationale": "OIDC authentication success event listener — handles login events for OIDC/JWT principals. No body-selected resource identifiers, no mutation or bulk-operation path.",
+      "key_evidence": ["onApplicationEvent(AuthenticationSuccessEvent) dispatches to oidcUserLogin or jwtLogin — authentication flow, not resource mutation"]
+    },
+    {
+      "candidate_id": "C013",
+      "relevance": 0.1,
+      "audit_priority": "low",
+      "rationale": "AppService with find/search methods (findAll, searchByAppIdOrAppName, findByAppIds). Only read operations visible in snippet; the findByAppIds(Set) signature could accept body-provided IDs but the snippet shows no mutation downstream.",
+      "key_evidence": ["findByAppIds(Set<String>) could accept body-selected app IDs", "Only read operations visible — no bulk update, sync, or mutation"]
+    },
+    {
+      "candidate_id": "C014",
+      "relevance": 0.0,
+      "audit_priority": "none",
+      "rationale": "OIDC local user service implementation — imports UserInfo, UserPO, UserRepository. No body-selected resource identifiers, no mutation path visible.",
+      "key_evidence": ["Imports for user repository and entity mapping — user lookup during OIDC login, not resource mutation"]
+    },
+    {
+      "candidate_id": "C015",
+      "relevance": 0.0,
+      "audit_priority": "none",
+      "rationale": "Spring application.yml configuration file — JPA, session, multipart, server compression settings. No code path, no body-selected resource identifiers.",
+      "key_evidence": ["Pure YAML configuration — no executable code path"]
+    },
+    {
+      "candidate_id": "C016",
+      "relevance": 0.0,
+      "audit_priority": "none",
+      "rationale": "AuthConfiguration bean definitions for JDBC user details manager, OIDC local user service, and OIDC success listener. Wiring-only code, no body-to-mutation path.",
+      "key_evidence": ["@Bean factory methods — dependency injection wiring, not a request-handling path"]
+    },
+    {
+      "candidate_id": "C017",
+      "relevance": 0.3,
+      "audit_priority": "low",
+      "rationale": "AppController — REST controller entry point for app CRUD operations. Imports AppDTO, BadRequestException, MultiResponseEntity, RichResponseEntity, and audit annotations. Controllers are the primary entry point for body parameters carrying resource identifiers. However the snippet is only imports/class declaration — no method bodies visible to confirm body-selected ID flow into mutations.",
+      "key_evidence": ["REST controller for App operations — typical entry point for body-provided app IDs", "Imports suggest create/update/delete operations (AppDTO, RichResponseEntity, audit logging)"]
+    },
+    {
+      "candidate_id": "C018",
+      "relevance": 0.0,
+      "audit_priority": "none",
+      "rationale": "AccessKeyUtil — utility for request-level access key authentication using HttpServletRequest. No body-selected resource identifiers, no mutation path.",
+      "key_evidence": ["Imports AccessKeyServiceWithCache, Signature, HttpServletRequest — access key validation, not resource mutation"]
+    },
+    {
+      "candidate_id": "C019",
+      "relevance": 0.0,
+      "audit_priority": "none",
+      "rationale": "AuthConfiguration OIDC security — configure(HttpSecurity) sets up CSRF, URL authorization, OAuth2 login, logout, JWT. Pure security filter chain configuration, no body-to-mutation path.",
+      "key_evidence": ["http.csrf().disable(); http.authorizeRequests(...); http.oauth2Login(...) — security filter chain only"]
+    },
+    {
+      "candidate_id": "C020",
+      "relevance": 0.25,
+      "audit_priority": "low",
+      "rationale": "AdminServiceAPI — client for admin service operations. Imports OpenItemDTO, ServerConfig, Base64, audit annotations. Admin API calls could carry body-selected resource identifiers (e.g., namespace IDs, item IDs) for mutations. Snippet only shows imports — method bodies are not visible.",
+      "key_evidence": ["Admin service API client — likely carries body-selected identifiers in admin operations", "Imports OpenItemDTO, ServerConfig, Base64 — suggests item/config mutations"]
+    }
+  ],
+  "confidence": 0.4,
+  "missing_information": [
+    "Actual method implementations for AppController (C017) — need to see request body parameters and whether they carry app IDs, namespace IDs, or item IDs used in mutations",
+    "Actual method implementations for AdminServiceAPI (C020) — need to see what identifiers are passed in request bodies and whether they are validated against URL path or authorization scope",
+    "Full method bodies for AppService.findByAppIds (C013) — need to see if the caller provides body-selected IDs that flow into mutations without validation"
+  ],
+  "top_choices": ["C017", "C020", "C013"]
+}
+```

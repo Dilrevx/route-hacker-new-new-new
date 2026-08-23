@@ -1,0 +1,108 @@
+{
+
+  "candidate_scores": [
+    {
+      "candidate_id": "C001",
+      "audit_priority": "low",
+      "relevance": 0.1,
+      "key_evidence": [
+        "getTempFolderPath and setTempFolderPath methods show a user-configurable temp directory path field"
+      ],
+      "rationale": "Only exposes a temp folder path getter/setter. No actual temporary file/directory creation, no delete-then-mkdirs sequence, and no TOCTOU race window visible in this snippet."
+    },
+    {
+      "candidate_id": "C002",
+      "audit_priority": "low",
+      "relevance": 0.1,
+      "key_evidence": [
+        "getTempFolderPath and setTempFolderPath methods show a user-configurable temp directory path field"
+      ],
+      "rationale": "Near-identical to C001. Only a temp folder path getter/setter with no actual temp file creation or TOCTOU pattern visible in this snippet."
+    },
+    {
+      "candidate_id": "C003",
+      "audit_priority": "none",
+      "relevance": 0.0,
+      "key_evidence": [
+        "Code generation template setup for OAuth2 security configurations and logging filters"
+      ],
+      "rationale": "Pure code generation scaffolding. No temporary file/directory creation, no shared writable locations, no TOCTOU pattern."
+    },
+    {
+      "candidate_id": "C004",
+      "audit_priority": "none",
+      "relevance": 0.0,
+      "key_evidence": [
+        "Code generation template setup for build files, README, and travis config"
+      ],
+      "rationale": "Code generation scaffolding. No temporary file/directory creation, no shared writable locations, no TOCTOU pattern."
+    },
+    {
+      "candidate_id": "C005",
+      "audit_priority": "medium",
+      "relevance": 0.35,
+      "key_evidence": [
+        "prepareDownloadFile method uses File.createTempFile(prefix, suffix, new File(tempFolderPath))",
+        "tempFolderPath is user-configurable and can point to a shared writable location"
+      ],
+      "rationale": "Contains temp file creation in a user-controlled directory. The temp folder path is set externally and could be a shared writable location. While the snippet does not show a delete-then-mkdirs sequence, the temp file creation in an attacker-influenced directory is a relevant entry point for TOCTOU audit."
+    },
+    {
+      "candidate_id": "C006",
+      "audit_priority": "low",
+      "relevance": 0.1,
+      "key_evidence": [
+        "getTempFolderPath and setTempFolderPath methods show a user-configurable temp directory path field"
+      ],
+      "rationale": "Same pattern as C001/C002. Only temp folder path getter/setter. No actual temp file creation or TOCTOU pattern in this snippet."
+    },
+    {
+      "candidate_id": "C007",
+      "audit_priority": "medium",
+      "relevance": 0.3,
+      "key_evidence": [
+        "prepareDownloadFile method uses File.createTempFile(prefix, suffix, new File(tempFolderPath))",
+        "tempFolderPath is user-configurable and can point to a shared writable location"
+      ],
+      "rationale": "Same pattern as C005 but in the okhttp-gson variant. Temp file creation in a user-controlled directory. A useful entry point to trace whether the path could be intercepted between creation and use."
+    },
+    {
+      "candidate_id": "C008",
+      "audit_priority": "low",
+      "relevance": 0.1,
+      "key_evidence": [
+        "getTempFolderPath and setTempFolderPath methods for temp folder path configuration"
+      ],
+      "rationale": "Same temp folder path getter/setter pattern as other ApiClient variants. No actual temp file creation or TOCTOU pattern visible in this snippet."
+    },
+    {
+      "candidate_id": "C009",
+      "audit_priority": "none",
+      "relevance": 0.0,
+      "key_evidence": [
+        "ZipUtil.compressFiles uses ZipOutputStream with FileOutputStream for zip compression"
+      ],
+      "rationale": "Generic zip compression utility. No temporary file/directory creation, no shared writable location concerns, and no TOCTOU pattern."
+    },
+    {
+      "candidate_id": "C010",
+      "audit_priority": "none",
+      "relevance": 0.0,
+      "key_evidence": [
+        "Code generation template setup for MSF4J server supporting files and build config"
+      ],
+      "rationale": "Code generation scaffolding. No temporary file/directory creation, no shared writable locations, no TOCTOU pattern."
+    }
+  ],
+  "confidence": 0.55,
+  "missing_information": [
+    "Full method bodies for the prepareDownloadFile methods (C005, C007) to check whether a delete-then-mkdirs or delete-then-recreate pattern exists beyond the createTempFile call",
+    "Callers of setTempFolderPath to determine whether the temp folder path can be set to a shared writable location by an attacker",
+    "Whether any code path performs a non-atomic delete-and-recreate of the temp directory between file creation and use",
+    "The actual method body of setDebugging (C001/C002/C006/C008) to check if it manipulates temporary paths beyond simple field assignment"
+  ],
+  "top_choices": [
+    "C005",
+    "C007"
+  ]
+}

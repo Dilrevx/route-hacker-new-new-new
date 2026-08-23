@@ -281,7 +281,8 @@ def summarize(
             }
         )
 
-    denominator = len(identity_rows)
+    identity_count = len(identity_rows)
+    hit_denominator = identities_with_scored_anchor
     summary = {
         "schema_version": "hcvr_recall_candidate_list_judge_summary.v1",
         "judge_input_count": len(judge_inputs),
@@ -291,18 +292,21 @@ def summarize(
         "invalid_prompt_count": invalid_prompt_count,
         "invalid_candidate_score_count": invalid_candidate_count,
         "prompt_counts": dict(sorted(prompt_counts.items())),
-        "identity_count": denominator,
+        "identity_count": identity_count,
         "identities_with_known_anchor_candidate": identities_with_anchor,
         "identities_with_scored_known_anchor_candidate": identities_with_scored_anchor,
         "judge_rerank_hit_counts": {f"top_{k}": count for k, count in sorted(hit_counts.items())},
         "judge_rerank_hit_rates": {
-            f"top_{k}": (count / denominator if denominator else None)
+            f"top_{k}": (count / hit_denominator if hit_denominator else None)
             for k, count in sorted(hit_counts.items())
         },
+        "judge_rerank_hit_rate_denominator": hit_denominator,
+        "identity_coverage_gap_count": identity_count - identities_with_scored_anchor,
         "policy": [
             "This is advisory semantic list judging for recall/reranker diagnostics.",
             "It does not update guidelines, sidecars, ranking, embedding weights, or audit prompts.",
             "Hidden known-anchor labels are used only after judge output is collected to estimate reranker potential.",
+            "Judge rerank Hit@K is computed only over identities whose judged candidate set contains a scored known-anchor-overlap candidate.",
         ],
     }
     candidate_rows.sort(
@@ -332,8 +336,9 @@ def write_readme(output_dir: Path, summary: dict[str, Any], identity_rows: list[
         f"- Candidate score parse issues: {summary['invalid_candidate_score_count']}",
         f"- Identities: {summary['identity_count']}",
         f"- Identities with scored known-anchor candidates: {summary['identities_with_scored_known_anchor_candidate']}",
+        f"- Identity coverage gaps: {summary['identity_coverage_gap_count']}",
         f"- Judge rerank hit counts: {summary['judge_rerank_hit_counts']}",
-        f"- Judge rerank hit rates: {summary['judge_rerank_hit_rates']}",
+        f"- Judge rerank hit rates over eligible identities: {summary['judge_rerank_hit_rates']}",
         "",
         "## Identity Rows",
         "",
@@ -355,6 +360,7 @@ def write_readme(output_dir: Path, summary: dict[str, Any], identity_rows: list[
             "- Hidden known-anchor labels are used only after judge completion for offline diagnostic statistics.",
             "- Do not convert judge choices into training labels, guideline text, regex fallback, or production routing without a separate reviewed experiment.",
             "- A strong judge rerank hit rate motivates a same-identity reranker A/B; it is not itself a paper-facing recall result.",
+            "- If no judged candidate set contains known-anchor overlap, this report is a Top-N semantic-quality sample and cannot evaluate anchor reranking.",
             "",
         ]
     )

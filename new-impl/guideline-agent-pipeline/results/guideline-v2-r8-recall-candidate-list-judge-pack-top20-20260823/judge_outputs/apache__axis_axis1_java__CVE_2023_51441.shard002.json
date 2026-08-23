@@ -1,0 +1,7 @@
+The JSON has been output. Here's a summary of the judgment:
+
+**Top candidates: C012 and C017** (both from `JSSESocketFactory.java`) — these are the only candidates that directly import and use JNDI/LDAP naming APIs (`LdapName`, `Rdn`, `Attributes`), likely for SSL certificate subject DN parsing. This is a path where TLS-negotiated certificate data reaches JNDI naming operations, matching the guideline's JNDI/LDAP lookup concern.
+
+**Remaining candidates (C011, C013–C016, C018–C020)** are all HTTP transport, configuration management, constant definitions, license headers, or documentation — none show JNDI/LDAP/RMI/naming-context lookup operations. Scored low to none.
+
+**Confidence: 0.70** — moderate, because the snippets are truncated before the actual lookup call sites and I can't confirm whether lookup inputs are constrained or whether `InitialContext.lookup()` / `DirContext.search()` are actually invoked with attacker-controlled parameters.

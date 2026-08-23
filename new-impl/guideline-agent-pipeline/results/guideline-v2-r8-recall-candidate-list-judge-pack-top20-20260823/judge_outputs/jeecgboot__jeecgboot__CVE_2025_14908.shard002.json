@@ -1,0 +1,116 @@
+```json
+{
+  "candidate_scores": [
+    {
+      "candidate_id": "C011",
+      "audit_priority": "low",
+      "key_evidence": [
+        "OnlineAuthDTO is a data transfer object with username and URL fields",
+        "No authorization logic or guard enforcement present"
+      ],
+      "rationale": "Plain DTO holding username and possible URLs for online auth interception. It carries data but contains no authorization decision point, check, or sensitive operation. Not useful as an audit entry point.",
+      "relevance": 0.12
+    },
+    {
+      "candidate_id": "C012",
+      "audit_priority": "medium",
+      "key_evidence": [
+        "doGetAuthorizationInfo extracts username from principals and builds SimpleAuthorizationInfo",
+        "This is the Shiro authorization decision point for role/permission assignment"
+      ],
+      "rationale": "Core authorization realm method that determines what roles and permissions a principal has. As an audit entry point, it helps understand how authorization is constructed, but the snippet alone does not show a missing resource-ownership check on a sensitive effect path.",
+      "relevance": 0.52
+    },
+    {
+      "candidate_id": "C013",
+      "audit_priority": "none",
+      "key_evidence": [
+        "Entire file content is commented out (// prefix on every line)"
+      ],
+      "rationale": "Fully commented-out Feign configuration. Dead code cannot be an active authorization bypass entry point.",
+      "relevance": 0.0
+    },
+    {
+      "candidate_id": "C014",
+      "audit_priority": "high",
+      "key_evidence": [
+        "updateAvatar accepts a LoginUser object via @RequestBody with no visible ownership check",
+        "sendAppChatSocket accepts a userId parameter without visible principal-to-target binding",
+        "queryRoleDictByCode accepts roleCodes without visible tenant or principal scoping"
+      ],
+      "rationale": "Multiple API endpoints accept resource identifiers (userId, roleCodes) and user-modifying payloads (LoginUser, DataLogDTO) and delegate directly to sysBaseApi. The snippet shows no authorization guard binding the current principal to the target resource before the sensitive effect. This is a strong candidate entry point for tracing whether ownership/tenant checks exist upstream or in the delegated implementation.",
+      "relevance": 0.68
+    },
+    {
+      "candidate_id": "C015",
+      "audit_priority": "medium",
+      "key_evidence": [
+        "@RequiresPermissions(\"system:online:list\") annotation is present on the list endpoint",
+        "Scans Redis for all user tokens without filtering by current user scope"
+      ],
+      "rationale": "Has a declarative permission check, but the method scans all user tokens in Redis rather than scoping to the current principal's tenant or organization. The permission check controls access to the endpoint but does not bind the returned data to the caller's scope. Worth auditing whether the permission alone is sufficient or if data-level tenant filtering is missing.",
+      "relevance": 0.48
+    },
+    {
+      "candidate_id": "C016",
+      "audit_priority": "none",
+      "key_evidence": [
+        "Simple POJO with upload and webapp path getters/setters"
+      ],
+      "rationale": "Configuration value holder with no authorization logic, resource identifiers, or sensitive operations. No connection to the guideline.",
+      "relevance": 0.0
+    },
+    {
+      "candidate_id": "C017",
+      "audit_priority": "none",
+      "key_evidence": [
+        "All lines are commented out Swagger security context configuration"
+      ],
+      "rationale": "Commented-out Swagger API documentation security configuration. Dead code, no active authorization path.",
+      "relevance": 0.0
+    },
+    {
+      "candidate_id": "C018",
+      "audit_priority": "low",
+      "key_evidence": [
+        "JWT token expiration constants (7 days PC, 30 days APP)",
+        "responseError helper writes JSON error responses"
+      ],
+      "rationale": "JWT utility for token lifecycle and error responses. This is authentication infrastructure (token creation/validation), not authorization enforcement on resource operations. Low relevance for tracing resource-ownership bypass paths.",
+      "relevance": 0.22
+    },
+    {
+      "candidate_id": "C019",
+      "audit_priority": "medium",
+      "key_evidence": [
+        "ShiroRealm extends AuthorizingRealm with dependencies on CommonAPI, RedisUtil, JwtUtil, TokenUtils",
+        "Imports include TenantContext and CacheConstant, suggesting multi-tenant awareness"
+      ],
+      "rationale": "Class declaration and dependency setup for the authorization realm. The presence of TenantContext in imports suggests tenant-scoped authorization may exist. As an audit entry point, this file is where authorization logic is wired together, but this snippet alone is just imports and field declarations.",
+      "relevance": 0.38
+    },
+    {
+      "candidate_id": "C020",
+      "audit_priority": "medium",
+      "key_evidence": [
+        "LoginController has dependencies on user service, permission service, depart service, dict service",
+        "Uses a cached thread pool for async operations"
+      ],
+      "rationale": "Login controller wiring showing the authentication entry point and its service dependencies. As an audit entry point, understanding how login establishes the principal is relevant, but the snippet shows only field injection and no actual login logic or resource-ownership path.",
+      "relevance": 0.35
+    }
+  ],
+  "confidence": 0.72,
+  "missing_information": [
+    "The actual method bodies for C014 endpoints (saveDataLog, updateAvatar, sendAppChatSocket, queryRoleDictByCode) — the snippet only shows the controller delegating to sysBaseApi",
+    "The implementation of sysBaseApi methods to determine whether tenant/owner checks are enforced downstream",
+    "The full doGetAuthorizationInfo method body in C012 to see how roles/permissions are resolved",
+    "Whether Shiro filter chain configuration enforces authentication on all C014 endpoints or leaves some unguarded"
+  ],
+  "top_choices": [
+    "C014",
+    "C012",
+    "C015"
+  ]
+}
+```

@@ -932,9 +932,29 @@ python3 ../../scripts/summarize_recall_candidate_list_judge_outputs.py \
 ```
 
 The summary computes offline known-anchor rerank Hit@1/3/5/10 using hidden
-metadata. Treat this as a reranker-design diagnostic only; paper-facing recall
-still requires a same-identity retrieval or reranking run that does not use
-known-anchor labels at inference time.
+metadata, but only over identities whose judged candidate set actually contains
+a scored known-anchor-overlap candidate. Treat this as a reranker-design
+diagnostic only; paper-facing recall still requires a same-identity retrieval
+or reranking run that does not use known-anchor labels at inference time.
+
+The first Top20 list-wise run is committed under
+`results/guideline-v2-r8-recall-candidate-list-judge-pack-top20-20260823/`.
+It contains 12 shuffled prompts for the same 6 Top300-within/Top100-miss cases.
+The summary records `identity_count=6`, `parsed_prompt_count=11`,
+`invalid_prompt_count=2`, and `identity_coverage_gap_count=6`. Because the
+known-anchor-overlap candidates are ranked 136, 194, 215, 218, 252, and 275,
+none of them appears in the Top20 judged candidate sets. This run therefore
+cannot estimate anchor reranking Hit@K; it is a Top20 semantic-quality sample
+and a coverage-gap diagnostic. A real reranker diagnostic for these cases needs
+a wider judged candidate set, stratified candidate sampling, or a model-side
+reranker A/B that includes the known-anchor rank band without revealing labels
+at inference time.
+
+The Top20 run also records a TraeX judge stability caveat. One shard failed to
+produce a clean JSON object after the judge attempted a blocked tool call, and
+one shard omitted proper `candidate_scores`. Keep the runner in a read-only
+tool-blocked configuration, but treat judge output as best-effort advisory data
+that needs parser validation before any downstream summary is trusted.
 
 Build a revision backlog from the semantic judge and recall-alignment outputs:
 

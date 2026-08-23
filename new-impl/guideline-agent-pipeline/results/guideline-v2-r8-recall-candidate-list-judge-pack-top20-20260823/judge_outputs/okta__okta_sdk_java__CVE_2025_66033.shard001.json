@@ -1,0 +1,119 @@
+```json
+{
+  "candidate_scores": [
+    {
+      "audit_priority": "medium",
+      "candidate_id": "C001",
+      "key_evidence": [
+        "Cache implementation using a backing Map instance for shared mutable state",
+        "Imports AtomicLong suggesting concurrent access patterns",
+        "Cache entries are classic check-then-use targets (containsKey then get/put without atomic boundary)"
+      ],
+      "rationale": "Cache implementations are inherently about shared mutable state where check-then-use patterns on entries are common TOCTOU surfaces. However, the snippet is truncated before the actual cache logic, so the specific check-then-use pattern is not visible.",
+      "relevance": 0.55
+    },
+    {
+      "audit_priority": "high",
+      "candidate_id": "C002",
+      "key_evidence": [
+        "Directly emits warnings about multi-threaded SDK usage with shared ApiClient instances",
+        "Explicitly warns about thread pool usage where mutable state is shared across threads",
+        "The warning utility itself documents the exact concurrent_object_lifecycle concern pattern"
+      ],
+      "rationale": "This file is directly about detecting and warning about concurrent access to shared SDK objects. It documents the exact pattern the guideline targets: shared mutable state (ApiClient) used across threads without proper stabilization. The warning content itself is strong evidence that the codebase has concurrent lifecycle concerns.",
+      "relevance": 0.85
+    },
+    {
+      "audit_priority": "none",
+      "candidate_id": "C003",
+      "key_evidence": [
+        "POM dependency declarations only"
+      ],
+      "rationale": "Build configuration file with no executable code, no shared state, and no check-then-use patterns. Irrelevant to concurrent object lifecycle.",
+      "relevance": 0.0
+    },
+    {
+      "audit_priority": "none",
+      "candidate_id": "C004",
+      "key_evidence": [
+        "POM project header and parent declaration only"
+      ],
+      "rationale": "Build configuration file with no executable code, no shared state, and no check-then-use patterns. Irrelevant to concurrent object lifecycle.",
+      "relevance": 0.0
+    },
+    {
+      "audit_priority": "none",
+      "candidate_id": "C005",
+      "key_evidence": [
+        "POM project header and parent declaration only"
+      ],
+      "rationale": "Build configuration file with no executable code, no shared state, and no check-then-use patterns. Irrelevant to concurrent object lifecycle.",
+      "relevance": 0.0
+    },
+    {
+      "audit_priority": "none",
+      "candidate_id": "C006",
+      "key_evidence": [
+        "POM dependency declarations only"
+      ],
+      "rationale": "Build configuration file with no executable code, no shared state, and no check-then-use patterns. Irrelevant to concurrent object lifecycle.",
+      "relevance": 0.0
+    },
+    {
+      "audit_priority": "low",
+      "candidate_id": "C007",
+      "key_evidence": [
+        "Reads file content from InputStream or Path",
+        "Uses BufferedReader with StringBuilder to accumulate content"
+      ],
+      "rationale": "File reading utilities. While file paths are mutable references that could be checked before use (e.g., existence check then read), the snippet shows only straightforward read utilities with no check-then-use pattern visible. Low relevance.",
+      "relevance": 0.2
+    },
+    {
+      "audit_priority": "low",
+      "candidate_id": "C008",
+      "key_evidence": [
+        "Imports ConfigurationValidator suggesting config-check-then-use flows",
+        "ClientBuilder imports suggest shared client configuration lifecycle"
+      ],
+      "rationale": "Header and imports only. The ConfigurationValidator import hints at check-then-use of configuration, but no actual code pattern is visible in the snippet to confirm concurrent lifecycle concerns.",
+      "relevance": 0.25
+    },
+    {
+      "audit_priority": "medium",
+      "candidate_id": "C009",
+      "key_evidence": [
+        "OAuth2 token retrieval with static final DUMMY_KEY_PAIR",
+        "Token lifecycle involves cryptographic key material that could be checked before use",
+        "Access token retrieval is a sensitive operation where credential state must be stabilized"
+      ],
+      "rationale": "Token retrieval service handles security-sensitive credentials. The DUMMY_KEY_PAIR static field is a shared mutable-like reference (though static final, the KeyPair object itself may be used in non-thread-safe ways). Token retrieval involves check-then-use of credential state.",
+      "relevance": 0.5
+    },
+    {
+      "audit_priority": "medium",
+      "candidate_id": "C010",
+      "key_evidence": [
+        "DPoP interceptor handles cryptographic proof-of-possession tokens",
+        "Interceptor pattern inherently checks request state then modifies/proceeds",
+        "JWT/JWK handling involves cryptographic key material lifecycle"
+      ],
+      "rationale": "DPoP interceptors check token binding proofs before forwarding requests. The interceptor pattern is a natural check-then-use boundary where request state must be stabilized. However, the snippet is truncated before the actual interceptor logic.",
+      "relevance": 0.45
+    }
+  ],
+  "confidence": 0.7,
+  "missing_information": [
+    "Full method bodies for C001 (cache implementation) to see actual get/put/evict logic with synchronization",
+    "Full interceptor logic for C010 to see whether DPoP proof checking and request forwarding are atomic",
+    "Full token retrieval flow for C009 to see if credential checking and token issuance share a synchronization boundary",
+    "Actual client builder configuration flow for C008 to see if config validation and client construction are atomic"
+  ],
+  "top_choices": [
+    "C002",
+    "C001",
+    "C009",
+    "C010"
+  ]
+}
+```

@@ -1,0 +1,116 @@
+```json
+{
+  "candidate_scores": [
+    {
+      "audit_priority": "medium",
+      "candidate_id": "C019",
+      "key_evidence": [
+        "authenticate() method receives attacker-controlled username and passes it to webUserService.loadUserByUsernameForApi(username)",
+        "The username likely flows into a SQL query to load user details, making this a source-to-sink entry point for tracing SQL injection"
+      ],
+      "rationale": "This is the API authentication entry point where an untrusted username is passed to a service method that almost certainly queries the database. While the SQL construction itself is not shown in this snippet, this is a strong starting point for tracing whether the username reaches a SQL statement without parameter binding.",
+      "relevance": 0.4
+    },
+    {
+      "audit_priority": "low",
+      "candidate_id": "C015",
+      "key_evidence": [
+        "Configures HikariCP DataSource with JDBC URL, username, password, and connection pool settings",
+        "References issue #736 with setMaxLifetime adjustment"
+      ],
+      "rationale": "Database connection configuration. While it sets up the DataSource that SQL queries will use, it does not show any query construction or concatenation of user input into SQL. Marginal relevance as infrastructure context.",
+      "relevance": 0.15
+    },
+    {
+      "audit_priority": "low",
+      "candidate_id": "C012",
+      "key_evidence": [
+        "Spring MVC controller at /manager/ajax/{chargeBoxId} with GET method",
+        "Receives path variable chargeBoxId and dependencies on ChargePointService, TransactionService"
+      ],
+      "rationale": "This is a REST endpoint where the chargeBoxId path variable is attacker-controlled and could flow through service layers into SQL queries. However, the snippet only shows class declaration and path constants, not the actual handler methods or SQL construction.",
+      "relevance": 0.15
+    },
+    {
+      "audit_priority": "low",
+      "candidate_id": "C011",
+      "key_evidence": [
+        "Imports jOOQ CSVFormat and Converter classes",
+        "File name suggests data import/export repository implementation"
+      ],
+      "rationale": "The file uses jOOQ (a query builder) and handles data import/export, which could involve dynamic SQL construction from imported data. However, the snippet only shows the license header and imports — no actual query construction is visible.",
+      "relevance": 0.1
+    },
+    {
+      "audit_priority": "low",
+      "candidate_id": "C017",
+      "key_evidence": [
+        "File name SettingsRepositoryImpl suggests database interaction",
+        "Imports suggest form-based settings handling including MailSettings"
+      ],
+      "rationale": "A repository implementation that likely queries the database for settings. Could contain SQL construction, but the snippet shows only the license header and imports. Not enough to assess whether SQL injection is relevant.",
+      "relevance": 0.1
+    },
+    {
+      "audit_priority": "low",
+      "candidate_id": "C018",
+      "key_evidence": [
+        "Configuration properties class with nested Auth (username, password, webApiKey, webApiSecret) and Ocpp settings",
+        "Defines constants like ROUTER_ENDPOINT_PATH and TIME_ZONE_ID"
+      ],
+      "rationale": "Pure configuration POJO. No SQL construction, no query execution, no data flow. Only relevant as reference for understanding what configuration values exist in the system.",
+      "relevance": 0.05
+    },
+    {
+      "audit_priority": "low",
+      "candidate_id": "C016",
+      "key_evidence": [
+        "Imports WebUserService, ApiControllerAdvice",
+        "Class name suggests API authentication management"
+      ],
+      "rationale": "The snippet shows only the license header and imports. The class name suggests it handles API authentication, which could involve username/password validation against a database. But the actual code is not shown in this window.",
+      "relevance": 0.05
+    },
+    {
+      "audit_priority": "none",
+      "candidate_id": "C013",
+      "key_evidence": [
+        "Spring @ControllerAdvice for API exception handling",
+        "Imports SteveException, DateTimeEditor, StringTrimmerEditor"
+      ],
+      "rationale": "This is a global exception handler for the API layer. It handles exceptions and likely formats error responses. No SQL construction, no query execution, no data flow relevant to SQL injection.",
+      "relevance": 0.0
+    },
+    {
+      "audit_priority": "none",
+      "candidate_id": "C014",
+      "key_evidence": [
+        "Spring @ControllerAdvice for global exception handling",
+        "Imports SteveProperties, ChargePointSelect, DateTime, LocalDate"
+      ],
+      "rationale": "Global exception handler for the web layer. Handles exceptions and binds model attributes. No SQL construction, no query execution, no data flow relevant to SQL injection.",
+      "relevance": 0.0
+    },
+    {
+      "audit_priority": "none",
+      "candidate_id": "C020",
+      "key_evidence": [
+        "Spring application.yml configuration file",
+        "Defines datasource URL, credentials, SSL, multipart, and server settings"
+      ],
+      "rationale": "Static YAML configuration file. No executable code, no SQL construction, no query execution. Defines datasource credentials and server settings declaratively.",
+      "relevance": 0.0
+    }
+  ],
+  "confidence": 0.55,
+  "missing_information": [
+    "The actual SQL query construction in ApiAuthenticationManager or WebUserService — does loadUserByUsernameForApi use parameter binding or string concatenation?",
+    "The handler methods in AjaxCallController — how is chargeBoxId passed to the service/repository layer?",
+    "The full DataImportExportRepositoryImpl and SettingsRepositoryImpl — do they contain raw SQL fragments or dynamic query building?",
+    "Whether any of these candidates use jOOQ's raw SQL API (e.g., DSL.query()) or only its type-safe DSL"
+  ],
+  "top_choices": [
+    "C019"
+  ]
+}
+```

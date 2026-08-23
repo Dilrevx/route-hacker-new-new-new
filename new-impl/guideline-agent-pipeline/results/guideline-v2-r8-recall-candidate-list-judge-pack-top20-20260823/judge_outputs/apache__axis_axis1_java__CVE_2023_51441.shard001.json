@@ -1,0 +1,125 @@
+```json
+{
+  "candidate_scores": [
+    {
+      "candidate_id": "C001",
+      "audit_priority": "low",
+      "relevance": 0.15,
+      "rationale": "HTTP servlet entry point with ServletSecurityProvider import, but snippet shows only imports/class declaration with no JNDI/LDAP/RMI lookup sink.",
+      "key_evidence": [
+        "imports ServletSecurityProvider",
+        "AxisServlet class declaration"
+      ]
+    },
+    {
+      "candidate_id": "C002",
+      "audit_priority": "medium",
+      "relevance": 0.35,
+      "rationale": "Call configuration with property names including USERNAME, PASSWORD, ENDPOINT_ADDRESS. isPropertySupported allows arbitrary non-java/javax properties, which could inject JNDI/RMI-related properties.",
+      "key_evidence": [
+        "isPropertySupported allows arbitrary properties",
+        "USERNAME_PROPERTY and PASSWORD_PROPERTY",
+        "ENDPOINT_ADDRESS_PROPERTY controls remote destination"
+      ]
+    },
+    {
+      "candidate_id": "C003",
+      "audit_priority": "high",
+      "relevance": 0.85,
+      "rationale": "Reads java.protocol.handler.pkgs system property, constructs URLStreamHandler class names via string concatenation, dynamically loads via Class.forName(). Classic URL protocol handler injection vector.",
+      "key_evidence": [
+        "System.getProperty java.protocol.handler.pkgs reads attacker-influenceable property",
+        "Class.forName(handlerClass) dynamically loads URLStreamHandler",
+        "protocol from address string without validation",
+        "new java.net.URL with dynamically loaded handler"
+      ]
+    },
+    {
+      "candidate_id": "C004",
+      "audit_priority": "medium",
+      "relevance": 0.3,
+      "rationale": "AxisProperties with Apache Commons Discovery imports for dynamic class/resource loading. Snippet mostly license header, but imports suggest dynamic class discovery.",
+      "key_evidence": [
+        "imports ResourceClassIterator and DiscoverClasses",
+        "Apache Commons Discovery dynamic resource loading"
+      ]
+    },
+    {
+      "candidate_id": "C005",
+      "audit_priority": "high",
+      "relevance": 0.8,
+      "rationale": "RMIProvider imports java.rmi.Naming and java.rmi.RMISecurityManager. RMI is explicitly called out in the guideline. Class name strongly indicates RMI-based remote lookup.",
+      "key_evidence": [
+        "imports java.rmi.Naming - primary RMI lookup API",
+        "imports java.rmi.RMISecurityManager",
+        "class RMIProvider extends RPCProvider"
+      ]
+    },
+    {
+      "candidate_id": "C006",
+      "audit_priority": "none",
+      "relevance": 0.0,
+      "rationale": "Resource properties file with license header and userAgentToken string. No code, no lookup APIs, no attacker-controlled paths.",
+      "key_evidence": [
+        "license header only",
+        "userAgentToken property"
+      ]
+    },
+    {
+      "candidate_id": "C007",
+      "audit_priority": "low",
+      "relevance": 0.1,
+      "rationale": "JWSHandler with javax.tools.JavaCompiler imports for dynamic compilation, not JNDI/LDAP/RMI lookup. Snippet shows imports and field declarations only.",
+      "key_evidence": [
+        "imports javax.tools.JavaCompiler for dynamic compilation",
+        "soapServices Map for caching"
+      ]
+    },
+    {
+      "candidate_id": "C008",
+      "audit_priority": "low",
+      "relevance": 0.05,
+      "rationale": "WSDDJAXRPCHandlerInfo with XML serialization and WSDD deployment imports. License header and imports only, no lookup APIs.",
+      "key_evidence": [
+        "WSDD deployment descriptor handler",
+        "imports for XMLUtils and SerializationContext"
+      ]
+    },
+    {
+      "candidate_id": "C009",
+      "audit_priority": "low",
+      "relevance": 0.1,
+      "rationale": "JWSHandler imports and license header. Shows JWSClassLoader import for dynamic class loading, but no JNDI/LDAP/RMI lookup.",
+      "key_evidence": [
+        "imports JWSClassLoader for dynamic class loading",
+        "imports RPCProvider"
+      ]
+    },
+    {
+      "candidate_id": "C010",
+      "audit_priority": "medium",
+      "relevance": 0.4,
+      "rationale": "SimpleAxisWorker parses query parameters (method=), sets MessageContext properties from request-derived fileName, constructs URLs. Could feed into downstream JNDI/RMI lookups.",
+      "key_evidence": [
+        "parses query parameters including method= from request",
+        "constructs URL from host/port/fileName derived from request",
+        "sets MC_REALPATH, MC_RELATIVE_PATH, MC_JWS_CLASSDIR from request"
+      ]
+    }
+  ],
+  "confidence": 0.65,
+  "missing_information": [
+    "Actual sink code (JNDI context.lookup(), RMI Naming.lookup(), LDAP InitialDirContext) not visible in most snippets",
+    "For C005, need actual RMIProvider methods calling Naming.lookup() to confirm attacker-controlled input",
+    "For C002, need to see how properties flow from Call configuration to lookup operations",
+    "For C004, need full AxisProperties to confirm discovery results used for remote lookups",
+    "Full call chains from entry points to lookup sinks not visible in these sliding windows"
+  ],
+  "top_choices": [
+    "C003",
+    "C005",
+    "C010",
+    "C002"
+  ]
+}
+```
