@@ -1,0 +1,17 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.9,
+  "coverage_score": 0.6,
+  "actionability_score": 0.85,
+  "retrieval_query_quality": 0.8,
+  "main_issue": "Single-case boundary with thorough evidence. The mechanism is narrow and well-scoped: OIDC client reads provider JWS algorithms, constructs IDTokenValidator for `none` without explicit opt-in, and trusts resulting identity claims. The evidence fully supports the source/sink/guard/fix chain. Coverage is limited to one case but the mechanism is intrinsically specific to OIDC `none`-algorithm handling, which is a legitimate narrow boundary distinct from generic JWT parser bugs.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "pac4j__pac4j::CVE-2021-44878: Patch commit 22b82ffd adds allowUnsignedIdTokens config flag with documentation that `none` means no signature validation and must be explicitly accepted — directly confirms the missing-guard semantics.",
+    "pac4j__pac4j::CVE-2021-44878: TokenValidator.java:51-64 change shows `none` now throws `Unsigned ID tokens are not allowed` unless isAllowUnsignedIdTokens() is true, confirming the safe-fix semantics at the code level.",
+    "pac4j__pac4j::CVE-2021-44878: TokenValidatorTests include testNoneAlgoNotAllowed and testNoneAlgoAllowed, confirming both the vulnerable path and the intended fix. Evidence is thorough for a single-case boundary."
+  ]
+}
+```

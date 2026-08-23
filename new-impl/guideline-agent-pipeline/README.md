@@ -1160,7 +1160,7 @@ Run a completion audit for the two-axis guideline objective:
 python new-impl/guideline-agent-pipeline/scripts/audit_guideline_dual_axis_objective.py \
   --scorecard new-impl/guideline-agent-pipeline/results/guideline-v2-r8-release-ready-scorecard-20260823/scorecard.json \
   --evidence-worklist-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-evidence-worklist-20260823/summary.json \
-  --evidence-coverage-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-evidence-coverage-plus-0040-judge-20260823/summary.json \
+  --evidence-coverage-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-evidence-coverage-plus-0513-judge-20260823/summary.json \
   --recall-alignment-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-release-ready-p3c64-alignment-20260823/summary.json \
   --recall-side-debug-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-recall-side-debug-pack-20260823/summary.json \
   --recall-side-miss-inspection-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-recall-side-miss-inspection-top300-20260823/summary.json \
@@ -1175,6 +1175,7 @@ python new-impl/guideline-agent-pipeline/scripts/audit_guideline_dual_axis_objec
   --ledger-validation-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0061-validation-src-reviewed-20260823/summary.json \
   --ledger-validation-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0116-validation-src-reviewed-20260823/summary.json \
   --ledger-validation-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0117-validation-src-reviewed-20260823/summary.json \
+  --ledger-validation-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-review-mech-0513-validation-src-reviewed-20260823/summary.json \
   --ledger-judge-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0001-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
   --ledger-judge-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0005-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
   --ledger-judge-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0007-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
@@ -1185,6 +1186,7 @@ python new-impl/guideline-agent-pipeline/scripts/audit_guideline_dual_axis_objec
   --ledger-judge-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0061-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
   --ledger-judge-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0116-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
   --ledger-judge-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0117-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
+  --ledger-judge-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-review-mech-0513-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
   --recall-candidate-pair-judge-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-recall-candidate-pair-judge-pack-20260823/judge_summary/summary.json \
   --recall-candidate-list-judge-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-recall-candidate-list-judge-pack-top20-20260823/judge_summary/summary.json \
   --output-dir /path/to/guideline-dual-axis-objective-audit \
@@ -1409,6 +1411,24 @@ blocking source-review next actions. This is exactly the role TraeX judge should
 play here: advisory semantic QA that finds boundary mistakes, with the final
 promotion still recorded in source-reviewed ledger rows and recall impact still
 requiring same-identity retrieval runs.
+
+The `review_mech_0513` source-review follow-up splits the old broad
+JWT/OIDC signature-verification guideline into source-backed submechanisms. The
+validated ledger has 4 rows, 3 promotable boundaries, and no invalid rows:
+generic JJWT `parse(...)` use before signed-JWS validation, JOSE token-header
+`jwk` trust when no verification key is supplied, and default acceptance of
+OIDC `none` ID-token algorithms without an explicit opt-in. The remaining
+unreviewed members stay in a holding row with `needs_more_evidence`. The TraeX
+DeepSeek-V4-Pro judge accepts all 4 rows as semantically coherent, with one low
+score caveat on evidence coverage. The latest cumulative coverage matrix is
+`results/guideline-v2-r8-evidence-coverage-plus-0513-judge-20260823/`: 11 groups
+are `source_reviewed_and_judge_accepted`, 9 remain `not_source_reviewed`, and
+there are no `source_reviewed_validation_only` rows. The latest dual-axis audit
+is
+`results/guideline-v2-r8-dual-axis-objective-audit-plus-0513-judge-20260823/`;
+it still reports `overall_status=not_complete`, `missing_count=3`, and 7
+blocking source-review next actions. This improves semantic coverage while
+leaving recall impact as a separate same-identity retrieval gate.
 
 Convert the backlog into review-only mechanism lexicon proposals:
 
