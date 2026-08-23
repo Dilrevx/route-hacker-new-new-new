@@ -358,13 +358,30 @@ def write_markdown(path: Path, summary: dict[str, Any], cases: list[dict[str, An
         if project_queue
         else "Dataset vulnerability IDs and types are joined after execution for evaluation."
     )
-    text = f"""# Codex Security Native Blind Batch Snapshot
+    exec_modes = Counter(
+        row["exec_mode"] or "unknown"
+        for row in cases
+        if row.get("record_status")
+    )
+    if exec_modes == Counter({"native-codex": sum(exec_modes.values())}):
+        execution_policy = "native Codex Security full-repository blind audit"
+    elif exec_modes:
+        execution_policy = (
+            "Codex Security harness full-repository blind audit; backend mix: "
+            + ", ".join(
+                f"{mode}={count}" for mode, count in sorted(exec_modes.items())
+            )
+        )
+    else:
+        execution_policy = "Codex Security full-repository blind audit"
+
+    text = f"""# Codex Security Blind Batch Snapshot
 
 ## Scope
 
 - Queue denominator: {summary["queue"]["cases"]} {queue_label}.
 - Current terminal coverage: {summary["processed_cases"]}/{summary["queue"]["cases"]} queue entries.
-- Execution policy: native Codex Security full-repository blind audit.
+- Execution policy: {execution_policy}.
 - {linkage_note}
 
 ## Aggregate Results
