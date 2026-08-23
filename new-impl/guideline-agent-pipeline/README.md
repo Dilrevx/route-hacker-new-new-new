@@ -1067,10 +1067,12 @@ python new-impl/guideline-agent-pipeline/scripts/summarize_guideline_evidence_co
   --evidence-worklist new-impl/guideline-agent-pipeline/results/guideline-v2-r8-evidence-worklist-20260823/evidence_worklist.jsonl \
   --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0001.jsonl \
   --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0007.jsonl \
+  --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0011.jsonl \
   --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0022.jsonl \
   --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0116.jsonl \
   --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0001-validation-20260823/validation_rows.json \
   --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0007-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0011-validation-src-reviewed-20260823/validation_rows.json \
   --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0022-validation-src-reviewed-20260823/validation_rows.json \
   --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0116-validation-src-reviewed-20260823/validation_rows.json \
   --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0007-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
@@ -1141,12 +1143,13 @@ Run a completion audit for the two-axis guideline objective:
 python new-impl/guideline-agent-pipeline/scripts/audit_guideline_dual_axis_objective.py \
   --scorecard new-impl/guideline-agent-pipeline/results/guideline-v2-r8-release-ready-scorecard-20260823/scorecard.json \
   --evidence-worklist-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-evidence-worklist-20260823/summary.json \
-  --evidence-coverage-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-evidence-coverage-20260823/summary.json \
+  --evidence-coverage-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-evidence-coverage-plus-0011-20260823/summary.json \
   --recall-alignment-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-release-ready-p3c64-alignment-20260823/summary.json \
   --recall-side-debug-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-recall-side-debug-pack-20260823/summary.json \
   --recall-side-miss-inspection-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-recall-side-miss-inspection-top300-20260823/summary.json \
   --boundary-recall-triage-summary new-impl/guideline-agent-pipeline/results/guideline-boundary-recall-triage-r8-gl-mech-0001-p3c64-3case-20260823/summary.json \
   --ledger-validation-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0022-validation-src-reviewed-20260823/summary.json \
+  --ledger-validation-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0011-validation-src-reviewed-20260823/summary.json \
   --ledger-judge-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0022-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
   --recall-candidate-pair-judge-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-recall-candidate-pair-judge-pack-20260823/judge_summary/summary.json \
   --recall-candidate-list-judge-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-recall-candidate-list-judge-pack-top20-20260823/judge_summary/summary.json \
@@ -1191,6 +1194,10 @@ Current source-reviewed boundary ledgers:
 - `guidelines/guideline_review_ledger.r8.gl_mech_0022.jsonl`: splits classic
   XML external entity or DTD/parser external-resource resolution from Archi's
   XML namespace/package URI-as-location loading.
+- `guidelines/guideline_review_ledger.r8.gl_mech_0011.jsonl`: promotes only
+  archive-entry path escape writes outside the extraction root. Archive
+  extraction DoS from cyclic links, null handling, or unbounded traversal stays
+  `needs_more_evidence` until a source-to-sink trace supports that boundary.
 - `guidelines/guideline_review_ledger.r8.gl_mech_0116.jsonl`: splits the old
   redirect-following SSRF bucket into direct URL/proxy SSRF and
   renderer/document-converter external-resource SSRF as promotable boundaries;
@@ -1212,7 +1219,7 @@ rows are evidence-preserving candidate boundaries, not recall positives: one
 redirect-following SSRF row that needs an initial-approved-URL to unsafe
 redirect case, and one webhook/callback SSRF row that needs a true
 server-initiated callback or notification endpoint case.
-The current evidence-coverage summary is under
+The source-review evidence-coverage summary before `gl_mech_0011` is under
 `results/guideline-v2-r8-evidence-coverage-20260823/`. It joins the 20-row r8
 worklist with the four filled ledgers, validation rows, and ledger-level judge
 reports. It records the remaining semantic queue without changing released
@@ -1228,6 +1235,22 @@ reports `overall_status=not_complete`, `missing_count=3`, and 15 blocking
 source-review next actions. This is the current handoff artifact for deciding
 whether the next round should collect semantic source evidence or run fresh
 same-identity recall.
+
+The `gl_mech_0011` source-review follow-up is committed under
+`guidelines/guideline_review_ledger.r8.gl_mech_0011.jsonl`, with verifier
+output in
+`results/guideline-review-ledger-r8-gl-mech-0011-validation-src-reviewed-20260823/`.
+It has 2 valid rows, 1 promotable boundary, and no invalid rows. The
+plus-0011 coverage matrix is under
+`results/guideline-v2-r8-evidence-coverage-plus-0011-20260823/`: the
+source-reviewed validation-only count moves from 1 to 2, while
+`not_source_reviewed` drops from 16 to 15. The plus-0011 dual-axis audit is
+under
+`results/guideline-v2-r8-dual-axis-objective-audit-plus-0011-20260823/` and
+still reports `overall_status=not_complete`, `missing_count=3`, and 15
+blocking source-review next actions. This is expected: one
+`fill_source_review_ledger` item became one `run_ledger_judge_pack` item, so
+semantic evidence quality improved without closing the full coverage gate yet.
 
 Convert the backlog into review-only mechanism lexicon proposals:
 
