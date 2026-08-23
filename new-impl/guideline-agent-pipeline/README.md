@@ -89,6 +89,11 @@ P3C64-vs-Qwen4B model-improvement claim.
     source/sink/guard/fix collection queue.
   - Produces a review artifact only: it does not update released guidelines,
     lexicon entries, sidecars, ranking, or audit prompts.
+- `scripts/build_guideline_boundary_repair_pack.py`
+  - Extracts split/revise rows from the evidence worklist into a mechanism
+    boundary repair pack with strong and weak example buckets.
+  - Produces a review artifact only: it does not update released guidelines,
+    lexicon entries, sidecars, ranking, or audit prompts.
 - `scripts/audit_guideline_dual_axis_objective.py`
   - Audits the current guideline iteration against the two coupled goals:
     semantic CVE-mechanism guideline quality and tuned-embedding recall
@@ -547,6 +552,12 @@ revision from checked evidence, 3 rows needing split-boundary validation, and
 `source_trace_present`, 56 `review_entry_only`, and 8
 `missing_trace_evidence`, which is why the next step is evidence collection
 rather than direct guideline rewriting.
+The split/revise subset is extracted under
+`results/guideline-v2-r8-boundary-repair-pack-20260823/`: 8 repair rows, with
+3 split-boundary items and 5 mechanism-scope revision items. It separates
+strong source-trace examples from weak `review_entry_only` or missing-trace
+examples so the next reviewer can assign cases to mechanism boundaries before
+anything is promoted into the lexicon or recall sidecar.
 
 The r8 experiment scorecard is committed under
 `results/guideline-v2-r8-release-ready-scorecard-20260823/`. It records the
@@ -716,6 +727,21 @@ examples, and the next reviewer action. This step exists to prevent hardcoded
 evaluation from shaping the generator: TraeX judge notes, labels, known
 anchors, and bad cases are review hints only. They are not hidden routing
 features and they are not release gates.
+
+Extract the split/revise subset into a boundary repair pack:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/build_guideline_boundary_repair_pack.py \
+  --evidence-worklist new-impl/guideline-agent-pipeline/results/guideline-v2-r8-evidence-worklist-20260823/evidence_worklist.jsonl \
+  --output-dir /path/to/guideline-boundary-repair-pack \
+  --max-examples-per-state 3
+```
+
+Use `boundary_repair_pack.jsonl` before editing the mechanism lexicon or
+guideline sidecar. It lists candidate split/revision boundaries and separates
+source-backed examples from review-entry-only or missing-trace examples. The
+boundaries are hypotheses until a reviewer assigns cases to them with checked
+source/sink/guard/fix evidence.
 
 Run a completion audit for the two-axis guideline objective:
 
