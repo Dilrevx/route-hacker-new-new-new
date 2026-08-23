@@ -1,0 +1,13 @@
+{
+  "common_identity_file": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/guideline-v2-same-identity-20260824/inputs/source_reviewed_common28_identities.jsonl",
+  "common_with_old_count": 28,
+  "identity_count": 32,
+  "identity_file": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/guideline-v2-same-identity-20260824/inputs/source_reviewed_32_identities.jsonl",
+  "old_sidecar_missing_count": 4,
+  "old_sidecar_missing_identities": [
+    "manydesigns__portofino::CVE-2021-29451",
+    "nimble-platform__common::CVE-2021-32631",
+    "openhab__openhab-webui::CVE-2024-42468",
+    "opensolon__solon::CVE-2025-1584"
+  ]
+}

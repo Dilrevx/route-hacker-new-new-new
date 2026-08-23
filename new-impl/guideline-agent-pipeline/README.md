@@ -1819,6 +1819,36 @@ Therefore the source-reviewed candidate can be discussed as a semantic
 classification candidate, while embedding recall improvement still needs a
 fresh same-identity recall run before it becomes a paper-facing metric.
 
+The fresh same-identity recall A/B is recorded under
+`results/guideline-v2-r8-source-reviewed-same-identity-qwen06b-top200-32-20260824/`.
+It uses the 32 source-reviewed sidecar identities, the same prewarmed source
+snapshots, the same 80-line/40-stride mechanical slicing, the same Top-200
+budget, and the real OpenAI-compatible `Qwen/Qwen3-Embedding-0.6B` service on
+`http://127.0.0.1:8001/v1`. Both runs completed 32/32 cases with 0 failures.
+On this fixed identity set, the source-reviewed release candidate improves
+Hit@30 from 16/32 to 23/32, Hit@100 from 21/32 to 28/32, Hit@200 from 23/32 to
+29/32, and MRR from 0.210817 to 0.262389. At Top-200 it has 6 left-only hits,
+0 right-only hits, and 3 misses shared by both sides.
+
+There is one fairness boundary in the 32-case comparison: the old r8 sidecar
+has explicit override rows for only 28 of the 32 source-reviewed identities, so
+4 old-run rows use the recall runner's normal dataset/default guideline
+fallback. The same result directory also contains a stricter common-28
+comparison where both sides have explicit sidecar text. On that subset, the
+source-reviewed candidate improves Hit@30 from 14/28 to 20/28, Hit@100 from
+18/28 to 24/28, Hit@200 from 20/28 to 25/28, and MRR from 0.203393 to
+0.256864. Use the common-28 table when the claim is specifically about sidecar
+text quality; use the 32-case table when discussing the current candidate's
+actual covered identity set.
+
+The cost proxy for both runs is 161374 candidate slices over 32 cases. Wall
+time was about 35.7 minutes for the old sidecar and 35.5 minutes for the
+source-reviewed candidate with `--case-workers 8`. The runner records
+cumulative worker timing, where code embedding dominates: about 12678 seconds
+for the old sidecar and 12594 seconds for the source-reviewed candidate. The
+embedding service used here does not return token usage, so the committed
+artifact reports candidate counts and timing rather than token totals.
+
 Convert the backlog into review-only mechanism lexicon proposals:
 
 ```bash

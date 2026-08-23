@@ -1,0 +1,137 @@
+{
+  "budgets": [
+    30,
+    50,
+    100,
+    150,
+    200
+  ],
+  "candidate_count_on_common": {
+    "different_count": 0,
+    "left_total": 161374,
+    "right_total": 161374
+  },
+  "common_count": 32,
+  "left_count": 32,
+  "left_label": "source-reviewed-release-candidate",
+  "left_only_count": 0,
+  "left_only_sample": [],
+  "metrics_on_common_identities": {
+    "hit_at_100": {
+      "delta_count": 7,
+      "delta_rate": 0.21875,
+      "left_count": 28,
+      "left_rate": 0.875,
+      "right_count": 21,
+      "right_rate": 0.65625
+    },
+    "hit_at_150": {
+      "delta_count": 5,
+      "delta_rate": 0.15625,
+      "left_count": 28,
+      "left_rate": 0.875,
+      "right_count": 23,
+      "right_rate": 0.71875
+    },
+    "hit_at_200": {
+      "delta_count": 6,
+      "delta_rate": 0.1875,
+      "left_count": 29,
+      "left_rate": 0.90625,
+      "right_count": 23,
+      "right_rate": 0.71875
+    },
+    "hit_at_30": {
+      "delta_count": 7,
+      "delta_rate": 0.21875,
+      "left_count": 23,
+      "left_rate": 0.71875,
+      "right_count": 16,
+      "right_rate": 0.5
+    },
+    "hit_at_50": {
+      "delta_count": 7,
+      "delta_rate": 0.21875,
+      "left_count": 24,
+      "left_rate": 0.75,
+      "right_count": 17,
+      "right_rate": 0.53125
+    },
+    "mrr": {
+      "delta": 0.051571389872725665,
+      "left": 0.2623885874150491,
+      "right": 0.21081719754232345
+    }
+  },
+  "primary_budget": 200,
+  "primary_budget_crossing": {
+    "both_hit_count": 23,
+    "both_miss_count": 3,
+    "left_only_hit_count": 6,
+    "left_only_hits": [
+      {
+        "cwe_ids": [],
+        "hcvr_type": "template_expression_injection",
+        "identity_key": "hubspot__jinjava::CVE-2020-12668",
+        "left_candidate_count": 775,
+        "left_rank": 1,
+        "right_candidate_count": 775,
+        "right_rank": null
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "template_expression_injection",
+        "identity_key": "hubspot__jinjava::CVE-2025-59340",
+        "left_candidate_count": 1548,
+        "left_rank": 3,
+        "right_candidate_count": 1548,
+        "right_rank": null
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "template_expression_injection",
+        "identity_key": "browserup__browserup-proxy::CVE-2020-26282",
+        "left_candidate_count": 529,
+        "left_rank": 5,
+        "right_candidate_count": 529,
+        "right_rank": null
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "template_expression_injection",
+        "identity_key": "hubspot__jinjava::CVE-2026-25526",
+        "left_candidate_count": 1579,
+        "left_rank": 5,
+        "right_candidate_count": 1579,
+        "right_rank": null
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "ssrf",
+        "identity_key": "dhis2__dhis2-core::CVE-2022-41949",
+        "left_candidate_count": 20373,
+        "left_rank": 10,
+        "right_candidate_count": 20373,
+        "right_rank": null
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "iris",
+        "identity_key": "opensolon__solon::CVE-2025-1584",
+        "left_candidate_count": 5678,
+        "left_rank": 11,
+        "right_candidate_count": 5678,
+        "right_rank": null
+      }
+    ],
+    "right_only_hit_count": 0,
+    "right_only_hits": []
+  },
+  "right_count": 32,
+  "right_label": "r8-release-ready-sidecar",
+  "right_only_count": 0,
+  "right_only_sample": [],
+  "same_identity_order": true,
+  "same_identity_set": true,
+  "schema_version": "hcvr_recall_rank_comparison.v1"
+}
