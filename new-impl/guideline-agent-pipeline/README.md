@@ -81,11 +81,12 @@ P3C64-vs-Qwen4B model-improvement claim.
     whose same-identity recall rows still miss the primary Top-K budget.
   - Separates rank-table coverage gaps from joined Top-K misses.
 - `scripts/inspect_recall_side_misses.py`
-  - Expands recall-side debug groups into case-level rank-only rows.
+  - Expands recall-side debug groups into case-level rows.
   - Records rank distance, Top-1 location, known-anchor count, candidate-count
     bucket, and next recall-side checks.
-  - Does not claim candidate-slicing failure unless full ranked candidate lists
-    and known-anchor span details are available.
+  - When supplied with `--top-candidates`, reports whether exported Top-N
+    candidate rows include known-anchor overlap.
+  - Does not claim vulnerability precision or change guideline quality.
 - `scripts/evaluate_guideline_groups.py`
   - Evaluates the guideline release itself, independent of embedding recall.
   - Reports coverage, source-only groups, mixed HCVR/CWE sanity checks, and
@@ -396,6 +397,11 @@ coherent source, sink, missing guard, exploit precondition, and fix semantics.
 It should not score embedding rank, known-anchor hit, or Top-K recall, and its
 output should create review/backlog items rather than silently changing the
 released guideline set.
+For recall-side misses such as the r8 Top300 follow-up below, run TraeX judge
+only when the source evidence suggests the guideline boundary itself may be
+wrong or underspecified. If the known anchor is present but ranked below budget,
+the primary action is a same-identity recall/reranking/query A/B rather than a
+semantic judge rerun.
 In practice the promotion chain is: structural sanity creates a review queue,
 TraeX judge gives an advisory second opinion, source-reviewed ledger rows record
 the boundary decision, and same-identity recall runs measure retrieval impact.
@@ -786,7 +792,8 @@ coverage gaps relative to the rank table. Use it to inspect query wording,
 candidate slicing, embedding backend, adapter behavior, and rank-table coverage
 without changing guideline taxonomy or adding runtime fallback rules.
 
-Expand the clean-group misses to case-level rank-only rows:
+Expand the clean-group misses to case-level rows. Without a Top-N candidate
+export this is rank-summary only:
 
 ```bash
 python new-impl/guideline-agent-pipeline/scripts/inspect_recall_side_misses.py \
@@ -812,6 +819,17 @@ debug budget to `recall_guideline_anchors.py`, then rerun
 `inspect_recall_side_misses.py --top-candidates /path/to/top_candidates.jsonl`.
 That enables candidate-overlap summaries while keeping the default recall
 metrics unchanged.
+
+The candidate-aware follow-up inspection is committed under
+`results/guideline-v2-r8-recall-side-miss-inspection-top300-20260823/`. It uses
+a real P3C64 run over the 6 joined ranked misses with `--top-k 500` and
+`--export-top-candidates 300`. The run completed 6/6 cases in 196.919 seconds
+with `known_anchor_hit_at_500=1.0` and `known_anchor_hit_at_100=0.0`. All 6
+known anchors are present in the exported Top300 but below Top100, with best
+overlap ranks `136`, `194`, `215`, `218`, `252`, and `275`. This rules out a
+simple candidate-slicing absence for these 6 joined misses and points the next
+recall-side work toward query wording, reranking, budget, or embedding-adapter
+A/B under the same identities.
 
 Build a revision backlog from the semantic judge and recall-alignment outputs:
 
@@ -965,7 +983,7 @@ python new-impl/guideline-agent-pipeline/scripts/audit_guideline_dual_axis_objec
   --evidence-worklist-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-evidence-worklist-20260823/summary.json \
   --recall-alignment-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-release-ready-p3c64-alignment-20260823/summary.json \
   --recall-side-debug-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-recall-side-debug-pack-20260823/summary.json \
-  --recall-side-miss-inspection-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-recall-side-miss-inspection-20260823/summary.json \
+  --recall-side-miss-inspection-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-recall-side-miss-inspection-top300-20260823/summary.json \
   --boundary-recall-triage-summary new-impl/guideline-agent-pipeline/results/guideline-boundary-recall-triage-r8-gl-mech-0001-p3c64-3case-20260823/summary.json \
   --ledger-validation-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0022-validation-src-reviewed-20260823/summary.json \
   --ledger-judge-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0022-judge-pack-src-reviewed-20260823/judge_summary/summary.json \

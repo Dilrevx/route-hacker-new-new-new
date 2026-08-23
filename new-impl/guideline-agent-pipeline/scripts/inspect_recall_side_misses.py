@@ -172,7 +172,15 @@ def inspect_case(
     rank = normalize_rank(case.get("rank"))
     state = miss_state(case, primary_budget)
     top1 = {}
-    if rank_row:
+    if exported_candidates:
+        first_candidate = exported_candidates[0]
+        top1 = {
+            "file": first_candidate.get("file"),
+            "start_line": first_candidate.get("start_line"),
+            "end_line": first_candidate.get("end_line"),
+            "known_anchor_overlap": first_candidate.get("known_anchor_overlap"),
+        }
+    elif rank_row:
         top1 = {
             "file": rank_row.get("top1_file"),
             "start_line": rank_row.get("top1_start_line"),
@@ -335,10 +343,18 @@ def build_inspection(
             "known_anchor_span_details": bool(exported_candidate_rows),
         },
         "policy": [
-            "This is a rank-only recall-side inspection artifact.",
+            (
+                "This is a candidate-aware recall-side inspection artifact."
+                if exported_candidate_rows
+                else "This is a rank-only recall-side inspection artifact."
+            ),
             "It does not update guidelines, sidecars, ranking, embedding weights, or audit prompts.",
             "It separates rank-table coverage gaps from joined cases whose known anchor ranks below the primary budget.",
-            "It cannot prove candidate-slicing failure without full ranked candidate lists and known-anchor span details.",
+            (
+                "It can report whether exported Top-N candidates include known-anchor overlap, but it does not prove vulnerability precision."
+                if exported_candidate_rows
+                else "It cannot prove candidate-slicing failure without full ranked candidate lists and known-anchor span details."
+            ),
         ],
     }
     return summary, rows
@@ -387,9 +403,21 @@ def write_readme(path: Path, summary: dict[str, Any], rows: list[dict[str, Any]]
             "",
             "## Limits",
             "",
-            "- The current rank table has only one Top-1 candidate summary plus the best known-anchor rank.",
-            "- This inspection cannot decide whether a specific known-anchor slice was malformed, absent, or simply ranked too low.",
-            "- To inspect candidate slicing directly, rerun recall with full Top-N candidate export and known-anchor span details, then join those files by `identity_key`.",
+            (
+                "- This inspection includes exported Top-N candidate rows and can identify whether known-anchor-overlapping slices are present within that exported budget."
+                if summary["input_capability"].get("full_ranked_candidate_lists")
+                else "- The current rank table has only one Top-1 candidate summary plus the best known-anchor rank."
+            ),
+            (
+                "- It still does not prove vulnerability precision; it only separates absent/ranked-low anchor evidence from semantic guideline review."
+                if summary["input_capability"].get("full_ranked_candidate_lists")
+                else "- This inspection cannot decide whether a specific known-anchor slice was malformed, absent, or simply ranked too low."
+            ),
+            (
+                "- To inspect deeper rank positions, rerun recall with a larger `--export-top-candidates` under the same identity list and embedding backend."
+                if summary["input_capability"].get("full_ranked_candidate_lists")
+                else "- To inspect candidate slicing directly, rerun recall with full Top-N candidate export and known-anchor span details, then join those files by `identity_key`."
+            ),
             "",
         ]
     )

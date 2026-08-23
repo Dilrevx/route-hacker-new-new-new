@@ -196,7 +196,14 @@ def test_inspection_uses_exported_candidate_overlap_summary():
         "overlap_within_primary_budget": False,
         "top_files": ["Top.java", "Anchor.java"],
     }
+    assert rows[0]["top1"] == {
+        "file": "Top.java",
+        "start_line": None,
+        "end_line": None,
+        "known_anchor_overlap": False,
+    }
     assert "known_anchor_present_in_export_but_below_primary_budget" in rows[0]["diagnosis"]
+    assert "candidate-aware" in summary["policy"][0]
 
 
 def test_cli_writes_case_level_inspection(tmp_path: Path):

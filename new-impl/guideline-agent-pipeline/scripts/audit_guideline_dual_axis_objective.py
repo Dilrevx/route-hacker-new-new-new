@@ -196,6 +196,21 @@ def build_audit(
     )
     recall_side_debug = recall_side_debug or {}
     recall_side_miss_inspection = recall_side_miss_inspection or {}
+    recall_side_miss_capability = (
+        recall_side_miss_inspection.get("input_capability")
+        if isinstance(recall_side_miss_inspection.get("input_capability"), dict)
+        else {}
+    )
+    recall_side_miss_message = (
+        "Case-level miss inspection includes exported Top-N candidate rows. It can separate candidate-generation "
+        "absence from known anchors that are present but ranked below the primary budget; it still does not prove "
+        "vulnerability precision or change guideline quality."
+        if recall_side_miss_capability.get("full_ranked_candidate_lists")
+        else (
+            "Case-level miss inspection is rank-only when full candidate lists are unavailable. It narrows the "
+            "next recall-side checks but does not prove candidate slicing failure or change guideline quality."
+        )
+    )
     boundary_recall_triage = boundary_recall_triage or {}
     boundary_next_actions = (
         boundary_recall_triage.get("next_action_counts")
@@ -359,11 +374,8 @@ def build_audit(
             "miss_state_counts": recall_side_miss_inspection.get("miss_state_counts") or {},
             "diagnosis_counts": recall_side_miss_inspection.get("diagnosis_counts") or {},
             "next_check_counts": recall_side_miss_inspection.get("next_check_counts") or {},
-            "input_capability": recall_side_miss_inspection.get("input_capability") or {},
-            "message": (
-                "Case-level miss inspection is rank-only when full candidate lists are unavailable. It narrows the "
-                "next recall-side checks but does not prove candidate slicing failure or change guideline quality."
-            ),
+            "input_capability": recall_side_miss_capability,
+            "message": recall_side_miss_message,
         },
         "missing_or_incomplete_requirements": missing,
         "next_gates": next_gates,
@@ -377,6 +389,22 @@ def build_audit(
 
 
 def write_readme(path: Path, audit: dict[str, Any]) -> None:
+    recall_miss_capability = (
+        audit.get("recall_side_miss_inspection_evidence", {}).get("input_capability")
+        if isinstance(audit.get("recall_side_miss_inspection_evidence"), dict)
+        else {}
+    )
+    recall_miss_note = (
+        "This is the case-level expansion of the recall-side debug queue with exported Top-N candidate rows. "
+        "It can show whether known-anchor-overlapping slices are present in the exported budget and whether "
+        "they are simply ranked below the primary budget; it still does not prove vulnerability precision."
+        if recall_miss_capability.get("full_ranked_candidate_lists")
+        else (
+            "This is the case-level expansion of the recall-side debug queue. With the current rank summary table "
+            "it can distinguish coverage gaps from ranked-below-budget misses, but it cannot prove candidate-slicing "
+            "quality without full ranked candidate exports."
+        )
+    )
     lines = [
         "# Guideline Dual-Axis Objective Audit",
         "",
@@ -463,7 +491,7 @@ def write_readme(path: Path, audit: dict[str, Any]) -> None:
             f"- Next checks: {recall_miss_inspection.get('next_check_counts')}",
             f"- Input capability: {recall_miss_inspection.get('input_capability')}",
             "",
-            "This is the case-level expansion of the recall-side debug queue. With the current rank summary table it can distinguish coverage gaps from ranked-below-budget misses, but it cannot prove candidate-slicing quality without full ranked candidate exports.",
+            recall_miss_note,
         ]
     )
     lines.extend(

@@ -193,6 +193,36 @@ def test_recall_side_miss_inspection_is_rank_only_diagnostic_evidence():
     )
 
 
+def test_recall_side_miss_inspection_can_be_candidate_aware():
+    module = load_module()
+
+    audit = module.build_audit(
+        scorecard=scorecard(),
+        worklist={"worklist_count": 1, "action_counts": {"collect_source_sink_guard_evidence": 1}},
+        desired_delta_rate=0.10,
+        recall_side_miss_inspection={
+            "recall_label": "p3c64",
+            "case_count": 6,
+            "miss_state_counts": {"ranked_below_primary_budget": 6},
+            "diagnosis_counts": {
+                "known_anchor_present_in_export_but_below_primary_budget": 6,
+            },
+            "next_check_counts": {
+                "inspect_budget_or_reranker_need_on_same_identity": 3,
+            },
+            "input_capability": {
+                "full_ranked_candidate_lists": True,
+                "known_anchor_span_details": True,
+            },
+        },
+    )
+
+    inspection = audit["recall_side_miss_inspection_evidence"]
+    assert inspection["input_capability"]["full_ranked_candidate_lists"] is True
+    assert "exported Top-N candidate rows" in inspection["message"]
+    assert "does not prove vulnerability precision" in inspection["message"]
+
+
 def test_source_reviewed_boundary_evidence_is_separate_from_recall_completion():
     module = load_module()
 
