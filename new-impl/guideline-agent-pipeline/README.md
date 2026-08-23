@@ -367,6 +367,10 @@ coherent source, sink, missing guard, exploit precondition, and fix semantics.
 It should not score embedding rank, known-anchor hit, or Top-K recall, and its
 output should create review/backlog items rather than silently changing the
 released guideline set.
+In practice the promotion chain is: structural sanity creates a review queue,
+TraeX judge gives an advisory second opinion, source-reviewed ledger rows record
+the boundary decision, and same-identity recall runs measure retrieval impact.
+Do not collapse those layers into one score.
 
 Run the structural checker and emit a TraeX judge pack:
 
@@ -583,6 +587,14 @@ contains no promotable row by default. A later filled ledger must pass the
 verifier before any boundary is promoted into released guideline text, and
 promotion still triggers a fresh same-identity recall run once the consumed
 sidecar changes.
+The first filled r8 ledger row is
+`guidelines/guideline_review_ledger.r8.gl_mech_0001.jsonl`, with validation
+under `results/guideline-review-ledger-r8-gl-mech-0001-validation-20260823/`.
+It promotes only `candidate_boundary_01`, the Java `File.createTempFile` ->
+`delete` -> `mkdir/mkdirs` temporary-directory race, using source/patch-backed
+evidence from CVE-2022-4817, CVE-2018-25068, and CVE-2022-3969. It explicitly
+keeps temporary-resource permission exposure as a separate boundary candidate.
+This is semantic boundary evidence, not a recall result.
 
 The r8 experiment scorecard is committed under
 `results/guideline-v2-r8-release-ready-scorecard-20260823/`. It records the
