@@ -1,0 +1,11 @@
+[
+  {
+    "boundary_decision": "promote_boundary",
+    "boundary_label": "candidate_boundary_01_corrected_output_folder_path_control",
+    "errors": [],
+    "guideline_id": "gl_mech_0008",
+    "line_no": 1,
+    "valid": true,
+    "warnings": []
+  }
+]
