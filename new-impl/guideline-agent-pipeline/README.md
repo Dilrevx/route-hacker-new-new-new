@@ -105,6 +105,13 @@ P3C64-vs-Qwen4B model-improvement claim.
     into a mechanism lexicon or guideline sidecar.
   - Requires source/sink/missing-guard/exploit-precondition/fix evidence for
     `promote_boundary` rows and still does not edit released artifacts.
+- `scripts/triage_guideline_boundary_recall.py`
+  - Joins source-reviewed boundary ledger rows with one or more recall rank
+    tables.
+  - Reports whether each semantic boundary has matching same-identity recall
+    coverage, supported hits, misses, or coverage gaps.
+  - Produces a diagnostic artifact only: it does not update guidelines,
+    sidecars, rank tables, or audit prompts.
 - `scripts/audit_guideline_dual_axis_objective.py`
   - Audits the current guideline iteration against the two coupled goals:
     semantic CVE-mechanism guideline quality and tuned-embedding recall
@@ -807,6 +814,27 @@ Allowed `boundary_decision` values are `promote_boundary`, `revise_boundary`,
 `recall_side_debug`. Only `promote_boundary` rows with representative cases and
 filled source/sink/missing-guard/exploit-precondition/fix fields are counted as
 promotable; that still means semantically ready, not recall-proven.
+
+Join a filled boundary ledger with recall rank tables before interpreting bad
+cases:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/triage_guideline_boundary_recall.py \
+  --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0001.jsonl \
+  --rank-table r7-p3c64=new-impl/guideline-agent-pipeline/results/guideline-v2-r7-full143-p3c64-20260823/r7_case_rank_table.jsonl \
+  --rank-table old-p3c64=new-impl/guideline-agent-pipeline/results/p3c64-fixed143-paper-eval-20260820/p3c64_case_rank_table.jsonl \
+  --rank-table qwen4b=new-impl/guideline-agent-pipeline/results/p3c64-fixed143-paper-eval-20260820/qwen4b_case_rank_table.jsonl \
+  --output-dir /path/to/guideline-boundary-recall-triage \
+  --budgets 30,50,100,150,200 \
+  --primary-budget 100
+```
+
+The committed `gl_mech_0001` triage artifact is under
+`results/guideline-boundary-recall-triage-r8-gl-mech-0001-20260823/`. It shows
+the boundary is source-reviewed and promotable, while the supplied full143 rank
+tables do not cover the three representative cases. That is a recall coverage
+gap, not evidence that the boundary is semantically wrong and not evidence that
+the embedding misses those cases.
 
 Run a completion audit for the two-axis guideline objective:
 
