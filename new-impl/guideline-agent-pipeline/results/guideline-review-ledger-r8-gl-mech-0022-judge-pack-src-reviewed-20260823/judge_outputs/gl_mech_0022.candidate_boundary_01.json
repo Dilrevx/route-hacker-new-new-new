@@ -1,0 +1,18 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.95,
+  "coverage_score": 0.85,
+  "actionability_score": 0.90,
+  "retrieval_query_quality": 0.88,
+  "main_issue": "The boundary is well-defined and coherent. All four cases share the same mechanism: Java XML parser/transformer factory construction or reuse without a complete external-resource, DOCTYPE, or external-access guard before processing attacker-influenced XML. The explicit exclusion of XMLDecoder, XPath expression injection, and EMF namespace URI cases is a strong boundary hygiene signal. Minor note: the Bonita case also involves TransformerFactory (not just DocumentBuilderFactory), which is correctly captured in the boundary text, but the evidence_refs could more explicitly call out the TransformerFactory path as a distinct variant within the same mechanism.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "allure-framework__allure2::CVE-2025-52888: Source-backed with pre-fix and post-fix commit hashes. DocumentBuilderFactory without entity resolver in test result XML parsing. Clear evidence.",
+    "apache__cxf-fediz::CVE-2018-8038: Source-backed. Static DocumentBuilderFactory with FEATURE_SECURE_PROCESSING but missing disallow-doctype-decl. Demonstrates that partial secure processing is insufficient. Clear evidence.",
+    "aws_amplify__aws_sdk_android::CVE-2022-4725: Source-backed. Two separate parser utilities (XpathUtils, RegionMetadataParser) both missing secure features. Demonstrates the mechanism can appear in multiple code paths in the same project. Clear evidence.",
+    "bonitasoft__bonita-connector-webservice::CVE-2020-36640: Source-backed. Covers both DocumentBuilderFactory (SOAP/XML document creation) and TransformerFactory (XML transformation) without ACCESS_EXTERNAL_DTD/SCHEMA/STYLESHEET. This is the strongest evidence for the transformer variant of the mechanism. Clear evidence."
+  ]
+}
+```

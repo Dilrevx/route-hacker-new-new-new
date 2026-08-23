@@ -15,7 +15,7 @@ TRAE_JUDGE_TIMEOUT_SECONDS=1800 TRAE_JUDGE_CONCURRENCY=4 ./run_traex_judge.sh ju
 Summarize completed judge outputs:
 
 ```bash
-python3 ../../../scripts/summarize_guideline_judge_outputs.py \
+python3 ../../scripts/summarize_guideline_judge_outputs.py \
   --judge-inputs judge_inputs.jsonl \
   --judge-output-dir judge_outputs \
   --output-dir judge_summary

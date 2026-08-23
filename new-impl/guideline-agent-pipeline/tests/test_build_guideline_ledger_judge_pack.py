@@ -102,3 +102,5 @@ def test_cli_writes_prompts_and_runner(tmp_path: Path):
     runner = (output / "run_traex_judge.sh").read_text(encoding="utf-8")
     assert "TRAE_JUDGE_CLI=\"${TRAE_JUDGE_CLI:-traex}\"" in runner
     assert "TRAE_JUDGE_MODEL=\"${TRAE_JUDGE_MODEL:-DeepSeek-V4-Pro}\"" in runner
+    assert "TRAE_JUDGE_EXTRA_ARGS" in runner
+    assert "--disallowed-tool exec" in (output / "README.md").read_text(encoding="utf-8")
