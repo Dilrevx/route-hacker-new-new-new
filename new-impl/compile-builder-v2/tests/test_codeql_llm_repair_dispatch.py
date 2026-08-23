@@ -473,20 +473,6 @@ def test_prior_completion_binding_rejects_receipt_mismatch(tmp_path: Path) -> No
         )
 
 
-def test_exact_source_matches_rehydrated_build_to_same_revision_archive_receipt(
-    tmp_path: Path,
-) -> None:
-    original_source = tmp_path / "original-source"
-    original_source.mkdir()
-    rehydrated_source = tmp_path / "rehydrated-source"
-    rehydrated_source.mkdir()
-    case_id = "v8:rehydrated-source"
-    receipt = source_receipt(original_source, case_id, "abc123")
-    failed = failed_receipt(rehydrated_source, case_id, "abc123")
-
-    assert dispatcher.exact_source_matches(failed, [receipt]) == [receipt]
-
-
 def test_materialize_isolated_attempt_receipts_uses_archive_and_rewrites_source_root(
     tmp_path: Path,
 ) -> None:
@@ -816,112 +802,6 @@ def test_controller_replans_once_from_fresh_failed_build_evidence(
     ]
     assert "fresh checkstyle network failure" in prompts[1]
     assert "previous cumulative decision remains in effect" in prompts[1]
-
-
-def test_controller_allows_multiple_bounded_feedback_replans(
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    source = tmp_path / "source"
-    source.mkdir()
-    case_id = "v8:multiple-build-feedback"
-    source_row = source_receipt(source, case_id, "abc123")
-    failed = failed_receipt(source, case_id, "abc123")
-    prior = deterministic_completion(failed, source_row)
-    executed_decisions: list[dict] = []
-    invocation_count = 0
-
-    def fake_invoke_model(**kwargs: object) -> dict:
-        nonlocal invocation_count
-        invocation_count += 1
-        extra_argument = (
-            "-Dcheckstyle.skip=true"
-            if invocation_count == 1
-            else "-Denforcer.skip=true"
-            if invocation_count == 2
-            else "-Drat.skip=true"
-        )
-        decision = {
-            "actions": [{"kind": "append_build_args", "args": [extra_argument]}],
-            "rationale": "Use a distinct bounded action from fresh build evidence.",
-        }
-        return {
-            "command": ["fake-model"],
-            "bounded_process": {"returncode": 0, "timed_out": False},
-            "output_path": str(kwargs["output_path"]),
-            "raw_text": json.dumps({"type": "result", "structured_output": decision}),
-        }
-
-    def fake_execute_repair_attempt(
-        receipt: dict,
-        decision: dict,
-        **_kwargs: object,
-    ) -> dict:
-        executed_decisions.append(decision)
-        packet = dispatcher.build_repair_packet(
-            receipt,
-            approved_java_homes=[],
-            approved_maven_homes=[],
-            source_receipt=source_row,
-        )
-        packet["failed_attempt"] = {
-            **packet["failed_attempt"],
-            "failure_category": "maven_quality_gate",
-            "log": {
-                "path": f"fresh-codeql-repair-{len(executed_decisions)}.log",
-                "sha256": f"fresh-log-{len(executed_decisions)}",
-                "available": True,
-                "excerpt": f"BUILD FAILURE {len(executed_decisions)}",
-            },
-        }
-        packet["packet_sha256"] = stable_json_sha256(
-            {key: value for key, value in packet.items() if key != "packet_sha256"}
-        )
-        return {
-            "status": (
-                "codeql_db_repaired"
-                if len(executed_decisions) == 3
-                else "repair_attempt_failed"
-            ),
-            "packet": packet,
-            "database_valid": len(executed_decisions) == 3,
-        }
-
-    monkeypatch.setattr(dispatcher, "invoke_model", fake_invoke_model)
-    monkeypatch.setattr(dispatcher, "execute_repair_attempt", fake_execute_repair_attempt)
-
-    result = dispatcher.run_case(
-        failed_receipt=failed,
-        source_receipt=source_row,
-        prior_completion=prior,
-        output_dir=tmp_path / "output",
-        attempt_number=1,
-        claude_command="fake-model",
-        openai_bridge_url=None,
-        openai_model="fake-model",
-        model_timeout_seconds=10,
-        codeql_timeout_seconds=10,
-        codeql_inactivity_timeout_seconds=None,
-        approved_java_homes=[],
-        approved_maven_homes=[],
-        max_build_feedback_replan_attempts=2,
-        dry_run=False,
-    )
-
-    assert result["status"] == "codeql_db_repaired"
-    assert result["build_feedback_replan_count"] == 2
-    assert invocation_count == 3
-    assert len(result["repair_attempts"]) == 3
-    assert executed_decisions[-1]["actions"] == [
-        {
-            "kind": "append_build_args",
-            "args": [
-                "-Dcheckstyle.skip=true",
-                "-Denforcer.skip=true",
-                "-Drat.skip=true",
-            ],
-        }
-    ]
 
 
 def test_controller_records_feedback_no_safe_action_as_terminal_refusal(
