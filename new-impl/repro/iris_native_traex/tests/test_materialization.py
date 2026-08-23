@@ -1,5 +1,8 @@
 from pathlib import Path
 import runpy
+import sys
+import types
+from unittest.mock import Mock, patch
 
 
 def test_scripts_are_present():
@@ -9,12 +12,160 @@ def test_scripts_are_present():
     assert (root / "run_native_iris_case.py").is_file()
     assert (root / "run_native_iris_batch.py").is_file()
     assert (root / "summarize_native_iris_metrics.py").is_file()
+    assert (root / "build_codeql_source_overlay.py").is_file()
+
+
+def test_bridge_json_mode_preserves_the_callers_requested_json_shape():
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "serve_traex_openai.py"))
+    prompt = module["render_prompt"](
+        [
+            {"role": "system", "content": "Classify APIs."},
+            {"role": "user", "content": "Return one JSON list, such as []."},
+        ],
+        require_json=True,
+    )
+    assert "one valid JSON value" in prompt
+    assert "exactly the JSON shape requested" in prompt
+    assert "valid JSON object" not in prompt
+
+
+def test_bridge_reverse_tunnel_command_enables_liveness_and_forward_failure():
+    module = runpy.run_path(
+        str(Path(__file__).resolve().parents[1] / "scripts" / "serve_traex_openai.py")
+    )
+
+    command = module["reverse_tunnel_command"](
+        ssh_bin="ssh",
+        remote="bobo5090",
+        remote_host="127.0.0.1",
+        remote_port=18889,
+        local_host="127.0.0.1",
+        local_port=18889,
+    )
+
+    assert command[-3:] == ["-R", "127.0.0.1:18889:127.0.0.1:18889", "bobo5090"]
+    assert "ExitOnForwardFailure=yes" in command
+    assert "ServerAliveInterval=30" in command
+    assert "ServerAliveCountMax=3" in command
+
+
+def test_native_runner_bridge_helpers_keep_transport_retries_narrow():
+    module = runpy.run_path(
+        str(Path(__file__).resolve().parents[1] / "scripts" / "run_native_iris_case.py")
+    )
+
+    assert module["bridge_health_url"]("http://127.0.0.1:18889") == (
+        "http://127.0.0.1:18889/healthz"
+    )
+    assert module["bridge_health_url"]("http://127.0.0.1:18889/v1") == (
+        "http://127.0.0.1:18889/healthz"
+    )
+    assert module["is_transient_bridge_failure"](
+        b"", b"openai.APIConnectionError: [Errno 111] Connection refused"
+    )
+    assert not module["is_transient_bridge_failure"](b"", b"CodeQL query failed")
 
 
 def test_batch_attempt_id_is_namespaced():
     module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "run_native_iris_batch.py"))
     assert module["safe_name"]("flash-a1") == "flash-a1"
     assert module["safe_name"]("v8:case") == "v8_case"
+
+
+def test_batch_single_case_command_forwards_label_batch_sizes(tmp_path):
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "run_native_iris_batch.py"))
+    command = module["single_case_command"](
+        python="python3",
+        runner=tmp_path / "runner.py",
+        workspace=tmp_path / "workspace",
+        run_id="qa-a8-case",
+        bridge_url="http://127.0.0.1:18889",
+        llm="gpt-traex-pro",
+        num_threads=1,
+        label_api_batch_size=30,
+        label_func_param_batch_size=20,
+        timeout_seconds=7200,
+        output_dir=tmp_path / "output",
+        bridge_ready_attempts=12,
+        bridge_ready_delay_seconds=3.0,
+        bridge_health_timeout_seconds=7.0,
+        transport_recovery_attempts=2,
+    )
+    assert command[command.index("--label-api-batch-size") + 1] == "30"
+    assert command[command.index("--label-func-param-batch-size") + 1] == "20"
+    assert command[command.index("--bridge-ready-attempts") + 1] == "12"
+    assert command[command.index("--transport-recovery-attempts") + 1] == "2"
+
+
+def test_native_runner_resume_flag_is_present():
+    source = (
+        Path(__file__).resolve().parents[1] / "scripts" / "run_native_iris_case.py"
+    ).read_text()
+    assert "--resume-existing-run" in source
+    assert "refusing to resume a run already marked completed_verified" in source
+    assert '"resume_existing_run": args.resume_existing_run' in source
+
+
+def test_batch_rejects_overcommitted_llm_concurrency(tmp_path):
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "run_native_iris_batch.py"))
+    manifest = tmp_path / "manifest.jsonl"
+    allowlist = tmp_path / "allowlist.jsonl"
+    row = {
+        "identity_key": "repo::CVE-1",
+        "project_slug": "repo_CVE-1",
+        "iris_query": "cwe-022wLLM",
+        "input_paths": {"source": "source", "codeql_db": "db", "package_names": "packages.txt"},
+        "revisions": {"v2_checkout_revision": "abc123"},
+        "source_provenance": [{"source_family": "test"}],
+        "input_status": {"codeql_db_status": "codeql_db_created"},
+    }
+    manifest.write_text(__import__("json").dumps(row) + "\n")
+    allowlist.write_text(__import__("json").dumps(row) + "\n")
+    with patch(
+        "sys.argv",
+        [
+            "run_native_iris_batch.py",
+            "--iris-manifest", str(manifest),
+            "--allowlist", str(allowlist),
+            "--expected-manifest-count", "1",
+            "--workspace-root", str(tmp_path / "workspaces"),
+            "--clean-iris-root", str(tmp_path),
+            "--codeql-dir", str(tmp_path),
+            "--bridge-url", "http://127.0.0.1:18888",
+            "--output-dir", str(tmp_path / "output"),
+            "--materializer", str(tmp_path / "materialize.py"),
+            "--single-case-runner", str(tmp_path / "runner.py"),
+            "--max-workers", "8",
+            "--num-threads", "8",
+            "--bridge-max-concurrency", "8",
+        ],
+    ):
+        try:
+            module["main"]()
+        except SystemExit as exc:
+            assert "exceeds bridge capacity" in str(exc)
+        else:
+            raise AssertionError("overcommitted dispatch must be rejected")
+
+
+def test_batch_bundle_preflight_rejects_before_queue_creation(tmp_path):
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "run_native_iris_batch.py"))
+    materializer = tmp_path / "materialize.py"
+    materializer.write_text("")
+    failed = Mock(returncode=1, stdout="", stderr="missing java-queries pack")
+    with patch.object(module["subprocess"], "run", return_value=failed):
+        try:
+            module["validate_codeql_bundle"](
+                python="python3",
+                materializer=materializer,
+                clean_iris_root=tmp_path / "iris",
+                codeql_dir=tmp_path / "codeql",
+            )
+        except RuntimeError as exc:
+            assert "before queue creation" in str(exc)
+            assert "missing java-queries pack" in str(exc)
+        else:
+            raise AssertionError("missing Action packs must block a whole batch before queue creation")
 
 
 def test_manifest_input_path_validation_reports_missing_paths(tmp_path):
@@ -29,6 +180,32 @@ def test_manifest_input_path_validation_reports_missing_paths(tmp_path):
     errors = module["input_path_errors"](row)
     assert len(errors) == 3
     assert "source" in errors[0]
+
+
+def test_batch_rejects_partial_codeql_database(tmp_path):
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "run_native_iris_batch.py"))
+    database = tmp_path / "db"
+    database.mkdir()
+    (database / "codeql-database.yml").write_text("primaryLanguage: java\n")
+    errors = module["codeql_database_errors"]({"input_paths": {"codeql_db": str(database)}})
+    assert len(errors) == 1
+    assert "db-java" in errors[0]
+    (database / "db-java").mkdir()
+    assert module["codeql_database_errors"]({"input_paths": {"codeql_db": str(database)}}) == []
+
+
+def test_batch_quarantines_interrupted_workspace_before_resume(tmp_path):
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "run_native_iris_batch.py"))
+    workspace = tmp_path / "workspace"
+    workspace.mkdir()
+    (workspace / "partial.txt").write_text("interrupted")
+
+    quarantined = module["quarantine_workspace"](workspace)
+
+    assert not workspace.exists()
+    assert quarantined.is_dir()
+    assert (quarantined / "partial.txt").read_text() == "interrupted"
+    assert module["workspace_lock_path"](workspace) == tmp_path / ".workspace.lock"
 
 
 def test_manifest_materialization_path_validation_requires_revision(tmp_path):
@@ -47,6 +224,160 @@ def test_manifest_materialization_path_validation_requires_revision(tmp_path):
         raise AssertionError("missing revision must be rejected")
 
 
+def test_codeql_bundle_validation_requires_matching_action_packs(tmp_path):
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "materialize_iris_case.py"))
+    clean = tmp_path / "iris"
+    (clean / "src").mkdir(parents=True)
+    (clean / "src" / "config.py").write_text('CODEQL_QUERY_VERSION = "1.8.1"\n')
+    codeql = tmp_path / "codeql"
+    codeql.mkdir()
+    executable = codeql / "codeql"
+    executable.write_text("#!/bin/sh\necho 'CodeQL command-line toolchain release 2.23.2.'\n")
+    executable.chmod(0o755)
+
+    try:
+        module["validate_codeql_bundle"](clean, codeql)
+    except RuntimeError as exc:
+        assert "java-queries@1.8.1" in str(exc)
+    else:
+        raise AssertionError("missing official query pack must reject materialization")
+
+    query_pack = codeql / "qlpacks" / "codeql" / "java-queries" / "1.8.1"
+    query_pack.mkdir(parents=True)
+    (query_pack / "qlpack.yml").write_text("name: codeql/java-queries\nversion: 1.8.1\n")
+    java_all = codeql / "qlpacks" / "codeql" / "java-all" / "7.7.1"
+    java_all.mkdir(parents=True)
+    (java_all / "qlpack.yml").write_text(
+        "name: codeql/java-all\nversion: 7.7.1\nbuildMetadata:\n  cliVersion: 2.23.2\n"
+    )
+
+    result = module["validate_codeql_bundle"](clean, codeql)
+
+    assert result["codeql_cli_version"] == "2.23.2"
+    assert result["iris_codeql_query_version"] == "1.8.1"
+    assert result["compatible_java_all_packs"][0]["version"] == "7.7.1"
+
+
+def test_codeql_source_overlay_validation_requires_matching_official_tag(tmp_path, monkeypatch):
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "materialize_iris_case.py"))
+    clean = tmp_path / "iris"
+    (clean / "src").mkdir(parents=True)
+    (clean / "src" / "config.py").write_text('CODEQL_QUERY_VERSION = "1.8.1"\n')
+    codeql = tmp_path / "codeql"
+    query_pack = codeql / "qlpacks" / "codeql" / "java-queries" / "1.8.1"
+    java_all = codeql / "qlpacks" / "codeql" / "java-all" / "7.7.1"
+    query_pack.mkdir(parents=True)
+    java_all.mkdir(parents=True)
+    (query_pack / "qlpack.yml").write_text("name: codeql/java-queries\nversion: 1.8.1\n")
+    query = query_pack / "Security" / "CWE" / "CWE-094" / "TemplateInjection.ql"
+    query.parent.mkdir(parents=True)
+    query.write_text("import java\nfrom int value\nselect value\n")
+    (java_all / "qlpack.yml").write_text("name: codeql/java-all\nversion: 7.7.1\n")
+    executable = codeql / "codeql"
+    executable.write_text("#!/bin/sh\necho 'CodeQL command-line toolchain release 2.23.2.'\n")
+    executable.chmod(0o755)
+    source = tmp_path / "source"
+    source.mkdir()
+    (source / ".git").mkdir()
+    manifest = {
+        "kind": "github_codeql_source_tag_overlay",
+        "source_root": str(source),
+        "source_tag": {"tag": "codeql-cli/v2.23.2", "commit": "abc123"},
+    }
+    (codeql / ".iris_codeql_source_overlay.json").write_text(__import__("json").dumps(manifest))
+
+    class Completed:
+        returncode = 0
+        stdout = "abc123\n"
+        stderr = ""
+
+    original_run = module["subprocess"].run
+
+    def fake_run(command, *args, **kwargs):
+        if command[:2] == ["git", "-C"]:
+            return Completed()
+        if command[:3] == [str(executable), "query", "compile"]:
+            return Completed()
+        return original_run(command, *args, **kwargs)
+
+    monkeypatch.setattr(module["subprocess"], "run", fake_run)
+    result = module["validate_codeql_bundle"](clean, codeql)
+
+    assert result["source_overlay"]["source_tag"]["tag"] == "codeql-cli/v2.23.2"
+    assert result["requires_case_local_pack_install_wrapper"] is True
+
+
+def test_source_overlay_materializes_case_local_pack_install_wrapper(tmp_path):
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "materialize_iris_case.py"))
+    codeql = tmp_path / "codeql"
+    overlay_packs = codeql / "qlpacks"
+    overlay_packs.mkdir(parents=True)
+    executable = codeql / "codeql"
+    executable.write_text("#!/usr/bin/env bash\nexit 0\n")
+    executable.chmod(0o755)
+    workspace = tmp_path / "workspace"
+
+    action = module["materialize_codeql_toolchain"](
+        codeql_dir=codeql,
+        workspace=workspace,
+        source_overlay={"source_tag": {"tag": "codeql-cli/v2.23.2"}},
+    )
+
+    wrapper = workspace / "codeql" / "codeql"
+    assert action["kind"] == "case_local_codeql_pack_install_wrapper"
+    assert (workspace / "codeql" / "qlpacks").is_symlink()
+    assert wrapper.is_file()
+    source = wrapper.read_text()
+    assert '[[ "${1:-}" == "pack" && "${2:-}" == "install" ]]' in source
+    assert '[[ "${1:-}" != "query"' in source
+    assert '[[ "${1:-}" == "database" && "${2:-}" == "analyze" ]]' in source
+    assert 'args[$index]="${candidate#"$PWD"/}"' in source
+    assert "qlpack.yml" in source
+    assert 'if [[ "${args[$index]}" == "--" ]]' in source
+    assert "--additional-packs" in source
+    assert str(overlay_packs) in source
+    provenance = __import__("json").loads(
+        (workspace / "codeql" / ".iris_case_codeql_toolchain_overlay.json").read_text()
+    )
+    assert provenance["pack_resolution_scope"] == "pack_install_query_and_database_analyze"
+    assert provenance["install_special_case"] == "codeql pack install"
+    assert "workspace-relative .ql file paths" in provenance["database_analyze_query_specifier_adapter"]
+    assert provenance["other_commands"] == "executes_shared_codeql_binary_unchanged"
+
+
+def test_refresh_case_local_codeql_toolchain_preserves_existing_outputs(tmp_path, monkeypatch):
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "materialize_iris_case.py"))
+    workspace = tmp_path / "workspace"
+    workspace.mkdir()
+    (workspace / "materialization.json").write_text("{}")
+    old_codeql = workspace / "codeql"
+    old_codeql.mkdir()
+    (old_codeql / "old-wrapper").write_text("old")
+    preserved_output = workspace / "output" / "artifact.txt"
+    preserved_output.parent.mkdir()
+    preserved_output.write_text("keep")
+    codeql = tmp_path / "codeql"
+    (codeql / "qlpacks").mkdir(parents=True)
+    executable = codeql / "codeql"
+    executable.write_text("#!/usr/bin/env bash\nexit 0\n")
+    executable.chmod(0o755)
+
+    monkeypatch.setitem(
+        module["refresh_case_local_codeql_toolchain"].__globals__,
+        "validate_codeql_bundle",
+        lambda _clean, _codeql: {"source_overlay": {"source_tag": {"tag": "codeql-cli/v2.23.2"}}},
+    )
+    refreshed = module["refresh_case_local_codeql_toolchain"](
+        clean_root=tmp_path / "clean",
+        codeql_dir=codeql,
+        workspace=workspace,
+    )
+
+    assert refreshed["toolchain_action"]["kind"] == "case_local_codeql_pack_install_wrapper"
+    assert (workspace / "codeql" / "codeql").is_file()
+    assert preserved_output.read_text() == "keep"
+
+
 def test_traex_alias_injection_preserves_valid_python(tmp_path):
     module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "materialize_iris_case.py"))
     gpt = tmp_path / "gpt.py"
@@ -60,12 +391,167 @@ def test_traex_alias_injection_preserves_valid_python(tmp_path):
         'class GPTModel:\n'
         '    def __init__(self, api_key):\n'
         '        self.client = OpenAI(api_key=api_key)\n'
+        '    def _predict(self, main_prompt, expect_json=False):\n'
+        '        response = self.client.chat.completions.create(model="gpt-4", messages=main_prompt)\n'
+        '        response=response.choices[0].message.content\n'
+        '        return response\n'
     )
     module["add_traex_model_aliases"](gpt)
     source = gpt.read_text()
     assert '"gpt-4": "gpt-4-preview",' in source
     assert '"gpt-traex-pro": "DeepSeek-V4-Pro",' in source
+    assert "def _create_completion_with_retry" in source
+    assert "IRIS_LLM_MAX_ATTEMPTS" in source
+    assert "def _retry_json_list_format" in source
+    assert "IRIS_JSON_LIST_FORMAT_ATTEMPTS" in source
     compile(source, str(gpt), "exec")
+
+
+def test_traex_alias_injection_retries_invalid_json_list_with_original_prompt(tmp_path, monkeypatch):
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "materialize_iris_case.py"))
+    gpt = tmp_path / "gpt.py"
+    gpt.write_text(
+        'import os\n'
+        'from tqdm.contrib.concurrent import thread_map\n'
+        'from openai import OpenAI\n'
+        'import src.models.config as config\n'
+        'from src.utils.mylogger import MyLogger\n'
+        'from src.models.llm import LLM\n'
+        '_model_name_map = {\n'
+        '    "gpt-4": "gpt-4-preview"\n'
+        '}\n'
+        '_OPENAI_DEFAULT_PARAMS = {}\n'
+        'class GPTModel(LLM):\n'
+        '    def __init__(self, model_name, logger, **kwargs):\n'
+        '        super().__init__(model_name, logger, _model_name_map, **kwargs)\n'
+        '        api_key = "test"\n'
+        '        self.client = OpenAI(api_key=api_key)\n'
+        '        self.logprobs = None\n'
+        '    def _predict(self, main_prompt, expect_json=False):\n'
+        '        prompt = main_prompt\n'
+        '        response = self.client.chat.completions.create(model=self.model_id, messages=prompt)\n'
+        '        if response.choices[0].logprobs != None:\n'
+        '            self.logprobs = response.choices[0].logprobs.content\n'
+        '        else:\n'
+        '            self.logprobs = None\n'
+        '        response = response.choices[0].message.content\n'
+        '        return response\n'
+    )
+    module["add_traex_model_aliases"](gpt)
+
+    calls = []
+
+    class DummyCompletion:
+        def __init__(self, text):
+            self.choices = [
+                types.SimpleNamespace(
+                    logprobs=None,
+                    message=types.SimpleNamespace(content=text),
+                )
+            ]
+
+    class DummyClient:
+        def __init__(self):
+            self.chat = types.SimpleNamespace(
+                completions=types.SimpleNamespace(create=self.create)
+            )
+
+        def create(self, **kwargs):
+            calls.append(kwargs)
+            response = (
+                "explanation before JSON"
+                if len(calls) == 1
+                else "[]\n\nNo candidate functions apply."
+                if len(calls) == 2
+                else "[]"
+            )
+            return DummyCompletion(response)
+
+    class DummyOpenAI:
+        def __init__(self, **kwargs):
+            self._client = DummyClient()
+
+        @property
+        def chat(self):
+            return self._client.chat
+
+    class DummyLLM:
+        def __init__(self, model_name, logger, model_name_map, **kwargs):
+            self.model_id = model_name_map[model_name]
+            self.kwargs = kwargs
+
+    openai_module = types.ModuleType("openai")
+    openai_module.OpenAI = DummyOpenAI
+    src_module = types.ModuleType("src")
+    models_module = types.ModuleType("src.models")
+    config_module = types.ModuleType("src.models.config")
+    llm_module = types.ModuleType("src.models.llm")
+    llm_module.LLM = DummyLLM
+    utils_module = types.ModuleType("src.utils")
+    logger_module = types.ModuleType("src.utils.mylogger")
+    logger_module.MyLogger = object
+    tqdm_module = types.ModuleType("tqdm")
+    tqdm_contrib_module = types.ModuleType("tqdm.contrib")
+    tqdm_concurrent_module = types.ModuleType("tqdm.contrib.concurrent")
+    tqdm_concurrent_module.thread_map = lambda function, values, **kwargs: [function(value) for value in values]
+    with patch.dict(
+        sys.modules,
+        {
+            "openai": openai_module,
+            "src": src_module,
+            "src.models": models_module,
+            "src.models.config": config_module,
+            "src.models.llm": llm_module,
+            "src.utils": utils_module,
+            "src.utils.mylogger": logger_module,
+            "tqdm": tqdm_module,
+            "tqdm.contrib": tqdm_contrib_module,
+            "tqdm.contrib.concurrent": tqdm_concurrent_module,
+        },
+    ):
+        namespace = runpy.run_path(str(gpt))
+        model = namespace["GPTModel"]("gpt-traex-pro", None)
+        prompt = [
+            {"role": "system", "content": "Return the result as a json list."},
+            {"role": "user", "content": "Classify the APIs."},
+        ]
+        assert model._predict(prompt) == "[]"
+
+    assert len(calls) == 3
+    assert calls[0]["messages"] == prompt
+    assert calls[1]["messages"][:2] == prompt
+    assert calls[1]["messages"][2]["role"] == "user"
+    assert "valid JSON array" in calls[1]["messages"][2]["content"]
+    assert calls[2]["messages"] == calls[1]["messages"]
+
+
+def test_traex_alias_injection_accepts_complete_fenced_json_list_without_retry(tmp_path):
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "materialize_iris_case.py"))
+    gpt = tmp_path / "gpt.py"
+    gpt.write_text(
+        'import os\n'
+        'from openai import OpenAI\n'
+        '_model_name_map = {\n'
+        '    "gpt-4": "gpt-4-preview"\n'
+        '}\n'
+        '_OPENAI_DEFAULT_PARAMS = {}\n'
+        'class GPTModel:\n'
+        '    def __init__(self):\n'
+        '        api_key = "test"\n'
+        '        self.client = OpenAI(api_key=api_key)\n'
+        '    def _predict(self, main_prompt, expect_json=False):\n'
+        '        response = self.client.chat.completions.create(model="gpt-4", messages=main_prompt)\n'
+        '        response=response.choices[0].message.content\n'
+        '        return response\n'
+    )
+    module["add_traex_model_aliases"](gpt)
+    source = gpt.read_text()
+    namespace = {"json": __import__("json")}
+    class_start = source.index("    @staticmethod\n    def _is_json_list_response")
+    class_end = source.index("    def _retry_json_list_format", class_start)
+    method_source = source[class_start:class_end]
+    exec("class ValidationOnly:\n" + method_source, namespace)
+    assert namespace["ValidationOnly"]._is_json_list_response("```json\n[]\n```")
 
 
 def test_batch_manifest_accepts_v2_checkout_revision(tmp_path):

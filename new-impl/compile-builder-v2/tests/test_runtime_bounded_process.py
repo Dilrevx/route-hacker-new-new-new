@@ -86,3 +86,47 @@ def test_bounded_process_cleans_child_new_session_on_timeout(tmp_path: Path) -> 
     assert result.cleanup_attempted is True
     assert result.cleanup_process_groups
     _assert_process_exited(int(child_pid_path.read_text(encoding="utf-8")))
+
+
+def test_bounded_process_stops_when_progress_file_goes_stale(tmp_path: Path) -> None:
+    progress_path = tmp_path / "build.log"
+    progress_path.write_text("started\n", encoding="utf-8")
+    result = run_bounded_process(
+        [sys.executable, "-c", "import time; time.sleep(30)"],
+        timeout_seconds=10,
+        inactivity_timeout_seconds=0.2,
+        progress_path=progress_path,
+        poll_interval_seconds=0.05,
+        term_grace_seconds=0.2,
+    )
+
+    assert result.returncode == 124
+    assert result.timed_out is True
+    assert result.inactivity_timed_out is True
+    assert result.cleanup_attempted is True
+
+
+def test_bounded_process_keeps_running_while_progress_file_advances(tmp_path: Path) -> None:
+    progress_path = tmp_path / "build.log"
+    command = [
+        sys.executable,
+        "-c",
+        (
+            "import pathlib, time; "
+            f"path=pathlib.Path({str(progress_path)!r}); "
+            "[path.write_text(str(index)) and time.sleep(0.05) for index in range(4)]"
+        ),
+    ]
+
+    result = run_bounded_process(
+        command,
+        timeout_seconds=5,
+        inactivity_timeout_seconds=0.2,
+        progress_path=progress_path,
+        poll_interval_seconds=0.02,
+        term_grace_seconds=0.2,
+    )
+
+    assert result.returncode == 0
+    assert result.timed_out is False
+    assert result.inactivity_timed_out is False

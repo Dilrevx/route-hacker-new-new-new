@@ -9,8 +9,11 @@ from route_hacker.runtime.codeql_repair import (
     apply_repair_decision,
     build_repair_packet,
     classify_build_failure,
+    compare_source_integrity,
     heuristic_repair_decision,
+    historical_retry_java_home,
     redact_text,
+    source_integrity_snapshot,
     validate_repair_decision,
     verify_exact_source,
 )
@@ -79,6 +82,183 @@ def test_packet_redacts_log_and_classifies_enforcer_failure(tmp_path):
     assert packet["packet_sha256"]
 
 
+def test_retry_same_command_packet_binds_the_matching_historical_java_home(tmp_path):
+    receipt = failed_receipt(tmp_path)
+    log_path = Path(receipt["codeql_database_create_result"]["log_path"])
+    receipt["attempts"] = [
+        {
+            "result": {
+                "log_path": str(log_path),
+                "log_sha256": hashlib.sha256(log_path.read_bytes()).hexdigest(),
+            },
+            "toolchain": {"java_home": "/opt/java-8"},
+        },
+        {
+            "result": {
+                "log_path": str(tmp_path / "other-attempt.log"),
+                "log_sha256": "other",
+            },
+            "toolchain": {"java_home": "/opt/java-21"},
+        },
+    ]
+
+    packet = build_repair_packet(
+        receipt,
+        approved_java_homes=["/opt/java-8", "/opt/java-17"],
+        approved_maven_homes=[],
+    )
+
+    assert packet["failed_attempt"]["historical_retry_toolchain"] == {
+        "java_home": "/opt/java-8",
+        "reason": None,
+        "matched_attempt_count": 1,
+    }
+    assert historical_retry_java_home(
+        receipt,
+        approved_java_homes=["/opt/java-17"],
+    ) == {
+        "java_home": None,
+        "reason": "historical_java_home_not_currently_approved",
+        "matched_attempt_count": 1,
+        "historical_java_home": "/opt/java-8",
+    }
+
+
+def test_execute_retry_same_command_inherits_matching_historical_java_home(
+    tmp_path,
+    monkeypatch,
+):
+    receipt = failed_receipt(tmp_path)
+    log_path = Path(receipt["codeql_database_create_result"]["log_path"])
+    receipt["attempts"] = [
+        {
+            "result": {"log_path": str(log_path)},
+            "toolchain": {"java_home": "/opt/java-8"},
+        }
+    ]
+    archive = tmp_path / "source.tar.gz"
+    archive.write_bytes(b"archive-content")
+    exact_source = {
+        "case_id": "v8:example",
+        "source_dir": receipt["source_dir"],
+        "resolved_buggy_commit": "abc123",
+        "status": "source_materialized_exact_archive_snapshot",
+        "contract": {"exact_declared_buggy_commit_only": True},
+        "archive_result": {
+            "archive_path": str(archive),
+            "archive_sha256": hashlib.sha256(archive.read_bytes()).hexdigest(),
+            "archive_url": "https://codeload.github.com/example/repo/tar.gz/abc123",
+        },
+    }
+    captured_env: dict[str, str] = {}
+
+    class Result:
+        returncode = 1
+
+        def to_dict(self):
+            return {"returncode": 1, "timed_out": False}
+
+    def run_failed(*_args, **kwargs):
+        captured_env.update(kwargs["env"])
+        return Result()
+
+    monkeypatch.setattr(
+        "route_hacker.runtime.codeql_repair.run_bounded_process",
+        run_failed,
+    )
+    from route_hacker.runtime.codeql_repair import execute_repair_attempt
+
+    attempt = execute_repair_attempt(
+        receipt,
+        {"actions": [{"kind": "retry_same_command"}], "rationale": "retry"},
+        attempt_dir=tmp_path / "attempt",
+        timeout_seconds=10,
+        approved_java_homes=["/opt/java-8"],
+        approved_maven_homes=[],
+        source_receipt=exact_source,
+    )
+
+    assert captured_env["JAVA_HOME"] == "/opt/java-8"
+    assert attempt["historical_retry_toolchain"]["java_home"] == "/opt/java-8"
+    assert attempt["applied_repair"]["applied_actions"] == [
+        {"kind": "retry_same_command", "inherited_java_home": "/opt/java-8"}
+    ]
+
+
+def test_execute_feedback_action_inherits_original_historical_java_home(
+    tmp_path,
+    monkeypatch,
+):
+    receipt = failed_receipt(tmp_path)
+    original_root = tmp_path / "original"
+    original_root.mkdir()
+    original_receipt = failed_receipt(original_root)
+    original_log_path = Path(
+        original_receipt["codeql_database_create_result"]["log_path"]
+    )
+    original_receipt["attempts"] = [
+        {
+            "result": {"log_path": str(original_log_path)},
+            "toolchain": {"java_home": "/opt/java-8"},
+        }
+    ]
+    archive = tmp_path / "source.tar.gz"
+    archive.write_bytes(b"archive-content")
+    exact_source = {
+        "case_id": "v8:example",
+        "source_dir": receipt["source_dir"],
+        "resolved_buggy_commit": "abc123",
+        "status": "source_materialized_exact_archive_snapshot",
+        "contract": {"exact_declared_buggy_commit_only": True},
+        "archive_result": {
+            "archive_path": str(archive),
+            "archive_sha256": hashlib.sha256(archive.read_bytes()).hexdigest(),
+            "archive_url": "https://codeload.github.com/example/repo/tar.gz/abc123",
+        },
+    }
+    captured_env: dict[str, str] = {}
+
+    class Result:
+        returncode = 1
+
+        def to_dict(self):
+            return {"returncode": 1, "timed_out": False}
+
+    def run_failed(*_args, **kwargs):
+        captured_env.update(kwargs["env"])
+        return Result()
+
+    monkeypatch.setattr(
+        "route_hacker.runtime.codeql_repair.run_bounded_process",
+        run_failed,
+    )
+    from route_hacker.runtime.codeql_repair import execute_repair_attempt
+
+    attempt = execute_repair_attempt(
+        receipt,
+        {
+            "actions": [
+                {"kind": "append_build_args", "args": ["-Dcheckstyle.skip=true"]}
+            ],
+            "rationale": "Skip an external quality-gate download.",
+        },
+        attempt_dir=tmp_path / "attempt-feedback",
+        timeout_seconds=10,
+        approved_java_homes=["/opt/java-8"],
+        approved_maven_homes=[],
+        source_receipt=exact_source,
+        historical_toolchain_receipt=original_receipt,
+    )
+
+    assert captured_env["JAVA_HOME"] == "/opt/java-8"
+    assert attempt["historical_retry_toolchain"]["java_home"] == "/opt/java-8"
+    assert attempt["applied_repair"]["verified_environment"] == {
+        "JAVA_HOME": "/opt/java-8",
+        "PATH_prefix": "/opt/java-8/bin",
+        "inherited_java_home": "/opt/java-8",
+    }
+
+
 def test_completed_attempt_packet_binds_final_log_and_failure_category(
     tmp_path,
     monkeypatch,
@@ -131,6 +311,158 @@ def test_completed_attempt_packet_binds_final_log_and_failure_category(
     assert packet["failed_attempt"]["log"]["sha256"] == attempt["log_sha256"]
     assert packet["failed_attempt"]["failure_category"] == "generic_build_failure"
     assert packet["packet_sha256"]
+
+
+def test_source_integrity_snapshot_ignores_generated_outputs_and_detects_source_change(
+    tmp_path: Path,
+):
+    source = tmp_path / "source"
+    source.mkdir()
+    source_file = source / "src" / "Main.java"
+    source_file.parent.mkdir()
+    source_file.write_text("class Main {}\n", encoding="utf-8")
+    before = source_integrity_snapshot(source)
+
+    generated_file = source / "module" / "target" / "generated.txt"
+    generated_file.parent.mkdir(parents=True)
+    generated_file.write_text("generated\n", encoding="utf-8")
+    shade_metadata = source / "module" / "dependency-reduced-pom.xml"
+    shade_metadata.write_text("<project />\n", encoding="utf-8")
+    flattened_metadata = source / "module" / ".flattened-pom.xml"
+    flattened_metadata.write_text("<project />\n", encoding="utf-8")
+    frontend_runtime = source / "module" / "node"
+    frontend_runtime.mkdir()
+    for executable in ("node", "npm", "npx"):
+        (frontend_runtime / executable).write_text("# generated runtime\n", encoding="utf-8")
+    frontend_dependency = source / "module" / "node_modules" / "demo" / "index.js"
+    frontend_dependency.parent.mkdir(parents=True)
+    frontend_dependency.write_text("generated dependency\n", encoding="utf-8")
+    maven_build_scan_workspace = (
+        source
+        / ".mvn"
+        / ".gradle-enterprise"
+        / "gradle-enterprise-workspace-id"
+    )
+    maven_build_scan_workspace.parent.mkdir(parents=True)
+    maven_build_scan_workspace.write_text("generated workspace ID\n", encoding="utf-8")
+    generated_only = source_integrity_snapshot(source)
+
+    from route_hacker.runtime.codeql_repair import compare_source_integrity
+
+    assert compare_source_integrity(before, generated_only)["verified"] is True
+    assert generated_only["ignored_file_names"] == [
+        ".flattened-pom.xml",
+        "dependency-reduced-pom.xml",
+    ]
+
+    source_file.write_text("class Main { int changed; }\n", encoding="utf-8")
+    changed = compare_source_integrity(before, source_integrity_snapshot(source))
+    assert changed["verified"] is False
+    assert changed["reason"] == "non_generated_source_content_changed_during_build"
+    assert changed["changed_paths"] == ["src/Main.java"]
+
+
+def test_source_integrity_snapshot_keeps_maven_config_but_ignores_build_scan_workspace_id(
+    tmp_path: Path,
+):
+    source = tmp_path / "source"
+    workspace_id = (
+        source
+        / ".mvn"
+        / ".gradle-enterprise"
+        / "gradle-enterprise-workspace-id"
+    )
+    workspace_id.parent.mkdir(parents=True)
+    maven_config = source / ".mvn" / "extensions.xml"
+    maven_config.write_text("<extensions />\n", encoding="utf-8")
+    before = source_integrity_snapshot(source)
+
+    workspace_id.write_text("generated workspace ID\n", encoding="utf-8")
+    generated_only = compare_source_integrity(before, source_integrity_snapshot(source))
+
+    assert generated_only["verified"] is True
+
+    maven_config.write_text("<extensions changed='true' />\n", encoding="utf-8")
+    changed = compare_source_integrity(before, source_integrity_snapshot(source))
+
+    assert changed["verified"] is False
+    assert changed["changed_paths"] == [".mvn/extensions.xml"]
+
+
+def test_source_integrity_snapshot_keeps_plain_node_source_directory_in_scope(tmp_path: Path):
+    source = tmp_path / "source"
+    plain_node_source = source / "node" / "config.js"
+    plain_node_source.parent.mkdir(parents=True)
+    plain_node_source.write_text("module.exports = {};\n", encoding="utf-8")
+    before = source_integrity_snapshot(source)
+
+    plain_node_source.write_text("module.exports = { changed: true };\n", encoding="utf-8")
+
+    from route_hacker.runtime.codeql_repair import compare_source_integrity
+
+    changed = compare_source_integrity(before, source_integrity_snapshot(source))
+
+    assert changed["verified"] is False
+    assert changed["changed_paths"] == ["node/config.js"]
+
+
+def test_execute_repair_rejects_database_when_build_changes_source_content(
+    tmp_path: Path,
+    monkeypatch,
+):
+    receipt = failed_receipt(tmp_path)
+    source = Path(receipt["source_dir"])
+    source_file = source / "Main.java"
+    source_file.write_text("class Main {}\n", encoding="utf-8")
+    archive = tmp_path / "source.tar.gz"
+    archive.write_bytes(b"archive-content")
+    source_receipt = {
+        "case_id": "v8:example",
+        "source_dir": receipt["source_dir"],
+        "resolved_buggy_commit": "abc123",
+        "status": "source_materialized_exact_archive_snapshot",
+        "contract": {"exact_declared_buggy_commit_only": True},
+        "archive_result": {
+            "archive_path": str(archive),
+            "archive_sha256": hashlib.sha256(archive.read_bytes()).hexdigest(),
+            "archive_url": "https://codeload.github.com/example/repo/tar.gz/abc123",
+        },
+    }
+
+    class Result:
+        returncode = 0
+
+        def to_dict(self):
+            return {"returncode": 0, "timed_out": False}
+
+    def mutating_process(*args, **kwargs):
+        source_file.write_text("class Main { int changed; }\n", encoding="utf-8")
+        database = tmp_path / "attempt" / "codeql-db"
+        (database / "db-java" / "default").mkdir(parents=True)
+        (database / "codeql-database.yml").write_text("name: test\n", encoding="utf-8")
+        (database / "db-java" / "default" / "files.rel").write_bytes(b"relations")
+        return Result()
+
+    monkeypatch.setattr(
+        "route_hacker.runtime.codeql_repair.run_bounded_process",
+        mutating_process,
+    )
+    from route_hacker.runtime.codeql_repair import execute_repair_attempt
+
+    attempt = execute_repair_attempt(
+        receipt,
+        {"actions": [{"kind": "retry_same_command"}], "rationale": "retry"},
+        attempt_dir=tmp_path / "attempt",
+        timeout_seconds=10,
+        approved_java_homes=[],
+        approved_maven_homes=[],
+        source_receipt=source_receipt,
+    )
+
+    assert attempt["database_valid"] is True
+    assert attempt["status"] == "repair_attempt_failed"
+    assert attempt["source_integrity_evidence"]["verified"] is False
+    assert attempt["source_integrity_evidence"]["changed_paths"] == ["Main.java"]
 
 
 def test_execute_repair_attempt_copies_maven_wrapper_dists_into_isolated_home(
@@ -600,6 +932,16 @@ def test_validate_repair_decision_rejects_unapproved_argument():
         )
 
 
+@pytest.mark.parametrize("argument", ["--no-daemon", "--stacktrace"])
+def test_validate_repair_decision_rejects_gradle_only_argument(argument: str):
+    with pytest.raises(RepairValidationError, match="unapproved argument"):
+        validate_repair_decision(
+            {"actions": [{"kind": "append_build_args", "args": [argument]}]},
+            approved_java_homes=[],
+            approved_maven_homes=[],
+        )
+
+
 def test_validate_repair_decision_drops_redundant_retry_same_command():
     validated = validate_repair_decision(
         {
@@ -619,6 +961,78 @@ def test_validate_repair_decision_drops_redundant_retry_same_command():
     assert validated["normalization"] == {
         "dropped_redundant_actions": ["retry_same_command"]
     }
+
+
+@pytest.mark.parametrize(
+    ("kind", "approved_key", "home_field", "home"),
+    [
+        ("set_java_home", "approved_java_homes", "java_home", "/opt/java-17"),
+        ("set_maven_home", "approved_maven_homes", "maven_home", "/opt/maven-3.9.8"),
+        ("set_ant_home", "approved_ant_homes", "ant_home", "/opt/ant-1.10"),
+    ],
+)
+def test_validate_repair_decision_canonicalizes_approved_generic_home_value(
+    kind: str,
+    approved_key: str,
+    home_field: str,
+    home: str,
+):
+    approvals = {
+        "approved_java_homes": [],
+        "approved_maven_homes": [],
+        "approved_ant_homes": [],
+    }
+    approvals[approved_key] = [home]
+
+    validated = validate_repair_decision(
+        {
+            "actions": [{"kind": kind, "value": home}],
+            "rationale": "Use the approved toolchain.",
+        },
+        **approvals,
+    )
+
+    assert validated["actions"] == [{"kind": kind, home_field: home}]
+
+
+def test_validate_repair_decision_rejects_conflicting_home_value_fields():
+    with pytest.raises(RepairValidationError, match="conflicting java_home and value"):
+        validate_repair_decision(
+            {
+                "actions": [
+                    {
+                        "kind": "set_java_home",
+                        "java_home": "/opt/java-17",
+                        "value": "/opt/java-21",
+                    }
+                ],
+                "rationale": "ambiguous toolchain",
+            },
+            approved_java_homes=["/opt/java-17", "/opt/java-21"],
+            approved_maven_homes=[],
+        )
+
+
+def test_validate_repair_decision_merges_generic_build_argument_values():
+    validated = validate_repair_decision(
+        {
+            "actions": [
+                {"kind": "append_build_args", "value": "-Dcheckstyle.skip=true"},
+                {"kind": "append_build_args", "value": "-Denforcer.skip=true"},
+                {"kind": "append_build_args", "value": "-Dcheckstyle.skip=true"},
+            ],
+            "rationale": "Skip approved non-semantic quality gates.",
+        },
+        approved_java_homes=[],
+        approved_maven_homes=[],
+    )
+
+    assert validated["actions"] == [
+        {
+            "kind": "append_build_args",
+            "args": ["-Dcheckstyle.skip=true", "-Denforcer.skip=true"],
+        }
+    ]
 
 
 def test_apply_repair_uses_new_database_and_preserves_source_root(tmp_path):
@@ -650,10 +1064,122 @@ def test_apply_repair_uses_new_database_and_preserves_source_root(tmp_path):
     assert applied["source_root"] == str(tmp_path / "source")
 
 
+def test_prepend_maven_clean_rebuilds_before_existing_package_goal(tmp_path):
+    receipt = failed_receipt(tmp_path)
+    decision = validate_repair_decision(
+        {
+            "actions": [
+                {"kind": "prepend_maven_clean"},
+                {"kind": "append_build_args", "args": ["-Dcheckstyle.skip=true"]},
+            ],
+            "rationale": "Force a fresh Maven compilation for CodeQL capture.",
+        },
+        approved_java_homes=[],
+        approved_maven_homes=[],
+    )
+
+    command, _env, applied = apply_repair_decision(
+        receipt["planned_codeql_database_command"],
+        decision,
+        attempt_database_dir=tmp_path / "new-attempt-db",
+        approved_java_homes=[],
+        approved_maven_homes=[],
+    )
+
+    build_command = command[command.index("--command") + 1]
+    assert build_command == "mvn -DskipTests clean package -Dcheckstyle.skip=true"
+    assert applied["applied_actions"][0] == {
+        "kind": "prepend_maven_clean",
+        "effect": "maven_clean_lifecycle_before_existing_build_goal",
+    }
+
+
+def test_remove_existing_build_args_only_removes_approved_present_argument(tmp_path):
+    receipt = failed_receipt(tmp_path)
+    receipt["planned_codeql_database_command"][-1] = (
+        "mvn -DskipTests -Dmaven.test.skip=true package"
+    )
+    decision = validate_repair_decision(
+        {
+            "actions": [
+                {
+                    "kind": "remove_existing_build_args",
+                    "args": ["-Dmaven.test.skip=true"],
+                }
+            ],
+            "rationale": "Allow a required test-jar to be packaged.",
+        },
+        approved_java_homes=[],
+        approved_maven_homes=[],
+    )
+
+    command, _env, applied = apply_repair_decision(
+        receipt["planned_codeql_database_command"],
+        decision,
+        attempt_database_dir=tmp_path / "new-attempt-db",
+        approved_java_homes=[],
+        approved_maven_homes=[],
+    )
+
+    build_command = command[command.index("--command") + 1]
+    assert build_command == "mvn -DskipTests package"
+    assert applied["applied_actions"] == [
+        {"kind": "remove_existing_build_args", "args": ["-Dmaven.test.skip=true"]}
+    ]
+
+
+def test_remove_existing_build_args_rejects_absent_argument(tmp_path):
+    receipt = failed_receipt(tmp_path)
+    decision = validate_repair_decision(
+        {
+            "actions": [
+                {
+                    "kind": "remove_existing_build_args",
+                    "args": ["-Dmaven.test.skip=true"],
+                }
+            ],
+            "rationale": "Do not rewrite arbitrary arguments.",
+        },
+        approved_java_homes=[],
+        approved_maven_homes=[],
+    )
+
+    with pytest.raises(RepairValidationError, match="only remove arguments present"):
+        apply_repair_decision(
+            receipt["planned_codeql_database_command"],
+            decision,
+            attempt_database_dir=tmp_path / "new-attempt-db",
+            approved_java_homes=[],
+            approved_maven_homes=[],
+        )
+
+
+def test_prepend_maven_clean_rejects_non_maven_build_command(tmp_path):
+    receipt = failed_receipt(tmp_path)
+    receipt["planned_codeql_database_command"][-1] = "./gradlew build"
+    decision = validate_repair_decision(
+        {
+            "actions": [{"kind": "prepend_maven_clean"}],
+            "rationale": "This must not rewrite Gradle.",
+        },
+        approved_java_homes=[],
+        approved_maven_homes=[],
+    )
+
+    with pytest.raises(RepairValidationError, match="direct Maven"):
+        apply_repair_decision(
+            receipt["planned_codeql_database_command"],
+            decision,
+            attempt_database_dir=tmp_path / "new-attempt-db",
+            approved_java_homes=[],
+            approved_maven_homes=[],
+        )
+
+
 def test_apply_repair_can_isolate_maven_user_home_without_changing_build_command(tmp_path):
     receipt = failed_receipt(tmp_path)
     build_home = tmp_path / "attempt-build-home"
-    (build_home / ".m2").mkdir(parents=True)
+    (build_home / ".m2" / "repository").mkdir(parents=True)
     (build_home / ".gradle").mkdir()
     decision = validate_repair_decision(
         {"actions": [{"kind": "retry_same_command"}], "rationale": "retry"},
@@ -680,6 +1206,68 @@ def test_apply_repair_can_isolate_maven_user_home_without_changing_build_command
     )
     assert applied["verified_environment"]["MAVEN_OPTS_user_home"] == (
         f"-Duser.home={build_home}"
+    )
+
+
+def test_apply_repair_preserves_repaired_maven_heap_when_isolating_build_home(tmp_path):
+    receipt = failed_receipt(tmp_path)
+    build_home = tmp_path / "attempt-build-home"
+    (build_home / ".m2" / "repository").mkdir(parents=True)
+    (build_home / ".gradle").mkdir()
+    decision = validate_repair_decision(
+        {
+            "actions": [{"kind": "set_maven_heap", "value": "-Xmx4g"}],
+            "rationale": "The build needs additional heap.",
+        },
+        approved_java_homes=[],
+        approved_maven_homes=[],
+    )
+
+    _command, env, _applied = apply_repair_decision(
+        receipt["planned_codeql_database_command"],
+        decision,
+        attempt_database_dir=tmp_path / "new-attempt-db",
+        approved_java_homes=[],
+        approved_maven_homes=[],
+        isolated_build_home=build_home,
+    )
+
+    assert "-Xmx4g" in env["MAVEN_OPTS"]
+    assert "-Xmx1024M" not in env["MAVEN_OPTS"]
+    assert f"-Duser.home={build_home}" in env["MAVEN_OPTS"]
+
+
+def test_apply_repair_redirects_explicit_maven_repository_to_isolated_home(tmp_path):
+    receipt = failed_receipt(tmp_path)
+    receipt["planned_codeql_database_command"][-1] = (
+        "mvn -Dmaven.repo.local=/shared/stale-m2 -DskipTests package"
+    )
+    build_home = tmp_path / "attempt-build-home"
+    (build_home / ".m2" / "repository").mkdir(parents=True)
+    (build_home / ".gradle").mkdir()
+    decision = validate_repair_decision(
+        {"actions": [{"kind": "retry_same_command"}], "rationale": "retry"},
+        approved_java_homes=[],
+        approved_maven_homes=[],
+    )
+
+    command, _env, applied = apply_repair_decision(
+        receipt["planned_codeql_database_command"],
+        decision,
+        attempt_database_dir=tmp_path / "new-attempt-db",
+        approved_java_homes=[],
+        approved_maven_homes=[],
+        isolated_build_home=build_home,
+    )
+
+    build_command = command[command.index("--command") + 1]
+    assert "-Dmaven.repo.local=/shared/stale-m2" not in build_command
+    assert f"-Dmaven.repo.local={build_home / '.m2' / 'repository'}" in build_command
+    assert applied["verified_environment"]["MAVEN_REPOSITORY"] == str(
+        build_home / ".m2" / "repository"
+    )
+    assert applied["verified_environment"]["rewritten_maven_repo_local_argument"] == (
+        "-Dmaven.repo.local=/shared/stale-m2"
     )
 
 

@@ -29,6 +29,23 @@ SCHEMA_VERSION = "route_hacker_codeql_repair.v1"
 MAX_LOG_CHARACTERS = 12_000
 MAX_RATIONALE_CHARACTERS = 1_000
 MAX_ACTIONS = 4
+SOURCE_INTEGRITY_IGNORED_DIRECTORIES = frozenset(
+    {
+        ".git",
+        ".gradle",
+        "build",
+        "node_modules",
+        "out",
+        "target",
+    }
+)
+SOURCE_INTEGRITY_IGNORED_FILENAMES = frozenset(
+    {
+        "dependency-reduced-pom.xml",
+        ".flattened-pom.xml",
+    }
+)
+MAX_SOURCE_INTEGRITY_CHANGED_PATHS = 100
 SAFE_BUILD_ARGS = frozenset(
     {
         "-Dmaven.buildNumber.skip=true",
@@ -48,11 +65,36 @@ SAFE_BUILD_ARGS = frozenset(
         "-Dspotless.apply.skip=true",
         "-Dspotless.check.skip=true",
         "-Dspotless.skip=true",
-        "--no-daemon",
-        "--stacktrace",
     }
 )
 SAFE_MAVEN_HEAP_OPTIONS = frozenset({"-Xmx2g", "-Xmx4g", "-Xmx6g"})
+MAVEN_LIFECYCLE_GOALS = frozenset(
+    {
+        "validate",
+        "initialize",
+        "generate-sources",
+        "process-sources",
+        "generate-resources",
+        "process-resources",
+        "compile",
+        "process-classes",
+        "generate-test-sources",
+        "process-test-sources",
+        "generate-test-resources",
+        "process-test-resources",
+        "test-compile",
+        "process-test-classes",
+        "test",
+        "prepare-package",
+        "package",
+        "pre-integration-test",
+        "integration-test",
+        "post-integration-test",
+        "verify",
+        "install",
+        "deploy",
+    }
+)
 SECRET_PATTERN = re.compile(
     r"(?im)(api[_-]?key|authorization|bearer|password|secret|token)"
     r"(\s*[:=]\s*|\s+)([^\r\n]+)"
@@ -73,6 +115,121 @@ def sha256_file(path: Path) -> str:
         for block in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(block)
     return digest.hexdigest()
+
+
+def is_generated_frontend_toolchain_path(path: Path, source_dir: Path) -> bool:
+    """Recognize the Node runtime directory downloaded by frontend build plugins.
+
+    ``frontend-maven-plugin`` commonly installs a complete Node runtime below a
+    project-local ``node/`` directory. The directory is build output only when
+    it contains the runtime executable together with both npm launchers. A
+    plain source directory named ``node`` does not satisfy this shape and
+    remains protected by the source-integrity check.
+    """
+
+    relative = path.relative_to(source_dir)
+    prefix = source_dir
+    for part in relative.parts:
+        prefix /= part
+        if part != "node" or not prefix.is_dir():
+            continue
+        if all((prefix / executable).is_file() for executable in ("node", "npm", "npx")):
+            return True
+    return False
+
+
+def is_generated_maven_build_scan_workspace_path(path: Path, source_dir: Path) -> bool:
+    """Recognize Gradle Enterprise's generated Maven build-scan workspace ID.
+
+    The Maven extension writes this identifier into ``.mvn`` after a build.
+    It is cache/build-scan state rather than a source or Maven configuration
+    input.  The match is intentionally exact so other ``.mvn`` files remain
+    subject to source-integrity verification.
+    """
+
+    return path.relative_to(source_dir).parts == (
+        ".mvn",
+        ".gradle-enterprise",
+        "gradle-enterprise-workspace-id",
+    )
+
+
+def source_integrity_snapshot(source_dir: Path) -> dict[str, Any]:
+    """Hash non-generated source content before and after a repair build.
+
+    Maven/Gradle output directories, frontend dependency/runtime downloads, and
+    the Maven Shade/Flatten plugins' fixed generated metadata files are
+    intentionally excluded because a compilation may create them. Any other
+    change is evidence that the build altered benchmark input and therefore
+    cannot qualify as an admissible repaired database.
+    """
+
+    files: dict[str, str] = {}
+    if not source_dir.is_dir():
+        return {
+            "source_dir": str(source_dir),
+            "available": False,
+            "reason": "source_directory_missing",
+            "ignored_directory_names": sorted(SOURCE_INTEGRITY_IGNORED_DIRECTORIES),
+            "ignored_file_names": sorted(SOURCE_INTEGRITY_IGNORED_FILENAMES),
+            "files": files,
+            "tree_sha256": None,
+        }
+    for path in sorted(source_dir.rglob("*")):
+        relative = path.relative_to(source_dir)
+        if any(part in SOURCE_INTEGRITY_IGNORED_DIRECTORIES for part in relative.parts):
+            continue
+        if is_generated_frontend_toolchain_path(path, source_dir):
+            continue
+        if is_generated_maven_build_scan_workspace_path(path, source_dir):
+            continue
+        if relative.name in SOURCE_INTEGRITY_IGNORED_FILENAMES:
+            continue
+        if path.is_file() and not path.is_symlink():
+            files[str(relative)] = sha256_file(path)
+    tree_sha256 = stable_json_sha256(files)
+    return {
+        "source_dir": str(source_dir),
+        "available": True,
+        "ignored_directory_names": sorted(SOURCE_INTEGRITY_IGNORED_DIRECTORIES),
+        "ignored_file_names": sorted(SOURCE_INTEGRITY_IGNORED_FILENAMES),
+        "files": files,
+        "tree_sha256": tree_sha256,
+    }
+
+
+def compare_source_integrity(
+    before: Mapping[str, Any],
+    after: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Return source-integrity evidence without persisting the full file map."""
+
+    before_files = before.get("files")
+    after_files = after.get("files")
+    if not isinstance(before_files, Mapping) or not isinstance(after_files, Mapping):
+        return {
+            "verified": False,
+            "reason": "source_integrity_snapshot_unavailable",
+            "before_tree_sha256": before.get("tree_sha256"),
+            "after_tree_sha256": after.get("tree_sha256"),
+            "changed_paths": [],
+        }
+    changed_paths = sorted(
+        path
+        for path in set(before_files) | set(after_files)
+        if before_files.get(path) != after_files.get(path)
+    )
+    return {
+        "verified": not changed_paths,
+        "reason": None if not changed_paths else "non_generated_source_content_changed_during_build",
+        "before_tree_sha256": before.get("tree_sha256"),
+        "after_tree_sha256": after.get("tree_sha256"),
+        "changed_path_count": len(changed_paths),
+        "changed_paths": changed_paths[:MAX_SOURCE_INTEGRITY_CHANGED_PATHS],
+        "changed_paths_truncated": len(changed_paths) > MAX_SOURCE_INTEGRITY_CHANGED_PATHS,
+        "ignored_directory_names": sorted(SOURCE_INTEGRITY_IGNORED_DIRECTORIES),
+        "ignored_file_names": sorted(SOURCE_INTEGRITY_IGNORED_FILENAMES),
+    }
 
 
 def stable_json_sha256(value: Any) -> str:
@@ -409,11 +566,152 @@ def _command_from_receipt(receipt: Mapping[str, Any]) -> list[str]:
     return list(value)
 
 
+def historical_retry_java_home(
+    receipt: Mapping[str, Any],
+    approved_java_homes: Sequence[str],
+) -> dict[str, Any]:
+    """Return the approved JDK used by the exact failed command, if recorded.
+
+    ``retry_same_command`` must replay the historical runtime context rather
+    than silently switching to whatever JDK happens to be the current host
+    default. Only an attempt whose logged CodeQL result exactly matches the
+    receipt's failed result can supply this inherited toolchain. The value is
+    then constrained to the caller's current JDK allow-list.
+    """
+
+    result = receipt.get("codeql_database_create_result")
+    result_map = result if isinstance(result, Mapping) else {}
+    result_log_path = result_map.get("log_path")
+    result_log_sha256 = result_map.get("log_sha256")
+    attempts = receipt.get("attempts")
+    if not isinstance(attempts, list):
+        return {
+            "java_home": None,
+            "reason": "historical_attempts_missing",
+            "matched_attempt_count": 0,
+        }
+    matched_java_homes: list[str] = []
+    for attempt in attempts:
+        if not isinstance(attempt, Mapping):
+            continue
+        attempt_result = attempt.get("result")
+        toolchain = attempt.get("toolchain")
+        if not isinstance(attempt_result, Mapping) or not isinstance(toolchain, Mapping):
+            continue
+        same_log = (
+            isinstance(result_log_sha256, str)
+            and result_log_sha256
+            and attempt_result.get("log_sha256") == result_log_sha256
+        ) or (
+            isinstance(result_log_path, str)
+            and result_log_path
+            and attempt_result.get("log_path") == result_log_path
+        )
+        if not same_log:
+            continue
+        java_home = toolchain.get("java_home")
+        if isinstance(java_home, str) and java_home:
+            matched_java_homes.append(java_home)
+    unique_homes = sorted(set(matched_java_homes))
+    if len(unique_homes) != 1:
+        return {
+            "java_home": None,
+            "reason": (
+                "historical_toolchain_ambiguous"
+                if unique_homes
+                else "historical_toolchain_not_recorded_for_failed_command"
+            ),
+            "matched_attempt_count": len(matched_java_homes),
+        }
+    java_home = unique_homes[0]
+    if java_home not in set(approved_java_homes):
+        return {
+            "java_home": None,
+            "reason": "historical_java_home_not_currently_approved",
+            "matched_attempt_count": len(matched_java_homes),
+            "historical_java_home": java_home,
+        }
+    return {
+        "java_home": java_home,
+        "reason": None,
+        "matched_attempt_count": len(matched_java_homes),
+    }
+
+
 def _append_unique(values: list[str], additions: Iterable[str]) -> list[str]:
     for item in additions:
         if item not in values:
             values.append(item)
     return values
+
+
+def is_maven_build_command(build_command: Sequence[str]) -> bool:
+    """Return whether a parsed build command invokes Maven directly."""
+
+    return bool(build_command) and Path(build_command[0]).name in {"mvn", "mvnw"}
+
+
+def redirect_maven_local_repository(
+    build_command: Sequence[str],
+    repository: Path,
+) -> tuple[list[str], str | None]:
+    """Point an explicit Maven local repository at an isolated attempt cache.
+
+    Historical receipts may include ``-Dmaven.repo.local=...``.  Such a value
+    bypasses ``MAVEN_USER_HOME`` and otherwise lets a retry consume a stale or
+    corrupted shared cache.  The execution layer, not the LLM action space,
+    therefore redirects this one Maven runtime property when a build home is
+    isolated.  Commands without the property retain normal Maven resolution
+    through the isolated ``MAVEN_USER_HOME``.
+    """
+
+    if not is_maven_build_command(build_command):
+        return list(build_command), None
+    prefix = "-Dmaven.repo.local="
+    target = f"{prefix}{repository}"
+    rewritten = list(build_command)
+    replaced: str | None = None
+    for index, token in enumerate(rewritten):
+        if token.startswith(prefix):
+            replaced = token
+            rewritten[index] = target
+    return rewritten, replaced
+
+
+def prepend_maven_clean_goal(build_command: Sequence[str]) -> list[str]:
+    """Insert Maven's ``clean`` lifecycle before a supported build lifecycle.
+
+    This action is deliberately narrower than arbitrary command rewriting:
+    it only applies to a direct Maven invocation with an existing lifecycle
+    goal. It deletes generated build outputs, never source files, and avoids
+    treating arbitrary plugin invocations as an eligible clean rebuild.
+    """
+
+    rewritten = list(build_command)
+    if not is_maven_build_command(rewritten):
+        raise RepairValidationError("prepend_maven_clean requires a direct Maven build command")
+    if "clean" in rewritten:
+        return rewritten
+    for index, token in enumerate(rewritten[1:], start=1):
+        if token in MAVEN_LIFECYCLE_GOALS:
+            rewritten.insert(index, "clean")
+            return rewritten
+    raise RepairValidationError(
+        "prepend_maven_clean requires an existing Maven lifecycle build goal"
+    )
+
+
+def removable_safe_build_args(build_command: Sequence[str]) -> list[str]:
+    """Return approved, already-present build arguments eligible for removal.
+
+    Removal is intentionally more restrictive than appending: a decision may
+    only remove an argument that is both globally approved and already present
+    in this exact failed command. This permits an LLM to stop a generic
+    skip flag from suppressing a required build artifact without enabling
+    arbitrary command editing.
+    """
+
+    return sorted({argument for argument in build_command if argument in SAFE_BUILD_ARGS})
 
 
 def build_repair_packet(
@@ -431,12 +729,18 @@ def build_repair_packet(
         receipt.get("resolved_buggy_commit") or receipt.get("declared_buggy_commit") or ""
     )
     command = _command_from_receipt(receipt)
+    build_command = shlex.split(_option_value(command, *_find_option(command, "--command"), "--command"))
+    removable_args = removable_safe_build_args(build_command)
     result = receipt.get("codeql_database_create_result")
     result_map = result if isinstance(result, Mapping) else {}
     log_path_text = result_map.get("log_path")
     log_path = Path(log_path_text) if isinstance(log_path_text, str) and log_path_text else None
     log = read_log_excerpt(log_path)
     category = classify_build_failure(str(log["excerpt"]))
+    historical_retry_toolchain = historical_retry_java_home(
+        receipt,
+        approved_java_homes,
+    )
     packet = {
         "schema_version": f"{SCHEMA_VERSION}:repair_packet",
         "case_id": receipt.get("case_id"),
@@ -456,6 +760,7 @@ def build_repair_packet(
             "failure_category": category,
             "planned_codeql_database_command": command,
             "log": log,
+            "historical_retry_toolchain": historical_retry_toolchain,
         },
         "allowed_action_schema": {
             "maximum_actions": MAX_ACTIONS,
@@ -465,14 +770,18 @@ def build_repair_packet(
                 "set_maven_home",
                 "set_ant_home",
                 "append_build_args",
+                "remove_existing_build_args",
                 "set_maven_heap",
+                "prepend_maven_clean",
                 "no_safe_action",
             ],
             "approved_java_homes": list(approved_java_homes),
             "approved_maven_homes": list(approved_maven_homes),
             "approved_ant_homes": list(approved_ant_homes),
             "safe_build_args": sorted(SAFE_BUILD_ARGS),
+            "removable_existing_build_args": removable_args,
             "safe_maven_heap_options": sorted(SAFE_MAVEN_HEAP_OPTIONS),
+            "allow_prepend_maven_clean": is_maven_build_command(build_command),
             "prohibited": [
                 "source edits",
                 "revision substitution",
@@ -592,6 +901,35 @@ def parse_repair_decision_text(text: str) -> dict[str, Any]:
     return value
 
 
+def _approved_home_from_action(
+    raw_action: Mapping[str, Any],
+    *,
+    field: str,
+    approved_homes: set[str],
+    action_kind: str,
+    label: str,
+) -> str:
+    """Read a home selection without widening the approved local allow-list.
+
+    The Claude JSON schema names action-specific fields, while compatible
+    OpenAI bridges may return their common ``value`` field.  Both forms are
+    canonicalized here only after an exact approved-home membership check.
+    """
+
+    explicit = raw_action.get(field)
+    generic = raw_action.get("value")
+    if explicit is not None and generic is not None and explicit != generic:
+        raise RepairValidationError(
+            f"{action_kind} has conflicting {field} and value selections"
+        )
+    selected = explicit if explicit is not None else generic
+    if not isinstance(selected, str) or selected not in approved_homes:
+        raise RepairValidationError(
+            f"{action_kind} must select an approved {label} home"
+        )
+    return selected
+
+
 def validate_repair_decision(
     decision: Mapping[str, Any],
     *,
@@ -624,38 +962,80 @@ def validate_repair_decision(
         kind = raw_action.get("kind")
         if not isinstance(kind, str):
             raise RepairValidationError("repair action is missing kind")
-        if kind in seen_kinds:
+        if kind in seen_kinds and kind not in {"append_build_args", "remove_existing_build_args"}:
             raise RepairValidationError(f"duplicate repair action: {kind}")
         seen_kinds.add(kind)
         if kind == "retry_same_command":
             actions.append({"kind": kind})
         elif kind == "set_java_home":
-            java_home = raw_action.get("java_home")
-            if not isinstance(java_home, str) or java_home not in approved_java:
-                raise RepairValidationError("set_java_home must select an approved Java home")
+            java_home = _approved_home_from_action(
+                raw_action,
+                field="java_home",
+                approved_homes=approved_java,
+                action_kind=kind,
+                label="Java",
+            )
             actions.append({"kind": kind, "java_home": java_home})
         elif kind == "set_maven_home":
-            maven_home = raw_action.get("maven_home")
-            if not isinstance(maven_home, str) or maven_home not in approved_maven:
-                raise RepairValidationError("set_maven_home must select an approved Maven home")
+            maven_home = _approved_home_from_action(
+                raw_action,
+                field="maven_home",
+                approved_homes=approved_maven,
+                action_kind=kind,
+                label="Maven",
+            )
             actions.append({"kind": kind, "maven_home": maven_home})
         elif kind == "set_ant_home":
-            ant_home = raw_action.get("ant_home")
-            if not isinstance(ant_home, str) or ant_home not in approved_ant:
-                raise RepairValidationError("set_ant_home must select an approved Ant home")
+            ant_home = _approved_home_from_action(
+                raw_action,
+                field="ant_home",
+                approved_homes=approved_ant,
+                action_kind=kind,
+                label="Ant",
+            )
             actions.append({"kind": kind, "ant_home": ant_home})
         elif kind == "append_build_args":
             args = raw_action.get("args")
+            if args is None:
+                value = raw_action.get("value")
+                args = [value] if isinstance(value, str) else None
             if not isinstance(args, list) or not args or not all(isinstance(arg, str) for arg in args):
                 raise RepairValidationError("append_build_args requires a nonempty string args list")
             if not set(args).issubset(SAFE_BUILD_ARGS):
                 raise RepairValidationError("append_build_args contains an unapproved argument")
-            actions.append({"kind": kind, "args": list(args)})
+            existing = next(
+                (action for action in actions if action["kind"] == kind),
+                None,
+            )
+            if existing is None:
+                actions.append({"kind": kind, "args": list(args)})
+            else:
+                existing["args"] = _append_unique(existing["args"], args)
+        elif kind == "remove_existing_build_args":
+            args = raw_action.get("args")
+            if not isinstance(args, list) or not args or not all(isinstance(arg, str) for arg in args):
+                raise RepairValidationError(
+                    "remove_existing_build_args requires a nonempty string args list"
+                )
+            if not set(args).issubset(SAFE_BUILD_ARGS):
+                raise RepairValidationError(
+                    "remove_existing_build_args contains an unapproved argument"
+                )
+            existing = next(
+                (action for action in actions if action["kind"] == kind),
+                None,
+            )
+            if existing is None:
+                actions.append({"kind": kind, "args": list(args)})
+            else:
+                existing["args"] = _append_unique(existing["args"], args)
         elif kind == "set_maven_heap":
             value = raw_action.get("value")
             if not isinstance(value, str) or value not in SAFE_MAVEN_HEAP_OPTIONS:
                 raise RepairValidationError("set_maven_heap requires an approved heap option")
             actions.append({"kind": kind, "value": value})
+        elif kind == "prepend_maven_clean":
+            actions.append({"kind": kind})
         elif kind == "no_safe_action":
             actions.append({"kind": kind})
         else:
@@ -720,6 +1100,7 @@ def apply_repair_decision(
     approved_ant_homes: Sequence[str] = (),
     verified_gradle_user_home: Path | None = None,
     isolated_build_home: Path | None = None,
+    inherited_java_home: str | None = None,
 ) -> tuple[list[str], dict[str, str], dict[str, Any]]:
     """Turn a validated decision into a new isolated CodeQL command and env."""
 
@@ -742,6 +1123,21 @@ def apply_repair_decision(
     actions = decision.get("actions")
     if not isinstance(actions, list):
         raise RepairValidationError("validated repair decision has no actions")
+    retry_same_command = actions == [{"kind": "retry_same_command"}]
+    explicitly_selects_java_home = any(
+        isinstance(action, Mapping) and action.get("kind") == "set_java_home"
+        for action in actions
+    )
+    inherited_java_home_applied = False
+    if inherited_java_home is not None:
+        if inherited_java_home not in java_homes:
+            raise RepairValidationError("historical Java home is not currently approved")
+        if not explicitly_selects_java_home:
+            env["JAVA_HOME"] = inherited_java_home
+            env["PATH"] = (
+                f"{Path(inherited_java_home) / 'bin'}:{os.environ.get('PATH', '')}"
+            )
+            inherited_java_home_applied = True
     applied_actions: list[dict[str, Any]] = []
     for action in actions:
         if not isinstance(action, Mapping):
@@ -750,7 +1146,14 @@ def apply_repair_decision(
         if kind == "no_safe_action":
             raise RepairValidationError("no_safe_action cannot be executed")
         if kind == "retry_same_command":
-            applied_actions.append({"kind": kind})
+            applied_actions.append(
+                {
+                    "kind": kind,
+                    "inherited_java_home": (
+                        inherited_java_home if inherited_java_home_applied else None
+                    ),
+                }
+            )
         elif kind == "set_java_home":
             java_home = action.get("java_home")
             if not isinstance(java_home, str) or java_home not in java_homes:
@@ -796,21 +1199,49 @@ def apply_repair_decision(
                 raise RepairValidationError("validated append_build_args is malformed")
             _append_unique(build_command, args)
             applied_actions.append({"kind": kind, "args": list(args)})
+        elif kind == "remove_existing_build_args":
+            args = action.get("args")
+            if not isinstance(args, list) or not args or not all(isinstance(arg, str) for arg in args):
+                raise RepairValidationError(
+                    "validated remove_existing_build_args is malformed"
+                )
+            if not set(args).issubset(SAFE_BUILD_ARGS):
+                raise RepairValidationError(
+                    "validated remove_existing_build_args contains an unapproved argument"
+                )
+            missing_args = [argument for argument in args if argument not in build_command]
+            if missing_args:
+                raise RepairValidationError(
+                    "remove_existing_build_args can only remove arguments present in the build command"
+                )
+            build_command = [
+                argument for argument in build_command if argument not in set(args)
+            ]
+            applied_actions.append({"kind": kind, "args": list(args)})
         elif kind == "set_maven_heap":
             heap = action.get("value")
             if not isinstance(heap, str) or heap not in SAFE_MAVEN_HEAP_OPTIONS:
                 raise RepairValidationError("validated Maven heap action is malformed")
-            existing = os.environ.get("MAVEN_OPTS", "")
-            env["MAVEN_OPTS"] = f"{existing} {heap}".strip()
+            existing = env.get("MAVEN_OPTS", "")
+            existing_options = shlex.split(existing)
+            retained_options = [
+                option
+                for option in existing_options
+                if re.fullmatch(r"-Xmx\d+[kKmMgG]", option) is None
+            ]
+            env["MAVEN_OPTS"] = " ".join([*retained_options, heap])
             applied_actions.append({"kind": kind, "value": heap})
+        elif kind == "prepend_maven_clean":
+            build_command = prepend_maven_clean_goal(build_command)
+            applied_actions.append(
+                {
+                    "kind": kind,
+                    "effect": "maven_clean_lifecycle_before_existing_build_goal",
+                }
+            )
         else:
             raise RepairValidationError(f"unexpected validated repair action: {kind}")
 
-    repaired_build_value = shlex.join(build_command)
-    if build_inline:
-        repaired[build_index] = f"--command={repaired_build_value}"
-    else:
-        repaired[build_index + 1] = repaired_build_value
     verified_environment: dict[str, str] = {}
     if verified_gradle_user_home is not None:
         gradle_user_home = verified_gradle_user_home.resolve()
@@ -821,14 +1252,20 @@ def apply_repair_decision(
     if isolated_build_home is not None:
         build_home = isolated_build_home.resolve()
         maven_user_home = build_home / ".m2"
+        maven_repository = maven_user_home / "repository"
         gradle_user_home = build_home / ".gradle"
         if (
             not build_home.is_dir()
             or not maven_user_home.is_dir()
+            or not maven_repository.is_dir()
             or not gradle_user_home.is_dir()
         ):
             raise RepairValidationError("isolated build home is incomplete")
-        existing_maven_opts = os.environ.get("MAVEN_OPTS", "")
+        build_command, replaced_maven_repository = redirect_maven_local_repository(
+            build_command,
+            maven_repository,
+        )
+        existing_maven_opts = env.get("MAVEN_OPTS", "")
         user_home_option = f"-Duser.home={build_home}"
         env["HOME"] = str(build_home)
         env["MAVEN_USER_HOME"] = str(maven_user_home)
@@ -842,13 +1279,22 @@ def apply_repair_decision(
             {
                 "HOME": str(build_home),
                 "MAVEN_USER_HOME": str(maven_user_home),
+                "MAVEN_REPOSITORY": str(maven_repository),
                 "GRADLE_USER_HOME": str(gradle_user_home),
                 "MAVEN_OPTS_user_home": user_home_option,
+                "rewritten_maven_repo_local_argument": replaced_maven_repository,
             }
         )
+    repaired_build_value = shlex.join(build_command)
+    if build_inline:
+        repaired[build_index] = f"--command={repaired_build_value}"
+    else:
+        repaired[build_index + 1] = repaired_build_value
     if "JAVA_HOME" in env:
         verified_environment["JAVA_HOME"] = env["JAVA_HOME"]
         verified_environment["PATH_prefix"] = str(Path(env["JAVA_HOME"]) / "bin")
+        if inherited_java_home_applied:
+            verified_environment["inherited_java_home"] = inherited_java_home
     return repaired, env, {
         "applied_actions": applied_actions,
         "source_root": source_root,
@@ -864,6 +1310,7 @@ def execute_repair_attempt(
     *,
     attempt_dir: Path,
     timeout_seconds: float,
+    inactivity_timeout_seconds: float | None = None,
     approved_java_homes: Sequence[str],
     approved_maven_homes: Sequence[str],
     approved_ant_homes: Sequence[str] = (),
@@ -872,11 +1319,14 @@ def execute_repair_attempt(
     verified_maven_repository_source: Path | None = None,
     verified_maven_wrapper_dists_source: Path | None = None,
     isolate_build_home: bool = False,
+    historical_toolchain_receipt: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Execute one verified, isolated repair attempt and return an auditable receipt."""
 
     if timeout_seconds <= 0:
         raise ValueError("timeout_seconds must be positive")
+    if inactivity_timeout_seconds is not None and inactivity_timeout_seconds <= 0:
+        raise ValueError("inactivity_timeout_seconds must be positive when set")
     attempt_dir.mkdir(parents=True, exist_ok=False)
     packet = build_repair_packet(
         receipt,
@@ -890,6 +1340,18 @@ def execute_repair_attempt(
         approved_java_homes=approved_java_homes,
         approved_maven_homes=approved_maven_homes,
         approved_ant_homes=approved_ant_homes,
+    )
+    toolchain_receipt = historical_toolchain_receipt or receipt
+    retry_toolchain = historical_retry_java_home(toolchain_receipt, approved_java_homes)
+    actions = validated["actions"]
+    explicitly_selects_java_home = any(
+        isinstance(action, Mapping) and action.get("kind") == "set_java_home"
+        for action in actions
+    )
+    inherited_java_home = (
+        retry_toolchain["java_home"]
+        if not explicitly_selects_java_home
+        else None
     )
     source_dir = Path(packet["source"]["source_dir"])
     expected_revision = str(packet["source"]["expected_revision"])
@@ -910,6 +1372,7 @@ def execute_repair_attempt(
             "validated_decision": validated,
             "source_revision_evidence": source_evidence,
         }
+    source_integrity_before = source_integrity_snapshot(source_dir)
 
     original_command = _command_from_receipt(receipt)
     database_dir = attempt_dir / "codeql-db"
@@ -950,6 +1413,8 @@ def execute_repair_attempt(
                 source_maven_repository,
                 attempt_build_home / ".m2" / "repository",
             )
+        else:
+            (attempt_build_home / ".m2" / "repository").mkdir()
         if source_maven_wrapper_dists is not None:
             shutil.copytree(
                 source_maven_wrapper_dists,
@@ -974,6 +1439,7 @@ def execute_repair_attempt(
         approved_ant_homes=approved_ant_homes,
         verified_gradle_user_home=attempt_gradle_user_home,
         isolated_build_home=attempt_build_home,
+        inherited_java_home=inherited_java_home,
     )
     if Path(applied["source_root"]).resolve() != source_dir.resolve():
         raise RepairValidationError("repair attempted to change the exact source root")
@@ -988,12 +1454,22 @@ def execute_repair_attempt(
             env={**os.environ, **extra_env},
             timeout_seconds=timeout_seconds,
             term_grace_seconds=min(30, max(1, timeout_seconds / 20)),
+            inactivity_timeout_seconds=inactivity_timeout_seconds,
+            progress_path=log_path if inactivity_timeout_seconds is not None else None,
             stdout=handle,
             stderr=subprocess.STDOUT,
             text=True,
         )
+    source_integrity = compare_source_integrity(
+        source_integrity_before,
+        source_integrity_snapshot(source_dir),
+    )
     database_valid = valid_codeql_database(database_dir)
-    status = "codeql_db_repaired" if bounded.returncode == 0 and database_valid else "repair_attempt_failed"
+    status = (
+        "codeql_db_repaired"
+        if bounded.returncode == 0 and database_valid and source_integrity["verified"]
+        else "repair_attempt_failed"
+    )
     final_packet = refresh_attempt_packet_log(packet, log_path=log_path)
     return {
         "schema_version": f"{SCHEMA_VERSION}:attempt",
@@ -1003,6 +1479,7 @@ def execute_repair_attempt(
         "status": status,
         "packet": final_packet,
         "validated_decision": validated,
+        "historical_retry_toolchain": retry_toolchain,
         "source_revision_evidence": source_evidence,
         "original_command_sha256": stable_json_sha256(original_command),
         "executed_command": repaired_command,
@@ -1030,11 +1507,13 @@ def execute_repair_attempt(
         "log_sha256": sha256_file(log_path),
         "database_dir": str(database_dir),
         "database_valid": database_valid,
+        "source_integrity_evidence": source_integrity,
         "official_query_status": receipt.get("official_query_status"),
         "contract": {
             "exact_declared_source_verified": True,
             "source_revision_substitution_forbidden": True,
             "source_edits_forbidden": True,
+            "non_generated_source_content_unchanged_after_build": source_integrity["verified"],
             "official_query_change_forbidden": True,
             "new_attempt_database_only": True,
             "retrieval_and_target_data_not_consumed": True,

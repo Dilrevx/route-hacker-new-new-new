@@ -26,6 +26,7 @@ class BoundedProcessResult:
     pid: int
     returncode: int | None
     timed_out: bool
+    inactivity_timed_out: bool
     elapsed_seconds: float
     process_group: int | None
     cleanup_attempted: bool
@@ -86,6 +87,33 @@ def _signal_groups(process_groups: Iterable[int], sig: signal.Signals) -> None:
             continue
 
 
+def _cleanup_timed_out_process(
+    proc: subprocess.Popen[Any],
+    *,
+    term_grace_seconds: float,
+) -> tuple[int | None, list[int], str, str]:
+    process_groups = _process_groups(proc.pid)
+    root_group = _safe_process_group(proc.pid)
+    if root_group is not None:
+        process_groups = sorted({*process_groups, root_group}, reverse=True)
+
+    _signal_groups(process_groups, signal.SIGTERM)
+    cleanup_signal = "SIGTERM"
+    cleanup_result = "terminated_after_sigterm"
+    try:
+        proc.wait(timeout=term_grace_seconds)
+    except subprocess.TimeoutExpired:
+        # Re-scan before escalation: descendants can fork their own
+        # process group after the first tree snapshot.
+        escalation_groups = set(process_groups)
+        escalation_groups.update(_process_groups(proc.pid))
+        _signal_groups(sorted(escalation_groups, reverse=True), signal.SIGKILL)
+        cleanup_signal = "SIGKILL"
+        cleanup_result = "killed_after_sigterm_timeout"
+        proc.wait()
+    return root_group, process_groups, cleanup_signal, cleanup_result
+
+
 def run_bounded_process(
     command: Sequence[str],
     *,
@@ -93,6 +121,9 @@ def run_bounded_process(
     env: Mapping[str, str] | None = None,
     timeout_seconds: float,
     term_grace_seconds: float = 10.0,
+    inactivity_timeout_seconds: float | None = None,
+    progress_path: Path | str | None = None,
+    poll_interval_seconds: float = 1.0,
     stdin: Any = None,
     input_data: str | bytes | None = None,
     stdout: Any = None,
@@ -109,6 +140,12 @@ def run_bounded_process(
         raise ValueError("timeout_seconds must be positive")
     if term_grace_seconds < 0:
         raise ValueError("term_grace_seconds must be non-negative")
+    if inactivity_timeout_seconds is not None and inactivity_timeout_seconds <= 0:
+        raise ValueError("inactivity_timeout_seconds must be positive when set")
+    if poll_interval_seconds <= 0:
+        raise ValueError("poll_interval_seconds must be positive")
+    if inactivity_timeout_seconds is not None and progress_path is None:
+        raise ValueError("progress_path is required with inactivity_timeout_seconds")
     if stdin is not None and input_data is not None:
         raise ValueError("stdin and input_data cannot both be set")
 
@@ -128,17 +165,51 @@ def run_bounded_process(
         text=text,
         start_new_session=True,
     )
+    observed_progress = _progress_signature(progress_path)
+    last_progress_at = time.monotonic()
     try:
-        if input_data is None:
-            returncode = proc.wait(timeout=timeout_seconds)
-        else:
-            proc.communicate(input=input_data, timeout=timeout_seconds)
-            returncode = proc.returncode
+        if input_data is not None:
+            proc.stdin.write(input_data)
+            proc.stdin.close()
+        while True:
+            returncode = proc.poll()
+            if returncode is not None:
+                break
+            elapsed_seconds = time.monotonic() - started
+            if elapsed_seconds >= timeout_seconds:
+                raise subprocess.TimeoutExpired(argv, timeout_seconds)
+            if inactivity_timeout_seconds is not None:
+                current_progress = _progress_signature(progress_path)
+                if current_progress != observed_progress:
+                    observed_progress = current_progress
+                    last_progress_at = time.monotonic()
+                elif time.monotonic() - last_progress_at >= inactivity_timeout_seconds:
+                    root_group, process_groups, cleanup_signal, cleanup_result = (
+                        _cleanup_timed_out_process(
+                            proc,
+                            term_grace_seconds=term_grace_seconds,
+                        )
+                    )
+                    return BoundedProcessResult(
+                        command=argv,
+                        pid=proc.pid,
+                        returncode=124,
+                        timed_out=True,
+                        inactivity_timed_out=True,
+                        elapsed_seconds=round(time.monotonic() - started, 3),
+                        process_group=root_group,
+                        cleanup_attempted=True,
+                        cleanup_process_groups=process_groups,
+                        cleanup_signal=cleanup_signal,
+                        cleanup_result=cleanup_result,
+                    )
+            time.sleep(min(poll_interval_seconds, max(0.01, timeout_seconds - elapsed_seconds)))
         return BoundedProcessResult(
             command=argv,
             pid=proc.pid,
             returncode=returncode,
             timed_out=False,
+            inactivity_timed_out=False,
             elapsed_seconds=round(time.monotonic() - started, 3),
             process_group=_safe_process_group(proc.pid),
             cleanup_attempted=False,
@@ -147,31 +218,19 @@ def run_bounded_process(
             cleanup_result=None,
         )
     except subprocess.TimeoutExpired:
-        process_groups = _process_groups(proc.pid)
-        root_group = _safe_process_group(proc.pid)
-        if root_group is not None:
-            process_groups = sorted({*process_groups, root_group}, reverse=True)
-
-        _signal_groups(process_groups, signal.SIGTERM)
-        cleanup_signal = "SIGTERM"
-        cleanup_result = "terminated_after_sigterm"
-        try:
-            proc.wait(timeout=term_grace_seconds)
-        except subprocess.TimeoutExpired:
-            # Re-scan before escalation: descendants can fork their own
-            # process group after the first tree snapshot.
-            escalation_groups = set(process_groups)
-            escalation_groups.update(_process_groups(proc.pid))
-            _signal_groups(sorted(escalation_groups, reverse=True), signal.SIGKILL)
-            cleanup_signal = "SIGKILL"
-            cleanup_result = "killed_after_sigterm_timeout"
-            proc.wait()
+        root_group, process_groups, cleanup_signal, cleanup_result = (
+            _cleanup_timed_out_process(
+                proc,
+                term_grace_seconds=term_grace_seconds,
+            )
+        )
 
         return BoundedProcessResult(
             command=argv,
             pid=proc.pid,
             returncode=124,
             timed_out=True,
+            inactivity_timed_out=False,
             elapsed_seconds=round(time.monotonic() - started, 3),
             process_group=root_group,
             cleanup_attempted=True,
@@ -186,3 +245,13 @@ def _safe_process_group(pid: int) -> int | None:
         return os.getpgid(pid)
     except ProcessLookupError:
         return None
+
+
+def _progress_signature(path: Path | str | None) -> tuple[int, int] | None:
+    if path is None:
+        return None
+    try:
+        stat = Path(path).stat()
+    except FileNotFoundError:
+        return None
+    return stat.st_mtime_ns, stat.st_size

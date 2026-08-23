@@ -6,16 +6,23 @@ import os
 import stat
 import subprocess
 import sys
+import tarfile
 import time
+import threading
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 import pytest
 
 from route_hacker.runtime.codeql_repair import RepairValidationError, stable_json_sha256
+import scripts.run_codeql_llm_repair_dispatch as dispatcher
 from scripts.run_codeql_llm_repair_dispatch import (
     build_repair_prompt,
     command_for_claude,
     extract_structured_output,
+    invoke_openai_bridge_model,
+    materialize_isolated_attempt_receipts,
+    normalize_openai_base_url,
     repair_json_schema,
     validate_prior_completion_binding,
 )
@@ -27,8 +34,14 @@ LAUNCHER = ROOT / "scripts" / "launch_deepseek_claude.sh"
 
 
 def source_receipt(source: Path, case_id: str, revision: str) -> dict:
-    archive = source.parent / "source.tar.gz"
-    archive.write_bytes(b"exact-source")
+    receipt_name = case_id.replace(":", "_")
+    archive = source.parent / f"{receipt_name}.tar.gz"
+    archive_input = source.parent / f"{receipt_name}-archive-input"
+    archive_root = archive_input / "repo-revision"
+    archive_root.mkdir(parents=True)
+    (archive_root / "README.md").write_text("exact-source\n", encoding="utf-8")
+    with tarfile.open(archive, "w:gz") as handle:
+        handle.add(archive_root, arcname=archive_root.name)
     return {
         "case_id": case_id,
         "source_dir": str(source),
@@ -91,9 +104,153 @@ def repair_packet() -> dict:
             "approved_java_homes": ["/opt/java-17"],
             "approved_maven_homes": ["/opt/maven-3.9"],
             "safe_build_args": ["-Denforcer.skip=true"],
+            "removable_existing_build_args": ["-Dmaven.test.skip=true"],
             "safe_maven_heap_options": ["-Xmx4g"],
+            "allow_prepend_maven_clean": False,
         }
     }
+
+
+def gradle_failed_receipt(source: Path, case_id: str, revision: str) -> dict:
+    receipt = failed_receipt(source, case_id, revision)
+    (source / "gradle" / "wrapper").mkdir(parents=True)
+    (source / "gradle" / "wrapper" / "gradle-wrapper.properties").write_text(
+        "distributionUrl=https\\://services.gradle.org/distributions/gradle-7.3.3-bin.zip\n",
+        encoding="utf-8",
+    )
+    receipt["planned_codeql_database_command"][-1] = "bash ./gradlew build -x test"
+    return receipt
+
+
+def test_verified_gradle_cache_matches_wrapper_distribution(tmp_path: Path) -> None:
+    source = tmp_path / "source"
+    source.mkdir()
+    receipt = gradle_failed_receipt(source, "v8:gradle-cache", "abc123")
+    cache = tmp_path / "gradle-cache"
+    archive = (
+        cache
+        / "wrapper"
+        / "dists"
+        / "gradle-7.3.3-bin"
+        / "wrapper-hash"
+        / "gradle-7.3.3-bin.zip"
+    )
+    archive.parent.mkdir(parents=True)
+    archive.write_bytes(b"trusted-gradle-distribution")
+
+    selected, evidence = dispatcher.verified_gradle_user_home_for_receipt(
+        failed_receipt=receipt,
+        verified_gradle_user_home=cache,
+    )
+
+    assert selected == cache.resolve()
+    assert evidence == {
+        "source": str(cache.resolve()),
+        "distribution_url": "https://services.gradle.org/distributions/gradle-7.3.3-bin.zip",
+        "archive_name": "gradle-7.3.3-bin.zip",
+        "archive_path": str(archive.resolve()),
+        "archive_sha256": hashlib.sha256(archive.read_bytes()).hexdigest(),
+    }
+
+
+def test_verified_gradle_cache_rejects_missing_wrapper_distribution(tmp_path: Path) -> None:
+    source = tmp_path / "source"
+    source.mkdir()
+    receipt = gradle_failed_receipt(source, "v8:gradle-cache-missing", "abc123")
+    cache = tmp_path / "gradle-cache"
+    cache.mkdir()
+
+    with pytest.raises(
+        RepairValidationError,
+        match="must contain exactly one wrapper distribution archive",
+    ):
+        dispatcher.verified_gradle_user_home_for_receipt(
+            failed_receipt=receipt,
+            verified_gradle_user_home=cache,
+        )
+
+
+def test_verified_gradle_cache_is_ignored_for_non_gradle_build(tmp_path: Path) -> None:
+    source = tmp_path / "source"
+    source.mkdir()
+    receipt = failed_receipt(source, "v8:maven-cache", "abc123")
+    cache = tmp_path / "gradle-cache"
+    cache.mkdir()
+
+    assert dispatcher.verified_gradle_user_home_for_receipt(
+        failed_receipt=receipt,
+        verified_gradle_user_home=cache,
+    ) == (None, None)
+
+
+def test_controller_forwards_verified_gradle_cache_to_isolated_attempt(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = tmp_path / "source"
+    source.mkdir()
+    case_id = "v8:gradle-cache-forwarding"
+    source_row = source_receipt(source, case_id, "abc123")
+    failed = gradle_failed_receipt(source, case_id, "abc123")
+    prior = deterministic_completion(failed, source_row)
+    cache = tmp_path / "gradle-cache"
+    archive = (
+        cache
+        / "wrapper"
+        / "dists"
+        / "gradle-7.3.3-bin"
+        / "wrapper-hash"
+        / "gradle-7.3.3-bin.zip"
+    )
+    archive.parent.mkdir(parents=True)
+    archive.write_bytes(b"trusted-gradle-distribution")
+    observed: dict[str, object] = {}
+
+    def fake_invoke_model(**kwargs: object) -> dict:
+        decision = {
+            "actions": [{"kind": "retry_same_command"}],
+            "rationale": "Use the verified local wrapper distribution.",
+        }
+        return {
+            "command": ["fake-model"],
+            "bounded_process": {"returncode": 0, "timed_out": False},
+            "output_path": str(kwargs["output_path"]),
+            "raw_text": json.dumps({"type": "result", "structured_output": decision}),
+        }
+
+    def fake_execute_repair_attempt(
+        receipt: dict,
+        decision: dict,
+        **kwargs: object,
+    ) -> dict:
+        observed.update(kwargs)
+        return {"status": "codeql_db_repaired", "database_valid": True}
+
+    monkeypatch.setattr(dispatcher, "invoke_model", fake_invoke_model)
+    monkeypatch.setattr(dispatcher, "execute_repair_attempt", fake_execute_repair_attempt)
+
+    result = dispatcher.run_case(
+        failed_receipt=failed,
+        source_receipt=source_row,
+        prior_completion=prior,
+        output_dir=tmp_path / "output",
+        attempt_number=1,
+        claude_command="fake-model",
+        openai_bridge_url=None,
+        openai_model="fake-model",
+        model_timeout_seconds=10,
+        codeql_timeout_seconds=10,
+        codeql_inactivity_timeout_seconds=None,
+        approved_java_homes=[],
+        approved_maven_homes=[],
+        verified_gradle_user_home=cache,
+    )
+
+    assert result["status"] == "codeql_db_repaired"
+    assert observed["verified_gradle_user_home_source"] == cache.resolve()
+    assert result["verified_gradle_cache"]["archive_sha256"] == hashlib.sha256(
+        archive.read_bytes()
+    ).hexdigest()
 
 
 def test_llm_prompt_is_redacted_and_command_has_tools_disabled(tmp_path: Path) -> None:
@@ -107,7 +264,7 @@ def test_llm_prompt_is_redacted_and_command_has_tools_disabled(tmp_path: Path) -
     )
 
     assert "do-not-leak" not in prompt
-    assert "retry_same_command is a standalone action" in prompt
+    assert "Unless you select set_java_home, execution inherits only the approved" in prompt
     command = command_for_claude("/opt/claude", repair_packet())
     assert "--tools" in command
     assert command[command.index("--tools") + 1] == ""
@@ -132,10 +289,39 @@ def test_repair_json_schema_encodes_per_packet_action_values() -> None:
     args_choice = next(
         choice for choice in choices if choice["properties"]["kind"] == {"const": "append_build_args"}
     )
-    assert java_choice["properties"]["java_home"]["enum"] == ["/opt/java-17"]
-    assert maven_choice["properties"]["maven_home"]["enum"] == ["/opt/maven-3.9"]
+    removal_choice = next(
+        choice
+        for choice in choices
+        if choice["properties"]["kind"] == {"const": "remove_existing_build_args"}
+    )
+    assert java_choice["properties"]["value"]["enum"] == ["/opt/java-17"]
+    assert maven_choice["properties"]["value"]["enum"] == ["/opt/maven-3.9"]
     assert args_choice["properties"]["args"]["minItems"] == 1
     assert args_choice["properties"]["args"]["items"]["enum"] == ["-Denforcer.skip=true"]
+    assert removal_choice["properties"]["args"]["items"]["enum"] == [
+        "-Dmaven.test.skip=true"
+    ]
+
+
+def test_repair_json_schema_offers_clean_only_for_direct_maven_build() -> None:
+    packet = repair_packet()
+    packet["failed_attempt"] = {
+        "planned_codeql_database_command": [
+            "codeql",
+            "database",
+            "create",
+            "/tmp/db",
+            "--source-root=/tmp/source",
+            "--command",
+            "mvn -DskipTests package",
+        ]
+    }
+    packet["allowed_action_schema"]["allow_prepend_maven_clean"] = True
+
+    schema = json.loads(repair_json_schema(packet))
+    choices = schema["properties"]["actions"]["oneOf"][2]["items"]["oneOf"]
+
+    assert any(choice["properties"]["kind"] == {"const": "prepend_maven_clean"} for choice in choices)
 
 
 def test_launcher_suppresses_profile_settings_mutation() -> None:
@@ -164,6 +350,113 @@ def test_extract_structured_output_uses_terminal_result_only() -> None:
     assert extract_structured_output(stream)["actions"] == [{"kind": "no_safe_action"}]
 
 
+def test_openai_bridge_transport_wraps_validated_structured_output(tmp_path: Path) -> None:
+    class BridgeHandler(BaseHTTPRequestHandler):
+        request_payload: dict | None = None
+        request_path: str | None = None
+
+        def log_message(self, _format: str, *args: object) -> None:
+            return
+
+        def do_POST(self) -> None:
+            BridgeHandler.request_path = self.path
+            BridgeHandler.request_payload = json.loads(
+                self.rfile.read(int(self.headers["Content-Length"])).decode("utf-8")
+            )
+            payload = {
+                "choices": [
+                    {
+                        "message": {
+                            "content": json.dumps(
+                                {
+                                    "actions": [{"kind": "no_safe_action"}],
+                                    "rationale": "No approved action is justified.",
+                                }
+                            )
+                        }
+                    }
+                ],
+                "usage": {"total_tokens": 7},
+            }
+            body = json.dumps(payload).encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+    server = ThreadingHTTPServer(("127.0.0.1", 0), BridgeHandler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        result = invoke_openai_bridge_model(
+            bridge_url=f"http://127.0.0.1:{server.server_port}",
+            model="DeepSeek-V4-Pro",
+            prompt="Return strict JSON.",
+            output_path=tmp_path / "model-output.txt",
+            timeout_seconds=5,
+            case_id="case::bridge",
+        )
+    finally:
+        server.shutdown()
+        thread.join(timeout=5)
+        server.server_close()
+
+    assert result["bounded_process"]["returncode"] == 0
+    assert result["bridge"]["model"] == "DeepSeek-V4-Pro"
+    assert BridgeHandler.request_path == "/v1/chat/completions"
+    assert BridgeHandler.request_payload is not None
+    assert BridgeHandler.request_payload["response_format"] == {"type": "json_object"}
+    assert extract_structured_output(result["raw_text"]) == {
+        "actions": [{"kind": "no_safe_action"}],
+        "rationale": "No approved action is justified.",
+    }
+
+
+def test_openai_bridge_connection_reset_becomes_a_failed_model_receipt(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def connection_reset(*_args: object, **_kwargs: object) -> object:
+        raise ConnectionResetError(104, "Connection reset by peer")
+
+    monkeypatch.setattr(dispatcher.urllib.request, "urlopen", connection_reset)
+
+    result = invoke_openai_bridge_model(
+        bridge_url="http://127.0.0.1:18889",
+        model="DeepSeek-V4-Pro",
+        prompt="Return strict JSON.",
+        output_path=tmp_path / "model-output.txt",
+        timeout_seconds=5,
+        case_id="case::connection-reset",
+    )
+
+    assert result["bounded_process"]["returncode"] == 1
+    assert result["bounded_process"]["timed_out"] is False
+    assert result["bounded_process"]["transport_error"].startswith(
+        "ConnectionResetError:"
+    )
+    assert "ConnectionResetError" in result["raw_text"]
+
+
+@pytest.mark.parametrize(
+    ("bridge_url", "expected"),
+    [
+        ("http://127.0.0.1:18889", "http://127.0.0.1:18889/v1"),
+        ("http://127.0.0.1:18889/", "http://127.0.0.1:18889/v1"),
+        ("http://127.0.0.1:18889/v1", "http://127.0.0.1:18889/v1"),
+        ("http://127.0.0.1:18889/v1/", "http://127.0.0.1:18889/v1"),
+    ],
+)
+def test_normalize_openai_base_url(bridge_url: str, expected: str) -> None:
+    assert normalize_openai_base_url(bridge_url) == expected
+
+
+def test_normalize_openai_base_url_rejects_blank_value() -> None:
+    with pytest.raises(ValueError, match="must not be empty"):
+        normalize_openai_base_url("   ")
+
+
 def test_prior_completion_binding_rejects_receipt_mismatch(tmp_path: Path) -> None:
     source = tmp_path / "source"
     source.mkdir()
@@ -177,6 +470,70 @@ def test_prior_completion_binding_rejects_receipt_mismatch(tmp_path: Path) -> No
             failed_receipt=failed,
             source_receipt=receipt,
             completion=completion,
+        )
+
+
+def test_exact_source_matches_rehydrated_build_to_same_revision_archive_receipt(
+    tmp_path: Path,
+) -> None:
+    original_source = tmp_path / "original-source"
+    original_source.mkdir()
+    rehydrated_source = tmp_path / "rehydrated-source"
+    rehydrated_source.mkdir()
+    case_id = "v8:rehydrated-source"
+    receipt = source_receipt(original_source, case_id, "abc123")
+    failed = failed_receipt(rehydrated_source, case_id, "abc123")
+
+    assert dispatcher.exact_source_matches(failed, [receipt]) == [receipt]
+
+
+def test_materialize_isolated_attempt_receipts_uses_archive_and_rewrites_source_root(
+    tmp_path: Path,
+) -> None:
+    source = tmp_path / "source"
+    source.mkdir()
+    case_id = "v8:isolated-source"
+    receipt = source_receipt(source, case_id, "abc123")
+    failed = failed_receipt(source, case_id, "abc123")
+    destination = tmp_path / "attempt-source"
+
+    execution_failed, execution_source, evidence = materialize_isolated_attempt_receipts(
+        failed_receipt=failed,
+        source_receipt=receipt,
+        destination=destination,
+    )
+
+    assert (destination / "README.md").read_text(encoding="utf-8") == "exact-source\n"
+    assert execution_failed["source_dir"] == str(destination.resolve())
+    assert execution_source["source_dir"] == str(destination.resolve())
+    command = execution_failed["planned_codeql_database_command"]
+    assert f"--source-root={destination.resolve()}" in command
+    assert evidence["mode"] == "archive_verified_isolated_copy"
+
+
+def test_materialize_isolated_attempt_receipts_rejects_archive_link_escape(
+    tmp_path: Path,
+) -> None:
+    source = tmp_path / "source"
+    source.mkdir()
+    case_id = "v8:unsafe-archive-link"
+    receipt = source_receipt(source, case_id, "abc123")
+    archive = Path(receipt["archive_result"]["archive_path"])
+    archive_input = tmp_path / "unsafe-archive-input"
+    archive_root = archive_input / "repo-revision"
+    archive_root.mkdir(parents=True)
+    (archive_root / "inside.txt").write_text("safe\n", encoding="utf-8")
+    (archive_root / "escape").symlink_to("../../outside")
+    with tarfile.open(archive, "w:gz") as handle:
+        handle.add(archive_root, arcname=archive_root.name, recursive=True)
+    receipt["archive_result"]["archive_sha256"] = hashlib.sha256(archive.read_bytes()).hexdigest()
+    failed = failed_receipt(source, case_id, "abc123")
+
+    with pytest.raises(RepairValidationError, match="unsafe link target"):
+        materialize_isolated_attempt_receipts(
+            failed_receipt=failed,
+            source_receipt=receipt,
+            destination=tmp_path / "attempt-source",
         )
 
 
@@ -283,6 +640,553 @@ def test_controller_uses_its_adjacent_runtime_without_pythonpath(tmp_path: Path)
     assert result.returncode == 0, result.stderr
     row = json.loads((output / "w1_llm_repair_receipts.jsonl").read_text(encoding="utf-8"))
     assert row["status"] == "no_safe_llm_repair"
+
+
+def test_controller_corrects_one_locally_rejected_model_proposal(tmp_path: Path) -> None:
+    source = tmp_path / "source"
+    source.mkdir()
+    case_id = "v8:proposal-correction"
+    source_row = source_receipt(source, case_id, "abc123")
+    failed = failed_receipt(source, case_id, "abc123")
+    prior = deterministic_completion(failed, source_row)
+    failed_path = tmp_path / "failed.jsonl"
+    source_path = tmp_path / "source.jsonl"
+    prior_path = tmp_path / "prior.jsonl"
+    output = tmp_path / "output"
+    counter = tmp_path / "model-call-count.txt"
+    model = tmp_path / "correcting-fake-claude"
+    model.write_text(
+        "#!" + sys.executable + "\n"
+        "import json\n"
+        "import pathlib\n"
+        "import sys\n"
+        "sys.stdin.read()\n"
+        f"counter = pathlib.Path({str(counter)!r})\n"
+        "call_count = int(counter.read_text()) + 1 if counter.exists() else 1\n"
+        "counter.write_text(str(call_count))\n"
+        "actions = ([{'kind':'append_build_args','value':'-Dunapproved=true'}]\n"
+        "           if call_count == 1 else [{'kind':'no_safe_action'}])\n"
+        "print(json.dumps({'type':'result','structured_output':"
+        "{'actions':actions,'rationale':'bounded correction'}}))\n",
+        encoding="utf-8",
+    )
+    model.chmod(model.stat().st_mode | stat.S_IXUSR)
+    write_jsonl(failed_path, [failed])
+    write_jsonl(source_path, [source_row])
+    write_jsonl(prior_path, [prior])
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(SCRIPT),
+            "--failed-receipts",
+            str(failed_path),
+            "--source-receipts",
+            str(source_path),
+            "--prior-ledger",
+            str(prior_path),
+            "--output-dir",
+            str(output),
+            "--expected-eligible-case-count",
+            "1",
+            "--claude-command",
+            str(model),
+            "--model-timeout-seconds",
+            "10",
+        ],
+        cwd=ROOT,
+        env={"PATH": os.environ["PATH"]},
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr
+    row = json.loads((output / "w1_llm_repair_receipts.jsonl").read_text(encoding="utf-8"))
+    assert counter.read_text() == "2"
+    assert row["status"] == "no_safe_llm_repair"
+    assert len(row["model_invocations"]) == 2
+    assert row["proposal_validation_errors"] == [
+        "append_build_args contains an unapproved argument"
+    ]
+
+
+def test_controller_replans_once_from_fresh_failed_build_evidence(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = tmp_path / "source"
+    source.mkdir()
+    case_id = "v8:build-feedback"
+    source_row = source_receipt(source, case_id, "abc123")
+    failed = failed_receipt(source, case_id, "abc123")
+    prior = deterministic_completion(failed, source_row)
+    prompts: list[str] = []
+    executed_decisions: list[dict] = []
+    execution_kwargs: list[dict[str, object]] = []
+
+    def fake_invoke_model(**kwargs: object) -> dict:
+        prompts.append(str(kwargs["prompt"]))
+        decision = (
+            {
+                "actions": [{"kind": "append_build_args", "args": ["-Dcheckstyle.skip=true"]}],
+                "rationale": "Skip the failed quality gate.",
+            }
+            if len(prompts) == 1
+            else {
+                "actions": [{"kind": "append_build_args", "args": ["-Denforcer.skip=true"]}],
+                "rationale": "Use a distinct bounded retry action.",
+            }
+        )
+        return {
+            "command": ["fake-model"],
+            "bounded_process": {"returncode": 0, "timed_out": False},
+            "output_path": str(kwargs["output_path"]),
+            "raw_text": json.dumps({"type": "result", "structured_output": decision}),
+        }
+
+    def fake_execute_repair_attempt(
+        receipt: dict,
+        decision: dict,
+        **kwargs: object,
+    ) -> dict:
+        executed_decisions.append(decision)
+        execution_kwargs.append(kwargs)
+        packet = dispatcher.build_repair_packet(
+            receipt,
+            approved_java_homes=[],
+            approved_maven_homes=[],
+            source_receipt=source_row,
+        )
+        packet["failed_attempt"] = {
+            **packet["failed_attempt"],
+            "failure_category": "maven_quality_gate",
+            "log": {
+                "path": "fresh-codeql-repair.log",
+                "sha256": "fresh-log",
+                "available": True,
+                "excerpt": "BUILD FAILURE: fresh checkstyle network failure",
+            },
+        }
+        packet["packet_sha256"] = stable_json_sha256(
+            {key: value for key, value in packet.items() if key != "packet_sha256"}
+        )
+        return {
+            "status": (
+                "repair_attempt_failed"
+                if len(executed_decisions) == 1
+                else "codeql_db_repaired"
+            ),
+            "packet": packet,
+            "database_valid": len(executed_decisions) == 2,
+        }
+
+    monkeypatch.setattr(dispatcher, "invoke_model", fake_invoke_model)
+    monkeypatch.setattr(dispatcher, "execute_repair_attempt", fake_execute_repair_attempt)
+
+    result = dispatcher.run_case(
+        failed_receipt=failed,
+        source_receipt=source_row,
+        prior_completion=prior,
+        output_dir=tmp_path / "output",
+        attempt_number=1,
+        claude_command="fake-model",
+        openai_bridge_url=None,
+        openai_model="fake-model",
+        model_timeout_seconds=10,
+        codeql_timeout_seconds=10,
+        codeql_inactivity_timeout_seconds=None,
+        approved_java_homes=[],
+        approved_maven_homes=[],
+        dry_run=False,
+    )
+
+    assert result["status"] == "codeql_db_repaired"
+    assert result["build_feedback_replan_count"] == 1
+    assert len(result["model_invocations"]) == 2
+    assert len(result["repair_attempts"]) == 2
+    assert len(executed_decisions) == 2
+    assert all(kwargs["isolate_build_home"] is True for kwargs in execution_kwargs)
+    assert all(
+        kwargs["historical_toolchain_receipt"] is failed for kwargs in execution_kwargs
+    )
+    assert executed_decisions[0] != executed_decisions[1]
+    assert executed_decisions[1]["actions"] == [
+        {"kind": "append_build_args", "args": ["-Dcheckstyle.skip=true", "-Denforcer.skip=true"]}
+    ]
+    assert "fresh checkstyle network failure" in prompts[1]
+    assert "previous cumulative decision remains in effect" in prompts[1]
+
+
+def test_controller_allows_multiple_bounded_feedback_replans(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = tmp_path / "source"
+    source.mkdir()
+    case_id = "v8:multiple-build-feedback"
+    source_row = source_receipt(source, case_id, "abc123")
+    failed = failed_receipt(source, case_id, "abc123")
+    prior = deterministic_completion(failed, source_row)
+    executed_decisions: list[dict] = []
+    invocation_count = 0
+
+    def fake_invoke_model(**kwargs: object) -> dict:
+        nonlocal invocation_count
+        invocation_count += 1
+        extra_argument = (
+            "-Dcheckstyle.skip=true"
+            if invocation_count == 1
+            else "-Denforcer.skip=true"
+            if invocation_count == 2
+            else "-Drat.skip=true"
+        )
+        decision = {
+            "actions": [{"kind": "append_build_args", "args": [extra_argument]}],
+            "rationale": "Use a distinct bounded action from fresh build evidence.",
+        }
+        return {
+            "command": ["fake-model"],
+            "bounded_process": {"returncode": 0, "timed_out": False},
+            "output_path": str(kwargs["output_path"]),
+            "raw_text": json.dumps({"type": "result", "structured_output": decision}),
+        }
+
+    def fake_execute_repair_attempt(
+        receipt: dict,
+        decision: dict,
+        **_kwargs: object,
+    ) -> dict:
+        executed_decisions.append(decision)
+        packet = dispatcher.build_repair_packet(
+            receipt,
+            approved_java_homes=[],
+            approved_maven_homes=[],
+            source_receipt=source_row,
+        )
+        packet["failed_attempt"] = {
+            **packet["failed_attempt"],
+            "failure_category": "maven_quality_gate",
+            "log": {
+                "path": f"fresh-codeql-repair-{len(executed_decisions)}.log",
+                "sha256": f"fresh-log-{len(executed_decisions)}",
+                "available": True,
+                "excerpt": f"BUILD FAILURE {len(executed_decisions)}",
+            },
+        }
+        packet["packet_sha256"] = stable_json_sha256(
+            {key: value for key, value in packet.items() if key != "packet_sha256"}
+        )
+        return {
+            "status": (
+                "codeql_db_repaired"
+                if len(executed_decisions) == 3
+                else "repair_attempt_failed"
+            ),
+            "packet": packet,
+            "database_valid": len(executed_decisions) == 3,
+        }
+
+    monkeypatch.setattr(dispatcher, "invoke_model", fake_invoke_model)
+    monkeypatch.setattr(dispatcher, "execute_repair_attempt", fake_execute_repair_attempt)
+
+    result = dispatcher.run_case(
+        failed_receipt=failed,
+        source_receipt=source_row,
+        prior_completion=prior,
+        output_dir=tmp_path / "output",
+        attempt_number=1,
+        claude_command="fake-model",
+        openai_bridge_url=None,
+        openai_model="fake-model",
+        model_timeout_seconds=10,
+        codeql_timeout_seconds=10,
+        codeql_inactivity_timeout_seconds=None,
+        approved_java_homes=[],
+        approved_maven_homes=[],
+        max_build_feedback_replan_attempts=2,
+        dry_run=False,
+    )
+
+    assert result["status"] == "codeql_db_repaired"
+    assert result["build_feedback_replan_count"] == 2
+    assert invocation_count == 3
+    assert len(result["repair_attempts"]) == 3
+    assert executed_decisions[-1]["actions"] == [
+        {
+            "kind": "append_build_args",
+            "args": [
+                "-Dcheckstyle.skip=true",
+                "-Denforcer.skip=true",
+                "-Drat.skip=true",
+            ],
+        }
+    ]
+
+
+def test_controller_records_feedback_no_safe_action_as_terminal_refusal(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = tmp_path / "source"
+    source.mkdir()
+    case_id = "v8:feedback-no-safe-action"
+    source_row = source_receipt(source, case_id, "abc123")
+    failed = failed_receipt(source, case_id, "abc123")
+    prior = deterministic_completion(failed, source_row)
+    executed_decisions: list[dict] = []
+    invocation_count = 0
+
+    def fake_invoke_model(**kwargs: object) -> dict:
+        nonlocal invocation_count
+        invocation_count += 1
+        decision = (
+            {
+                "actions": [{"kind": "append_build_args", "args": ["-Dcheckstyle.skip=true"]}],
+                "rationale": "Skip the failed quality gate.",
+            }
+            if invocation_count == 1
+            else {
+                "actions": [{"kind": "no_safe_action"}],
+                "rationale": "No further approved repair action is justified.",
+            }
+        )
+        return {
+            "command": ["fake-model"],
+            "bounded_process": {"returncode": 0, "timed_out": False},
+            "output_path": str(kwargs["output_path"]),
+            "raw_text": json.dumps({"type": "result", "structured_output": decision}),
+        }
+
+    def fake_execute_repair_attempt(
+        receipt: dict,
+        decision: dict,
+        **_kwargs: object,
+    ) -> dict:
+        executed_decisions.append(decision)
+        packet = dispatcher.build_repair_packet(
+            receipt,
+            approved_java_homes=[],
+            approved_maven_homes=[],
+            source_receipt=source_row,
+        )
+        return {"status": "repair_attempt_failed", "packet": packet}
+
+    monkeypatch.setattr(dispatcher, "invoke_model", fake_invoke_model)
+    monkeypatch.setattr(dispatcher, "execute_repair_attempt", fake_execute_repair_attempt)
+
+    result = dispatcher.run_case(
+        failed_receipt=failed,
+        source_receipt=source_row,
+        prior_completion=prior,
+        output_dir=tmp_path / "output",
+        attempt_number=1,
+        claude_command="fake-model",
+        openai_bridge_url=None,
+        openai_model="fake-model",
+        model_timeout_seconds=10,
+        codeql_timeout_seconds=10,
+        codeql_inactivity_timeout_seconds=None,
+        approved_java_homes=[],
+        approved_maven_homes=[],
+        dry_run=False,
+    )
+
+    assert result["status"] == "no_safe_llm_repair"
+    assert result["reason"] == "feedback_no_safe_action_after_build_failure"
+    assert result["build_feedback_replan_count"] == 1
+    assert len(result["model_invocations"]) == 2
+    assert len(result["repair_attempts"]) == 2
+    assert len(executed_decisions) == 1
+    assert result["validated_decision"]["actions"] == [{"kind": "no_safe_action"}]
+    assert result["previous_cumulative_decision"] == executed_decisions[0]
+    assert result["repair_attempts"][1]["feedback_terminal_refusal"] is True
+
+
+def test_controller_retries_one_transport_failure_before_validating_decision(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = tmp_path / "source"
+    source.mkdir()
+    case_id = "v8:transport-retry"
+    source_row = source_receipt(source, case_id, "abc123")
+    failed = failed_receipt(source, case_id, "abc123")
+    prior = deterministic_completion(failed, source_row)
+    invocation_count = 0
+
+    def fake_invoke_model(**_kwargs: object) -> dict:
+        nonlocal invocation_count
+        invocation_count += 1
+        if invocation_count == 1:
+            return {
+                "command": ["fake-model"],
+                "bounded_process": {
+                    "returncode": 1,
+                    "timed_out": False,
+                    "transport_error": "ConnectionResetError: reset",
+                },
+                "raw_text": '{"type":"result","is_error":true}',
+            }
+        return {
+            "command": ["fake-model"],
+            "bounded_process": {
+                "returncode": 0,
+                "timed_out": False,
+                "transport_error": None,
+            },
+            "raw_text": json.dumps(
+                {
+                    "type": "result",
+                    "structured_output": {
+                        "actions": [{"kind": "no_safe_action"}],
+                        "rationale": "No approved action is justified.",
+                    },
+                }
+            ),
+        }
+
+    monkeypatch.setattr(dispatcher, "invoke_model", fake_invoke_model)
+    result = dispatcher.run_case(
+        failed_receipt=failed,
+        source_receipt=source_row,
+        prior_completion=prior,
+        output_dir=tmp_path / "output",
+        attempt_number=1,
+        claude_command="fake-model",
+        openai_bridge_url=None,
+        openai_model="fake-model",
+        model_timeout_seconds=10,
+        codeql_timeout_seconds=10,
+        codeql_inactivity_timeout_seconds=None,
+        approved_java_homes=[],
+        approved_maven_homes=[],
+        dry_run=False,
+    )
+
+    assert result["status"] == "no_safe_llm_repair"
+    assert invocation_count == 2
+    assert len(result["model_invocations"]) == 2
+    assert result["model_invocations"][0]["bounded_process"]["transport_error"].startswith(
+        "ConnectionResetError:"
+    )
+
+
+def test_controller_does_not_reexecute_a_repeated_build_feedback_decision(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = tmp_path / "source"
+    source.mkdir()
+    case_id = "v8:repeated-build-feedback"
+    source_row = source_receipt(source, case_id, "abc123")
+    failed = failed_receipt(source, case_id, "abc123")
+    prior = deterministic_completion(failed, source_row)
+    executed_decisions: list[dict] = []
+
+    def fake_invoke_model(**kwargs: object) -> dict:
+        decision = {
+            "actions": [{"kind": "retry_same_command"}],
+            "rationale": "Repeat the same bounded retry.",
+        }
+        return {
+            "command": ["fake-model"],
+            "bounded_process": {"returncode": 0, "timed_out": False},
+            "output_path": str(kwargs["output_path"]),
+            "raw_text": json.dumps({"type": "result", "structured_output": decision}),
+        }
+
+    def fake_execute_repair_attempt(
+        receipt: dict,
+        decision: dict,
+        **kwargs: object,
+    ) -> dict:
+        executed_decisions.append(decision)
+        packet = dispatcher.build_repair_packet(
+            receipt,
+            approved_java_homes=[],
+            approved_maven_homes=[],
+            source_receipt=source_row,
+        )
+        return {"status": "repair_attempt_failed", "packet": packet}
+
+    monkeypatch.setattr(dispatcher, "invoke_model", fake_invoke_model)
+    monkeypatch.setattr(dispatcher, "execute_repair_attempt", fake_execute_repair_attempt)
+
+    result = dispatcher.run_case(
+        failed_receipt=failed,
+        source_receipt=source_row,
+        prior_completion=prior,
+        output_dir=tmp_path / "output",
+        attempt_number=1,
+        claude_command="fake-model",
+        openai_bridge_url=None,
+        openai_model="fake-model",
+        model_timeout_seconds=10,
+        codeql_timeout_seconds=10,
+        codeql_inactivity_timeout_seconds=None,
+        approved_java_homes=[],
+        approved_maven_homes=[],
+        dry_run=False,
+    )
+
+    assert result["status"] == "no_safe_llm_repair"
+    assert result["reason"] == "repeated_validated_decision_after_build_failure"
+    assert len(result["model_invocations"]) == 2
+    assert len(executed_decisions) == 1
+    assert len(result["decision_rounds"]) == 1
+
+
+def test_merge_repair_decisions_merges_feedback_build_arguments() -> None:
+    previous = {
+        "actions": [
+            {"kind": "append_build_args", "args": ["-Dcheckstyle.skip=true"]},
+        ],
+        "rationale": "Skip the quality gate.",
+    }
+    incremental = {
+        "actions": [
+            {"kind": "append_build_args", "args": ["-Denforcer.skip=true"]},
+        ],
+        "rationale": "Skip the enforcer.",
+    }
+
+    merged = dispatcher.merge_repair_decisions(
+        previous,
+        incremental,
+        approved_java_homes=[],
+        approved_maven_homes=[],
+    )
+
+    assert merged["actions"] == [
+        {
+            "kind": "append_build_args",
+            "args": ["-Dcheckstyle.skip=true", "-Denforcer.skip=true"],
+        }
+    ]
+
+
+def test_merge_repair_decisions_keeps_previous_plan_for_retry_only_feedback() -> None:
+    previous = {
+        "actions": [
+            {"kind": "set_maven_heap", "value": "-Xmx4g"},
+        ],
+        "rationale": "Increase the approved heap.",
+    }
+    incremental = {
+        "actions": [{"kind": "retry_same_command"}],
+        "rationale": "Retry the same command.",
+    }
+
+    assert (
+        dispatcher.merge_repair_decisions(
+            previous,
+            incremental,
+            approved_java_homes=[],
+            approved_maven_homes=[],
+        )
+        == previous
+    )
 
 
 def test_controller_has_distinct_worker_failure_status() -> None:

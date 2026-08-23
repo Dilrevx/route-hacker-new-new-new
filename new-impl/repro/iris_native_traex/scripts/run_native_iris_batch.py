@@ -6,6 +6,8 @@ import argparse
 import collections
 import hashlib
 import json
+import os
+import shutil
 import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -51,6 +53,26 @@ def input_path_errors(row: dict[str, Any]) -> list[str]:
             errors.append(f"input_paths.{key} is not an existing directory: {path}")
         if kind == "file" and not path.is_file():
             errors.append(f"input_paths.{key} is not an existing file: {path}")
+    return errors
+
+
+def codeql_database_errors(row: dict[str, Any]) -> list[str]:
+    """Reject interrupted CodeQL creation directories before consuming LLM budget."""
+
+    inputs = row.get("input_paths")
+    if not isinstance(inputs, dict) or not inputs.get("codeql_db"):
+        return []
+    database = Path(str(inputs["codeql_db"]))
+    if not database.is_dir():
+        return []
+    errors = []
+    if not (database / "codeql-database.yml").is_file():
+        errors.append(f"input_paths.codeql_db is missing codeql-database.yml: {database}")
+    if not (database / "db-java").is_dir():
+        errors.append(
+            "input_paths.codeql_db is missing db-java; likely an interrupted CodeQL database creation: "
+            f"{database}"
+        )
     return errors
 
 
@@ -139,6 +161,119 @@ def summarize_receipts(path: Path) -> dict[str, Any]:
     }
 
 
+def single_case_command(
+    *,
+    python: str,
+    runner: Path,
+    workspace: Path,
+    run_id: str,
+    bridge_url: str,
+    llm: str,
+    num_threads: int,
+    label_api_batch_size: int,
+    label_func_param_batch_size: int,
+    timeout_seconds: int,
+    output_dir: Path,
+    bridge_ready_attempts: int,
+    bridge_ready_delay_seconds: float,
+    bridge_health_timeout_seconds: float,
+    transport_recovery_attempts: int,
+) -> list[str]:
+    """Build the exact native-IRIS runner command recorded by a batch attempt."""
+
+    return [
+        python,
+        str(runner),
+        "--workspace",
+        str(workspace),
+        "--run-id",
+        run_id,
+        "--bridge-url",
+        bridge_url,
+        "--llm",
+        llm,
+        "--num-threads",
+        str(num_threads),
+        "--label-api-batch-size",
+        str(label_api_batch_size),
+        "--label-func-param-batch-size",
+        str(label_func_param_batch_size),
+        "--timeout-seconds",
+        str(timeout_seconds),
+        "--output-dir",
+        str(output_dir),
+        "--bridge-ready-attempts",
+        str(bridge_ready_attempts),
+        "--bridge-ready-delay-seconds",
+        str(bridge_ready_delay_seconds),
+        "--bridge-health-timeout-seconds",
+        str(bridge_health_timeout_seconds),
+        "--transport-recovery-attempts",
+        str(transport_recovery_attempts),
+    ]
+
+
+def validate_codeql_bundle(
+    *,
+    python: str,
+    materializer: Path,
+    clean_iris_root: Path,
+    codeql_dir: Path,
+) -> dict[str, Any]:
+    """Check the shared official Action bundle once before any case is queued."""
+
+    command = [
+        python,
+        str(materializer),
+        "--validate-codeql-bundle",
+        "--clean-iris-root",
+        str(clean_iris_root),
+        "--codeql-dir",
+        str(codeql_dir),
+    ]
+    try:
+        completed = subprocess.run(command, text=True, capture_output=True, check=False)
+    except OSError as exc:
+        raise RuntimeError(f"cannot start CodeQL bundle preflight: {exc}") from exc
+    if completed.returncode != 0:
+        detail = (completed.stderr or completed.stdout).strip()[-2000:]
+        raise RuntimeError(
+            "CodeQL Action bundle preflight failed before queue creation "
+            f"(exit {completed.returncode}): {detail}"
+        )
+    try:
+        bundle = json.loads(completed.stdout)
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(
+            "CodeQL Action bundle preflight returned non-JSON output: "
+            f"{completed.stdout[-500:]}"
+        ) from exc
+    if not isinstance(bundle, dict):
+        raise RuntimeError("CodeQL Action bundle preflight returned a non-object payload")
+    return bundle
+
+
+def workspace_lock_path(workspace: Path) -> Path:
+    """Return the sibling lock path used to prevent duplicate case execution."""
+
+    return workspace.parent / f".{workspace.name}.lock"
+
+
+def quarantine_workspace(workspace: Path) -> Path:
+    """Preserve an interrupted materialization before a resume retry replaces it."""
+
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    destination = workspace.with_name(f"{workspace.name}.interrupted-{timestamp}")
+    suffix = 1
+    while destination.exists():
+        destination = workspace.with_name(
+            f"{workspace.name}.interrupted-{timestamp}-{suffix}"
+        )
+        suffix += 1
+    shutil.move(str(workspace), str(destination))
+    return destination
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--iris-manifest", type=Path, required=True)
@@ -154,14 +289,56 @@ def main() -> int:
     parser.add_argument("--python", default=sys.executable)
     parser.add_argument("--max-workers", type=int, default=2)
     parser.add_argument("--limit", type=int)
-    parser.add_argument("--resume", action="store_true")
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        help=(
+            "skip verified receipts and retry other cases; an unlocked interrupted "
+            "workspace is preserved under a timestamped sibling name before rematerialization"
+        ),
+    )
     parser.add_argument("--attempt-id", default="attempt-1")
     parser.add_argument("--llm", choices=("gpt-traex-flash", "gpt-traex-pro"), default="gpt-traex-flash")
     parser.add_argument("--num-threads", type=int, default=1)
+    parser.add_argument("--label-api-batch-size", type=int, default=30)
+    parser.add_argument("--label-func-param-batch-size", type=int, default=20)
+    parser.add_argument(
+        "--bridge-max-concurrency",
+        type=int,
+        default=8,
+        help="maximum simultaneous bridge completions; prevents remote requests queueing past client timeouts",
+    )
     parser.add_argument("--timeout-seconds", type=int, default=3600)
+    parser.add_argument("--bridge-ready-attempts", type=int, default=36)
+    parser.add_argument("--bridge-ready-delay-seconds", type=float, default=5.0)
+    parser.add_argument("--bridge-health-timeout-seconds", type=float, default=10.0)
+    parser.add_argument("--transport-recovery-attempts", type=int, default=2)
     args = parser.parse_args()
     if args.max_workers < 1 or args.max_workers > 8:
         raise SystemExit("--max-workers must be in [1, 8]")
+    if args.num_threads < 1:
+        raise SystemExit("--num-threads must be positive")
+    if args.label_api_batch_size < 1:
+        raise SystemExit("--label-api-batch-size must be positive")
+    if args.label_func_param_batch_size < 1:
+        raise SystemExit("--label-func-param-batch-size must be positive")
+    if args.bridge_max_concurrency < 1:
+        raise SystemExit("--bridge-max-concurrency must be positive")
+    if args.bridge_ready_attempts < 1:
+        raise SystemExit("--bridge-ready-attempts must be positive")
+    if args.bridge_ready_delay_seconds < 0:
+        raise SystemExit("--bridge-ready-delay-seconds must not be negative")
+    if args.bridge_health_timeout_seconds <= 0:
+        raise SystemExit("--bridge-health-timeout-seconds must be positive")
+    if args.transport_recovery_attempts < 0:
+        raise SystemExit("--transport-recovery-attempts must not be negative")
+    max_inflight_llm_requests = args.max_workers * args.num_threads
+    if max_inflight_llm_requests > args.bridge_max_concurrency:
+        raise SystemExit(
+            "max-workers * num-threads exceeds bridge capacity "
+            f"({args.max_workers} * {args.num_threads} > {args.bridge_max_concurrency}); "
+            "reduce project or per-project IRIS concurrency to prevent queued requests timing out"
+        )
     if not safe_name(args.attempt_id) or safe_name(args.attempt_id) != args.attempt_id:
         raise SystemExit("--attempt-id may contain only letters, numbers, '.', '_' and '-'")
 
@@ -175,6 +352,12 @@ def main() -> int:
         read_jsonl(manifest_path),
         read_jsonl(allowlist_path),
         args.expected_manifest_count,
+    )
+    bundle = validate_codeql_bundle(
+        python=args.python,
+        materializer=args.materializer.resolve(),
+        clean_iris_root=args.clean_iris_root.resolve(),
+        codeql_dir=args.codeql_dir.resolve(),
     )
     manifest_hash = sha256_path(manifest_path)
     queue_rows = [
@@ -201,6 +384,10 @@ def main() -> int:
         with queue_path.open("w", encoding="utf-8") as handle:
             for row in queue_rows:
                 handle.write(json.dumps(row, sort_keys=True) + "\n")
+    (output_dir / "codeql-bundle-preflight.json").write_text(
+        json.dumps(bundle, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
     completed: set[str] = set()
     if args.resume and ledger.is_file():
         completed = {
@@ -236,7 +423,7 @@ def main() -> int:
             "workspace": str(workspace),
             "output_dir": str(case_dir),
         }
-        path_errors = input_path_errors(row)
+        path_errors = input_path_errors(row) + codeql_database_errors(row)
         if path_errors:
             return {
                 **base_receipt,
@@ -245,71 +432,122 @@ def main() -> int:
                 "error_kind": "input_path_validation",
                 "errors": path_errors,
             }
-        materialize = [
-            args.python, str(args.materializer), "--manifest", str(manifest_path),
-            "--case-id", case_id, "--clean-iris-root", str(args.clean_iris_root),
-            "--codeql-dir", str(args.codeql_dir), "--workspace", str(workspace),
-        ]
+        lock_path = workspace_lock_path(workspace)
+        lock_path.parent.mkdir(parents=True, exist_ok=True)
         try:
-            materialized = subprocess.run(materialize, text=True, capture_output=True, check=False)
-        except OSError as exc:
+            lock_fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except FileExistsError:
             return {
                 **base_receipt,
-                "status": "materialization_failed",
+                "status": "workspace_busy",
                 "retryable": True,
-                "error_kind": "materializer_spawn",
-                "error": str(exc),
+                "error_kind": "workspace_lock_exists",
+                "workspace_lock": str(lock_path),
             }
-        if materialized.returncode != 0:
+        try:
+            with os.fdopen(lock_fd, "w", encoding="utf-8") as handle:
+                handle.write(
+                    json.dumps(
+                        {
+                            "attempt_id": args.attempt_id,
+                            "case_id": case_id,
+                            "identity_key": identity_key,
+                            "pid": os.getpid(),
+                            "started_at": datetime.now(timezone.utc).replace(
+                                microsecond=0
+                            ).isoformat(),
+                        },
+                        sort_keys=True,
+                    )
+                    + "\n"
+                )
+            quarantined_workspace = None
+            if workspace.exists() and args.resume:
+                quarantined_workspace = quarantine_workspace(workspace)
+            materialize = [
+                args.python, str(args.materializer), "--manifest", str(manifest_path),
+                "--case-id", case_id, "--clean-iris-root", str(args.clean_iris_root),
+                "--codeql-dir", str(args.codeql_dir), "--workspace", str(workspace),
+            ]
+            try:
+                materialized = subprocess.run(materialize, text=True, capture_output=True, check=False)
+            except OSError as exc:
+                return {
+                    **base_receipt,
+                    "status": "materialization_failed",
+                    "retryable": True,
+                    "error_kind": "materializer_spawn",
+                    "error": str(exc),
+                }
+            if materialized.returncode != 0:
+                return {
+                    **base_receipt,
+                    "status": "materialization_failed",
+                    "retryable": True,
+                    "error_kind": "materializer_exit",
+                    "runner_returncode": materialized.returncode,
+                    "stderr": materialized.stderr[-2000:],
+                    "stdout": materialized.stdout[-2000:],
+                    "quarantined_workspace": (
+                        str(quarantined_workspace) if quarantined_workspace else None
+                    ),
+                }
+            run = single_case_command(
+                python=args.python,
+                runner=args.single_case_runner,
+                workspace=workspace,
+                run_id=run_id,
+                bridge_url=args.bridge_url,
+                llm=args.llm,
+                num_threads=args.num_threads,
+                label_api_batch_size=args.label_api_batch_size,
+                label_func_param_batch_size=args.label_func_param_batch_size,
+                timeout_seconds=args.timeout_seconds,
+                output_dir=case_dir,
+                bridge_ready_attempts=args.bridge_ready_attempts,
+                bridge_ready_delay_seconds=args.bridge_ready_delay_seconds,
+                bridge_health_timeout_seconds=args.bridge_health_timeout_seconds,
+                transport_recovery_attempts=args.transport_recovery_attempts,
+            )
+            try:
+                executed = subprocess.run(run, text=True, capture_output=True, check=False)
+            except OSError as exc:
+                return {
+                    **base_receipt,
+                    "status": "runner_failed",
+                    "retryable": True,
+                    "error_kind": "runner_spawn",
+                    "error": str(exc),
+                }
+            summary_path = case_dir / "summary.json"
+            try:
+                summary = json.loads(summary_path.read_text()) if summary_path.is_file() else {}
+            except (OSError, json.JSONDecodeError) as exc:
+                summary = {}
+                summary_error = str(exc)
+            else:
+                summary_error = None
             return {
                 **base_receipt,
-                "status": "materialization_failed",
-                "retryable": True,
-                "error_kind": "materializer_exit",
-                "runner_returncode": materialized.returncode,
-                "stderr": materialized.stderr[-2000:],
-                "stdout": materialized.stdout[-2000:],
+                "status": summary.get("status", "runner_summary_missing"),
+                "runner_returncode": executed.returncode,
+                "retryable": summary.get("status") != "completed_verified",
+                "summary_path": str(summary_path) if summary_path.is_file() else None,
+                "summary_error": summary_error,
+                "verified_completion": summary.get("verified_completion"),
+                "elapsed_seconds": summary.get("elapsed_seconds"),
+                "iris_statistics": summary.get("iris_statistics") or {},
+                "label_response_audit": {
+                    "total_dispatched_prompt_count": (summary.get("label_response_audit") or {}).get("total_dispatched_prompt_count"),
+                    "all_valid": (summary.get("label_response_audit") or {}).get("all_valid"),
+                },
+                "artifact_gate": summary.get("artifact_gate") or {},
+                "quarantined_workspace": (
+                    str(quarantined_workspace) if quarantined_workspace else None
+                ),
             }
-        run = [
-            args.python, str(args.single_case_runner), "--workspace", str(workspace),
-            "--run-id", run_id, "--bridge-url", args.bridge_url, "--llm", args.llm,
-            "--num-threads", str(args.num_threads), "--timeout-seconds", str(args.timeout_seconds),
-            "--output-dir", str(case_dir),
-        ]
-        try:
-            executed = subprocess.run(run, text=True, capture_output=True, check=False)
-        except OSError as exc:
-            return {
-                **base_receipt,
-                "status": "runner_failed",
-                "retryable": True,
-                "error_kind": "runner_spawn",
-                "error": str(exc),
-            }
-        summary_path = case_dir / "summary.json"
-        try:
-            summary = json.loads(summary_path.read_text()) if summary_path.is_file() else {}
-        except (OSError, json.JSONDecodeError) as exc:
-            summary = {}
-            summary_error = str(exc)
-        else:
-            summary_error = None
-        return {
-            **base_receipt,
-            "status": summary.get("status", "runner_summary_missing"),
-            "runner_returncode": executed.returncode,
-            "retryable": summary.get("status") != "completed_verified",
-            "summary_path": str(summary_path) if summary_path.is_file() else None,
-            "summary_error": summary_error,
-            "verified_completion": summary.get("verified_completion"),
-            "elapsed_seconds": summary.get("elapsed_seconds"),
-            "iris_statistics": summary.get("iris_statistics") or {},
-            "label_response_audit": {
-                "total_dispatched_prompt_count": (summary.get("label_response_audit") or {}).get("total_dispatched_prompt_count"),
-                "all_valid": (summary.get("label_response_audit") or {}).get("all_valid"),
-            },
-            "artifact_gate": summary.get("artifact_gate") or {},
-        }
+        finally:
+            lock_path.unlink(missing_ok=True)
 
     with ThreadPoolExecutor(max_workers=args.max_workers) as pool:
         futures = [pool.submit(run_case, row) for row in selected]

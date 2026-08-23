@@ -10,6 +10,8 @@ import signal
 import subprocess
 import sys
 import time
+import urllib.error
+import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -24,6 +26,71 @@ EXPECTED_ARTIFACTS = (
     "../{query}-posthoc-filter/stats.json",
     "../{query}-final/results.json",
 )
+
+TRANSIENT_BRIDGE_FAILURE_MARKERS = (
+    "apiconnectionerror",
+    "httpx.connecterror",
+    "connection refused",
+    "connection reset by peer",
+    "remote end closed connection",
+    "temporarily unavailable",
+    "[errno 111]",
+)
+
+
+def normalize_openai_base_url(bridge_url: str) -> str:
+    """Return the OpenAI-compatible base URL without duplicating its version path."""
+
+    normalized = bridge_url.strip().rstrip("/")
+    if not normalized:
+        raise ValueError("bridge URL must not be empty")
+    return normalized if normalized.endswith("/v1") else f"{normalized}/v1"
+
+
+def bridge_health_url(bridge_url: str) -> str:
+    normalized = bridge_url.strip().rstrip("/")
+    if normalized.endswith("/v1"):
+        normalized = normalized[:-3]
+    if not normalized:
+        raise ValueError("bridge URL must not be empty")
+    return f"{normalized}/healthz"
+
+
+def check_bridge_health(bridge_url: str, timeout_seconds: float) -> tuple[bool, str]:
+    request = urllib.request.Request(bridge_health_url(bridge_url), method="GET")
+    try:
+        with urllib.request.urlopen(request, timeout=timeout_seconds) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+        if response.status != 200:
+            return False, f"unexpected HTTP status {response.status}"
+        if not isinstance(payload, dict) or payload.get("status") != "ok":
+            return False, f"unexpected health payload: {payload!r}"
+        return True, "ready"
+    except (OSError, urllib.error.URLError, urllib.error.HTTPError, json.JSONDecodeError) as exc:
+        return False, f"{type(exc).__name__}: {exc}"
+
+
+def wait_for_bridge(
+    bridge_url: str,
+    *,
+    attempts: int,
+    delay_seconds: float,
+    request_timeout_seconds: float,
+) -> dict[str, Any]:
+    observations: list[dict[str, Any]] = []
+    for attempt in range(1, attempts + 1):
+        ready, detail = check_bridge_health(bridge_url, request_timeout_seconds)
+        observations.append({"attempt": attempt, "ready": ready, "detail": detail})
+        if ready:
+            return {"ready": True, "observations": observations}
+        if attempt < attempts:
+            time.sleep(delay_seconds)
+    return {"ready": False, "observations": observations}
+
+
+def is_transient_bridge_failure(stdout: bytes, stderr: bytes) -> bool:
+    detail = (stdout + b"\n" + stderr).decode("utf-8", errors="replace").lower()
+    return any(marker in detail for marker in TRANSIENT_BRIDGE_FAILURE_MARKERS)
 
 
 def sha256_path(path: Path) -> str:
@@ -158,7 +225,47 @@ def main() -> int:
     parser.add_argument("--label-func-param-batch-size", type=int, default=20)
     parser.add_argument("--timeout-seconds", type=int, default=3600)
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument(
+        "--bridge-ready-attempts",
+        type=int,
+        default=36,
+        help="bounded health checks before an IRIS launch or transport-only resume",
+    )
+    parser.add_argument(
+        "--bridge-ready-delay-seconds",
+        type=float,
+        default=5.0,
+        help="delay between bridge health checks",
+    )
+    parser.add_argument(
+        "--bridge-health-timeout-seconds",
+        type=float,
+        default=10.0,
+        help="per-request timeout for the bridge /healthz endpoint",
+    )
+    parser.add_argument(
+        "--transport-recovery-attempts",
+        type=int,
+        default=2,
+        help="bounded copied-IRIS resumes after an explicit bridge transport failure",
+    )
+    parser.add_argument(
+        "--resume-existing-run",
+        action="store_true",
+        help=(
+            "rerun copied original IRIS with the same run-id so its own cache checks "
+            "reuse already-written stage artifacts; rejects a verified prior summary"
+        ),
+    )
     args = parser.parse_args()
+    if args.bridge_ready_attempts < 1:
+        raise SystemExit("--bridge-ready-attempts must be positive")
+    if args.bridge_ready_delay_seconds < 0:
+        raise SystemExit("--bridge-ready-delay-seconds must not be negative")
+    if args.bridge_health_timeout_seconds <= 0:
+        raise SystemExit("--bridge-health-timeout-seconds must be positive")
+    if args.transport_recovery_attempts < 0:
+        raise SystemExit("--transport-recovery-attempts must not be negative")
 
     workspace = args.workspace.resolve()
     materialization = read_json(workspace / "materialization.json")
@@ -169,7 +276,16 @@ def main() -> int:
     output_dir.mkdir(parents=True, exist_ok=True)
     project_output = workspace / "output" / slug / args.run_id
     common_output = workspace / "output" / "common" / args.run_id
-    if project_output.exists() or common_output.exists():
+    prior_summary_path = output_dir / "summary.json"
+    if args.resume_existing_run:
+        if not project_output.is_dir():
+            raise SystemExit(
+                "--resume-existing-run requires an existing project output directory "
+                "for this workspace and run-id"
+            )
+        if prior_summary_path.is_file() and read_json(prior_summary_path).get("verified_completion"):
+            raise SystemExit("refusing to resume a run already marked completed_verified")
+    elif project_output.exists() or common_output.exists():
         raise SystemExit("run-id collides with existing project/common output; choose a fresh --run-id")
 
     command = [
@@ -193,14 +309,63 @@ def main() -> int:
     env.update(
         {
             "OPENAI_API_KEY": "traex-local-bridge",
-            "OPENAI_BASE_URL": args.bridge_url.rstrip("/") + "/v1",
-            "IRIS_LLM_MAX_ATTEMPTS": env.get("IRIS_LLM_MAX_ATTEMPTS", "2"),
+            "OPENAI_BASE_URL": normalize_openai_base_url(args.bridge_url),
+            "IRIS_LLM_MAX_ATTEMPTS": env.get("IRIS_LLM_MAX_ATTEMPTS", "4"),
+            "IRIS_LLM_RETRY_DELAY_SECONDS": env.get("IRIS_LLM_RETRY_DELAY_SECONDS", "5"),
             "IRIS_TRAEX_RUN_ID": args.run_id,
             "IRIS_TRAEX_CASE_ID": str(case.get("case_id") or slug),
         }
     )
     started = time.monotonic()
-    returncode, timed_out, stdout, stderr = run_process(command, workspace, env, args.timeout_seconds)
+    execution_attempts: list[dict[str, Any]] = []
+    stdout = b""
+    stderr = b""
+    returncode: int | None = None
+    timed_out = False
+    for execution_attempt in range(1, args.transport_recovery_attempts + 2):
+        bridge_readiness = wait_for_bridge(
+            args.bridge_url,
+            attempts=args.bridge_ready_attempts,
+            delay_seconds=args.bridge_ready_delay_seconds,
+            request_timeout_seconds=args.bridge_health_timeout_seconds,
+        )
+        attempt_record: dict[str, Any] = {
+            "attempt": execution_attempt,
+            "bridge_readiness": bridge_readiness,
+        }
+        if not bridge_readiness["ready"]:
+            attempt_record["status"] = "bridge_unavailable"
+            execution_attempts.append(attempt_record)
+            break
+        attempt_started = time.monotonic()
+        returncode, timed_out, stdout, stderr = run_process(
+            command, workspace, env, args.timeout_seconds
+        )
+        attempt_stdout_path = output_dir / f"stdout.attempt-{execution_attempt:02d}.txt"
+        attempt_stderr_path = output_dir / f"stderr.attempt-{execution_attempt:02d}.txt"
+        attempt_stdout_path.write_bytes(stdout)
+        attempt_stderr_path.write_bytes(stderr)
+        transport_failure = (
+            returncode != 0
+            and not timed_out
+            and is_transient_bridge_failure(stdout, stderr)
+        )
+        attempt_record.update(
+            {
+                "status": "transport_failure" if transport_failure else "completed",
+                "returncode": returncode,
+                "timed_out": timed_out,
+                "elapsed_seconds": round(time.monotonic() - attempt_started, 3),
+                "transport_failure": transport_failure,
+                "stdout_path": str(attempt_stdout_path),
+                "stderr_path": str(attempt_stderr_path),
+                "stdout_sha256": sha256_path(attempt_stdout_path),
+                "stderr_sha256": sha256_path(attempt_stderr_path),
+            }
+        )
+        execution_attempts.append(attempt_record)
+        if not transport_failure:
+            break
     elapsed_seconds = round(time.monotonic() - started, 3)
     (output_dir / "stdout.txt").write_bytes(stdout)
     (output_dir / "stderr.txt").write_bytes(stderr)
@@ -231,6 +396,15 @@ def main() -> int:
         "workspace": str(workspace),
         "materialization_sha256": sha256_path(workspace / "materialization.json"),
         "command": command,
+        "resume_existing_run": args.resume_existing_run,
+        "bridge_recovery": {
+            "bridge_health_url": bridge_health_url(args.bridge_url),
+            "bridge_ready_attempts": args.bridge_ready_attempts,
+            "bridge_ready_delay_seconds": args.bridge_ready_delay_seconds,
+            "bridge_health_timeout_seconds": args.bridge_health_timeout_seconds,
+            "transport_recovery_attempts": args.transport_recovery_attempts,
+            "execution_attempts": execution_attempts,
+        },
         "returncode": returncode,
         "timed_out": timed_out,
         "elapsed_seconds": elapsed_seconds,
