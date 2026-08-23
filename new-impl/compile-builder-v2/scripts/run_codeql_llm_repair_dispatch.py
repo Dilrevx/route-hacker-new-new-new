@@ -76,7 +76,7 @@ MAX_MODEL_OUTPUT_CHARACTERS = 16_000
 DEFAULT_OPENAI_MODEL = "DeepSeek-V4-Pro"
 MAX_PROPOSAL_CORRECTION_ATTEMPTS = 1
 MAX_MODEL_TRANSPORT_ATTEMPTS = 2
-MAX_BUILD_FEEDBACK_REPLAN_ATTEMPTS = 1
+DEFAULT_MAX_BUILD_FEEDBACK_REPLAN_ATTEMPTS = 3
 
 
 def append_unique(values: list[str], additions: Iterable[str]) -> list[str]:
@@ -361,6 +361,40 @@ def source_receipts_by_case(rows: Iterable[dict[str, Any]]) -> dict[str, list[di
         if isinstance(case_id, str) and case_id:
             grouped[case_id].append(row)
     return grouped
+
+
+def exact_source_matches(
+    failed_receipt: Mapping[str, Any],
+    source_receipts: Iterable[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Find exact-source receipts valid for a historical failed build.
+
+    A failed build can point to a rehydrated copy while its exact-source receipt
+    records the original archive materialization directory. Both are valid if
+    they are bound to the same case and resolved buggy revision. The runtime
+    still materializes a fresh isolated copy from the receipt's verified archive
+    before the model is invoked.
+    """
+
+    failed_source_dir = failed_receipt.get("source_dir")
+    failed_revision = failed_receipt.get("resolved_buggy_commit")
+    matches: list[dict[str, Any]] = []
+    for source_receipt in source_receipts:
+        if source_receipt.get("source_dir") == failed_source_dir:
+            matches.append(source_receipt)
+            continue
+        if (
+            isinstance(failed_revision, str)
+            and source_receipt.get("resolved_buggy_commit") == failed_revision
+            and source_receipt.get("status")
+            in {
+                "source_materialized_exact_archive_snapshot",
+                "source_materialized_exact_clean_snapshot",
+                "source_reused_exact_clean_snapshot",
+            }
+        ):
+            matches.append(source_receipt)
+    return matches
 
 
 def read_case_ids(path: Path) -> list[str]:
@@ -970,8 +1004,11 @@ def run_case(
     approved_java_homes: list[str],
     approved_maven_homes: list[str],
     verified_gradle_user_home: Path | None = None,
+    max_build_feedback_replan_attempts: int = DEFAULT_MAX_BUILD_FEEDBACK_REPLAN_ATTEMPTS,
     dry_run: bool = False,
 ) -> dict[str, Any]:
+    if max_build_feedback_replan_attempts < 0:
+        raise ValueError("max_build_feedback_replan_attempts must be non-negative")
     case_id = str(failed_receipt["case_id"])
     case_dir = output_dir / "cases" / safe_name(case_id) / f"attempt-{attempt_number:03d}"
     case_dir.mkdir(parents=True, exist_ok=False)
@@ -980,16 +1017,43 @@ def run_case(
         source_receipt=source_receipt,
         completion=prior_completion,
     )
-    source_dir = Path(str(failed_receipt["source_dir"]))
+    try:
+        (
+            verified_failed_receipt,
+            verified_source_receipt,
+            source_verification_materialization,
+        ) = materialize_isolated_attempt_receipts(
+            failed_receipt=failed_receipt,
+            source_receipt=source_receipt,
+            destination=case_dir / "source-preflight",
+        )
+    except RepairValidationError as error:
+        return {
+            "schema_version": f"{SCHEMA_VERSION}:case_completion",
+            "recorded_at": utc_now(),
+            "case_id": case_id,
+            "project_slug": failed_receipt.get("project_slug"),
+            "attempt_number": attempt_number,
+            "failed_receipt_sha256": stable_json_sha256(failed_receipt),
+            "source_receipt_sha256": stable_json_sha256(source_receipt),
+            "prior_completion_sha256": stable_json_sha256(prior_completion),
+            "prior_completion_status": prior_completion.get("status"),
+            "attempt_dir": stable_path(case_dir),
+            "status": "source_revision_verification_failed",
+            "reason": "preflight_source_materialization_failed",
+            "error_type": type(error).__name__,
+            "error": str(error),
+        }
+    source_dir = Path(str(verified_failed_receipt["source_dir"]))
     expected_revision = str(
-        failed_receipt.get("resolved_buggy_commit")
-        or failed_receipt.get("declared_buggy_commit")
+        verified_failed_receipt.get("resolved_buggy_commit")
+        or verified_failed_receipt.get("declared_buggy_commit")
         or ""
     )
     source_evidence = verify_exact_source(
         source_dir,
         expected_revision,
-        source_receipt,
+        verified_source_receipt,
         expected_case_id=case_id,
     )
     verified_gradle_home, gradle_cache_evidence = verified_gradle_user_home_for_receipt(
@@ -997,10 +1061,10 @@ def run_case(
         verified_gradle_user_home=verified_gradle_user_home,
     )
     packet = build_repair_packet(
-        failed_receipt,
+        verified_failed_receipt,
         approved_java_homes=approved_java_homes,
         approved_maven_homes=approved_maven_homes,
-        source_receipt=source_receipt,
+        source_receipt=verified_source_receipt,
     )
     write_json(case_dir / "packet.json", packet)
     prompt = build_repair_prompt(packet)
@@ -1019,10 +1083,11 @@ def run_case(
         "packet_sha256": packet["packet_sha256"],
         "attempt_dir": stable_path(case_dir),
         "source_revision_evidence": source_evidence,
+        "source_verification_materialization": source_verification_materialization,
         "contract": {
             "model_tools_disabled": True,
             "model_actions_validated_locally": True,
-            "build_failure_feedback_replan_bounded_to_one": True,
+            "max_build_feedback_replan_attempts": max_build_feedback_replan_attempts,
             "repeated_validated_build_decision_not_reexecuted": True,
             "fresh_redacted_build_log_used_for_replan": True,
             "exact_declared_source_reverified_before_execution": True,
@@ -1052,7 +1117,7 @@ def run_case(
     active_prompt = prompt
     cumulative_decision: dict[str, Any] | None = None
 
-    for decision_round in range(MAX_BUILD_FEEDBACK_REPLAN_ATTEMPTS + 1):
+    for decision_round in range(max_build_feedback_replan_attempts + 1):
         if decision_round:
             write_json(
                 case_dir / f"feedback-packet-{decision_round:03d}.json",
@@ -1283,7 +1348,7 @@ def run_case(
                 "repair_attempts": decision_rounds,
                 "build_feedback_replan_count": decision_round,
             }
-        if decision_round == MAX_BUILD_FEEDBACK_REPLAN_ATTEMPTS:
+        if decision_round == max_build_feedback_replan_attempts:
             return {
                 **base,
                 "status": attempt["status"],
@@ -1396,6 +1461,16 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument("--max-attempts", type=int, default=1)
+    parser.add_argument(
+        "--max-build-feedback-replan-attempts",
+        type=int,
+        default=DEFAULT_MAX_BUILD_FEEDBACK_REPLAN_ATTEMPTS,
+        help=(
+            "Maximum fresh model feedback decisions after failed CodeQL builds. "
+            "Each decision remains locally validated and repeated cumulative decisions "
+            "are never re-executed."
+        ),
+    )
     parser.add_argument("--case-id", action="append", default=[])
     parser.add_argument("--case-id-file", type=Path)
     parser.add_argument("--limit", type=int)
@@ -1419,6 +1494,8 @@ def main() -> int:
         raise SystemExit("CodeQL inactivity timeout must be positive when set")
     if args.max_attempts < 1 or args.heartbeat_seconds < 1:
         raise SystemExit("max attempts and heartbeat seconds must be positive")
+    if args.max_build_feedback_replan_attempts < 0:
+        raise SystemExit("--max-build-feedback-replan-attempts must be non-negative")
     if args.limit is not None and args.limit < 0:
         raise SystemExit("--limit must be non-negative")
     if args.case_id and args.case_id_file:
@@ -1498,10 +1575,7 @@ def main() -> int:
                 }
             )
             continue
-        source_dir = failed.get("source_dir")
-        exact_matches = [
-            source for source in matches if source.get("source_dir") == source_dir
-        ]
+        exact_matches = exact_source_matches(failed, matches)
         if not exact_matches:
             immediate_results.append(
                 {
@@ -1615,6 +1689,7 @@ def main() -> int:
                     approved_java_homes=approved_java_homes,
                     approved_maven_homes=approved_maven_homes,
                     verified_gradle_user_home=verified_gradle_user_home,
+                    max_build_feedback_replan_attempts=args.max_build_feedback_replan_attempts,
                     dry_run=args.dry_run,
                 )
 
@@ -1697,7 +1772,7 @@ def main() -> int:
         "codeql_inactivity_timeout_seconds": args.codeql_inactivity_timeout_seconds,
         "max_attempts": args.max_attempts,
         "max_model_transport_attempts": MAX_MODEL_TRANSPORT_ATTEMPTS,
-        "max_build_feedback_replan_attempts_per_case": MAX_BUILD_FEEDBACK_REPLAN_ATTEMPTS,
+        "max_build_feedback_replan_attempts_per_case": args.max_build_feedback_replan_attempts,
         "approved_java_home_count": len(approved_java_homes),
         "approved_maven_home_count": len(approved_maven_homes),
         "dry_run": args.dry_run,
@@ -1721,7 +1796,7 @@ def main() -> int:
         "prior_receipt_hashes_verified_before_model_call": True,
         "model_tools_disabled": True,
         "model_actions_validated_locally": True,
-        "build_failure_feedback_replan_bounded_to_one": True,
+        "max_build_feedback_replan_attempts": args.max_build_feedback_replan_attempts,
         "repeated_validated_build_decision_not_reexecuted": True,
         "fresh_redacted_build_log_used_for_replan": True,
         "source_revision_substitution_forbidden": True,
