@@ -84,6 +84,17 @@ The matching Qwen3-Embedding-4B full result is:
 /mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/hcvr-p3c64-fixed143-20260820T113743/qwen4b_full_recall_merged/recall_results.jsonl
 ```
 
+## Experiment Result Index
+
+Use this index to find committed lightweight experiment receipts. Large recall
+JSONL files are recorded by path and hash in the result manifests instead of
+being stored in Git.
+
+| Result | Path | Purpose |
+| --- | --- | --- |
+| P3C64 fixed143 paper-eval | `guideline-agent-pipeline/results/p3c64-fixed143-paper-eval-20260820/` | Current valid 143-case retrieval baseline and Qwen3-Embedding-4B comparison. |
+| P3C64 half fixed case subset | `guideline-agent-pipeline/results/p3c64-half-fixed-case-top160-v1/` | Fixed 71-case Backend-B audit subset stratified by P3C64 Top160 recall status: 41 hit and 30 miss out of the 83/60 full-set split. |
+
 ## Method Boundary
 
 P3C64 is a query-only residual adapter over Qwen3-Embedding-0.6B. Candidate code
