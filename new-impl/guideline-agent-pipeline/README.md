@@ -94,6 +94,12 @@ P3C64-vs-Qwen4B model-improvement claim.
     boundary repair pack with strong and weak example buckets.
   - Produces a review artifact only: it does not update released guidelines,
     lexicon entries, sidecars, ranking, or audit prompts.
+- `scripts/build_guideline_case_review_packets.py`
+  - Renders one Markdown source-evidence review packet per boundary repair
+    item, with candidate boundaries, strong/weak examples, and blank evidence
+    fields for reviewer completion.
+  - Produces review handoff material only: unfilled packets are not
+    release-ready guideline changes.
 - `scripts/audit_guideline_dual_axis_objective.py`
   - Audits the current guideline iteration against the two coupled goals:
     semantic CVE-mechanism guideline quality and tuned-embedding recall
@@ -558,6 +564,12 @@ The split/revise subset is extracted under
 strong source-trace examples from weak `review_entry_only` or missing-trace
 examples so the next reviewer can assign cases to mechanism boundaries before
 anything is promoted into the lexicon or recall sidecar.
+The reviewer-facing packet set is committed under
+`results/guideline-v2-r8-case-review-packets-20260823/`: 8 Markdown packets,
+one per split/revise item. Each packet has candidate boundaries, source-trace
+examples, weak examples, missing-trace examples, and blank reviewer fields for
+source shape, sink or sensitive effect, missing guard, exploit precondition,
+safe fix semantics, boundary decision, and recall follow-up.
 
 The r8 experiment scorecard is committed under
 `results/guideline-v2-r8-release-ready-scorecard-20260823/`. It records the
@@ -742,6 +754,19 @@ guideline sidecar. It lists candidate split/revision boundaries and separates
 source-backed examples from review-entry-only or missing-trace examples. The
 boundaries are hypotheses until a reviewer assigns cases to them with checked
 source/sink/guard/fix evidence.
+
+Render per-guideline source-evidence review packets:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/build_guideline_case_review_packets.py \
+  --boundary-repair-pack new-impl/guideline-agent-pipeline/results/guideline-v2-r8-boundary-repair-pack-20260823/boundary_repair_pack.jsonl \
+  --output-dir /path/to/guideline-case-review-packets
+```
+
+Use these packets for the next evidence-collection round. They are useful when
+handing a specific mechanism group to a reviewer or source-inspection agent:
+the reviewer fills the evidence fields, then the team decides whether to
+promote a boundary into the lexicon or leave it out of the released sidecar.
 
 Run a completion audit for the two-axis guideline objective:
 
