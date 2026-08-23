@@ -164,6 +164,7 @@ def build_audit(
     worklist: dict[str, Any],
     desired_delta_rate: float,
     recall_alignment: dict[str, Any] | None = None,
+    recall_side_debug: dict[str, Any] | None = None,
     boundary_recall_triage: dict[str, Any] | None = None,
     ledger_validation: dict[str, Any] | None = None,
     ledger_judge: dict[str, Any] | None = None,
@@ -192,6 +193,7 @@ def build_audit(
         if isinstance(recall_alignment.get("attention_counts"), dict)
         else {}
     )
+    recall_side_debug = recall_side_debug or {}
     boundary_recall_triage = boundary_recall_triage or {}
     boundary_next_actions = (
         boundary_recall_triage.get("next_action_counts")
@@ -228,6 +230,8 @@ def build_audit(
                 f"primary_budget={recall.get('primary_budget')}",
                 f"recall_alignment_joined={alignment_joined}/{alignment_total}",
                 f"recall_alignment_attention_counts={alignment_attention}",
+                f"recall_side_debug_group_count={recall_side_debug.get('debug_group_count')}",
+                f"recall_side_debug_miss_state_totals={recall_side_debug.get('miss_state_totals')}",
                 f"boundary_recall_triage_aligned_boundaries={aligned_boundary_count}",
                 f"boundary_recall_triage_rank_tables={boundary_recall_triage.get('rank_table_labels')}",
             ],
@@ -253,6 +257,7 @@ def build_audit(
                 "source-reviewed boundaries can be marked semantically ready without being counted as recall-proven",
                 f"label_mixture_is_blocking={alignment_policy.get('label_mixture_is_blocking')}",
                 f"min_clean_purity_is_blocking={alignment_policy.get('min_clean_purity_is_blocking')}",
+                "recall-side debug pack separates rank misses from rank-table coverage gaps",
             ],
             "status": "satisfied_as_evaluation_policy",
             "gap": "Need per-group semantic-vs-recall triage after the next changed-sidecar recall run.",
@@ -332,6 +337,17 @@ def build_audit(
                 "inspection, not hidden routing or hardcoded guideline changes."
             ),
         },
+        "recall_side_debug_evidence": {
+            "status": "provided" if recall_side_debug else "not_provided",
+            "recall_label": recall_side_debug.get("recall_label"),
+            "debug_group_count": recall_side_debug.get("debug_group_count"),
+            "miss_state_totals": recall_side_debug.get("miss_state_totals") or {},
+            "recommended_check_counts": recall_side_debug.get("recommended_check_counts") or {},
+            "message": (
+                "Recall-side debug rows are not guideline changes. They queue query, slicing, embedder, adapter, "
+                "and rank-table coverage checks for semantically clean groups that still miss Top-K."
+            ),
+        },
         "missing_or_incomplete_requirements": missing,
         "next_gates": next_gates,
         "decision": (
@@ -371,6 +387,7 @@ def write_readme(path: Path, audit: dict[str, Any]) -> None:
         lines.append(f"| {row['requirement']} | `{row['status']}` | {evidence} | {gap} |")
     reviewed = audit.get("source_reviewed_boundary_evidence") or {}
     alignment = audit.get("recall_alignment_evidence") or {}
+    recall_debug = audit.get("recall_side_debug_evidence") or {}
     lines.extend(
         [
             "",
@@ -399,6 +416,20 @@ def write_readme(path: Path, audit: dict[str, Any]) -> None:
             f"- Cleanliness policy: {alignment.get('cleanliness_policy')}",
             "",
             "This diagnostic separates clean semantic boundaries from recall misses. Mixed HCVR/CWE labels remain review signals, but they are not hard gates because one reusable mechanism can cut across labels.",
+        ]
+    )
+    lines.extend(
+        [
+            "",
+            "## Recall-Side Debug Evidence",
+            "",
+            f"- Status: `{recall_debug.get('status')}`",
+            f"- Recall label: `{recall_debug.get('recall_label')}`",
+            f"- Debug groups: {recall_debug.get('debug_group_count')}",
+            f"- Miss states: {recall_debug.get('miss_state_totals')}",
+            f"- Recommended checks: {recall_debug.get('recommended_check_counts')}",
+            "",
+            "These rows are a work queue for recall-side diagnosis. They do not rewrite mechanism taxonomy and do not justify engineering combinations unless a same-identity A/B later supports that claim.",
         ]
     )
     lines.extend(
@@ -438,6 +469,7 @@ def main() -> None:
     parser.add_argument("--scorecard", type=Path, required=True)
     parser.add_argument("--evidence-worklist-summary", type=Path, required=True)
     parser.add_argument("--recall-alignment-summary", type=Path)
+    parser.add_argument("--recall-side-debug-summary", type=Path)
     parser.add_argument("--boundary-recall-triage-summary", type=Path)
     parser.add_argument("--ledger-validation-summary", type=Path, action="append")
     parser.add_argument("--ledger-judge-summary", type=Path, action="append")
@@ -453,6 +485,11 @@ def main() -> None:
         recall_alignment=(
             read_json(args.recall_alignment_summary)
             if args.recall_alignment_summary
+            else None
+        ),
+        recall_side_debug=(
+            read_json(args.recall_side_debug_summary)
+            if args.recall_side_debug_summary
             else None
         ),
         boundary_recall_triage=(

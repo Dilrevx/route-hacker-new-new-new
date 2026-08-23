@@ -26,6 +26,8 @@
         "primary_budget=100",
         "recall_alignment_joined=28/143",
         "recall_alignment_attention_counts={'embedding_or_candidate_recall_attention': 6, 'guideline_quality_attention': 121, 'label_mixed_structural_attention': 8, 'missing_recall_rows': 44}",
+        "recall_side_debug_group_count=6",
+        "recall_side_debug_miss_state_totals={'coverage_gap_not_in_rank_table': 9, 'ranked_below_primary_budget': 6}",
         "boundary_recall_triage_aligned_boundaries=0",
         "boundary_recall_triage_rank_tables=None"
       ],
@@ -96,6 +98,23 @@
     "same_identity_baseline": true,
     "status": "provided"
   },
+  "recall_side_debug_evidence": {
+    "debug_group_count": 6,
+    "message": "Recall-side debug rows are not guideline changes. They queue query, slicing, embedder, adapter, and rank-table coverage checks for semantically clean groups that still miss Top-K.",
+    "miss_state_totals": {
+      "coverage_gap_not_in_rank_table": 9,
+      "ranked_below_primary_budget": 6
+    },
+    "recall_label": "r7-p3c64-full143",
+    "recommended_check_counts": {
+      "compare_embedding_backend_or_query_adapter_on_same_identity": 6,
+      "inspect_candidate_slicing_for_known_anchor_context": 6,
+      "inspect_guideline_query_wording_against_source_evidence": 6,
+      "review_label_mixture_without_treating_it_as_hard_failure": 2,
+      "verify_identity_filter_dataset_split_and_rank_table_coverage": 3
+    },
+    "status": "provided"
+  },
   "requirements": [
     {
       "evidence": [
@@ -121,6 +140,8 @@
         "primary_budget=100",
         "recall_alignment_joined=28/143",
         "recall_alignment_attention_counts={'embedding_or_candidate_recall_attention': 6, 'guideline_quality_attention': 121, 'label_mixed_structural_attention': 8, 'missing_recall_rows': 44}",
+        "recall_side_debug_group_count=6",
+        "recall_side_debug_miss_state_totals={'coverage_gap_not_in_rank_table': 9, 'ranked_below_primary_budget': 6}",
         "boundary_recall_triage_aligned_boundaries=0",
         "boundary_recall_triage_rank_tables=None"
       ],
@@ -145,7 +166,8 @@
         "scorecard separates structural, judge, recall, and sidecar-equivalence evidence",
         "source-reviewed boundaries can be marked semantically ready without being counted as recall-proven",
         "label_mixture_is_blocking=False",
-        "min_clean_purity_is_blocking=False"
+        "min_clean_purity_is_blocking=False",
+        "recall-side debug pack separates rank misses from rank-table coverage gaps"
       ],
       "gap": "Need per-group semantic-vs-recall triage after the next changed-sidecar recall run.",
       "requirement": "If semantic guideline quality is strong but recall remains weak, inspect recall method before weakening taxonomy.",

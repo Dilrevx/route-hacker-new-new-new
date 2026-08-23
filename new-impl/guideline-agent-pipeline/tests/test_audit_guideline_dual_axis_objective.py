@@ -127,6 +127,34 @@ def test_recall_alignment_policy_is_diagnostic_not_completion_signal():
     assert "recall_alignment_joined=28/143" in audit["requirements"][1]["evidence"]
 
 
+def test_recall_side_debug_pack_is_recorded_as_work_queue():
+    module = load_module()
+
+    audit = module.build_audit(
+        scorecard=scorecard(),
+        worklist={"worklist_count": 1, "action_counts": {"collect_source_sink_guard_evidence": 1}},
+        desired_delta_rate=0.10,
+        recall_side_debug={
+            "recall_label": "p3c64",
+            "debug_group_count": 6,
+            "miss_state_totals": {
+                "coverage_gap_not_in_rank_table": 9,
+                "ranked_below_primary_budget": 6,
+            },
+            "recommended_check_counts": {
+                "inspect_candidate_slicing_for_known_anchor_context": 6,
+            },
+        },
+    )
+
+    assert audit["overall_status"] == "not_complete"
+    debug = audit["recall_side_debug_evidence"]
+    assert debug["status"] == "provided"
+    assert debug["debug_group_count"] == 6
+    assert "recall_side_debug_group_count=6" in audit["requirements"][1]["evidence"]
+    assert "recall-side debug pack separates rank misses from rank-table coverage gaps" in audit["requirements"][3]["evidence"]
+
+
 def test_source_reviewed_boundary_evidence_is_separate_from_recall_completion():
     module = load_module()
 
@@ -223,6 +251,7 @@ def test_cli_writes_dual_axis_audit(tmp_path: Path):
     scorecard_path = tmp_path / "scorecard.json"
     worklist_path = tmp_path / "worklist.json"
     recall_alignment_path = tmp_path / "recall_alignment.json"
+    recall_side_debug_path = tmp_path / "recall_side_debug.json"
     ledger_validation_path = tmp_path / "ledger_validation.json"
     ledger_judge_path = tmp_path / "ledger_judge.json"
     output = tmp_path / "audit"
@@ -240,6 +269,19 @@ def test_cli_writes_dual_axis_audit(tmp_path: Path):
                 "same_identity_baseline": True,
                 "attention_counts": {"label_mixed_structural_attention": 8},
                 "cleanliness_policy": {"label_mixture_is_blocking": False},
+            }
+        ),
+        encoding="utf-8",
+    )
+    recall_side_debug_path.write_text(
+        json.dumps(
+            {
+                "recall_label": "p3c64",
+                "debug_group_count": 6,
+                "miss_state_totals": {"ranked_below_primary_budget": 6},
+                "recommended_check_counts": {
+                    "inspect_candidate_slicing_for_known_anchor_context": 6,
+                },
             }
         ),
         encoding="utf-8",
@@ -263,6 +305,8 @@ def test_cli_writes_dual_axis_audit(tmp_path: Path):
             str(worklist_path),
             "--recall-alignment-summary",
             str(recall_alignment_path),
+            "--recall-side-debug-summary",
+            str(recall_side_debug_path),
             "--ledger-validation-summary",
             str(ledger_validation_path),
             "--ledger-judge-summary",
@@ -283,6 +327,7 @@ def test_cli_writes_dual_axis_audit(tmp_path: Path):
     assert "Guideline Dual-Axis Objective Audit" in readme
     assert "Source-Reviewed Boundary Evidence" in readme
     assert "Recall Alignment Diagnostics" in readme
+    assert "Recall-Side Debug Evidence" in readme
 
 
 def test_cli_accepts_repeated_source_reviewed_summaries(tmp_path: Path):

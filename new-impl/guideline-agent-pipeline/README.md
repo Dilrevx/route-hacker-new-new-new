@@ -744,12 +744,30 @@ The r8 released-only/P3C64 alignment sanity report is committed under
 r8 released-only group assignments and the existing r7 full143 P3C64 rank
 table. It joins only 28 of the 143 recall identities, so treat it as a
 diagnostic check for the taxonomy-vs-embed triage logic rather than a recall
-claim. Its attention counts are: 44
-`embedding_or_candidate_recall_attention`, 121 `guideline_quality_attention`,
-8 `label_mixed_structural_attention`, and 44 `missing_recall_rows`. The useful
-change is that mixed-label groups now keep `label_mixed_structural_attention`
-as a review signal while still allowing clean source/sink/guard groups to
-trigger recall-side debugging.
+claim. Its attention counts are: 6 `embedding_or_candidate_recall_attention`,
+121 `guideline_quality_attention`, 8 `label_mixed_structural_attention`, and
+44 `missing_recall_rows`. The useful change is that mixed-label groups now keep
+`label_mixed_structural_attention` as a review signal while still allowing
+clean source/sink/guard groups to trigger recall-side debugging. Rank-table
+coverage gaps are also separated from real joined Top-K misses, so a case that
+never appeared in the recall table is no longer counted as embedding failure.
+
+Build a recall-side debug pack for those clean-group Top-K misses:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/build_recall_side_debug_pack.py \
+  --alignment-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-release-ready-p3c64-alignment-20260823/summary.json \
+  --group-alignment new-impl/guideline-agent-pipeline/results/guideline-v2-r8-release-ready-p3c64-alignment-20260823/group_recall_alignment.jsonl \
+  --case-alignment new-impl/guideline-agent-pipeline/results/guideline-v2-r8-release-ready-p3c64-alignment-20260823/case_recall_alignment.jsonl \
+  --output-dir /path/to/recall-side-debug-pack
+```
+
+The r8 debug pack is committed under
+`results/guideline-v2-r8-recall-side-debug-pack-20260823/`. It contains 6
+debug groups, with 6 joined cases ranked below Top-100 and 9 cases that are
+coverage gaps relative to the rank table. Use it to inspect query wording,
+candidate slicing, embedding backend, adapter behavior, and rank-table coverage
+without changing guideline taxonomy or adding runtime fallback rules.
 
 Build a revision backlog from the semantic judge and recall-alignment outputs:
 

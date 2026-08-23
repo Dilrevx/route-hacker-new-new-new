@@ -184,9 +184,11 @@ def diagnose(
                         "",
                     ),
                     "recall_label": recall_label,
+                    "present_in_recall_table": recall_row is not None,
                     "rank": rank,
                     "hit_at_primary_budget": hit(rank, primary_budget),
                     "baseline_label": baseline_label,
+                    "present_in_baseline_table": baseline_row is not None if baseline else None,
                     "baseline_rank": baseline_rank,
                     "baseline_hit_at_primary_budget": hit(baseline_rank, primary_budget) if baseline else None,
                     "rank_delta_vs_baseline": (
