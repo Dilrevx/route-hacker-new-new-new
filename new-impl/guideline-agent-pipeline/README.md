@@ -1160,7 +1160,7 @@ Run a completion audit for the two-axis guideline objective:
 python new-impl/guideline-agent-pipeline/scripts/audit_guideline_dual_axis_objective.py \
   --scorecard new-impl/guideline-agent-pipeline/results/guideline-v2-r8-release-ready-scorecard-20260823/scorecard.json \
   --evidence-worklist-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-evidence-worklist-20260823/summary.json \
-  --evidence-coverage-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-evidence-coverage-plus-0513-judge-20260823/summary.json \
+  --evidence-coverage-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-evidence-coverage-plus-0514-judge-20260823/summary.json \
   --recall-alignment-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-release-ready-p3c64-alignment-20260823/summary.json \
   --recall-side-debug-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-recall-side-debug-pack-20260823/summary.json \
   --recall-side-miss-inspection-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-recall-side-miss-inspection-top300-20260823/summary.json \
@@ -1176,6 +1176,7 @@ python new-impl/guideline-agent-pipeline/scripts/audit_guideline_dual_axis_objec
   --ledger-validation-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0116-validation-src-reviewed-20260823/summary.json \
   --ledger-validation-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0117-validation-src-reviewed-20260823/summary.json \
   --ledger-validation-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-review-mech-0513-validation-src-reviewed-20260823/summary.json \
+  --ledger-validation-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-review-mech-0514-validation-src-reviewed-20260823/summary.json \
   --ledger-judge-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0001-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
   --ledger-judge-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0005-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
   --ledger-judge-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0007-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
@@ -1187,6 +1188,7 @@ python new-impl/guideline-agent-pipeline/scripts/audit_guideline_dual_axis_objec
   --ledger-judge-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0116-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
   --ledger-judge-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0117-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
   --ledger-judge-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-review-mech-0513-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
+  --ledger-judge-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-review-mech-0514-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
   --recall-candidate-pair-judge-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-recall-candidate-pair-judge-pack-20260823/judge_summary/summary.json \
   --recall-candidate-list-judge-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-recall-candidate-list-judge-pack-top20-20260823/judge_summary/summary.json \
   --output-dir /path/to/guideline-dual-axis-objective-audit \
@@ -1429,6 +1431,29 @@ is
 it still reports `overall_status=not_complete`, `missing_count=3`, and 7
 blocking source-review next actions. This improves semantic coverage while
 leaving recall impact as a separate same-identity retrieval gate.
+
+The `review_mech_0514` source-review follow-up splits a broad
+authentication/authorization validation-flow bucket into four source-backed
+submechanisms plus a holding row. The promoted boundaries are inactive account
+identifier acceptance in AuthGuard, missing-token media-filter fail-open in
+Booklore, token-presence-only interceptor authentication in Taier, and empty
+token-scope authorization bypass in Jans Config API. Grassroot JWT refresh and
+MeterSphere unauthenticated-login material stay in `needs_more_evidence`
+because the current evidence either overlaps the JWT verification family or has
+not isolated a precise source/sink/guard/fix boundary. The ledger has 5 valid
+rows, 4 promotable boundaries, and no invalid rows. The TraeX DeepSeek-V4-Pro
+judge returns 4 `accept` decisions and 1 `needs_evidence` decision, with low
+coverage scores mostly reflecting single-case boundaries and the holding row.
+The latest cumulative coverage matrix is
+`results/guideline-v2-r8-evidence-coverage-plus-0514-judge-20260823/`: 12 groups
+are `source_reviewed_and_judge_accepted`, 8 remain `not_source_reviewed`, and
+there are no `source_reviewed_validation_only` rows. The latest dual-axis audit
+is
+`results/guideline-v2-r8-dual-axis-objective-audit-plus-0514-judge-20260823/`;
+it still reports `overall_status=not_complete`, `missing_count=3`, and 6
+blocking source-review next actions. This is another semantic-coverage advance,
+not a recall claim; any recall-consumed sidecar update still needs a fresh
+same-identity retrieval run.
 
 Convert the backlog into review-only mechanism lexicon proposals:
 
