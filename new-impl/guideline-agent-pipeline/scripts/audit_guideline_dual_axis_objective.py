@@ -271,6 +271,61 @@ def recall_candidate_judge_evidence(
     }
 
 
+def source_review_coverage_evidence(coverage_summary: dict[str, Any] | None) -> dict[str, Any]:
+    if not coverage_summary:
+        return {
+            "status": "not_provided",
+            "coverage_row_count": 0,
+            "blocking_next_action_count": None,
+            "message": "No source-review evidence coverage summary was provided.",
+        }
+    next_action_counts = (
+        coverage_summary.get("next_action_counts")
+        if isinstance(coverage_summary.get("next_action_counts"), dict)
+        else {}
+    )
+    coverage_status_counts = (
+        coverage_summary.get("coverage_status_counts")
+        if isinstance(coverage_summary.get("coverage_status_counts"), dict)
+        else {}
+    )
+    blocking_next_actions = {
+        "fill_source_review_ledger",
+        "fix_invalid_ledger_rows",
+        "collect_missing_boundary_evidence",
+        "run_ledger_judge_pack",
+        "collect_or_assign_representative_cases",
+    }
+    blocking_count = sum(int(next_action_counts.get(action) or 0) for action in blocking_next_actions)
+    recall_followup_count = int(next_action_counts.get("run_same_identity_recall_after_sidecar_change") or 0)
+    optional_control_count = int(next_action_counts.get("optional_control_source_review") or 0)
+    if blocking_count:
+        status = "not_satisfied_source_review_coverage_incomplete"
+    elif recall_followup_count:
+        status = "satisfied_semantic_coverage_pending_recall_followup"
+    else:
+        status = "satisfied_semantic_coverage"
+    return {
+        "status": status,
+        "worklist_count": coverage_summary.get("worklist_count"),
+        "coverage_row_count": coverage_summary.get("coverage_row_count"),
+        "coverage_status_counts": coverage_status_counts,
+        "next_action_counts": next_action_counts,
+        "blocking_next_action_count": blocking_count,
+        "recall_followup_count": recall_followup_count,
+        "optional_control_count": optional_control_count,
+        "source_review_action_count": coverage_summary.get("source_review_action_count"),
+        "source_review_judge_accepted_count": coverage_summary.get("source_review_judge_accepted_count"),
+        "source_review_validation_only_count": coverage_summary.get("source_review_validation_only_count"),
+        "promotable_valid_boundary_count": coverage_summary.get("promotable_valid_boundary_count"),
+        "promotable_judge_accept_boundary_count": coverage_summary.get("promotable_judge_accept_boundary_count"),
+        "message": (
+            "Source-review coverage is a completion gate for semantic guideline work. It is diagnostic only "
+            "and does not update released guidelines, sidecars, embeddings, rank tables, or audit prompts."
+        ),
+    }
+
+
 def build_audit(
     *,
     scorecard: dict[str, Any],
@@ -284,6 +339,7 @@ def build_audit(
     ledger_judge: dict[str, Any] | None = None,
     recall_candidate_pair_judge: dict[str, Any] | None = None,
     recall_candidate_list_judge: dict[str, Any] | None = None,
+    evidence_coverage: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     recall = scorecard.get("recall_evidence") if isinstance(scorecard.get("recall_evidence"), dict) else {}
     judge = scorecard.get("judge_evidence") if isinstance(scorecard.get("judge_evidence"), dict) else {}
@@ -296,6 +352,7 @@ def build_audit(
     semantic_status = status_for_semantic_quality(scorecard, worklist)
     recall_status = status_for_recall(scorecard, desired_delta_rate)
     reviewed_boundary = source_reviewed_boundary_evidence(ledger_validation, ledger_judge)
+    coverage = source_review_coverage_evidence(evidence_coverage)
     candidate_judge = recall_candidate_judge_evidence(
         recall_candidate_pair_judge,
         recall_candidate_list_judge,
@@ -355,6 +412,24 @@ def build_audit(
             ],
             "status": semantic_status,
             "gap": "TraeX judge still finds many groups needing source/sink/guard evidence or split/revision work.",
+        },
+        {
+            "requirement": "Cover the semantic evidence worklist before treating guideline classification as complete.",
+            "evidence": [
+                f"evidence_coverage_status={coverage.get('status')}",
+                f"coverage_rows={coverage.get('coverage_row_count')}/{coverage.get('worklist_count')}",
+                f"coverage_status_counts={coverage.get('coverage_status_counts')}",
+                f"coverage_next_action_counts={coverage.get('next_action_counts')}",
+                f"coverage_blocking_next_action_count={coverage.get('blocking_next_action_count')}",
+                f"coverage_recall_followup_count={coverage.get('recall_followup_count')}",
+                f"source_review_judge_accepted={coverage.get('source_review_judge_accepted_count')}/{coverage.get('source_review_action_count')}",
+            ],
+            "status": coverage.get("status"),
+            "gap": (
+                "Blocking source-review actions remain before the guideline taxonomy can be treated as semantically covered."
+                if coverage.get("blocking_next_action_count")
+                else "After semantic coverage, recall-consumed text changes still need same-identity recall follow-up."
+            ),
         },
         {
             "requirement": "Keep guidelines compatible with the tuned embedding recall path.",
@@ -426,7 +501,10 @@ def build_audit(
             "gate": "semantic_evidence_gate",
             "run_when": "before changing released guideline text or lexicon entries",
             "pass_condition": "each promoted group has checked source, sink, missing guard, exploit precondition, and fix semantics for representative member cases",
-            "current_state": "not passed; evidence worklist has outstanding rows",
+            "current_state": (
+                f"{coverage.get('status')}; blocking_next_actions={coverage.get('blocking_next_action_count')}; "
+                f"next_actions={coverage.get('next_action_counts')}"
+            ),
         },
         {
             "gate": "same_identity_recall_gate",
@@ -465,6 +543,7 @@ def build_audit(
         "overall_status": overall_status,
         "requirements": requirements,
         "source_reviewed_boundary_evidence": reviewed_boundary,
+        "source_review_coverage_evidence": coverage,
         "recall_alignment_evidence": {
             "status": "provided" if recall_alignment else "not_provided",
             "recall_label": recall_alignment.get("recall_label"),
@@ -554,6 +633,7 @@ def write_readme(path: Path, audit: dict[str, Any]) -> None:
         gap = str(row.get("gap") or "").replace("|", "\\|")
         lines.append(f"| {row['requirement']} | `{row['status']}` | {evidence} | {gap} |")
     reviewed = audit.get("source_reviewed_boundary_evidence") or {}
+    coverage = audit.get("source_review_coverage_evidence") or {}
     alignment = audit.get("recall_alignment_evidence") or {}
     recall_debug = audit.get("recall_side_debug_evidence") or {}
     recall_miss_inspection = audit.get("recall_side_miss_inspection_evidence") or {}
@@ -562,6 +642,18 @@ def write_readme(path: Path, audit: dict[str, Any]) -> None:
     list_judge = candidate_judge.get("list_judge") if isinstance(candidate_judge.get("list_judge"), dict) else {}
     lines.extend(
         [
+            "",
+            "## Source-Review Coverage Gate",
+            "",
+            f"- Status: `{coverage.get('status')}`",
+            f"- Coverage rows: {coverage.get('coverage_row_count')} / {coverage.get('worklist_count')}",
+            f"- Coverage statuses: {coverage.get('coverage_status_counts')}",
+            f"- Next actions: {coverage.get('next_action_counts')}",
+            f"- Blocking next actions: {coverage.get('blocking_next_action_count')}",
+            f"- Recall follow-up rows: {coverage.get('recall_followup_count')}",
+            f"- Source-review actions accepted by judge: {coverage.get('source_review_judge_accepted_count')} / {coverage.get('source_review_action_count')}",
+            "",
+            "This gate prevents a partially source-reviewed ledger set from being mistaken for full guideline readiness. It is still a planning artifact only: it does not mutate guideline text, recall sidecars, embedding inputs, ranking outputs, or audit prompts.",
             "",
             "## Source-Reviewed Boundary Evidence",
             "",
@@ -673,6 +765,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--scorecard", type=Path, required=True)
     parser.add_argument("--evidence-worklist-summary", type=Path, required=True)
+    parser.add_argument("--evidence-coverage-summary", type=Path)
     parser.add_argument("--recall-alignment-summary", type=Path)
     parser.add_argument("--recall-side-debug-summary", type=Path)
     parser.add_argument("--recall-side-miss-inspection-summary", type=Path)
@@ -721,6 +814,11 @@ def main() -> None:
         ),
         recall_candidate_list_judge=aggregate_candidate_list_judges(
             [read_json(path) for path in (args.recall_candidate_list_judge_summary or [])]
+        ),
+        evidence_coverage=(
+            read_json(args.evidence_coverage_summary)
+            if args.evidence_coverage_summary
+            else None
         ),
     )
     args.output_dir.mkdir(parents=True, exist_ok=True)

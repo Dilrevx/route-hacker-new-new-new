@@ -172,6 +172,8 @@ P3C64-vs-Qwen4B model-improvement claim.
   - Audits the current guideline iteration against the two coupled goals:
     semantic CVE-mechanism guideline quality and tuned-embedding recall
     compatibility.
+  - Can attach the source-review evidence coverage summary so partially filled
+    boundary ledgers cannot be mistaken for full guideline readiness.
   - Produces a completion-gate artifact only: it does not change generation,
     recall, ranking, or paper result tables.
 - `scripts/propose_mechanism_lexicon_updates.py`
@@ -1139,6 +1141,7 @@ Run a completion audit for the two-axis guideline objective:
 python new-impl/guideline-agent-pipeline/scripts/audit_guideline_dual_axis_objective.py \
   --scorecard new-impl/guideline-agent-pipeline/results/guideline-v2-r8-release-ready-scorecard-20260823/scorecard.json \
   --evidence-worklist-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-evidence-worklist-20260823/summary.json \
+  --evidence-coverage-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-evidence-coverage-20260823/summary.json \
   --recall-alignment-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-release-ready-p3c64-alignment-20260823/summary.json \
   --recall-side-debug-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-recall-side-debug-pack-20260823/summary.json \
   --recall-side-miss-inspection-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-recall-side-miss-inspection-top300-20260823/summary.json \
@@ -1164,6 +1167,10 @@ hidden known-anchor-overlap candidate looks semantically better than current
 Top-1; list-wise summaries can indicate whether a production-shaped judged set
 has enough anchor coverage to estimate reranker potential. Neither summary is
 paper-facing recall evidence.
+`--evidence-coverage-summary` should point at the output of
+`summarize_guideline_evidence_coverage.py`. It is the full worklist completion
+gate: aggregated ledger summaries can prove reviewed rows are good, but they
+cannot prove that the remaining worklist has been source-reviewed.
 
 Use this audit before declaring a guideline iteration complete. Passing
 structural checks, TraeX judge parsing, sidecar equivalence, or a recall table
@@ -1214,6 +1221,13 @@ guidelines: 3 worklist groups are `source_reviewed_and_judge_accepted`, 1 is
 actions are 14 `fill_source_review_ledger`, 2 `optional_control_source_review`,
 1 `run_ledger_judge_pack`, and 3
 `run_same_identity_recall_after_sidecar_change`.
+The coverage-aware dual-axis audit is under
+`results/guideline-v2-r8-dual-axis-objective-audit-with-evidence-coverage-20260823/`.
+It adds the coverage summary as a separate completion requirement and currently
+reports `overall_status=not_complete`, `missing_count=3`, and 15 blocking
+source-review next actions. This is the current handoff artifact for deciding
+whether the next round should collect semantic source evidence or run fresh
+same-identity recall.
 
 Convert the backlog into review-only mechanism lexicon proposals:
 
