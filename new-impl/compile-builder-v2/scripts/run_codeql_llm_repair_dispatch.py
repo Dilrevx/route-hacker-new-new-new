@@ -77,6 +77,8 @@ DEFAULT_OPENAI_MODEL = "DeepSeek-V4-Pro"
 MAX_PROPOSAL_CORRECTION_ATTEMPTS = 1
 MAX_MODEL_TRANSPORT_ATTEMPTS = 2
 DEFAULT_MAX_BUILD_FEEDBACK_REPLAN_ATTEMPTS = 3
+DEFAULT_MAX_NETWORK_RATE_LIMIT_RETRIES = 2
+DEFAULT_NETWORK_RATE_LIMIT_BACKOFF_SECONDS = 60
 
 
 def append_unique(values: list[str], additions: Iterable[str]) -> list[str]:
@@ -119,6 +121,55 @@ def requires_isolated_build_home_preflight(packet: Mapping[str, Any]) -> bool:
         "accessdeniedexception" in normalized
         and ("/.m2/repository" in normalized or "/.m2\\repository" in normalized)
     )
+
+
+def is_dependency_rate_limit_failure(attempt: Mapping[str, Any]) -> bool:
+    """Return whether a failed CodeQL build hit an upstream HTTP 429.
+
+    A rate limit is transient execution evidence, not a project-specific
+    repair requirement.  The controller can therefore replay the already
+    validated command under its existing isolated-source/build-home contract
+    without asking the model to invent a configuration change.
+    """
+
+    if attempt.get("status") != "repair_attempt_failed":
+        return False
+    packet = attempt.get("packet")
+    if not isinstance(packet, Mapping):
+        return False
+    failed_attempt = packet.get("failed_attempt")
+    if not isinstance(failed_attempt, Mapping):
+        return False
+    log = failed_attempt.get("log")
+    excerpt = log.get("excerpt") if isinstance(log, Mapping) else ""
+    if not isinstance(excerpt, str):
+        return False
+    normalized = excerpt.lower()
+    return (
+        "429" in normalized
+        and (
+            "too many requests" in normalized
+            or "status code: 429" in normalized
+            or "rate limit" in normalized
+            or "rate-limit" in normalized
+        )
+    )
+
+
+def network_rate_limit_backoff_seconds(
+    *,
+    case_id: str,
+    retry_number: int,
+    base_seconds: float,
+) -> float:
+    """Return bounded exponential backoff with deterministic case spreading."""
+
+    if retry_number < 1:
+        raise ValueError("retry_number must be positive")
+    if base_seconds <= 0:
+        raise ValueError("base_seconds must be positive")
+    spread_seconds = int(hashlib.sha256(case_id.encode("utf-8")).hexdigest()[:2], 16) % 15
+    return base_seconds * (2 ** (retry_number - 1)) + spread_seconds
 
 
 def utc_now() -> str:
@@ -1029,10 +1080,16 @@ def run_case(
     approved_maven_homes: list[str],
     verified_gradle_user_home: Path | None = None,
     max_build_feedback_replan_attempts: int = DEFAULT_MAX_BUILD_FEEDBACK_REPLAN_ATTEMPTS,
+    max_network_rate_limit_retries: int = DEFAULT_MAX_NETWORK_RATE_LIMIT_RETRIES,
+    network_rate_limit_backoff_seconds_base: float = DEFAULT_NETWORK_RATE_LIMIT_BACKOFF_SECONDS,
     dry_run: bool = False,
 ) -> dict[str, Any]:
     if max_build_feedback_replan_attempts < 0:
         raise ValueError("max_build_feedback_replan_attempts must be non-negative")
+    if max_network_rate_limit_retries < 0:
+        raise ValueError("max_network_rate_limit_retries must be non-negative")
+    if network_rate_limit_backoff_seconds_base <= 0:
+        raise ValueError("network_rate_limit_backoff_seconds_base must be positive")
     case_id = str(failed_receipt["case_id"])
     case_dir = output_dir / "cases" / safe_name(case_id) / f"attempt-{attempt_number:03d}"
     case_dir.mkdir(parents=True, exist_ok=False)
@@ -1108,7 +1165,10 @@ def run_case(
             "model_tools_disabled": True,
             "model_actions_validated_locally": True,
             "max_build_feedback_replan_attempts": max_build_feedback_replan_attempts,
+            "max_network_rate_limit_retries": max_network_rate_limit_retries,
+            "network_rate_limit_backoff_seconds_base": network_rate_limit_backoff_seconds_base,
             "repeated_validated_build_decision_not_reexecuted": True,
+            "upstream_http_429_replays_same_validated_command_only": True,
             "fresh_redacted_build_log_used_for_replan": True,
             "exact_declared_source_reverified_before_execution": True,
             "source_revision_substitution_forbidden": True,
@@ -1410,6 +1470,86 @@ def run_case(
             historical_toolchain_receipt=failed_receipt,
         )
         attempt["source_materialization"] = source_materialization
+        network_rate_limit_retries: list[dict[str, Any]] = []
+        for network_retry_number in range(1, max_network_rate_limit_retries + 1):
+            if not is_dependency_rate_limit_failure(attempt):
+                break
+            delay_seconds = network_rate_limit_backoff_seconds(
+                case_id=case_id,
+                retry_number=network_retry_number,
+                base_seconds=network_rate_limit_backoff_seconds_base,
+            )
+            retry_record: dict[str, Any] = {
+                "retry_number": network_retry_number,
+                "trigger": "upstream_http_429_dependency_rate_limit",
+                "delay_seconds": delay_seconds,
+                "prior_attempt_status": attempt["status"],
+                "prior_packet_sha256": (
+                    attempt.get("packet", {}).get("packet_sha256")
+                    if isinstance(attempt.get("packet"), Mapping)
+                    else None
+                ),
+            }
+            time.sleep(delay_seconds)
+            try:
+                (
+                    retry_failed_receipt,
+                    retry_source_receipt,
+                    retry_source_materialization,
+                ) = materialize_isolated_attempt_receipts(
+                    failed_receipt=failed_receipt,
+                    source_receipt=source_receipt,
+                    destination=case_dir
+                    / f"source-{decision_round:03d}-network-rate-limit-retry-{network_retry_number:03d}",
+                )
+            except RepairValidationError as error:
+                retry_record.update(
+                    {
+                        "status": "source_revision_verification_failed",
+                        "error_type": type(error).__name__,
+                        "error": str(error),
+                    }
+                )
+                network_rate_limit_retries.append(retry_record)
+                round_record["network_rate_limit_retries"] = network_rate_limit_retries
+                decision_rounds.append(round_record)
+                return {
+                    **base,
+                    "status": "source_revision_verification_failed",
+                    "reason": "network_rate_limit_retry_source_materialization_failed",
+                    "error_type": type(error).__name__,
+                    "error": str(error),
+                    "model_invocation": model_receipt,
+                    "model_invocations": model_invocations,
+                    "proposal_validation_errors": validation_errors,
+                    "validated_decision": executed_decision,
+                    "repair_attempt": attempt,
+                    "repair_attempts": decision_rounds,
+                    "build_feedback_replan_count": decision_round,
+                }
+            attempt = execute_repair_attempt(
+                retry_failed_receipt,
+                executed_decision,
+                attempt_dir=attempt_dir / f"network-rate-limit-retry-{network_retry_number:03d}",
+                timeout_seconds=codeql_timeout_seconds,
+                inactivity_timeout_seconds=codeql_inactivity_timeout_seconds,
+                approved_java_homes=approved_java_homes,
+                approved_maven_homes=approved_maven_homes,
+                source_receipt=retry_source_receipt,
+                verified_gradle_user_home_source=verified_gradle_home,
+                isolate_build_home=True,
+                historical_toolchain_receipt=failed_receipt,
+            )
+            attempt["source_materialization"] = retry_source_materialization
+            retry_record.update(
+                {
+                    "status": attempt["status"],
+                    "repair_attempt": attempt,
+                }
+            )
+            network_rate_limit_retries.append(retry_record)
+        if network_rate_limit_retries:
+            round_record["network_rate_limit_retries"] = network_rate_limit_retries
         round_record["repair_attempt"] = attempt
         decision_rounds.append(round_record)
         if attempt["status"] != "repair_attempt_failed":
@@ -1423,6 +1563,7 @@ def run_case(
                 "repair_attempt": attempt,
                 "repair_attempts": decision_rounds,
                 "build_feedback_replan_count": decision_round,
+                "network_rate_limit_retry_count": len(network_rate_limit_retries),
             }
         if decision_round == max_build_feedback_replan_attempts:
             return {
@@ -1435,6 +1576,7 @@ def run_case(
                 "repair_attempt": attempt,
                 "repair_attempts": decision_rounds,
                 "build_feedback_replan_count": decision_round,
+                "network_rate_limit_retry_count": len(network_rate_limit_retries),
             }
         refreshed_packet = attempt.get("packet")
         if not isinstance(refreshed_packet, dict) or not isinstance(
@@ -1547,6 +1689,24 @@ def parse_args() -> argparse.Namespace:
             "are never re-executed."
         ),
     )
+    parser.add_argument(
+        "--max-network-rate-limit-retries",
+        type=int,
+        default=DEFAULT_MAX_NETWORK_RATE_LIMIT_RETRIES,
+        help=(
+            "Maximum mechanical replays of the same locally validated build command "
+            "after an upstream HTTP 429 dependency rate-limit failure."
+        ),
+    )
+    parser.add_argument(
+        "--network-rate-limit-backoff-seconds",
+        type=float,
+        default=DEFAULT_NETWORK_RATE_LIMIT_BACKOFF_SECONDS,
+        help=(
+            "Base seconds for exponential HTTP 429 backoff; a deterministic per-case "
+            "0-14 second spread avoids synchronized retries."
+        ),
+    )
     parser.add_argument("--case-id", action="append", default=[])
     parser.add_argument("--case-id-file", type=Path)
     parser.add_argument("--limit", type=int)
@@ -1572,6 +1732,10 @@ def main() -> int:
         raise SystemExit("max attempts and heartbeat seconds must be positive")
     if args.max_build_feedback_replan_attempts < 0:
         raise SystemExit("--max-build-feedback-replan-attempts must be non-negative")
+    if args.max_network_rate_limit_retries < 0:
+        raise SystemExit("--max-network-rate-limit-retries must be non-negative")
+    if args.network_rate_limit_backoff_seconds <= 0:
+        raise SystemExit("--network-rate-limit-backoff-seconds must be positive")
     if args.limit is not None and args.limit < 0:
         raise SystemExit("--limit must be non-negative")
     if args.case_id and args.case_id_file:
@@ -1766,6 +1930,8 @@ def main() -> int:
                     approved_maven_homes=approved_maven_homes,
                     verified_gradle_user_home=verified_gradle_user_home,
                     max_build_feedback_replan_attempts=args.max_build_feedback_replan_attempts,
+                    max_network_rate_limit_retries=args.max_network_rate_limit_retries,
+                    network_rate_limit_backoff_seconds_base=args.network_rate_limit_backoff_seconds,
                     dry_run=args.dry_run,
                 )
 
