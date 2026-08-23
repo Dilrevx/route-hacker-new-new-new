@@ -440,6 +440,18 @@ def clone_or_fetch(repo_url: str, repo_dir: Path, timeout: int | None = None) ->
     subprocess.run(["git", "clone", "--no-checkout", repo_url, str(repo_dir)], check=True, timeout=timeout)
 
 
+def repo_has_commit(repo_dir: Path, commit: str) -> bool:
+    if not repo_dir.exists():
+        return False
+    result = subprocess.run(
+        ["git", "-C", str(repo_dir), "rev-parse", "--verify", "--quiet", f"{commit}^{{commit}}"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        check=False,
+    )
+    return result.returncode == 0
+
+
 def materialize_snapshot(repo_dir: Path, commit: str, snapshot: Path) -> None:
     if snapshot.exists():
         raise FileExistsError(f"refusing existing source snapshot: {snapshot}")
@@ -492,7 +504,8 @@ def ensure_snapshot(case: dict[str, Any], repo_cache: Path, snapshots: Path, clo
     snapshot = snapshots / f"{safe_slug(repo_key)}__{commit[:12]}"
     if snapshot.is_dir():
         return snapshot
-    clone_or_fetch(repo["repo_url"], repo_dir, clone_timeout)
+    if not repo_has_commit(repo_dir, commit):
+        clone_or_fetch(repo["repo_url"], repo_dir, clone_timeout)
     materialize_snapshot(repo_dir, commit, snapshot)
     return snapshot
 

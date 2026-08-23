@@ -387,3 +387,33 @@ def test_build_guideline_uses_cwe_for_unknown_type():
     guideline = module.build_guideline(case)
 
     assert "outbound network requests" in guideline
+
+
+def test_ensure_snapshot_uses_existing_commit_without_fetch(tmp_path: Path, monkeypatch):
+    module = load_module()
+    case = sample_case()
+    repo_cache = tmp_path / "repo-cache"
+    snapshots = tmp_path / "snapshots"
+    repo_dir = repo_cache / "owner__repo"
+    repo_dir.mkdir(parents=True)
+    snapshot_dir = snapshots / f"owner__repo__{case['revisions']['checkout_revision'][:12]}"
+    calls: list[str] = []
+
+    monkeypatch.setattr(module, "repo_has_commit", lambda path, commit: True)
+
+    def fake_clone_or_fetch(*args, **kwargs):
+        calls.append("clone_or_fetch")
+
+    def fake_materialize(repo_dir_arg, commit_arg, snapshot_arg):
+        assert repo_dir_arg == repo_dir
+        assert commit_arg == case["revisions"]["checkout_revision"]
+        assert snapshot_arg == snapshot_dir
+        snapshot_arg.mkdir(parents=True)
+
+    monkeypatch.setattr(module, "clone_or_fetch", fake_clone_or_fetch)
+    monkeypatch.setattr(module, "materialize_snapshot", fake_materialize)
+
+    snapshot = module.ensure_snapshot(case, repo_cache, snapshots)
+
+    assert snapshot == snapshot_dir
+    assert calls == []
