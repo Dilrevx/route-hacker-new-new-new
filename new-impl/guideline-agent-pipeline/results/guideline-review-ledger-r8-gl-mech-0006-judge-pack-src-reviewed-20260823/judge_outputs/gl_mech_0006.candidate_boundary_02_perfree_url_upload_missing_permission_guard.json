@@ -1,0 +1,19 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.9,
+  "coverage_score": 0.7,
+  "actionability_score": 0.85,
+  "retrieval_query_quality": 0.8,
+  "main_issue": "The mechanism is tightly scoped and well-evidenced: a single controller endpoint accepts a request-body URL and triggers server-side outbound fetch without the endpoint-level permission guard that neighboring attachment mutations require. The advisory, pre-patch source, service-side sink, and fix commit all align on the same missing guard and repair. The reviewer correctly distinguishes this from path-scoped resource-mismatch authorization patterns.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "GHSA-h976-6mc8-5w2v confirms missing authorization check in uploadAttachByUrl endpoint.",
+    "Pre-patch AttachController.java lines 87-94 shows uploadAttachByUrl without @PreAuthorize; neighboring upload/update/delete have permission annotations.",
+    "AttachUploadByUrlVO.java lines 11-13 defines request-controlled url field with only @NotNull.",
+    "AttachServiceImpl.java lines 116-140 calls HttpUtil.downloadFileFromUrl(url, ...) confirming server-side outbound fetch sink.",
+    "Fix commit 103c79165e3a adds @PreAuthorize(\"@ss.hasPermission('admin:attach:update')\") confirming the repaired guard."
+  ]
+}
+```

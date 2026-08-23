@@ -1,0 +1,20 @@
+[
+  {
+    "boundary_decision": "promote_boundary",
+    "boundary_label": "candidate_boundary_01_geoserver_absolute_resource_path_traversal",
+    "errors": [],
+    "guideline_id": "gl_mech_0006",
+    "line_no": 1,
+    "valid": true,
+    "warnings": []
+  },
+  {
+    "boundary_decision": "promote_boundary",
+    "boundary_label": "candidate_boundary_02_perfree_url_upload_missing_permission_guard",
+    "errors": [],
+    "guideline_id": "gl_mech_0006",
+    "line_no": 2,
+    "valid": true,
+    "warnings": []
+  }
+]
