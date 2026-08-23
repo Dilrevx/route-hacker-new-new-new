@@ -1,0 +1,146 @@
+{
+  "budgets": [
+    30,
+    50,
+    100,
+    150,
+    160,
+    200,
+    300,
+    500,
+    1000
+  ],
+  "created_at": "2026-08-24",
+  "crossings_vs_old": {
+    "top_100": {
+      "both_hit_count": 72,
+      "both_miss_count": 67,
+      "new_only_hit_count": 3,
+      "new_only_hits": [
+        {
+          "hcvr_type": "ssrf",
+          "identity_key": "useplunk__plunk::CVE-2026-32096",
+          "new_rank": 52,
+          "old_rank": 106
+        },
+        {
+          "hcvr_type": "template_expression_injection",
+          "identity_key": "xwiki__xwiki-commons::CVE-2024-31996",
+          "new_rank": 33,
+          "old_rank": 150
+        },
+        {
+          "hcvr_type": "template_expression_injection",
+          "identity_key": "xwiki__xwiki-rendering::CVE-2025-66474",
+          "new_rank": 86,
+          "old_rank": 248
+        }
+      ],
+      "old_only_hit_count": 1,
+      "old_only_hits": [
+        {
+          "hcvr_type": "m9_expansion",
+          "identity_key": "code16__sharp::CVE-2026-53634",
+          "new_rank": 104,
+          "old_rank": 74
+        }
+      ]
+    },
+    "top_160": {
+      "both_hit_count": 83,
+      "both_miss_count": 59,
+      "new_only_hit_count": 1,
+      "new_only_hits": [
+        {
+          "hcvr_type": "template_expression_injection",
+          "identity_key": "xwiki__xwiki-rendering::CVE-2025-66474",
+          "new_rank": 86,
+          "old_rank": 248
+        }
+      ],
+      "old_only_hit_count": 0,
+      "old_only_hits": []
+    },
+    "top_200": {
+      "both_hit_count": 84,
+      "both_miss_count": 58,
+      "new_only_hit_count": 1,
+      "new_only_hits": [
+        {
+          "hcvr_type": "template_expression_injection",
+          "identity_key": "xwiki__xwiki-rendering::CVE-2025-66474",
+          "new_rank": 86,
+          "old_rank": 248
+        }
+      ],
+      "old_only_hit_count": 0,
+      "old_only_hits": []
+    }
+  },
+  "delta_vs_old_p3c64": {
+    "hit_at_100": 2,
+    "hit_at_1000": -31,
+    "hit_at_150": 1,
+    "hit_at_160": 1,
+    "hit_at_200": 1,
+    "hit_at_30": -2,
+    "hit_at_300": -6,
+    "hit_at_50": 0,
+    "hit_at_500": -18,
+    "mrr": -0.0011152514162616894
+  },
+  "delta_vs_r7_release_ready": {
+    "hit_at_100": -1,
+    "hit_at_1000": -21,
+    "hit_at_150": -1,
+    "hit_at_160": -1,
+    "hit_at_200": -2,
+    "hit_at_30": -4,
+    "hit_at_300": -11,
+    "hit_at_50": -2,
+    "hit_at_500": -21,
+    "mrr": -0.009651563833262614
+  },
+  "identity_count": 143,
+  "interpretation": "Full143 source-reviewed sidecar coverage is only 32 identities. In baseline-plus-override mode it preserves most old P3C64 recall but does not create the desired large full143 lift; Top160 is 84/143 versus 83/143 old P3C64 and 85/143 r7 release-ready.",
+  "method": "P3C64 query-residual with source-reviewed release candidate sidecar in baseline-plus-override mode",
+  "metrics": {
+    "old_p3c64": {
+      "hit_at_100": 73,
+      "hit_at_1000": 116,
+      "hit_at_150": 83,
+      "hit_at_160": 83,
+      "hit_at_200": 84,
+      "hit_at_30": 45,
+      "hit_at_300": 91,
+      "hit_at_50": 56,
+      "hit_at_500": 103,
+      "mrr": 0.08852777946015142
+    },
+    "r7_release_ready": {
+      "hit_at_100": 76,
+      "hit_at_1000": 106,
+      "hit_at_150": 85,
+      "hit_at_160": 85,
+      "hit_at_200": 87,
+      "hit_at_30": 47,
+      "hit_at_300": 96,
+      "hit_at_50": 58,
+      "hit_at_500": 106,
+      "mrr": 0.09706409187715234
+    },
+    "source_reviewed_bpo": {
+      "hit_at_100": 75,
+      "hit_at_1000": 85,
+      "hit_at_150": 84,
+      "hit_at_160": 84,
+      "hit_at_200": 85,
+      "hit_at_30": 43,
+      "hit_at_300": 85,
+      "hit_at_50": 56,
+      "hit_at_500": 85,
+      "mrr": 0.08741252804388973
+    }
+  },
+  "schema_version": "hcvr_source_reviewed_full143_analysis.v1"
+}

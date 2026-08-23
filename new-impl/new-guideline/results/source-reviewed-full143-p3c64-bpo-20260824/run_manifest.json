@@ -1,0 +1,47 @@
+{
+  "run_root": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/hcvr-new-guideline-full143-cache-20260824T052149",
+  "identity_count": 143,
+  "shards": [
+    {
+      "index": 0,
+      "count": 24
+    },
+    {
+      "index": 1,
+      "count": 25
+    },
+    {
+      "index": 2,
+      "count": 24
+    },
+    {
+      "index": 3,
+      "count": 23
+    },
+    {
+      "index": 4,
+      "count": 23
+    },
+    {
+      "index": 5,
+      "count": 24
+    }
+  ],
+  "repo_partition_count": 120,
+  "repo_cache_symlinks": 120,
+  "wanted_repo_count": 120,
+  "source_cache_roots": [
+    "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/hcvr-p3c64-143-run/repo-cache",
+    "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/hcvr-p3c64-fixed143-20260820T113743/repo-cache-3",
+    "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/hcvr-p3c64-fixed143-20260820T113743/repo-cache-0",
+    "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/hcvr-p3c64-fixed143-20260820T113743/repo-cache-7",
+    "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/hcvr-p3c64-fixed143-20260820T113743/repo-cache-6",
+    "/data/lhq/workspace/hcvr-embedding-qwen-size-runs/run-143-qwen4b-20260819T052314/repo-cache-qwen3-4b-7",
+    "/data/lhq/workspace/hcvr-embedding-qwen-size-runs/run-143-qwen4b-20260819T052314/repo-cache-qwen3-4b-6",
+    "/data/lhq/workspace/hcvr-embedding-qwen-size-runs/run-143-qwen4b-20260819T052314/repo-cache-qwen3-4b-3",
+    "/data/lhq/workspace/hcvr-embedding-qwen-size-runs/run-143-qwen4b-20260819T052314/repo-cache-qwen3-4b-0",
+    "/data/lhq/workspace/hcvr-embedding-qwen-size-runs/run-143-qwen4b-20260819T052314/repo-cache-qwen3-4b-5",
+    "/data/lhq/workspace/hcvr-embedding-qwen-size-runs/run-143-qwen4b-20260819T052314/repo-cache-qwen3-4b-2",
+    "/data/lhq/workspace/hcvr-ablation-a-30-v2allow-20260818T164555/repo-cache"
+  ]
+}

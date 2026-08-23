@@ -1,0 +1,65 @@
+{
+  "budgets": [
+    160,
+    1000
+  ],
+  "candidate_count_on_common": {
+    "different_count": 0,
+    "left_total": 1094013,
+    "right_total": 1094013
+  },
+  "common_count": 143,
+  "left_count": 143,
+  "left_label": "source-reviewed-baseline-plus-override-full143",
+  "left_only_count": 0,
+  "left_only_sample": [],
+  "metrics_on_common_identities": {
+    "hit_at_1000": {
+      "delta_count": -31,
+      "delta_rate": -0.21678321678321677,
+      "left_count": 85,
+      "left_rate": 0.5944055944055944,
+      "right_count": 116,
+      "right_rate": 0.8111888111888111
+    },
+    "hit_at_160": {
+      "delta_count": 1,
+      "delta_rate": 0.006993006993006993,
+      "left_count": 84,
+      "left_rate": 0.5874125874125874,
+      "right_count": 83,
+      "right_rate": 0.5804195804195804
+    },
+    "mrr": {
+      "delta": -0.0011152514162616894,
+      "left": 0.08741252804388973,
+      "right": 0.08852777946015142
+    }
+  },
+  "primary_budget": 160,
+  "primary_budget_crossing": {
+    "both_hit_count": 83,
+    "both_miss_count": 59,
+    "left_only_hit_count": 1,
+    "left_only_hits": [
+      {
+        "cwe_ids": [],
+        "hcvr_type": "template_expression_injection",
+        "identity_key": "xwiki__xwiki-rendering::CVE-2025-66474",
+        "left_candidate_count": 2254,
+        "left_rank": 86,
+        "right_candidate_count": 2254,
+        "right_rank": 248
+      }
+    ],
+    "right_only_hit_count": 0,
+    "right_only_hits": []
+  },
+  "right_count": 143,
+  "right_label": "old-p3c64-fixed143",
+  "right_only_count": 0,
+  "right_only_sample": [],
+  "same_identity_order": true,
+  "same_identity_set": true,
+  "schema_version": "hcvr_recall_rank_comparison.v1"
+}
