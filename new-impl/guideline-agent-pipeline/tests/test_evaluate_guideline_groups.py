@@ -308,6 +308,9 @@ def test_write_judge_pack_for_flagged_groups(tmp_path: Path):
     assert "judgment criteria can be reviewed and versioned" in (judge_dir / "README.md").read_text(encoding="utf-8")
     runner = (judge_dir / "run_traex_judge.sh").read_text(encoding="utf-8")
     assert "TRAE_JUDGE_CONCURRENCY" in runner
+    assert 'TRAE_JUDGE_CLI="${TRAE_JUDGE_CLI:-traex}"' in runner
+    assert 'TRAE_JUDGE_MODEL="${TRAE_JUDGE_MODEL:-}"' in runner
+    assert 'args+=(--model "$TRAE_JUDGE_MODEL")' in runner
     assert 'OUT_DIR="${1:-judge_outputs}"' in runner
     assert 'xargs -n 1 -P "$CONCURRENCY"' in runner
     assert runner.index('OUT_DIR="${1:-judge_outputs}"') < runner.index("export OUT_DIR")

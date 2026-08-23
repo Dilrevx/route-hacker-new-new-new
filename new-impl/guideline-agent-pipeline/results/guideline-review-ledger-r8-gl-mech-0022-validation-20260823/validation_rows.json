@@ -1,0 +1,38 @@
+[
+  {
+    "boundary_decision": "promote_boundary",
+    "boundary_label": "candidate_boundary_01",
+    "errors": [],
+    "guideline_id": "gl_mech_0022",
+    "line_no": 1,
+    "valid": true,
+    "warnings": []
+  },
+  {
+    "boundary_decision": "split_further",
+    "boundary_label": "candidate_boundary_04",
+    "errors": [],
+    "guideline_id": "gl_mech_0022",
+    "line_no": 2,
+    "valid": true,
+    "warnings": []
+  },
+  {
+    "boundary_decision": "needs_more_evidence",
+    "boundary_label": "candidate_boundary_01.aws_amplify_pending",
+    "errors": [],
+    "guideline_id": "gl_mech_0022",
+    "line_no": 3,
+    "valid": true,
+    "warnings": []
+  },
+  {
+    "boundary_decision": "needs_more_evidence",
+    "boundary_label": "candidate_boundary_01.bonita_pending",
+    "errors": [],
+    "guideline_id": "gl_mech_0022",
+    "line_no": 4,
+    "valid": true,
+    "warnings": []
+  }
+]

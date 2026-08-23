@@ -105,6 +105,11 @@ P3C64-vs-Qwen4B model-improvement claim.
     into a mechanism lexicon or guideline sidecar.
   - Requires source/sink/missing-guard/exploit-precondition/fix evidence for
     `promote_boundary` rows and still does not edit released artifacts.
+- `scripts/build_guideline_ledger_judge_pack.py`
+  - Builds a TraeX LLM-as-judge prompt pack from filled source-review ledger
+    rows.
+  - Reviews semantic boundary coherence only. It does not judge embedding
+    recall, update sidecars, or convert judge decisions into release gates.
 - `scripts/triage_guideline_boundary_recall.py`
   - Joins source-reviewed boundary ledger rows with one or more recall rank
     tables.
@@ -430,8 +435,12 @@ Run the generated judge pack with TraeX:
 
 ```bash
 cd new-impl/guideline-agent-pipeline/results/guideline-v2-r3-group-eval-20260823/llm_judge_pack
-TRAE_JUDGE_TIMEOUT_SECONDS=1800 ./run_traex_judge.sh judge_outputs
+TRAE_JUDGE_CLI=traex TRAE_JUDGE_MODEL=DeepSeek-V4-Pro TRAE_JUDGE_TIMEOUT_SECONDS=1800 TRAE_JUDGE_CONCURRENCY=4 ./run_traex_judge.sh judge_outputs
 ```
+
+The generated runner defaults to `traex`; set `TRAE_JUDGE_CLI=traecli` only
+when using the legacy local command name. `TRAE_JUDGE_MODEL` is optional for
+older packs and should be set explicitly when comparing judge runs.
 
 Summarize the judge outputs after the run:
 
@@ -814,6 +823,24 @@ Allowed `boundary_decision` values are `promote_boundary`, `revise_boundary`,
 `recall_side_debug`. Only `promote_boundary` rows with representative cases and
 filled source/sink/missing-guard/exploit-precondition/fix fields are counted as
 promotable; that still means semantically ready, not recall-proven.
+
+Optionally build a TraeX judge pack from the filled ledger:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/build_guideline_ledger_judge_pack.py \
+  --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0022.jsonl \
+  --decision promote_boundary \
+  --decision split_further \
+  --rubric new-impl/guideline-agent-pipeline/guidelines/judge_rubric.v1.md \
+  --output-dir /path/to/ledger-boundary-judge-pack \
+  --default-cli traex \
+  --default-model DeepSeek-V4-Pro
+```
+
+This produces `judge_inputs.jsonl`, one prompt per selected ledger row, and a
+`run_traex_judge.sh` wrapper. Use it as an advisory semantic review of the
+source-reviewed boundary decision. It is not a recall metric, not a replacement
+for source inspection, and not a hidden rule source.
 
 Join a filled boundary ledger with recall rank tables before interpreting bad
 cases:
