@@ -1740,6 +1740,25 @@ or reconcile the release guideline sidecar from accepted source-reviewed
 boundaries, then rerun same-identity recall with the changed sidecar as the
 only method variable.
 
+For a conservative recall-side sanity run that changes only already aligned
+release groups, build a propagated sidecar from the propagation audit:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/build_propagated_boundary_sidecar.py \
+  --propagation new-impl/guideline-agent-pipeline/results/guideline-v2-r8-source-reviewed-boundary-propagation-audit-20260824/boundary_propagation.jsonl \
+  --boundary-overrides new-impl/guideline-agent-pipeline/results/guideline-v2-r8-source-reviewed-sidecar-candidate-full-20260823/boundary_overrides.jsonl \
+  --case-assignments new-impl/guideline-agent-pipeline/results/guideline-v2-r8-release-ready-group-eval-20260823/case_assignments.jsonl \
+  --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
+  --output-dir /path/to/propagated-boundary-sidecar
+```
+
+The committed ready-only artifact is
+`results/guideline-v2-r8-propagated-boundary-sidecar-ready-only-20260824/`.
+It selects only `group_ablation_ready` boundaries by default, so it currently
+contains the source-reviewed `gl_mech_0001` boundary and 8 release-assigned
+sidecar identities. This is useful for a narrow sanity A/B; it deliberately
+skips the 31 boundaries that need release regeneration.
+
 Convert the backlog into review-only mechanism lexicon proposals:
 
 ```bash
