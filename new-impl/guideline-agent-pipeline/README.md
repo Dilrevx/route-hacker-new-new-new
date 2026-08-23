@@ -100,6 +100,11 @@ P3C64-vs-Qwen4B model-improvement claim.
     fields for reviewer completion.
   - Produces review handoff material only: unfilled packets are not
     release-ready guideline changes.
+- `scripts/verify_guideline_review_ledger.py`
+  - Validates filled reviewer ledger rows before any boundary can be promoted
+    into a mechanism lexicon or guideline sidecar.
+  - Requires source/sink/missing-guard/exploit-precondition/fix evidence for
+    `promote_boundary` rows and still does not edit released artifacts.
 - `scripts/audit_guideline_dual_axis_objective.py`
   - Audits the current guideline iteration against the two coupled goals:
     semantic CVE-mechanism guideline quality and tuned-embedding recall
@@ -570,6 +575,14 @@ one per split/revise item. Each packet has candidate boundaries, source-trace
 examples, weak examples, missing-trace examples, and blank reviewer fields for
 source shape, sink or sensitive effect, missing guard, exploit precondition,
 safe fix semantics, boundary decision, and recall follow-up.
+The review ledger template is
+`guidelines/guideline_review_ledger.template.jsonl`; the template validation
+artifact is
+`results/guideline-review-ledger-template-validation-20260823/`. The template
+contains no promotable row by default. A later filled ledger must pass the
+verifier before any boundary is promoted into released guideline text, and
+promotion still triggers a fresh same-identity recall run once the consumed
+sidecar changes.
 
 The r8 experiment scorecard is committed under
 `results/guideline-v2-r8-release-ready-scorecard-20260823/`. It records the
@@ -767,6 +780,21 @@ Use these packets for the next evidence-collection round. They are useful when
 handing a specific mechanism group to a reviewer or source-inspection agent:
 the reviewer fills the evidence fields, then the team decides whether to
 promote a boundary into the lexicon or leave it out of the released sidecar.
+
+Validate a filled reviewer ledger before promotion:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/verify_guideline_review_ledger.py \
+  --ledger /path/to/filled_guideline_review_ledger.jsonl \
+  --output-dir /path/to/review-ledger-validation \
+  --fail-on-invalid
+```
+
+Allowed `boundary_decision` values are `promote_boundary`, `revise_boundary`,
+`split_further`, `mark_out_of_scope`, `needs_more_evidence`, and
+`recall_side_debug`. Only `promote_boundary` rows with representative cases and
+filled source/sink/missing-guard/exploit-precondition/fix fields are counted as
+promotable; that still means semantically ready, not recall-proven.
 
 Run a completion audit for the two-axis guideline objective:
 
