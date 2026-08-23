@@ -97,6 +97,30 @@ def normalize_openai_base_url(bridge_url: str) -> str:
     return normalized if normalized.endswith("/v1") else f"{normalized}/v1"
 
 
+def requires_isolated_build_home_preflight(packet: Mapping[str, Any]) -> bool:
+    """Detect a historical global Maven-cache permission failure.
+
+    Every repair execution already receives an isolated build home.  A receipt
+    created before that contract can still make the model reject immediately
+    based on a stale global-cache error, so replay it once mechanically under
+    the existing isolated-home contract before asking the model to reason about
+    project-specific build evidence.
+    """
+
+    failed_attempt = packet.get("failed_attempt")
+    if not isinstance(failed_attempt, Mapping):
+        return False
+    log = failed_attempt.get("log")
+    excerpt = log.get("excerpt") if isinstance(log, Mapping) else ""
+    if not isinstance(excerpt, str):
+        return False
+    normalized = excerpt.lower()
+    return (
+        "accessdeniedexception" in normalized
+        and ("/.m2/repository" in normalized or "/.m2\\repository" in normalized)
+    )
+
+
 def utc_now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
 
@@ -1066,10 +1090,6 @@ def run_case(
         approved_maven_homes=approved_maven_homes,
         source_receipt=verified_source_receipt,
     )
-    write_json(case_dir / "packet.json", packet)
-    prompt = build_repair_prompt(packet)
-    prompt_path = case_dir / "prompt.txt"
-    write_text(prompt_path, prompt)
     base = {
         "schema_version": f"{SCHEMA_VERSION}:case_completion",
         "recorded_at": utc_now(),
@@ -1109,6 +1129,62 @@ def run_case(
         return {**base, "status": "llm_repair_dry_run"}
     if not claude_command and not openai_bridge_url:
         raise RepairValidationError("claude command is required unless --dry-run is set")
+    environment_preflight: dict[str, Any] | None = None
+    if requires_isolated_build_home_preflight(packet):
+        preflight_decision = {
+            "actions": [{"kind": "retry_same_command"}],
+            "rationale": (
+                "Replay historical global Maven-cache permission failure under the "
+                "mandatory isolated build-home contract before model evaluation."
+            ),
+        }
+        environment_preflight = execute_repair_attempt(
+            verified_failed_receipt,
+            preflight_decision,
+            attempt_dir=case_dir / "isolated-build-home-preflight",
+            timeout_seconds=codeql_timeout_seconds,
+            inactivity_timeout_seconds=codeql_inactivity_timeout_seconds,
+            approved_java_homes=approved_java_homes,
+            approved_maven_homes=approved_maven_homes,
+            source_receipt=verified_source_receipt,
+            verified_gradle_user_home_source=verified_gradle_home,
+            isolate_build_home=True,
+            historical_toolchain_receipt=failed_receipt,
+        )
+        base["environment_preflight"] = environment_preflight
+        if environment_preflight["status"] != "repair_attempt_failed":
+            return {
+                **base,
+                "packet_sha256": environment_preflight["packet"]["packet_sha256"],
+                "status": environment_preflight["status"],
+                "validated_decision": preflight_decision,
+                "repair_attempt": environment_preflight,
+                "repair_attempts": [
+                    {
+                        "decision_round": "isolated_build_home_preflight",
+                        "mechanical_environment_retry": True,
+                        "validated_decision": preflight_decision,
+                        "repair_attempt": environment_preflight,
+                    }
+                ],
+                "build_feedback_replan_count": 0,
+            }
+        refreshed_packet = environment_preflight.get("packet")
+        if not isinstance(refreshed_packet, dict) or not isinstance(
+            refreshed_packet.get("packet_sha256"), str
+        ):
+            return {
+                **base,
+                "status": "repair_attempt_failed",
+                "reason": "isolated_build_home_preflight_missing_refreshable_packet",
+                "repair_attempt": environment_preflight,
+            }
+        packet = refreshed_packet
+    write_json(case_dir / "packet.json", packet)
+    prompt = build_repair_prompt(packet)
+    prompt_path = case_dir / "prompt.txt"
+    write_text(prompt_path, prompt)
+    base["packet_sha256"] = packet["packet_sha256"]
     model_invocations: list[dict[str, Any]] = []
     validation_errors: list[str] = []
     decision_rounds: list[dict[str, Any]] = []

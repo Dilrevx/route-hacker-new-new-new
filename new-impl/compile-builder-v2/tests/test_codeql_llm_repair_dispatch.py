@@ -23,6 +23,7 @@ from scripts.run_codeql_llm_repair_dispatch import (
     invoke_openai_bridge_model,
     materialize_isolated_attempt_receipts,
     normalize_openai_base_url,
+    requires_isolated_build_home_preflight,
     repair_json_schema,
     validate_prior_completion_binding,
 )
@@ -109,6 +110,31 @@ def repair_packet() -> dict:
             "allow_prepend_maven_clean": False,
         }
     }
+
+
+def test_requires_isolated_build_home_preflight_only_for_global_maven_access_denial():
+    assert requires_isolated_build_home_preflight(
+        {
+            "failed_attempt": {
+                "log": {
+                    "excerpt": (
+                        "java.nio.file.AccessDeniedException: "
+                        "/data/lhq/.m2/repository/org/example"
+                    )
+                }
+            }
+        }
+    )
+    assert not requires_isolated_build_home_preflight(
+        {
+            "failed_attempt": {
+                "log": {"excerpt": "java.nio.file.AccessDeniedException: /tmp/output"}
+            }
+        }
+    )
+    assert not requires_isolated_build_home_preflight(
+        {"failed_attempt": {"log": {"excerpt": "BUILD FAILURE"}}}
+    )
 
 
 def gradle_failed_receipt(source: Path, case_id: str, revision: str) -> dict:
