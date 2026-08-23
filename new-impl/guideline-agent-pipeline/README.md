@@ -643,6 +643,13 @@ fresh same-identity recall after sidecar text changes, taxonomy-vs-embed triage
 for clean groups that still miss Top-K, and separated paper claim boundaries
 for semantic quality, recall deltas, sidecar equivalence, and any engineering
 fusion.
+The latest audit with recall-alignment policy metadata is
+`results/guideline-v2-r8-dual-axis-objective-audit-with-alignment-policy-20260823/`.
+It preserves the `not_complete` status, records the 28/143 alignment join
+coverage, and makes the cleanliness policy machine-readable: pending,
+review-only, source-only, and actionability-incomplete groups block
+recall-side interpretation; mixed HCVR/CWE labels remain review signals, not
+hard failure conditions.
 
 Build a cautious experiment scorecard when reporting a guideline iteration:
 

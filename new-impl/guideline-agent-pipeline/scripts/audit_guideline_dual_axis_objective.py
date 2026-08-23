@@ -163,6 +163,7 @@ def build_audit(
     scorecard: dict[str, Any],
     worklist: dict[str, Any],
     desired_delta_rate: float,
+    recall_alignment: dict[str, Any] | None = None,
     boundary_recall_triage: dict[str, Any] | None = None,
     ledger_validation: dict[str, Any] | None = None,
     ledger_judge: dict[str, Any] | None = None,
@@ -178,6 +179,19 @@ def build_audit(
     semantic_status = status_for_semantic_quality(scorecard, worklist)
     recall_status = status_for_recall(scorecard, desired_delta_rate)
     reviewed_boundary = source_reviewed_boundary_evidence(ledger_validation, ledger_judge)
+    recall_alignment = recall_alignment or {}
+    alignment_policy = (
+        recall_alignment.get("cleanliness_policy")
+        if isinstance(recall_alignment.get("cleanliness_policy"), dict)
+        else {}
+    )
+    alignment_joined = recall_alignment.get("joined_recall_case_count")
+    alignment_total = recall_alignment.get("recall_case_count")
+    alignment_attention = (
+        recall_alignment.get("attention_counts")
+        if isinstance(recall_alignment.get("attention_counts"), dict)
+        else {}
+    )
     boundary_recall_triage = boundary_recall_triage or {}
     boundary_next_actions = (
         boundary_recall_triage.get("next_action_counts")
@@ -212,6 +226,8 @@ def build_audit(
                 f"same_identity_order={recall.get('same_identity_order')}",
                 f"recall_equivalence_status={recall_equivalence.get('status')}",
                 f"primary_budget={recall.get('primary_budget')}",
+                f"recall_alignment_joined={alignment_joined}/{alignment_total}",
+                f"recall_alignment_attention_counts={alignment_attention}",
                 f"boundary_recall_triage_aligned_boundaries={aligned_boundary_count}",
                 f"boundary_recall_triage_rank_tables={boundary_recall_triage.get('rank_table_labels')}",
             ],
@@ -235,6 +251,8 @@ def build_audit(
                 "revision backlog has actions for embedding/candidate/query mismatch",
                 "scorecard separates structural, judge, recall, and sidecar-equivalence evidence",
                 "source-reviewed boundaries can be marked semantically ready without being counted as recall-proven",
+                f"label_mixture_is_blocking={alignment_policy.get('label_mixture_is_blocking')}",
+                f"min_clean_purity_is_blocking={alignment_policy.get('min_clean_purity_is_blocking')}",
             ],
             "status": "satisfied_as_evaluation_policy",
             "gap": "Need per-group semantic-vs-recall triage after the next changed-sidecar recall run.",
@@ -301,6 +319,19 @@ def build_audit(
         "overall_status": overall_status,
         "requirements": requirements,
         "source_reviewed_boundary_evidence": reviewed_boundary,
+        "recall_alignment_evidence": {
+            "status": "provided" if recall_alignment else "not_provided",
+            "recall_label": recall_alignment.get("recall_label"),
+            "joined_recall_case_count": alignment_joined,
+            "recall_case_count": alignment_total,
+            "same_identity_baseline": recall_alignment.get("same_identity_baseline"),
+            "attention_counts": alignment_attention,
+            "cleanliness_policy": alignment_policy,
+            "message": (
+                "Recall alignment is diagnostic only. Limited joins or clean-group misses should guide recall-side "
+                "inspection, not hidden routing or hardcoded guideline changes."
+            ),
+        },
         "missing_or_incomplete_requirements": missing,
         "next_gates": next_gates,
         "decision": (
@@ -339,6 +370,7 @@ def write_readme(path: Path, audit: dict[str, Any]) -> None:
         gap = str(row.get("gap") or "").replace("|", "\\|")
         lines.append(f"| {row['requirement']} | `{row['status']}` | {evidence} | {gap} |")
     reviewed = audit.get("source_reviewed_boundary_evidence") or {}
+    alignment = audit.get("recall_alignment_evidence") or {}
     lines.extend(
         [
             "",
@@ -352,6 +384,21 @@ def write_readme(path: Path, audit: dict[str, Any]) -> None:
             f"- Judge average scores: {reviewed.get('judge_average_scores')}",
             "",
             "This section records source-reviewed guideline-boundary evidence. It can support a semantic boundary decision, but it does not prove recall. If one of these boundaries misses Top-K, the next action is recall-side diagnosis or a same-identity model/ranking A/B, not automatic taxonomy degradation.",
+        ]
+    )
+    lines.extend(
+        [
+            "",
+            "## Recall Alignment Diagnostics",
+            "",
+            f"- Status: `{alignment.get('status')}`",
+            f"- Recall label: `{alignment.get('recall_label')}`",
+            f"- Joined recall cases: {alignment.get('joined_recall_case_count')} / {alignment.get('recall_case_count')}",
+            f"- Same identity baseline: {alignment.get('same_identity_baseline')}",
+            f"- Attention counts: {alignment.get('attention_counts')}",
+            f"- Cleanliness policy: {alignment.get('cleanliness_policy')}",
+            "",
+            "This diagnostic separates clean semantic boundaries from recall misses. Mixed HCVR/CWE labels remain review signals, but they are not hard gates because one reusable mechanism can cut across labels.",
         ]
     )
     lines.extend(
@@ -390,6 +437,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--scorecard", type=Path, required=True)
     parser.add_argument("--evidence-worklist-summary", type=Path, required=True)
+    parser.add_argument("--recall-alignment-summary", type=Path)
     parser.add_argument("--boundary-recall-triage-summary", type=Path)
     parser.add_argument("--ledger-validation-summary", type=Path, action="append")
     parser.add_argument("--ledger-judge-summary", type=Path, action="append")
@@ -402,6 +450,11 @@ def main() -> None:
         scorecard=read_json(args.scorecard),
         worklist=read_json(args.evidence_worklist_summary),
         desired_delta_rate=args.desired_delta_rate,
+        recall_alignment=(
+            read_json(args.recall_alignment_summary)
+            if args.recall_alignment_summary
+            else None
+        ),
         boundary_recall_triage=(
             read_json(args.boundary_recall_triage_summary)
             if args.boundary_recall_triage_summary

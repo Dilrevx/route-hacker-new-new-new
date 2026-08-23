@@ -95,6 +95,38 @@ def test_boundary_triage_is_recorded_without_completing_global_audit():
     assert "1 source-reviewed boundary" in audit["next_gates"][2]["current_state"]
 
 
+def test_recall_alignment_policy_is_diagnostic_not_completion_signal():
+    module = load_module()
+
+    audit = module.build_audit(
+        scorecard=scorecard(),
+        worklist={"worklist_count": 1, "action_counts": {"collect_source_sink_guard_evidence": 1}},
+        desired_delta_rate=0.10,
+        recall_alignment={
+            "recall_label": "p3c64",
+            "joined_recall_case_count": 28,
+            "recall_case_count": 143,
+            "same_identity_baseline": True,
+            "attention_counts": {
+                "label_mixed_structural_attention": 8,
+                "embedding_or_candidate_recall_attention": 44,
+            },
+            "cleanliness_policy": {
+                "label_mixture_is_blocking": False,
+                "min_clean_purity_is_blocking": False,
+            },
+        },
+    )
+
+    assert audit["overall_status"] == "not_complete"
+    alignment = audit["recall_alignment_evidence"]
+    assert alignment["status"] == "provided"
+    assert alignment["joined_recall_case_count"] == 28
+    assert alignment["cleanliness_policy"]["label_mixture_is_blocking"] is False
+    assert "label_mixture_is_blocking=False" in audit["requirements"][3]["evidence"]
+    assert "recall_alignment_joined=28/143" in audit["requirements"][1]["evidence"]
+
+
 def test_source_reviewed_boundary_evidence_is_separate_from_recall_completion():
     module = load_module()
 
@@ -190,12 +222,26 @@ def test_aggregate_multiple_source_reviewed_summaries():
 def test_cli_writes_dual_axis_audit(tmp_path: Path):
     scorecard_path = tmp_path / "scorecard.json"
     worklist_path = tmp_path / "worklist.json"
+    recall_alignment_path = tmp_path / "recall_alignment.json"
     ledger_validation_path = tmp_path / "ledger_validation.json"
     ledger_judge_path = tmp_path / "ledger_judge.json"
     output = tmp_path / "audit"
     scorecard_path.write_text(json.dumps(scorecard()), encoding="utf-8")
     worklist_path.write_text(
         json.dumps({"worklist_count": 1, "action_counts": {"collect_source_sink_guard_evidence": 1}}),
+        encoding="utf-8",
+    )
+    recall_alignment_path.write_text(
+        json.dumps(
+            {
+                "recall_label": "p3c64",
+                "joined_recall_case_count": 28,
+                "recall_case_count": 143,
+                "same_identity_baseline": True,
+                "attention_counts": {"label_mixed_structural_attention": 8},
+                "cleanliness_policy": {"label_mixture_is_blocking": False},
+            }
+        ),
         encoding="utf-8",
     )
     ledger_validation_path.write_text(
@@ -215,6 +261,8 @@ def test_cli_writes_dual_axis_audit(tmp_path: Path):
             str(scorecard_path),
             "--evidence-worklist-summary",
             str(worklist_path),
+            "--recall-alignment-summary",
+            str(recall_alignment_path),
             "--ledger-validation-summary",
             str(ledger_validation_path),
             "--ledger-judge-summary",
@@ -234,6 +282,7 @@ def test_cli_writes_dual_axis_audit(tmp_path: Path):
     readme = (output / "README.md").read_text(encoding="utf-8")
     assert "Guideline Dual-Axis Objective Audit" in readme
     assert "Source-Reviewed Boundary Evidence" in readme
+    assert "Recall Alignment Diagnostics" in readme
 
 
 def test_cli_accepts_repeated_source_reviewed_summaries(tmp_path: Path):
