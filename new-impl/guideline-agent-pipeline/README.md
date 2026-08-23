@@ -173,6 +173,18 @@ P3C64-vs-Qwen4B model-improvement claim.
   - Produces a source-reviewed coverage matrix and next review queue only; it
     does not update guidelines, sidecars, rank tables, embeddings, or audit
     prompts.
+- `scripts/build_source_reviewed_sidecar.py`
+  - Converts accepted source-reviewed boundary ledger rows into a review-only
+    guideline override sidecar candidate.
+  - Includes only rows whose ledger decision is `promote_boundary`, verifier
+    row is valid, and ledger-level judge decision is `accept`.
+  - Generates recall text from mechanism name, boundary text, missing guard,
+    safe fix semantics, and a same-path confirmation reminder; it rejects CVE
+    IDs, `file:line` shapes, evidence-reference fields, known-anchor ranks,
+    and source-evidence text in the generated retrieval guideline.
+  - Produces an ablation input only. It does not update released guidelines,
+    change embeddings, mutate rank tables, or justify paper-facing recall
+    claims without a fresh same-identity recall run.
 - `scripts/build_guideline_ledger_judge_pack.py`
   - Builds a TraeX LLM-as-judge prompt pack from filled source-review ledger
     rows.
@@ -1609,20 +1621,90 @@ sanitization boundary plus 1 `needs_more_evidence` row for the unresolved
 `AppLollmsMessage.from_dict` advisory/source mismatch; the judge accepts the
 promoted row and marks the unresolved row `needs_evidence`.
 
-The latest cumulative coverage matrix is
-`results/guideline-v2-r8-evidence-coverage-plus-0509-0009-0012-judge-20260823/`:
-18 worklist groups are now `source_reviewed_and_judge_accepted`, 2 groups are
-the intended optional control reviews, and there are no blocking source-review
-next actions. Across the accumulated source-reviewed ledgers there are 47
-ledger rows, 40 validation rows, 46 judge rows, and 33 promotable boundaries
-accepted by judge in the coverage matrix. The latest dual-axis audit is
-`results/guideline-v2-r8-dual-axis-objective-audit-plus-0509-0009-0012-judge-20260823/`;
-it still reports `overall_status=not_complete`, but source-review coverage is
-now `satisfied_semantic_coverage_pending_recall_followup` with
-`blocking_next_action_count=0`. The remaining objective gaps are no longer
-unfilled source-review blockers: they are the paper-facing recall target gap
-and the requirement to run fresh same-identity recall after any
-recall-consumed sidecar text changes.
+The current strict cumulative coverage matrix is
+`results/guideline-v2-r8-evidence-coverage-plus-0509-0009-0012-full-judge-20260823/`.
+It uses the complete validation and judge inputs, including the existing
+`gl_mech_0001` validation and the `gl_mech_0040` v2 validation. In that view,
+18 worklist groups are `source_reviewed_and_judge_accepted`, 2 groups are the
+intended optional control reviews, and there are no blocking source-review next
+actions. Across the accumulated source-reviewed ledgers there are 47 ledger
+rows, 47 validation rows, 46 judge rows, and 33 promotable boundaries accepted
+by judge in the coverage matrix. The current strict dual-axis audit is
+`results/guideline-v2-r8-dual-axis-objective-audit-plus-0509-0009-0012-full-judge-20260823/`;
+it still reports `overall_status=not_complete`, with `missing_count=2`. The
+remaining objective gaps are no longer unfilled source-review blockers: they
+are the paper-facing recall target gap and the requirement to run fresh
+same-identity recall after any recall-consumed sidecar text changes.
+
+The accepted source-reviewed boundaries can be exported as a controlled,
+review-only recall sidecar candidate:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/build_source_reviewed_sidecar.py \
+  --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0001.jsonl \
+  --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0005.jsonl \
+  --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0006.jsonl \
+  --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0007.jsonl \
+  --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0008.jsonl \
+  --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0009.jsonl \
+  --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0011.jsonl \
+  --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0012.jsonl \
+  --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0015.jsonl \
+  --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0022.jsonl \
+  --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0040.jsonl \
+  --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0061.jsonl \
+  --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0116.jsonl \
+  --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0117.jsonl \
+  --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.review_mech_0017.jsonl \
+  --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.review_mech_0509.jsonl \
+  --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.review_mech_0513.jsonl \
+  --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.review_mech_0514.jsonl \
+  --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0001-validation-20260823/validation_rows.json \
+  --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0005-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0006-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0007-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0008-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0009-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0011-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0012-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0015-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0022-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0040-validation-src-reviewed-v2-20260823/validation_rows.json \
+  --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0061-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0116-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0117-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-review-mech-0017-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-review-mech-0509-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-review-mech-0513-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-review-mech-0514-validation-src-reviewed-20260823/validation_rows.json \
+  --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0001-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0005-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0006-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0007-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0008-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0009-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0011-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0012-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0015-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0022-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0040-judge-pack-src-reviewed-v2-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0061-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0116-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0117-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-review-mech-0017-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-review-mech-0509-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-review-mech-0513-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-review-mech-0514-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
+  --output-dir /path/to/source-reviewed-sidecar-candidate
+```
+
+The generated candidate committed here is
+`results/guideline-v2-r8-source-reviewed-sidecar-candidate-full-20260823/`.
+It contains 33 accepted promotable boundaries, 48 matched sidecar identities,
+and 5 source-reviewed representative cases absent from the supplied cases file.
+This is the next same-identity recall A/B input, not a release replacement and
+not a recall result.
 
 Convert the backlog into review-only mechanism lexicon proposals:
 
