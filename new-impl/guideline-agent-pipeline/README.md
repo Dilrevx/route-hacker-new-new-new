@@ -918,14 +918,21 @@ Current source-reviewed boundary ledgers:
   trusted-client/credential forwarding still needs more source evidence, and
   redirect-following SSRF remains a coherent candidate mechanism with no
   source-reviewed representative case in this group yet.
+- `guidelines/guideline_review_ledger.r8.gl_mech_0007.jsonl`: revises the old
+  webhook/callback SSRF framing into a source-reviewed direct URL download
+  boundary for `CommonServiceImpl.urlDownload`. The checked case supports an
+  attacker-controlled URL argument reaching `new URL(fileUrl).openStream()`
+  before protocol validation. The old webhook/callback mechanism remains
+  coherent but needs representative source evidence before promotion.
 
-The cumulative audit with both ledgers is under
-`results/guideline-v2-r8-dual-axis-objective-audit-with-source-reviewed-boundaries-plus-0116-20260823/`.
-It has 6 valid source-reviewed ledger rows, 3 promotable boundaries, and
-TraeX judge decisions of `accept=4` and `needs_evidence=1`. The non-accept row
-is the redirect-following SSRF candidate, which stays out of recall-positive
-claims until source evidence shows an initial approved URL followed by an
-unsafe redirected destination.
+The cumulative audit with these ledgers is under
+`results/guideline-v2-r8-dual-axis-objective-audit-with-source-reviewed-boundaries-plus-0007-20260823/`.
+It has 8 valid source-reviewed ledger rows, 4 promotable boundaries, and
+TraeX judge decisions of `accept=5` and `needs_evidence=2`. The non-accept
+rows are evidence-preserving candidate boundaries, not recall positives: one
+redirect-following SSRF row that needs an initial-approved-URL to unsafe
+redirect case, and one webhook/callback SSRF row that needs a true
+server-initiated callback or notification endpoint case.
 
 Convert the backlog into review-only mechanism lexicon proposals:
 
