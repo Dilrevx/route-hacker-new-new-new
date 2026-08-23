@@ -1,0 +1,21 @@
+{
+  "boundary_label": "candidate_boundary_03_spel_context",
+  "guideline_group_key": "gl_mech_0040__candidate_boundary_03_spel_context__mech_spel_unrestricted_evaluation_context",
+  "guideline_id": "sr_mech_0014",
+  "guideline_text": "Audit for SpEL evaluation with unrestricted StandardEvaluationContext. SpEL unrestricted evaluation context: attacker-influenced notification, template, or expression content is evaluated with Spring Expression Language using StandardEvaluationContext or another context that permits method invocation, type access, or broad property access. Report flows where the expression evaluation context is not reduced to read-only property/data binding access before evaluation. Required missing-guard check: The vulnerable notifier rendering path does not restrict the SpEL context to read-only data binding/property access on the same evaluation path. StandardEvaluationContext is too permissive for untrusted or attacker-influenced expressions. Safe implementation should: Replace StandardEvaluationContext on the affected rendering path with SimpleEvaluationContext.forPropertyAccessors(DataBindingPropertyAccessor.forReadOnlyAccess(), new MapAccessor()).withRootObject(root).build(), or an equivalent restricted context that only exposes intended read-only data properties before evaluation. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 1 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_spel_unrestricted_evaluation_context",
+    "name": "SpEL evaluation with unrestricted StandardEvaluationContext"
+  },
+  "old_guideline_id": "gl_mech_0040",
+  "release_status": {
+    "blockers": [
+      "singleton_or_missing_case_support"
+    ],
+    "release_ready": false,
+    "status": "review_only"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 1
+}

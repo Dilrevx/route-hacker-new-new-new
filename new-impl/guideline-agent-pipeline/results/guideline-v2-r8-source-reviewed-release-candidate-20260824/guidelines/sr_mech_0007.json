@@ -1,0 +1,21 @@
+{
+  "boundary_label": "candidate_boundary_01_onedev_artifact_content_sniffing_xss",
+  "guideline_group_key": "gl_mech_0009__candidate_boundary_01_onedev_artifact_content_sniffing_xss__mech_artifact_download_content_sniffing_xss",
+  "guideline_id": "sr_mech_0007",
+  "guideline_text": "Audit for user-uploaded artifact served with sniffed active content type. Artifact download content-sniffing XSS: user-uploaded build artifacts, attachments, generated files, or repository artifacts are served back to browsers with a Content-Type derived from file content, extension, or a MIME detector, and the response lacks a defensive `X-Content-Type-Options: nosniff` policy or forced attachment/binary type. Report artifact-serving paths where attacker-supplied HTML or script-bearing content can be rendered as active same-origin browser content instead of being delivered as inert download data. Required missing-guard check: The vulnerable resource response does not force an inert content type such as `application/octet-stream` and does not add `X-Content-Type-Options: nosniff` before returning user-controlled artifact bytes to the browser. This is not a template-expression evaluator sink; the browser rendering decision is controlled by response content type and sniffing policy. Safe implementation should: Serve user-uploaded artifacts as inert binary data and prevent browser sniffing: set `Content-Type` to `MimeTypes.OCTET_STREAM` and add `X-Content-Type-Options: nosniff` on the artifact response instead of using content detection on uploaded artifact bytes. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 0 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_artifact_download_content_sniffing_xss",
+    "name": "user-uploaded artifact served with sniffed active content type"
+  },
+  "old_guideline_id": "gl_mech_0009",
+  "release_status": {
+    "blockers": [
+      "singleton_or_missing_case_support"
+    ],
+    "release_ready": false,
+    "status": "review_only"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 0
+}

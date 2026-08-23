@@ -1,0 +1,21 @@
+{
+  "boundary_label": "candidate_boundary_01",
+  "guideline_group_key": "gl_mech_0007__candidate_boundary_01__mech_ssrf_untrusted_url_download_openstream",
+  "guideline_id": "sr_mech_0005",
+  "guideline_text": "Audit for server-side URL download fetch from attacker-controlled URL. Untrusted URL download SSRF: a request parameter or equivalent caller-controlled URL argument is used as the destination for a server-side Java URL.openStream, URLConnection, HTTP client, download helper, or proxy fetch before the same path parses and constrains the outbound scheme and destination. The checked instance is a download endpoint where the request-supplied URL remains the fetched URL unless private OSS mode rewrites it. Required missing-guard check: Before the fix, the urlDownload path checked only null/empty input and parsed path segments for OSS bucket/object helpers. It did not create a URL object and enforce an allowed protocol before openStream, and the reviewed evidence does not show host, DNS-resolved IP, private-network, metadata-address, or redirect-hop policy on the fetched destination. Safe implementation should: The patch parses fileUrl with new URL(fileUrl), rejects malformed URLs, rejects protocols other than http and https, and then calls parsedUrl.openStream() on the parsed URL. MIME type and extension allowlists are also added elsewhere, but those are content controls rather than destination controls. A stronger production SSRF fix would add host allowlists, DNS/IP private-range checks, and redirect revalidation before the same outbound request. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 1 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_ssrf_untrusted_url_download_openstream",
+    "name": "server-side URL download fetch from attacker-controlled URL"
+  },
+  "old_guideline_id": "gl_mech_0007",
+  "release_status": {
+    "blockers": [
+      "singleton_or_missing_case_support"
+    ],
+    "release_ready": false,
+    "status": "review_only"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 1
+}

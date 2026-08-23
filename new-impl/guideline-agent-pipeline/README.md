@@ -1759,6 +1759,27 @@ contains the source-reviewed `gl_mech_0001` boundary and 8 release-assigned
 sidecar identities. This is useful for a narrow sanity A/B; it deliberately
 skips the 31 boundaries that need release regeneration.
 
+Build a broader source-reviewed release candidate when the refined boundaries
+should become their own guideline candidates instead of being forced back into
+the older release mechanisms:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/build_source_reviewed_release_candidate.py \
+  --source-reviewed-sidecar-dir new-impl/guideline-agent-pipeline/results/guideline-v2-r8-source-reviewed-sidecar-candidate-full-20260823 \
+  --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
+  --output-dir /path/to/source-reviewed-release-candidate
+```
+
+The committed candidate is
+`results/guideline-v2-r8-source-reviewed-release-candidate-20260824/`. It
+turns the 33 accepted source-reviewed boundaries into 33 explicit guideline
+candidates, keeps 12 multi-case boundaries release-ready for recall sidecar
+ablation, leaves 21 singleton or missing-case boundaries review-only by
+default, and emits 32 recall sidecar identities. This is the safer next input
+for semantic review plus same-identity recall, because it preserves the
+fine-grained JNDI/XXE/SSRF/authentication/path-race style mechanism boundaries
+instead of weakening them to fit the older broad release groups.
+
 Convert the backlog into review-only mechanism lexicon proposals:
 
 ```bash

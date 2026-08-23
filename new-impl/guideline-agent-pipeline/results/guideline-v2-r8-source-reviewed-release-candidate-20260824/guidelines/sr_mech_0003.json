@@ -1,0 +1,21 @@
+{
+  "boundary_label": "candidate_boundary_01_geoserver_absolute_resource_path_traversal",
+  "guideline_group_key": "gl_mech_0006__candidate_boundary_01_geoserver_absolute_resource_path_traversal__mech_absolute_resource_path_traversal_missing_component_validation",
+  "guideline_id": "sr_mech_0003",
+  "guideline_text": "Audit for absolute resource wrapper path traversal through missing component validation. Absolute resource wrapper path traversal: a REST upload, harvest, or resource-management path accepts attacker-controlled file names or resource path fragments and resolves them through a filesystem or URL-backed resource wrapper that is intended to represent an existing absolute location outside the normal data-directory resource implementation. Report paths where traversal components such as `..` are accepted by the wrapper and then used for read, write, directory, listing, deletion, harvest, or catalog import effects before path-component validation proves the child resource remains under the intended resource root. Required missing-guard check: The absolute Resource wrapper path lacks a component-level traversal guard before constructing or wrapping file and URL resources. Pre-patch `Files.ResourceAdaptor(File file)` does not validate `file.getPath()`, `Files.ResourceAdaptor.get(String resourcePath)` passes `resourcePath` directly into `new File(file, resourcePath)`, and `URIs.ResourceAdaptor(URL url)` accepts `url.getPath()` without `Paths.valid`. The normal relative resource implementation's traversal validation therefore does not protect absolute-path coverage stores. Safe implementation should: Apply path-component validation to every file or URL resource wrapper path before the resource is used. The observed fix calls `valid(file.getPath())` in the file-backed `ResourceAdaptor` constructor, calls `valid(resourcePath)` before `new File(file, resourcePath)`, and calls `Paths.valid(url.getPath())` in the URL-backed wrapper constructor. The helper rejects any `..` component after separator normalization, and tests cover Unix and Windows traversal forms. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 0 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_absolute_resource_path_traversal_missing_component_validation",
+    "name": "absolute resource wrapper path traversal through missing component validation"
+  },
+  "old_guideline_id": "gl_mech_0006",
+  "release_status": {
+    "blockers": [
+      "singleton_or_missing_case_support"
+    ],
+    "release_ready": false,
+    "status": "review_only"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 0
+}

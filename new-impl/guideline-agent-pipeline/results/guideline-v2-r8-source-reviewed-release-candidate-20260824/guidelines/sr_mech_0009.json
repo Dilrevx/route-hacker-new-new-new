@@ -1,0 +1,21 @@
+{
+  "boundary_label": "candidate_boundary_01_lollms_social_content_stored_xss",
+  "guideline_group_key": "gl_mech_0012__candidate_boundary_01_lollms_social_content_stored_xss__mech_stored_social_content_missing_html_sanitization",
+  "guideline_id": "sr_mech_0009",
+  "guideline_text": "Audit for stored social content missing HTML sanitization before persistence or rendering. Stored social-content XSS through missing HTML sanitization: a social, discussion, direct-message, comment, group-name, or rich-text endpoint accepts attacker-controlled content and stores or returns it for later browser rendering without applying an allowlist-based HTML sanitizer or equivalent output encoding on the same content field. Report code paths where stored user content reaches ORM/database objects or message responses before sanitization, and later browser-facing views can render that content as HTML or script. Required missing-guard check: The vulnerable routes lacked an allowlist sanitizer or output-encoding guard on the same user-controlled content fields before storage/return. There was no `bleach.clean`-style restriction of tags and attributes for posts, comments, DMs, broadcast DMs, or group names before creating or updating database records. Safe implementation should: Define a restrictive sanitizer policy, apply it before storing or updating each social content field, and migrate existing stored content through the same sanitizer. The observed fix adds `sanitize_content` backed by `bleach.clean(..., tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRS, strip=True)` and applies it to create/update post, add comment, broadcast DM, direct-message send, group conversation name, and existing database content cleanup paths. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 0 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_stored_social_content_missing_html_sanitization",
+    "name": "stored social content missing HTML sanitization before persistence or rendering"
+  },
+  "old_guideline_id": "gl_mech_0012",
+  "release_status": {
+    "blockers": [
+      "singleton_or_missing_case_support"
+    ],
+    "release_ready": false,
+    "status": "review_only"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 0
+}

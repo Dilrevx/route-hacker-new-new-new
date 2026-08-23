@@ -1,0 +1,19 @@
+{
+  "boundary_label": "candidate_boundary_01",
+  "guideline_group_key": "gl_mech_0061__candidate_boundary_01__mech_open_redirect_final_destination_policy_missing",
+  "guideline_id": "sr_mech_0016",
+  "guideline_text": "Audit for open redirect from attacker-controlled destination without final normalized policy check. Open redirect through missing final destination policy: an attacker-controlled redirect target, return URL, callback URL, Referer-derived destination, OAuth/OIDC redirect_uri, or client-side navigation target reaches a browser redirect, Location header, response.sendRedirect, window.location assignment, or protocol authorization redirect before the same source-to-sink path validates the final decoded and normalized destination against an exact policy. The relevant guard checks the destination that is actually emitted or assigned, not an earlier string form that can be bypassed by relative resolution, prefix matching, protocol-relative syntax, origin confusion, or unsafe URI schemes. Required missing-guard check: The old-side paths do not validate the final parsed destination on the same path immediately before the redirect/navigation sink. The missing guard is not just scheme filtering: it must bind the actual emitted destination to a policy such as relative-only paths under the expected origin, exact registered callback URIs, or an allowlisted scheme/origin/path tuple. Prefix-only checks, unchecked request context, protocol-relative targets, ambiguous normalization, and direct assignment to window.location are insufficient. Safe implementation should: A safe fix parses and normalizes the destination using URL semantics before the sink, resolves relative paths against the expected application origin, rejects protocol-relative and malformed values, and allows only same-origin relative paths or exact registered/allowlisted destinations. The policy must be applied to the same normalized destination later used by sendRedirect, Location, window.location, or equivalent browser navigation effect. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 2 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_open_redirect_final_destination_policy_missing",
+    "name": "open redirect from attacker-controlled destination without final normalized policy check"
+  },
+  "old_guideline_id": "gl_mech_0061",
+  "release_status": {
+    "blockers": [],
+    "release_ready": true,
+    "status": "release_ready"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 2
+}

@@ -1,0 +1,19 @@
+{
+  "boundary_label": "candidate_boundary_02",
+  "guideline_group_key": "gl_mech_0116__candidate_boundary_02__mech_renderer_external_resource_ssrf",
+  "guideline_id": "sr_mech_0018",
+  "guideline_text": "Audit for renderer or document converter external-resource SSRF. Renderer external-resource SSRF: attacker-controlled document, SVG, image, template, diagram, or similar rich-content input is handed to a renderer, converter, transcoder, or macro processor that resolves external URLs or resource references during rendering, without an explicit external-resource policy enforced on that renderer instance. Required missing-guard check: The vulnerable path does not disable external resource resolution or validate the render service destination before the renderer is invoked. The missing guard is renderer-specific: for Batik, external resource loading is enabled; for render-service handoff, the chosen server URL is not checked against a trusted-domain policy before rendering. Safe implementation should: Set renderer/converter options that deny external resources by default, or parse and validate the render service URL against trusted domains before invoking the renderer. The guard must be applied to the exact renderer or service call that resolves resources. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 2 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_renderer_external_resource_ssrf",
+    "name": "renderer or document converter external-resource SSRF"
+  },
+  "old_guideline_id": "gl_mech_0116",
+  "release_status": {
+    "blockers": [],
+    "release_ready": true,
+    "status": "release_ready"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 2
+}

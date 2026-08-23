@@ -1,0 +1,21 @@
+{
+  "boundary_label": "candidate_boundary_03_nonempty_token_without_validation",
+  "guideline_group_key": "review_mech_0514__candidate_boundary_03_nonempty_token_without_validation__mech_token_presence_check_without_validation",
+  "guideline_id": "sr_mech_0032",
+  "guideline_text": "Audit for authentication interceptor accepts any non-empty token without validation. Token-presence-only authentication: request interceptors or middleware read a session, JWT, API, or gateway token and allow protected handler execution when the token string is merely present or non-empty, without decrypting, verifying, decoding, or looking up the token before returning success. Report code paths where token validity is checked only for blankness before a protected endpoint or sensitive downstream operation proceeds. Required missing-guard check: The vulnerable code throws NOT_LOGIN only when StringUtils.isBlank(token) and does not call TokenService.decryption(token), signature verification, session lookup, or equivalent validation before returning true. Safe implementation should: Inject the token validation service and validate/decrypt the token on the same interceptor path before returning true. Reject invalid tokens before entering protected handler logic, and separately block dangerous JDBC URL parameters at the datasource sink where applicable. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 1 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_token_presence_check_without_validation",
+    "name": "authentication interceptor accepts any non-empty token without validation"
+  },
+  "old_guideline_id": "review_mech_0514",
+  "release_status": {
+    "blockers": [
+      "singleton_or_missing_case_support"
+    ],
+    "release_ready": false,
+    "status": "review_only"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 1
+}

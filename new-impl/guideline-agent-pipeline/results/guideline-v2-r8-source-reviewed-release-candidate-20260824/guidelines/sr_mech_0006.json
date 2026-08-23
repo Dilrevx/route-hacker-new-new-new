@@ -1,0 +1,21 @@
+{
+  "boundary_label": "candidate_boundary_01_corrected_output_folder_path_control",
+  "guideline_group_key": "gl_mech_0008__candidate_boundary_01_corrected_output_folder_path_control__mech_attacker_controlled_output_directory_read_delete",
+  "guideline_id": "sr_mech_0006",
+  "guideline_text": "Audit for attacker-controlled output directory for generated artifacts. Attacker-controlled generator output directory: a web-exposed code generation service accepts an output directory or folder option from request-controlled generator options, concatenates it with the server temporary root, and later uses that derived path as the generator output directory, archive input, and cleanup target. If traversal components or absolute-path semantics are not removed before the filesystem effects, the request can make the service read from or delete files and directories outside the intended per-request workspace. Required missing-guard check: The vulnerable flow does not reject or ignore traversal-capable outputFolder values before binding them to generation, archive, and delete operations. There is no canonical containment check proving the final outputFolder remains under the intended per-request temporary directory, and the user-selected option is used as a trusted filesystem destination. Safe implementation should: Do not accept request-controlled outputFolder for the online service. Derive the output directory from server-controlled language and generation type under a freshly created temporary workspace, or otherwise canonicalize and enforce containment before every generation, archive, and cleanup effect. The observed patch removes opts.getOptions().get(\"outputFolder\") from destPath selection and always uses language + \"-\" + type.getTypeName(). Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 0 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_attacker_controlled_output_directory_read_delete",
+    "name": "attacker-controlled output directory for generated artifacts"
+  },
+  "old_guideline_id": "gl_mech_0008",
+  "release_status": {
+    "blockers": [
+      "singleton_or_missing_case_support"
+    ],
+    "release_ready": false,
+    "status": "review_only"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 0
+}

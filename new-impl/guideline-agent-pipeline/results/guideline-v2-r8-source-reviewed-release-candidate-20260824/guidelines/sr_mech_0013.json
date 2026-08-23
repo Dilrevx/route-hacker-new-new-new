@@ -1,0 +1,19 @@
+{
+  "boundary_label": "candidate_boundary_02_bean_validation_message_el",
+  "guideline_group_key": "gl_mech_0040__candidate_boundary_02_bean_validation_message_el__mech_bean_validation_message_el_interpolation_injection",
+  "guideline_id": "sr_mech_0013",
+  "guideline_text": "Audit for Bean Validation message template EL interpolation injection. Bean Validation message template EL interpolation injection: attacker-controlled validation values, custom messages, or message fragments are embedded into a Bean Validation constraint violation template via buildConstraintViolationWithTemplate or an equivalent EL-capable interpolation sink. Report flows where attacker text containing `{`, `}`, `$`, or `${...}` reaches that template without escaping metacharacters, using message-parameter APIs, or disabling EL interpolation before message rendering. Required missing-guard check: The vulnerable flows do not escape expression-language metacharacters before the message reaches buildConstraintViolationWithTemplate, and they do not use message-parameter APIs, static templates, or a non-EL interpolator on the same path. Safe implementation should: Escape `{`, `}`, `$`, backslash, and `${` sequences before constructing the template, use message-parameter APIs or static templates that separate data from message syntax, or configure a non-EL message interpolator. The safe fix must occur before buildConstraintViolationWithTemplate or the equivalent interpolation sink. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 3 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_bean_validation_message_el_interpolation_injection",
+    "name": "Bean Validation message template EL interpolation injection"
+  },
+  "old_guideline_id": "gl_mech_0040",
+  "release_status": {
+    "blockers": [],
+    "release_ready": true,
+    "status": "release_ready"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 3
+}

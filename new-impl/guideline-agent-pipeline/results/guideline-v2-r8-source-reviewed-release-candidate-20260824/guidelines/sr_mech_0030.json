@@ -1,0 +1,21 @@
+{
+  "boundary_label": "candidate_boundary_01_inactive_identifier_authentication_acceptance",
+  "guideline_group_key": "review_mech_0514__candidate_boundary_01_inactive_identifier_authentication_acceptance__mech_inactive_identifier_authentication_acceptance",
+  "guideline_id": "sr_mech_0030",
+  "guideline_text": "Audit for inactive account identifier accepted during authentication. Inactive identifier authentication acceptance: authentication code looks up credentials by an externally supplied username, email, phone number, or other login identifier and accepts the account after password or credential verification without confirming that the matched identifier is active and still allowed for login. Report code paths where inactive, disabled, unverified, or revoked identifiers can still bind to an account or principal before session creation or authentication success. Required missing-guard check: The vulnerable code does not check that the specific UserIdentifier matching the submitted username is active before accepting the credential and returning the account. Safe implementation should: Before password acceptance or username-only account return, locate the matching identifier on the credential record and reject authentication when that identifier is missing or inactive. The fix must run on the same credential path that creates the authenticated account. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 1 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_inactive_identifier_authentication_acceptance",
+    "name": "inactive account identifier accepted during authentication"
+  },
+  "old_guideline_id": "review_mech_0514",
+  "release_status": {
+    "blockers": [
+      "singleton_or_missing_case_support"
+    ],
+    "release_ready": false,
+    "status": "review_only"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 1
+}

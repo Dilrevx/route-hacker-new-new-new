@@ -1,0 +1,19 @@
+{
+  "boundary_label": "candidate_boundary_01_static_resource_path_containment",
+  "guideline_group_key": "review_mech_0017__candidate_boundary_01_static_resource_path_containment__mech_static_resource_path_traversal_missing_final_containment",
+  "guideline_id": "sr_mech_0020",
+  "guideline_text": "Audit for static resource request path traversal without final containment guard. Static resource path traversal: an HTTP request path, servlet path, route path, or static-resource lookup key is decoded or trimmed and then resolved against a server-controlled static-resource root, user-file folder, mounted resource, or repository lookup before the final normalized filesystem/resource location is proven to remain inside the intended root. Report code paths where traversal segments, decoded traversal, absolute path behavior, or mount-prefix fallback can make a static-file read resolve outside the configured web resource base. Required missing-guard check: The vulnerable OpenHAB code did not compare the canonical resolved file path against the canonical userFileFolder/rootFolder before serving it. The vulnerable Solon code did not reject '/../' traversal segments before selecting a StaticRepository and calling repository.find on the derived relative path. In both cases, the guard must be applied to the same final path value that reaches the static-resource read. Safe implementation should: Before returning or serving the resource, normalize/canonicalize the final resolved path and enforce containment under the intended root, or reject traversal segments before repository lookup when that lookup is the authoritative resolution step. The check must occur after URL decoding and before the file or URL is returned to the response path. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 2 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_static_resource_path_traversal_missing_final_containment",
+    "name": "static resource request path traversal without final containment guard"
+  },
+  "old_guideline_id": "review_mech_0017",
+  "release_status": {
+    "blockers": [],
+    "release_ready": true,
+    "status": "release_ready"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 2
+}

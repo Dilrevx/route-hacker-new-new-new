@@ -1,0 +1,19 @@
+{
+  "boundary_label": "candidate_boundary_01",
+  "guideline_group_key": "gl_mech_0005__candidate_boundary_01__mech_path_traversal_missing_normalized_containment",
+  "guideline_id": "sr_mech_0002",
+  "guideline_text": "Audit for path traversal through missing normalized base-directory containment. Path traversal through missing normalized containment: attacker-controlled filenames, object keys, upload identifiers, archive entries, path fragments, or resource names are resolved beneath an intended base directory and then used for file read, write, delete, list, existence check, or metadata operations before the exact resolved path is normalized or canonicalized and verified to remain under that base. The boundary covers server-side filesystem or filesystem-backed object-store paths where traversal components, separator variants, or prefix confusion can escape the intended root. Required missing-guard check: The old-side flows do not enforce normalized or canonical containment of the exact resolved destination before the file operation. DSpace builds temp directories and chunk paths from request parameters without canonical containment under upload.temp.dir or java.io.tmpdir. S3Proxy resolves object keys and prefixes under a container root and uses them for list/read/write/delete/access operations without checking that the normalized path stays inside the container directory. A guard applied to a different value or a string prefix check that can be bypassed by path semantics would not satisfy this boundary. Safe implementation should: A safe implementation constructs the destination with path-aware APIs, normalizes or canonicalizes the final path under the intended base, rejects absolute paths, traversal components, separator-confusion variants, and prefix-confusion escapes, then enforces base-directory containment on the same path immediately before read/write/delete/list/metadata effects. For object-store abstractions, every operation that resolves a key or prefix to local filesystem state must share the same containment helper. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 2 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_path_traversal_missing_normalized_containment",
+    "name": "path traversal through missing normalized base-directory containment"
+  },
+  "old_guideline_id": "gl_mech_0005",
+  "release_status": {
+    "blockers": [],
+    "release_ready": true,
+    "status": "release_ready"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 2
+}

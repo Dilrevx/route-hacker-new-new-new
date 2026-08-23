@@ -1,0 +1,21 @@
+{
+  "boundary_label": "candidate_boundary_02_missing_media_token_filter_rejection",
+  "guideline_group_key": "review_mech_0514__candidate_boundary_02_missing_media_token_filter_rejection__mech_media_filter_missing_token_allows_controller_access",
+  "guideline_id": "sr_mech_0031",
+  "guideline_text": "Audit for media endpoint filter lets unauthenticated requests continue when token is missing. Missing-token media filter bypass: a servlet or web filter protects media, file, cover, thumbnail, or document-download endpoints but continues the filter chain when the expected request token is absent or empty. Report code paths where downstream controllers expose protected content after the filter only attempts validation when a token exists, instead of rejecting unauthenticated requests before chain.doFilter. Required missing-guard check: The vulnerable filter only validates token when token != null and does not return an HTTP 401 for null or empty token before calling chain.doFilter. Safe implementation should: Reject null or empty token values with HTTP 401 before any authentication branch and before chain.doFilter, then keep rejecting invalid token or authentication exceptions. Controller annotations alone should not be the only guard for these endpoints. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 1 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_media_filter_missing_token_allows_controller_access",
+    "name": "media endpoint filter lets unauthenticated requests continue when token is missing"
+  },
+  "old_guideline_id": "review_mech_0514",
+  "release_status": {
+    "blockers": [
+      "singleton_or_missing_case_support"
+    ],
+    "release_ready": false,
+    "status": "review_only"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 1
+}

@@ -1,0 +1,19 @@
+{
+  "boundary_label": "candidate_boundary_01",
+  "guideline_group_key": "gl_mech_0117__candidate_boundary_01__mech_ssrf_outbound_url_destination_policy_gap",
+  "guideline_id": "sr_mech_0019",
+  "guideline_text": "Audit for server-side outbound URL request with incomplete destination policy. Server-side outbound URL destination policy gap: attacker-influenced URL, endpoint, host, webhook, callback, plugin, bridge, or configuration input reaches server-side HTTP request construction or dispatch before the same request destination is parsed, normalized, resolved, and constrained under the effective network destination policy. The policy must bind the URL actually used by the outbound client, including scheme, host parsing, DNS/IP resolution, private/loopback/link-local/multicast/cloud-metadata ranges, redirect hops, and parser inconsistencies where applicable. Required missing-guard check: The old-side evidence lacks complete effective-destination validation. Bugsink uses urllib.parse.urlparse to decide scheme and hostname before outbound policy checks, while the patch switches to requests preparation plus urllib3 parsing and rejects raw non-RFC characters, indicating a parser-boundary mismatch. CC-Tweaked's private-address predicate omitted cloud metadata and multicast destinations, so the deny policy did not cover all sensitive internal targets. Safe implementation should: A safe implementation parses and canonicalizes the URL using the same semantics as the outbound HTTP client, rejects malformed or ambiguous raw inputs, enforces allowed schemes, resolves and checks the effective host/IP against private, loopback, link-local, multicast, unique-local, and cloud-metadata ranges, and reapplies equivalent checks after redirects or DNS changes before dispatch. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 2 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_ssrf_outbound_url_destination_policy_gap",
+    "name": "server-side outbound URL request with incomplete destination policy"
+  },
+  "old_guideline_id": "gl_mech_0117",
+  "release_status": {
+    "blockers": [],
+    "release_ready": true,
+    "status": "release_ready"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 2
+}

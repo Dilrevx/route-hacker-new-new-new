@@ -1,0 +1,19 @@
+{
+  "boundary_label": "candidate_boundary_01",
+  "guideline_group_key": "gl_mech_0011__candidate_boundary_01__mech_archive_entry_path_escape_write",
+  "guideline_id": "sr_mech_0008",
+  "guideline_text": "Audit for archive entry path escape write outside extraction root. Archive-entry path escape write: an attacker-controlled archive entry name or derived entry path is resolved beneath an extraction root and then used to create directories, create links, or write file content before the same extraction path enforces normalized or canonical containment under the intended root. This includes ZIP/JAR/Simple Archive Format extraction paths where traversal components, absolute paths, separator variants, or prefix-confusion can make the resolved output target escape the extraction directory. Required missing-guard check: The promoted evidence does not show a normalized or canonical path containment check applied to the resolved destination before the write/create operation. The generic missing guard is not merely lack of a string prefix check; the relevant guard must bind the exact resolved entry destination used by the write to the intended extraction root under filesystem semantics. Safe implementation should: A safe implementation resolves each archive entry against the extraction root, normalizes or canonicalizes using the target filesystem semantics, rejects absolute paths, traversal components, separator-confusion variants, and prefix-confusion escapes, then enforces that the final path remains under the intended root before creating directories, links, or writing content. Symlink-following writes require additional no-follow or link-target validation and may need a separate boundary. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 3 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_archive_entry_path_escape_write",
+    "name": "archive entry path escape write outside extraction root"
+  },
+  "old_guideline_id": "gl_mech_0011",
+  "release_status": {
+    "blockers": [],
+    "release_ready": true,
+    "status": "release_ready"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 3
+}

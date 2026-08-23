@@ -1,0 +1,21 @@
+{
+  "boundary_label": "candidate_boundary_04_oidc_session_expiry_binding",
+  "guideline_group_key": "review_mech_0509__candidate_boundary_04_oidc_session_expiry_binding__mech_oidc_server_session_not_bound_to_token_expiry",
+  "guideline_id": "sr_mech_0026",
+  "guideline_text": "Audit for OIDC server session not bounded to token expiry. OIDC session lifetime not bound to token expiry: a web application establishes a server-side session for OIDC login but leaves the servlet/session timeout or OpenID configuration independent of provider token expiration, allowing an authenticated server session to remain valid beyond the intended inactivity or ID-token lifetime. Report security-handler or OIDC configuration paths where session lifetime and logout-on-token-expiry controls are absent on the same authentication flow. Required missing-guard check: The vulnerable configuration does not call `sessionHandler.setMaxInactiveInterval(...)` with an OIDC session timeout and does not set `.logoutWhenIdTokenIsExpired(true)` on the OpenIdConfiguration used by the OIDC security handler. Safe implementation should: Add an explicit positive OIDC session timeout configuration, apply it to the Jetty `SessionHandler` with `setMaxInactiveInterval`, and build the OpenIdConfiguration with `logoutWhenIdTokenIsExpired(true)` so server session validity tracks OIDC token/session lifetime. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 1 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_oidc_server_session_not_bound_to_token_expiry",
+    "name": "OIDC server session not bounded to token expiry"
+  },
+  "old_guideline_id": "review_mech_0509",
+  "release_status": {
+    "blockers": [
+      "singleton_or_missing_case_support"
+    ],
+    "release_ready": false,
+    "status": "review_only"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 1
+}
