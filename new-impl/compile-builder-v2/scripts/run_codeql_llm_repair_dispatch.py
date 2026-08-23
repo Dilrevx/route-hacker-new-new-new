@@ -61,6 +61,7 @@ TERMINAL_STATUSES = frozenset(
     {
         "codeql_db_repaired",
         "repair_attempt_failed",
+        "upstream_dependency_rate_limited",
         "no_safe_llm_repair",
         "llm_model_invocation_failed",
         "llm_repair_proposal_rejected",
@@ -1552,6 +1553,23 @@ def run_case(
             round_record["network_rate_limit_retries"] = network_rate_limit_retries
         round_record["repair_attempt"] = attempt
         decision_rounds.append(round_record)
+        if (
+            is_dependency_rate_limit_failure(attempt)
+            and len(network_rate_limit_retries) == max_network_rate_limit_retries
+        ):
+            return {
+                **base,
+                "status": "upstream_dependency_rate_limited",
+                "reason": "upstream_http_429_dependency_rate_limit_exhausted",
+                "model_invocation": model_receipt,
+                "model_invocations": model_invocations,
+                "proposal_validation_errors": validation_errors,
+                "validated_decision": executed_decision,
+                "repair_attempt": attempt,
+                "repair_attempts": decision_rounds,
+                "build_feedback_replan_count": decision_round,
+                "network_rate_limit_retry_count": len(network_rate_limit_retries),
+            }
         if attempt["status"] != "repair_attempt_failed":
             return {
                 **base,

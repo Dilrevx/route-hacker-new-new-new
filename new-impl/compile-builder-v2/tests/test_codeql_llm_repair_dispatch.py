@@ -990,6 +990,90 @@ def test_controller_replays_same_validated_command_after_http_429(
     assert retry["status"] == "codeql_db_repaired"
 
 
+def test_controller_records_exhausted_http_429_retries_separately(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = tmp_path / "source"
+    source.mkdir()
+    case_id = "v8:rate-limit-exhausted"
+    source_row = source_receipt(source, case_id, "abc123")
+    failed = failed_receipt(source, case_id, "abc123")
+    prior = deterministic_completion(failed, source_row)
+    invocation_count = 0
+    executed_decisions: list[dict] = []
+
+    def fake_invoke_model(**_kwargs: object) -> dict:
+        nonlocal invocation_count
+        invocation_count += 1
+        decision = {
+            "actions": [{"kind": "retry_same_command"}],
+            "rationale": "The historical command is already locally approved.",
+        }
+        return {
+            "command": ["fake-model"],
+            "bounded_process": {"returncode": 0, "timed_out": False},
+            "output_path": "model-output.txt",
+            "raw_text": json.dumps({"type": "result", "structured_output": decision}),
+        }
+
+    def fake_execute_repair_attempt(
+        receipt: dict,
+        decision: dict,
+        **_kwargs: object,
+    ) -> dict:
+        executed_decisions.append(decision)
+        packet = dispatcher.build_repair_packet(
+            receipt,
+            approved_java_homes=[],
+            approved_maven_homes=[],
+            source_receipt=source_row,
+        )
+        packet["failed_attempt"] = {
+            **packet["failed_attempt"],
+            "log": {
+                "path": f"fresh-codeql-{len(executed_decisions)}.log",
+                "sha256": f"fresh-{len(executed_decisions)}",
+                "available": True,
+                "excerpt": "status code: 429, reason phrase: Too Many Requests (429)",
+            },
+        }
+        packet["packet_sha256"] = stable_json_sha256(
+            {key: value for key, value in packet.items() if key != "packet_sha256"}
+        )
+        return {"status": "repair_attempt_failed", "packet": packet}
+
+    monkeypatch.setattr(dispatcher, "invoke_model", fake_invoke_model)
+    monkeypatch.setattr(dispatcher, "execute_repair_attempt", fake_execute_repair_attempt)
+    monkeypatch.setattr(dispatcher.time, "sleep", lambda _delay: None)
+
+    result = dispatcher.run_case(
+        failed_receipt=failed,
+        source_receipt=source_row,
+        prior_completion=prior,
+        output_dir=tmp_path / "output",
+        attempt_number=1,
+        claude_command="fake-model",
+        openai_bridge_url=None,
+        openai_model="fake-model",
+        model_timeout_seconds=10,
+        codeql_timeout_seconds=10,
+        codeql_inactivity_timeout_seconds=None,
+        approved_java_homes=[],
+        approved_maven_homes=[],
+        max_network_rate_limit_retries=2,
+        network_rate_limit_backoff_seconds_base=1,
+        dry_run=False,
+    )
+
+    assert result["status"] == "upstream_dependency_rate_limited"
+    assert result["reason"] == "upstream_http_429_dependency_rate_limit_exhausted"
+    assert result["network_rate_limit_retry_count"] == 2
+    assert invocation_count == 1
+    assert len(executed_decisions) == 3
+    assert len(result["repair_attempts"][0]["network_rate_limit_retries"]) == 2
+
+
 def test_controller_allows_multiple_bounded_feedback_replans(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
