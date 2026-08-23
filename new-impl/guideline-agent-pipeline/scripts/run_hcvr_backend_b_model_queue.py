@@ -21,11 +21,12 @@ import concurrent.futures
 import json
 import subprocess
 import sys
+import tarfile
 import time
 from pathlib import Path
 from typing import Any, Iterable
 
-from run_hcvr_case_anchor_audits import ensure_snapshot, safe_slug
+from run_hcvr_case_anchor_audits import safe_slug
 
 
 def read_jsonl(path: Path) -> Iterable[dict[str, Any]]:
@@ -90,13 +91,74 @@ def prewarm_snapshot(
     cache directory, so retry once after preserving that entry as evidence.
     """
 
+    repo = case["repository"]
+    repo_key = safe_slug(str(repo["repo_key"]))
+    commit = str(case["revisions"]["checkout_revision"])
+    repo_dir = repo_cache / repo_key
+    snapshot = snapshot_root / f"{repo_key}__{commit[:12]}"
+    if snapshot.is_dir():
+        return snapshot
+
+    # Do not use ``git clone --no-checkout`` here.  It transfers the complete
+    # reachable history and has repeatedly caused macOS to kill ``index-pack``
+    # under local memory pressure.  A depth-one fetch of the frozen commit has
+    # the same source tree needed for ``git archive`` without historical packs.
+    def fetch_and_materialize() -> Path:
+        repo_dir.parent.mkdir(parents=True, exist_ok=True)
+        subprocess.run(["git", "init", str(repo_dir)], check=True, timeout=clone_timeout)
+        subprocess.run(
+            ["git", "-C", str(repo_dir), "remote", "add", "origin", str(repo["repo_url"])],
+            check=True,
+            timeout=clone_timeout,
+        )
+        subprocess.run(
+            [
+                "git",
+                "-C",
+                str(repo_dir),
+                "-c",
+                "pack.threads=1",
+                "fetch",
+                "--depth=1",
+                "origin",
+                commit,
+            ],
+            check=True,
+            timeout=clone_timeout,
+        )
+        observed = subprocess.check_output(
+            ["git", "-C", str(repo_dir), "rev-parse", f"{commit}^{{commit}}"],
+            text=True,
+        ).strip()
+        if observed != commit:
+            raise ValueError(f"repository does not resolve expected commit: {commit}")
+        snapshot.mkdir(parents=True)
+        archive = snapshot.parent / f".{snapshot.name}.tar"
+        try:
+            subprocess.run(
+                ["git", "-C", str(repo_dir), "archive", "--format=tar", f"--output={archive}", commit],
+                check=True,
+                timeout=clone_timeout,
+            )
+            with tarfile.open(archive) as handle:
+                snapshot_root_resolved = snapshot.resolve()
+                for member in handle.getmembers():
+                    member_path = (snapshot_root_resolved / member.name).resolve()
+                    try:
+                        member_path.relative_to(snapshot_root_resolved)
+                    except ValueError as error:
+                        raise ValueError(f"unsafe archive member path: {member.name}") from error
+                handle.extractall(snapshot)
+        except Exception:
+            # The incomplete snapshot is renamed by the outer recovery path.
+            raise
+        finally:
+            archive.unlink(missing_ok=True)
+        return snapshot
+
     try:
-        return ensure_snapshot(case, repo_cache, snapshot_root, clone_timeout)
+        return fetch_and_materialize()
     except (subprocess.CalledProcessError, subprocess.TimeoutExpired):
-        repo_key = safe_slug(str(case["repository"]["repo_key"]))
-        commit = str(case["revisions"]["checkout_revision"])
-        repo_dir = repo_cache / repo_key
-        snapshot = snapshot_root / f"{repo_key}__{commit[:12]}"
         # Preserve rather than delete an incomplete cache/snapshot: --repo-cache
         # can be shared by callers, and this evidence is useful for diagnosis.
         suffix = f".failed-{int(time.time())}"
@@ -104,7 +166,7 @@ def prewarm_snapshot(
             repo_dir.rename(repo_dir.with_name(repo_dir.name + suffix))
         if snapshot.exists():
             snapshot.rename(snapshot.with_name(snapshot.name + suffix))
-        return ensure_snapshot(case, repo_cache, snapshot_root, clone_timeout)
+        return fetch_and_materialize()
 
 
 def prepare_recall_projection(
