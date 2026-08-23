@@ -1069,6 +1069,7 @@ python new-impl/guideline-agent-pipeline/scripts/summarize_guideline_evidence_co
   --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0005.jsonl \
   --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0007.jsonl \
   --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0011.jsonl \
+  --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0015.jsonl \
   --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0022.jsonl \
   --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0061.jsonl \
   --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0116.jsonl \
@@ -1077,6 +1078,7 @@ python new-impl/guideline-agent-pipeline/scripts/summarize_guideline_evidence_co
   --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0005-validation-src-reviewed-20260823/validation_rows.json \
   --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0007-validation-src-reviewed-20260823/validation_rows.json \
   --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0011-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0015-validation-src-reviewed-20260823/validation_rows.json \
   --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0022-validation-src-reviewed-20260823/validation_rows.json \
   --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0061-validation-src-reviewed-20260823/validation_rows.json \
   --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0116-validation-src-reviewed-20260823/validation_rows.json \
@@ -1085,6 +1087,7 @@ python new-impl/guideline-agent-pipeline/scripts/summarize_guideline_evidence_co
   --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0005-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
   --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0007-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
   --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0011-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0015-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
   --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0022-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
   --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0061-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
   --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0116-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
@@ -1154,7 +1157,7 @@ Run a completion audit for the two-axis guideline objective:
 python new-impl/guideline-agent-pipeline/scripts/audit_guideline_dual_axis_objective.py \
   --scorecard new-impl/guideline-agent-pipeline/results/guideline-v2-r8-release-ready-scorecard-20260823/scorecard.json \
   --evidence-worklist-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-evidence-worklist-20260823/summary.json \
-  --evidence-coverage-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-evidence-coverage-plus-0001-0011-judge-20260823/summary.json \
+  --evidence-coverage-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-evidence-coverage-plus-0015-judge-20260823/summary.json \
   --recall-alignment-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-release-ready-p3c64-alignment-20260823/summary.json \
   --recall-side-debug-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-recall-side-debug-pack-20260823/summary.json \
   --recall-side-miss-inspection-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-recall-side-miss-inspection-top300-20260823/summary.json \
@@ -1163,6 +1166,7 @@ python new-impl/guideline-agent-pipeline/scripts/audit_guideline_dual_axis_objec
   --ledger-validation-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0005-validation-src-reviewed-20260823/summary.json \
   --ledger-validation-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0007-validation-src-reviewed-20260823/summary.json \
   --ledger-validation-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0011-validation-src-reviewed-20260823/summary.json \
+  --ledger-validation-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0015-validation-src-reviewed-20260823/summary.json \
   --ledger-validation-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0022-validation-src-reviewed-20260823/summary.json \
   --ledger-validation-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0061-validation-src-reviewed-20260823/summary.json \
   --ledger-validation-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0116-validation-src-reviewed-20260823/summary.json \
@@ -1171,6 +1175,7 @@ python new-impl/guideline-agent-pipeline/scripts/audit_guideline_dual_axis_objec
   --ledger-judge-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0005-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
   --ledger-judge-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0007-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
   --ledger-judge-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0011-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
+  --ledger-judge-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0015-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
   --ledger-judge-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0022-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
   --ledger-judge-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0061-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
   --ledger-judge-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0116-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
@@ -1357,6 +1362,22 @@ groups are now `source_reviewed_and_judge_accepted`, 12 remain
 The latest dual-axis audit is
 `results/guideline-v2-r8-dual-axis-objective-audit-plus-0001-0011-judge-20260823/`;
 it still reports `overall_status=not_complete`, `missing_count=3`, and 10
+blocking source-review next actions.
+
+The `gl_mech_0015` source-review follow-up corrects the old mechanism
+attribution instead of preserving the misleading createTempFile-delete-mkdir
+label. The promoted boundary is a Python Requests archive-member predictable
+temporary-file check/write race backed by the patch from
+`output/cve_clustering/v2/patch_cache/66d21cb07bd6255b1280291c4fafb71803cdb3b7.diff`
+and the validated vulnerable checkout window around `src/requests/utils.py`.
+The TraeX judge accepts the narrow single-case boundary with a low coverage
+score caveat. The latest cumulative coverage matrix is
+`results/guideline-v2-r8-evidence-coverage-plus-0015-judge-20260823/`: 9
+groups are now `source_reviewed_and_judge_accepted`, 11 remain
+`not_source_reviewed`, and there are no `source_reviewed_validation_only` rows.
+The latest dual-axis audit is
+`results/guideline-v2-r8-dual-axis-objective-audit-plus-0015-judge-20260823/`;
+it still reports `overall_status=not_complete`, `missing_count=3`, and 9
 blocking source-review next actions.
 
 Convert the backlog into review-only mechanism lexicon proposals:
