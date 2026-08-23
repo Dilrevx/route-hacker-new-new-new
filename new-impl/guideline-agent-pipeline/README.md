@@ -65,6 +65,23 @@ P3C64-vs-Qwen4B model-improvement claim.
   - Fails by default when the identity sets differ, so model A/B runs do not
     accidentally compare different case subsets.
   - Supports explicit `--allow-mismatch` for intersection diagnostics.
+- `scripts/run_hcvr_ablation_a.py`
+  - Runs the grouped bounded-audit harness over a fixed case allowlist and a
+    frozen Top-K recall receipt.
+  - Uses directory-local grouping so Top-K remains the audit budget while
+    `m` / `anchor_group_size` controls how many anchors one model call owns.
+  - Supports subset allowlists for feasibility probes such as the 71-case
+    P3C64 half fixed split, while still verifying the frozen 143-case QA
+    receipt.
+  - Scores case-level TP/FN with `Alarms = TP + FP`; additional findings that
+    also localize the same case truth are tracked separately as
+    `extra_truth_hit_count` instead of being counted as false positives.
+- `scripts/run_hcvr_backend_b_model_queue.py`
+  - Queues Backend-B model replacement runs over a fixed allowlist.
+  - Defaults to the current P3C64 probe setting, Top160 with `m=32`, i.e. five
+    grouped audit calls for a full-budget case.
+  - Projects large recall JSONL files to compact Top-K inputs and records the
+    exact command, model, reasoning effort, and output directory for each case.
 - `scripts/merge_recall_shards.py`
   - Merges per-case recall output directories into a single
     `recall_results.jsonl`, `selected_cases.jsonl`, `summary.json`, and

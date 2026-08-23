@@ -465,7 +465,20 @@ def materialize_snapshot(repo_dir: Path, commit: str, snapshot: Path) -> None:
             check=True,
         )
         with tarfile.open(archive) as handle:
-            handle.extractall(snapshot, filter="data")
+            try:
+                handle.extractall(snapshot, filter="data")
+            except TypeError:
+                # Python < 3.12 does not support the extraction filter keyword.
+                # The archive is produced locally by `git archive`, but still
+                # keep a path traversal guard before falling back.
+                snapshot_root = snapshot.resolve()
+                for member in handle.getmembers():
+                    member_path = (snapshot_root / member.name).resolve()
+                    try:
+                        member_path.relative_to(snapshot_root)
+                    except ValueError as error:
+                        raise ValueError(f"unsafe archive member path: {member.name}") from error
+                handle.extractall(snapshot)
     finally:
         archive.unlink(missing_ok=True)
 
