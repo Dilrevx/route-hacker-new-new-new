@@ -1112,6 +1112,8 @@ python new-impl/guideline-agent-pipeline/scripts/audit_guideline_dual_axis_objec
   --boundary-recall-triage-summary new-impl/guideline-agent-pipeline/results/guideline-boundary-recall-triage-r8-gl-mech-0001-p3c64-3case-20260823/summary.json \
   --ledger-validation-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0022-validation-src-reviewed-20260823/summary.json \
   --ledger-judge-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0022-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
+  --recall-candidate-pair-judge-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-recall-candidate-pair-judge-pack-20260823/judge_summary/summary.json \
+  --recall-candidate-list-judge-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-recall-candidate-list-judge-pack-top20-20260823/judge_summary/summary.json \
   --output-dir /path/to/guideline-dual-axis-objective-audit \
   --desired-delta-rate 0.10
 ```
@@ -1122,6 +1124,13 @@ the cumulative semantic-evidence view. The script aggregates row counts,
 decision counts, promotable boundary counts, judge decisions, and weighted
 average judge scores. This keeps per-guideline repair work incremental without
 losing evidence from previous rounds.
+`--recall-candidate-pair-judge-summary` and
+`--recall-candidate-list-judge-summary` are also repeatable, but they are
+recall-method diagnostics only. Pair judge summaries can indicate that a
+hidden known-anchor-overlap candidate looks semantically better than current
+Top-1; list-wise summaries can indicate whether a production-shaped judged set
+has enough anchor coverage to estimate reranker potential. Neither summary is
+paper-facing recall evidence.
 
 Use this audit before declaring a guideline iteration complete. Passing
 structural checks, TraeX judge parsing, sidecar equivalence, or a recall table

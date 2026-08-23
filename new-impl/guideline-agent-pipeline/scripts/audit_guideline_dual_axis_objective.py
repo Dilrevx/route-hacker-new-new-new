@@ -158,6 +158,119 @@ def source_reviewed_boundary_evidence(
     }
 
 
+def aggregate_candidate_pair_judges(summaries: list[dict[str, Any]]) -> dict[str, Any] | None:
+    if not summaries:
+        return None
+    choice_outcome_counts: dict[str, int] = {}
+    choice_counts: dict[str, int] = {}
+    parsed_count = 0
+    result = {
+        "schema_version": "hcvr_recall_candidate_pair_judge_summary.aggregate.v1",
+        "summary_count": len(summaries),
+        "judge_input_count": 0,
+        "parsed_count": 0,
+        "missing_output_count": 0,
+        "invalid_output_count": 0,
+        "choice_outcome_counts": choice_outcome_counts,
+        "choice_counts": choice_counts,
+        "anchor_overlap_choice_rate": None,
+        "top1_choice_rate": None,
+    }
+    for summary in summaries:
+        current_parsed = int(summary.get("parsed_count") or 0)
+        parsed_count += current_parsed
+        result["judge_input_count"] += int(summary.get("judge_input_count") or 0)
+        result["parsed_count"] += current_parsed
+        result["missing_output_count"] += int(summary.get("missing_output_count") or 0)
+        result["invalid_output_count"] += int(summary.get("invalid_output_count") or 0)
+        add_counts(choice_outcome_counts, summary.get("choice_outcome_counts") or {})
+        add_counts(choice_counts, summary.get("choice_counts") or {})
+    result["choice_outcome_counts"] = dict(sorted(choice_outcome_counts.items()))
+    result["choice_counts"] = dict(sorted(choice_counts.items()))
+    if parsed_count:
+        result["anchor_overlap_choice_rate"] = choice_outcome_counts.get("anchor_overlap_chosen", 0) / parsed_count
+        result["top1_choice_rate"] = choice_outcome_counts.get("top1_chosen", 0) / parsed_count
+    return result
+
+
+def aggregate_candidate_list_judges(summaries: list[dict[str, Any]]) -> dict[str, Any] | None:
+    if not summaries:
+        return None
+    prompt_counts: dict[str, int] = {}
+    hit_counts: dict[str, int] = {}
+    result = {
+        "schema_version": "hcvr_recall_candidate_list_judge_summary.aggregate.v1",
+        "summary_count": len(summaries),
+        "judge_input_count": 0,
+        "parsed_prompt_count": 0,
+        "missing_prompt_count": 0,
+        "invalid_prompt_count": 0,
+        "invalid_candidate_score_count": 0,
+        "identity_count": 0,
+        "identities_with_known_anchor_candidate": 0,
+        "identities_with_scored_known_anchor_candidate": 0,
+        "identity_coverage_gap_count": 0,
+        "judge_rerank_hit_counts": hit_counts,
+        "judge_rerank_hit_rates": {},
+        "judge_rerank_hit_rate_denominator": 0,
+        "prompt_counts": prompt_counts,
+    }
+    for summary in summaries:
+        result["judge_input_count"] += int(summary.get("judge_input_count") or 0)
+        result["parsed_prompt_count"] += int(summary.get("parsed_prompt_count") or 0)
+        result["missing_prompt_count"] += int(summary.get("missing_prompt_count") or 0)
+        result["invalid_prompt_count"] += int(summary.get("invalid_prompt_count") or 0)
+        result["invalid_candidate_score_count"] += int(summary.get("invalid_candidate_score_count") or 0)
+        result["identity_count"] += int(summary.get("identity_count") or 0)
+        result["identities_with_known_anchor_candidate"] += int(summary.get("identities_with_known_anchor_candidate") or 0)
+        result["identities_with_scored_known_anchor_candidate"] += int(
+            summary.get("identities_with_scored_known_anchor_candidate") or 0
+        )
+        result["identity_coverage_gap_count"] += int(summary.get("identity_coverage_gap_count") or 0)
+        result["judge_rerank_hit_rate_denominator"] += int(summary.get("judge_rerank_hit_rate_denominator") or 0)
+        add_counts(prompt_counts, summary.get("prompt_counts") or {})
+        add_counts(hit_counts, summary.get("judge_rerank_hit_counts") or {})
+    result["prompt_counts"] = dict(sorted(prompt_counts.items()))
+    result["judge_rerank_hit_counts"] = dict(sorted(hit_counts.items()))
+    denominator = int(result["judge_rerank_hit_rate_denominator"] or 0)
+    result["judge_rerank_hit_rates"] = {
+        key: (count / denominator if denominator else None)
+        for key, count in sorted(hit_counts.items())
+    }
+    return result
+
+
+def recall_candidate_judge_evidence(
+    pair_judge: dict[str, Any] | None,
+    list_judge: dict[str, Any] | None,
+) -> dict[str, Any]:
+    if not pair_judge and not list_judge:
+        return {
+            "status": "not_provided",
+            "message": "No recall-candidate judge diagnostics were provided.",
+        }
+    list_denominator = int((list_judge or {}).get("judge_rerank_hit_rate_denominator") or 0)
+    if list_judge and list_denominator:
+        list_status = "eligible_for_offline_rerank_diagnostic"
+    elif list_judge:
+        list_status = "coverage_gap_only_not_rerank_hit_evidence"
+    else:
+        list_status = "not_provided"
+    return {
+        "status": "provided",
+        "pair_judge": pair_judge or {},
+        "list_judge": list_judge or {},
+        "list_judge_status": list_status,
+        "message": (
+            "Recall-candidate judge evidence is advisory for query/reranker design only. Pair prompts are "
+            "oracle-shaped sanity checks, while list-wise prompts are closer to production reranking but only "
+            "estimate Hit@K when the judged candidate set contains known-anchor-overlap candidates. These "
+            "diagnostics are not recall evidence and do not update guidelines, sidecars, ranking, embedding "
+            "weights, or paper recall metrics."
+        ),
+    }
+
+
 def build_audit(
     *,
     scorecard: dict[str, Any],
@@ -169,6 +282,8 @@ def build_audit(
     boundary_recall_triage: dict[str, Any] | None = None,
     ledger_validation: dict[str, Any] | None = None,
     ledger_judge: dict[str, Any] | None = None,
+    recall_candidate_pair_judge: dict[str, Any] | None = None,
+    recall_candidate_list_judge: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     recall = scorecard.get("recall_evidence") if isinstance(scorecard.get("recall_evidence"), dict) else {}
     judge = scorecard.get("judge_evidence") if isinstance(scorecard.get("judge_evidence"), dict) else {}
@@ -181,6 +296,10 @@ def build_audit(
     semantic_status = status_for_semantic_quality(scorecard, worklist)
     recall_status = status_for_recall(scorecard, desired_delta_rate)
     reviewed_boundary = source_reviewed_boundary_evidence(ledger_validation, ledger_judge)
+    candidate_judge = recall_candidate_judge_evidence(
+        recall_candidate_pair_judge,
+        recall_candidate_list_judge,
+    )
     recall_alignment = recall_alignment or {}
     alignment_policy = (
         recall_alignment.get("cleanliness_policy")
@@ -288,6 +407,9 @@ def build_audit(
                 "RRF/fusion is documented as a recall-compatible engineering path, not a guideline-quality claim",
                 "TraeX judge output feeds backlog/worklist rather than released guidelines or ranking",
                 "new embedders, fusion, or rerankers are allowed only as explicit same-identity A/B configurations",
+                f"recall_candidate_pair_anchor_overlap_choice_rate={(candidate_judge.get('pair_judge') or {}).get('anchor_overlap_choice_rate')}",
+                f"recall_candidate_list_status={candidate_judge.get('list_judge_status')}",
+                f"recall_candidate_list_denominator={(candidate_judge.get('list_judge') or {}).get('judge_rerank_hit_rate_denominator')}",
             ],
             "status": "satisfied_by_current_policy",
             "gap": "Any future fusion or model substitution needs same-identity A/B and a separate claim boundary.",
@@ -377,6 +499,7 @@ def build_audit(
             "input_capability": recall_side_miss_capability,
             "message": recall_side_miss_message,
         },
+        "recall_candidate_judge_evidence": candidate_judge,
         "missing_or_incomplete_requirements": missing,
         "next_gates": next_gates,
         "decision": (
@@ -434,6 +557,9 @@ def write_readme(path: Path, audit: dict[str, Any]) -> None:
     alignment = audit.get("recall_alignment_evidence") or {}
     recall_debug = audit.get("recall_side_debug_evidence") or {}
     recall_miss_inspection = audit.get("recall_side_miss_inspection_evidence") or {}
+    candidate_judge = audit.get("recall_candidate_judge_evidence") or {}
+    pair_judge = candidate_judge.get("pair_judge") if isinstance(candidate_judge.get("pair_judge"), dict) else {}
+    list_judge = candidate_judge.get("list_judge") if isinstance(candidate_judge.get("list_judge"), dict) else {}
     lines.extend(
         [
             "",
@@ -497,6 +623,23 @@ def write_readme(path: Path, audit: dict[str, Any]) -> None:
     lines.extend(
         [
             "",
+            "## Recall-Candidate Judge Diagnostics",
+            "",
+            f"- Status: `{candidate_judge.get('status')}`",
+            f"- Pair judge parsed/missing/invalid: {pair_judge.get('parsed_count')} / {pair_judge.get('missing_output_count')} / {pair_judge.get('invalid_output_count')}",
+            f"- Pair judge outcome counts: {pair_judge.get('choice_outcome_counts')}",
+            f"- Pair judge anchor-overlap choice rate: {pair_judge.get('anchor_overlap_choice_rate')}",
+            f"- List judge status: `{candidate_judge.get('list_judge_status')}`",
+            f"- List judge prompts parsed/missing/invalid: {list_judge.get('parsed_prompt_count')} / {list_judge.get('missing_prompt_count')} / {list_judge.get('invalid_prompt_count')}",
+            f"- List judge identity coverage gaps: {list_judge.get('identity_coverage_gap_count')}",
+            f"- List judge rerank denominator: {list_judge.get('judge_rerank_hit_rate_denominator')}",
+            "",
+            "Candidate judge outputs are useful for deciding whether to try a reranker, wider candidate budget, or query rewrite. They are not recall evidence and they do not change guideline text, sidecars, embeddings, ranking, or audit prompts.",
+        ]
+    )
+    lines.extend(
+        [
+            "",
             "## Required Gates For The Next Round",
             "",
             "| Gate | Run When | Pass Condition | Current State |",
@@ -536,6 +679,8 @@ def main() -> None:
     parser.add_argument("--boundary-recall-triage-summary", type=Path)
     parser.add_argument("--ledger-validation-summary", type=Path, action="append")
     parser.add_argument("--ledger-judge-summary", type=Path, action="append")
+    parser.add_argument("--recall-candidate-pair-judge-summary", type=Path, action="append")
+    parser.add_argument("--recall-candidate-list-judge-summary", type=Path, action="append")
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--desired-delta-rate", type=float, default=0.10)
     args = parser.parse_args()
@@ -570,6 +715,12 @@ def main() -> None:
         ),
         ledger_judge=aggregate_ledger_judges(
             [read_json(path) for path in (args.ledger_judge_summary or [])]
+        ),
+        recall_candidate_pair_judge=aggregate_candidate_pair_judges(
+            [read_json(path) for path in (args.recall_candidate_pair_judge_summary or [])]
+        ),
+        recall_candidate_list_judge=aggregate_candidate_list_judges(
+            [read_json(path) for path in (args.recall_candidate_list_judge_summary or [])]
         ),
     )
     args.output_dir.mkdir(parents=True, exist_ok=True)

@@ -223,6 +223,105 @@ def test_recall_side_miss_inspection_can_be_candidate_aware():
     assert "does not prove vulnerability precision" in inspection["message"]
 
 
+def test_recall_candidate_judge_evidence_is_advisory_not_recall_completion():
+    module = load_module()
+
+    audit = module.build_audit(
+        scorecard=scorecard(),
+        worklist={"worklist_count": 1, "action_counts": {"collect_source_sink_guard_evidence": 1}},
+        desired_delta_rate=0.10,
+        recall_candidate_pair_judge={
+            "judge_input_count": 6,
+            "parsed_count": 6,
+            "missing_output_count": 0,
+            "invalid_output_count": 0,
+            "choice_outcome_counts": {"anchor_overlap_chosen": 5, "neither": 1},
+            "anchor_overlap_choice_rate": 5 / 6,
+            "top1_choice_rate": 0.0,
+        },
+        recall_candidate_list_judge={
+            "judge_input_count": 12,
+            "parsed_prompt_count": 11,
+            "missing_prompt_count": 0,
+            "invalid_prompt_count": 2,
+            "identity_count": 6,
+            "identity_coverage_gap_count": 6,
+            "judge_rerank_hit_rate_denominator": 0,
+            "judge_rerank_hit_rates": {"top_1": None},
+        },
+    )
+
+    assert audit["overall_status"] == "not_complete"
+    judge = audit["recall_candidate_judge_evidence"]
+    assert judge["status"] == "provided"
+    assert judge["list_judge_status"] == "coverage_gap_only_not_rerank_hit_evidence"
+    assert "not recall evidence" in judge["message"]
+    assert (
+        "recall_candidate_pair_anchor_overlap_choice_rate=0.8333333333333334"
+        in audit["requirements"][4]["evidence"]
+    )
+    assert "recall_candidate_list_denominator=0" in audit["requirements"][4]["evidence"]
+
+
+def test_aggregate_candidate_judge_summaries():
+    module = load_module()
+
+    pair = module.aggregate_candidate_pair_judges(
+        [
+            {
+                "judge_input_count": 2,
+                "parsed_count": 2,
+                "missing_output_count": 0,
+                "invalid_output_count": 0,
+                "choice_outcome_counts": {"anchor_overlap_chosen": 1, "top1_chosen": 1},
+                "choice_counts": {"A": 1, "B": 1},
+            },
+            {
+                "judge_input_count": 1,
+                "parsed_count": 1,
+                "missing_output_count": 0,
+                "invalid_output_count": 0,
+                "choice_outcome_counts": {"anchor_overlap_chosen": 1},
+                "choice_counts": {"B": 1},
+            },
+        ]
+    )
+    listwise = module.aggregate_candidate_list_judges(
+        [
+            {
+                "judge_input_count": 2,
+                "parsed_prompt_count": 2,
+                "identity_count": 1,
+                "identities_with_known_anchor_candidate": 1,
+                "identities_with_scored_known_anchor_candidate": 1,
+                "identity_coverage_gap_count": 0,
+                "judge_rerank_hit_rate_denominator": 1,
+                "judge_rerank_hit_counts": {"top_1": 0, "top_3": 1},
+                "prompt_counts": {"parsed": 2},
+            },
+            {
+                "judge_input_count": 1,
+                "parsed_prompt_count": 1,
+                "identity_count": 1,
+                "identities_with_known_anchor_candidate": 0,
+                "identities_with_scored_known_anchor_candidate": 0,
+                "identity_coverage_gap_count": 1,
+                "judge_rerank_hit_rate_denominator": 0,
+                "judge_rerank_hit_counts": {"top_1": 0, "top_3": 0},
+                "prompt_counts": {"parsed": 1},
+            },
+        ]
+    )
+
+    assert pair["parsed_count"] == 3
+    assert pair["choice_outcome_counts"] == {"anchor_overlap_chosen": 2, "top1_chosen": 1}
+    assert math.isclose(pair["anchor_overlap_choice_rate"], 2 / 3)
+    assert listwise["identity_count"] == 2
+    assert listwise["identity_coverage_gap_count"] == 1
+    assert listwise["judge_rerank_hit_rate_denominator"] == 1
+    assert listwise["judge_rerank_hit_rates"] == {"top_1": 0.0, "top_3": 1.0}
+
+
 def test_source_reviewed_boundary_evidence_is_separate_from_recall_completion():
     module = load_module()
 
@@ -321,6 +420,8 @@ def test_cli_writes_dual_axis_audit(tmp_path: Path):
     recall_alignment_path = tmp_path / "recall_alignment.json"
     recall_side_debug_path = tmp_path / "recall_side_debug.json"
     recall_side_miss_inspection_path = tmp_path / "recall_side_miss_inspection.json"
+    pair_judge_path = tmp_path / "pair_judge.json"
+    list_judge_path = tmp_path / "list_judge.json"
     ledger_validation_path = tmp_path / "ledger_validation.json"
     ledger_judge_path = tmp_path / "ledger_judge.json"
     output = tmp_path / "audit"
@@ -373,6 +474,30 @@ def test_cli_writes_dual_axis_audit(tmp_path: Path):
         json.dumps({"parsed_count": 1, "accepted_count": 1, "decision_counts": {"accept": 1}}),
         encoding="utf-8",
     )
+    pair_judge_path.write_text(
+        json.dumps(
+            {
+                "judge_input_count": 6,
+                "parsed_count": 6,
+                "choice_outcome_counts": {"anchor_overlap_chosen": 5, "neither": 1},
+            }
+        ),
+        encoding="utf-8",
+    )
+    list_judge_path.write_text(
+        json.dumps(
+            {
+                "judge_input_count": 12,
+                "parsed_prompt_count": 11,
+                "invalid_prompt_count": 2,
+                "identity_count": 6,
+                "identity_coverage_gap_count": 6,
+                "judge_rerank_hit_rate_denominator": 0,
+                "judge_rerank_hit_counts": {"top_1": 0},
+            }
+        ),
+        encoding="utf-8",
+    )
 
     result = subprocess.run(
         [
@@ -392,6 +517,10 @@ def test_cli_writes_dual_axis_audit(tmp_path: Path):
             str(ledger_validation_path),
             "--ledger-judge-summary",
             str(ledger_judge_path),
+            "--recall-candidate-pair-judge-summary",
+            str(pair_judge_path),
+            "--recall-candidate-list-judge-summary",
+            str(list_judge_path),
             "--output-dir",
             str(output),
         ],
@@ -410,6 +539,8 @@ def test_cli_writes_dual_axis_audit(tmp_path: Path):
     assert "Recall Alignment Diagnostics" in readme
     assert "Recall-Side Debug Evidence" in readme
     assert "Recall-Side Case Inspection" in readme
+    assert "Recall-Candidate Judge Diagnostics" in readme
+    assert "coverage_gap_only_not_rerank_hit_evidence" in readme
 
 
 def test_cli_accepts_repeated_source_reviewed_summaries(tmp_path: Path):
