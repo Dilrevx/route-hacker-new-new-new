@@ -17,6 +17,7 @@ split into five grouped audit prompts.
 from __future__ import annotations
 
 import argparse
+import concurrent.futures
 import json
 import subprocess
 import sys
@@ -157,6 +158,119 @@ def case_completed(output_dir: Path) -> bool:
     return bool(rows and rows[-1].get("state") == "completed")
 
 
+def build_case_command(
+    *,
+    args: argparse.Namespace,
+    runner: Path,
+    projection: Path,
+    case_dir: Path,
+    case_index: int,
+) -> list[str]:
+    """Build one isolated case invocation for bounded case-level concurrency."""
+    command = [
+        sys.executable,
+        str(runner),
+        "--qa",
+        str(args.qa.resolve()),
+        "--cases-file",
+        str(args.cases_file.resolve()),
+        "--allowlist",
+        str(args.allowlist.resolve()),
+        "--summary",
+        str(args.summary.resolve()),
+        "--recall-results",
+        str(projection),
+        "--output-dir",
+        str(case_dir),
+        "--repo-cache",
+        str(args.repo_cache.resolve()),
+        "--snapshot-root",
+        str(args.snapshot_root.resolve()),
+        "--codex-home",
+        str(args.codex_home.resolve()),
+        "--temp-root",
+        str((args.temp_root / f"case-{case_index:03d}").resolve()),
+        "--audit-runner",
+        "codex",
+        "--codex",
+        args.codex,
+        "--model",
+        args.model,
+        "--variants",
+        "full",
+        "--skip",
+        str(case_index - 1),
+        "--limit",
+        "1",
+        "--anchor-budget",
+        str(args.top_k),
+        "--anchor-group-size",
+        str(args.group_size),
+        "--group-timeout",
+        str(args.group_timeout),
+        "--clone-timeout",
+        str(args.clone_timeout),
+        "--concurrency",
+        "1",
+        "--include-case-metadata",
+    ]
+    if args.model_reasoning_effort:
+        command.extend(["--model-reasoning-effort", args.model_reasoning_effort])
+    if args.allowlist.name != "hcvr_new_unified_fix_revision_paper_eval_review.v2.jsonl":
+        command.append("--allow-subset-allowlist")
+    if args.resume:
+        command.append("--resume")
+        if args.retry_incomplete_groups:
+            command.append("--retry-incomplete-groups")
+    return command
+
+
+def run_case(
+    *,
+    command: list[str],
+    ledger: Path,
+    case_index: int,
+    identity_key: str,
+    case_dir: Path,
+    top_k: int,
+    group_size: int,
+    dry_run: bool,
+) -> dict[str, Any]:
+    append_jsonl(
+        ledger,
+        {
+            "event": "start",
+            "case_index": case_index,
+            "identity_key": identity_key,
+            "output_dir": str(case_dir),
+            "top_k": top_k,
+            "m": group_size,
+            "command": command,
+            "time": time.time(),
+        },
+    )
+    if dry_run:
+        return {
+            "case_index": case_index,
+            "identity_key": identity_key,
+            "state": "dry_run",
+            "returncode": None,
+        }
+    started = time.time()
+    completed = subprocess.run(command, check=False)
+    result = {
+        "event": "exit",
+        "case_index": case_index,
+        "identity_key": identity_key,
+        "output_dir": str(case_dir),
+        "returncode": completed.returncode,
+        "duration_seconds": round(time.time() - started, 3),
+        "time": time.time(),
+    }
+    append_jsonl(ledger, result)
+    return result
+
+
 def main() -> None:
     repo_root = Path(__file__).resolve().parents[3]
     new_impl = repo_root / "new-impl"
@@ -177,6 +291,12 @@ def main() -> None:
     parser.add_argument("--m", "--anchor-group-size", dest="group_size", type=int, default=32)
     parser.add_argument("--group-timeout", type=int, default=3600)
     parser.add_argument("--clone-timeout", type=int, default=600)
+    parser.add_argument(
+        "--case-concurrency",
+        type=int,
+        default=1,
+        help="Maximum simultaneously active cases; groups within each case remain sequential.",
+    )
     parser.add_argument("--resume", action="store_true")
     parser.add_argument(
         "--retry-incomplete-groups",
@@ -194,8 +314,8 @@ def main() -> None:
     parser.add_argument("--summary", type=Path, default=dataset_root / "dataset/summary.v1.json")
     args = parser.parse_args()
 
-    if args.top_k < 1 or args.group_size < 1:
-        raise SystemExit("--top-k and --m must be positive")
+    if args.top_k < 1 or args.group_size < 1 or args.case_concurrency < 1:
+        raise SystemExit("--top-k, --m, and --case-concurrency must be positive")
     if args.top_k < args.group_size:
         raise SystemExit("--top-k must be >= --m")
 
@@ -223,6 +343,7 @@ def main() -> None:
             "case_count": len(identities),
             "top_k": args.top_k,
             "m": args.group_size,
+            "case_concurrency": args.case_concurrency,
             "retry_incomplete_groups": bool(args.retry_incomplete_groups),
             "groups_per_full_case": (args.top_k + args.group_size - 1) // args.group_size,
             "recall_projection": str(projection.resolve()),
@@ -238,9 +359,10 @@ def main() -> None:
 
     runner = new_impl / "guideline-agent-pipeline/scripts/run_hcvr_ablation_a.py"
     ledger = args.output_dir / "backend_b_queue_events.jsonl"
+    pending: list[tuple[int, str, Path, list[str]]] = []
     for offset, identity in enumerate(identities, start=args.case_start):
         case_dir = args.output_dir / "per-case-runs" / f"case-{offset:03d}"
-        if args.resume and not args.retry_incomplete_groups and case_completed(case_dir):
+        if args.resume and case_completed(case_dir):
             append_jsonl(
                 ledger,
                 {
@@ -252,88 +374,53 @@ def main() -> None:
                 },
             )
             continue
-        command = [
-            sys.executable,
-            str(runner),
-            "--qa",
-            str(args.qa.resolve()),
-            "--cases-file",
-            str(args.cases_file.resolve()),
-            "--allowlist",
-            str(args.allowlist.resolve()),
-            "--summary",
-            str(args.summary.resolve()),
-            "--recall-results",
-            str(projection),
-            "--output-dir",
-            str(case_dir),
-            "--repo-cache",
-            str(args.repo_cache.resolve()),
-            "--snapshot-root",
-            str(args.snapshot_root.resolve()),
-            "--codex-home",
-            str(args.codex_home.resolve()),
-            "--temp-root",
-            str((args.temp_root / f"case-{offset:03d}").resolve()),
-            "--audit-runner",
-            "codex",
-            "--codex",
-            args.codex,
-            "--model",
-            args.model,
-            "--variants",
-            "full",
-            "--skip",
-            str(offset - 1),
-            "--limit",
-            "1",
-            "--anchor-budget",
-            str(args.top_k),
-            "--anchor-group-size",
-            str(args.group_size),
-            "--group-timeout",
-            str(args.group_timeout),
-            "--clone-timeout",
-            str(args.clone_timeout),
-            "--concurrency",
-            "1",
-            "--include-case-metadata",
+        pending.append(
+            (
+                offset,
+                identity,
+                case_dir,
+                build_case_command(
+                    args=args,
+                    runner=runner,
+                    projection=projection,
+                    case_dir=case_dir,
+                    case_index=offset,
+                ),
+            )
+        )
+
+    if args.case_concurrency == 1:
+        for offset, identity, case_dir, command in pending:
+            run_case(
+                command=command,
+                ledger=ledger,
+                case_index=offset,
+                identity_key=identity,
+                case_dir=case_dir,
+                top_k=args.top_k,
+                group_size=args.group_size,
+                dry_run=args.dry_run,
+            )
+        return
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=args.case_concurrency) as pool:
+        futures = [
+            pool.submit(
+                run_case,
+                command=command,
+                ledger=ledger,
+                case_index=offset,
+                identity_key=identity,
+                case_dir=case_dir,
+                top_k=args.top_k,
+                group_size=args.group_size,
+                dry_run=args.dry_run,
+            )
+            for offset, identity, case_dir, command in pending
         ]
-        if args.model_reasoning_effort:
-            command.extend(["--model-reasoning-effort", args.model_reasoning_effort])
-        if args.allowlist.name != "hcvr_new_unified_fix_revision_paper_eval_review.v2.jsonl":
-            command.append("--allow-subset-allowlist")
-        if args.resume:
-            command.extend(["--resume", "--retry-incomplete-groups"])
-        append_jsonl(
-            ledger,
-            {
-                "event": "start",
-                "case_index": offset,
-                "identity_key": identity,
-                "output_dir": str(case_dir),
-                "top_k": args.top_k,
-                "m": args.group_size,
-                "command": command,
-                "time": time.time(),
-            },
-        )
-        if args.dry_run:
-            continue
-        started = time.time()
-        completed = subprocess.run(command, check=False)
-        append_jsonl(
-            ledger,
-            {
-                "event": "exit",
-                "case_index": offset,
-                "identity_key": identity,
-                "output_dir": str(case_dir),
-                "returncode": completed.returncode,
-                "duration_seconds": round(time.time() - started, 3),
-                "time": time.time(),
-            },
-        )
+        for future in concurrent.futures.as_completed(futures):
+            result = future.result()
+            print(json.dumps(result, ensure_ascii=False, sort_keys=True), flush=True)
 
 
 if __name__ == "__main__":
