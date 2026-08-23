@@ -87,6 +87,21 @@ P3C64-vs-Qwen4B model-improvement claim.
   - When supplied with `--top-candidates`, reports whether exported Top-N
     candidate rows include known-anchor overlap.
   - Does not claim vulnerability precision or change guideline quality.
+- `scripts/build_recall_candidate_pair_judge_pack.py`
+  - Builds an advisory TraeX LLM-as-judge pack for recall-side ranked misses.
+  - Each prompt compares anonymous Top-1 and known-anchor-overlap candidates
+    using only guideline text, path, symbol, and source snippet.
+  - Omits CVE IDs, ranks, scores, known-anchor labels, and benchmark metadata
+    from prompts; hidden labels remain only in `judge_inputs.jsonl` for
+    post-run diagnostics.
+  - Skips pairs whose source snippets cannot be read, so packs should be
+    generated where recall snapshots are available.
+- `scripts/summarize_recall_candidate_pair_judge_outputs.py`
+  - Summarizes advisory candidate-pair judge outputs.
+  - Reports whether the judge preferred the hidden known-anchor-overlap
+    candidate, current Top-1, a tie, or neither.
+  - Produces diagnostic evidence only; it does not update ranking, guidelines,
+    sidecars, training labels, or paper recall metrics.
 - `scripts/evaluate_guideline_groups.py`
   - Evaluates the guideline release itself, independent of embedding recall.
   - Reports coverage, source-only groups, mixed HCVR/CWE sanity checks, and
@@ -830,6 +845,42 @@ overlap ranks `136`, `194`, `215`, `218`, `252`, and `275`. This rules out a
 simple candidate-slicing absence for these 6 joined misses and points the next
 recall-side work toward query wording, reranking, budget, or embedding-adapter
 A/B under the same identities.
+
+For these joined ranked misses, an optional TraeX candidate-pair judge pack can
+test whether a semantic reviewer would prefer the Top-1 candidate or the best
+known-anchor-overlap candidate when rank, score, CVE ID, and labels are hidden:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/build_recall_candidate_pair_judge_pack.py \
+  --recall-results /path/to/recall_results.jsonl \
+  --top-candidates /path/to/top_candidates.jsonl \
+  --output-dir /path/to/recall-candidate-pair-judge-pack \
+  --default-cli traex \
+  --default-model DeepSeek-V4-Pro
+```
+
+Generate this pack on the machine where `snapshot` paths from
+`recall_results.jsonl` are readable; by default, rows with unreadable source
+snippets are skipped. Run the generated pack with:
+
+```bash
+cd /path/to/recall-candidate-pair-judge-pack
+TRAE_JUDGE_CLI=traex TRAE_JUDGE_MODEL=DeepSeek-V4-Pro TRAE_JUDGE_EXTRA_ARGS='--disallowed-tool exec' TRAE_JUDGE_CONCURRENCY=2 TRAE_JUDGE_TIMEOUT_SECONDS=1800 ./run_traex_judge.sh judge_outputs
+```
+
+Then summarize:
+
+```bash
+python3 ../../scripts/summarize_recall_candidate_pair_judge_outputs.py \
+  --judge-inputs judge_inputs.jsonl \
+  --judge-output-dir judge_outputs \
+  --output-dir judge_summary
+```
+
+Use this only as advisory semantic QA for reranker/query design. If the judge
+often prefers the known-anchor-overlap candidate, that motivates a
+same-identity reranker A/B; it is not itself a recall result, a vulnerability
+verdict, or a guideline release gate.
 
 Build a revision backlog from the semantic judge and recall-alignment outputs:
 
