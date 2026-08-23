@@ -1,0 +1,17 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.95,
+  "coverage_score": 0.90,
+  "actionability_score": 0.92,
+  "retrieval_query_quality": 0.88,
+  "main_issue": "All three representative cases share the same sink (buildConstraintViolationWithTemplate with EL-capable interpolation), the same source shape (attacker-controlled values or message fragments containing EL syntax), the same missing guard (no metacharacter escaping before template construction), and convergent fix semantics (escape ${, {, }, $, backslash or use message-parameter APIs). The boundary correctly excludes non-Bean-Validation sinks and parser-error cases.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "dropwizard::CVE-2020-11002: ViolationCollector.addViolation passes msg directly to buildConstraintViolationWithTemplate; fix adds InterpolationHelper.escapeMessageParameter and escapeExpressions.",
+    "dropwizard::CVE-2020-5245: Fix adds ESCAPE_PATTERN for ${ and escapeEl before buildConstraintViolationWithTemplate.",
+    "browserup-proxy::CVE-2020-26282: LongPositiveConstraint.isValid interpolates attacker value into errorMessage then calls buildConstraintViolationWithTemplate; fix adds MessageSanitizer.escape for backslash, braces, and dollar signs."
+  ]
+}
+```
