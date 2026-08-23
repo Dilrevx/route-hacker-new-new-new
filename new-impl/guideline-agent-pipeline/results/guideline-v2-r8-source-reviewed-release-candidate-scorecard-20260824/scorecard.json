@@ -1,0 +1,167 @@
+{
+  "claim_boundaries": [
+    {
+      "caveat": "Purity and flags are weak diagnostics; mechanism quality still needs semantic review.",
+      "claim": "guideline_classification_quality",
+      "evidence": [
+        "group structural summary",
+        "source-only and pending-review accounting"
+      ],
+      "status": "supported_as_advisory_diagnostic"
+    },
+    {
+      "caveat": "Judge outputs rank review priority and cannot be converted into hardcoded routing.",
+      "claim": "semantic_guideline_quality",
+      "evidence": [],
+      "status": "missing_evidence"
+    },
+    {
+      "caveat": "A recall comparison was provided, but the requested release sidecar changes recall-consumed identity keys or guideline text. Rerun recall for this release before making retrieval claims.",
+      "claim": "embedding_recall_improvement",
+      "evidence": [],
+      "status": "missing_or_invalid_evidence"
+    }
+  ],
+  "judge_evidence": {
+    "judge_input_count": 0,
+    "message": "No LLM judge summary was provided; semantic review evidence is missing.",
+    "status": "missing"
+  },
+  "method_policy": [
+    "Optimize guideline wording and grouping from source/sink/guard evidence, not from keyword checks.",
+    "Use bad recall cases as regression and motivation data, not as per-case hardcoded fixes.",
+    "Treat recall numbers as evidence for a specific embedding plus guideline/query configuration.",
+    "Require same identity sets for paper-facing recall deltas."
+  ],
+  "recall_equivalence_evidence": {
+    "changed_text_count": 28,
+    "common_count": 28,
+    "left_count": 189,
+    "left_label": "guideline-v2-r8-release-ready-sidecar",
+    "left_sha256": "a45ead53711756d7c27bbbd692d2b9446cd3ce1bf7417939fdb1e901f8f6abf2",
+    "message": "The released sidecar changes recall-consumed identity keys or guideline text; rerun recall before inheriting metrics.",
+    "recall_consumed_text_equivalent": false,
+    "right_count": 32,
+    "right_label": "source-reviewed-release-candidate-sidecar",
+    "right_sha256": "74d591e677b654a95ae361693e4c7dea66791af8070b5b3a2e1978c56891deb0",
+    "same_key_set": false,
+    "status": "invalid_consumed_text_difference"
+  },
+  "recall_evidence": {
+    "budgets": [
+      {
+        "budget": 30,
+        "delta_count": 15,
+        "delta_rate": 0.1048951048951049,
+        "left_count": 45,
+        "left_rate": 0.3146853146853147,
+        "right_count": 30,
+        "right_rate": 0.2097902097902098
+      },
+      {
+        "budget": 50,
+        "delta_count": 19,
+        "delta_rate": 0.13286713286713286,
+        "left_count": 56,
+        "left_rate": 0.3916083916083916,
+        "right_count": 37,
+        "right_rate": 0.25874125874125875
+      },
+      {
+        "budget": 100,
+        "delta_count": 18,
+        "delta_rate": 0.1258741258741259,
+        "left_count": 73,
+        "left_rate": 0.5104895104895105,
+        "right_count": 55,
+        "right_rate": 0.38461538461538464
+      },
+      {
+        "budget": 200,
+        "delta_count": 10,
+        "delta_rate": 0.06993006993006994,
+        "left_count": 84,
+        "left_rate": 0.5874125874125874,
+        "right_count": 74,
+        "right_rate": 0.5174825174825175
+      },
+      {
+        "budget": 300,
+        "delta_count": 9,
+        "delta_rate": 0.06293706293706294,
+        "left_count": 91,
+        "left_rate": 0.6363636363636364,
+        "right_count": 82,
+        "right_rate": 0.5734265734265734
+      },
+      {
+        "budget": 500,
+        "delta_count": 9,
+        "delta_rate": 0.06293706293706294,
+        "left_count": 103,
+        "left_rate": 0.7202797202797203,
+        "right_count": 94,
+        "right_rate": 0.6573426573426573
+      }
+    ],
+    "common_count": 143,
+    "left_label": "p3c64-fixed-paper-eval-143",
+    "message": "A recall comparison was provided, but the requested release sidecar changes recall-consumed identity keys or guideline text. Rerun recall for this release before making retrieval claims.",
+    "mrr": {
+      "delta": 0.03779435989807441,
+      "left": 0.08852777946015142,
+      "right": 0.050733419562077005
+    },
+    "primary_budget": 200,
+    "right_label": "qwen3-embedding-4b-frozen-paper-eval",
+    "same_identity_order": true,
+    "same_identity_set": true,
+    "status": "invalid_sidecar_equivalence"
+  },
+  "release": {
+    "active_attribution_count": null,
+    "case_assignment_count": 48,
+    "guideline_count": 33,
+    "include_singleton_overrides": false,
+    "input_boundary_count": 33,
+    "input_sha256": {
+      "new-impl/guideline-agent-pipeline/results/guideline-v2-r8-source-reviewed-sidecar-candidate-full-20260823/boundary_overrides.jsonl": "bdcf9ef8b639eb017d04389652ab4066768ab8a2cb108bc4f9a33d713e7102fb",
+      "new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl": "f687641e6a47fd291fe402e7bac8cbb9aa16b38e2456bc85b2b174017fa7047d"
+    },
+    "override_count": 32,
+    "pending_overrides_included": null,
+    "pending_review_count": null,
+    "policy": [
+      "source_reviewed_release_candidate",
+      "accepted_boundaries_only",
+      "no_regex_fallback",
+      "no_bad_case_answer_key",
+      "requires_same_identity_recall_before_claim"
+    ],
+    "release_ready_guideline_count": 12,
+    "review_only_guideline_count": 21,
+    "schema_version": "hcvr_source_reviewed_release_candidate.v1",
+    "source_fingerprint": null,
+    "unresolved_representative_count": 5,
+    "work_item_count": null
+  },
+  "release_label": "guideline-v2-r8-source-reviewed-release-candidate",
+  "schema_version": "hcvr_guideline_experiment_scorecard.v1",
+  "structural_evidence": {
+    "assigned_unique_case_count": 48,
+    "assignment_link_count": 48,
+    "assignment_link_group_count": 28,
+    "case_coverage_rate": 0.07207207207207207,
+    "evaluated_group_count": 28,
+    "guideline_count": 33,
+    "message": "Structural labels are triage signals for guideline grouping, not hard pass/fail gates.",
+    "mixed_cwe_group_count": 2,
+    "mixed_hcvr_group_count": 2,
+    "pending_candidate_count": 0,
+    "source_only_group_count": 5,
+    "status": "advisory_structural_diagnostic",
+    "total_case_count": 666,
+    "weighted_cwe_purity": 0.9375,
+    "weighted_primary_hcvr_purity": 0.9375
+  }
+}

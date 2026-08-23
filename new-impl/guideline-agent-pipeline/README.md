@@ -1780,6 +1780,45 @@ for semantic review plus same-identity recall, because it preserves the
 fine-grained JNDI/XXE/SSRF/authentication/path-race style mechanism boundaries
 instead of weakening them to fit the older broad release groups.
 
+Evaluate that candidate on the two separate axes before making a paper-facing
+claim:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/evaluate_guideline_groups.py \
+  --release-dir new-impl/guideline-agent-pipeline/results/guideline-v2-r8-source-reviewed-release-candidate-20260824 \
+  --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
+  --output-dir /path/to/source-reviewed-release-candidate-group-eval
+
+python new-impl/guideline-agent-pipeline/scripts/compare_guideline_sidecars.py \
+  --left new-impl/guideline-agent-pipeline/results/mechanism-guideline-preview-v2-cluster-scope-r8-release-ready-20260823/guideline_overrides.jsonl \
+  --right new-impl/guideline-agent-pipeline/results/guideline-v2-r8-source-reviewed-release-candidate-20260824/guideline_overrides.jsonl \
+  --left-label guideline-v2-r8-release-ready-sidecar \
+  --right-label source-reviewed-release-candidate-sidecar \
+  --output-json /path/to/source-reviewed-release-candidate-vs-r8-sidecar-equivalence/summary.json \
+  --output-md /path/to/source-reviewed-release-candidate-vs-r8-sidecar-equivalence/README.md
+
+python new-impl/guideline-agent-pipeline/scripts/summarize_guideline_experiment.py \
+  --release-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-source-reviewed-release-candidate-20260824/summary.json \
+  --group-summary /path/to/source-reviewed-release-candidate-group-eval/summary.json \
+  --recall-comparison new-impl/guideline-agent-pipeline/results/p3c64-fixed143-paper-eval-20260820/qwen4b_comparison.json \
+  --recall-equivalence /path/to/source-reviewed-release-candidate-vs-r8-sidecar-equivalence/summary.json \
+  --release-label guideline-v2-r8-source-reviewed-release-candidate \
+  --output-json /path/to/source-reviewed-release-candidate-scorecard/scorecard.json \
+  --output-md /path/to/source-reviewed-release-candidate-scorecard/README.md
+```
+
+The committed evaluation artifacts are
+`results/guideline-v2-r8-source-reviewed-release-candidate-group-eval-20260824/`,
+`results/guideline-v2-r8-source-reviewed-release-candidate-vs-r8-sidecar-equivalence-20260824/`,
+and
+`results/guideline-v2-r8-source-reviewed-release-candidate-scorecard-20260824/`.
+They show the candidate has 28 case-linked mechanism groups and 48 assignments
+with weighted HCVR/CWE purity `0.9375`, but the recall sidecar is not equivalent
+to the measured r8 sidecar (`same_key_set=false`, `changed_text_count=28`).
+Therefore the source-reviewed candidate can be discussed as a semantic
+classification candidate, while embedding recall improvement still needs a
+fresh same-identity recall run before it becomes a paper-facing metric.
+
 Convert the backlog into review-only mechanism lexicon proposals:
 
 ```bash

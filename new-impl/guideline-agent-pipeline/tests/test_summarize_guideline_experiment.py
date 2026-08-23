@@ -65,6 +65,22 @@ def judge_summary() -> dict:
     }
 
 
+def source_reviewed_release_summary() -> dict:
+    return {
+        "schema_version": "hcvr_source_reviewed_release_candidate.v1",
+        "guideline_count": 33,
+        "release_ready_guideline_count": 12,
+        "review_only_guideline_count": 21,
+        "case_assignment_count": 48,
+        "input_boundary_count": 33,
+        "unresolved_representative_count": 5,
+        "include_singleton_overrides": False,
+        "override_count": 32,
+        "input_sha256": {"cases.jsonl": "abc"},
+        "policy": ["source_reviewed_release_candidate", "no_regex_fallback"],
+    }
+
+
 def test_scorecard_marks_missing_recall_as_no_recall_claim():
     module = load_module()
 
@@ -81,6 +97,29 @@ def test_scorecard_marks_missing_recall_as_no_recall_claim():
     assert scorecard["recall_evidence"]["status"] == "missing"
     assert recall_claim["status"] == "missing_or_invalid_evidence"
     assert "same identity" not in " ".join(recall_claim["evidence"]).lower()
+
+
+def test_scorecard_keeps_source_reviewed_release_fields():
+    module = load_module()
+
+    scorecard = module.build_scorecard(
+        release_summary=source_reviewed_release_summary(),
+        group_summary=group_summary(),
+        judge_summary=None,
+        recall_summary=None,
+        release_label="source-reviewed",
+        desired_delta_rate=0.10,
+    )
+
+    release = scorecard["release"]
+    assert release["schema_version"] == "hcvr_source_reviewed_release_candidate.v1"
+    assert release["release_ready_guideline_count"] == 12
+    assert release["review_only_guideline_count"] == 21
+    assert release["case_assignment_count"] == 48
+    assert release["input_boundary_count"] == 33
+    assert release["unresolved_representative_count"] == 5
+    assert release["include_singleton_overrides"] is False
+    assert release["policy"] == ["source_reviewed_release_candidate", "no_regex_fallback"]
 
 
 def test_scorecard_accepts_same_identity_recall_budget_evidence():

@@ -130,6 +130,8 @@ def structural_evidence(group_summary: dict[str, Any]) -> dict[str, Any]:
         "status": "advisory_structural_diagnostic",
         "guideline_count": group_summary.get("guideline_count"),
         "evaluated_group_count": group_summary.get("evaluated_group_count"),
+        "assignment_link_count": group_summary.get("assignment_link_count"),
+        "assignment_link_group_count": group_summary.get("assignment_link_group_count"),
         "source_only_group_count": group_summary.get("source_only_group_count"),
         "assigned_unique_case_count": group_summary.get("assigned_unique_case_count"),
         "total_case_count": group_summary.get("total_case_count"),
@@ -161,6 +163,29 @@ def judge_evidence(judge_summary: dict[str, Any] | None) -> dict[str, Any]:
         "low_score_count": judge_summary.get("low_score_count"),
         "average_scores": judge_summary.get("average_scores") or {},
         "message": "LLM-as-judge output is semantic review evidence; it must not become keyword routing or a hidden optimization target.",
+    }
+
+
+def release_evidence(release_summary: dict[str, Any]) -> dict[str, Any]:
+    """Normalize release summary fields from legacy and source-reviewed schemas."""
+
+    return {
+        "schema_version": release_summary.get("schema_version"),
+        "guideline_count": release_summary.get("guideline_count"),
+        "work_item_count": release_summary.get("work_item_count"),
+        "active_attribution_count": release_summary.get("active_attribution_count"),
+        "pending_review_count": release_summary.get("pending_review_count"),
+        "release_ready_guideline_count": release_summary.get("release_ready_guideline_count"),
+        "review_only_guideline_count": release_summary.get("review_only_guideline_count"),
+        "case_assignment_count": release_summary.get("case_assignment_count"),
+        "input_boundary_count": release_summary.get("input_boundary_count"),
+        "unresolved_representative_count": release_summary.get("unresolved_representative_count"),
+        "include_singleton_overrides": release_summary.get("include_singleton_overrides"),
+        "override_count": release_summary.get("override_count"),
+        "pending_overrides_included": release_summary.get("pending_overrides_included"),
+        "source_fingerprint": release_summary.get("source_fingerprint"),
+        "input_sha256": release_summary.get("input_sha256") or {},
+        "policy": release_summary.get("policy") or [],
     }
 
 
@@ -258,15 +283,7 @@ def build_scorecard(
     return {
         "schema_version": "hcvr_guideline_experiment_scorecard.v1",
         "release_label": release_label,
-        "release": {
-            "guideline_count": release_summary.get("guideline_count"),
-            "work_item_count": release_summary.get("work_item_count"),
-            "active_attribution_count": release_summary.get("active_attribution_count"),
-            "pending_review_count": release_summary.get("pending_review_count"),
-            "override_count": release_summary.get("override_count"),
-            "pending_overrides_included": release_summary.get("pending_overrides_included"),
-            "source_fingerprint": release_summary.get("source_fingerprint"),
-        },
+        "release": release_evidence(release_summary),
         "structural_evidence": structural,
         "judge_evidence": judge,
         "recall_evidence": recall,
@@ -297,12 +314,18 @@ def write_markdown(path: Path, scorecard: dict[str, Any], desired_delta_rate: fl
         "# HCVR Guideline Experiment Scorecard",
         "",
         f"- Release: `{scorecard['release_label']}`",
-        f"- Guidelines: {release['guideline_count']}",
-        f"- Work items: {release['work_item_count']}",
-        f"- Active attributions: {release['active_attribution_count']}",
-        f"- Pending review: {release['pending_review_count']}",
-        f"- Recall sidecar rows: {release['override_count']}",
-        f"- Pending overrides included: {release['pending_overrides_included']}",
+        f"- Guidelines: {fmt(release['guideline_count'])}",
+        f"- Work items: {fmt(release['work_item_count'])}",
+        f"- Active attributions: {fmt(release['active_attribution_count'])}",
+        f"- Pending review: {fmt(release['pending_review_count'])}",
+        f"- Release-ready guidelines: {fmt(release['release_ready_guideline_count'])}",
+        f"- Review-only guidelines: {fmt(release['review_only_guideline_count'])}",
+        f"- Case assignments: {fmt(release['case_assignment_count'])}",
+        f"- Input boundaries: {fmt(release['input_boundary_count'])}",
+        f"- Unresolved representatives: {fmt(release['unresolved_representative_count'])}",
+        f"- Include singleton overrides: {fmt(release['include_singleton_overrides'])}",
+        f"- Recall sidecar rows: {fmt(release['override_count'])}",
+        f"- Pending overrides included: {fmt(release['pending_overrides_included'])}",
         "",
         "## Evidence Axes",
         "",

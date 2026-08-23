@@ -206,6 +206,63 @@ def test_evaluate_release_excludes_source_only_groups_from_purity(tmp_path: Path
     assert source_only["flags"] == ["source_only_no_case_metadata"]
 
 
+def test_evaluate_release_uses_case_assignments_for_review_only_source_reviewed_guidelines(tmp_path: Path):
+    module = load_module()
+    cases_file = tmp_path / "cases.jsonl"
+    write_jsonl(cases_file, [case("case-a", "CVE-1", "ssrf", ["CWE-918"])])
+    release = build_release(
+        tmp_path,
+        [
+            {
+                "guideline_id": "sr_mech_0001",
+                "guideline_group_key": "gl_old__candidate_boundary__mech_jndi_lookup_ssrf",
+                "guideline_text": "Audit JNDI lookup values that can trigger outbound resource access.",
+                "mechanism": {
+                    "mechanism_id": "mech_jndi_lookup_ssrf",
+                    "name": "JNDI lookup SSRF",
+                    "family": "source_reviewed_boundary",
+                },
+                "release_status": {
+                    "release_ready": False,
+                    "status": "review_only",
+                    "blockers": ["singleton_or_missing_case_support"],
+                },
+                "schema_version": "hcvr_source_reviewed_guideline.v1",
+            }
+        ],
+        [],
+    )
+    write_jsonl(
+        release / "case_assignments.jsonl",
+        [
+            {
+                "identity_key": "case-a",
+                "case_id": "case::case-a",
+                "cve_ids": ["CVE-1"],
+                "guideline_id": "sr_mech_0001",
+                "primary_hcvr_type": "ssrf",
+                "cwe_ids": ["CWE-918"],
+            }
+        ],
+    )
+
+    summary, group_rows, assignments = module.evaluate_release(
+        release_dir=release,
+        cases_file=cases_file,
+        min_purity=0.67,
+        singleton_soft_cap=0,
+    )
+
+    assert summary["assignment_link_count"] == 1
+    assert summary["assignment_link_group_count"] == 1
+    assert summary["source_only_group_count"] == 0
+    assert summary["assigned_unique_case_count"] == 1
+    assert group_rows[0]["actionability_source"] == "source_reviewed_text"
+    assert "incomplete_actionability_fields" not in group_rows[0]["flags"]
+    assert group_rows[0]["flags"] == ["review_only"]
+    assert assignments[0]["identity_key"] == "case-a"
+
+
 def test_review_queue_is_only_evaluated_when_requested(tmp_path: Path):
     module = load_module()
     cases_file = tmp_path / "cases.jsonl"

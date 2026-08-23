@@ -56,14 +56,14 @@ def write_tsv(path: Path, rows: list[dict[str, Any]], fields: list[str]) -> None
 
 def format_tsv(value: Any) -> str:
     if value is None:
-        return ""
+        return "n/a"
     if isinstance(value, float):
         return f"{value:.4f}"
     if isinstance(value, (list, tuple)):
-        return ",".join(str(item) for item in value)
+        return ",".join(str(item) for item in value) or "n/a"
     if isinstance(value, dict):
         return json.dumps(value, ensure_ascii=False, sort_keys=True)
-    return str(value).replace("\t", " ").replace("\n", " ")
+    return str(value).replace("\t", " ").replace("\n", " ") or "n/a"
 
 
 def normalize_label(value: Any) -> str:
@@ -246,10 +246,51 @@ def load_override_case_links(
     return links, unresolved
 
 
-def actionability_score(payload: dict[str, Any]) -> tuple[float, list[str]]:
+def actionability_score(payload: dict[str, Any]) -> tuple[float | None, list[str], str]:
     mechanism = payload.get("mechanism") or {}
     present = [field for field in ACTIONABILITY_FIELDS if str(mechanism.get(field) or "").strip()]
-    return len(present) / len(ACTIONABILITY_FIELDS), present
+    if present:
+        return len(present) / len(ACTIONABILITY_FIELDS), present, "structured_mechanism_fields"
+    if payload.get("schema_version") == "hcvr_source_reviewed_guideline.v1":
+        return None, [], "source_reviewed_text"
+    return 0.0, present, "missing_structured_fields"
+
+
+def synthesize_case_from_assignment(row: dict[str, Any]) -> dict[str, Any]:
+    cve_ids = [str(value).strip() for value in row.get("cve_ids") or [] if str(value or "").strip()]
+    return {
+        "identity_key": row.get("identity_key"),
+        "new_unified_case_id": row.get("case_id"),
+        "vulnerability": {"id": cve_ids[0] if cve_ids else None, "aliases": cve_ids[1:]},
+        "classification": {
+            "primary_hcvr_type": row.get("primary_hcvr_type") or "unspecified",
+            "cwe_ids": row.get("cwe_ids") or [],
+        },
+    }
+
+
+def load_case_assignment_links(
+    release_dir: Path,
+    by_identity: dict[str, dict[str, Any]],
+    by_case_id: dict[str, dict[str, Any]],
+) -> dict[str, list[dict[str, Any]]]:
+    path = release_dir / "case_assignments.jsonl"
+    if not path.is_file():
+        return {}
+    links: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    seen: set[tuple[str, str]] = set()
+    for row in read_jsonl(path):
+        guideline_id = str(row.get("guideline_id") or "")
+        identity = str(row.get("identity_key") or "")
+        if not guideline_id or not identity:
+            continue
+        key = (guideline_id, identity)
+        if key in seen:
+            continue
+        seen.add(key)
+        case = by_identity.get(identity) or by_case_id.get(str(row.get("case_id") or ""))
+        links[guideline_id].append(case if case is not None else synthesize_case_from_assignment(row))
+    return links
 
 
 def evaluate_release(
@@ -262,6 +303,7 @@ def evaluate_release(
 ) -> tuple[dict[str, Any], list[dict[str, Any]], list[dict[str, Any]]]:
     by_identity, by_case_id, by_cve = load_cases(cases_file)
     payloads = load_guideline_payloads(release_dir, include_review_queue=include_review_queue)
+    assignment_links = load_case_assignment_links(release_dir, by_identity, by_case_id)
     override_links, unresolved_override_links = load_override_case_links(release_dir, by_identity, by_case_id)
     candidates_path = release_dir / "mechanism_candidates.jsonl"
     pending_candidate_count = 0
@@ -277,7 +319,7 @@ def evaluate_release(
         guideline_id = str(payload.get("guideline_id") or "")
         group_key = str(payload.get("guideline_group_key") or guideline_id)
         mechanism = payload.get("mechanism") or {}
-        cases = override_links.get(guideline_id) or []
+        cases = assignment_links.get(guideline_id) or override_links.get(guideline_id) or []
         if not cases:
             for cve_id in payload.get("cve_ids") or []:
                 cases.extend(by_cve.get(str(cve_id), []))
@@ -324,7 +366,7 @@ def evaluate_release(
         cwe_purity = purity(cwe_counter)
         hcvr_entropy = entropy(hcvr_counter)
         cwe_entropy = entropy(cwe_counter)
-        action_score, action_fields = actionability_score(payload)
+        action_score, action_fields, action_source = actionability_score(payload)
         flags: list[str] = []
         if assigned_count == 0:
             flags.append("source_only_no_case_metadata")
@@ -334,7 +376,7 @@ def evaluate_release(
             flags.append("mixed_hcvr")
         if len(cwe_counter) > 1 and cwe_purity < min_purity:
             flags.append("mixed_cwe")
-        if action_score < 1.0:
+        if action_score is not None and action_score < 1.0:
             flags.append("incomplete_actionability_fields")
         family = str(mechanism.get("family") or "")
         mech_id = str(mechanism.get("mechanism_id") or "")
@@ -361,8 +403,9 @@ def evaluate_release(
                 "cwe_majority": majority(cwe_counter),
                 "cwe_purity": round(cwe_purity, 4),
                 "cwe_entropy": round(cwe_entropy, 4),
-                "actionability_score": round(action_score, 4),
+                "actionability_score": round(action_score, 4) if action_score is not None else None,
                 "actionability_fields": action_fields,
+                "actionability_source": action_source,
                 "flags": flags,
                 "guideline_text": compact_text(payload.get("guideline_text"), 2000),
                 "cluster_summary": compact_text(payload.get("cluster_summary"), 1200),
@@ -391,6 +434,8 @@ def evaluate_release(
         "case_coverage_rate": (len(unique_assigned_cases) / total_cases if total_cases else None),
         "pending_candidate_count": pending_candidate_count,
         "include_review_queue": include_review_queue,
+        "assignment_link_count": sum(len(rows) for rows in assignment_links.values()),
+        "assignment_link_group_count": len(assignment_links),
         "small_group_count": flagged_counts.get("small_group", 0),
         "source_only_no_case_metadata_count": flagged_counts.get("source_only_no_case_metadata", 0),
         "mixed_hcvr_group_count": flagged_counts.get("mixed_hcvr", 0),
