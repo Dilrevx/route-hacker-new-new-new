@@ -1715,6 +1715,31 @@ that the sidecar is consumable by P3C64 recall, not as a paper-facing recall
 metric. A full 48-sidecar or 143-case claim still requires stable source
 materialization and same-identity evaluation.
 
+Audit whether source-reviewed boundaries can be propagated back into the
+current release guideline groups before running a paper-facing recall claim:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/audit_source_reviewed_boundary_propagation.py \
+  --boundary-overrides new-impl/guideline-agent-pipeline/results/guideline-v2-r8-source-reviewed-sidecar-candidate-full-20260823/boundary_overrides.jsonl \
+  --group-report new-impl/guideline-agent-pipeline/results/guideline-v2-r8-release-ready-group-eval-20260823/group_report.jsonl \
+  --case-assignments new-impl/guideline-agent-pipeline/results/guideline-v2-r8-release-ready-group-eval-20260823/case_assignments.jsonl \
+  --fixed-identity-file new-impl/guideline-agent-pipeline/results/p3c64-fixed143-paper-eval-20260820/paper_eval_143_identities.jsonl \
+  --output-dir /path/to/source-reviewed-boundary-propagation-audit
+```
+
+The committed diagnostic artifact is
+`results/guideline-v2-r8-source-reviewed-boundary-propagation-audit-20260824/`.
+It reports 33 source-reviewed boundaries over 18 guideline groups. Only
+`gl_mech_0001` is immediately `group_ablation_ready` for the current release
+and frozen 143 identity set; `gl_mech_0022` is group-compatible but outside
+the frozen 143 fixed set; the other 31 boundaries are
+`requires_release_regeneration` because source review refined the mechanism
+name or boundary beyond the current release guideline. This is a release
+alignment finding, not a recall failure. The next clean step is to regenerate
+or reconcile the release guideline sidecar from accepted source-reviewed
+boundaries, then rerun same-identity recall with the changed sidecar as the
+only method variable.
+
 Convert the backlog into review-only mechanism lexicon proposals:
 
 ```bash
