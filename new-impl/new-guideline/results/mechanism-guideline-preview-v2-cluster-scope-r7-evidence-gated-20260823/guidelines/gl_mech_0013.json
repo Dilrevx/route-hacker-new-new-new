@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "This cluster comprises vulnerabilities where user-controlled input is used to construct file paths or resource identifiers without proper validation, canonicalization, or containment checks, enabling directory traversal, unauthorized file read/write, or resource access. A minority of outliers involve unrelated vulnerabilities like deserialization, SSRF, regular expression injection, and stored XSS.",
+  "created_at": "2026-08-22T20:37:27+00:00",
+  "cve_ids": [
+    "CVE-2022-39207"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0002__mech_template_expression_untrusted_eval",
+  "guideline_id": "gl_mech_0013",
+  "guideline_text": "Trace attacker-controlled template text, expression strings, macro content, or rendering parameters into template engines, expression evaluators, macro renderers, or scriptable configuration evaluators. Report code paths where untrusted expression content is evaluated without sandboxing, escaping, allowlisting, or disabling reflective execution features. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should separate data from templates, sandbox expression evaluation, and disable reflection or method invocation features for untrusted input.",
+  "mechanism": {
+    "aliases": [
+      "template injection",
+      "expression language injection",
+      "SpEL injection",
+      "OGNL injection",
+      "Velocity macro injection",
+      "FreeMarker template injection"
+    ],
+    "family": "code_or_template_injection",
+    "mechanism_id": "mech_template_expression_untrusted_eval",
+    "missing_guard": "untrusted expression content is evaluated without sandboxing, escaping, allowlisting, or disabling reflective execution features",
+    "name": "untrusted template or expression evaluation",
+    "required_keywords": [],
+    "sink_shape": "template engines, expression evaluators, macro renderers, or scriptable configuration evaluators",
+    "source_shape": "attacker-controlled template text, expression strings, macro content, or rendering parameters",
+    "typical_fix": "separate data from templates, sandbox expression evaluation, and disable reflection or method invocation features for untrusted input"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2022-39207",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    2
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 2,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2022-39207"
+      ],
+      "name": "Missing or insufficient path validation for file and resource access",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "code_or_template_injection",
+    "mech_template_expression_untrusted_eval",
+    "template injection",
+    "expression language injection",
+    "SpEL injection",
+    "OGNL injection"
+  ]
+}

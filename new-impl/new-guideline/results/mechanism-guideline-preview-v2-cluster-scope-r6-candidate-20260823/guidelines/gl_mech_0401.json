@@ -1,0 +1,87 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where WebSocket or HTTP endpoints fail to properly validate the Origin header for cross-origin requests, or where authentication relies on untrusted HTTP headers (proxy-forwarded or user-supplied identifiers) without adequate checks. These flaws enable CSRF bypass, authentication bypass, or unauthorized access.",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2014-125071",
+    "CVE-2026-32025",
+    "CVE-2026-32045",
+    "CVE-2026-32302",
+    "CVE-2026-41347",
+    "CVE-2026-8621"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0088__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0401",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 6 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "required_keywords": [],
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2014-125071",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    88
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 88,
+      "fix_strategy": "Implement rigorous Origin header validation for all WebSocket connections, including checking for null origin and applying the same allowlist logic to loopback connections.",
+      "members": [
+        "CVE-2014-125071",
+        "CVE-2026-32025"
+      ],
+      "name": "Missing or incomplete WebSocket origin validation",
+      "root_cause": "WebSocket upgrade handlers either completely omit Origin header validation, treat null origin as a bypass, or exempt loopback connections from origin checks, assuming they are trustworthy."
+    },
+    {
+      "cluster_id": 88,
+      "fix_strategy": "Always enforce origin validation for browser-originated requests, regardless of proxy headers. Remove any exemptions that skip origin checks when proxy headers are present.",
+      "members": [
+        "CVE-2026-32302",
+        "CVE-2026-41347"
+      ],
+      "name": "Origin validation bypass due to proxy header trust",
+      "root_cause": "Code assumes that the presence of proxy headers (e.g., X-Forwarded-For) indicates a trusted reverse proxy that has already validated the origin, or trusts proxy-forwarded authentication headers without performing origin checks for browser-originated requests."
+    },
+    {
+      "cluster_id": 88,
+      "fix_strategy": "Add a route whitelist/blacklist so that proxy header authentication is only accepted for Control UI/WebSocket routes; require explicit token/password for other API routes.",
+      "members": [
+        "CVE-2026-32045"
+      ],
+      "name": "Improper trust in proxy headers for authentication without route restriction",
+      "root_cause": "Authentication middleware accepts proxy headers (e.g., Tailscale identity) as sufficient for all HTTP routes, including API endpoints that require token/password, without restricting to allowed UI/WebSocket routes."
+    },
+    {
+      "cluster_id": 88,
+      "fix_strategy": "Replace header-derived identity with server-configured environment variables for shared-token authentication.",
+      "members": [
+        "CVE-2026-8621"
+      ],
+      "name": "Blind trust in user-supplied headers for shared-token identity",
+      "root_cause": "Shared-token authentication uses caller-supplied HTTP headers (X-Crabbox-Owner, X-Crabbox-Org) to determine identity and organization without validating that these values correspond to the authenticated token."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

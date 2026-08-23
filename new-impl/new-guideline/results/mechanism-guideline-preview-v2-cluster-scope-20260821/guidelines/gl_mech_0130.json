@@ -1,0 +1,60 @@
+{
+  "cluster_summary": "This cluster encompasses vulnerabilities where server-side code fails to implement proper cross-site request forgery (CSRF) protections, perform necessary authorization checks, or employ correct security context handling. These flaws allow attackers to forge requests, escalate privileges, or bypass access controls.",
+  "created_at": "2026-08-20T19:54:08+00:00",
+  "cve_ids": [
+    "CVE-2013-7251",
+    "CVE-2021-25931",
+    "CVE-2023-37277",
+    "CVE-2024-31985",
+    "CVE-2024-31986"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0028__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0130",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 5 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2013-7251",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    28
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Add CSRF token generation, embed in forms or headers, and validate on the server side before processing.",
+      "members": [
+        "CVE-2021-25931",
+        "CVE-2023-37277",
+        "CVE-2013-7251",
+        "CVE-2024-31986",
+        "CVE-2024-31985"
+      ],
+      "name": "Missing synchronizer token (CSRF token) on state-changing requests",
+      "root_cause": "The application relies solely on cookie-based authentication without a server-generated token that must be submitted with each state-changing request, allowing cross-site request forgery."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

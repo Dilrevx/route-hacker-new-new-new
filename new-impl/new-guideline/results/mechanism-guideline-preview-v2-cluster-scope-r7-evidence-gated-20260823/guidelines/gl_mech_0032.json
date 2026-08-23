@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "This cluster contains CVEs where user-controlled data is output without proper sanitization or encoding, leading to code injection. The vulnerabilities span three contexts: CSV formula injection due to missing neutralization of leading formula characters, stored cross-site scripting due to missing HTML sanitization before database storage or output, and cross-site scripting via unescaped user data in HTTP response headers.",
+  "created_at": "2026-08-22T20:37:27+00:00",
+  "cve_ids": [
+    "CVE-2026-39422"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0005__pending_mech_cluster_5_stored_cross_site_scripting_due_to_missing_html_sanitization_or_output",
+  "guideline_id": "gl_mech_0032",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Sanitize input with an allowlist-based HTML sanitizer (e.g., bleach.clean) before storage, or escape output with html.escape() when rendering the stored data..",
+  "mechanism": {
+    "aliases": [
+      "escape",
+      "embedded",
+      "missing-output-encoding",
+      "missing",
+      "scripting",
+      "performs"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_5_stored_cross_site_scripting_due_to_missing_html_sanitization_or_output",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Stored cross-site scripting due to missing HTML sanitization or output encoding",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Sanitize input with an allowlist-based HTML sanitizer (e.g., bleach.clean) before storage, or escape output with html.escape() when rendering the stored data."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-39422",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    5
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 5,
+      "fix_strategy": "Sanitize input with an allowlist-based HTML sanitizer (e.g., bleach.clean) before storage, or escape output with html.escape() when rendering the stored data.",
+      "members": [
+        "CVE-2026-39422"
+      ],
+      "name": "Stored cross-site scripting due to missing HTML sanitization or output encoding",
+      "root_cause": "User-provided content is stored in a database without HTML sanitization (e.g., using bleach.clean) and later rendered in HTML without output encoding, allowing injection of arbitrary HTML/JavaScript."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_5_stored_cross_site_scripting_due_to_missing_html_sanitization_or_output",
+    "escape",
+    "embedded",
+    "missing-output-encoding",
+    "missing"
+  ]
+}

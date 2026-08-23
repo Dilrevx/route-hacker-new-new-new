@@ -1,0 +1,146 @@
+{
+  "cluster_summary": "The code deserializes untrusted data using Java's default deserialization mechanisms (ObjectInputStream, XStream, Kryo) without restricting which classes can be instantiated. This allows attackers to craft malicious serialized objects that instantiate arbitrary classes, often leading to remote code execution via gadget chains. Various fixes involve adding class allowlists, replacing deserialization with safe parsing, removing serializable interfaces, disabling endpoints, or removing vulnerable libraries.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2013-4521",
+    "CVE-2015-5377",
+    "CVE-2016-2510",
+    "CVE-2017-2608",
+    "CVE-2017-2612",
+    "CVE-2018-1000613",
+    "CVE-2018-6331",
+    "CVE-2021-21243",
+    "CVE-2021-29505",
+    "CVE-2021-32634",
+    "CVE-2022-39311",
+    "CVE-2022-41137",
+    "CVE-2023-36480",
+    "CVE-2023-38689",
+    "CVE-2023-42809",
+    "CVE-2024-32030",
+    "CVE-2024-47552",
+    "CVE-2025-31129",
+    "CVE-2025-32897",
+    "CVE-2025-47771",
+    "CVE-2026-33701",
+    "CVE-2026-52751"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0016__mech_deserialization_untrusted_type_graph",
+  "guideline_id": "gl_mech_0062",
+  "guideline_text": "Trace untrusted serialized bytes, object streams, pickles, marshaled payloads, or type metadata into deserializers that instantiate classes, reconstruct object graphs, or invoke callbacks during object creation. Report code paths where allowed classes, object types, and construction side effects are not constrained before deserialization. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 22 historical CVE example(s), not as a project-specific signature. A safe implementation should use type allowlists, safe codecs, signature checks, or data-only formats instead of general object deserialization.",
+  "mechanism": {
+    "aliases": [
+      "unsafe deserialization",
+      "ObjectInputStream.readObject",
+      "pickle load",
+      "marshal load",
+      "serializer type metadata"
+    ],
+    "family": "deserialization",
+    "mechanism_id": "mech_deserialization_untrusted_type_graph",
+    "missing_guard": "allowed classes, object types, and construction side effects are not constrained before deserialization",
+    "name": "untrusted deserialization with attacker-controlled type graph",
+    "required_keywords": [],
+    "sink_shape": "deserializers that instantiate classes, reconstruct object graphs, or invoke callbacks during object creation",
+    "source_shape": "untrusted serialized bytes, object streams, pickles, marshaled payloads, or type metadata",
+    "typical_fix": "use type allowlists, safe codecs, signature checks, or data-only formats instead of general object deserialization"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2013-4521",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    16
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 16,
+      "fix_strategy": "Override ObjectInputStream.resolveClass() or apply an ObjectInputFilter to restrict deserialization to a whitelist of allowed classes, rejecting any class not in the allowed set.",
+      "members": [
+        "CVE-2013-4521",
+        "CVE-2015-5377",
+        "CVE-2018-1000613",
+        "CVE-2018-6331",
+        "CVE-2023-42809",
+        "CVE-2024-47552",
+        "CVE-2025-31129",
+        "CVE-2025-32897",
+        "CVE-2025-47771",
+        "CVE-2026-52751"
+      ],
+      "name": "Missing class whitelist in ObjectInputStream deserialization",
+      "root_cause": "The code uses Java's ObjectInputStream to deserialize untrusted data without any class filtering or type validation, allowing an attacker to specify arbitrary class names that are instantiated during deserialization."
+    },
+    {
+      "cluster_id": 16,
+      "fix_strategy": "Eliminate the use of ObjectInputStream entirely; instead, manually parse the expected data using primitive types or string-based parsing, or throw an exception to disable the feature.",
+      "members": [
+        "CVE-2021-21243",
+        "CVE-2023-36480",
+        "CVE-2023-38689",
+        "CVE-2026-33701"
+      ],
+      "name": "Replacing unsafe Java serialization with safe data parsing",
+      "root_cause": "The code uses Java's ObjectInputStream.readObject() directly on untrusted network data, assuming the data is safe, without any validation or filtering."
+    },
+    {
+      "cluster_id": 16,
+      "fix_strategy": "Add a blacklist for dangerous classes/packages (e.g., javax.imageio.*, java.lang.ProcessBuilder) or upgrade to a version that enforces a class whitelist for deserialization.",
+      "members": [
+        "CVE-2017-2608",
+        "CVE-2017-2612",
+        "CVE-2021-29505"
+      ],
+      "name": "Unrestricted XStream deserialization fixed with type restrictions",
+      "root_cause": "The application uses XStream to deserialize untrusted XML input without restricting allowed classes or implementing a blacklist, allowing attackers to instantiate arbitrary classes via gadget chains."
+    },
+    {
+      "cluster_id": 16,
+      "fix_strategy": "Remove the Serializable interface from the class and mark sensitive fields as transient. Replace default serialization with custom serialization using DataInputStream/DataOutputStream for controlled field reading.",
+      "members": [
+        "CVE-2016-2510",
+        "CVE-2021-32634"
+      ],
+      "name": "Preventing serialization of internal classes by removing Serializable interface",
+      "root_cause": "Internal classes (e.g., Handler, WorkBundle) implement java.io.Serializable, allowing them to be serialized and deserialized. This enables attackers to craft serialized objects that trigger arbitrary code execution during deserialization of these classes."
+    },
+    {
+      "cluster_id": 16,
+      "fix_strategy": "Disable the deserialization endpoint by default, only enabling it if a specific system property is set to true.",
+      "members": [
+        "CVE-2022-39311"
+      ],
+      "name": "Disabling vulnerable deserialization endpoint",
+      "root_cause": "The application exposes an HTTP endpoint that deserializes untrusted Java objects from request bodies without restricting allowed types or requiring strong authentication, assuming agent UUID authentication is sufficient."
+    },
+    {
+      "cluster_id": 16,
+      "fix_strategy": "Remove the vulnerable library from the classpath and replace it with a safe version (e.g., commons-collections4) that does not contain the gadget chains.",
+      "members": [
+        "CVE-2024-32030"
+      ],
+      "name": "Removing vulnerable library with known deserialization gadgets",
+      "root_cause": "The application includes a library (commons-collections 3.x) that contains known gadget chains for deserialization attacks, and the code deserializes untrusted data, allowing attackers to leverage these gadgets."
+    },
+    {
+      "cluster_id": 16,
+      "fix_strategy": "Before full deserialization, check that the first class encountered is an allowed type (e.g., ExprNodeDesc); reject otherwise. Add a flag to enable this check only for specific use cases.",
+      "members": [
+        "CVE-2022-41137"
+      ],
+      "name": "Unrestricted Kryo deserialization fixed with pre-deserialization class check",
+      "root_cause": "The code uses Kryo's default deserialization to process untrusted serialized data without restricting which classes can be instantiated, assuming the data is securely authenticated."
+    }
+  ],
+  "tags": [
+    "deserialization",
+    "mech_deserialization_untrusted_type_graph",
+    "unsafe deserialization",
+    "ObjectInputStream.readObject",
+    "pickle load",
+    "marshal load"
+  ]
+}

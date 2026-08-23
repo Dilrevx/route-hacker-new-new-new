@@ -1,0 +1,55 @@
+{
+  "cluster_summary": "This cluster comprises various cryptographic implementation errors including missing validation of cryptographic operation results and input parameters, carry propagation bugs in arithmetic, side-channel leakage due to non-constant-time code, integer overflow, default insecure modes, and improper order of operations. These flaws lead to predictable keys, oracle attacks, keystream reuse, and out-of-bounds access.",
+  "created_at": "2026-08-22T17:56:09+00:00",
+  "cve_ids": [
+    "CVE-2020-8929"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0027__mech_path_traversal_missing_canonical_prefix",
+  "guideline_id": "gl_mech_0153",
+  "guideline_text": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under the intended base directory before the file operation. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check.",
+  "mechanism": {
+    "aliases": [
+      "path traversal",
+      "directory traversal",
+      "Zip Slip",
+      "archive entry traversal",
+      "canonical path bypass"
+    ],
+    "family": "filesystem",
+    "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+    "missing_guard": "the normalized absolute path is not checked to remain under the intended base directory before the file operation",
+    "name": "path traversal through missing canonical prefix check",
+    "sink_shape": "file read, write, delete, extraction, or resource-loading APIs",
+    "source_shape": "attacker-controlled filenames, archive entries, path fragments, or resource names",
+    "typical_fix": "normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2020-8929",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    27
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 27,
+      "fix_strategy": "Use a custom immutable byte array wrapper with proper equals and hashCode based on Arrays.equals and Arrays.hashCode, avoiding String conversion.",
+      "members": [
+        "CVE-2020-8929"
+      ],
+      "name": "Binary key collision due to charset decoding",
+      "root_cause": "Binary data used as keys is converted to String via charset decoding, which silently replaces invalid byte sequences with replacement characters, causing key collisions."
+    }
+  ],
+  "tags": [
+    "filesystem",
+    "mech_path_traversal_missing_canonical_prefix",
+    "path traversal",
+    "directory traversal",
+    "Zip Slip",
+    "archive entry traversal"
+  ]
+}

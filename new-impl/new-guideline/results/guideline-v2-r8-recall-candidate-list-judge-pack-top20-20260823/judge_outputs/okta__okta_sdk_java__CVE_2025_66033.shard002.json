@@ -1,0 +1,106 @@
+```json
+{
+  "candidate_scores": [
+    {
+      "audit_priority": "high",
+      "candidate_id": "C019",
+      "key_evidence": [
+        "nonce expiration check at line 81: nonceValidUntil.isBefore(Instant.now()) followed by nullification",
+        "jwk null-check at line 86 before processRequest",
+        "nonce check at line 91 after response for handshake success",
+        "mutable fields nonce and nonceValidUntil accessed without synchronization"
+      ],
+      "rationale": "Direct TOCTOU pattern: nonce validity is checked before use, then the mutable nonce field is conditionally nullified and later re-checked against the response. The nonce and nonceValidUntil are shared mutable fields with no visible lock, handle, or atomic operation stabilizing the check-to-use chain.",
+      "relevance": 0.85
+    },
+    {
+      "audit_priority": "high",
+      "candidate_id": "C013",
+      "key_evidence": [
+        "ThreadLocal<MessageDigest> at line 64 with comment 'MessageDigest is not thread-safe, need one per thread'",
+        "mutable DPoP state fields: nonce, nonceValidUntil, jwk",
+        "class-level comment about DPoP handshake state management"
+      ],
+      "rationale": "Explicitly manages concurrent object lifecycle: ThreadLocal is used to isolate non-thread-safe MessageDigest per thread. The mutable DPoP handshake state (nonce, jwk) is shared across requests and managed without visible synchronization, making this a prime entry point for auditing concurrent state access.",
+      "relevance": 0.75
+    },
+    {
+      "audit_priority": "medium",
+      "candidate_id": "C018",
+      "key_evidence": [
+        "Utility class purpose: detect and warn about multi-threaded usage of Okta SDK",
+        "Per-thread pagination state keyed by thread ID mentioned in javadoc",
+        "Uses ConcurrentHashMap, AtomicBoolean, AtomicInteger for thread-safe detection"
+      ],
+      "rationale": "Directly related to concurrent shared state: the class exists specifically to detect when multiple threads misuse the same ApiClient instance, which stores per-thread pagination state. However, this snippet is the detection/warning mechanism itself, not the vulnerable code path. Useful as context for the concurrent lifecycle pattern.",
+      "relevance": 0.7
+    },
+    {
+      "audit_priority": "low",
+      "candidate_id": "C016",
+      "key_evidence": [
+        "validateOAuth2ClientConfig checks clientId, scopes, privateKey, oAuth2AccessToken, jwtSigner before use",
+        "Assert.notNull and Assert.isTrue guard conditions at lines 447-457"
+      ],
+      "rationale": "Check-then-use pattern on configuration values, but the checked values are string/primitive configuration fields set during builder initialization, not mutable shared state subject to concurrent modification. The check-use window is within a single-threaded builder setup, not a runtime TOCTOU concern.",
+      "relevance": 0.35
+    },
+    {
+      "audit_priority": "none",
+      "candidate_id": "C017",
+      "key_evidence": [
+        "Javadoc at line 104-105: loading secrets from environment variables or system properties can lead to leaking"
+      ],
+      "rationale": "Import block and class javadoc for DefaultClientBuilder. The secret-leakage warning is about credential management, not concurrent object lifecycle or check-use patterns on mutable shared state.",
+      "relevance": 0.1
+    },
+    {
+      "audit_priority": "none",
+      "candidate_id": "C014",
+      "key_evidence": []
+      "rationale": "License header and package/import declarations only. No executable code, no mutable state, no concurrent lifecycle concerns visible.",
+      "relevance": 0.05
+    },
+    {
+      "audit_priority": "none",
+      "candidate_id": "C011",
+      "key_evidence": [],
+      "rationale": "Maven dependency declarations in pom.xml. Build configuration file with no runtime code paths, no mutable shared state, no check-use patterns.",
+      "relevance": 0.0
+    },
+    {
+      "audit_priority": "none",
+      "candidate_id": "C012",
+      "key_evidence": [],
+      "rationale": "Maven dependency declarations (httpclient5, Jackson, openapitools) in pom.xml. Build configuration with no concurrent object lifecycle concerns.",
+      "relevance": 0.0
+    },
+    {
+      "audit_priority": "none",
+      "candidate_id": "C015",
+      "key_evidence": [],
+      "rationale": "Root pom.xml dependency management section (slf4j, logback, Bouncy Castle, JJWT). Build configuration, not runtime code.",
+      "relevance": 0.0
+    },
+    {
+      "audit_priority": "none",
+      "candidate_id": "C020",
+      "key_evidence": [],
+      "rationale": "Example/quickstart code snippets showing client creation. Documentation code with no concurrent object lifecycle or check-use patterns.",
+      "relevance": 0.0
+    }
+  ],
+  "confidence": 0.82,
+  "missing_information": [
+    "Full DPoPInterceptor class to see complete nonce/jwk lifecycle and any synchronization guards",
+    "Full MultiThreadingWarningUtil implementation to understand detection mechanism and whether it reveals deeper concurrent state issues",
+    "Full AccessTokenRetrieverServiceImpl to see if it contains token retrieval check-use patterns",
+    "Whether DPoPInterceptor fields are accessed from multiple threads concurrently in the Okta SDK architecture"
+  ],
+  "top_choices": [
+    "C019",
+    "C013",
+    "C018"
+  ]
+}
+```

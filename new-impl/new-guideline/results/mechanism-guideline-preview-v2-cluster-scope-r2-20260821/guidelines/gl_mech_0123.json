@@ -1,0 +1,116 @@
+{
+  "cluster_summary": "The cluster comprises vulnerabilities where the application fails to properly manage session lifecycle, authentication state validation, or token consumption, leading to session fixation, unauthorized access, replay attacks, or denial of service. Common root causes include missing invalidation of sessions or tokens, failure to re-validate against current configuration, and unsafe reuse of mutable objects.",
+  "created_at": "2026-08-21T09:41:09+00:00",
+  "cve_ids": [
+    "CVE-2014-0086",
+    "CVE-2014-2066",
+    "CVE-2023-41041",
+    "CVE-2023-45669",
+    "CVE-2024-23679",
+    "CVE-2024-24823",
+    "CVE-2025-11429",
+    "CVE-2025-62604",
+    "CVE-2025-8546"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0022__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0123",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 9 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2014-0086",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    22
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 22,
+      "fix_strategy": "Invalidate the old session before creating a new one, or force generation of a new session ID by passing null when creating the session.",
+      "members": [
+        "CVE-2024-23679",
+        "CVE-2014-2066",
+        "CVE-2024-24823"
+      ],
+      "name": "Missing session invalidation or session ID regeneration on authentication",
+      "root_cause": "After successful authentication, the existing session is reused without invalidating it or generating a new session ID, allowing a pre-set session ID to remain valid (session fixation)."
+    },
+    {
+      "cluster_id": 22,
+      "fix_strategy": "Add a check that compares the per-session flag with the current global configuration, returning false if they conflict.",
+      "members": [
+        "CVE-2025-11429"
+      ],
+      "name": "Session state not re-validated against dynamic configuration",
+      "root_cause": "The session validity check only considers a per-session flag (e.g., rememberMe) set at login, without comparing it against the current realm-level configuration. When the administrator disables the global setting, existing sessions remain valid."
+    },
+    {
+      "cluster_id": 22,
+      "fix_strategy": "Restrict the endpoint to local authentication only, ignoring the client-provided mode parameter.",
+      "members": [
+        "CVE-2025-62604"
+      ],
+      "name": "Authentication mode selection from untrusted input",
+      "root_cause": "The login endpoint dispatches authentication based on a client-supplied parameter without verifying that the chosen mode (e.g., SSO) is backed by a valid token, allowing unauthenticated users to impersonate others."
+    },
+    {
+      "cluster_id": 22,
+      "fix_strategy": "Immediately remove the session attribute after reading it, ensuring single use.",
+      "members": [
+        "CVE-2025-8546"
+      ],
+      "name": "One-time token not consumed after verification",
+      "root_cause": "The expected CAPTCHA string is retrieved from the session but never removed after successful verification, allowing the same token to be replayed within the same session."
+    },
+    {
+      "cluster_id": 22,
+      "fix_strategy": "Broadcast a session-deleted event on logout and add listeners on all nodes to remove the corresponding cached session.",
+      "members": [
+        "CVE-2023-41041"
+      ],
+      "name": "Incomplete distributed session invalidation on logout",
+      "root_cause": "Logout deletes the session from the local node and database, but peer nodes retain a cached copy. No cluster-wide invalidation event is broadcast, so stale sessions remain valid on other nodes."
+    },
+    {
+      "cluster_id": 22,
+      "fix_strategy": "Use the stored authenticator object directly instead of creating a new instance, so that state changes are persisted.",
+      "members": [
+        "CVE-2023-45669"
+      ],
+      "name": "Authentication state not persisted after update due to object copying",
+      "root_cause": "The authentication provider creates a new object from the stored authenticator's fields, so updates (e.g., counter increments) are applied to the copy and discarded instead of being saved to the data store."
+    },
+    {
+      "cluster_id": 22,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2014-0086"
+      ],
+      "name": "Improper session and authentication state management",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

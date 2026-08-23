@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where user-supplied URLs are passed to browser navigation or external command execution functions without sufficient validation. Missing checks on URL schemes, IP ranges, protocol allowlists, and trust of message sources allow SSRF, command injection, local file access, and unauthorized operations. The cluster includes missing pre-navigation validation, post-interaction re-validation, OS command execution mistakes, insecure trust of messages, and a race condition outlier.",
+  "created_at": "2026-08-22T20:04:52+00:00",
+  "cve_ids": [
+    "CVE-2025-24789"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0084__pending_mech_cluster_84_unsafe_use_of_relative_executable_path",
+  "guideline_id": "gl_mech_0421",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Use an absolute path to the executable or a safe API (e.g., Desktop.getDesktop().browse) that does not search PATH..",
+  "mechanism": {
+    "aliases": [
+      "malicious",
+      "trusting",
+      "allowing",
+      "locate",
+      "runtime.exec",
+      "path-hijacked"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_84_unsafe_use_of_relative_executable_path",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Unsafe use of relative executable path",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Use an absolute path to the executable or a safe API (e.g., Desktop.getDesktop().browse) that does not search PATH."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2025-24789",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    84
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 84,
+      "fix_strategy": "Use an absolute path to the executable or a safe API (e.g., Desktop.getDesktop().browse) that does not search PATH.",
+      "members": [
+        "CVE-2025-24789"
+      ],
+      "name": "Unsafe use of relative executable path",
+      "root_cause": "Code uses a relative executable name ('xdg-open') in Runtime.exec, relying on system PATH and allowing an attacker to substitute a malicious executable."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_84_unsafe_use_of_relative_executable_path",
+    "malicious",
+    "trusting",
+    "allowing",
+    "locate"
+  ]
+}

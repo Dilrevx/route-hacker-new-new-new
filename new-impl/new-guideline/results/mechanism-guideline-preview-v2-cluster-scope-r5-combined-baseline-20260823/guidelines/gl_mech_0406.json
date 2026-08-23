@@ -1,0 +1,85 @@
+{
+  "cluster_summary": "This cluster includes vulnerabilities where privileged operations (config changes, admin commands, profile updates) lack proper authorization checks. The code often assumes implicit trust based on the communication channel or lower-level authentication, but fails to verify that the caller possesses a required admin or owner scope, allowing lower-privilege users or prompt-injected models to perform unauthorized actions.",
+  "created_at": "2026-08-22T20:04:52+00:00",
+  "cve_ids": [
+    "CVE-2026-41359",
+    "CVE-2026-41375",
+    "CVE-2026-42433",
+    "CVE-2026-45001"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0081__mech_object_owner_scope_missing_authz",
+  "guideline_id": "gl_mech_0406",
+  "guideline_text": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where the authorization decision is not bound to both the current principal and the exact resource or tenant being affected. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 4 historical CVE example(s), not as a project-specific signature. A safe implementation should check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation.",
+  "mechanism": {
+    "aliases": [
+      "object ownership authorization",
+      "tenant scope check",
+      "IDOR",
+      "resource scoped authorization"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_object_owner_scope_missing_authz",
+    "missing_guard": "the authorization decision is not bound to both the current principal and the exact resource or tenant being affected",
+    "name": "missing object-owner or tenant-scope authorization",
+    "required_keywords": [],
+    "sink_shape": "sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource",
+    "source_shape": "attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets",
+    "typical_fix": "check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-41359",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    81
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 81,
+      "fix_strategy": "Add an explicit scope gate at the entry point of admin endpoints to require operator.admin before allowing any privileged action.",
+      "members": [
+        "CVE-2026-41359"
+      ],
+      "name": "Missing operator.admin scope check on admin operations",
+      "root_cause": "The code assumes that being authenticated with a lower scope (e.g., operator.write) or being on an internal channel is sufficient for admin operations, but fails to verify that the client has the operator.admin scope before allowing mutation."
+    },
+    {
+      "cluster_id": 81,
+      "fix_strategy": "Remove the channel-specific condition and enforce the same scope requirement universally across all channels.",
+      "members": [
+        "CVE-2026-41375"
+      ],
+      "name": "Channel-specific authorization condition allowing bypass on other channels",
+      "root_cause": "An authorization check is conditioned on a specific channel (e.g., 'webchat'), so requests from other channels bypass the admin scope requirement entirely."
+    },
+    {
+      "cluster_id": 81,
+      "fix_strategy": "Add an explicit check that the sender is the owner (senderIsOwner === true) before adding the action to the exposed set and before handling it, otherwise throw an authorization error.",
+      "members": [
+        "CVE-2026-42433"
+      ],
+      "name": "Missing owner role check for profile update action",
+      "root_cause": "The code relies on a configuration-level gate but does not verify that the sender is the owner before exposing or executing a privileged profile update action."
+    },
+    {
+      "cluster_id": 81,
+      "fix_strategy": "Add a guard function that validates the patch or new config against a denylist of protected paths and throws an error if any modification touches them.",
+      "members": [
+        "CVE-2026-45001"
+      ],
+      "name": "Missing authorization guard on config mutation endpoints exposed to agents",
+      "root_cause": "The agent-facing config mutation endpoints assume the caller identity has been validated elsewhere, but a prompt-injected model with tool access can bypass this assumption, leading to unauthorized changes."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_object_owner_scope_missing_authz",
+    "object ownership authorization",
+    "tenant scope check",
+    "IDOR",
+    "resource scoped authorization"
+  ]
+}

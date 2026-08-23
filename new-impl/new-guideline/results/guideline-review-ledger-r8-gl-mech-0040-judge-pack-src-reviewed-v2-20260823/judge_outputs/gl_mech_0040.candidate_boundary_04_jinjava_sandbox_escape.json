@@ -1,0 +1,13 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.9,
+  "coverage_score": 0.85,
+  "actionability_score": 0.9,
+  "retrieval_query_quality": 0.85,
+  "main_issue": "The three cases share a tight mechanism: Jinjava template expressions reach the same resolver (JinjavaBeanELResolver) and tag property access paths, each bypassing a different facet of the same sandbox — missing restricted class (CVE-2020-12668), missing restricted base object (CVE-2025-59340), missing restricted method/package + direct bean read bypass (CVE-2026-25526). The fix family is consistent (extend restriction sets, add guard checks, route through sandbox-aware resolution). The boundary is well-scoped to Jinjava-specific sandbox escape without over-generalizing to broader template injection.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": []
+}
+```

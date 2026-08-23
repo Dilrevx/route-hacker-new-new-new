@@ -1,0 +1,18 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.75,
+  "coverage_score": 0.65,
+  "actionability_score": 0.70,
+  "retrieval_query_quality": 0.70,
+  "main_issue": "Two cases share a genuine common mechanism (server-side outbound URL with incomplete destination policy), but the specific gap flavor differs: Bugsink is a parser-boundary mismatch (urlparse vs. urllib3/requests), while CC-Tweaked is missing address ranges (cloud-metadata, multicast). The boundary text abstracts these into 'incomplete effective destination policy' which holds, but the two cases represent different sub-variants within the same mechanism family. Coverage is limited at n=2.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "bugsink__bugsink::CVE-2026-44502: Parser-boundary mismatch — urllib.parse.urlparse used for scheme/hostname decisions before outbound policy checks; patch switches to requests preparation + urllib3 parsing and rejects raw non-RFC characters. Source evidence confirms the gap is in the parser used to validate the URL before dispatch.",
+    "cc-tweaked__cc-tweaked::CVE-2023-37262: Incomplete deny-list range coverage — PrivatePattern.matches checked any-local, loopback, link-local, site-local but omitted cloud metadata addresses and multicast ranges. Source evidence confirms the gap is in the address-range predicate, not in URL parsing.",
+    "Both cases support 'attacker-influenced outbound destination + incomplete destination constraint' as the shared mechanism. The boundary text's parser-inconsistency clause (scheme, host parsing, DNS/IP resolution, private/loopback/link-local/multicast/cloud-metadata ranges, redirect hops, parser inconsistencies) covers both sub-variants.",
+    "Coverage is thin at n=2 cases. The mechanism is broad enough to cover more cases, but the current evidence only supports two distinct sub-variants. Consider adding more cases across both parser-boundary and range-coverage variants to strengthen the boundary."
+  ]
+}
+```

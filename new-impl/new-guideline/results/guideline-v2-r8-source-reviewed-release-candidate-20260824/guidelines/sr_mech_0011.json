@@ -1,0 +1,19 @@
+{
+  "boundary_label": "candidate_boundary_01",
+  "guideline_group_key": "gl_mech_0022__candidate_boundary_01__mech_xml_external_entity_resolution",
+  "guideline_id": "sr_mech_0011",
+  "guideline_text": "Audit for unsafe XML parser external entity or DTD resolution. Unsafe XML parser external-resource resolution: externally supplied XML, SOAP, XML report, XML metadata, or XML configuration bytes reach DOM/SAX/StAX/JAXB/SOAP parser or XML transformation utilities that can process DOCTYPE, external general entities, external parameter entities, external DTDs, schemas, stylesheets, or equivalent external resources before a rejecting resolver or restrictive parser/factory feature is applied. Required missing-guard check: The vulnerable side constructs or reuses parser/transformer factories or builders without disabling DOCTYPE declarations and external general/parameter entity resolution on the exact XML processor instance, without setting restrictive XMLConstants external-access properties where applicable, and without installing a rejecting or tightly scoped EntityResolver before parse. Safe implementation should: Configure every XML parser, transformer, schema, or builder factory before processing untrusted XML: reject DOCTYPE where feasible, disable external general and parameter entities and external DTD loading, set restrictive external-access properties for schema/stylesheet/transformer flows, disable XInclude and entity expansion when applicable, and install a resolver that denies or strictly allowlists external resource resolution. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 4 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_xml_external_entity_resolution",
+    "name": "unsafe XML parser external entity or DTD resolution"
+  },
+  "old_guideline_id": "gl_mech_0022",
+  "release_status": {
+    "blockers": [],
+    "release_ready": true,
+    "status": "release_ready"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 4
+}

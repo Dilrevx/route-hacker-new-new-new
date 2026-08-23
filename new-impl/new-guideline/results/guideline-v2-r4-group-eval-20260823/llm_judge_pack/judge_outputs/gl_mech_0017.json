@@ -1,0 +1,16 @@
+{
+  "decision": "revise",
+  "coherence_score": 0.96,
+  "coverage_score": 0.95,
+  "actionability_score": 0.78,
+  "retrieval_query_quality": 0.58,
+  "main_issue": "The two cases share a clear inline file-serving XSS mechanism, but the guideline's generic tracing language is too broad and omits the decisive browser-execution preconditions and response-header checks.",
+  "suggested_guideline": "Audit file-download endpoints that stream stored or attacker-controlled content and let a request parameter, configuration value, or default select inline Content-Disposition. Flag paths where the endpoint serves a browser-renderable or active file type inline without enforcing an extension and MIME allow-list before setting response headers. Confirm whether an attacker can control the file content or obtain a file identifier, force inline rendering, and receive the stored bytes under a renderable Content-Type. A safe fix should default to Content-Disposition: attachment and allow inline serving only for a small configurable set of inert, expected types; ensure Content-Type is derived from validated type policy rather than an untrusted filename, and add protective response headers such as nosniff where appropriate.",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "CVE-2025-32961: RestFileDownloadController chooses attachment versus inline directly from request parameter a, sets MIME type from FileDescriptor metadata, and streams the selected stored file without an inline extension allow-list.",
+    "CVE-2025-32960: FileDownloadController has the same source-to-header-to-stream shape: optional attachment controls disposition, FileDescriptor controls MIME and filename, and FileLoader streams the file bytes without an inline allow-list.",
+    "Both examples support one mechanism rather than separate path traversal, upload, SSRF, or resource-access patterns mentioned by the cluster summary.",
+    "The evidence does not establish every exploit precondition, especially who can upload or control active file contents and whether file identifiers are accessible to the attacker; the rewritten guideline should require those checks during audit."
+  ]
+}

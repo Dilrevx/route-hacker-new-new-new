@@ -1,0 +1,55 @@
+{
+  "cluster_summary": "This cluster covers vulnerabilities in inventory and slot manipulation logic where the code fails to validate slot properties (e.g., fake output slots), enforce access control (e.g., player permission to modify slots), or account for special item behaviors (e.g., Bundle items causing duplicate packets or state desynchronization). The missing checks lead to item duplication, unauthorized extraction, or state divergence, and the fixes involve adding explicit validation of slot types, permission checks, and consistency guards.",
+  "created_at": "2026-08-22T20:04:49+00:00",
+  "cve_ids": [
+    "CVE-2025-62782"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0001__mech_toctou_mutable_object_reuse",
+  "guideline_id": "gl_mech_0006",
+  "guideline_text": "Trace mutable files, paths, objects, identities, request fields, or shared state that are checked before use into sensitive file, state, permission, memory, or resource effects that depend on the earlier check. Report code paths where the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary.",
+  "mechanism": {
+    "aliases": [
+      "TOCTOU",
+      "check then use race",
+      "double fetch",
+      "stale object reuse"
+    ],
+    "family": "race_or_lifecycle",
+    "mechanism_id": "mech_toctou_mutable_object_reuse",
+    "missing_guard": "the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect",
+    "name": "time-of-check to time-of-use on mutable object",
+    "required_keywords": [],
+    "sink_shape": "sensitive file, state, permission, memory, or resource effects that depend on the earlier check",
+    "source_shape": "mutable files, paths, objects, identities, request fields, or shared state that are checked before use",
+    "typical_fix": "bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2025-62782",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    1
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 1,
+      "fix_strategy": "Add checks for Bundle items (redraw GUI, consume event) and include player context in inventory update calls to ensure state is scoped per player.",
+      "members": [
+        "CVE-2025-62782"
+      ],
+      "name": "Incomplete handling of Bundle item interactions in inventory",
+      "root_cause": "The code does not account for the special behavior of Bundle items (e.g., extra client packets, sub-items) in inventory click handlers, collect-to-cursor logic, or GUI-storage consistency, causing duplicate processing or state mismatches that lead to item duplication."
+    }
+  ],
+  "tags": [
+    "race_or_lifecycle",
+    "mech_toctou_mutable_object_reuse",
+    "TOCTOU",
+    "check then use race",
+    "double fetch",
+    "stale object reuse"
+  ]
+}

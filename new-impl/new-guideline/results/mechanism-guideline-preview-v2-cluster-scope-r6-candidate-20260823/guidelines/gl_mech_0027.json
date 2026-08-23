@@ -1,0 +1,124 @@
+{
+  "cluster_summary": "This cluster encompasses vulnerabilities in tar and zip archive extraction where insufficient validation of member paths, link targets, header fields, and resource limits allows path traversal, arbitrary file writes, denial of service, or race conditions. The flaws commonly arise from missing canonicalization (e.g., os.path.realpath, os.path.normpath), flawed base directory comparison logic, or incomplete input sanitization.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2025-13462",
+    "CVE-2025-4138",
+    "CVE-2025-4330",
+    "CVE-2025-4435",
+    "CVE-2025-4517",
+    "CVE-2026-11816",
+    "CVE-2026-27905",
+    "CVE-2026-28518",
+    "CVE-2026-29065",
+    "CVE-2026-29790",
+    "CVE-2026-3087",
+    "CVE-2026-35465",
+    "CVE-2026-3816",
+    "CVE-2026-40258",
+    "CVE-2026-7774"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0006__mech_path_traversal_missing_canonical_prefix",
+  "guideline_id": "gl_mech_0027",
+  "guideline_text": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under the intended base directory before the file operation. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 15 historical CVE example(s), not as a project-specific signature. A safe implementation should normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check.",
+  "mechanism": {
+    "aliases": [
+      "path traversal",
+      "directory traversal",
+      "Zip Slip",
+      "archive entry traversal",
+      "canonical path bypass"
+    ],
+    "family": "filesystem",
+    "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+    "missing_guard": "the normalized absolute path is not checked to remain under the intended base directory before the file operation",
+    "name": "path traversal through missing canonical prefix check",
+    "required_keywords": [],
+    "sink_shape": "file read, write, delete, extraction, or resource-loading APIs",
+    "source_shape": "attacker-controlled filenames, archive entries, path fragments, or resource names",
+    "typical_fix": "normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2025-13462",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    6
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 6,
+      "fix_strategy": "Canonicalize both the extraction directory and the resolved member path using os.path.realpath or os.path.normpath, then verify the member path starts with the canonical base directory.",
+      "members": [
+        "CVE-2025-4138",
+        "CVE-2025-4517",
+        "CVE-2026-27905",
+        "CVE-2026-28518",
+        "CVE-2026-29065",
+        "CVE-2026-3087",
+        "CVE-2026-35465",
+        "CVE-2026-40258",
+        "CVE-2026-7774"
+      ],
+      "name": "Missing path canonicalization before extraction (zip/tar slip)",
+      "root_cause": "Code does not canonicalize member paths or link targets before constructing the destination path, allowing path traversal via '..' sequences or absolute paths."
+    },
+    {
+      "cluster_id": 6,
+      "fix_strategy": "Pass the intended extraction directory as base_dir and canonicalize it; replace commonprefix with os.path.commonpath or canonicalized prefix check.",
+      "members": [
+        "CVE-2026-11816",
+        "CVE-2026-29790"
+      ],
+      "name": "Incorrect base directory resolution or comparison method",
+      "root_cause": "Path containment check uses the process current working directory instead of the actual extraction destination, or uses character-wise prefix comparison (os.path.commonprefix) instead of path component comparison."
+    },
+    {
+      "cluster_id": 6,
+      "fix_strategy": "After catching the filter exception, check errorlevel: if 0, skip the member instead of proceeding with extraction.",
+      "members": [
+        "CVE-2025-4435"
+      ],
+      "name": "Filter bypass due to errorlevel suppression",
+      "root_cause": "When an extraction filter rejects a member, the exception is caught but extraction continues if TarFile.errorlevel is 0, bypassing the filter."
+    },
+    {
+      "cluster_id": 6,
+      "fix_strategy": "Re-apply the extraction filter on the substituted member during fallback and raise LinkFallbackError if the filter rejects it.",
+      "members": [
+        "CVE-2025-4330"
+      ],
+      "name": "Missing filter re-application on fallback extraction",
+      "root_cause": "When a symbolic or hard link is substituted by extracting the target file content (fallback), the extraction filter is not re-applied, allowing path traversal."
+    },
+    {
+      "cluster_id": 6,
+      "fix_strategy": "Add input validation: reject negative values, verify ZIP64 offset and signature, and use a context flag to conditionally apply type normalization.",
+      "members": [
+        "CVE-2025-13462"
+      ],
+      "name": "Input parsing validation errors (header fields)",
+      "root_cause": "Missing validation of header fields such as negative offsets, unverified ZIP64 offsets, or context-insensitive type conversion (AREGTYPE→DIRTYPE) during multi-block header parsing."
+    },
+    {
+      "cluster_id": 6,
+      "fix_strategy": "Validate archive metadata (member count, sizes, compression ratio) before extraction; reject non-regular file types and enforce size limits.",
+      "members": [
+        "CVE-2026-3816"
+      ],
+      "name": "Resource exhaustion due to missing limits on archive contents",
+      "root_cause": "No enforcement of limits on member count, individual/total size, compression ratio, or dangerous entry types (FIFO, devices), allowing crafted archives to exhaust resources."
+    }
+  ],
+  "tags": [
+    "filesystem",
+    "mech_path_traversal_missing_canonical_prefix",
+    "path traversal",
+    "directory traversal",
+    "Zip Slip",
+    "archive entry traversal"
+  ]
+}

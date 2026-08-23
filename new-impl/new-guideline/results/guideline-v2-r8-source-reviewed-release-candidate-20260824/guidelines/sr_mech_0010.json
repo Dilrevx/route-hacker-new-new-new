@@ -1,0 +1,21 @@
+{
+  "boundary_label": "candidate_revision",
+  "guideline_group_key": "gl_mech_0015__candidate_revision__mech_predictable_archive_member_temp_path_check_write_race",
+  "guideline_id": "sr_mech_0010",
+  "guideline_text": "Audit for predictable archive-member temporary file check-write race. Predictable archive-member temporary file check-write race: code extracts a user-influenced archive member by deriving a predictable temporary file path from the member name, checks whether that path already exists, and later writes or returns that same path without binding the check and write to a unique exclusive file object. A local actor with write access to the temporary directory can pre-create or replace the predicted path so downstream consumers use attacker-controlled content. Required missing-guard check: The vulnerable flow lacks a random, unique, exclusive temporary-file allocation that binds the chosen pathname to the later write. The os.path.exists check does not protect the subsequent write or returned path against a pre-existing or raced file in the shared temporary directory. Safe implementation should: Use tempfile.mkstemp or an equivalent exclusive temporary-file creation primitive to allocate a non-deterministic path, write through the returned file descriptor or stable handle, and close it safely. A restricted TMPDIR can reduce exposure for deployments that cannot upgrade, but the code-level fix is exclusive randomized temporary-file creation instead of basename-derived check-then-write. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 1 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_predictable_archive_member_temp_path_check_write_race",
+    "name": "predictable archive-member temporary file check-write race"
+  },
+  "old_guideline_id": "gl_mech_0015",
+  "release_status": {
+    "blockers": [
+      "singleton_or_missing_case_support"
+    ],
+    "release_ready": false,
+    "status": "review_only"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 1
+}

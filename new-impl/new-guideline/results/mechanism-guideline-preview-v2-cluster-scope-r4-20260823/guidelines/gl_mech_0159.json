@@ -1,0 +1,58 @@
+{
+  "cluster_summary": "This cluster comprises various cryptographic implementation errors including missing validation of cryptographic operation results and input parameters, carry propagation bugs in arithmetic, side-channel leakage due to non-constant-time code, integer overflow, default insecure modes, and improper order of operations. These flaws lead to predictable keys, oracle attacks, keystream reuse, and out-of-bounds access.",
+  "created_at": "2026-08-22T17:56:09+00:00",
+  "cve_ids": [
+    "CVE-2016-1000339",
+    "CVE-2026-5598"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0027__pending_mech_cluster_27_secret_dependent_code_paths_or_memory_accesses_enabling_side_channels",
+  "guideline_id": "gl_mech_0159",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should Replace data-dependent branches with constant-time arithmetic (e.g., using shifts and masks) and randomize or clone S-box tables to obscure access patterns..",
+  "mechanism": {
+    "aliases": [
+      "observed",
+      "branch",
+      "paths",
+      "side-channel",
+      "lookups",
+      "decryptblock"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_27_secret_dependent_code_paths_or_memory_accesses_enabling_side_channels",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Secret-dependent code paths or memory accesses enabling side channels",
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Replace data-dependent branches with constant-time arithmetic (e.g., using shifts and masks) and randomize or clone S-box tables to obscure access patterns."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2016-1000339",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    27
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 27,
+      "fix_strategy": "Replace data-dependent branches with constant-time arithmetic (e.g., using shifts and masks) and randomize or clone S-box tables to obscure access patterns.",
+      "members": [
+        "CVE-2026-5598",
+        "CVE-2016-1000339"
+      ],
+      "name": "Secret-dependent code paths or memory accesses enabling side channels",
+      "root_cause": "Secret-dependent conditional branches or static table lookups in cryptographic operations allow attackers to infer secret values via timing or cache side channels."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_27_secret_dependent_code_paths_or_memory_accesses_enabling_side_channels",
+    "observed",
+    "branch",
+    "paths",
+    "side-channel"
+  ]
+}

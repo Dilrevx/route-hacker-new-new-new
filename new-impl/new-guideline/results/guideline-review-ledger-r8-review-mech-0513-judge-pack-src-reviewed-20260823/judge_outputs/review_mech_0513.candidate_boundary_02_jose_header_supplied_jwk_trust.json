@@ -1,0 +1,17 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.85,
+  "coverage_score": 0.70,
+  "actionability_score": 0.90,
+  "retrieval_query_quality": 0.80,
+  "main_issue": "Single-project, single-CVE mechanism with only one representative case. The boundary is internally coherent (same pattern across JWS and JWE paths) and the fix is precise, but cross-project generalizability is unproven. The reviewer correctly distinguishes this from JJWT parseClaimsJws misuse and OIDC none-algorithm handling, so the narrow scope is intentional and well-justified.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "Evidence is solid: the same patch commit (a5d4b2d4c9e46bfa11c82f85fdc2bcc0b50ae681) removes the identical header[\"jwk\"] fallback from both authlib/jose/rfc7515/jws.py:_prepare_algorithm_key and authlib/jose/rfc7516/jwe.py:prepare_key, confirming a common mechanism rather than two separate bugs.",
+    "Only one identity_key (authlib__authlib::CVE-2026-27962) is listed. The recall_follow_up note suggests re-running same-identity recall after a sidecar change to verify candidate slicing captures the right code paths before changing the query text — this is a reasonable precaution for a single-case boundary.",
+    "The boundary text is descriptive and specific enough to serve as a retrieval query: mentions algorithm.prepare_key, header[\"jwk\"], and the key-preparation step before trust establishment."
+  ]
+}
+```

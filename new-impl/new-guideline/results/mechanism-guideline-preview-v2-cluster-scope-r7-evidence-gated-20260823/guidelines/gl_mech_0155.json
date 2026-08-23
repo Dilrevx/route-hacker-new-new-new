@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities related to improper use of cryptographic primitives (weak PRNG, insecure modes, insufficient key protection) and failure to validate trust boundaries in inter-component communication (mutable intents, unverified package identity, side-channel). The former lead to predictable ciphertext, key exposure, or credential compromise; the latter allow injection, redirection, or unauthorized access.",
+  "created_at": "2026-08-22T20:37:28+00:00",
+  "cve_ids": [
+    "CVE-2021-32658"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0028__pending_mech_cluster_28_missing_cryptographic_consistency_verification",
+  "guideline_id": "gl_mech_0155",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Perform a round-trip encryption/decryption test after key derivation to ensure consistency; reject on mismatch..",
+  "mechanism": {
+    "aliases": [
+      "consistency",
+      "sensitive",
+      "correctly",
+      "cryptographic-key-setup",
+      "dialog",
+      "exposure"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_28_missing_cryptographic_consistency_verification",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing cryptographic consistency verification",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Perform a round-trip encryption/decryption test after key derivation to ensure consistency; reject on mismatch."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2021-32658",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    28
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Perform a round-trip encryption/decryption test after key derivation to ensure consistency; reject on mismatch.",
+      "members": [
+        "CVE-2021-32658"
+      ],
+      "name": "Missing cryptographic consistency verification",
+      "root_cause": "After deriving a private key (e.g., from mnemonic), the code does not verify that it matches the corresponding public key, leading to undetected corruption."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_28_missing_cryptographic_consistency_verification",
+    "consistency",
+    "sensitive",
+    "correctly",
+    "cryptographic-key-setup"
+  ]
+}

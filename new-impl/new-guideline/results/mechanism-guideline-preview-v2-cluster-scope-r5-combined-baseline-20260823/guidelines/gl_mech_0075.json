@@ -1,0 +1,63 @@
+{
+  "cluster_summary": "This cluster comprises 16 CVEs that all involve insufficient validation or sanitization of user-controlled input before it is used in critical operations such as shell command execution, subprocess argument construction, filesystem path operations, and output rendering. The vulnerabilities manifest as command injection, argument injection, path traversal, credential disclosure, ANSI escape injection, and regex bypass, but they share a common deficiency in treating untrusted input as safe in different contexts.",
+  "created_at": "2026-08-22T20:04:49+00:00",
+  "cve_ids": [
+    "CVE-2021-43286",
+    "CVE-2022-29184",
+    "CVE-2026-28291",
+    "CVE-2026-7725"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0020__pending_mech_cluster_20_argument_injection_in_external_commands_via_option_prefix",
+  "guideline_id": "gl_mech_0075",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 4 historical CVE example(s), not as a project-specific signature. A safe implementation should Validate input against an allow-list (alphanumeric start, known safe patterns), add '--' separator to treat arguments as positional, and reject strings containing dangerous option patterns (e.g., '--config')..",
+  "mechanism": {
+    "aliases": [
+      "one",
+      "sufficient",
+      "values",
+      "input",
+      "treat",
+      "privileges"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_20_argument_injection_in_external_commands_via_option_prefix",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Argument Injection in External Commands via Option Prefix",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Validate input against an allow-list (alphanumeric start, known safe patterns), add '--' separator to treat arguments as positional, and reject strings containing dangerous option patterns (e.g., '--config')."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2021-43286",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    20
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 20,
+      "fix_strategy": "Validate input against an allow-list (alphanumeric start, known safe patterns), add '--' separator to treat arguments as positional, and reject strings containing dangerous option patterns (e.g., '--config').",
+      "members": [
+        "CVE-2021-43286",
+        "CVE-2022-29184",
+        "CVE-2026-28291",
+        "CVE-2026-7725"
+      ],
+      "name": "Argument Injection in External Commands via Option Prefix",
+      "root_cause": "User-controlled input is passed directly as an argument to an external command (git, Mercurial) without validation that it does not start with a command-line option prefix (e.g., '-', '--config'). This allows injection of arbitrary options that alter the command's behavior, potentially leading to code execution."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_20_argument_injection_in_external_commands_via_option_prefix",
+    "one",
+    "sufficient",
+    "values",
+    "input"
+  ]
+}

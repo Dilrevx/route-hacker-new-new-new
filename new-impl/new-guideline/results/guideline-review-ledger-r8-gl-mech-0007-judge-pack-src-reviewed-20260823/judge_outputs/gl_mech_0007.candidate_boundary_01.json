@@ -1,0 +1,18 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.85,
+  "coverage_score": 0.55,
+  "actionability_score": 0.85,
+  "retrieval_query_quality": 0.80,
+  "main_issue": "The boundary describes a coherent mechanism: attacker-controlled URL parameter flows to server-side URL.openStream without protocol or destination validation. The source shape (urlDownload receives String url, derives metadata, keeps fileUrl = url), sink (new URL(fileUrl).openStream()), missing guard (no protocol/host validation before openStream), and safe fix (parse URL, reject non-http/https protocols) are all consistent and evidenced. However, the guideline text mentions 'HTTP client, download helper, or proxy fetch' as sink variants, but only the download helper (openStream) variant is evidenced by the single representative case. Coverage is limited to one case, but the mechanism is well-defined and actionable.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "Source evidence confirms CommonServiceImpl.urlDownload receives caller-controlled String url, derives bucket/object/filename, and keeps fileUrl = url before openStream.",
+    "Patch evidence confirms the fix adds URL parsing, protocol validation (http/https only), and MIME/extension allowlists — the destination-protocol guard is the core SSRF fix.",
+    "The boundary text's mention of 'HTTP client' and 'proxy fetch' variants is not evidenced by this single case; only the download helper / openStream pattern is confirmed.",
+    "The safe fix semantics section acknowledges that host allowlists, DNS/IP private-range checks, and redirect revalidation are absent from the evidenced fix and represent stronger production SSRF hardening."
+  ]
+}
+```

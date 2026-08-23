@@ -1,0 +1,56 @@
+{
+  "cluster_summary": "The code fails to verify that user-supplied identifiers (such as user IDs, resource IDs, or workspace IDs) are properly authenticated, owned by the requester, or correctly formatted before using them to access or return data. This leads to unauthorized access to private resources, data exposure, and path traversal attacks.",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2025-48370"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0092__mech_path_traversal_missing_canonical_prefix",
+  "guideline_id": "gl_mech_0416",
+  "guideline_text": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under the intended base directory before the file operation. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check.",
+  "mechanism": {
+    "aliases": [
+      "path traversal",
+      "directory traversal",
+      "Zip Slip",
+      "archive entry traversal",
+      "canonical path bypass"
+    ],
+    "family": "filesystem",
+    "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+    "missing_guard": "the normalized absolute path is not checked to remain under the intended base directory before the file operation",
+    "name": "path traversal through missing canonical prefix check",
+    "required_keywords": [],
+    "sink_shape": "file read, write, delete, extraction, or resource-loading APIs",
+    "source_shape": "attacker-controlled filenames, archive entries, path fragments, or resource names",
+    "typical_fix": "normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2025-48370",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    92
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 92,
+      "fix_strategy": "Validate that the input matches the expected format (e.g., UUID pattern) before concatenating into the URL. Reject the request with an error if the format does not match.",
+      "members": [
+        "CVE-2025-48370"
+      ],
+      "name": "Missing input format validation before path construction",
+      "root_cause": "User-supplied identifiers (e.g., uid, id) are used directly in URL path templates without prior format validation (e.g., UUID regex check). This allows injection of path traversal sequences ('../') that redirect requests to unintended endpoints."
+    }
+  ],
+  "tags": [
+    "filesystem",
+    "mech_path_traversal_missing_canonical_prefix",
+    "path traversal",
+    "directory traversal",
+    "Zip Slip",
+    "archive entry traversal"
+  ]
+}

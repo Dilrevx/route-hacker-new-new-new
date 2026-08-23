@@ -1,0 +1,119 @@
+```json
+{
+  "candidate_scores": [
+    {
+      "candidate_id": "C001",
+      "audit_priority": "low",
+      "relevance": 0.2,
+      "key_evidence": [
+        "JWT token login via getSubject().login(jwtToken)",
+        "CORS preHandle sets Access-Control-Allow-Origin from request Origin header"
+      ],
+      "rationale": "This is an authentication entry point (login), not authorization enforcement. The CORS handling echoes the request Origin header which could be relevant but is not about resource/tenant-level authorization."
+    },
+    {
+      "candidate_id": "C002",
+      "audit_priority": "none",
+      "relevance": 0.05,
+      "key_evidence": [
+        "All code is commented out (// prefix on every line)",
+        "Commented-out ApiKey security scheme and setHeaderToken helper"
+      ],
+      "rationale": "Entirely commented-out Swagger config. Dead code with no runtime effect; cannot be an authorization bypass entry point."
+    },
+    {
+      "candidate_id": "C003",
+      "audit_priority": "none",
+      "relevance": 0.0,
+      "key_evidence": [
+        "All code is commented out including package declaration and imports"
+      ],
+      "rationale": "Entirely commented-out file header. No executable code; zero relevance to authorization bypass."
+    },
+    {
+      "candidate_id": "C004",
+      "audit_priority": "low",
+      "relevance": 0.15,
+      "key_evidence": [
+        "Imports Shiro AuthorizationException and UnauthorizedException",
+        "Global exception handler for the application"
+      ],
+      "rationale": "A global exception handler that catches authorization exceptions but does not enforce authorization decisions. It is downstream of the actual guard, not the guard itself."
+    },
+    {
+      "candidate_id": "C005",
+      "audit_priority": "low",
+      "relevance": 0.1,
+      "key_evidence": [
+        "XXL-JOB login service with makeToken and parseToken",
+        "Token is hex-encoded JSON of user object"
+      ],
+      "rationale": "Authentication-only login service for a job scheduler. No resource-level or tenant-level authorization logic visible in the snippet."
+    },
+    {
+      "candidate_id": "C006",
+      "audit_priority": "medium",
+      "relevance": 0.3,
+      "key_evidence": [
+        "getToken method signs JWT with username and password, stores in Redis with 60s expiry",
+        "OpenApiController exposes swagger model endpoint at /json"
+      ],
+      "rationale": "Token generation endpoint that creates JWTs. Could be an audit entry point if token issuance lacks proper authorization checks, but the snippet only shows the token creation mechanism, not resource-access authorization."
+    },
+    {
+      "candidate_id": "C007",
+      "audit_priority": "none",
+      "relevance": 0.0,
+      "key_evidence": [
+        "All code is commented out",
+        "Swagger resource handler and Docket bean configuration"
+      ],
+      "rationale": "Entirely commented-out Swagger configuration. No runtime code; zero relevance."
+    },
+    {
+      "candidate_id": "C008",
+      "audit_priority": "low",
+      "relevance": 0.15,
+      "key_evidence": [
+        "JWT utility using auth0 JWT library (JWT, JWTVerifier, Algorithm, DecodedJWT)",
+        "Imports Shiro SecurityUtils"
+      ],
+      "rationale": "JWT signing/verification utility class. Infrastructure for token handling but not an authorization enforcement point. Snippet only shows imports and class declaration."
+    },
+    {
+      "candidate_id": "C009",
+      "audit_priority": "medium",
+      "relevance": 0.3,
+      "key_evidence": [
+        "Uses @RequiresPermissions Shiro annotation for authorization",
+        "Online user management controller with JwtUtil and RedisUtil",
+        "Imports Shiro SecurityUtils and authz annotations"
+      ],
+      "rationale": "Controller for online user management with Shiro authorization annotations. Could be relevant for checking whether permission checks are correctly bound to specific users/sessions, but the snippet only shows imports and class declaration."
+    },
+    {
+      "candidate_id": "C010",
+      "audit_priority": "high",
+      "relevance": 0.7,
+      "key_evidence": [
+        "Tenant authorization check: oConvertUtils.isIn(contextTenantId, newArray) verifies user belongs to tenant",
+        "Throws AuthenticationException when tenant authorization fails",
+        "Checks relTenantIds from database against context tenant ID before allowing access",
+        "Directly implements the pattern: authorization decision bound to current principal and exact tenant"
+      ],
+      "rationale": "ShiroRealm.doGetAuthenticationInfo with explicit tenant-scope authorization logic. The code checks whether the user's tenant IDs include the context tenant, and denies access if not. This is a direct match for the guideline's tenant-ID authorization enforcement pattern."
+    }
+  ],
+  "confidence": 0.75,
+  "missing_information": [
+    "Full method bodies for C009 and C006 to see the actual authorization enforcement logic beyond imports",
+    "Whether C010's tenant check is applied consistently across all sensitive operations or only in the realm",
+    "The actual guideline anchor examples that this guideline was derived from, to better calibrate relevance scoring"
+  ],
+  "top_choices": [
+    "C010",
+    "C009",
+    "C006"
+  ]
+}
+```

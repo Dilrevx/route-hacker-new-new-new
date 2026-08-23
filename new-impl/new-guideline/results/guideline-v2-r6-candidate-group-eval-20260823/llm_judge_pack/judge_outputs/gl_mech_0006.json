@@ -1,0 +1,19 @@
+{
+  "decision": "revise",
+  "coherence_score": 0.42,
+  "coverage_score": 0.56,
+  "actionability_score": 0.31,
+  "retrieval_query_quality": 0.16,
+  "main_issue": "The evidence supports inventory-state binding and GUI/backing-storage reconciliation, but the guideline is an overbroad missing-validation template and introduces Bundle-item handling without case-level support.",
+  "suggested_guideline": "Audit inventory GUI transfer and update paths for state changes that rely on a player-scoped read, slot view, or backing-storage lookup. Before mutating storage, granting or collecting an item, require the operation to verify that the acting player is authorized for the same inventory resource and that the GUI slot still reconciles with the corresponding backing-storage slot. Reject or safely redraw stale, synthetic, mismatched, or inaccessible slot state. Preserve the validated player, inventory, slot identity, and item state through the final mutation so an update cannot be applied to another player's storage or to a logically different slot.",
+  "split_suggestions": [
+    "Player/resource binding is lost between an inventory read and a storage mutation",
+    "GUI slot state is not reconciled with the backing-storage slot before transfer or update"
+  ],
+  "evidence_notes": [
+    "CVE-2025-62783 evidence describes a collect-to-cursor update where the read is player-scoped but the write lacks the same player/resource precondition.",
+    "CVE-2025-62784 evidence describes a required reconciliation between a GUI slot view and its backing-storage slot before transfer or update.",
+    "Neither supplied case-level description establishes Bundle-item behavior, duplicate packets, fake output slots, or a general permission-check mechanism.",
+    "The compact labels do not provide concrete source, sink, guard, or patch details; the rewritten guideline should be validated against the underlying code and fixes before release."
+  ]
+}

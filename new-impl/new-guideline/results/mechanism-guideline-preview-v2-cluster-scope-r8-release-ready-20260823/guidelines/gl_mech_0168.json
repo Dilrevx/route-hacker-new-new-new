@@ -1,0 +1,75 @@
+{
+  "cluster_summary": "The code fails to verify that user-supplied identifiers (such as user IDs, resource IDs, or workspace IDs) are properly authenticated, owned by the requester, or correctly formatted before using them to access or return data. This leads to unauthorized access to private resources, data exposure, and path traversal attacks.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2025-48370",
+    "CVE-2026-39966"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0092__mech_ssrf_webhook_url_fetch",
+  "guideline_id": "gl_mech_0168",
+  "guideline_text": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets.",
+  "mechanism": {
+    "aliases": [
+      "webhook SSRF",
+      "callback URL fetch",
+      "user controlled URL fetch",
+      "outbound HTTP client SSRF"
+    ],
+    "family": "ssrf",
+    "mechanism_id": "mech_ssrf_webhook_url_fetch",
+    "missing_guard": "scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request",
+    "name": "attacker-controlled webhook or callback URL fetch",
+    "required_keywords": [],
+    "sink_shape": "outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers",
+    "source_shape": "attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations",
+    "typical_fix": "enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 2,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 2,
+    "total_member_count": 2,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2025-48370",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    92
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 92,
+      "fix_strategy": "Replace the synchronous filter with a map that collects Promises and then filters based on resolved boolean values using Promise.all.",
+      "members": [
+        "CVE-2026-39966"
+      ],
+      "name": "Async callback in synchronous array filter bypassing access control",
+      "root_cause": "An asynchronous predicate is used in a synchronous Array.filter() call. Since filter() does not await, the predicate returns a Promise object (always truthy), causing all elements to pass the filter and bypass the intended authorization logic."
+    },
+    {
+      "cluster_id": 92,
+      "fix_strategy": "Validate that the input matches the expected format (e.g., UUID pattern) before concatenating into the URL. Reject the request with an error if the format does not match.",
+      "members": [
+        "CVE-2025-48370"
+      ],
+      "name": "Missing input format validation before path construction",
+      "root_cause": "User-supplied identifiers (e.g., uid, id) are used directly in URL path templates without prior format validation (e.g., UUID regex check). This allows injection of path traversal sequences ('../') that redirect requests to unintended endpoints."
+    }
+  ],
+  "tags": [
+    "ssrf",
+    "mech_ssrf_webhook_url_fetch",
+    "webhook SSRF",
+    "callback URL fetch",
+    "user controlled URL fetch",
+    "outbound HTTP client SSRF"
+  ]
+}

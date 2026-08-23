@@ -1,0 +1,63 @@
+{
+  "cluster_summary": "This cluster covers vulnerabilities where user-controlled input is directly concatenated or interpolated into database query strings (SQL, JPQL, Cypher, DQL) without proper parameterization or escaping, leading to injection attacks. The majority are fixed by replacing string concatenation with parameterized queries; a subset rely on improved escaping of special characters. A few involve identifier quoting, type casting, or input validation.",
+  "created_at": "2026-08-22T20:37:28+00:00",
+  "cve_ids": [
+    "CVE-2023-1495",
+    "CVE-2023-25158",
+    "CVE-2026-32763",
+    "CVE-2026-33060"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0036__pending_mech_cluster_36_sql_injection_via_insufficient_escaping_of_special_characters_fixed_b",
+  "guideline_id": "gl_mech_0201",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 4 historical CVE example(s), not as a project-specific signature. A safe implementation should Escape all relevant characters (single quotes, backslashes, LIKE wildcards) using dedicated escaping functions or doubling quotes, ensuring string literals are properly enclosed..",
+  "mechanism": {
+    "aliases": [
+      "includes",
+      "out",
+      "modification",
+      "sql",
+      "sanitize",
+      "quotes"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_36_sql_injection_via_insufficient_escaping_of_special_characters_fixed_b",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "SQL injection via insufficient escaping of special characters fixed by improved escaping",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Escape all relevant characters (single quotes, backslashes, LIKE wildcards) using dedicated escaping functions or doubling quotes, ensuring string literals are properly enclosed."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2023-1495",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    36
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 36,
+      "fix_strategy": "Escape all relevant characters (single quotes, backslashes, LIKE wildcards) using dedicated escaping functions or doubling quotes, ensuring string literals are properly enclosed.",
+      "members": [
+        "CVE-2023-1495",
+        "CVE-2023-25158",
+        "CVE-2026-32763",
+        "CVE-2026-33060"
+      ],
+      "name": "SQL injection via insufficient escaping of special characters fixed by improved escaping",
+      "root_cause": "The code attempts to sanitize input by escaping only single quotes (or missing backslash escaping) but fails to neutralize all metacharacters, allowing injection via other escape sequences or remaining unescaped characters."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_36_sql_injection_via_insufficient_escaping_of_special_characters_fixed_b",
+    "includes",
+    "out",
+    "modification",
+    "sql"
+  ]
+}

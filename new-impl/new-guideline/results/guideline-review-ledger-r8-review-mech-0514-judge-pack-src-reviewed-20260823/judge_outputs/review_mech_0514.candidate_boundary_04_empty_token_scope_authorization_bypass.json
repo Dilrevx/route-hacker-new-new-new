@@ -1,0 +1,18 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.9,
+  "coverage_score": 0.55,
+  "actionability_score": 0.9,
+  "retrieval_query_quality": 0.85,
+  "main_issue": "Only one representative case (CVE-2025-53003). The mechanism is internally coherent with strong patch-level evidence, but generalizability beyond the Janssen project is unproven.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "Patch commit 92eea4d4637f confirms AuthUtil.findMissingElements returned Collections.emptyList() for both empty required-scope and empty token-scope inputs, which is the core bug.",
+    "OpenIdAuthorizationService.validateScope update and ClientResourceTest.getClientsWithInvalidToken (expecting 401) provide positive fix + negative test evidence.",
+    "Public advisory confirms real-world impact: IDP information exposed from clients, users, scripts, and internal API surfaces.",
+    "Single-case limitation: no cross-project evidence to confirm this exact pattern (empty-token-scope satisfying non-empty required scopes) recurs elsewhere."
+  ]
+}
+```

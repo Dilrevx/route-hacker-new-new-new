@@ -1,0 +1,108 @@
+{
+  "cluster_summary": "This cluster consists of 15 CVEs involving improper handling of untrusted data during XML/DOM operations. The vulnerabilities fall into three main categories: unescaped or unvalidated user input in XML serialization leading to injection; unbounded recursion or stack overflow due to missing depth guards; and insufficient controls on XML entity expansion enabling denial of service. Two additional CVEs are outliers involving quadratic time complexity and regex injection.",
+  "created_at": "2026-08-22T20:04:49+00:00",
+  "cve_ids": [
+    "CVE-2025-12084",
+    "CVE-2025-9375",
+    "CVE-2026-25896",
+    "CVE-2026-26278",
+    "CVE-2026-27942",
+    "CVE-2026-31899",
+    "CVE-2026-33036",
+    "CVE-2026-33349",
+    "CVE-2026-34601",
+    "CVE-2026-40260",
+    "CVE-2026-41672",
+    "CVE-2026-41673",
+    "CVE-2026-41674",
+    "CVE-2026-41675",
+    "CVE-2026-4224"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0009__mech_xml_external_entity_resolution",
+  "guideline_id": "gl_mech_0033",
+  "guideline_text": "Trace attacker-controlled or externally supplied XML documents, SOAP messages, XML reports, configuration files, XPath inputs, or XSLT stylesheets into XML parser, XPath, transformer, schema, or SOAP/XML utility code that parses or transforms those documents. Report code paths where DTD declarations, external general entities, external parameter entities, external schema access, or external stylesheet access are not disabled or constrained on the exact parser/transformer instance. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 15 historical CVE example(s), not as a project-specific signature. A safe implementation should disable DOCTYPE and external entity processing, restrict external-access properties, and install a resolver or parser configuration that rejects external resource resolution before parsing.",
+  "mechanism": {
+    "aliases": [
+      "XXE",
+      "XML external entity",
+      "external entity resolution",
+      "DTD processing",
+      "DocumentBuilderFactory external entities"
+    ],
+    "family": "xml_external_resource_resolution",
+    "mechanism_id": "mech_xml_external_entity_resolution",
+    "missing_guard": "DTD declarations, external general entities, external parameter entities, external schema access, or external stylesheet access are not disabled or constrained on the exact parser/transformer instance",
+    "name": "unsafe XML parser external entity or DTD resolution",
+    "required_keywords": [],
+    "sink_shape": "XML parser, XPath, transformer, schema, or SOAP/XML utility code that parses or transforms those documents",
+    "source_shape": "attacker-controlled or externally supplied XML documents, SOAP messages, XML reports, configuration files, XPath inputs, or XSLT stylesheets",
+    "typical_fix": "disable DOCTYPE and external entity processing, restrict external-access properties, and install a resolver or parser configuration that rejects external resource resolution before parsing"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2025-12084",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    9
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 9,
+      "fix_strategy": "Add validation or escaping of user input before inclusion in XML serialization; for example, validate element names against allowed characters, escape CDATA terminators, reject comments containing '-->', validate DocumentType fields against XML grammar, and escape PI closing sequences.",
+      "members": [
+        "CVE-2025-9375",
+        "CVE-2026-34601",
+        "CVE-2026-41672",
+        "CVE-2026-41674",
+        "CVE-2026-41675"
+      ],
+      "name": "Unescaped or unvalidated user input in XML serialization",
+      "root_cause": "User-controlled data is directly inserted into XML output (element/attribute names, comments, CDATA, processing instructions, DocumentType fields) without proper escaping or validation against XML syntax constraints, allowing injection of arbitrary markup."
+    },
+    {
+      "cluster_id": 9,
+      "fix_strategy": "Replace recursion with iterative traversal using explicit stack, add recursion depth counters with thresholds, or add type guards to stop recursion on invalid input.",
+      "members": [
+        "CVE-2026-27942",
+        "CVE-2026-31899",
+        "CVE-2026-41673",
+        "CVE-2026-4224"
+      ],
+      "name": "Missing recursion depth limit or type validation in tree processing",
+      "root_cause": "Recursive functions process tree structures (DOM nodes, SVG use elements, content models, arrays) without depth limits or type checks, allowing attacker-controlled deeply nested or non-array input to cause stack overflow or infinite recursion."
+    },
+    {
+      "cluster_id": 9,
+      "fix_strategy": "Implement or enforce proper entity expansion limits: add configurable limits on entity size, total expansions, and depth; count expansions for all entity types; use strict null checks for limit configuration; or disable entity declarations entirely.",
+      "members": [
+        "CVE-2026-26278",
+        "CVE-2026-33036",
+        "CVE-2026-40260",
+        "CVE-2026-33349"
+      ],
+      "name": "Inadequate controls on XML entity expansion",
+      "root_cause": "Entity expansion limits are missing, incomplete (not covering numeric/standard entities), or bypassed due to falsy checks on numeric limits, allowing denial of service via excessive CPU/memory from entity expansion."
+    },
+    {
+      "cluster_id": 9,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2025-12084",
+        "CVE-2026-25896"
+      ],
+      "name": "Missing validation, escaping, and depth limits in XML/DOM processing",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "xml_external_resource_resolution",
+    "mech_xml_external_entity_resolution",
+    "XXE",
+    "XML external entity",
+    "external entity resolution",
+    "DTD processing"
+  ]
+}

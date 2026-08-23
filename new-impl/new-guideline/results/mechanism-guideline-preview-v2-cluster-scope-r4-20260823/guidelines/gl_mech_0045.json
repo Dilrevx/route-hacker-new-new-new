@@ -1,0 +1,58 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where untrusted input (serialized data, JSON, configuration) specifies a class name that is then loaded or instantiated without sufficient validation—either an allowlist or a comprehensive blocklist. Most members involve incomplete deny-lists in polymorphic deserialization frameworks, allowing instantiation of dangerous gadget classes. A few members involve missing allowlists in reflective instantiation or resource exhaustion from recursive collection structures.",
+  "created_at": "2026-08-22T17:56:09+00:00",
+  "cve_ids": [
+    "CVE-2014-9515",
+    "CVE-2018-21234"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0009__pending_mech_cluster_9_arbitrary_class_instantiation_from_user_controlled_class_name_without_",
+  "guideline_id": "gl_mech_0045",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should Add a configurable allowlist of safe class name prefixes or patterns and validate the class name before loading..",
+  "mechanism": {
+    "aliases": [
+      "creation",
+      "parsed",
+      "class.forname",
+      "instantiation",
+      "allowclass",
+      "derived"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_9_arbitrary_class_instantiation_from_user_controlled_class_name_without_",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Arbitrary class instantiation from user-controlled class name without allowlist",
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Add a configurable allowlist of safe class name prefixes or patterns and validate the class name before loading."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2014-9515",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    9
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 9,
+      "fix_strategy": "Add a configurable allowlist of safe class name prefixes or patterns and validate the class name before loading.",
+      "members": [
+        "CVE-2014-9515",
+        "CVE-2018-21234"
+      ],
+      "name": "Arbitrary class instantiation from user-controlled class name without allowlist",
+      "root_cause": "User-controlled fully qualified class name is used directly in reflective instantiation (e.g., Class.forName) without an allowlist, assuming only trusted classes will be used."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_9_arbitrary_class_instantiation_from_user_controlled_class_name_without_",
+    "creation",
+    "parsed",
+    "class.forname",
+    "instantiation"
+  ]
+}

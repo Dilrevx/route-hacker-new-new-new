@@ -1,0 +1,76 @@
+{
+  "backend": "sentence-transformers direct",
+  "candidate_count_mean": 11642.066666666668,
+  "candidate_count_total": 349262,
+  "case_count": 30,
+  "completed_count": 30,
+  "duration_seconds_total_sum": 15620.649,
+  "duration_seconds_wall_from_status_approx": "2026-08-18T21:31:29+08:00..2026-08-18T23:17:26+08:00",
+  "failed_count": 0,
+  "failures": [],
+  "hit_at": {
+    "1": 0.0,
+    "10": 0.03333333333333333,
+    "100": 0.3333333333333333,
+    "1000": 0.6666666666666666,
+    "10000": 1.0,
+    "20": 0.1,
+    "200": 0.4666666666666667,
+    "3": 0.03333333333333333,
+    "30": 0.1,
+    "5": 0.03333333333333333,
+    "50": 0.13333333333333333,
+    "500": 0.5666666666666667,
+    "5000": 0.9333333333333333,
+    "50000": 1.0
+  },
+  "hit_cases_full_saved_rank": 30,
+  "hit_count_at": {
+    "1": 0,
+    "10": 1,
+    "100": 10,
+    "1000": 20,
+    "10000": 30,
+    "20": 3,
+    "200": 14,
+    "3": 1,
+    "30": 3,
+    "5": 1,
+    "50": 4,
+    "500": 17,
+    "5000": 28,
+    "50000": 30
+  },
+  "miss_cases_full_saved_rank": 0,
+  "model": "/data/lhq/workspace/hcvr-embedding-service/models/Qwen3-Embedding-4B",
+  "model_label": "Qwen3-Embedding-4B",
+  "mrr_all_cases": 0.025628362412402225,
+  "output_root": "/data/lhq/workspace/hcvr-embedding-qwen-size-runs/run-30-qwen4b-20260818T213016/direct-qwen3-4b-top50000",
+  "rank_percentiles_hits_only_linear": {
+    "p50": 291.5,
+    "p90": 4081.100000000001,
+    "p95": 5482.800000000001,
+    "p99": 7713.5700000000015
+  },
+  "rank_percentiles_hits_only_nearest_rank": {
+    "p50": 271,
+    "p90": 4029,
+    "p95": 6246,
+    "p99": 8313
+  },
+  "rank_percentiles_penalized_miss_as_candidate_count_plus_1_linear": {
+    "p50": 291.5,
+    "p90": 4081.100000000001,
+    "p95": 5482.800000000001,
+    "p99": 7713.5700000000015
+  },
+  "rank_percentiles_penalized_miss_as_candidate_count_plus_1_nearest_rank": {
+    "p50": 271,
+    "p90": 4029,
+    "p95": 6246,
+    "p99": 8313
+  },
+  "run_base": "/data/lhq/workspace/hcvr-embedding-qwen-size-runs/run-30-qwen4b-20260818T213016",
+  "schema_version": "hcvr_embedding_rank_metrics.v1",
+  "top_k_saved": 50000
+}

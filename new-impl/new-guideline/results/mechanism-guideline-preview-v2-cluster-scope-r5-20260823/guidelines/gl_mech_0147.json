@@ -1,0 +1,76 @@
+{
+  "cluster_summary": "This cluster contains 12 cryptographic vulnerabilities covering several distinct coding errors: non-constant-time comparisons that enable timing oracles, use of weak hash algorithms (SHA-1) for digital signatures, insufficient validation of DER-encoded signature structure, missing checks for empty signature sets, missing public key commitment verification, signature verification over wrong payload, acceptance of short key identifiers, and lack of DH subgroup validation. Each vulnerability allows an attacker to bypass cryptographic security guarantees.",
+  "created_at": "2026-08-22T18:31:03+00:00",
+  "cve_ids": [
+    "CVE-2010-10006",
+    "CVE-2016-1000346",
+    "CVE-2023-26053",
+    "CVE-2024-23953"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0026__mech_toctou_mutable_object_reuse",
+  "guideline_id": "gl_mech_0147",
+  "guideline_text": "Trace mutable files, paths, objects, identities, request fields, or shared state that are checked before use into sensitive file, state, permission, memory, or resource effects that depend on the earlier check. Report code paths where the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 4 historical CVE example(s), not as a project-specific signature. A safe implementation should bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary.",
+  "mechanism": {
+    "aliases": [
+      "TOCTOU",
+      "check then use race",
+      "double fetch",
+      "stale object reuse"
+    ],
+    "family": "race_or_lifecycle",
+    "mechanism_id": "mech_toctou_mutable_object_reuse",
+    "missing_guard": "the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect",
+    "name": "time-of-check to time-of-use on mutable object",
+    "sink_shape": "sensitive file, state, permission, memory, or resource effects that depend on the earlier check",
+    "source_shape": "mutable files, paths, objects, identities, request fields, or shared state that are checked before use",
+    "typical_fix": "bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2010-10006",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    26
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 26,
+      "fix_strategy": "Replace with constant-time comparison functions like a safeEquals() that XORs all bytes without early exit, or use MessageDigest.isEqual.",
+      "members": [
+        "CVE-2010-10006",
+        "CVE-2024-23953"
+      ],
+      "name": "Non-constant-time cryptographic comparison",
+      "root_cause": "Code uses short-circuit equality checks (String.equals or Arrays.equals) to compare HMAC or signatures, leaking timing information that enables byte-by-byte oracle attacks."
+    },
+    {
+      "cluster_id": 26,
+      "fix_strategy": "Reject any key identifier shorter than full fingerprint length; use fingerprint hex string for verification.",
+      "members": [
+        "CVE-2023-26053"
+      ],
+      "name": "Acceptance of short key identifier as trust anchor",
+      "root_cause": "Code accepts 64-bit key IDs in trust elements, which are vulnerable to collision attacks; full fingerprint required."
+    },
+    {
+      "cluster_id": 26,
+      "fix_strategy": "Validate Y is in range [2, p-2] and if subgroup Q exists, verify Y^Q mod P == 1; reject shared secret equal to 1.",
+      "members": [
+        "CVE-2016-1000346"
+      ],
+      "name": "Missing DH public key subgroup validation",
+      "root_cause": "DH public key Y is used directly without checking it belongs to the expected subgroup, enabling small subgroup attacks."
+    }
+  ],
+  "tags": [
+    "race_or_lifecycle",
+    "mech_toctou_mutable_object_reuse",
+    "TOCTOU",
+    "check then use race",
+    "double fetch",
+    "stale object reuse"
+  ]
+}

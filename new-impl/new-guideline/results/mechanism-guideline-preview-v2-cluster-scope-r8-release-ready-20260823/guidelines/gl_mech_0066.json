@@ -1,0 +1,77 @@
+{
+  "cluster_summary": "The cluster comprises vulnerabilities where user-controlled input is used to construct URLs (redirect targets, server-side fetch URLs, navigation destinations, or URL query strings) without adequate validation or encoding. This leads to open redirect, server-side request forgery (SSRF), cross-site scripting (XSS), token leakage, and exposure of sensitive data. The root causes include missing host allowlist checks, incomplete URL parsing allowing bypasses, and failure to encode or filter sensitive data.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2023-48240",
+    "CVE-2025-32970",
+    "CVE-2026-40299"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0037__mech_ssrf_webhook_url_fetch",
+  "guideline_id": "gl_mech_0066",
+  "guideline_text": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets.",
+  "mechanism": {
+    "aliases": [
+      "webhook SSRF",
+      "callback URL fetch",
+      "user controlled URL fetch",
+      "outbound HTTP client SSRF"
+    ],
+    "family": "ssrf",
+    "mechanism_id": "mech_ssrf_webhook_url_fetch",
+    "missing_guard": "scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request",
+    "name": "attacker-controlled webhook or callback URL fetch",
+    "required_keywords": [],
+    "sink_shape": "outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers",
+    "source_shape": "attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations",
+    "typical_fix": "enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 2,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 3,
+    "total_member_count": 3,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2023-48240",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    37
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 37,
+      "fix_strategy": "Add allowlist validation (e.g., URLSecurityManager, url_has_allowed_host_and_scheme) or compare the URL's origin/host against the current request's origin or a configured list of trusted hosts.",
+      "members": [
+        "CVE-2023-48240",
+        "CVE-2025-32970"
+      ],
+      "name": "Missing host/domain allowlist validation for redirect and server-side requests",
+      "root_cause": "Code assumes user-controlled URL is safe and does not validate the destination host against a whitelist of trusted domains or the current origin before using it in a redirect or server-side request."
+    },
+    {
+      "cluster_id": 37,
+      "fix_strategy": "Improve URL parsing to catch all absolute URL variants: explicitly reject protocol-relative URLs, expand regex to match single-slash schemes, strip control characters, and parse URI components for proper validation.",
+      "members": [
+        "CVE-2026-40299"
+      ],
+      "name": "Incomplete URL validation allowing bypass via alternative absolute URL representations",
+      "root_cause": "Validation logic (regex or string prefix check) fails to recognize protocol-relative URLs (starting with //), malformed scheme separators (single slash), control characters, or leading slash sequences, allowing an attacker to bypass host trust checks."
+    }
+  ],
+  "tags": [
+    "ssrf",
+    "mech_ssrf_webhook_url_fetch",
+    "webhook SSRF",
+    "callback URL fetch",
+    "user controlled URL fetch",
+    "outbound HTTP client SSRF"
+  ]
+}

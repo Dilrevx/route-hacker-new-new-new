@@ -1,0 +1,18 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.85,
+  "coverage_score": 0.3,
+  "actionability_score": 0.25,
+  "retrieval_query_quality": 0.1,
+  "main_issue": "The boundary is internally coherent and correctly self-limits: it explicitly states that the three remaining cases lack source-reviewed evidence and should not be used as positives for recall or guideline routing. The boundary text is a well-formed placeholder that prevents label-pressure from contaminating the three promoted submechanisms. The decision of needs_more_evidence is appropriate for the actual cases, and the boundary itself is accept-quality as a negative/holding boundary.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "All three representative cases are annotated as unknown_source_member::<CVE> — no source spans, patches, parser sinks, algorithm guards, or fix semantics have been reviewed in this ledger.",
+    "The sole evidence_ref points to a review_queue.jsonl listing that merely enumerates the CVEs as unsupported members; it does not provide source-level evidence.",
+    "The boundary text correctly identifies the range of possible mechanisms (signature skipping, algorithm confusion, issuer/audience validation, key selection) without committing to any specific one in the absence of evidence.",
+    "Future work should source-review CVE-2023-48238, CVE-2026-28490, and CVE-2026-28498 individually, then either assign them to existing promoted submechanisms or create new source-backed boundaries."
+  ]
+}
+```

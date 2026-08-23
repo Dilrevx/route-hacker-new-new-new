@@ -1,0 +1,91 @@
+{
+  "cluster_summary": "The code fails to verify that user-supplied identifiers (such as user IDs, resource IDs, or workspace IDs) are properly authenticated, owned by the requester, or correctly formatted before using them to access or return data. This leads to unauthorized access to private resources, data exposure, and path traversal attacks.",
+  "created_at": "2026-08-22T20:04:52+00:00",
+  "cve_ids": [
+    "CVE-2026-22663",
+    "CVE-2026-22680",
+    "CVE-2026-27792",
+    "CVE-2026-27793",
+    "CVE-2026-28444",
+    "CVE-2026-32252",
+    "CVE-2026-32638",
+    "CVE-2026-39966",
+    "CVE-2026-39967",
+    "CVE-2026-39968",
+    "CVE-2026-49956"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0092__mech_object_owner_scope_missing_authz",
+  "guideline_id": "gl_mech_0448",
+  "guideline_text": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where the authorization decision is not bound to both the current principal and the exact resource or tenant being affected. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 11 historical CVE example(s), not as a project-specific signature. A safe implementation should check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation.",
+  "mechanism": {
+    "aliases": [
+      "object ownership authorization",
+      "tenant scope check",
+      "IDOR",
+      "resource scoped authorization"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_object_owner_scope_missing_authz",
+    "missing_guard": "the authorization decision is not bound to both the current principal and the exact resource or tenant being affected",
+    "name": "missing object-owner or tenant-scope authorization",
+    "required_keywords": [],
+    "sink_shape": "sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource",
+    "source_shape": "attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets",
+    "typical_fix": "check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-22663",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    92
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 92,
+      "fix_strategy": "Add authorization checks that compare the requester's identity or scope with the resource owner or scope before processing requests. For database queries, include the authenticated user's identifier or scope as a filter condition (e.g., WHERE owner_id = current_user_id OR WHERE typebotId = authorized_typebot).",
+      "members": [
+        "CVE-2026-22663",
+        "CVE-2026-22680",
+        "CVE-2026-27792",
+        "CVE-2026-27793",
+        "CVE-2026-28444",
+        "CVE-2026-32252",
+        "CVE-2026-39967",
+        "CVE-2026-39968",
+        "CVE-2026-49956"
+      ],
+      "name": "Missing resource ownership or scope validation",
+      "root_cause": "The code assumes that a user-supplied identifier (e.g., user ID, prompt ID, result ID, workspace ID) is sufficient to access or return data without verifying that the identifier belongs to the authenticated user or the authorized scope (e.g., team, typebot). No ownership check or tenant filter is applied."
+    },
+    {
+      "cluster_id": 92,
+      "fix_strategy": "Replace the synchronous filter with a map that collects Promises and then filters based on resolved boolean values using Promise.all.",
+      "members": [
+        "CVE-2026-39966"
+      ],
+      "name": "Async callback in synchronous array filter bypassing access control",
+      "root_cause": "An asynchronous predicate is used in a synchronous Array.filter() call. Since filter() does not await, the predicate returns a Promise object (always truthy), causing all elements to pass the filter and bypass the intended authorization logic."
+    },
+    {
+      "cluster_id": 92,
+      "fix_strategy": "Replace the conditional filter with an unconditional rank-based comparison that always restricts access to users with equal or higher rank than the authenticated user, independent of any user-supplied parameter.",
+      "members": [
+        "CVE-2026-32638"
+      ],
+      "name": "User-controlled filter flag bypassing authorization restriction",
+      "root_cause": "A privilege filter (e.g., exclude owner users) is conditionally applied based on an attacker-controlled query parameter. By setting the parameter to a value that skips the filter, an attacker can bypass the restriction and access higher-privilege data."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_object_owner_scope_missing_authz",
+    "object ownership authorization",
+    "tenant scope check",
+    "IDOR",
+    "resource scoped authorization"
+  ]
+}

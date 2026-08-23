@@ -1,0 +1,77 @@
+{
+  "cluster_summary": "This cluster comprises 15 CVEs where user-controlled data is insufficiently validated or sanitized before being used in code generation, resource consumption, or template rendering operations. The vulnerabilities lead to code injection, resource exhaustion, or bypass of security boundaries. Common patterns include missing own-property checks, lack of AST validation, unsanitized identifier interpolation, and improper resource limit enforcement.",
+  "created_at": "2026-08-22T20:04:49+00:00",
+  "cve_ids": [
+    "CVE-2026-33285",
+    "CVE-2026-33943",
+    "CVE-2026-41311"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0021__mech_template_expression_untrusted_eval",
+  "guideline_id": "gl_mech_0080",
+  "guideline_text": "Trace attacker-controlled template text, expression strings, macro content, or rendering parameters into template engines, expression evaluators, macro renderers, or scriptable configuration evaluators. Report code paths where untrusted expression content is evaluated without sandboxing, escaping, allowlisting, or disabling reflective execution features. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should separate data from templates, sandbox expression evaluation, and disable reflection or method invocation features for untrusted input.",
+  "mechanism": {
+    "aliases": [
+      "template injection",
+      "expression language injection",
+      "SpEL injection",
+      "OGNL injection",
+      "Velocity macro injection",
+      "FreeMarker template injection"
+    ],
+    "family": "code_or_template_injection",
+    "mechanism_id": "mech_template_expression_untrusted_eval",
+    "missing_guard": "untrusted expression content is evaluated without sandboxing, escaping, allowlisting, or disabling reflective execution features",
+    "name": "untrusted template or expression evaluation",
+    "required_keywords": [],
+    "sink_shape": "template engines, expression evaluators, macro renderers, or scriptable configuration evaluators",
+    "source_shape": "attacker-controlled template text, expression strings, macro content, or rendering parameters",
+    "typical_fix": "separate data from templates, sandbox expression evaluation, and disable reflection or method invocation features for untrusted input"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-33285",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    21
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 21,
+      "fix_strategy": "Validate identifier strings against a regex pattern for valid variable names, or sanitize by removing non-word characters; also restrict merge operations to own properties.",
+      "members": [
+        "CVE-2026-33943"
+      ],
+      "name": "Unsanitized identifier interpolation in code generation",
+      "root_cause": "User-controlled strings (import names, protobuf type names, import key names) are directly interpolated into generated JavaScript code without verification that they are valid identifiers, enabling code injection via special characters."
+    },
+    {
+      "cluster_id": 21,
+      "fix_strategy": "Guard the assertion and accumulation with a condition to only apply positive values (if (+count > 0)).",
+      "members": [
+        "CVE-2026-33285"
+      ],
+      "name": "Insufficient validation of resource consumption increments (negative values)",
+      "root_cause": "Resource limit methods accept count parameter without checking for non-negative, allowing negative values to decrease accumulator and bypass limits."
+    },
+    {
+      "cluster_id": 21,
+      "fix_strategy": "Add a stack to the rendering context to track currently rendering blocks and throw an error if a block is re-entered.",
+      "members": [
+        "CVE-2026-41311"
+      ],
+      "name": "Uncontrolled recursion via circular block reference in template rendering",
+      "root_cause": "Template engine lacks cycle detection or depth limit, allowing circular block inheritance to cause stack overflow or memory exhaustion."
+    }
+  ],
+  "tags": [
+    "code_or_template_injection",
+    "mech_template_expression_untrusted_eval",
+    "template injection",
+    "expression language injection",
+    "SpEL injection",
+    "OGNL injection"
+  ]
+}

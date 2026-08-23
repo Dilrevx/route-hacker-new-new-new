@@ -1,0 +1,60 @@
+{
+  "cluster_summary": "A collection of authentication and authorization vulnerabilities where tokens or credentials are not properly validated, either cryptographically, temporally, or through binding checks, leading to bypass, impersonation, or unauthorized access.",
+  "created_at": "2026-08-20T19:59:26+00:00",
+  "cve_ids": [
+    "CVE-2021-32631",
+    "CVE-2021-44878",
+    "CVE-2026-52754"
+  ],
+  "embeddings": {},
+  "group_scope": "mechanism",
+  "guideline_group_key": "pending_mech_cluster_23_missing_cryptographic_token_verification",
+  "guideline_id": "gl_mech_0055",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should Add mandatory cryptographic verification (signature verification, proof-of-possession, or decryption) before accepting token claims..",
+  "mechanism": {
+    "aliases": [
+      "boolean",
+      "vulnerabilities",
+      "validatetoken",
+      "proof",
+      "impersonation",
+      "integrity"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_23_missing_cryptographic_token_verification",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing cryptographic token verification",
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Add mandatory cryptographic verification (signature verification, proof-of-possession, or decryption) before accepting token claims."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2021-32631",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    23
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 23,
+      "fix_strategy": "Add mandatory cryptographic verification (signature verification, proof-of-possession, or decryption) before accepting token claims.",
+      "members": [
+        "CVE-2026-52754",
+        "CVE-2021-44878",
+        "CVE-2021-32631"
+      ],
+      "name": "Missing cryptographic token verification",
+      "root_cause": "The code fails to cryptographically verify the authenticity of a token (e.g., JWT signature, SAML signature, client certificate possession, token decryption) before accepting it as valid."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_23_missing_cryptographic_token_verification",
+    "boolean",
+    "vulnerabilities",
+    "validatetoken",
+    "proof"
+  ]
+}

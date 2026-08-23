@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "This cluster covers vulnerabilities where user-controlled data is embedded into HTML, attributes, JavaScript, or CSS contexts without proper context-aware escaping, leading to cross-site scripting. The root causes include incomplete HTML entity encoding, missing script-context escaping for JSON, confusion between text and HTML sinks, and lack of dedicated escaping for different contexts.",
+  "created_at": "2026-08-22T20:37:29+00:00",
+  "cve_ids": [
+    "CVE-2026-35218"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0051__pending_mech_cluster_51_inappropriate_use_of_raw_html_sink_for_plain_text_data",
+  "guideline_id": "gl_mech_0284",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Replace raw HTML insertion with text-safe methods such as document.createTextNode() or auto-escaped text interpolation, ensuring the data is treated as text rather than HTML..",
+  "mechanism": {
+    "aliases": [
+      "user-session",
+      "workspace",
+      "svelte",
+      "payload",
+      "authenticated",
+      "use"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_51_inappropriate_use_of_raw_html_sink_for_plain_text_data",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Inappropriate use of raw HTML sink for plain text data",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Replace raw HTML insertion with text-safe methods such as document.createTextNode() or auto-escaped text interpolation, ensuring the data is treated as text rather than HTML."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-35218",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    51
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 51,
+      "fix_strategy": "Replace raw HTML insertion with text-safe methods such as document.createTextNode() or auto-escaped text interpolation, ensuring the data is treated as text rather than HTML.",
+      "members": [
+        "CVE-2026-35218"
+      ],
+      "name": "Inappropriate use of raw HTML sink for plain text data",
+      "root_cause": "The code assumed that user-controlled data (e.g., SSID, entity names) is safe to assign to innerHTML or render via @html, treating text as raw HTML without any escaping or sanitization."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_51_inappropriate_use_of_raw_html_sink_for_plain_text_data",
+    "user-session",
+    "workspace",
+    "svelte",
+    "payload"
+  ]
+}

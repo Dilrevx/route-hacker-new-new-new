@@ -1,0 +1,53 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where sensitive data (passwords, emails) is exposed due to missing type-based filtering, obfuscation, or redaction. It also includes issues with stale cached configuration and specific logic errors in metadata handling and cleanup, leading to unauthorized disclosure of protected information.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2025-58049"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0034__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0159",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "required_keywords": [],
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2025-58049",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    34
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 34,
+      "fix_strategy": "Remove the sensitive keys from the context before persisting the job status.",
+      "members": [
+        "CVE-2025-58049"
+      ],
+      "name": "persisting sensitive request data in job status",
+      "root_cause": "After export, the request context containing sensitive keys (session, headers, cookies) is not cleaned, leading to persistence in job status."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

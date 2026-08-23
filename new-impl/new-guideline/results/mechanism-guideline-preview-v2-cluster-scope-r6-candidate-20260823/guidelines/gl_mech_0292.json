@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "These vulnerabilities stem from failures to correctly establish, propagate, or enforce the security context (e.g., document author permissions or restricted mode flags) when processing user-supplied content within macro and rendering pipelines. This leads to unauthorized script execution or privilege escalation. The fixes involve reordering context switches, adding permission checks, propagating restriction flags, or using correct rendering APIs.",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2025-58365"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0064__pending_mech_cluster_64_improper_authorization_context_when_processing_user_supplied_content",
+  "guideline_id": "gl_mech_0292",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Ensure that content is processed with the security context of its author or intended user, either by reordering context switches, adding explicit authorization checks, or using APIs that automatically use the correct context..",
+  "mechanism": {
+    "aliases": [
+      "rendered",
+      "code-injection",
+      "higher",
+      "either",
+      "authorization",
+      "rendering"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_64_improper_authorization_context_when_processing_user_supplied_content",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Improper authorization context when processing user-supplied content",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Ensure that content is processed with the security context of its author or intended user, either by reordering context switches, adding explicit authorization checks, or using APIs that automatically use the correct context."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2025-58365",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    64
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 64,
+      "fix_strategy": "Ensure that content is processed with the security context of its author or intended user, either by reordering context switches, adding explicit authorization checks, or using APIs that automatically use the correct context.",
+      "members": [
+        "CVE-2025-58365"
+      ],
+      "name": "Improper authorization context when processing user-supplied content",
+      "root_cause": "The code uses the wrong user or document context (e.g., viewer, document author, or macro author) when parsing or rendering user-supplied content, leading to unauthorized execution of scripts."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_64_improper_authorization_context_when_processing_user_supplied_content",
+    "rendered",
+    "code-injection",
+    "higher",
+    "either"
+  ]
+}

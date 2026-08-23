@@ -1,0 +1,52 @@
+{
+  "case_assignment_count": 48,
+  "files": {
+    "case_assignments": "case_assignments.jsonl",
+    "guideline_overrides": "guideline_overrides.jsonl",
+    "index": "index.json",
+    "unresolved_representative_cases": "unresolved_representative_cases.jsonl"
+  },
+  "guideline_count": 33,
+  "include_singleton_overrides": false,
+  "input_boundary_count": 33,
+  "input_sha256": {
+    "new-impl/guideline-agent-pipeline/results/guideline-v2-r8-source-reviewed-sidecar-candidate-full-20260823/boundary_overrides.jsonl": "bdcf9ef8b639eb017d04389652ab4066768ab8a2cb108bc4f9a33d713e7102fb",
+    "new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl": "f687641e6a47fd291fe402e7bac8cbb9aa16b38e2456bc85b2b174017fa7047d"
+  },
+  "old_guideline_boundary_counts": {
+    "gl_mech_0001": 1,
+    "gl_mech_0005": 1,
+    "gl_mech_0006": 2,
+    "gl_mech_0007": 1,
+    "gl_mech_0008": 1,
+    "gl_mech_0009": 1,
+    "gl_mech_0011": 1,
+    "gl_mech_0012": 1,
+    "gl_mech_0015": 1,
+    "gl_mech_0022": 1,
+    "gl_mech_0040": 4,
+    "gl_mech_0061": 1,
+    "gl_mech_0116": 2,
+    "gl_mech_0117": 1,
+    "review_mech_0017": 3,
+    "review_mech_0509": 4,
+    "review_mech_0513": 3,
+    "review_mech_0514": 4
+  },
+  "override_count": 32,
+  "policy": [
+    "source_reviewed_release_candidate",
+    "accepted_boundaries_only",
+    "no_regex_fallback",
+    "no_bad_case_answer_key",
+    "requires_same_identity_recall_before_claim"
+  ],
+  "release_ready_guideline_count": 12,
+  "review_only_guideline_count": 21,
+  "schema_version": "hcvr_source_reviewed_release_candidate.v1",
+  "status_counts": {
+    "release_ready": 12,
+    "review_only_singleton_or_missing_case": 21
+  },
+  "unresolved_representative_count": 5
+}

@@ -1,0 +1,17 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.85,
+  "coverage_score": 0.60,
+  "actionability_score": 0.85,
+  "retrieval_query_quality": 0.80,
+  "main_issue": "Mechanism is internally coherent and well-supported by patch+advisory evidence, but only one representative case is listed. The boundary is cleanly separated from token-crypto and per-resource authorization concerns per reviewer notes.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "Patch commit b226c433 shows the exact fix: token==null || token.isEmpty() → SC_UNAUTHORIZED before chain.doFilter, confirming the missing-token branch is the root cause.",
+    "GitHub advisory GHSA-363g-fhcq-hvqp independently confirms the filter continued processing without a token, aligning with the patch evidence.",
+    "Only one case (booklore-app__booklore::CVE-2025-62614) currently supports this boundary; additional cases with the same filter-chain fail-open pattern on missing auth material would strengthen coverage."
+  ]
+}
+```

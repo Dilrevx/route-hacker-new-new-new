@@ -1,0 +1,61 @@
+{
+  "cluster_summary": "These vulnerabilities involve OS command injection where user-supplied input is executed as part of a shell command. Two common mistakes are: (1) using shell-invoking execution APIs (exec, execSync) with concatenated strings instead of non-shell variants (execFile, spawn) with argument arrays, and (2) failing to validate user-specified command names against an allowlist before execution, allowing arbitrary commands or abusable utilities.",
+  "created_at": "2026-08-22T20:37:30+00:00",
+  "cve_ids": [
+    "CVE-2026-30625",
+    "CVE-2026-34935",
+    "CVE-2026-41497"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0068__pending_mech_cluster_68_missing_command_allowlist_and_argument_validation",
+  "guideline_id": "gl_mech_0367",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should Add an allowlist of permitted executable basenames. Validate the command's basename against this list before execution. For allowed commands that have dangerous flags, restrict or validate arguments against a positive list of safe flags..",
+  "mechanism": {
+    "aliases": [
+      "allowlist",
+      "includes",
+      "argument",
+      "shlex.split",
+      "executable",
+      "dangerous"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_68_missing_command_allowlist_and_argument_validation",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing command allowlist and argument validation",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Add an allowlist of permitted executable basenames. Validate the command's basename against this list before execution. For allowed commands that have dangerous flags, restrict or validate arguments against a positive list of safe flags."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-30625",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    68
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 68,
+      "fix_strategy": "Add an allowlist of permitted executable basenames. Validate the command's basename against this list before execution. For allowed commands that have dangerous flags, restrict or validate arguments against a positive list of safe flags.",
+      "members": [
+        "CVE-2026-30625",
+        "CVE-2026-34935",
+        "CVE-2026-41497"
+      ],
+      "name": "Missing command allowlist and argument validation",
+      "root_cause": "User-supplied command names and arguments were passed to execution functions without restricting the executable to a predefined allowlist. Even when a check was present, allowed commands (like npm, npx) could be abused via their arguments to execute arbitrary commands."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_68_missing_command_allowlist_and_argument_validation",
+    "allowlist",
+    "includes",
+    "argument",
+    "shlex.split"
+  ]
+}

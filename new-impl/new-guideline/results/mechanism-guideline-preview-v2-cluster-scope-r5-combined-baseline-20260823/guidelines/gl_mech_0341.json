@@ -1,0 +1,65 @@
+{
+  "cluster_summary": "Multiple endpoints across different modules accept state-changing HTTP requests (POST, GET with side effects) without requiring a per-request CSRF token. Attackers can forge cross-origin requests that execute actions using the victim's authenticated session. Fixes involve generating a unique token, embedding it in forms or as a header, and validating it server-side before processing.",
+  "created_at": "2026-08-22T20:04:51+00:00",
+  "cve_ids": [
+    "CVE-2023-40572",
+    "CVE-2024-55876"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0066__mech_privileged_server_side_capability_exposed",
+  "guideline_id": "gl_mech_0341",
+  "guideline_text": "Trace lower-privilege script, template, macro, plugin, or API callers that can invoke privileged server-side capabilities into server-side include, template rendering, servlet dispatch, raw object access, internal file reads, or privileged framework APIs. Report code paths where a higher privilege check is not enforced at the API entry point before exposing the server-side capability. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should check the required higher privilege at the exposed API boundary and return no sensitive result when the caller lacks that privilege.",
+  "mechanism": {
+    "aliases": [
+      "missing programming rights check",
+      "privileged API exposure",
+      "server-side include capability exposure",
+      "lower privilege script capability"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_privileged_server_side_capability_exposed",
+    "missing_guard": "a higher privilege check is not enforced at the API entry point before exposing the server-side capability",
+    "name": "privileged server-side capability exposed to lower privilege context",
+    "required_keywords": [],
+    "sink_shape": "server-side include, template rendering, servlet dispatch, raw object access, internal file reads, or privileged framework APIs",
+    "source_shape": "lower-privilege script, template, macro, plugin, or API callers that can invoke privileged server-side capabilities",
+    "typical_fix": "check the required higher privilege at the exposed API boundary and return no sensitive result when the caller lacks that privilege"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2023-40572",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    66
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 66,
+      "fix_strategy": "Add server-side CSRF token generation and validation: embed a unique token as a hidden field in forms or as a custom header (e.g., X-CSRF-Token), and reject any request where the token is missing, invalid, or mismatched with the session. Use existing framework CSRF services (e.g., `$services.csrf.isTokenValid()`) to enforce the check before processing the action.",
+      "members": [
+        "CVE-2023-40572"
+      ],
+      "name": "missing CSRF token validation on state-changing endpoints",
+      "root_cause": "The application does not generate or validate a unique anti-CSRF token (nonce) for HTTP requests that perform state-changing operations (e.g., creating, updating, deleting resources, executing scheduler actions). The server trusts that any authenticated request is intentional, lacking a mechanism to distinguish legitimate user actions from forged cross-site requests."
+    },
+    {
+      "cluster_id": 66,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2024-55876"
+      ],
+      "name": "missing anti-CSRF token validation on state-changing operations",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_privileged_server_side_capability_exposed",
+    "missing programming rights check",
+    "privileged API exposure",
+    "server-side include capability exposure",
+    "lower privilege script capability"
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "cluster_summary": "A collection of vulnerabilities where the application fails to enforce proper authorization checks, allowing unauthorized access to resources. The issues include missing checks on REST endpoints (both for actions and data retrieval), incorrect tenant scoping in queries and authorization, oversight of access rights for deleted documents and revisions, and lack of access control configuration for new wiki spaces.",
+  "created_at": "2026-08-22T17:56:09+00:00",
+  "cve_ids": [
+    "CVE-2022-41936",
+    "CVE-2024-45591",
+    "CVE-2025-49584"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0038__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0201",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2022-41936",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    38
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 38,
+      "fix_strategy": "Inject an authorization manager and call checkAccess() or hasAccess() with the appropriate right (e.g., VIEW, ADMIN) before performing the operation or including data in the response.",
+      "members": [
+        "CVE-2025-49584",
+        "CVE-2022-41936",
+        "CVE-2024-45591"
+      ],
+      "name": "Missing authorization checks on REST endpoints and data retrieval operations",
+      "root_cause": "The code does not perform authentication/authorization checks before executing sensitive operations or returning data via REST endpoints, leaving resources accessible to unauthorized users."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

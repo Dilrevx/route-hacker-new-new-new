@@ -1,0 +1,19 @@
+{
+  "boundary_label": "candidate_boundary_01",
+  "guideline_group_key": "gl_mech_0116__candidate_boundary_01__mech_ssrf_direct_untrusted_url_fetch",
+  "guideline_id": "sr_mech_0017",
+  "guideline_text": "Audit for direct SSRF through attacker-controlled outbound URL fetch. Direct URL/proxy SSRF: attacker-controlled request parameters, path components, headers, tool configuration, or equivalent request metadata are used to construct an outbound HTTP, proxy, MCP, webhook, or REST-client destination, and the server performs the request before enforcing scheme, host, port, DNS-resolved address, private-network, metadata-address, and redirect-target policy on the same destination object. Required missing-guard check: The vulnerable path does not parse and validate the exact outbound destination before the request, does not reject private or metadata address ranges after DNS resolution, does not constrain scheme/host/port through an allowlist, and does not bind any validation result to the final destination used by the network client. Redirect validation may also be missing, but redirect behavior is not required for this direct boundary. Safe implementation should: Parse the requested destination into a URL object before constructing the outbound request, enforce allowed schemes and destinations, reject localhost, private, link-local, metadata, and otherwise forbidden resolved addresses, validate each redirected destination when redirects are followed, and apply the guard immediately before the same network client request that uses the destination. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 4 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_ssrf_direct_untrusted_url_fetch",
+    "name": "direct SSRF through attacker-controlled outbound URL fetch"
+  },
+  "old_guideline_id": "gl_mech_0116",
+  "release_status": {
+    "blockers": [],
+    "release_ready": true,
+    "status": "release_ready"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 4
+}

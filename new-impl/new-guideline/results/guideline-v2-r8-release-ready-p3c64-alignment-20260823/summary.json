@@ -1,0 +1,50 @@
+{
+  "assigned_case_count": 189,
+  "attention_counts": {
+    "embedding_or_candidate_recall_attention": 6,
+    "guideline_quality_attention": 121,
+    "label_mixed_structural_attention": 8,
+    "missing_recall_rows": 44
+  },
+  "baseline_label": null,
+  "budgets": [
+    30,
+    50,
+    100,
+    150,
+    200,
+    300,
+    500
+  ],
+  "cleanliness_policy": {
+    "blocking_flags": [
+      "incomplete_actionability_fields",
+      "pending_review",
+      "review_only",
+      "source_only_no_case_metadata"
+    ],
+    "label_mixed_flags": [
+      "mixed_cwe",
+      "mixed_hcvr"
+    ],
+    "label_mixture_is_blocking": false,
+    "min_clean_purity_is_blocking": false,
+    "rationale": "Clean-enough means source/sink/guard evidence is release-usable. HCVR/CWE mixture remains a review signal because reusable mechanisms can cross labels."
+  },
+  "group_count": 177,
+  "group_with_assignments_count": 56,
+  "interpretation": [
+    "Guideline-group cleanliness and recall hit rates are separate evidence axes.",
+    "A clean group with weak recall points to embedding, candidate slicing, or query wording mismatch.",
+    "A pending, review-only, source-only, or actionability-incomplete group with weak recall should be fixed as guideline evidence before retraining.",
+    "Mixed HCVR/CWE labels are structural review signals, not automatic proof that a mechanism boundary is wrong.",
+    "Baseline deltas are paper-facing only when same_identity_baseline is true."
+  ],
+  "joined_baseline_case_count": null,
+  "joined_recall_case_count": 28,
+  "primary_budget": 100,
+  "recall_case_count": 143,
+  "recall_label": "r7-p3c64-full143",
+  "same_identity_baseline": true,
+  "schema_version": "hcvr_guideline_recall_alignment.v1"
+}

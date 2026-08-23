@@ -1,0 +1,17 @@
+```json
+{
+  "decision": "needs_evidence",
+  "coherence_score": 0.72,
+  "coverage_score": 0.10,
+  "actionability_score": 0.55,
+  "retrieval_query_quality": 0.60,
+  "main_issue": "The guideline text is internally coherent as a standalone vulnerability mechanism (source shape, sink, missing guard, exploit precondition, and safe fix all align around redirect-following SSRF), but the source-reviewed evidence does not establish redirect-following as the shared boundary for any of the cases in this group. The representative_cases list is empty, and the rationale explicitly states that gl_mech_0116 examples mostly establish direct URL/proxy SSRF, renderer external-resource SSRF, or credential/trust-boundary confusion—not redirect-following.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "No source-reviewed cases support redirect-following as the shared mechanism. Cases like bigsk1, cbioportal, DHIS2, FastGPT, and mcp-atlassian should not be counted as redirect-following positives without source evidence showing an initial allowed URL followed by an unsafe redirected destination.",
+    "The representative_cases field is empty, meaning no case-level evidence links this guideline to actual vulnerability instances.",
+    "The guideline description itself is well-formed and could be retained as a candidate mechanism, but it needs at least one source-reviewed case where redirect-following is the confirmed boundary before it can be accepted."
+  ]
+}
+```

@@ -1,0 +1,2146 @@
+# Guideline Agent Pipeline
+
+This module is the cleaned implementation of the simplified Route-Hacker flow:
+
+```text
+offline guideline clustering / guideline release
+  -> online guideline-conditioned anchor recall
+  -> per-anchor Codex harness audit
+  -> audit report with risk/no-risk, confidence, and PoC handoff locations
+  -> later PoC agent instrumentation and dynamic validation
+```
+
+The implementation keeps the boundary intentionally small. Retrieval proposes
+anchors. The audit agent decides `risk` or `no-risk`. The PoC stage is a handoff
+contract in the audit report, not a hidden reducer or schema-heavy verifier.
+
+Current frozen 143-case result, using the same identity file for both sides:
+
+| Budget | Qwen3-Embedding-4B | P3C64 query-residual | Delta |
+| --- | ---: | ---: | ---: |
+| Top-30 | 30/143 = 0.2098 | 45/143 = 0.3147 | +15 cases / +10.5 pp |
+| Top-50 | 37/143 = 0.2587 | 56/143 = 0.3916 | +19 cases / +13.3 pp |
+| Top-100 | 55/143 = 0.3846 | 73/143 = 0.5105 | +18 cases / +12.6 pp |
+| Top-150 | 65/143 = 0.4545 | 83/143 = 0.5804 | +18 cases / +12.6 pp |
+| Top-200 | 74/143 = 0.5175 | 84/143 = 0.5874 | +10 cases / +7.0 pp |
+
+Use Top-100 or Top-150 when making a `>10 percentage-point` result claim. Use
+Top-200 as `+10 additional recovered cases`, not as `+10 percentage points`.
+The detailed bad-case note is
+`results/p3c64-fixed143-paper-eval-20260820/bad_case_analysis.md`.
+
+Latest r7 guideline-sidecar rerun on the same 143 identities is stored in
+`results/guideline-v2-r7-full143-p3c64-20260823/`. This run keeps the same
+P3C64 query-residual backend and source snapshots, changes only the released
+guideline sidecar, and gives a conservative full143 improvement over the old
+P3C64 baseline: `+2` cases at Top-30, `+3` at Top-100, `+3` at Top-200, and
+`+3` at Top-500. Use this as guideline-generation evidence, not as the
+P3C64-vs-Qwen4B model-improvement claim.
+
+## Files
+
+- `scripts/run_hcvr_case_anchor_audits.py`
+  - Reads an HCVR QA receipt.
+  - Selects cases from `added_identities`.
+  - Builds retrieval guidelines from explicit case text, clustering sidecar
+    overrides, CWE templates, or coarse HCVR type templates.
+  - Consumes selected anchors from a recall run, or uses each case's existing
+    `recall_anchors` for audit-only compatibility runs.
+  - Materializes the exact source checkout in a read-only snapshot.
+  - Runs one Codex audit per selected anchor.
+  - Writes free-form reports plus `audit_index.jsonl` and `summary.json`.
+- `scripts/recall_guideline_anchors.py`
+  - Materializes the exact source checkout in a read-only snapshot.
+  - Mechanically slices source files into overlapping candidate anchors.
+  - Builds the case guideline from the QA receipt, with optional guideline
+    sidecar overrides.
+  - Ranks candidates by guideline-conditioned embedding similarity.
+  - Supports `openai`, `sentence-transformers`, and the recovered
+    `p3c64-query-residual` backend.
+  - Uses known anchors only after ranking to compute Hit@K and MRR.
+  - Optionally writes a flat `top_candidates.jsonl` for recall-side debugging
+    when `--export-top-candidates N` is supplied.
+- `scripts/compare_recall_rank_tables.py`
+  - Compares two recall rank tables by `identity_key`.
+  - Fails by default when the identity sets differ, so model A/B runs do not
+    accidentally compare different case subsets.
+  - Supports explicit `--allow-mismatch` for intersection diagnostics.
+- `scripts/run_hcvr_ablation_a.py`
+  - Runs the grouped bounded-audit harness over a fixed case allowlist and a
+    frozen Top-K recall receipt.
+  - Uses directory-local grouping so Top-K remains the audit budget while
+    `m` / `anchor_group_size` controls how many anchors one model call owns.
+  - Supports subset allowlists for feasibility probes such as the 71-case
+    P3C64 half fixed split, while still verifying the frozen 143-case QA
+    receipt.
+  - Scores case-level TP/FN with `Alarms = TP + FP`; additional findings that
+    also localize the same case truth are tracked separately as
+    `extra_truth_hit_count` instead of being counted as false positives.
+- `scripts/run_hcvr_backend_b_model_queue.py`
+  - Queues Backend-B model replacement runs over a fixed allowlist.
+  - Defaults to the current P3C64 probe setting, Top160 with `m=32`, i.e. five
+    grouped audit calls for a full-budget case.
+  - Projects large recall JSONL files to compact Top-K inputs and records the
+    exact command, model, reasoning effort, and output directory for each case.
+- `scripts/merge_recall_shards.py`
+  - Merges per-case recall output directories into a single
+    `recall_results.jsonl`, `selected_cases.jsonl`, `summary.json`, and
+    `README.md`.
+  - Recomputes Hit@K and MRR from merged results.
+  - Marks identity-file rows with missing shard outputs as missing cases.
+- `scripts/diagnose_guideline_recall_alignment.py`
+  - Joins released guideline-group diagnostics with same-identity recall ranks.
+  - Separates guideline-quality attention, label-mixture structural attention,
+    rank-table coverage gaps, and clean groups that still miss the primary
+    budget.
+- `scripts/build_recall_side_debug_pack.py`
+  - Builds a review-only debug pack for semantically clean guideline groups
+    whose same-identity recall rows still miss the primary Top-K budget.
+  - Separates rank-table coverage gaps from joined Top-K misses.
+- `scripts/inspect_recall_side_misses.py`
+  - Expands recall-side debug groups into case-level rows.
+  - Records rank distance, Top-1 location, known-anchor count, candidate-count
+    bucket, and next recall-side checks.
+  - When supplied with `--top-candidates`, reports whether exported Top-N
+    candidate rows include known-anchor overlap.
+  - Does not claim vulnerability precision or change guideline quality.
+- `scripts/build_recall_candidate_pair_judge_pack.py`
+  - Builds an advisory TraeX LLM-as-judge pack for recall-side ranked misses.
+  - Each prompt compares anonymous Top-1 and known-anchor-overlap candidates
+    using only guideline text, path, symbol, and source snippet.
+  - Omits CVE IDs, ranks, scores, known-anchor labels, and benchmark metadata
+    from prompts; hidden labels remain only in `judge_inputs.jsonl` for
+    post-run diagnostics.
+  - Skips pairs whose source snippets cannot be read, so packs should be
+    generated where recall snapshots are available.
+- `scripts/summarize_recall_candidate_pair_judge_outputs.py`
+  - Summarizes advisory candidate-pair judge outputs.
+  - Reports whether the judge preferred the hidden known-anchor-overlap
+    candidate, current Top-1, a tie, or neither.
+  - Produces diagnostic evidence only; it does not update ranking, guidelines,
+    sidecars, training labels, or paper recall metrics.
+- `scripts/build_recall_candidate_list_judge_pack.py`
+  - Builds an advisory list-wise TraeX judge pack over shuffled Top-N recall
+    candidates.
+  - Prompts ask for per-candidate relevance and audit priority, while hiding
+    original rank, score, known-anchor labels, CVE IDs, and benchmark metadata.
+  - Use this to assess reranker potential without constructing oracle
+    Top1-vs-anchor prompts.
+- `scripts/summarize_recall_candidate_list_judge_outputs.py`
+  - Summarizes list-wise judge scores and computes offline known-anchor
+    rerank Hit@1/3/5/10 using hidden metadata after the judge run.
+  - Produces diagnostic evidence only; it does not update ranking, guidelines,
+    sidecars, training labels, or paper recall metrics.
+- `scripts/evaluate_guideline_groups.py`
+  - Evaluates the guideline release itself, independent of embedding recall.
+  - Reports coverage, source-only groups, mixed HCVR/CWE sanity checks, and
+    actionability fields.
+  - Optionally emits a TraeX LLM-as-judge prompt pack for semantic mechanism
+    review.
+- `scripts/summarize_guideline_judge_outputs.py`
+  - Summarizes TraeX/LLM judge outputs into decision counts, score averages,
+    and prioritized guideline rows needing revision, splitting, merging, or
+    more evidence.
+- `scripts/build_guideline_revision_backlog.py`
+  - Joins judge output with recall-alignment diagnostics into a guideline
+    revision backlog.
+  - Produces a review artifact only: it does not update released guidelines,
+    change ranking, or add fallback rules.
+- `scripts/build_guideline_evidence_worklist.py`
+  - Converts a revision backlog plus grouped case evidence into a concrete
+    source/sink/guard/fix collection queue.
+  - Produces a review artifact only: it does not update released guidelines,
+    lexicon entries, sidecars, ranking, or audit prompts.
+- `scripts/build_guideline_boundary_repair_pack.py`
+  - Extracts split/revise rows from the evidence worklist into a mechanism
+    boundary repair pack with strong and weak example buckets.
+  - Produces a review artifact only: it does not update released guidelines,
+    lexicon entries, sidecars, ranking, or audit prompts.
+- `scripts/build_guideline_case_review_packets.py`
+  - Renders one Markdown source-evidence review packet per boundary repair
+    item, with candidate boundaries, strong/weak examples, and blank evidence
+    fields for reviewer completion.
+  - Produces review handoff material only: unfilled packets are not
+    release-ready guideline changes.
+- `scripts/verify_guideline_review_ledger.py`
+  - Validates filled reviewer ledger rows before any boundary can be promoted
+    into a mechanism lexicon or guideline sidecar.
+  - Requires source/sink/missing-guard/exploit-precondition/fix evidence for
+    `promote_boundary` rows and still does not edit released artifacts.
+- `scripts/summarize_guideline_evidence_coverage.py`
+  - Joins the r8 evidence worklist with filled source-review ledgers,
+    validation rows, and optional ledger-level judge reports.
+  - Produces a source-reviewed coverage matrix and next review queue only; it
+    does not update guidelines, sidecars, rank tables, embeddings, or audit
+    prompts.
+- `scripts/build_source_reviewed_sidecar.py`
+  - Converts accepted source-reviewed boundary ledger rows into a review-only
+    guideline override sidecar candidate.
+  - Includes only rows whose ledger decision is `promote_boundary`, verifier
+    row is valid, and ledger-level judge decision is `accept`.
+  - Generates recall text from mechanism name, boundary text, missing guard,
+    safe fix semantics, and a same-path confirmation reminder; it rejects CVE
+    IDs, `file:line` shapes, evidence-reference fields, known-anchor ranks,
+    and source-evidence text in the generated retrieval guideline.
+  - Produces an ablation input only. It does not update released guidelines,
+    change embeddings, mutate rank tables, or justify paper-facing recall
+    claims without a fresh same-identity recall run.
+- `scripts/build_guideline_ledger_judge_pack.py`
+  - Builds a TraeX LLM-as-judge prompt pack from filled source-review ledger
+    rows.
+  - Reviews semantic boundary coherence only. It does not judge embedding
+    recall, update sidecars, or convert judge decisions into release gates.
+- `scripts/triage_guideline_boundary_recall.py`
+  - Joins source-reviewed boundary ledger rows with one or more recall rank
+    tables.
+  - Reports whether each semantic boundary has matching same-identity recall
+    coverage, supported hits, misses, or coverage gaps.
+  - Produces a diagnostic artifact only: it does not update guidelines,
+    sidecars, rank tables, or audit prompts.
+- `scripts/audit_guideline_dual_axis_objective.py`
+  - Audits the current guideline iteration against the two coupled goals:
+    semantic CVE-mechanism guideline quality and tuned-embedding recall
+    compatibility.
+  - Can attach the source-review evidence coverage summary so partially filled
+    boundary ledgers cannot be mistaken for full guideline readiness.
+  - Produces a completion-gate artifact only: it does not change generation,
+    recall, ranking, or paper result tables.
+- `scripts/propose_mechanism_lexicon_updates.py`
+  - Converts a revision backlog into review-only candidate lexicon updates and
+    recall investigation tasks.
+  - Proposed text is never consumed by recall until it is manually promoted into
+    a versioned lexicon and rerun through same-identity evaluation.
+- `scripts/derive_guideline_from_audit.py`
+  - Converts a successful risk audit report into a generalized guideline track.
+  - Emits both `guideline_tracks.yaml` and a cve_clustering-style guideline
+    artifact.
+- `scripts/extract_poc_handoff_from_audit.py`
+  - Converts completed `risk` audit rows into PoC-agent handoff packets.
+  - Extracts `file:line` candidates from the report body without claiming they
+    are final proof.
+- `tests/`
+  - Unit tests for footer parsing, command-event validation, QA case selection,
+    prompt construction, and deterministic guideline derivation.
+
+## Audit Contract
+
+Each audit report is plain text, but it must end with exactly two
+machine-readable lines:
+
+```text
+Decision: risk
+Confidence: 0.90
+```
+
+or:
+
+```text
+Decision: no-risk
+Confidence: 0.75
+```
+
+`unknown` is not a valid decision.
+
+For `risk`, the body should include:
+
+- the anchor relation;
+- exact `file:line` locations for the missing or incorrect security condition;
+- exact `file:line` locations for the sensitive effect;
+- runtime conditions, variables, branch predicates, and state that a later PoC
+  agent should observe or instrument to eliminate false positives.
+
+## Recall Guideline Anchors
+
+Use this stage when evaluating the full online retrieval path:
+
+```text
+QA case guideline -> source snapshot -> mechanical candidate slices
+  -> embedding recall Top-K -> selected audit anchors
+```
+
+P3C64 is the current recovered HCVR method with positive recall evidence. It
+keeps candidate code vectors as frozen Qwen3-Embedding-0.6B vectors and adapts
+only the query/guideline vector with a residual MLP.
+
+Guideline construction is deliberately kept on the query side. The default
+builder uses the case's explicit `guideline_text`, `retrieval_guideline`, or
+`audit_guideline` when present, then falls back to CWE templates and coarse
+HCVR type templates. It does not infer mechanism-specific queries from ad hoc
+regular expressions over advisory text; mechanism names such as JNDI, LDAP,
+RMI, unsafe template evaluation, or SSRF-through-JNDI must come from a
+reviewable offline guideline release or from an explicit sidecar override.
+Known anchors, ranks, file paths, and line numbers are never used to construct
+the retrieval query.
+
+## Guideline Clustering Roadmap
+
+The intended offline-to-online contract is:
+
+```text
+CVE metadata + patch diff
+  -> code-centric root-cause extraction
+  -> cluster refinement into evidence neighborhoods and sub-patterns
+  -> mechanism attribution inside each neighborhood
+  -> one reusable guideline per cluster-scoped mechanism
+  -> guideline sidecar consumed by recall and audit
+```
+
+The historical `cve_clustering` implementation already has the right artifact
+shape: each structured CVE carries `root_cause`, `abstract_pattern`,
+`data_flow`, `trigger_condition`, and `fix_strategy`; refined clusters can
+carry `sub_patterns` with their own root cause, fix strategy, and member CVEs;
+guideline generation expands broad clusters into reviewable mechanism-scoped
+guidelines. When `--cases-file` is provided, the release also emits
+`guideline_overrides.jsonl`, which recall and audit consume through
+`--guideline-file`.
+
+The current weakness is guideline granularity. Broad buckets such as `iris`,
+`m9_wave2`, `m9_wave4`, and `m9_expansion` are useful for bookkeeping, but they
+are too coarse as retrieval queries. A Java naming bug should surface as a
+JNDI/LDAP/RMI lookup guideline, and an outbound lookup bug should be expressible
+as SSRF through a naming or lookup API rather than as a generic SSRF or generic
+security-relevant code path. This module now implements that split as an
+offline release step, backed by a reviewable mechanism lexicon.
+
+For the next guideline-v2 iteration:
+
+1. Treat `bad-case` branch material as motivation and regression data,
+   including the historical bad-case notes and the fixed-143 retrieval
+   evidence.
+2. Improve offline cluster refinement so `sub_patterns` are mechanism-level
+   and audit-actionable, not umbrella vulnerability categories.
+3. Emit a sidecar keyed by `identity_key` or `case_id` for this module to
+   consume without mutating the dataset.
+4. Rerun P3C64 on the frozen 143 identity file and compare against
+   `results/p3c64-fixed143-paper-eval-20260820/` at Top-100, Top-150, and
+   Top-200.
+
+The current implementation does not abandon clustering. It changes the role of
+clustering: clusters provide the local historical evidence neighborhood, while
+mechanism attribution decides the released guideline boundary. A broad cluster
+can therefore emit separate guidelines for JNDI lookup, webhook SSRF,
+redirect-following SSRF, template evaluation, or pending-review mechanisms.
+
+Generate a guideline-v2 preview from cve_clustering artifacts:
+
+```bash
+python new-impl/new-guideline/scripts/generate_mechanism_guidelines.py \
+  --clusters /path/to/refined_clusters.json \
+  --structured /path/to/structured_cves.jsonl \
+  --output-dir /path/to/mechanism-guideline-release
+```
+
+The default `--group-scope cluster-mechanism` emits one guideline per
+`(cluster_id, mechanism_id)`. This keeps JNDI-in-cluster-9 separate from
+JNDI-in-cluster-11, while still preserving both the cluster context and the
+human-readable mechanism label. Use `--group-scope mechanism` only for ablation
+against the older global same-mechanism aggregation. Use
+`--group-scope sub-pattern` when the refined cluster already contains high
+quality sub-pattern boundaries and you want the narrowest release.
+
+The mechanism lexicon is an offline release asset:
+
+```text
+guidelines/mechanism_lexicon.seed.json
+```
+
+It records reusable mechanism names, aliases, source shape, sink shape, missing
+guard, and typical fix text. Unknown work items are written as
+`pending_review`; the next lexicon iteration can be maintained manually or by an
+LLM reviewer that proposes new entries from those pending rows. The online
+recall runner consumes the released `guideline_overrides.jsonl` sidecar and
+does not infer mechanism words from advisory regexes.
+Lexicon entries may also declare `required_keywords`, a list of evidence groups
+where each group is a string or a list of alternative strings. This is an
+offline attribution constraint: a mechanism participates only when every group
+has at least one phrase present in the CVE evidence text. Use it to prevent
+generic terms such as `filter`, `escape`, or `length` from pulling unrelated
+clusters into LDAP, SQL, or binary-length mechanisms. Do not use it as an
+online source-code scanner or as a hidden case-specific fallback.
+By default, `pending_review` work items are not written into `guidelines/`,
+`index.json`, or `guideline_overrides.jsonl`. They remain visible in
+`mechanism_candidates.jsonl` and `review_queue.jsonl` for human and
+TraeX LLM-as-judge review, because they are not yet stable retrieval queries.
+Use `--include-pending-guidelines` only when building a review ablation that
+needs pending rows inside `index.json`; use `--include-pending-overrides` only
+for an explicit ablation that measures the cost of letting unresolved
+guidelines enter recall.
+
+Committed preview outputs:
+
+- `results/mechanism-guideline-preview-smoke-cluster-scope-20260821/` shows a
+  deliberately broad cluster split into separate JNDI and webhook SSRF
+  guidelines.
+- `results/mechanism-guideline-preview-v2-cluster-scope-20260821/` applies the
+  same generator to the historical cve_clustering v2 artifacts. It emits 160
+  guidelines from 303 work items: 231 active lexicon attributions and 72
+  pending-review attributions.
+- `results/guideline-v2-badcase12-regression-20260821/` records a same-identity
+  regression over 12 old P3C64 Top-100 misses covered by the first guideline-v2
+  sidecar. It improves Top-100 from 0/12 to 5/12, but 3 cases regress in rank.
+- `results/mechanism-guideline-preview-v2-cluster-scope-r2-20260821/` is the
+  next guideline-v2 preview. It gives sub-pattern evidence precedence over
+  broad cluster summaries during mechanism attribution and adds narrower
+  mechanisms for request-body resource mismatch authorization, temporary
+  directory create-delete-mkdir TOCTOU, and privileged server-side capability
+  exposure.
+- `results/mechanism-guideline-preview-v2-cluster-scope-r3-20260821/` adds an
+  explicit unsafe URI scheme open-redirect mechanism. This keeps redirect URI
+  validation cases from falling into the broader webhook/SSRF bucket while
+  preserving the r2 sub-pattern attribution changes.
+- `results/guideline-v2-r3-badcase12-regression-20260821/` records the r3
+  same-identity regression on the same 12 old P3C64 Top-100 misses. r3 reaches
+  Top-100 5/12, Top-200 7/12, and Top-500 9/12. It is the best current
+  single-guideline candidate, but it is not strong enough for hard replacement
+  without a regression gate.
+- Remote diagnostic run
+  `/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/hcvr-guideline-v2-badcase30-20260821T0505/v2-r3-baseline-plus-override-covered12-gpu6-20260821T183746/`
+  tested same-candidate max-score fusion between the baseline guideline and
+  the r3 override. It kept Top-100 at 5/12 but dropped Top-200 to 6/12 and
+  Top-500 to 8/12. Use this mode for diagnostics, not as the next default full
+  143-case policy.
+- `results/mechanism-guideline-preview-v2-cluster-scope-r5-combined-baseline-20260823/`
+  is a same-input seed-only baseline for the combined 97-cluster input. It is
+  used only to compare r6 candidate lexicon behavior against the same source
+  artifacts.
+- `results/mechanism-guideline-preview-v2-cluster-scope-r6-candidate-20260823/`
+  adds `guidelines/mechanism_lexicon.candidate_r6.json` through
+  `--extra-lexicon`. The candidate lexicon introduces review-only mechanism
+  entries for LDAP filter injection, HTML sanitizer policy gaps, binary
+  length/resource bounds, authentication artifact validation, dynamic SQL
+  fragments, inline Content-Disposition XSS, temporary-resource permissions,
+  and archive symlink extraction escape.
+
+The r1/r2/r3 bad-case regressions are useful but not yet sufficient for a full
+replacement run. Treat them as evidence that mechanism-scoped guidelines help
+some old misses and that attribution quality still needs a regression gate or
+offline list-level fusion policy before full paper-eval replacement.
+
+## Guideline Quality Evaluation
+
+Evaluate guideline generation on three separate axes:
+
+```text
+guideline release
+  -> structural sanity check over joined unified-case metadata
+  -> semantic LLM-as-judge review over grouped CVE evidence
+  -> same-identity embedding recall evaluation
+```
+
+The structural checker is deliberately limited. It reports coverage,
+source-only groups, small groups, mixed HCVR/CWE labels, and missing
+actionability fields. These fields catch broad or incomplete guideline groups,
+but they are not the definition of a good mechanism. A valid mechanism can cut
+across multiple CWE labels, and a high-purity label bucket can still be too
+generic to guide audit.
+Do not tune the generator to satisfy these flags mechanically. Treat them as a
+queue for semantic review, then decide from source/sink shape, missing guard,
+exploit precondition, and safe fix evidence.
+
+The guideline objective has two coupled but separate requirements:
+
+- **Semantic classification quality**: guidelines should describe reusable CVE
+  mechanisms that are general enough to transfer across projects and specific
+  enough to direct an audit. Evaluate this with source evidence, structural
+  sanity checks, and human or TraeX LLM-as-judge review.
+- **Embedding recall compatibility**: those guidelines should also work as
+  queries for a frozen candidate-slicing and embedding backend. Evaluate this
+  only with same-identity recall A/B runs.
+
+Bad recall cases are valid motivation for the next guideline iteration, but
+they are not answer keys. If a guideline group is semantically coherent and its
+source/sink/guard evidence is strong, a miss should first trigger recall-side
+debugging: query wording, candidate slicing, embedding backend, Top-K budget,
+or list-level fusion. Do not degrade the guideline taxonomy solely to satisfy a
+single embedding model, and do not introduce hidden regex routing or per-case
+fixes.
+
+TraeX LLM-as-a-judge belongs on the semantic-classification side of this split.
+Its rubric should ask whether a guideline names a reusable mechanism with
+coherent source, sink, missing guard, exploit precondition, and fix semantics.
+It should not score embedding rank, known-anchor hit, or Top-K recall, and its
+output should create review/backlog items rather than silently changing the
+released guideline set.
+For recall-side misses such as the r8 Top300 follow-up below, run TraeX judge
+only when the source evidence suggests the guideline boundary itself may be
+wrong or underspecified. If the known anchor is present but ranked below budget,
+the primary action is a same-identity recall/reranking/query A/B rather than a
+semantic judge rerun.
+In practice the promotion chain is: structural sanity creates a review queue,
+TraeX judge gives an advisory second opinion, source-reviewed ledger rows record
+the boundary decision, and same-identity recall runs measure retrieval impact.
+Do not collapse those layers into one score.
+
+Run the structural checker and emit a TraeX judge pack:
+
+```bash
+python new-impl/new-guideline/scripts/evaluate_guideline_groups.py \
+  --release-dir new-impl/new-guideline/results/mechanism-guideline-preview-v2-cluster-scope-r3-20260821 \
+  --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
+  --output-dir new-impl/new-guideline/results/guideline-v2-r3-group-eval-20260823 \
+  --judge-pack-dir new-impl/new-guideline/results/guideline-v2-r3-group-eval-20260823/llm_judge_pack \
+  --judge-rubric new-impl/new-guideline/guidelines/judge_rubric.v1.md \
+  --include-review-queue \
+  --judge-group-filter balanced \
+  --judge-max-groups 20
+```
+
+Outputs:
+
+```text
+/path/to/group-eval/
+  summary.json
+  group_report.jsonl
+  group_report.tsv
+  case_assignments.jsonl
+  README.md
+  llm_judge_pack/
+    judge_inputs.jsonl
+    prompts/
+    run_traex_judge.sh
+```
+
+Without `--include-review-queue`, the structural report evaluates only released
+guidelines in `index.json`. Add `--include-review-queue` when the purpose is
+semantic triage and TraeX should also review withheld pending candidates.
+
+The LLM judge prompt asks for JSON with `accept`, `revise`, `split`, `merge`,
+or `needs_evidence`. The target is semantic guideline quality: whether the
+group shares a reusable root-cause mechanism, whether the guideline names the
+right source, sink, missing guard, and fix, and whether the text is a useful
+retrieval/audit query. It does not judge embedding recall ranks.
+The rubric lives in `guidelines/judge_rubric.v1.md`; update and version that
+file when the semantic review standard changes, rather than burying new scoring
+criteria inside the generator.
+The recommended `balanced` judge filter samples evidence-limited groups,
+label-mixed groups, clean controls, small groups, and source-only groups in
+round-robin order. This keeps judge review from becoming a hardcoded
+bad-case/label-purity test while still surfacing the groups most likely to need
+human attention.
+
+Run the generated judge pack with TraeX:
+
+```bash
+cd new-impl/new-guideline/results/guideline-v2-r3-group-eval-20260823/llm_judge_pack
+TRAE_JUDGE_CLI=traex TRAE_JUDGE_MODEL=DeepSeek-V4-Pro TRAE_JUDGE_TIMEOUT_SECONDS=1800 TRAE_JUDGE_CONCURRENCY=4 ./run_traex_judge.sh judge_outputs
+```
+
+The generated runner defaults to `traex`; set `TRAE_JUDGE_CLI=traecli` only
+when using the legacy local command name. `TRAE_JUDGE_MODEL` is optional for
+older packs and should be set explicitly when comparing judge runs.
+
+Summarize the judge outputs after the run:
+
+```bash
+python3 ../../scripts/summarize_guideline_judge_outputs.py \
+  --judge-inputs judge_inputs.jsonl \
+  --judge-output-dir judge_outputs \
+  --output-dir judge_summary
+```
+
+This keeps the online recall path clean: no runtime regex fallback and no
+hidden label-based routing. Judge output is advisory evidence for the next
+guideline iteration; retrieval claims still require same-identity embedding
+recall runs.
+
+The r4 TraeX judge run over 20 flagged guideline groups is committed under
+`results/guideline-v2-r4-group-eval-20260823/llm_judge_pack/judge_summary/`.
+It parsed all 20 outputs with no missing or invalid files, but returned
+`accept=0`, `revise=8`, `split=7`, and `needs_evidence=5`. The dominant
+failures were mechanism/evidence mismatch, overly generic guideline wording,
+and pending groups entering retrieval as if they were stable mechanisms. The
+next generation policy is therefore:
+
+1. Keep mechanism naming in offline release artifacts and sidecars; do not add
+   online regex fallback or hidden label routing.
+2. Let mechanism lexicon fields carry the specific guard semantics instead of
+   appending a universal authorization/resource-binding sentence to every
+   guideline.
+3. Keep `pending_review` groups visible for semantic review, but exclude them
+   from the default recall sidecar until the mechanism evidence is sufficient.
+
+The r5 policy removes the universal resource/principal/destination/object
+binding boilerplate and excludes `pending_review` guidelines from the default
+recall sidecar. The generated release is committed under
+`results/mechanism-guideline-preview-v2-cluster-scope-r5-20260823/`: 202
+guidelines, 237 active attributions, 89 pending-review attributions, 153 recall
+sidecar rows, and no pending-review sidecar rows by default. Its group eval is
+under `results/guideline-v2-r5-group-eval-20260823/`: 68 groups join to unified
+case metadata, 134 are source-only historical groups, weighted HCVR purity is
+0.7568, and weighted CWE purity is 0.8676. The r5 TraeX judge run parsed all
+20 outputs with no missing or invalid files and returned `accept=0`,
+`revise=8`, `split=4`, `needs_evidence=8`, and low-score `18/20`. Treat this
+as evidence that r5 cleaned the release policy but did not solve guideline
+quality. The remaining high-priority issues are wrong mechanism attribution,
+insufficient case evidence, and pending groups that still need specific
+source/sink/guard wording before they become stable recall queries. Do not
+optimize the generator toward fixed judge keywords or structural flags; use the
+judge notes as reading order for the next evidence-driven mechanism split.
+
+The r6 candidate iteration keeps the same generator policy and loads a separate
+candidate lexicon file instead of overwriting the seed lexicon:
+
+```bash
+python new-impl/new-guideline/scripts/generate_mechanism_guidelines.py \
+  --clusters .tmp/guideline_inputs/refined_clusters_combined.json \
+  --structured .tmp/guideline_inputs/structured_cves_combined.jsonl \
+  --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
+  --lexicon new-impl/new-guideline/guidelines/mechanism_lexicon.seed.json \
+  --extra-lexicon new-impl/new-guideline/guidelines/mechanism_lexicon.candidate_r6.json \
+  --output-dir new-impl/new-guideline/results/mechanism-guideline-preview-v2-cluster-scope-r6-candidate-20260823
+```
+
+On the same combined input, r6 candidate reduces pending attributions from 212
+to 148 and increases recall sidecar rows from 232 to 252. The structural purity
+stays effectively flat against the seed-only combined baseline: weighted HCVR
+purity `0.8297 -> 0.8297`, weighted CWE purity `0.9179 -> 0.9142`, mixed HCVR
+groups `8 -> 10`, and mixed CWE groups stays `7 -> 7`. Interpret this as a
+coverage-expansion candidate that needs TraeX judge review and a same-identity
+recall rerun before any paper-facing recall claim.
+
+The r6 TraeX judge run confirms that coverage expansion alone is not enough:
+20/20 judge outputs parsed, with `accept=0`, `split=8`, `revise=4`,
+`needs_evidence=8`, and low-score `17/20`. The recurring failure mode is that
+cluster or sub-pattern text can over-attribute a member to a mechanism even
+when that member's own structured CVE evidence lacks enough source, sink,
+missing-guard, or fix support.
+
+The r7 evidence-gated iteration keeps the r6 candidate lexicon but requires
+member-level structured evidence to support a mechanism before the member can
+enter an active guideline. The gate is generic: it compares the member CVE text
+against the mechanism's source shape, sink shape, missing guard, and typical
+fix fields; it does not use CVE IDs, dataset labels, known anchors, or
+judge-output keywords. If the highest-scoring mechanism lacks member evidence,
+the generator tries the next mechanism; if none is supported, the member becomes
+`pending_review`.
+
+On the same combined input, r7 emits 563 guidelines from 746 work items, with
+360 active attributions, 386 pending-review attributions, and 189 recall
+sidecar rows. Structural quality improves relative to r6 candidate: weighted
+HCVR purity `0.8297 -> 0.8659`, weighted CWE purity `0.9142 -> 0.9245`, and
+mixed HCVR groups `10 -> 8`. The r7 TraeX judge run parsed 20/20 outputs with
+`accept=1`, `split=3`, `revise=4`, `needs_evidence=12`, and low-score `17/20`.
+This is a quality-control improvement, not a recall improvement claim: it
+reduces wrong-mechanism mixing and surfaces thin evidence as pending work, while
+showing that the next bottleneck is still source/sink/guard evidence collection
+and specific wording for pending groups.
+
+The next generator policy tightens the release boundary: only `release_ready`
+guidelines enter `guidelines/`, `index.json`, and the recall sidecar by default.
+Rows with unresolved mechanism evidence are written to `review_queue.jsonl`
+instead. This keeps TraeX LLM-as-judge focused on semantic review material
+without letting low-evidence candidates silently become retrieval queries.
+
+The r8 release-ready run applies that boundary on the same combined input:
+`results/mechanism-guideline-preview-v2-cluster-scope-r8-release-ready-20260823/`
+contains 177 released guidelines, 386 review-queue rows, 746 total mechanism
+candidate rows, and 189 recall sidecar rows. The released-only structural eval
+is under
+`results/guideline-v2-r8-release-ready-released-only-eval-20260823/`: 177
+released guidelines, 56 groups joined to unified case metadata, weighted HCVR
+purity 0.8307, and weighted CWE purity 0.9171. The review-inclusive semantic
+triage eval is under
+`results/guideline-v2-r8-release-ready-group-eval-20260823/`: it sees the same
+563 reviewable rows as r7, marks 386 as `review_only`, and emits a balanced
+20-item TraeX judge pack with 4 evidence-limited, 4 label-mixed, 4 clean
+control, 4 small-group, and 4 source-only examples. Treat this as a release
+hygiene improvement; recall numbers remain the previously recorded full143 r7
+P3C64 same-identity result until a fresh r8 recall run is executed.
+
+The r8 TraeX judge run is committed under
+`results/guideline-v2-r8-release-ready-group-eval-20260823/llm_judge_pack/`.
+It parsed all 20 outputs with no missing or invalid files and returned
+`accept=2`, `revise=5`, `split=3`, `needs_evidence=10`, and low-score
+`14/20`. The judge-only revision backlog is under
+`llm_judge_pack/revision_backlog_judge_only/`. Its recommended actions are:
+10 `collect_source_sink_guard_evidence`, 5
+`revise_mechanism_text_from_evidence`, 3 `split_mechanism_boundary`, and 2
+`keep_as_control_group`. This is semantic review evidence only. It shows that
+the release boundary is cleaner, while the next guideline-generation bottleneck
+is still member-level source/sink/guard evidence and mechanism boundary
+precision, especially for broad SSRF, XML, temporary-resource, authorization,
+and template/expression groups.
+The follow-up evidence collection worklist is committed under
+`results/guideline-v2-r8-evidence-worklist-20260823/`. It keeps the same
+review-only boundary and turns the judge backlog into concrete reviewer work:
+20 rows, 15 rows needing source-level trace evidence, 10 rows needing explicit
+source/sink/missing-guard/fix collection, 5 rows needing mechanism-scope
+revision from checked evidence, 3 rows needing split-boundary validation, and
+2 accepted control groups. Its case evidence states are 24
+`source_trace_present`, 56 `review_entry_only`, and 8
+`missing_trace_evidence`, which is why the next step is evidence collection
+rather than direct guideline rewriting.
+The split/revise subset is extracted under
+`results/guideline-v2-r8-boundary-repair-pack-20260823/`: 8 repair rows, with
+3 split-boundary items and 5 mechanism-scope revision items. It separates
+strong source-trace examples from weak `review_entry_only` or missing-trace
+examples so the next reviewer can assign cases to mechanism boundaries before
+anything is promoted into the lexicon or recall sidecar.
+The reviewer-facing packet set is committed under
+`results/guideline-v2-r8-case-review-packets-20260823/`: 8 Markdown packets,
+one per split/revise item. Each packet has candidate boundaries, source-trace
+examples, weak examples, missing-trace examples, and blank reviewer fields for
+source shape, sink or sensitive effect, missing guard, exploit precondition,
+safe fix semantics, boundary decision, and recall follow-up.
+The review ledger template is
+`guidelines/guideline_review_ledger.template.jsonl`; the template validation
+artifact is
+`results/guideline-review-ledger-template-validation-20260823/`. The template
+contains no promotable row by default. A later filled ledger must pass the
+verifier before any boundary is promoted into released guideline text, and
+promotion still triggers a fresh same-identity recall run once the consumed
+sidecar changes.
+The first filled r8 ledger row is
+`guidelines/guideline_review_ledger.r8.gl_mech_0001.jsonl`, with validation
+under `results/guideline-review-ledger-r8-gl-mech-0001-validation-20260823/`.
+It promotes only `candidate_boundary_01`, the Java `File.createTempFile` ->
+`delete` -> `mkdir/mkdirs` temporary-directory race, using source/patch-backed
+evidence from CVE-2022-4817, CVE-2018-25068, and CVE-2022-3969. It explicitly
+keeps temporary-resource permission exposure as a separate boundary candidate.
+This is semantic boundary evidence, not a recall result.
+
+The r8 experiment scorecard is committed under
+`results/guideline-v2-r8-release-ready-scorecard-20260823/`. It records the
+same release and judge evidence, plus the sidecar-equivalence check under
+`results/guideline-v2-r8-vs-r7-sidecar-equivalence-20260823/`. The r8 sidecar
+file hash differs from r7, but the actual `identity_key -> guideline text`
+mapping consumed by recall is identical: 189 shared keys and 0 changed
+consumed texts. Therefore the scorecard marks recall evidence as
+`inherited_same_identity_by_sidecar_equivalence`: r8 inherits the already
+measured r7 same-identity P3C64 recall table under unchanged identity file,
+snapshots, slicing, embedding backend, adapter weights, and ranking parameters.
+This is not a fresh r8 recall run. A fresh same-identity recall A/B is still
+required if any consumed sidecar text, identity set, source snapshot, slicing
+logic, embedding service, adapter state, or ranking parameter changes.
+
+The current objective-level completion audit is
+`results/guideline-v2-r8-objective-audit-20260823/`. It maps the active
+requirements to concrete artifacts and marks the remaining gaps: r8 is a
+cleaner, recall-compatible release boundary, but the semantic judge sample and
+recall deltas do not yet justify calling the guideline-generation problem
+solved.
+The stricter dual-axis completion audit is
+`results/guideline-v2-r8-dual-axis-objective-audit-20260823/`. It checks the
+active objective against the current scorecard and evidence worklist. Its
+status is `not_complete`: semantic guideline classification is
+`partially_satisfied_needs_evidence`, and embedding recall is
+`compatible_but_improvement_below_target`. The audit also records the required
+next gates: source/sink/guard/fix evidence before changing guideline text,
+fresh same-identity recall after sidecar text changes, taxonomy-vs-embed triage
+for clean groups that still miss Top-K, and separated paper claim boundaries
+for semantic quality, recall deltas, sidecar equivalence, and any engineering
+fusion.
+The latest audit with recall-alignment policy metadata is
+`results/guideline-v2-r8-dual-axis-objective-audit-with-alignment-policy-20260823/`.
+It preserves the `not_complete` status, records the 28/143 alignment join
+coverage, and makes the cleanliness policy machine-readable: pending,
+review-only, source-only, and actionability-incomplete groups block
+recall-side interpretation; mixed HCVR/CWE labels remain review signals, not
+hard failure conditions.
+
+Build a cautious experiment scorecard when reporting a guideline iteration:
+
+```bash
+python new-impl/new-guideline/scripts/summarize_guideline_experiment.py \
+  --release-summary new-impl/new-guideline/results/mechanism-guideline-preview-v2-cluster-scope-r5-20260823/summary.json \
+  --group-summary new-impl/new-guideline/results/guideline-v2-r5-group-eval-20260823/summary.json \
+  --judge-summary new-impl/new-guideline/results/guideline-v2-r5-group-eval-20260823/llm_judge_pack/judge_summary/summary.json \
+  --release-label guideline-v2-r5 \
+  --output-json /path/to/scorecard.json \
+  --output-md /path/to/README.md
+```
+
+Add `--recall-comparison /path/to/same_identity_comparison.json` only when the
+new guideline release has been evaluated against a baseline on the same frozen
+identity file. Without that input, the scorecard deliberately reports recall
+evidence as missing. If the comparison says the identity sets differ, the
+scorecard marks the recall evidence invalid for paper-facing claims. This keeps
+three facts separate:
+
+- structural sanity describes whether the guideline release is internally
+  reviewable;
+- TraeX LLM-as-judge describes semantic mechanism quality and review priority;
+- same-identity recall A/B describes one embedding plus guideline/query
+  configuration.
+
+Use the scorecard as the handoff artifact for paper discussion. It is not part
+of online retrieval, does not call a model, and must not be used to introduce
+keyword routing or hidden per-case fixes.
+
+When a release changes only review metadata or release boundary files but keeps
+the recall-consumed sidecar text unchanged, generate an explicit equivalence
+artifact instead of rerunning a full 143-case recall job:
+
+```bash
+python new-impl/new-guideline/scripts/compare_guideline_sidecars.py \
+  --left /path/to/measured-release/guideline_overrides.jsonl \
+  --right /path/to/current-release/guideline_overrides.jsonl \
+  --left-label measured-sidecar \
+  --right-label current-sidecar \
+  --output-json /path/to/sidecar-equivalence/summary.json \
+  --output-md /path/to/sidecar-equivalence/README.md
+```
+
+Then pass both the measured same-identity recall comparison and the equivalence
+summary into the scorecard:
+
+```bash
+python new-impl/new-guideline/scripts/summarize_guideline_experiment.py \
+  --release-summary /path/to/current-release/summary.json \
+  --group-summary /path/to/current-group-eval/summary.json \
+  --judge-summary /path/to/current-judge-summary/summary.json \
+  --recall-comparison /path/to/measured-same-identity-recall-comparison.json \
+  --recall-equivalence /path/to/sidecar-equivalence/summary.json \
+  --release-label current-release \
+  --output-json /path/to/scorecard.json \
+  --output-md /path/to/README.md
+```
+
+Only use this inheritance path when `recall_consumed_text_equivalent=true` and
+the measured recall comparison itself has `same_identity_set=true`. It proves
+query-side equivalence for the recall runner; it does not prove semantic
+guideline quality and does not replace TraeX/human review.
+
+To inspect whether bad cases look like guideline-quality failures or
+embedding/candidate-recall failures, join a guideline group report with a recall
+rank table:
+
+```bash
+python new-impl/new-guideline/scripts/diagnose_guideline_recall_alignment.py \
+  --group-report new-impl/new-guideline/results/guideline-v2-r5-group-eval-20260823/group_report.jsonl \
+  --case-assignments new-impl/new-guideline/results/guideline-v2-r5-group-eval-20260823/case_assignments.jsonl \
+  --recall-results new-impl/new-guideline/results/p3c64-fixed143-paper-eval-20260820/p3c64_case_rank_table.jsonl \
+  --recall-label p3c64-current-guideline-baseline-control \
+  --baseline-results new-impl/new-guideline/results/p3c64-fixed143-paper-eval-20260820/qwen4b_case_rank_table.jsonl \
+  --baseline-label qwen3-embedding-4b \
+  --primary-budget 100 \
+  --output-dir /path/to/guideline-recall-alignment
+```
+
+Read the alignment report as a diagnosis, not as a guideline-v2 recall result,
+unless the recall table was generated with the same guideline sidecar being
+evaluated. A clean guideline group with weak recall points toward embedding,
+candidate slicing, or query wording. A pending, review-only, source-only, or
+actionability-incomplete group should be fixed as guideline evidence before
+blaming the embedder. A group that only has mixed HCVR/CWE structural labels
+should be reviewed, but label mixture is not a hard failure by itself because a
+real mechanism can cut across public CWE or dataset labels.
+
+The r8 released-only/P3C64 alignment sanity report is committed under
+`results/guideline-v2-r8-release-ready-p3c64-alignment-20260823/`. It uses the
+r8 released-only group assignments and the existing r7 full143 P3C64 rank
+table. It joins only 28 of the 143 recall identities, so treat it as a
+diagnostic check for the taxonomy-vs-embed triage logic rather than a recall
+claim. Its attention counts are: 6 `embedding_or_candidate_recall_attention`,
+121 `guideline_quality_attention`, 8 `label_mixed_structural_attention`, and
+44 `missing_recall_rows`. The useful change is that mixed-label groups now keep
+`label_mixed_structural_attention` as a review signal while still allowing
+clean source/sink/guard groups to trigger recall-side debugging. Rank-table
+coverage gaps are also separated from real joined Top-K misses, so a case that
+never appeared in the recall table is no longer counted as embedding failure.
+
+Build a recall-side debug pack for those clean-group Top-K misses:
+
+```bash
+python new-impl/new-guideline/scripts/build_recall_side_debug_pack.py \
+  --alignment-summary new-impl/new-guideline/results/guideline-v2-r8-release-ready-p3c64-alignment-20260823/summary.json \
+  --group-alignment new-impl/new-guideline/results/guideline-v2-r8-release-ready-p3c64-alignment-20260823/group_recall_alignment.jsonl \
+  --case-alignment new-impl/new-guideline/results/guideline-v2-r8-release-ready-p3c64-alignment-20260823/case_recall_alignment.jsonl \
+  --output-dir /path/to/recall-side-debug-pack
+```
+
+The r8 debug pack is committed under
+`results/guideline-v2-r8-recall-side-debug-pack-20260823/`. It contains 6
+debug groups, with 6 joined cases ranked below Top-100 and 9 cases that are
+coverage gaps relative to the rank table. Use it to inspect query wording,
+candidate slicing, embedding backend, adapter behavior, and rank-table coverage
+without changing guideline taxonomy or adding runtime fallback rules.
+
+Expand the clean-group misses to case-level rows. Without a Top-N candidate
+export this is rank-summary only:
+
+```bash
+python new-impl/new-guideline/scripts/inspect_recall_side_misses.py \
+  --recall-side-debug-summary new-impl/new-guideline/results/guideline-v2-r8-recall-side-debug-pack-20260823/summary.json \
+  --group-alignment new-impl/new-guideline/results/guideline-v2-r8-release-ready-p3c64-alignment-20260823/group_recall_alignment.jsonl \
+  --case-alignment new-impl/new-guideline/results/guideline-v2-r8-release-ready-p3c64-alignment-20260823/case_recall_alignment.jsonl \
+  --recall-rank-table new-impl/new-guideline/results/guideline-v2-r7-full143-p3c64-20260823/r7_case_rank_table.jsonl \
+  --output-dir /path/to/recall-side-miss-inspection
+```
+
+The r8 case-level inspection is committed under
+`results/guideline-v2-r8-recall-side-miss-inspection-20260823/`. It inspects 15
+miss rows: 9 identities are absent from the rank table, and 6 identities are
+present but have known anchors below Top-100. For those 6 ranked misses, the
+Top-1 location does not overlap the known anchor; 3 also have large candidate
+pools. This points the next recall-side work toward query wording, full
+candidate export/slicing checks, and same-identity embedding adapter comparison
+before weakening the guideline taxonomy. The inspection is explicitly
+rank-only because the current case rank table does not contain full Top-N
+candidate lists or known-anchor span details.
+For the next recall run, add `--export-top-candidates 300` or another explicit
+debug budget to `recall_guideline_anchors.py`, then rerun
+`inspect_recall_side_misses.py --top-candidates /path/to/top_candidates.jsonl`.
+That enables candidate-overlap summaries while keeping the default recall
+metrics unchanged.
+
+The candidate-aware follow-up inspection is committed under
+`results/guideline-v2-r8-recall-side-miss-inspection-top300-20260823/`. It uses
+a real P3C64 run over the 6 joined ranked misses with `--top-k 500` and
+`--export-top-candidates 300`. The run completed 6/6 cases in 196.919 seconds
+with `known_anchor_hit_at_500=1.0` and `known_anchor_hit_at_100=0.0`. All 6
+known anchors are present in the exported Top300 but below Top100, with best
+overlap ranks `136`, `194`, `215`, `218`, `252`, and `275`. This rules out a
+simple candidate-slicing absence for these 6 joined misses and points the next
+recall-side work toward query wording, reranking, budget, or embedding-adapter
+A/B under the same identities.
+
+For these joined ranked misses, an optional TraeX candidate-pair judge pack can
+test whether a semantic reviewer would prefer the Top-1 candidate or the best
+known-anchor-overlap candidate when rank, score, CVE ID, and labels are hidden:
+
+```bash
+python new-impl/new-guideline/scripts/build_recall_candidate_pair_judge_pack.py \
+  --recall-results /path/to/recall_results.jsonl \
+  --top-candidates /path/to/top_candidates.jsonl \
+  --output-dir /path/to/recall-candidate-pair-judge-pack \
+  --default-cli traex \
+  --default-model DeepSeek-V4-Pro
+```
+
+Generate this pack on the machine where `snapshot` paths from
+`recall_results.jsonl` are readable; by default, rows with unreadable source
+snippets are skipped. Run the generated pack with:
+
+```bash
+cd /path/to/recall-candidate-pair-judge-pack
+TRAE_JUDGE_CLI=traex TRAE_JUDGE_MODEL=DeepSeek-V4-Pro TRAE_JUDGE_EXTRA_ARGS='--disallowed-tool exec' TRAE_JUDGE_CONCURRENCY=2 TRAE_JUDGE_TIMEOUT_SECONDS=1800 ./run_traex_judge.sh judge_outputs
+```
+
+Then summarize:
+
+```bash
+python3 ../../scripts/summarize_recall_candidate_pair_judge_outputs.py \
+  --judge-inputs judge_inputs.jsonl \
+  --judge-output-dir judge_outputs \
+  --output-dir judge_summary
+```
+
+Use this only as advisory semantic QA for reranker/query design. If the judge
+often prefers the known-anchor-overlap candidate, that motivates a
+same-identity reranker A/B; it is not itself a recall result, a vulnerability
+verdict, or a guideline release gate.
+
+The r8 candidate-pair judge pack and completed TraeX judge summary are
+committed under
+`results/guideline-v2-r8-recall-candidate-pair-judge-pack-20260823/`. The pack
+contains the 6 Top300-within/Top100-miss cases above, generated on `bobo5090`
+where the source snapshots were readable. Prompts include non-empty snippets
+and omit concrete CVE IDs, known-anchor flags, hidden labels, ranks, and scores.
+The DeepSeek-V4-Pro judge run parsed 6/6 outputs with no invalid rows:
+`anchor_overlap_chosen=5`, `top1_chosen=0`, and `neither=1`. This supports a
+recall-side hypothesis that several misses are ranking/query failures rather
+than guideline-boundary failures. It also flags
+`steve-community__steve::CVE-2026-28230` for deeper inspection because neither
+candidate showed the SQL-construction mechanism in the visible snippet.
+
+For a production-shaped reranker diagnostic, prefer list-wise scoring over the
+pair sanity check:
+
+```bash
+python new-impl/new-guideline/scripts/build_recall_candidate_list_judge_pack.py \
+  --recall-results /path/to/recall_results.jsonl \
+  --top-candidates /path/to/top_candidates.jsonl \
+  --output-dir /path/to/recall-candidate-list-judge-pack \
+  --max-rank 20 \
+  --candidates-per-prompt 10 \
+  --default-cli traex \
+  --default-model DeepSeek-V4-Pro
+```
+
+This pack shuffles candidates and hides original rank/score/known-anchor
+metadata from the prompt. After TraeX scores every candidate, summarize with:
+
+```bash
+python3 ../../scripts/summarize_recall_candidate_list_judge_outputs.py \
+  --judge-inputs judge_inputs.jsonl \
+  --judge-output-dir judge_outputs \
+  --output-dir judge_summary
+```
+
+The summary computes offline known-anchor rerank Hit@1/3/5/10 using hidden
+metadata, but only over identities whose judged candidate set actually contains
+a scored known-anchor-overlap candidate. Treat this as a reranker-design
+diagnostic only; paper-facing recall still requires a same-identity retrieval
+or reranking run that does not use known-anchor labels at inference time.
+
+The first Top20 list-wise run is committed under
+`results/guideline-v2-r8-recall-candidate-list-judge-pack-top20-20260823/`.
+It contains 12 shuffled prompts for the same 6 Top300-within/Top100-miss cases.
+The summary records `identity_count=6`, `parsed_prompt_count=11`,
+`invalid_prompt_count=2`, and `identity_coverage_gap_count=6`. Because the
+known-anchor-overlap candidates are ranked 136, 194, 215, 218, 252, and 275,
+none of them appears in the Top20 judged candidate sets. This run therefore
+cannot estimate anchor reranking Hit@K; it is a Top20 semantic-quality sample
+and a coverage-gap diagnostic. A real reranker diagnostic for these cases needs
+a wider judged candidate set, stratified candidate sampling, or a model-side
+reranker A/B that includes the known-anchor rank band without revealing labels
+at inference time.
+
+The Top20 run also records a TraeX judge stability caveat. One shard failed to
+produce a clean JSON object after the judge attempted a blocked tool call, and
+one shard omitted proper `candidate_scores`. Keep the runner in a read-only
+tool-blocked configuration, but treat judge output as best-effort advisory data
+that needs parser validation before any downstream summary is trusted.
+
+Build a revision backlog from the semantic judge and recall-alignment outputs:
+
+```bash
+python new-impl/new-guideline/scripts/build_guideline_revision_backlog.py \
+  --judge-summary new-impl/new-guideline/results/guideline-v2-r5-group-eval-20260823/llm_judge_pack/judge_summary/summary.json \
+  --judge-report new-impl/new-guideline/results/guideline-v2-r5-group-eval-20260823/llm_judge_pack/judge_summary/judge_report.jsonl \
+  --alignment-summary new-impl/new-guideline/results/guideline-v2-r5-recall-alignment-20260823/summary.json \
+  --alignment-report new-impl/new-guideline/results/guideline-v2-r5-recall-alignment-20260823/group_recall_alignment.jsonl \
+  --output-dir /path/to/guideline-revision-backlog
+```
+
+The backlog separates review actions including:
+
+- `split_mechanism_boundary` for groups whose CVE evidence mixes reusable
+  mechanisms;
+- `revise_mechanism_text_from_evidence` for groups with the right scope but
+  wrong or overly broad source/sink/guard wording;
+- `collect_source_sink_guard_evidence` for groups whose evidence is too thin to
+  support a stable guideline;
+- `inspect_embedding_candidate_or_query_mismatch` for clean groups that still
+  miss under the recall budget.
+- `inspect_same_identity_recall_regression` for clean groups where the current
+  recall run regresses against a same-identity baseline;
+- `fix_recall_identity_join_or_run_coverage` for groups whose assigned cases do
+  not appear in the recall table;
+- `review_guideline_group_evidence` and `manual_review` for lower-confidence
+  rows that need human source inspection before becoming release changes.
+
+Judge-suggested guideline text is marked
+`review_candidate_not_release`. It should be reread against source evidence
+before entering `guideline_overrides.jsonl`; do not copy it directly into a
+release and do not turn suggested phrases or example misses into runtime
+matching rules.
+
+Turn that backlog into a concrete evidence-collection worklist before changing
+the generator or lexicon:
+
+```bash
+python new-impl/new-guideline/scripts/build_guideline_evidence_worklist.py \
+  --revision-backlog new-impl/new-guideline/results/guideline-v2-r8-release-ready-group-eval-20260823/llm_judge_pack/revision_backlog_judge_only/revision_backlog.jsonl \
+  --group-report new-impl/new-guideline/results/guideline-v2-r8-release-ready-group-eval-20260823/group_report.jsonl \
+  --output-dir /path/to/guideline-evidence-worklist \
+  --max-cases-per-item 6
+```
+
+Read `evidence_worklist.jsonl` as the next reviewer queue. Each row lists the
+problematic guideline, action, mechanism, concrete evidence gaps, compact case
+examples, and the next reviewer action. This step exists to prevent hardcoded
+evaluation from shaping the generator: TraeX judge notes, labels, known
+anchors, and bad cases are review hints only. They are not hidden routing
+features and they are not release gates.
+
+Extract the split/revise subset into a boundary repair pack:
+
+```bash
+python new-impl/new-guideline/scripts/build_guideline_boundary_repair_pack.py \
+  --evidence-worklist new-impl/new-guideline/results/guideline-v2-r8-evidence-worklist-20260823/evidence_worklist.jsonl \
+  --output-dir /path/to/guideline-boundary-repair-pack \
+  --max-examples-per-state 3
+```
+
+Use `boundary_repair_pack.jsonl` before editing the mechanism lexicon or
+guideline sidecar. It lists candidate split/revision boundaries and separates
+source-backed examples from review-entry-only or missing-trace examples. The
+boundaries are hypotheses until a reviewer assigns cases to them with checked
+source/sink/guard/fix evidence.
+
+Render per-guideline source-evidence review packets:
+
+```bash
+python new-impl/new-guideline/scripts/build_guideline_case_review_packets.py \
+  --boundary-repair-pack new-impl/new-guideline/results/guideline-v2-r8-boundary-repair-pack-20260823/boundary_repair_pack.jsonl \
+  --output-dir /path/to/guideline-case-review-packets
+```
+
+Use these packets for the next evidence-collection round. They are useful when
+handing a specific mechanism group to a reviewer or source-inspection agent:
+the reviewer fills the evidence fields, then the team decides whether to
+promote a boundary into the lexicon or leave it out of the released sidecar.
+
+Validate a filled reviewer ledger before promotion:
+
+```bash
+python new-impl/new-guideline/scripts/verify_guideline_review_ledger.py \
+  --ledger /path/to/filled_guideline_review_ledger.jsonl \
+  --output-dir /path/to/review-ledger-validation \
+  --fail-on-invalid
+```
+
+Allowed `boundary_decision` values are `promote_boundary`, `revise_boundary`,
+`split_further`, `mark_out_of_scope`, `needs_more_evidence`, and
+`recall_side_debug`. Only `promote_boundary` rows with representative cases and
+filled source/sink/missing-guard/exploit-precondition/fix fields are counted as
+promotable; that still means semantically ready, not recall-proven.
+
+Summarize which evidence-worklist rows already have source-reviewed ledgers,
+which still need ledger-level judge, and which remain unfixed:
+
+```bash
+python new-impl/new-guideline/scripts/summarize_guideline_evidence_coverage.py \
+  --evidence-worklist new-impl/new-guideline/results/guideline-v2-r8-evidence-worklist-20260823/evidence_worklist.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0001.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0005.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0006.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0007.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0008.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0011.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0015.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0022.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0040.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0061.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0116.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0117.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.review_mech_0017.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.review_mech_0513.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.review_mech_0514.jsonl \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0001-validation-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0005-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0006-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0007-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0008-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0011-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0015-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0022-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0040-validation-src-reviewed-v2-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0061-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0116-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0117-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-review-mech-0017-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-review-mech-0513-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-review-mech-0514-validation-src-reviewed-20260823/validation_rows.json \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0001-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0005-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0006-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0007-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0008-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0011-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0015-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0022-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0040-judge-pack-src-reviewed-v2-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0061-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0116-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0117-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-review-mech-0017-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-review-mech-0513-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-review-mech-0514-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --output-dir /path/to/guideline-evidence-coverage
+```
+
+Read `next_review_queue.jsonl` as the next semantic-evidence queue. A row with
+`source_reviewed_and_judge_accepted` is semantic boundary evidence only; it
+still requires a fresh same-identity recall run if the recall-consumed sidecar
+changes. A row with `source_reviewed_validation_only` should usually get a
+ledger-level TraeX judge pack before being cited as semantic evidence. A row
+with `not_source_reviewed` still needs a filled source-review ledger.
+
+Optionally build a TraeX judge pack from the filled ledger:
+
+```bash
+python new-impl/new-guideline/scripts/build_guideline_ledger_judge_pack.py \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0022.jsonl \
+  --decision promote_boundary \
+  --decision split_further \
+  --rubric new-impl/new-guideline/guidelines/judge_rubric.v1.md \
+  --output-dir /path/to/ledger-boundary-judge-pack \
+  --default-cli traex \
+  --default-model DeepSeek-V4-Pro
+```
+
+This produces `judge_inputs.jsonl`, one prompt per selected ledger row, and a
+`run_traex_judge.sh` wrapper. Use it as an advisory semantic review of the
+source-reviewed boundary decision. It is not a recall metric, not a replacement
+for source inspection, and not a hidden rule source.
+
+Join a filled boundary ledger with recall rank tables before interpreting bad
+cases:
+
+```bash
+python new-impl/new-guideline/scripts/triage_guideline_boundary_recall.py \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0001.jsonl \
+  --rank-table r7-p3c64=new-impl/new-guideline/results/guideline-v2-r7-full143-p3c64-20260823/r7_case_rank_table.jsonl \
+  --rank-table old-p3c64=new-impl/new-guideline/results/p3c64-fixed143-paper-eval-20260820/p3c64_case_rank_table.jsonl \
+  --rank-table qwen4b=new-impl/new-guideline/results/p3c64-fixed143-paper-eval-20260820/qwen4b_case_rank_table.jsonl \
+  --output-dir /path/to/guideline-boundary-recall-triage \
+  --budgets 30,50,100,150,200 \
+  --primary-budget 100
+```
+
+The committed `gl_mech_0001` triage artifact is under
+`results/guideline-boundary-recall-triage-r8-gl-mech-0001-20260823/`. It shows
+the boundary is source-reviewed and promotable, while the supplied full143 rank
+tables do not cover the three representative cases. That is a recall coverage
+gap, not evidence that the boundary is semantically wrong and not evidence that
+the embedding misses those cases.
+
+The follow-up focused P3C64 run is under
+`results/guideline-boundary-recall-r8-gl-mech-0001-p3c64-3case-20260823/`,
+with its joined triage report under
+`results/guideline-boundary-recall-triage-r8-gl-mech-0001-p3c64-3case-20260823/`.
+It uses the source-reviewed `gl_mech_0001` boundary, the real
+`p3c64-query-residual` embedder, and the same three representative identities.
+All three complete and hit the known anchor by Top-30 with ranks `5`, `1`, and
+`27`. Treat this as boundary-level smoke evidence, not a paper-level aggregate
+claim.
+
+Run a completion audit for the two-axis guideline objective:
+
+```bash
+python new-impl/new-guideline/scripts/audit_guideline_dual_axis_objective.py \
+  --scorecard new-impl/new-guideline/results/guideline-v2-r8-release-ready-scorecard-20260823/scorecard.json \
+  --evidence-worklist-summary new-impl/new-guideline/results/guideline-v2-r8-evidence-worklist-20260823/summary.json \
+  --evidence-coverage-summary new-impl/new-guideline/results/guideline-v2-r8-evidence-coverage-plus-0006-0008-0514-judge-20260823/summary.json \
+  --recall-alignment-summary new-impl/new-guideline/results/guideline-v2-r8-release-ready-p3c64-alignment-20260823/summary.json \
+  --recall-side-debug-summary new-impl/new-guideline/results/guideline-v2-r8-recall-side-debug-pack-20260823/summary.json \
+  --recall-side-miss-inspection-summary new-impl/new-guideline/results/guideline-v2-r8-recall-side-miss-inspection-top300-20260823/summary.json \
+  --boundary-recall-triage-summary new-impl/new-guideline/results/guideline-boundary-recall-triage-r8-gl-mech-0001-p3c64-3case-20260823/summary.json \
+  --ledger-validation-summary new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0001-validation-20260823/summary.json \
+  --ledger-validation-summary new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0005-validation-src-reviewed-20260823/summary.json \
+  --ledger-validation-summary new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0006-validation-src-reviewed-20260823/summary.json \
+  --ledger-validation-summary new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0007-validation-src-reviewed-20260823/summary.json \
+  --ledger-validation-summary new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0008-validation-src-reviewed-20260823/summary.json \
+  --ledger-validation-summary new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0011-validation-src-reviewed-20260823/summary.json \
+  --ledger-validation-summary new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0015-validation-src-reviewed-20260823/summary.json \
+  --ledger-validation-summary new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0022-validation-src-reviewed-20260823/summary.json \
+  --ledger-validation-summary new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0040-validation-src-reviewed-v2-20260823/summary.json \
+  --ledger-validation-summary new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0061-validation-src-reviewed-20260823/summary.json \
+  --ledger-validation-summary new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0116-validation-src-reviewed-20260823/summary.json \
+  --ledger-validation-summary new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0117-validation-src-reviewed-20260823/summary.json \
+  --ledger-validation-summary new-impl/new-guideline/results/guideline-review-ledger-r8-review-mech-0017-validation-src-reviewed-20260823/summary.json \
+  --ledger-validation-summary new-impl/new-guideline/results/guideline-review-ledger-r8-review-mech-0513-validation-src-reviewed-20260823/summary.json \
+  --ledger-validation-summary new-impl/new-guideline/results/guideline-review-ledger-r8-review-mech-0514-validation-src-reviewed-20260823/summary.json \
+  --ledger-judge-summary new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0001-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
+  --ledger-judge-summary new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0005-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
+  --ledger-judge-summary new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0006-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
+  --ledger-judge-summary new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0007-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
+  --ledger-judge-summary new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0008-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
+  --ledger-judge-summary new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0011-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
+  --ledger-judge-summary new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0015-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
+  --ledger-judge-summary new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0022-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
+  --ledger-judge-summary new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0040-judge-pack-src-reviewed-v2-20260823/judge_summary/summary.json \
+  --ledger-judge-summary new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0061-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
+  --ledger-judge-summary new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0116-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
+  --ledger-judge-summary new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0117-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
+  --ledger-judge-summary new-impl/new-guideline/results/guideline-review-ledger-r8-review-mech-0017-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
+  --ledger-judge-summary new-impl/new-guideline/results/guideline-review-ledger-r8-review-mech-0513-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
+  --ledger-judge-summary new-impl/new-guideline/results/guideline-review-ledger-r8-review-mech-0514-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
+  --recall-candidate-pair-judge-summary new-impl/new-guideline/results/guideline-v2-r8-recall-candidate-pair-judge-pack-20260823/judge_summary/summary.json \
+  --recall-candidate-list-judge-summary new-impl/new-guideline/results/guideline-v2-r8-recall-candidate-list-judge-pack-top20-20260823/judge_summary/summary.json \
+  --output-dir /path/to/guideline-dual-axis-objective-audit \
+  --desired-delta-rate 0.10
+```
+
+`--ledger-validation-summary` and `--ledger-judge-summary` are repeatable.
+Pass one pair for every source-reviewed boundary ledger that should count in
+the cumulative semantic-evidence view. The script aggregates row counts,
+decision counts, promotable boundary counts, judge decisions, and weighted
+average judge scores. This keeps per-guideline repair work incremental without
+losing evidence from previous rounds.
+`--recall-candidate-pair-judge-summary` and
+`--recall-candidate-list-judge-summary` are also repeatable, but they are
+recall-method diagnostics only. Pair judge summaries can indicate that a
+hidden known-anchor-overlap candidate looks semantically better than current
+Top-1; list-wise summaries can indicate whether a production-shaped judged set
+has enough anchor coverage to estimate reranker potential. Neither summary is
+paper-facing recall evidence.
+`--evidence-coverage-summary` should point at the output of
+`summarize_guideline_evidence_coverage.py`. It is the full worklist completion
+gate: aggregated ledger summaries can prove reviewed rows are good, but they
+cannot prove that the remaining worklist has been source-reviewed.
+
+Use this audit before declaring a guideline iteration complete. Passing
+structural checks, TraeX judge parsing, sidecar equivalence, or a recall table
+is not enough by itself. The completion gate requires semantic evidence for
+the guideline taxonomy and same-identity recall evidence for the exact
+sidecar/query configuration being claimed.
+Filled ledger validation and ledger-level TraeX judge summaries can be attached
+to record source-reviewed boundary evidence. This can show that a boundary is
+semantically coherent even when the current embedding backend fails to retrieve
+its representative cases. In that situation, first diagnose query wording,
+candidate slicing, embedding backend, adapter weights, reranking, or fusion
+under a same-identity A/B setup. Do not weaken a source-supported mechanism
+taxonomy merely to satisfy one embedder, and do not turn the ledger, judge
+notes, CVE labels, or bad-case anchors into hidden routing rules.
+
+Current source-reviewed boundary ledgers:
+
+- `guidelines/guideline_review_ledger.r8.gl_mech_0005.jsonl`: promotes only
+  source-reviewed path traversal through missing normalized containment for
+  DSpace resumable upload paths and S3Proxy filesystem-backed object keys.
+  Review-entry-only cases and partial evidence such as Graylog's filename path
+  with an existing validation helper remain `needs_more_evidence`.
+- `guidelines/guideline_review_ledger.r8.gl_mech_0006.jsonl`: corrects a
+  source-only r8 attribution error by splitting the old request-body resource
+  mismatch authorization label into two accepted single-case boundaries:
+  GeoServer absolute Resource wrapper path traversal through missing `..`
+  component validation, and PerfreeBlog missing endpoint authorization for a
+  request-body URL that reaches server-side attachment download. Both members
+  are source-only representatives absent from the frozen 143-case identity set,
+  so they are semantic corrections rather than recall claims.
+- `guidelines/guideline_review_ledger.r8.gl_mech_0022.jsonl`: splits classic
+  XML external entity or DTD/parser external-resource resolution from Archi's
+  XML namespace/package URI-as-location loading.
+- `guidelines/guideline_review_ledger.r8.gl_mech_0011.jsonl`: promotes only
+  archive-entry path escape writes outside the extraction root. Archive
+  extraction DoS from cyclic links, null handling, or unbounded traversal stays
+  `needs_more_evidence` until a source-to-sink trace supports that boundary.
+- `guidelines/guideline_review_ledger.r8.gl_mech_0061.jsonl`: revises the old
+  unsafe-URI-scheme open redirect framing into a broader final normalized
+  destination policy boundary. The source-reviewed promotable boundary covers
+  attacker-controlled redirect destinations reaching `window.location` or
+  `response.sendRedirect` without same-path final destination validation;
+  unsafe-scheme-only redirect remains `needs_more_evidence`.
+- `guidelines/guideline_review_ledger.r8.gl_mech_0116.jsonl`: splits the old
+  redirect-following SSRF bucket into direct URL/proxy SSRF and
+  renderer/document-converter external-resource SSRF as promotable boundaries;
+  trusted-client/credential forwarding still needs more source evidence, and
+  redirect-following SSRF remains a coherent candidate mechanism with no
+  source-reviewed representative case in this group yet.
+- `guidelines/guideline_review_ledger.r8.gl_mech_0117.jsonl`: revises the old
+  webhook/callback SSRF framing into a server-side outbound URL destination
+  policy boundary. The source-reviewed promotable boundary covers
+  attacker-influenced outbound destinations reaching server-side request
+  validation or dispatch with incomplete parser-consistent and network-range
+  policy; webhook/callback-only dispatch remains `needs_more_evidence`.
+- `guidelines/guideline_review_ledger.r8.gl_mech_0007.jsonl`: revises the old
+  webhook/callback SSRF framing into a source-reviewed direct URL download
+  boundary for `CommonServiceImpl.urlDownload`. The checked case supports an
+  attacker-controlled URL argument reaching `new URL(fileUrl).openStream()`
+  before protocol validation. The old webhook/callback mechanism remains
+  coherent but needs representative source evidence before promotion.
+- `guidelines/guideline_review_ledger.r8.gl_mech_0008.jsonl`: corrects a
+  source-only r8 attribution error for CVE-2024-35219. The source-reviewed
+  evidence supports attacker-controlled OpenAPI Generator Online `outputFolder`
+  path control reaching generation, bundle, and cleanup filesystem effects; it
+  does not support the previous temporary-directory create/delete/mkdir TOCTOU
+  label. Treat this as a semantic correction and rerun same-identity recall if
+  the recall-consumed sidecar text changes.
+- `guidelines/guideline_review_ledger.r8.gl_mech_0009.jsonl`: corrects the old
+  template/expression-evaluation attribution for CVE-2022-39207. The
+  source-reviewed evidence supports artifact download content-sniffing XSS:
+  uploaded or generated artifact bytes can be served back without a restrictive
+  content type or attachment policy, letting active content execute in a browser
+  context. Treat this as a semantic correction, not a template-injection recall
+  claim.
+- `guidelines/guideline_review_ledger.r8.gl_mech_0012.jsonl`: splits stored
+  social/message content HTML-sanitization issues into a promotable social
+  content boundary and a holding row for `AppLollmsMessage.from_dict`. The
+  social-content boundary is source-reviewed and judge-accepted; the
+  `from_dict` row remains `needs_more_evidence` because the advisory and the
+  checked patch/source window do not yet isolate a matching source/sink/fix
+  path.
+- `guidelines/guideline_review_ledger.r8.review_mech_0017.jsonl`: splits the
+  broad pending path/resource validation bucket into three source-backed
+  promotable boundaries: static-resource request path traversal without final
+  containment, multipart original-filename path writes, and recursive copy/move
+  missing an ancestor guard. The CUBA member is marked out-of-scope for this
+  bucket because the source and patch evidence show unbounded upload-size
+  storage exhaustion rather than path/resource containment failure.
+- `guidelines/guideline_review_ledger.r8.gl_mech_0040.jsonl`: splits the old
+  broad template/expression umbrella into four source-reviewed promotable
+  boundaries: untrusted template text rendered by FreeMarker or Velocity, Bean
+  Validation message-template EL interpolation, SpEL `StandardEvaluationContext`
+  misuse, and Jinjava sandbox bypass through property or method restriction
+  gaps. Parser-error-message downstream EL risk and the remaining unreviewed
+  evaluator members stay `needs_more_evidence`.
+- `guidelines/guideline_review_ledger.r8.review_mech_0509.jsonl`: splits the
+  broad authentication-bypass and token-validation bucket into four
+  source-reviewed promotable boundaries: default acceptance of JWT `none`,
+  empty-token callback reachability, public default JWT secret fallback, and
+  OIDC server sessions not bound to token expiry.
+
+The earlier cumulative audit after the `gl_mech_0007` ledger is under
+`results/guideline-v2-r8-dual-axis-objective-audit-with-source-reviewed-boundaries-plus-0007-20260823/`.
+It has 8 valid source-reviewed ledger rows, 4 promotable boundaries, and
+TraeX judge decisions of `accept=5` and `needs_evidence=2`. The non-accept
+rows are evidence-preserving candidate boundaries, not recall positives: one
+redirect-following SSRF row that needs an initial-approved-URL to unsafe
+redirect case, and one webhook/callback SSRF row that needs a true
+server-initiated callback or notification endpoint case.
+The source-review evidence-coverage summary before `gl_mech_0011` is under
+`results/guideline-v2-r8-evidence-coverage-20260823/`. It joins the 20-row r8
+worklist with the four filled ledgers, validation rows, and ledger-level judge
+reports. It records the remaining semantic queue without changing released
+guidelines: 3 worklist groups are `source_reviewed_and_judge_accepted`, 1 is
+`source_reviewed_validation_only`, 16 are `not_source_reviewed`, and the next
+actions are 14 `fill_source_review_ledger`, 2 `optional_control_source_review`,
+1 `run_ledger_judge_pack`, and 3
+`run_same_identity_recall_after_sidecar_change`.
+The coverage-aware dual-axis audit is under
+`results/guideline-v2-r8-dual-axis-objective-audit-with-evidence-coverage-20260823/`.
+It adds the coverage summary as a separate completion requirement and currently
+reports `overall_status=not_complete`, `missing_count=3`, and 15 blocking
+source-review next actions. This is the current handoff artifact for deciding
+whether the next round should collect semantic source evidence or run fresh
+same-identity recall.
+
+The `gl_mech_0011` source-review follow-up is committed under
+`guidelines/guideline_review_ledger.r8.gl_mech_0011.jsonl`, with verifier
+output in
+`results/guideline-review-ledger-r8-gl-mech-0011-validation-src-reviewed-20260823/`.
+It has 2 valid rows, 1 promotable boundary, and no invalid rows. The
+plus-0011 coverage matrix is under
+`results/guideline-v2-r8-evidence-coverage-plus-0011-20260823/`: the
+source-reviewed validation-only count moves from 1 to 2, while
+`not_source_reviewed` drops from 16 to 15. The plus-0011 dual-axis audit is
+under
+`results/guideline-v2-r8-dual-axis-objective-audit-plus-0011-20260823/` and
+still reports `overall_status=not_complete`, `missing_count=3`, and 15
+blocking source-review next actions. This is expected: one
+`fill_source_review_ledger` item became one `run_ledger_judge_pack` item, so
+semantic evidence quality improved without closing the full coverage gate yet.
+
+The `gl_mech_0061` source-review and judge follow-up is committed under
+`guidelines/guideline_review_ledger.r8.gl_mech_0061.jsonl`, verifier output in
+`results/guideline-review-ledger-r8-gl-mech-0061-validation-src-reviewed-20260823/`,
+and judge output in
+`results/guideline-review-ledger-r8-gl-mech-0061-judge-pack-src-reviewed-20260823/`.
+The TraeX judge accepts the broad final-destination policy boundary and marks
+the unsafe-scheme-only boundary as `needs_evidence`, matching the conservative
+ledger split. The latest coverage matrix is
+`results/guideline-v2-r8-evidence-coverage-plus-0061-judge-20260823/`: 4
+groups are now `source_reviewed_and_judge_accepted`, 2 are
+`source_reviewed_validation_only`, and 14 remain `not_source_reviewed`. The
+latest dual-axis audit is
+`results/guideline-v2-r8-dual-axis-objective-audit-plus-0061-judge-20260823/`;
+it still reports `overall_status=not_complete`, `missing_count=3`, and 14
+blocking source-review next actions.
+
+The `gl_mech_0117` source-review and judge follow-up is committed under
+`guidelines/guideline_review_ledger.r8.gl_mech_0117.jsonl`, verifier output in
+`results/guideline-review-ledger-r8-gl-mech-0117-validation-src-reviewed-20260823/`,
+and judge output in
+`results/guideline-review-ledger-r8-gl-mech-0117-judge-pack-src-reviewed-20260823/`.
+The TraeX judge accepts the broad server-side outbound destination-policy
+boundary and marks webhook/callback-only SSRF as `needs_evidence`. One judge
+shard attempted a blocked shell here-doc before returning JSON; parser
+validation still succeeded with no invalid outputs, so keep this as advisory
+semantic QA rather than a hard gate. The latest coverage matrix is
+`results/guideline-v2-r8-evidence-coverage-plus-0117-judge-20260823/`: 5
+groups are now `source_reviewed_and_judge_accepted`, 2 are
+`source_reviewed_validation_only`, and 13 remain `not_source_reviewed`. The
+latest dual-axis audit is
+`results/guideline-v2-r8-dual-axis-objective-audit-plus-0117-judge-20260823/`;
+it still reports `overall_status=not_complete`, `missing_count=3`, and 13
+blocking source-review next actions.
+
+The `gl_mech_0005` source-review and judge follow-up is committed under
+`guidelines/guideline_review_ledger.r8.gl_mech_0005.jsonl`, verifier output in
+`results/guideline-review-ledger-r8-gl-mech-0005-validation-src-reviewed-20260823/`,
+and judge output in
+`results/guideline-review-ledger-r8-gl-mech-0005-judge-pack-src-reviewed-20260823/`.
+The TraeX judge accepts the DSpace/S3Proxy normalized containment boundary and
+marks the review-entry-only or partial-guard bucket as `needs_evidence`. The
+latest coverage matrix is
+`results/guideline-v2-r8-evidence-coverage-plus-0005-judge-20260823/`: 6
+groups are now `source_reviewed_and_judge_accepted`, 2 are
+`source_reviewed_validation_only`, and 12 remain `not_source_reviewed`. The
+latest dual-axis audit is
+`results/guideline-v2-r8-dual-axis-objective-audit-plus-0005-judge-20260823/`;
+it still reports `overall_status=not_complete`, `missing_count=3`, and 12
+blocking source-review next actions.
+
+The `gl_mech_0001` and `gl_mech_0011` ledger-level judge follow-up is committed
+under `results/guideline-review-ledger-r8-gl-mech-0001-judge-pack-src-reviewed-20260823/`
+and `results/guideline-review-ledger-r8-gl-mech-0011-judge-pack-src-reviewed-20260823/`.
+`gl_mech_0001` is accepted as a createTempFile-delete-mkdir race boundary.
+`gl_mech_0011` keeps archive-entry path escape as accepted and leaves archive
+extraction cycle/null DoS as `needs_evidence`; one judge shard attempted a
+blocked shell command before producing valid JSON, so keep this as another
+TraeX judge stability caveat. The latest cumulative coverage matrix is
+`results/guideline-v2-r8-evidence-coverage-plus-0001-0011-judge-20260823/`: 8
+groups are now `source_reviewed_and_judge_accepted`, 12 remain
+`not_source_reviewed`, and there are no `source_reviewed_validation_only` rows.
+The latest dual-axis audit is
+`results/guideline-v2-r8-dual-axis-objective-audit-plus-0001-0011-judge-20260823/`;
+it still reports `overall_status=not_complete`, `missing_count=3`, and 10
+blocking source-review next actions.
+
+The `gl_mech_0015` source-review follow-up corrects the old mechanism
+attribution instead of preserving the misleading createTempFile-delete-mkdir
+label. The promoted boundary is a Python Requests archive-member predictable
+temporary-file check/write race backed by the patch from
+`output/cve_clustering/v2/patch_cache/66d21cb07bd6255b1280291c4fafb71803cdb3b7.diff`
+and the validated vulnerable checkout window around `src/requests/utils.py`.
+The TraeX judge accepts the narrow single-case boundary with a low coverage
+score caveat. The latest cumulative coverage matrix is
+`results/guideline-v2-r8-evidence-coverage-plus-0015-judge-20260823/`: 9
+groups are now `source_reviewed_and_judge_accepted`, 11 remain
+`not_source_reviewed`, and there are no `source_reviewed_validation_only` rows.
+The latest dual-axis audit is
+`results/guideline-v2-r8-dual-axis-objective-audit-plus-0015-judge-20260823/`;
+it still reports `overall_status=not_complete`, `missing_count=3`, and 9
+blocking source-review next actions.
+
+The `gl_mech_0040` source-review follow-up splits the old broad
+template/expression guideline into source-backed submechanisms. The revised v2
+ledger has 6 valid rows, 4 promotable boundaries, and no invalid rows. The
+TraeX DeepSeek-V4-Pro ledger judge accepts all 4 promoted boundaries and marks
+the 2 evidence-lacking rows as `needs_evidence`, after catching that the
+cron-utils parser-error-message case should not be folded into the Bean
+Validation message-template boundary. The latest cumulative coverage matrix is
+`results/guideline-v2-r8-evidence-coverage-plus-0040-judge-20260823/`: 10 groups
+are `source_reviewed_and_judge_accepted`, 10 remain `not_source_reviewed`, and
+there are no `source_reviewed_validation_only` rows. The latest dual-axis audit
+is
+`results/guideline-v2-r8-dual-axis-objective-audit-plus-0040-judge-20260823/`;
+it still reports `overall_status=not_complete`, `missing_count=3`, and 8
+blocking source-review next actions. This is exactly the role TraeX judge should
+play here: advisory semantic QA that finds boundary mistakes, with the final
+promotion still recorded in source-reviewed ledger rows and recall impact still
+requiring same-identity retrieval runs.
+
+The `review_mech_0513` source-review follow-up splits the old broad
+JWT/OIDC signature-verification guideline into source-backed submechanisms. The
+validated ledger has 4 rows, 3 promotable boundaries, and no invalid rows:
+generic JJWT `parse(...)` use before signed-JWS validation, JOSE token-header
+`jwk` trust when no verification key is supplied, and default acceptance of
+OIDC `none` ID-token algorithms without an explicit opt-in. The remaining
+unreviewed members stay in a holding row with `needs_more_evidence`. The TraeX
+DeepSeek-V4-Pro judge accepts all 4 rows as semantically coherent, with one low
+score caveat on evidence coverage. The latest cumulative coverage matrix is
+`results/guideline-v2-r8-evidence-coverage-plus-0513-judge-20260823/`: 11 groups
+are `source_reviewed_and_judge_accepted`, 9 remain `not_source_reviewed`, and
+there are no `source_reviewed_validation_only` rows. The latest dual-axis audit
+is
+`results/guideline-v2-r8-dual-axis-objective-audit-plus-0513-judge-20260823/`;
+it still reports `overall_status=not_complete`, `missing_count=3`, and 7
+blocking source-review next actions. This improves semantic coverage while
+leaving recall impact as a separate same-identity retrieval gate.
+
+The `review_mech_0514` source-review follow-up splits a broad
+authentication/authorization validation-flow bucket into four source-backed
+submechanisms plus a holding row. The promoted boundaries are inactive account
+identifier acceptance in AuthGuard, missing-token media-filter fail-open in
+Booklore, token-presence-only interceptor authentication in Taier, and empty
+token-scope authorization bypass in Jans Config API. Grassroot JWT refresh and
+MeterSphere unauthenticated-login material stay in `needs_more_evidence`
+because the current evidence either overlaps the JWT verification family or has
+not isolated a precise source/sink/guard/fix boundary. The ledger has 5 valid
+rows, 4 promotable boundaries, and no invalid rows. The TraeX DeepSeek-V4-Pro
+judge returns 4 `accept` decisions and 1 `needs_evidence` decision, with low
+coverage scores mostly reflecting single-case boundaries and the holding row.
+The latest cumulative coverage matrix is
+`results/guideline-v2-r8-evidence-coverage-plus-0514-judge-20260823/`: 12 groups
+are `source_reviewed_and_judge_accepted`, 8 remain `not_source_reviewed`, and
+there are no `source_reviewed_validation_only` rows. The latest dual-axis audit
+is
+`results/guideline-v2-r8-dual-axis-objective-audit-plus-0514-judge-20260823/`;
+it still reports `overall_status=not_complete`, `missing_count=3`, and 6
+blocking source-review next actions. This is another semantic-coverage advance,
+not a recall claim; any recall-consumed sidecar update still needs a fresh
+same-identity retrieval run.
+
+The `gl_mech_0008` source-review follow-up corrects the r8 source-only
+attribution for CVE-2024-35219 instead of preserving the misleading
+temporary-directory race label. The promoted boundary is attacker-controlled
+OpenAPI Generator Online `outputFolder` path control: request-controlled
+generator options selected the output directory, then the same path was used
+for generation, ZIP bundling, and cleanup. The patch removes
+`opts.getOptions().get("outputFolder")` and derives the directory from
+server-controlled language/type values. The TraeX DeepSeek-V4-Pro judge accepts
+the corrected single-case boundary with strong coherence and a single-case
+coverage caveat. The latest cumulative coverage matrix is
+`results/guideline-v2-r8-evidence-coverage-plus-0008-0514-judge-20260823/`: 13
+groups are `source_reviewed_and_judge_accepted`, 7 remain
+`not_source_reviewed`, and there are no `source_reviewed_validation_only` rows.
+The latest dual-axis audit is
+`results/guideline-v2-r8-dual-axis-objective-audit-plus-0008-0514-judge-20260823/`;
+it still reports `overall_status=not_complete`, `missing_count=3`, and 5
+blocking source-review next actions. This reduces semantic debt by removing an
+incorrect mechanism assignment; it is not a TOCTOU recall claim.
+
+The `gl_mech_0006` source-review follow-up corrects the r8 source-only
+attribution for CVE-2023-51444 and CVE-2025-60319 instead of preserving the
+request-body resource mismatch authorization label. The two promoted boundaries
+are GeoServer absolute file/URL Resource wrapper traversal due to missing
+component validation, and PerfreeBlog missing endpoint authorization for a
+request-body URL that reaches server-side attachment download. The validated
+ledger has 2 promotable rows and no invalid rows. The TraeX DeepSeek-V4-Pro
+judge accepts both rows, with a low coverage-score caveat on the single-case
+GeoServer boundary. The latest cumulative coverage matrix is
+`results/guideline-v2-r8-evidence-coverage-plus-0006-0008-0514-judge-20260823/`:
+14 groups are `source_reviewed_and_judge_accepted`, 6 remain
+`not_source_reviewed`, and there are no `source_reviewed_validation_only` rows.
+The latest dual-axis audit is
+`results/guideline-v2-r8-dual-axis-objective-audit-plus-0006-0008-0514-judge-20260823/`;
+it still reports `overall_status=not_complete`, `missing_count=3`, and 4
+blocking source-review next actions. Because both representatives are absent
+from the frozen 143-case identity set, this is a semantic-quality repair and
+should not be presented as a same-identity recall improvement.
+
+The `review_mech_0017` source-review follow-up resolves the broad pending
+path/resource validation bucket. The validated ledger has 4 rows, 3 promotable
+boundaries, and no invalid rows. The promoted boundaries are OpenHAB/Solon
+static-resource request path traversal without final containment,
+zdh_web multipart original-filename path write, and Opal recursive copy/move
+missing an ancestor guard. CUBA CVE-2025-32959 is kept as
+`mark_out_of_scope` for this bucket because the patch adds upload-size
+limiting and partial-file cleanup, proving a storage-exhaustion mechanism
+rather than path traversal. The TraeX DeepSeek-V4-Pro judge accepts all 4 rows;
+average scores are coherence `0.8625`, coverage `0.6625`, actionability
+`0.8375`, and retrieval query quality `0.7875`, with no low-score rows. The
+latest cumulative coverage matrix is
+`results/guideline-v2-r8-evidence-coverage-plus-0017-0006-0008-0514-judge-20260823/`:
+15 groups are `source_reviewed_and_judge_accepted`, 5 remain
+`not_source_reviewed`, and there are no `source_reviewed_validation_only`
+rows. The latest dual-axis audit is
+`results/guideline-v2-r8-dual-axis-objective-audit-plus-0017-0006-0008-0514-judge-20260823/`;
+it still reports `overall_status=not_complete`, `missing_count=3`, and 3
+blocking source-review next actions. This is semantic-evidence progress only;
+changing recall-consumed sidecar text still requires a fresh same-identity
+recall run at the declared Top-K budgets.
+
+The final three high-priority r8 source-review follow-ups in this batch are
+committed under `guidelines/guideline_review_ledger.r8.review_mech_0509.jsonl`,
+`guidelines/guideline_review_ledger.r8.gl_mech_0009.jsonl`, and
+`guidelines/guideline_review_ledger.r8.gl_mech_0012.jsonl`. `review_mech_0509`
+adds 4 valid promotable authentication/token boundaries; the TraeX
+DeepSeek-V4-Pro ledger judge accepts all 4, with average coherence `0.8675`,
+coverage `0.5875`, actionability `0.8500`, and retrieval-query quality
+`0.8200`. `gl_mech_0009` corrects artifact download content-sniffing XSS as a
+single valid promotable boundary; the judge accepts it with coherence `0.9000`,
+coverage `0.7000`, actionability `0.9500`, and retrieval-query quality
+`0.8500`. `gl_mech_0012` records 1 valid promotable stored-social-content HTML
+sanitization boundary plus 1 `needs_more_evidence` row for the unresolved
+`AppLollmsMessage.from_dict` advisory/source mismatch; the judge accepts the
+promoted row and marks the unresolved row `needs_evidence`.
+
+The current strict cumulative coverage matrix is
+`results/guideline-v2-r8-evidence-coverage-plus-0509-0009-0012-full-judge-20260823/`.
+It uses the complete validation and judge inputs, including the existing
+`gl_mech_0001` validation and the `gl_mech_0040` v2 validation. In that view,
+18 worklist groups are `source_reviewed_and_judge_accepted`, 2 groups are the
+intended optional control reviews, and there are no blocking source-review next
+actions. Across the accumulated source-reviewed ledgers there are 47 ledger
+rows, 47 validation rows, 46 judge rows, and 33 promotable boundaries accepted
+by judge in the coverage matrix. The current strict dual-axis audit is
+`results/guideline-v2-r8-dual-axis-objective-audit-plus-0509-0009-0012-full-judge-20260823/`;
+it still reports `overall_status=not_complete`, with `missing_count=2`. The
+remaining objective gaps are no longer unfilled source-review blockers: they
+are the paper-facing recall target gap and the requirement to run fresh
+same-identity recall after any recall-consumed sidecar text changes.
+
+The accepted source-reviewed boundaries can be exported as a controlled,
+review-only recall sidecar candidate:
+
+```bash
+python new-impl/new-guideline/scripts/build_source_reviewed_sidecar.py \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0001.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0005.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0006.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0007.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0008.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0009.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0011.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0012.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0015.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0022.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0040.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0061.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0116.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.gl_mech_0117.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.review_mech_0017.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.review_mech_0509.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.review_mech_0513.jsonl \
+  --ledger new-impl/new-guideline/guidelines/guideline_review_ledger.r8.review_mech_0514.jsonl \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0001-validation-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0005-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0006-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0007-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0008-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0009-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0011-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0012-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0015-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0022-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0040-validation-src-reviewed-v2-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0061-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0116-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0117-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-review-mech-0017-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-review-mech-0509-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-review-mech-0513-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/new-guideline/results/guideline-review-ledger-r8-review-mech-0514-validation-src-reviewed-20260823/validation_rows.json \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0001-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0005-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0006-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0007-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0008-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0009-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0011-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0012-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0015-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0022-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0040-judge-pack-src-reviewed-v2-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0061-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0116-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-gl-mech-0117-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-review-mech-0017-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-review-mech-0509-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-review-mech-0513-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/new-guideline/results/guideline-review-ledger-r8-review-mech-0514-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
+  --output-dir /path/to/source-reviewed-sidecar-candidate
+```
+
+The generated candidate committed here is
+`results/guideline-v2-r8-source-reviewed-sidecar-candidate-full-20260823/`.
+It contains 33 accepted promotable boundaries, 48 matched sidecar identities,
+and 5 source-reviewed representative cases absent from the supplied cases file.
+This is the next same-identity recall A/B input, not a release replacement and
+not a recall result.
+
+A wiring smoke for this candidate is recorded under
+`results/guideline-v2-r8-source-reviewed-sidecar-recall-smoke-20260824/`. The
+cached 3-case run completed with all three cases hitting Top-200, while the
+12-case attempt is environment-contaminated because 9 cases failed during
+GitHub HTTPS clone with `gnutls_handshake() failed`. Treat this as evidence
+that the sidecar is consumable by P3C64 recall, not as a paper-facing recall
+metric. A full 48-sidecar or 143-case claim still requires stable source
+materialization and same-identity evaluation.
+
+Audit whether source-reviewed boundaries can be propagated back into the
+current release guideline groups before running a paper-facing recall claim:
+
+```bash
+python new-impl/new-guideline/scripts/audit_source_reviewed_boundary_propagation.py \
+  --boundary-overrides new-impl/new-guideline/results/guideline-v2-r8-source-reviewed-sidecar-candidate-full-20260823/boundary_overrides.jsonl \
+  --group-report new-impl/new-guideline/results/guideline-v2-r8-release-ready-group-eval-20260823/group_report.jsonl \
+  --case-assignments new-impl/new-guideline/results/guideline-v2-r8-release-ready-group-eval-20260823/case_assignments.jsonl \
+  --fixed-identity-file new-impl/new-guideline/results/p3c64-fixed143-paper-eval-20260820/paper_eval_143_identities.jsonl \
+  --output-dir /path/to/source-reviewed-boundary-propagation-audit
+```
+
+The committed diagnostic artifact is
+`results/guideline-v2-r8-source-reviewed-boundary-propagation-audit-20260824/`.
+It reports 33 source-reviewed boundaries over 18 guideline groups. Only
+`gl_mech_0001` is immediately `group_ablation_ready` for the current release
+and frozen 143 identity set; `gl_mech_0022` is group-compatible but outside
+the frozen 143 fixed set; the other 31 boundaries are
+`requires_release_regeneration` because source review refined the mechanism
+name or boundary beyond the current release guideline. This is a release
+alignment finding, not a recall failure. The next clean step is to regenerate
+or reconcile the release guideline sidecar from accepted source-reviewed
+boundaries, then rerun same-identity recall with the changed sidecar as the
+only method variable.
+
+For a conservative recall-side sanity run that changes only already aligned
+release groups, build a propagated sidecar from the propagation audit:
+
+```bash
+python new-impl/new-guideline/scripts/build_propagated_boundary_sidecar.py \
+  --propagation new-impl/new-guideline/results/guideline-v2-r8-source-reviewed-boundary-propagation-audit-20260824/boundary_propagation.jsonl \
+  --boundary-overrides new-impl/new-guideline/results/guideline-v2-r8-source-reviewed-sidecar-candidate-full-20260823/boundary_overrides.jsonl \
+  --case-assignments new-impl/new-guideline/results/guideline-v2-r8-release-ready-group-eval-20260823/case_assignments.jsonl \
+  --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
+  --output-dir /path/to/propagated-boundary-sidecar
+```
+
+The committed ready-only artifact is
+`results/guideline-v2-r8-propagated-boundary-sidecar-ready-only-20260824/`.
+It selects only `group_ablation_ready` boundaries by default, so it currently
+contains the source-reviewed `gl_mech_0001` boundary and 8 release-assigned
+sidecar identities. This is useful for a narrow sanity A/B; it deliberately
+skips the 31 boundaries that need release regeneration.
+
+Build a broader source-reviewed release candidate when the refined boundaries
+should become their own guideline candidates instead of being forced back into
+the older release mechanisms:
+
+```bash
+python new-impl/new-guideline/scripts/build_source_reviewed_release_candidate.py \
+  --source-reviewed-sidecar-dir new-impl/new-guideline/results/guideline-v2-r8-source-reviewed-sidecar-candidate-full-20260823 \
+  --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
+  --output-dir /path/to/source-reviewed-release-candidate
+```
+
+The committed candidate is
+`results/guideline-v2-r8-source-reviewed-release-candidate-20260824/`. It
+turns the 33 accepted source-reviewed boundaries into 33 explicit guideline
+candidates, keeps 12 multi-case boundaries release-ready for recall sidecar
+ablation, leaves 21 singleton or missing-case boundaries review-only by
+default, and emits 32 recall sidecar identities. This is the safer next input
+for semantic review plus same-identity recall, because it preserves the
+fine-grained JNDI/XXE/SSRF/authentication/path-race style mechanism boundaries
+instead of weakening them to fit the older broad release groups.
+
+Evaluate that candidate on the two separate axes before making a paper-facing
+claim:
+
+```bash
+python new-impl/new-guideline/scripts/evaluate_guideline_groups.py \
+  --release-dir new-impl/new-guideline/results/guideline-v2-r8-source-reviewed-release-candidate-20260824 \
+  --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
+  --output-dir /path/to/source-reviewed-release-candidate-group-eval
+
+python new-impl/new-guideline/scripts/compare_guideline_sidecars.py \
+  --left new-impl/new-guideline/results/mechanism-guideline-preview-v2-cluster-scope-r8-release-ready-20260823/guideline_overrides.jsonl \
+  --right new-impl/new-guideline/results/guideline-v2-r8-source-reviewed-release-candidate-20260824/guideline_overrides.jsonl \
+  --left-label guideline-v2-r8-release-ready-sidecar \
+  --right-label source-reviewed-release-candidate-sidecar \
+  --output-json /path/to/source-reviewed-release-candidate-vs-r8-sidecar-equivalence/summary.json \
+  --output-md /path/to/source-reviewed-release-candidate-vs-r8-sidecar-equivalence/README.md
+
+python new-impl/new-guideline/scripts/summarize_guideline_experiment.py \
+  --release-summary new-impl/new-guideline/results/guideline-v2-r8-source-reviewed-release-candidate-20260824/summary.json \
+  --group-summary /path/to/source-reviewed-release-candidate-group-eval/summary.json \
+  --recall-comparison new-impl/new-guideline/results/p3c64-fixed143-paper-eval-20260820/qwen4b_comparison.json \
+  --recall-equivalence /path/to/source-reviewed-release-candidate-vs-r8-sidecar-equivalence/summary.json \
+  --release-label guideline-v2-r8-source-reviewed-release-candidate \
+  --output-json /path/to/source-reviewed-release-candidate-scorecard/scorecard.json \
+  --output-md /path/to/source-reviewed-release-candidate-scorecard/README.md
+```
+
+The committed evaluation artifacts are
+`results/guideline-v2-r8-source-reviewed-release-candidate-group-eval-20260824/`,
+`results/guideline-v2-r8-source-reviewed-release-candidate-vs-r8-sidecar-equivalence-20260824/`,
+and
+`results/guideline-v2-r8-source-reviewed-release-candidate-scorecard-20260824/`.
+They show the candidate has 28 case-linked mechanism groups and 48 assignments
+with weighted HCVR/CWE purity `0.9375`, but the recall sidecar is not equivalent
+to the measured r8 sidecar (`same_key_set=false`, `changed_text_count=28`).
+Therefore the source-reviewed candidate can be discussed as a semantic
+classification candidate, while embedding recall improvement still needs a
+fresh same-identity recall run before it becomes a paper-facing metric.
+
+The fresh same-identity recall A/B is recorded under
+`results/guideline-v2-r8-source-reviewed-same-identity-qwen06b-top200-32-20260824/`.
+It uses the 32 source-reviewed sidecar identities, the same prewarmed source
+snapshots, the same 80-line/40-stride mechanical slicing, the same Top-200
+budget, and the real OpenAI-compatible `Qwen/Qwen3-Embedding-0.6B` service on
+`http://127.0.0.1:8001/v1`. Both runs completed 32/32 cases with 0 failures.
+On this fixed identity set, the source-reviewed release candidate improves
+Hit@30 from 16/32 to 23/32, Hit@100 from 21/32 to 28/32, Hit@200 from 23/32 to
+29/32, and MRR from 0.210817 to 0.262389. At Top-200 it has 6 left-only hits,
+0 right-only hits, and 3 misses shared by both sides.
+
+There is one fairness boundary in the 32-case comparison: the old r8 sidecar
+has explicit override rows for only 28 of the 32 source-reviewed identities, so
+4 old-run rows use the recall runner's normal dataset/default guideline
+fallback. The same result directory also contains a stricter common-28
+comparison where both sides have explicit sidecar text. On that subset, the
+source-reviewed candidate improves Hit@30 from 14/28 to 20/28, Hit@100 from
+18/28 to 24/28, Hit@200 from 20/28 to 25/28, and MRR from 0.203393 to
+0.256864. Use the common-28 table when the claim is specifically about sidecar
+text quality; use the 32-case table when discussing the current candidate's
+actual covered identity set.
+
+The cost proxy for both runs is 161374 candidate slices over 32 cases. Wall
+time was about 35.7 minutes for the old sidecar and 35.5 minutes for the
+source-reviewed candidate with `--case-workers 8`. The runner records
+cumulative worker timing, where code embedding dominates: about 12678 seconds
+for the old sidecar and 12594 seconds for the source-reviewed candidate. The
+embedding service used here does not return token usage, so the committed
+artifact reports candidate counts and timing rather than token totals.
+
+The fresh scorecard for this evidence chain is
+`results/guideline-v2-r8-source-reviewed-release-candidate-scorecard-with-fresh-recall-20260824/`.
+It uses the source-reviewed release candidate structural summary plus the fresh
+32-case same-identity recall comparison directly. It does not pass the invalid
+old sidecar-equivalence report, because the changed source-reviewed sidecar
+needs its own recall evidence.
+
+The completion audit that joins the source-review coverage gate with the fresh
+recall A/B is
+`results/guideline-v2-r8-dual-axis-objective-audit-source-reviewed-fresh-recall-20260824/`.
+It reports `overall_status=complete` and `missing_count=0` for this scoped
+candidate. The semantic axis is satisfied by the cumulative source-review
+coverage matrix: 20/20 worklist rows covered, 18/18 source-review actions
+accepted by judge, 2 remaining rows kept as optional controls, and 0 blocking
+next actions. The recall axis is satisfied by the fresh same-identity A/B above:
+all reported budgets exceed the +10pp target on the 32-case fixed identity set.
+This is a paper-facing completion signal for the evaluated guideline/query plus
+embedding configuration, not an unconditional claim that the taxonomy is optimal
+for future embedders, rerankers, datasets, or regenerated guideline text.
+
+Convert the backlog into review-only mechanism lexicon proposals:
+
+```bash
+python new-impl/new-guideline/scripts/propose_mechanism_lexicon_updates.py \
+  --revision-backlog new-impl/new-guideline/results/guideline-v2-r5-revision-backlog-20260823/revision_backlog.jsonl \
+  --lexicon new-impl/new-guideline/guidelines/mechanism_lexicon.seed.json \
+  --output-dir /path/to/lexicon-proposals
+```
+
+This proposal file is the handoff to the next guideline-design round. It can
+name candidate mechanisms suggested by TraeX judge feedback, but those entries
+are `release_ready=false` until a reviewer confirms they generalize beyond the
+motivating cases and a fresh same-identity recall run confirms the effect.
+
+For model A/B evaluation, always pass the same `--identity-file` to every run.
+`--selection all --limit N` without `--identity-file` selects the first N
+accepted cases in `new_unified_cases.v1.jsonl`; that is useful for quick smoke
+runs, but it is not interchangeable with the frozen paper-eval allowlist.
+For a tiny boundary-debug run, use `--identity-list` instead of editing the
+dataset or creating an ad hoc sidecar. The script writes the inline identities
+to `.inline_identities.jsonl` inside the output directory and, when `--limit`
+is omitted, automatically limits the run to exactly those identities.
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python new-impl/new-guideline/scripts/recall_guideline_anchors.py \
+  --qa new-impl/hcvr_new_unified_dataset_v2/receipts/hcvr_new_unified_paper_eval_rebalance_qa.v2.json \
+  --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
+  --identity-list 'centic9__jgit-cookbook::CVE-2022-4817,devent__globalpom-utils::CVE-2018-25068,openkm__document-management-system::CVE-2022-3969' \
+  --guideline-file new-impl/new-guideline/results/mechanism-guideline-preview-v2-cluster-scope-r8-release-ready-20260823/guideline_overrides.jsonl \
+  --guideline-mode baseline-plus-override \
+  --output-dir /path/to/run/gl-mech-0001-boundary-recall \
+  --repo-cache /path/to/run/repo-cache \
+  --snapshot-root /path/to/run/snapshots \
+  --selection all \
+  --top-k 200 \
+  --audit-anchor-rank 1 \
+  --case-workers 2 \
+  --embedding-backend p3c64-query-residual \
+  --embedding-model /data/lhq/workspace/hcvr-embedding-service/models/Qwen3-Embedding-0.6B \
+  --embedding-device cuda:0 \
+  --embedding-batch-size 128 \
+  --max-seq-length 512 \
+  --p3c64-state /data/lhq/workspace/p3-hard-competition-query-adapter-v1/selection_run_v1/p3c64_state.pt
+```
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python new-impl/new-guideline/scripts/recall_guideline_anchors.py \
+  --qa new-impl/hcvr_new_unified_dataset_v2/receipts/hcvr_new_unified_paper_eval_rebalance_qa.v2.json \
+  --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
+  --identity-file /path/to/paper_eval_143_identities.jsonl \
+  --guideline-file /path/to/guideline_overrides.jsonl \
+  --guideline-mode baseline-plus-override \
+  --output-dir /path/to/run/p3c64-recall30 \
+  --repo-cache /path/to/run/repo-cache \
+  --snapshot-root /path/to/run/snapshots \
+  --selection all \
+  --limit 30 \
+  --top-k 200 \
+  --audit-anchor-rank 1 \
+  --case-workers 2 \
+  --embedding-backend p3c64-query-residual \
+  --embedding-model /data/lhq/workspace/hcvr-embedding-service/models/Qwen3-Embedding-0.6B \
+  --embedding-device cuda:0 \
+  --embedding-batch-size 128 \
+  --max-seq-length 512 \
+  --p3c64-state /data/lhq/workspace/p3-hard-competition-query-adapter-v1/selection_run_v1/p3c64_state.pt
+```
+
+`--guideline-file` is optional. It accepts JSONL rows or a JSON object keyed by
+`identity_key`, `new_unified_case_id`, or `case_id`; each row may contain
+`guideline_text`, `retrieval_guideline`, `audit_guideline`, or `guideline`.
+Use it to attach offline guideline-clustering output without mutating the
+dataset. Recalled `selected_cases.jsonl` rows carry the exact guideline used by
+retrieval so the audit stage can reuse the same text.
+
+`--guideline-mode` defaults to `override`, which preserves the historical
+single-query behavior: when `--guideline-file` is supplied, the released
+sidecar guideline replaces the broad dataset/template guideline for that case.
+Use `--guideline-mode baseline-plus-override` for regression-sensitive
+experiments. In that mode the runner embeds both the original baseline
+guideline and the released override guideline, scores every candidate by the
+maximum similarity across the two query vectors, and records the winning
+`query_label` plus per-query scores in `recall_results.jsonl`. A 12-case smoke
+test showed that this same-score-space max operation is diagnostic but not a
+good default fusion policy. Prefer separate baseline and override recall runs
+followed by list-level RRF or candidate union when trying to preserve old hits
+while adding mechanism-specific recoveries.
+
+Outputs:
+
+```text
+/path/to/run/p3c64-recall30/
+  recall_results.jsonl
+  selected_cases.jsonl
+  summary.json
+  README.md
+```
+
+Compare a P3C64 run against a frozen baseline only after confirming both sides
+used the same identities:
+
+```bash
+python new-impl/new-guideline/scripts/compare_recall_rank_tables.py \
+  --left /path/to/p3c64/recall_results.jsonl \
+  --right /path/to/qwen4b/case_rank_table.jsonl \
+  --left-label p3c64-query-residual \
+  --right-label qwen3-embedding-4b \
+  --budgets 30,50,100,200,300,500 \
+  --primary-budget 200 \
+  --output-json /path/to/comparison/summary.json \
+  --output-md /path/to/comparison/README.md
+```
+
+If the command fails with `identity sets differ`, rerun the inconsistent side
+with the frozen identity file. Use `--allow-mismatch` only when intentionally
+debugging the overlapping subset.
+
+For sharded per-case runs, merge outputs before comparing:
+
+```bash
+python new-impl/new-guideline/scripts/merge_recall_shards.py \
+  --shard-root /path/to/run/output \
+  --output-dir /path/to/run/merged \
+  --identity-file /path/to/paper_eval_143_identities.jsonl \
+  --budgets 30,50,100,200,300,500
+```
+
+When two same-identity recall runs have full `top_anchors`, fuse their anchor
+rankings with reciprocal rank fusion (RRF). This is useful when a tuned query
+adapter and a larger base embedding model recover complementary known anchors:
+
+```bash
+python new-impl/new-guideline/scripts/fuse_recall_rank_tables.py \
+  --left /path/to/p3c64/recall_results.jsonl \
+  --right /path/to/qwen4b/merged_recall_results.jsonl \
+  --left-label p3c64-query-residual \
+  --right-label qwen3-embedding-4b \
+  --left-weight 1.5 \
+  --right-weight 1.0 \
+  --rrf-k 60 \
+  --per-source-cap 1000 \
+  --budgets 30,50,100,200,300,500 \
+  --output-dir /path/to/fused-rrf
+```
+
+The fusion script intentionally requires both inputs to have the same identity
+set and order. It outputs another recall-compatible `recall_results.jsonl`, so
+the fused result can be compared with `compare_recall_rank_tables.py` or fed to
+the audit stage through its generated `selected_cases.jsonl`.
+
+Feed `selected_cases.jsonl` to the audit runner with `--selected-anchor-file`
+when you want the next stage to audit recalled anchors instead of
+dataset-provided anchors.
+
+```bash
+python new-impl/new-guideline/scripts/run_hcvr_case_anchor_audits.py \
+  --qa new-impl/hcvr_new_unified_dataset_v2/receipts/hcvr_new_unified_paper_eval_rebalance_qa.v2.json \
+  --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
+  --selected-anchor-file /path/to/run/p3c64-recall30/selected_cases.jsonl \
+  --guideline-file /path/to/guideline_overrides.jsonl \
+  --output-dir /path/to/run/audit-recalled30 \
+  --repo-cache /path/to/run/repo-cache \
+  --snapshot-root /path/to/run/snapshots \
+  --codex-home ~/.codex \
+  --temp-root /path/to/tmp \
+  --selection all \
+  --limit 30 \
+  --concurrency 1 \
+  --timeout 1200 \
+  --max-attempts 1
+```
+
+## Prepare 20 QA Cases
+
+This prepares packets without calling Codex:
+
+```bash
+python new-impl/new-guideline/scripts/run_hcvr_case_anchor_audits.py \
+  --qa /path/to/hcvr_new_unified_paper_eval_rebalance_qa.v2.json \
+  --output-dir /path/to/run/prepared20 \
+  --repo-cache /path/to/run/repo-cache \
+  --snapshot-root /path/to/run/snapshots \
+  --codex-home ~/.codex \
+  --temp-root /path/to/tmp \
+  --limit 20 \
+  --prepare-only
+```
+
+Use `--no-materialize` with `--prepare-only` when you only want prompt packets
+and do not want to clone repositories yet.
+
+## Run Codex Harness Audits
+
+The default model is `qwen3-coder:30b`, matching the successful OpenMeetings
+pilot harness.
+
+```bash
+python new-impl/new-guideline/scripts/run_hcvr_case_anchor_audits.py \
+  --qa /path/to/hcvr_new_unified_paper_eval_rebalance_qa.v2.json \
+  --output-dir /path/to/run/audit20 \
+  --repo-cache /path/to/run/repo-cache \
+  --snapshot-root /path/to/run/snapshots \
+  --codex-home ~/.codex \
+  --temp-root /path/to/tmp \
+  --limit 20 \
+  --concurrency 1 \
+  --timeout 900 \
+  --max-attempts 1
+```
+
+Outputs:
+
+```text
+/path/to/run/audit20/
+  selected_cases.jsonl
+  audit_index.jsonl
+  summary.json
+  reports/
+    <case>.prompt.txt
+    <case>.attempt-01.events.jsonl
+    <case>.attempt-01.md
+    <case>.events.jsonl
+    <case>.md
+```
+
+The runner starts Codex in its own process group. If a timeout fires, it kills
+the full process group so native Codex children do not remain orphaned.
+
+## Seed a New Guideline from a Risk Audit
+
+```bash
+python new-impl/new-guideline/scripts/derive_guideline_from_audit.py \
+  --audit-report /path/to/reports/rank-0020.md \
+  --output-dir /path/to/derived-guideline \
+  --track-id object_scoped_authorization_after_interface_permission
+```
+
+The derived guideline intentionally excludes project names, file names,
+function names, and line numbers from the released guideline text.
+
+## PoC Handoff
+
+The PoC agent is downstream of this module. It should consume risk reports and
+use the report body to choose instrumentation points. This module does not run
+dynamic PoCs itself.
+
+Recommended handoff fields are already present in the report text:
+
+- anchor `file:line`;
+- missing or incorrect condition `file:line`;
+- sensitive effect `file:line`;
+- branch predicates and variables to observe;
+- expected runtime state that distinguishes true risk from false positive.
+
+Build handoff packets from completed audit results:
+
+```bash
+python new-impl/new-guideline/scripts/extract_poc_handoff_from_audit.py \
+  --audit-index /path/to/run/audit20/audit_index.jsonl \
+  --output /path/to/run/audit20/poc_handoff.jsonl
+```
+
+## Test
+
+```bash
+python -m pytest -q new-impl/new-guideline/tests
+```
+
+## Operational Notes
+
+- Keep run outputs outside the repository.
+- Do not commit cloned repositories, snapshots, Codex logs, prompts from private
+  code, credentials, or auth state.
+- Use the QA receipt and source snapshots as inputs, not training data or
+  hidden truth during audit.

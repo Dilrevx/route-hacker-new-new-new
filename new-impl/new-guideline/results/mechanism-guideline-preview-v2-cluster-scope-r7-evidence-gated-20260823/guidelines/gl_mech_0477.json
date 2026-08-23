@@ -1,0 +1,65 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where user-supplied URLs are passed to browser navigation or external command execution functions without sufficient validation. Missing checks on URL schemes, IP ranges, protocol allowlists, and trust of message sources allow SSRF, command injection, local file access, and unauthorized operations. The cluster includes missing pre-navigation validation, post-interaction re-validation, OS command execution mistakes, insecure trust of messages, and a race condition outlier.",
+  "created_at": "2026-08-22T20:37:30+00:00",
+  "cve_ids": [
+    "CVE-2026-32008",
+    "CVE-2026-43573",
+    "CVE-2026-5323"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0084__mech_ssrf_redirect_following_client",
+  "guideline_id": "gl_mech_0477",
+  "guideline_text": "Trace attacker-controlled URLs or server-controlled redirect responses into HTTP clients that automatically follow redirects or reuse a previously validated URL decision. Report code paths where the final redirected scheme, host, port, and resolved address are not revalidated before the sensitive network request. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should disable automatic redirects or revalidate every redirect hop against the same allowlist and address policy.",
+  "mechanism": {
+    "aliases": [
+      "redirect-follow SSRF",
+      "HTTP redirect SSRF",
+      "Location header SSRF"
+    ],
+    "family": "ssrf",
+    "mechanism_id": "mech_ssrf_redirect_following_client",
+    "missing_guard": "the final redirected scheme, host, port, and resolved address are not revalidated before the sensitive network request",
+    "name": "SSRF through redirect-following client",
+    "required_keywords": [],
+    "sink_shape": "HTTP clients that automatically follow redirects or reuse a previously validated URL decision",
+    "source_shape": "attacker-controlled URLs or server-controlled redirect responses",
+    "typical_fix": "disable automatic redirects or revalidate every redirect hop against the same allowlist and address policy"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-32008",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    84
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 84,
+      "fix_strategy": "Add an allowlist of safe schemes (e.g., http, https, about:blank) and resolve hostnames to IPs to reject private, loopback, and link-local addresses before navigation or resource requests.",
+      "members": [
+        "CVE-2026-32008",
+        "CVE-2026-5323"
+      ],
+      "name": "Missing pre-navigation URL validation for SSRF/local file protection",
+      "root_cause": "Code assumes user-supplied URL is safe for browser navigation without validating target scheme or IP range, allowing navigation to file:/// or private networks."
+    },
+    {
+      "cluster_id": 84,
+      "fix_strategy": "After each interaction, enumerate all open tabs or listen for navigation events, then assert that the final URL matches the SSRF policy.",
+      "members": [
+        "CVE-2026-43573"
+      ],
+      "name": "Missing post-interaction URL re-validation",
+      "root_cause": "Code does not re-validate the resulting URL after a browser interaction (click, type, press) that may trigger navigation, allowing delayed or new-tab navigation to bypass SSRF policy."
+    }
+  ],
+  "tags": [
+    "ssrf",
+    "mech_ssrf_redirect_following_client",
+    "redirect-follow SSRF",
+    "HTTP redirect SSRF",
+    "Location header SSRF"
+  ]
+}

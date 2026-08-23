@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "A set of vulnerabilities where user-controlled data is embedded into HTML output without appropriate context-specific output encoding, allowing injection of arbitrary HTML/JavaScript. This occurs when developers assume raw input is safe for direct inclusion in HTML body, attribute, or script contexts.",
+  "created_at": "2026-08-22T20:37:29+00:00",
+  "cve_ids": [
+    "CVE-2021-25929"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0057__pending_mech_cluster_57_missing_context_aware_output_encoding_across_multiple_output_contexts",
+  "guideline_id": "gl_mech_0311",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Apply context-specific output encoding: for HTML body use fn:escapeXml, for JavaScript use e:forJavaScript, and for JavaScript string interpolation use _.escape()..",
+  "mechanism": {
+    "aliases": [
+      "users",
+      "encoding",
+      "interpolated",
+      "body",
+      "containing",
+      "authenticated"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_57_missing_context_aware_output_encoding_across_multiple_output_contexts",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "missing context-aware output encoding across multiple output contexts",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Apply context-specific output encoding: for HTML body use fn:escapeXml, for JavaScript use e:forJavaScript, and for JavaScript string interpolation use _.escape()."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2021-25929",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    57
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 57,
+      "fix_strategy": "Apply context-specific output encoding: for HTML body use fn:escapeXml, for JavaScript use e:forJavaScript, and for JavaScript string interpolation use _.escape().",
+      "members": [
+        "CVE-2021-25929"
+      ],
+      "name": "missing context-aware output encoding across multiple output contexts",
+      "root_cause": "The application stores user-controlled data and later renders it in both HTML and JavaScript contexts without applying the correct encoding for each context, assuming stored data is safe."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_57_missing_context_aware_output_encoding_across_multiple_output_contexts",
+    "users",
+    "encoding",
+    "interpolated",
+    "body"
+  ]
+}

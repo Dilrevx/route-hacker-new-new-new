@@ -1,0 +1,38 @@
+[
+  {
+    "boundary_decision": "promote_boundary",
+    "boundary_label": "candidate_boundary_01_jjwt_parse_without_jws_verification",
+    "errors": [],
+    "guideline_id": "review_mech_0513",
+    "line_no": 1,
+    "valid": true,
+    "warnings": []
+  },
+  {
+    "boundary_decision": "promote_boundary",
+    "boundary_label": "candidate_boundary_02_jose_header_supplied_jwk_trust",
+    "errors": [],
+    "guideline_id": "review_mech_0513",
+    "line_no": 2,
+    "valid": true,
+    "warnings": []
+  },
+  {
+    "boundary_decision": "promote_boundary",
+    "boundary_label": "candidate_boundary_03_oidc_none_algorithm_requires_opt_in",
+    "errors": [],
+    "guideline_id": "review_mech_0513",
+    "line_no": 3,
+    "valid": true,
+    "warnings": []
+  },
+  {
+    "boundary_decision": "needs_more_evidence",
+    "boundary_label": "candidate_boundary_04_remaining_unreviewed_members",
+    "errors": [],
+    "guideline_id": "review_mech_0513",
+    "line_no": 4,
+    "valid": true,
+    "warnings": []
+  }
+]

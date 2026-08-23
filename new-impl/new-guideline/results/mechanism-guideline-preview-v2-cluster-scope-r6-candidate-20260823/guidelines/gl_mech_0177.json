@@ -1,0 +1,65 @@
+{
+  "cluster_summary": "This cluster covers vulnerabilities where credentials (cookies, headers, realms) are improperly handled when crossing trust boundaries such as cross-origin redirects, fetch requests, proxy bypass, and shared client contexts. The root causes include missing credential clearing, incomplete header filtering, incorrect origin references, and unisolated mutable state.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2024-53990",
+    "CVE-2026-34518",
+    "CVE-2026-45300"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0038__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0177",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "required_keywords": [],
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2024-53990",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    38
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 38,
+      "fix_strategy": "Ensure all credential sources are cleared when origin changes, including headers and any separate cookies object.",
+      "members": [
+        "CVE-2026-34518",
+        "CVE-2026-45300"
+      ],
+      "name": "Incomplete credential clearing on redirect",
+      "root_cause": "Code fails to remove all sensitive credential sources (Cookie header, Proxy-Authorization header, per-request cookies dictionary) when following a redirect to a different origin."
+    },
+    {
+      "cluster_id": 38,
+      "fix_strategy": "Replace addOrReplaceCookie with addCookieIfUnset to preserve user-defined cookies.",
+      "members": [
+        "CVE-2024-53990"
+      ],
+      "name": "Cookie store precedence violation",
+      "root_cause": "When merging cookies from a persistent store with request-specific cookies, the store unconditionally replaces explicitly set cookies without precedence check."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

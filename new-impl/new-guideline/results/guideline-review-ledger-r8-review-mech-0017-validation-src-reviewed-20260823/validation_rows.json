@@ -1,0 +1,38 @@
+[
+  {
+    "boundary_decision": "promote_boundary",
+    "boundary_label": "candidate_boundary_01_static_resource_path_containment",
+    "errors": [],
+    "guideline_id": "review_mech_0017",
+    "line_no": 1,
+    "valid": true,
+    "warnings": []
+  },
+  {
+    "boundary_decision": "promote_boundary",
+    "boundary_label": "candidate_boundary_02_multipart_original_filename_write",
+    "errors": [],
+    "guideline_id": "review_mech_0017",
+    "line_no": 2,
+    "valid": true,
+    "warnings": []
+  },
+  {
+    "boundary_decision": "promote_boundary",
+    "boundary_label": "candidate_boundary_03_recursive_copy_move_ancestor_guard",
+    "errors": [],
+    "guideline_id": "review_mech_0017",
+    "line_no": 3,
+    "valid": true,
+    "warnings": []
+  },
+  {
+    "boundary_decision": "mark_out_of_scope",
+    "boundary_label": "candidate_boundary_04_cuba_upload_size_out_of_scope",
+    "errors": [],
+    "guideline_id": "review_mech_0017",
+    "line_no": 4,
+    "valid": true,
+    "warnings": []
+  }
+]

@@ -1,0 +1,73 @@
+{
+  "cluster_summary": "The cluster contains vulnerabilities in DNS handling within a network library that uses a proxy trust model. The primary defect is performing DNS pinning (hostname resolution and IP binding) before checking whether a trusted proxy is active, which bypasses proxy security controls and can lead to SSRF, information leakage, and authorization bypass. Additional sub-patterns include DNS rebinding due to separation of hostname validation and fetch, and several unrelated DNS issues.",
+  "created_at": "2026-08-22T20:37:27+00:00",
+  "cve_ids": [
+    "CVE-2026-40155"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0014__mech_authentication_artifact_incomplete_validation",
+  "guideline_id": "gl_mech_0066",
+  "guideline_text": "Trace externally supplied authentication artifacts such as JWTs, SAML responses, OAuth authorization codes, bearer tokens, session cookies, or client credentials into session creation, identity binding, privilege assignment, protected API access, or credential exchange decisions. Report code paths where signature, issuer, audience, expiry, nonce, binding, proof-of-possession, or protocol state validation is incomplete before accepting the identity. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should validate all required cryptographic and protocol fields before creating a principal or granting access, and bind the artifact to the intended client, audience, and session.",
+  "mechanism": {
+    "aliases": [
+      "JWT validation bypass",
+      "SAML validation bypass",
+      "OAuth token validation bypass",
+      "session artifact validation bypass"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_authentication_artifact_incomplete_validation",
+    "missing_guard": "signature, issuer, audience, expiry, nonce, binding, proof-of-possession, or protocol state validation is incomplete before accepting the identity",
+    "name": "authentication artifact accepted without complete validation",
+    "required_keywords": [
+      [
+        "jwt",
+        "saml",
+        "oauth",
+        "token",
+        "session",
+        "credential"
+      ],
+      [
+        "signature",
+        "claims",
+        "audience",
+        "issuer",
+        "nonce",
+        "proof-of-possession",
+        "validation"
+      ]
+    ],
+    "sink_shape": "session creation, identity binding, privilege assignment, protected API access, or credential exchange decisions",
+    "source_shape": "externally supplied authentication artifacts such as JWTs, SAML responses, OAuth authorization codes, bearer tokens, session cookies, or client credentials",
+    "typical_fix": "validate all required cryptographic and protocol fields before creating a principal or granting access, and bind the artifact to the intended client, audience, and session"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-40155",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    14
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 14,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2026-40155"
+      ],
+      "name": "premature DNS pinning before proxy mode check",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_authentication_artifact_incomplete_validation",
+    "JWT validation bypass",
+    "SAML validation bypass",
+    "OAuth token validation bypass",
+    "session artifact validation bypass"
+  ]
+}

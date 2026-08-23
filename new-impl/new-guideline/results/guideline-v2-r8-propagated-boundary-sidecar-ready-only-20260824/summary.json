@@ -1,0 +1,26 @@
+{
+  "allowed_statuses": [
+    "group_ablation_ready"
+  ],
+  "files": {
+    "guideline_overrides": "guideline_overrides.jsonl",
+    "selected_boundaries": "selected_boundaries.jsonl"
+  },
+  "input_boundary_count": 33,
+  "input_status_counts": {
+    "group_ablation_candidate_outside_fixed_set": 1,
+    "group_ablation_ready": 1,
+    "requires_release_regeneration": 31
+  },
+  "policy": [
+    "release_group_sidecar_candidate",
+    "source_reviewed_boundaries_only",
+    "no_bad_case_answer_key",
+    "no_regex_fallback",
+    "requires_same_identity_recall_before_claim"
+  ],
+  "schema_version": "hcvr_propagated_boundary_sidecar.v1",
+  "selected_boundary_count": 1,
+  "sidecar_identity_count": 8,
+  "skip_or_missing_counts": {}
+}

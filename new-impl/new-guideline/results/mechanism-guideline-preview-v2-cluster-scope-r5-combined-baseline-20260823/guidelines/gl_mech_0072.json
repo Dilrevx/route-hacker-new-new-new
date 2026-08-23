@@ -1,0 +1,55 @@
+{
+  "cluster_summary": "This cluster comprises 16 CVEs that all involve insufficient validation or sanitization of user-controlled input before it is used in critical operations such as shell command execution, subprocess argument construction, filesystem path operations, and output rendering. The vulnerabilities manifest as command injection, argument injection, path traversal, credential disclosure, ANSI escape injection, and regex bypass, but they share a common deficiency in treating untrusted input as safe in different contexts.",
+  "created_at": "2026-08-22T20:04:49+00:00",
+  "cve_ids": [
+    "CVE-2026-47090"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0020__mech_open_redirect_unsafe_uri_scheme",
+  "guideline_id": "gl_mech_0072",
+  "guideline_text": "Trace attacker-controlled redirect targets, callback URLs, return URLs, OAuth redirect_uri values, or browser navigation destinations into redirect responses, Location headers, OAuth/OIDC/SAML redirect validation, or browser-followed navigation targets. Report code paths where the redirect target is accepted without constraining the final scheme and destination to trusted browser-safe values. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should validate redirect targets with an explicit safe-scheme and destination allowlist after decoding and normalization.",
+  "mechanism": {
+    "aliases": [
+      "unsafe redirect URI scheme",
+      "javascript URI redirect",
+      "data URI redirect",
+      "redirect_uri scheme bypass"
+    ],
+    "family": "open_redirect",
+    "mechanism_id": "mech_open_redirect_unsafe_uri_scheme",
+    "missing_guard": "the redirect target is accepted without constraining the final scheme and destination to trusted browser-safe values",
+    "name": "open redirect through unsafe URI scheme validation",
+    "required_keywords": [],
+    "sink_shape": "redirect responses, Location headers, OAuth/OIDC/SAML redirect validation, or browser-followed navigation targets",
+    "source_shape": "attacker-controlled redirect targets, callback URLs, return URLs, OAuth redirect_uri values, or browser navigation destinations",
+    "typical_fix": "validate redirect targets with an explicit safe-scheme and destination allowlist after decoding and normalization"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-47090",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    20
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 20,
+      "fix_strategy": "Strip control characters from display strings, encode URI components, validate URI schemes, and canonicalize file paths before embedding in hyperlinks.",
+      "members": [
+        "CVE-2026-47090"
+      ],
+      "name": "ANSI Escape Injection in Terminal Output",
+      "root_cause": "User-controlled strings are directly embedded into ANSI escape sequences (OSC 8 hyperlinks) without stripping control characters or validating URI schemes, allowing injection of arbitrary escape sequences that can manipulate terminal behavior."
+    }
+  ],
+  "tags": [
+    "open_redirect",
+    "mech_open_redirect_unsafe_uri_scheme",
+    "unsafe redirect URI scheme",
+    "javascript URI redirect",
+    "data URI redirect",
+    "redirect_uri scheme bypass"
+  ]
+}

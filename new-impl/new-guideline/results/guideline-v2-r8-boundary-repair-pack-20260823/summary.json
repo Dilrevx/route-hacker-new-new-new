@@ -1,0 +1,24 @@
+{
+  "example_counts": {
+    "missing_trace_evidence": 4,
+    "review_entry_only": 16,
+    "source_trace_present": 13
+  },
+  "pack_count": 8,
+  "policy": [
+    "This is a review-only mechanism-boundary repair pack.",
+    "It does not update released guidelines, lexicon entries, guideline sidecars, recall ranks, or audit prompts.",
+    "Use it to collect source/sink/guard/fix evidence before deciding whether a split or revision belongs in the released guideline set.",
+    "Any promoted sidecar text requires a fresh same-identity recall run."
+  ],
+  "repair_kind_counts": {
+    "revise_mechanism_text_from_evidence": 5,
+    "split_mechanism_boundary": 3
+  },
+  "schema_version": "hcvr_guideline_boundary_repair_pack.v1",
+  "source_worklist_count": 20,
+  "target_actions": [
+    "revise_mechanism_text_from_evidence",
+    "split_mechanism_boundary"
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "cluster_summary": "This cluster covers vulnerabilities where attacker-controlled strings are evaluated as expression language or code by template engines, validation frameworks, or dynamic code generators without proper restrictions or sanitization. The common mistake is assuming user input is safe to interpret, leading to injection of arbitrary expressions or code that can execute arbitrary operations.",
+  "created_at": "2026-08-21T09:41:08+00:00",
+  "cve_ids": [
+    "CVE-2010-5327",
+    "CVE-2020-11002",
+    "CVE-2020-12668",
+    "CVE-2020-26282",
+    "CVE-2020-5245",
+    "CVE-2021-21244",
+    "CVE-2021-3644",
+    "CVE-2021-41269",
+    "CVE-2022-24881",
+    "CVE-2022-46166",
+    "CVE-2023-51387",
+    "CVE-2023-51388",
+    "CVE-2024-41667",
+    "CVE-2025-35036",
+    "CVE-2025-59954",
+    "CVE-2026-7045"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0003__mech_template_expression_untrusted_eval",
+  "guideline_id": "gl_mech_0011",
+  "guideline_text": "Trace attacker-controlled template text, expression strings, macro content, or rendering parameters into template engines, expression evaluators, macro renderers, or scriptable configuration evaluators. Report code paths where untrusted expression content is evaluated without sandboxing, escaping, allowlisting, or disabling reflective execution features. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 16 historical CVE example(s), not as a project-specific signature. A safe implementation should separate data from templates, sandbox expression evaluation, and disable reflection or method invocation features for untrusted input.",
+  "mechanism": {
+    "aliases": [
+      "template injection",
+      "expression language injection",
+      "SpEL injection",
+      "OGNL injection",
+      "Velocity macro injection",
+      "FreeMarker template injection"
+    ],
+    "family": "code_or_template_injection",
+    "mechanism_id": "mech_template_expression_untrusted_eval",
+    "missing_guard": "untrusted expression content is evaluated without sandboxing, escaping, allowlisting, or disabling reflective execution features",
+    "name": "untrusted template or expression evaluation",
+    "sink_shape": "template engines, expression evaluators, macro renderers, or scriptable configuration evaluators",
+    "source_shape": "attacker-controlled template text, expression strings, macro content, or rendering parameters",
+    "typical_fix": "separate data from templates, sandbox expression evaluation, and disable reflection or method invocation features for untrusted input"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2010-5327",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    3
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 3,
+      "fix_strategy": "Restrict the evaluation context by disabling dangerous features: use SimpleEvaluationContext for SpEL, set empty function library for JXPath, restrict feature set for AviatorScript, set SAFER_RESOLVER for FreeMarker, and use SecureUberspector for Velocity.",
+      "members": [
+        "CVE-2026-7045",
+        "CVE-2025-59954",
+        "CVE-2022-46166",
+        "CVE-2022-24881",
+        "CVE-2023-51388",
+        "CVE-2024-41667",
+        "CVE-2010-5327",
+        "CVE-2023-51387"
+      ],
+      "name": "Unrestricted Expression Language Engine Configuration",
+      "root_cause": "Expression language engines (SpEL, JXPath, AviatorScript, FreeMarker, Velocity) are used with default settings that allow dangerous operations (type references, method invocation, object instantiation) on attacker-controlled expressions, because the code assumes the input is trusted."
+    },
+    {
+      "cluster_id": 3,
+      "fix_strategy": "Escape EL delimiters (e.g., `${` with `\\${`) in user input, replace dynamic templates with static safe messages, or switch to a non-EL interpolator such as ParameterMessageInterpolator, or disable EL interpolation by default.",
+      "members": [
+        "CVE-2025-35036",
+        "CVE-2021-41269",
+        "CVE-2020-5245",
+        "CVE-2020-26282",
+        "CVE-2020-11002",
+        "CVE-2021-21244"
+      ],
+      "name": "Unescaped User Input in Bean Validation Message Templates",
+      "root_cause": "User-supplied strings are passed to Hibernate Validator's message interpolation, which interprets EL expressions, without escaping special characters ('${', etc.) or using a non-EL interpolator."
+    },
+    {
+      "cluster_id": 3,
+      "fix_strategy": "Extend the restricted class list to include dangerous types (java.lang.reflect.Method, Field, Constructor, JinjavaInterpreter) and ensure property resolution goes through sandboxed checks that return null for restricted base objects.",
+      "members": [
+        "CVE-2020-12668"
+      ],
+      "name": "Sandbox Bypass via Unrestricted Property Access on Interpreter Internals",
+      "root_cause": "Template engine sandboxes do not restrict access to dangerous object types (e.g., reflection objects, engine interpreter object) that allow further traversal to unsafe functionality like arbitrary class instantiation, because the sandbox's blocklist is incomplete."
+    },
+    {
+      "cluster_id": 3,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2021-3644"
+      ],
+      "name": "Unrestricted Evaluation of User-Supplied Expressions in Template Engines and Validation Messages",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "code_or_template_injection",
+    "mech_template_expression_untrusted_eval",
+    "template injection",
+    "expression language injection",
+    "SpEL injection",
+    "OGNL injection"
+  ]
+}

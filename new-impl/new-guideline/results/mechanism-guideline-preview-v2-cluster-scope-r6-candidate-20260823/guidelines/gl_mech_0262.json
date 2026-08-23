@@ -1,0 +1,72 @@
+{
+  "cluster_summary": "A set of vulnerabilities where user-controlled data is embedded into HTML output without appropriate context-specific output encoding, allowing injection of arbitrary HTML/JavaScript. This occurs when developers assume raw input is safe for direct inclusion in HTML body, attribute, or script contexts.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2019-17091"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0057__mech_sql_dynamic_query_untrusted_fragment",
+  "guideline_id": "gl_mech_0262",
+  "guideline_text": "Trace attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values into SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters. Report code paths where values or structural fragments are concatenated into SQL syntax without parameter binding or a strict allowlist for identifiers and operators. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should use bound parameters for values, allowlist structural SQL fragments, and keep untrusted data out of query syntax.",
+  "mechanism": {
+    "aliases": [
+      "SQL injection",
+      "SQL concatenation",
+      "dynamic SQL injection",
+      "untrusted query fragment"
+    ],
+    "family": "sql_injection",
+    "mechanism_id": "mech_sql_dynamic_query_untrusted_fragment",
+    "missing_guard": "values or structural fragments are concatenated into SQL syntax without parameter binding or a strict allowlist for identifiers and operators",
+    "name": "dynamic SQL query construction from untrusted fragments",
+    "required_keywords": [
+      [
+        "sql",
+        "jdbc",
+        "statement",
+        "preparedstatement",
+        "query"
+      ],
+      [
+        "concatenate",
+        "concat",
+        "interpolation",
+        "fragment",
+        "parameter",
+        "where",
+        "order by"
+      ]
+    ],
+    "sink_shape": "SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters",
+    "source_shape": "attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values",
+    "typical_fix": "use bound parameters for values, allowlist structural SQL fragments, and keep untrusted data out of query syntax"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2019-17091",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    57
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 57,
+      "fix_strategy": "Apply HTML entity escaping (e.g., StringEscapeUtils.escapeHtml, fn:escapeXml, writer.writeText) to all user-controlled values before inserting into HTML body context.",
+      "members": [
+        "CVE-2019-17091"
+      ],
+      "name": "missing HTML entity encoding in HTML body context",
+      "root_cause": "The code assumes user-controlled strings are safe to include directly in HTML text content (e.g., between tags) without HTML entity escaping, allowing injection of arbitrary tags."
+    }
+  ],
+  "tags": [
+    "sql_injection",
+    "mech_sql_dynamic_query_untrusted_fragment",
+    "SQL injection",
+    "SQL concatenation",
+    "dynamic SQL injection",
+    "untrusted query fragment"
+  ]
+}

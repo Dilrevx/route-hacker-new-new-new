@@ -1,0 +1,19 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.90,
+  "coverage_score": 0.85,
+  "actionability_score": 0.90,
+  "retrieval_query_quality": 0.85,
+  "main_issue": "The boundary correctly captures the shared source→sink→missing-guard pattern across all four cases. Each case shows attacker-influenced destination material (query param, path info, header, config) flowing into a server-side network client (fetch, RestTemplate, MCP transport, fetcher) without destination validation. The rewrite from redirect-following to direct URL/proxy is justified: redirect following is a guard variant, not the mechanism itself, and the old framing overfits the group name while losing the shared source/sink/guard shape.",
+  "suggested_guideline": "Direct URL/proxy SSRF: attacker-controlled request parameters, path components, headers, tool configuration, or equivalent request metadata are used to construct an outbound HTTP, proxy, MCP, webhook, or REST-client destination, and the server performs the request before enforcing scheme, host, port, DNS-resolved address, private-network, metadata-address, and redirect-target policy on the same destination object.",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "bigsk1__openai-realtime-ui::CVE-2026-5803: direct source-snapshot evidence shows req.query.url → fetch(fullUrl) without URL parsing or address policy. Strong evidence.",
+    "cbioportal__cbioportal::CVE-2024-41668: direct source-snapshot evidence shows path-info → RestTemplate.exchange() without scheme/host/private-address policy. Strong evidence.",
+    "labring__fastgpt::CVE-2026-44284: evidence is from committed r8 worklist records, not direct source snapshots. Mechanism fit is confirmed (MCPClient URL → StreamableHTTPClientTransport/SSEClientTransport without internal-address gate), but evidence should be source-expanded with direct snapshot references before final release.",
+    "sooperset__mcp-atlassian::CVE-2026-27826: committed r5/r8 group evidence shows header-provided URLs → JiraConfig/JiraFetcher and ConfluenceConfig/ConfluenceFetcher without destination validation. Also overlaps credential-forwarding risk which may warrant a separate audit dimension.",
+    "All four cases converge on the same missing-guard shape: the destination is not parsed and validated before the request, no private/metadata address ranges are rejected post-DNS, and no allowlist constrains scheme/host/port. The safe-fix semantics (parse→validate→reject internal→validate redirects→request) are consistent across cases."
+  ]
+}
+```

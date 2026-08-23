@@ -1,0 +1,21 @@
+{
+  "boundary_label": "candidate_boundary_02_perfree_url_upload_missing_permission_guard",
+  "guideline_group_key": "gl_mech_0006__candidate_boundary_02_perfree_url_upload_missing_permission_guard__mech_missing_endpoint_authorization_for_server_side_url_fetch",
+  "guideline_id": "sr_mech_0004",
+  "guideline_text": "Audit for missing endpoint authorization for server-side URL fetch. Missing endpoint authorization for server-side URL fetch: a controller endpoint accepts an attacker-controlled URL in the request body and invokes a server-side download, import, upload, preview, or attachment-ingestion service without enforcing the same permission guard used for comparable administrative attachment or upload operations. Report paths where the request body URL reaches server-side outbound fetching or file ingestion before the endpoint-level authorization check proves the caller is allowed to trigger that network and storage effect. Required missing-guard check: The vulnerable endpoint has no `@PreAuthorize` permission check on the same controller method that receives the URL and triggers the server-side fetch. The request body being `@Valid` only checks presence of the URL field and does not authorize the caller or restrict the outbound target. The missing guard is endpoint authorization before the SSRF-capable download operation, not a URL parser, path-parameter mismatch, or request-body resource ownership check. Safe implementation should: Apply the same administrative attachment update permission guard to the URL-upload endpoint before reading the body URL or invoking the service-side download. The observed fix adds `@PreAuthorize(\"@ss.hasPermission('admin:attach:update')\")` immediately above `uploadAttachByUrl`; further URL allowlisting or network-range filtering would harden SSRF behavior, but the CVE's patch and advisory identify the missing authorization check as the fixed guard. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 0 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_missing_endpoint_authorization_for_server_side_url_fetch",
+    "name": "missing endpoint authorization for server-side URL fetch"
+  },
+  "old_guideline_id": "gl_mech_0006",
+  "release_status": {
+    "blockers": [
+      "singleton_or_missing_case_support"
+    ],
+    "release_ready": false,
+    "status": "review_only"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 0
+}

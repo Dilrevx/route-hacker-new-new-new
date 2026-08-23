@@ -1,0 +1,19 @@
+{
+  "boundary_label": "candidate_boundary_04_jinjava_sandbox_escape",
+  "guideline_group_key": "gl_mech_0040__candidate_boundary_04_jinjava_sandbox_escape__mech_jinjava_sandbox_property_method_escape",
+  "guideline_id": "sr_mech_0015",
+  "guideline_text": "Audit for Jinjava sandbox bypass through incomplete property or method restrictions. Jinjava sandbox bypass through incomplete property or method restrictions: attacker-controlled template expressions reach Jinjava EL/property/method resolution and can access interpreter internals, restricted classes, reflection packages, Jackson databind objects, or direct JavaBean read methods because the resolver does not consistently apply sandbox restrictions to the base object, method name, package, or property access path. Report flows where property or method resolution bypasses the interpreter's restricted-class and restricted-method checks. Required missing-guard check: The vulnerable paths lack consistent restricted-class, restricted-base-object, restricted-package, restricted-method, and sandbox-aware property resolution checks at the resolver and tag property access points. Direct JavaBean read-method invocation bypasses the interpreter's normal sandbox-aware resolution path. Safe implementation should: Extend the restricted class/package/method set, reject restricted base objects in getValue, and route property reads through interpreter.resolveProperty or an equivalent sandbox-aware resolver so the same restrictions apply across direct property access, method invocation, package access, and tag iteration paths. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 3 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_jinjava_sandbox_property_method_escape",
+    "name": "Jinjava sandbox bypass through incomplete property or method restrictions"
+  },
+  "old_guideline_id": "gl_mech_0040",
+  "release_status": {
+    "blockers": [],
+    "release_ready": true,
+    "status": "release_ready"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 3
+}

@@ -1,0 +1,132 @@
+{
+  "cluster_summary": "This cluster comprises vulnerabilities where file parsers fail to validate user-controlled integer values (offsets, sizes, counts) before using them in memory writes, loop bounds, or decompression. The lack of bounds checking allows attackers to trigger out-of-bounds writes, infinite loops, memory exhaustion, or CPU exhaustion via crafted files.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2026-25990",
+    "CVE-2026-27809",
+    "CVE-2026-27888",
+    "CVE-2026-28351",
+    "CVE-2026-40192",
+    "CVE-2026-41168",
+    "CVE-2026-41312",
+    "CVE-2026-41314",
+    "CVE-2026-42311"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0039__mech_binary_length_unbounded_resource_use",
+  "guideline_id": "gl_mech_0070",
+  "guideline_text": "Trace attacker-controlled binary length fields, size counters, frame lengths, offsets, back-references, or decompressed-size metadata into memory allocation, buffer growth, parsing loops, frame handling, decompression, or resource-consuming work. Report code paths where protocol-specific upper bounds, arithmetic overflow checks, structural consistency checks, or expansion limits are absent before allocation or work expansion. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 9 historical CVE example(s), not as a project-specific signature. A safe implementation should enforce explicit size limits, validate arithmetic and offsets before use, reject malformed or oversized records early, and bound decompression or frame-processing work.",
+  "mechanism": {
+    "aliases": [
+      "unbounded length allocation",
+      "binary size field DoS",
+      "frame length resource exhaustion",
+      "decompression size exhaustion"
+    ],
+    "family": "resource_exhaustion_or_bounds",
+    "mechanism_id": "mech_binary_length_unbounded_resource_use",
+    "missing_guard": "protocol-specific upper bounds, arithmetic overflow checks, structural consistency checks, or expansion limits are absent before allocation or work expansion",
+    "name": "unbounded binary length or size field drives resource use",
+    "required_keywords": [
+      [
+        "binary",
+        "frame",
+        "buffer",
+        "allocate",
+        "allocation",
+        "decompress",
+        "compressed",
+        "payload",
+        "offset"
+      ],
+      [
+        "length",
+        "size",
+        "count",
+        "bounds",
+        "overflow"
+      ]
+    ],
+    "sink_shape": "memory allocation, buffer growth, parsing loops, frame handling, decompression, or resource-consuming work",
+    "source_shape": "attacker-controlled binary length fields, size counters, frame lengths, offsets, back-references, or decompressed-size metadata",
+    "typical_fix": "enforce explicit size limits, validate arithmetic and offsets before use, reject malformed or oversized records early, and bound decompression or frame-processing work"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 3,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 9,
+    "total_member_count": 9,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2026-25990",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    39
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 39,
+      "fix_strategy": "Add validation checks for non-negative offsets and ensure coordinates are within image dimensions, raising an error if invalid.",
+      "members": [
+        "CVE-2026-25990",
+        "CVE-2026-42311"
+      ],
+      "name": "Missing validation of tile/image coordinates leading to out-of-bounds write",
+      "root_cause": "Code assumes tile offsets or extent coordinates are non-negative and within image bounds, but no validation is performed before using them to compute memory boundaries."
+    },
+    {
+      "cluster_id": 39,
+      "fix_strategy": "Add a maximum output size limit and raise an exception if the decompressed data exceeds the limit.",
+      "members": [
+        "CVE-2026-27888",
+        "CVE-2026-28351",
+        "CVE-2026-40192"
+      ],
+      "name": "Unbounded decompression output causing memory exhaustion",
+      "root_cause": "Decompression routines (FlateDecode, RunLengthDecode, gzip) do not impose a limit on the size of decompressed output, allowing a decompression bomb to exhaust memory."
+    },
+    {
+      "cluster_id": 39,
+      "fix_strategy": "Clamp or reject excessive loop bounds; replace iteration over a range with iteration over actual collected object IDs.",
+      "members": [
+        "CVE-2026-41168"
+      ],
+      "name": "Unvalidated loop bounds from input metadata causing CPU exhaustion",
+      "root_cause": "User-controlled integer values from PDF stream or trailer dictionaries (e.g., /N, /Size) are used directly as loop bounds without validation or capping, allowing arbitrarily large iterations."
+    },
+    {
+      "cluster_id": 39,
+      "fix_strategy": "Wrap decompression calls in try/except blocks with fallback, and add a state flag to prevent reuse after an error.",
+      "members": [
+        "CVE-2026-27809"
+      ],
+      "name": "Missing error handling in decompression leading to crash or buffer overflow",
+      "root_cause": "Decompression routines do not handle malformed data gracefully: exceptions are uncaught, or the decompressor state is reused after an error, leading to crashes or stack buffer overflows."
+    },
+    {
+      "cluster_id": 39,
+      "fix_strategy": "Add validation of columns and row_length against configured maximums, raising an exception if exceeded.",
+      "members": [
+        "CVE-2026-41312",
+        "CVE-2026-41314"
+      ],
+      "name": "Missing limits on stream parameters leading to memory exhaustion",
+      "root_cause": "User-controlled PDF stream parameters (columns, colors, bits_per_component) are used to compute row_length without validation, enabling arbitrarily large memory allocation."
+    }
+  ],
+  "tags": [
+    "resource_exhaustion_or_bounds",
+    "mech_binary_length_unbounded_resource_use",
+    "unbounded length allocation",
+    "binary size field DoS",
+    "frame length resource exhaustion",
+    "decompression size exhaustion"
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "cluster_summary": "These vulnerabilities result from failing to apply proper output encoding when embedding user-controlled data into web content (HTML, XML, JavaScript). The code assumes data is safe and concatenates it directly into output strings, allowing injection of arbitrary markup or script. The fix requires applying context-appropriate escaping (HTML entity, XML entity, or JavaScript string escaping) depending on the output context.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2024-23818"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0047__mech_template_expression_untrusted_eval",
+  "guideline_id": "gl_mech_0080",
+  "guideline_text": "Trace attacker-controlled template text, expression strings, macro content, or rendering parameters into template engines, expression evaluators, macro renderers, or scriptable configuration evaluators. Report code paths where untrusted expression content is evaluated without sandboxing, escaping, allowlisting, or disabling reflective execution features. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should separate data from templates, sandbox expression evaluation, and disable reflection or method invocation features for untrusted input.",
+  "mechanism": {
+    "aliases": [
+      "template injection",
+      "expression language injection",
+      "SpEL injection",
+      "OGNL injection",
+      "Velocity macro injection",
+      "FreeMarker template injection"
+    ],
+    "family": "code_or_template_injection",
+    "mechanism_id": "mech_template_expression_untrusted_eval",
+    "missing_guard": "untrusted expression content is evaluated without sandboxing, escaping, allowlisting, or disabling reflective execution features",
+    "name": "untrusted template or expression evaluation",
+    "required_keywords": [],
+    "sink_shape": "template engines, expression evaluators, macro renderers, or scriptable configuration evaluators",
+    "source_shape": "attacker-controlled template text, expression strings, macro content, or rendering parameters",
+    "typical_fix": "separate data from templates, sandbox expression evaluation, and disable reflection or method invocation features for untrusted input"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 3,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 1,
+    "total_member_count": 1,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2024-23818",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    47
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 47,
+      "fix_strategy": "Set FreeMarker template configuration to use HTMLOutputFormat globally, wrap script blocks with <#outputformat \"JavaScript\">, and apply ?js_string built-in to all string variables in JavaScript contexts.",
+      "members": [
+        "CVE-2024-23818"
+      ],
+      "name": "Missing JavaScript context escaping in FreeMarker templates",
+      "root_cause": "FreeMarker templates generate JavaScript code for OpenLayers maps without applying JavaScript-specific escaping (e.g., ?js_string) to user-controlled values, assuming default escaping is sufficient."
+    }
+  ],
+  "tags": [
+    "code_or_template_injection",
+    "mech_template_expression_untrusted_eval",
+    "template injection",
+    "expression language injection",
+    "SpEL injection",
+    "OGNL injection"
+  ]
+}

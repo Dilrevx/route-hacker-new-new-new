@@ -1,0 +1,7 @@
+identity_key	best_known_anchor_judge_rank	best_known_anchor_original_rank	best_known_anchor_relevance	judge_top_known_anchor_overlap	judge_top_original_rank	judge_top_file
+apache__axis-axis1-java::CVE-2023-51441				False	5	axis-codegen/src/main/java/org/apache/axis/wsdl/toJava/JavaServiceImplWriter.java
+apolloconfig__apollo::CVE-2024-43397				False	11	apollo-adminservice/src/main/java/com/ctrip/framework/apollo/adminservice/controller/ItemController.java
+jeecgboot__jeecgboot::CVE-2025-14908				False	4	jeecg-boot/jeecg-boot-base-core/src/main/java/org/jeecg/config/shiro/ShiroRealm.java
+okta__okta-sdk-java::CVE-2025-66033				False	16	api/src/main/java/com/okta/sdk/client/MultiThreadingWarningUtil.java
+steve-community__steve::CVE-2026-28230				False	17	src/main/java/de/rwth/idsg/steve/repository/impl/SettingsRepositoryImpl.java
+swagger-api__swagger-codegen::CVE-2021-21363				False	6	samples/client/petstore/java/jersey2/src/main/java/io/swagger/client/ApiClient.java

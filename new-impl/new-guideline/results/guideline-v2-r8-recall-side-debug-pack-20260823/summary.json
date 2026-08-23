@@ -1,0 +1,47 @@
+{
+  "cleanliness_policy": {
+    "blocking_flags": [
+      "incomplete_actionability_fields",
+      "pending_review",
+      "review_only",
+      "source_only_no_case_metadata"
+    ],
+    "label_mixed_flags": [
+      "mixed_cwe",
+      "mixed_hcvr"
+    ],
+    "label_mixture_is_blocking": false,
+    "min_clean_purity_is_blocking": false,
+    "rationale": "Clean-enough means source/sink/guard evidence is release-usable. HCVR/CWE mixture remains a review signal because reusable mechanisms can cross labels."
+  },
+  "debug_group_count": 6,
+  "miss_state_totals": {
+    "coverage_gap_not_in_rank_table": 9,
+    "ranked_below_primary_budget": 6
+  },
+  "policy": [
+    "This pack is recall-side diagnosis only.",
+    "It does not update guidelines, sidecars, ranking, embedding weights, or audit prompts.",
+    "Coverage gaps are separated from real Top-K misses.",
+    "Mixed HCVR/CWE labels are review signals, not automatic taxonomy failures.",
+    "Any replacement embedder, reranker, or fusion method must be evaluated on the same identities, snapshots, candidates, and budgets."
+  ],
+  "primary_budget": 100,
+  "recall_label": "r7-p3c64-full143",
+  "recommended_check_counts": {
+    "compare_embedding_backend_or_query_adapter_on_same_identity": 6,
+    "inspect_candidate_slicing_for_known_anchor_context": 6,
+    "inspect_guideline_query_wording_against_source_evidence": 6,
+    "review_label_mixture_without_treating_it_as_hard_failure": 2,
+    "verify_identity_filter_dataset_split_and_rank_table_coverage": 3
+  },
+  "schema_version": "hcvr_recall_side_debug_pack.v1",
+  "source_alignment_joined_recall_case_count": 28,
+  "source_alignment_recall_case_count": 143,
+  "source_attention_counts": {
+    "embedding_or_candidate_recall_attention": 6,
+    "guideline_quality_attention": 121,
+    "label_mixed_structural_attention": 8,
+    "missing_recall_rows": 44
+  }
+}

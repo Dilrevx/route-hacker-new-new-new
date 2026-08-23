@@ -1,0 +1,59 @@
+{
+  "cluster_summary": "This cluster covers vulnerabilities where user-supplied data is used to construct database connection URLs, load classes, or configure resources without adequate validation, allowing attackers to inject dangerous parameters, load arbitrary classes, or trigger deserialization and SSRF. The fixes involve adding blacklists, encoding, type checks, or prefix validation.",
+  "created_at": "2026-08-22T20:37:28+00:00",
+  "cve_ids": [
+    "CVE-2025-57772",
+    "CVE-2025-62420"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0027__pending_mech_cluster_27_missing_jdbc_url_scheme_prefix_validation",
+  "guideline_id": "gl_mech_0148",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should Add a prefix check on the actual JDBC URL string before use, ensuring it matches the expected driver..",
+  "mechanism": {
+    "aliases": [
+      "sql",
+      "missing-protocol-allowlist-validation",
+      "initialization",
+      "create",
+      "containing",
+      "authenticated"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_27_missing_jdbc_url_scheme_prefix_validation",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing JDBC URL scheme/prefix validation",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Add a prefix check on the actual JDBC URL string before use, ensuring it matches the expected driver."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2025-57772",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    27
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 27,
+      "fix_strategy": "Add a prefix check on the actual JDBC URL string before use, ensuring it matches the expected driver.",
+      "members": [
+        "CVE-2025-57772",
+        "CVE-2025-62420"
+      ],
+      "name": "Missing JDBC URL scheme/prefix validation",
+      "root_cause": "The code does not verify that the JDBC URL starts with the expected prefix (e.g., 'jdbc:h2') or validates the wrong field, allowing use of arbitrary driver URLs."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_27_missing_jdbc_url_scheme_prefix_validation",
+    "sql",
+    "missing-protocol-allowlist-validation",
+    "initialization",
+    "create"
+  ]
+}

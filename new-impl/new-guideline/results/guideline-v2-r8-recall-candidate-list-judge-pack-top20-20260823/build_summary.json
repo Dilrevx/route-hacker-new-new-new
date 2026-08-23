@@ -1,0 +1,15 @@
+{
+  "candidates_per_prompt": 10,
+  "identity_count": 6,
+  "max_rank": 20,
+  "max_snippet_chars": 1200,
+  "policy": [
+    "Prompts hide original rank, score, known-anchor labels, CVE IDs, and benchmark metadata.",
+    "Hidden labels are stored only in judge_inputs.jsonl for offline post-run diagnostics.",
+    "This pack is advisory semantic QA for reranker design, not a recall result."
+  ],
+  "prompt_count": 12,
+  "schema_version": "hcvr_recall_candidate_list_judge_pack.v1",
+  "skipped_empty_snippet_candidates": 0,
+  "skipped_no_candidate_identities": 0
+}

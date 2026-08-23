@@ -1,0 +1,28 @@
+{
+  "assigned_unique_case_count": 276,
+  "case_coverage_rate": 0.4144144144144144,
+  "cases_file": "/Users/bytedance/workspace/route-hacker-new-new-p3c64/new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl",
+  "evaluated_group_count": 103,
+  "flag_counts": {
+    "mixed_cwe": 7,
+    "mixed_hcvr": 10,
+    "pending_review": 148,
+    "small_group": 69,
+    "source_only_no_case_metadata": 330
+  },
+  "flagged_group_count": 415,
+  "guideline_count": 433,
+  "macro_cwe_purity": 0.9577126213592232,
+  "macro_primary_hcvr_purity": 0.9431291262135921,
+  "mixed_cwe_group_count": 7,
+  "mixed_hcvr_group_count": 10,
+  "pending_candidate_count": 148,
+  "release_dir": "/Users/bytedance/workspace/route-hacker-new-new-p3c64/new-impl/guideline-agent-pipeline/results/mechanism-guideline-preview-v2-cluster-scope-r6-candidate-20260823",
+  "schema_version": "hcvr_guideline_group_eval.v1",
+  "small_group_count": 69,
+  "source_only_group_count": 330,
+  "source_only_no_case_metadata_count": 330,
+  "total_case_count": 666,
+  "weighted_cwe_purity": 0.9142471014492753,
+  "weighted_primary_hcvr_purity": 0.8297119565217391
+}

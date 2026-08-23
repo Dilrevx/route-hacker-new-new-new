@@ -1,0 +1,91 @@
+{
+  "packet_count": 8,
+  "packets": [
+    {
+      "guideline_id": "gl_mech_0001",
+      "mechanism_id": "mech_temp_file_delete_mkdir_race",
+      "missing_trace_examples": 0,
+      "packet": "packets/01-gl_mech_0001.md",
+      "release_policy": "review_only_not_release_not_recall_input",
+      "repair_kind": "split_mechanism_boundary",
+      "review_entry_only_examples": 2,
+      "source_trace_examples": 3
+    },
+    {
+      "guideline_id": "gl_mech_0022",
+      "mechanism_id": "mech_xml_external_entity_resolution",
+      "missing_trace_examples": 3,
+      "packet": "packets/02-gl_mech_0022.md",
+      "release_policy": "review_only_not_release_not_recall_input",
+      "repair_kind": "split_mechanism_boundary",
+      "review_entry_only_examples": 1,
+      "source_trace_examples": 1
+    },
+    {
+      "guideline_id": "gl_mech_0116",
+      "mechanism_id": "mech_ssrf_redirect_following_client",
+      "missing_trace_examples": 0,
+      "packet": "packets/03-gl_mech_0116.md",
+      "release_policy": "review_only_not_release_not_recall_input",
+      "repair_kind": "split_mechanism_boundary",
+      "review_entry_only_examples": 3,
+      "source_trace_examples": 2
+    },
+    {
+      "guideline_id": "gl_mech_0007",
+      "mechanism_id": "mech_ssrf_webhook_url_fetch",
+      "missing_trace_examples": 0,
+      "packet": "packets/04-gl_mech_0007.md",
+      "release_policy": "review_only_not_release_not_recall_input",
+      "repair_kind": "revise_mechanism_text_from_evidence",
+      "review_entry_only_examples": 1,
+      "source_trace_examples": 0
+    },
+    {
+      "guideline_id": "gl_mech_0011",
+      "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+      "missing_trace_examples": 1,
+      "packet": "packets/05-gl_mech_0011.md",
+      "release_policy": "review_only_not_release_not_recall_input",
+      "repair_kind": "revise_mechanism_text_from_evidence",
+      "review_entry_only_examples": 3,
+      "source_trace_examples": 2
+    },
+    {
+      "guideline_id": "gl_mech_0015",
+      "mechanism_id": "mech_temp_file_delete_mkdir_race",
+      "missing_trace_examples": 0,
+      "packet": "packets/06-gl_mech_0015.md",
+      "release_policy": "review_only_not_release_not_recall_input",
+      "repair_kind": "revise_mechanism_text_from_evidence",
+      "review_entry_only_examples": 1,
+      "source_trace_examples": 0
+    },
+    {
+      "guideline_id": "gl_mech_0061",
+      "mechanism_id": "mech_open_redirect_unsafe_uri_scheme",
+      "missing_trace_examples": 0,
+      "packet": "packets/07-gl_mech_0061.md",
+      "release_policy": "review_only_not_release_not_recall_input",
+      "repair_kind": "revise_mechanism_text_from_evidence",
+      "review_entry_only_examples": 2,
+      "source_trace_examples": 3
+    },
+    {
+      "guideline_id": "gl_mech_0117",
+      "mechanism_id": "mech_ssrf_webhook_url_fetch",
+      "missing_trace_examples": 0,
+      "packet": "packets/08-gl_mech_0117.md",
+      "release_policy": "review_only_not_release_not_recall_input",
+      "repair_kind": "revise_mechanism_text_from_evidence",
+      "review_entry_only_examples": 3,
+      "source_trace_examples": 2
+    }
+  ],
+  "policy": [
+    "Packets are review-only handoff material.",
+    "Filled packets may inform a later lexicon or sidecar edit only after source evidence is checked.",
+    "Any changed recall-consumed guideline text requires a fresh same-identity recall run."
+  ],
+  "schema_version": "hcvr_guideline_case_review_packets.v1"
+}

@@ -1,0 +1,75 @@
+{
+  "cluster_summary": "This cluster contains 40 CVEs primarily related to Server-Side Request Forgery (SSRF) due to missing or incomplete validation of user-supplied URLs before making outbound HTTP requests. It also includes issues with TLS certificate validation, credential exposure, authorization context confusion, regular expression denial of service, and concurrency race conditions. The common thread is inadequate security checks in network-facing operations.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2025-66033",
+    "CVE-2026-39865"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0070__mech_toctou_mutable_object_reuse",
+  "guideline_id": "gl_mech_0118",
+  "guideline_text": "Trace mutable files, paths, objects, identities, request fields, or shared state that are checked before use into sensitive file, state, permission, memory, or resource effects that depend on the earlier check. Report code paths where the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary.",
+  "mechanism": {
+    "aliases": [
+      "TOCTOU",
+      "check then use race",
+      "double fetch",
+      "stale object reuse"
+    ],
+    "family": "race_or_lifecycle",
+    "mechanism_id": "mech_toctou_mutable_object_reuse",
+    "missing_guard": "the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect",
+    "name": "time-of-check to time-of-use on mutable object",
+    "required_keywords": [],
+    "sink_shape": "sensitive file, state, permission, memory, or resource effects that depend on the earlier check",
+    "source_shape": "mutable files, paths, objects, identities, request fields, or shared state that are checked before use",
+    "typical_fix": "bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 2,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 2,
+    "total_member_count": 2,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2025-66033",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    70
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 70,
+      "fix_strategy": "Introduce immutable per-request response objects and lazy iterators that isolate pagination state to each thread.",
+      "members": [
+        "CVE-2025-66033"
+      ],
+      "name": "Shared mutable pagination state leading to thread leaks",
+      "root_cause": "The HTTP client stores pagination state (e.g., next page URL) in a mutable field shared across threads without synchronization. Concurrent threads overwrite each other's state, preventing proper cleanup and causing resource leaks."
+    },
+    {
+      "cluster_id": 70,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2026-39865"
+      ],
+      "name": "Missing pre-request validation and secure configuration in network operations",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "race_or_lifecycle",
+    "mech_toctou_mutable_object_reuse",
+    "TOCTOU",
+    "check then use race",
+    "double fetch",
+    "stale object reuse"
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "cluster_summary": "This cluster contains 18 Netty CVEs covering a range of input parsing and validation flaws, including missing CRLF validation, disabled header validation, insufficient boundary checks, resource exhaustion, memory leaks, and incorrect protocol state handling. The vulnerabilities span HTTP, SMTP, WebSocket, AJP, and binary HTTP parsers.",
+  "created_at": "2026-08-20T19:54:08+00:00",
+  "cve_ids": [
+    "CVE-2021-21409"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0018__mech_toctou_mutable_object_reuse",
+  "guideline_id": "gl_mech_0069",
+  "guideline_text": "Trace mutable files, paths, objects, identities, request fields, or shared state that are checked before use into sensitive file, state, permission, memory, or resource effects that depend on the earlier check. Report code paths where the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary.",
+  "mechanism": {
+    "aliases": [
+      "TOCTOU",
+      "check then use race",
+      "double fetch",
+      "stale object reuse"
+    ],
+    "family": "race_or_lifecycle",
+    "mechanism_id": "mech_toctou_mutable_object_reuse",
+    "missing_guard": "the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect",
+    "name": "time-of-check to time-of-use on mutable object",
+    "sink_shape": "sensitive file, state, permission, memory, or resource effects that depend on the earlier check",
+    "source_shape": "mutable files, paths, objects, identities, request fields, or shared state that are checked before use",
+    "typical_fix": "bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2021-21409",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    18
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 18,
+      "fix_strategy": "Capture the 'headers received' state at method entry into a local variable before any state-modifying processing.",
+      "members": [
+        "CVE-2021-21409"
+      ],
+      "name": "Missing Content-Length validation due to state flag timing",
+      "root_cause": "The code uses a mutable stream state flag after downstream processing may have set it, bypassing content-length validation for initial headers frames with end-stream flag."
+    }
+  ],
+  "tags": [
+    "race_or_lifecycle",
+    "mech_toctou_mutable_object_reuse",
+    "TOCTOU",
+    "check then use race",
+    "double fetch",
+    "stale object reuse"
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "cluster_summary": "A cluster of vulnerabilities where user-controlled wiki content is executed with the wrong security context (e.g., viewer's or page author's privileges instead of content owner's) or where missing required-rights analyses allow low-privileged users to inject script content that later executes with elevated privileges.",
+  "created_at": "2026-08-21T10:07:21+00:00",
+  "cve_ids": [
+    "CVE-2023-26056",
+    "CVE-2023-26480",
+    "CVE-2023-29206",
+    "CVE-2023-37912",
+    "CVE-2023-40177",
+    "CVE-2024-31981",
+    "CVE-2025-32973",
+    "CVE-2025-32974",
+    "CVE-2025-49581",
+    "CVE-2025-49582",
+    "CVE-2025-49583",
+    "CVE-2025-49586",
+    "CVE-2025-49587"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0036__mech_privileged_server_side_capability_exposed",
+  "guideline_id": "gl_mech_0195",
+  "guideline_text": "Trace lower-privilege script, template, macro, plugin, or API callers that can invoke privileged server-side capabilities into server-side include, template rendering, servlet dispatch, raw object access, internal file reads, or privileged framework APIs. Report code paths where a higher privilege check is not enforced at the API entry point before exposing the server-side capability. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 13 historical CVE example(s), not as a project-specific signature. A safe implementation should check the required higher privilege at the exposed API boundary and return no sensitive result when the caller lacks that privilege.",
+  "mechanism": {
+    "aliases": [
+      "missing programming rights check",
+      "privileged API exposure",
+      "server-side include capability exposure",
+      "lower privilege script capability"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_privileged_server_side_capability_exposed",
+    "missing_guard": "a higher privilege check is not enforced at the API entry point before exposing the server-side capability",
+    "name": "privileged server-side capability exposed to lower privilege context",
+    "sink_shape": "server-side include, template rendering, servlet dispatch, raw object access, internal file reads, or privileged framework APIs",
+    "source_shape": "lower-privilege script, template, macro, plugin, or API callers that can invoke privileged server-side capabilities",
+    "typical_fix": "check the required higher privilege at the exposed API boundary and return no sensitive result when the caller lacks that privilege"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2023-26056",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    36
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 36,
+      "fix_strategy": "Explicitly pass the restricted flag to all derived contexts, or set it on documents.",
+      "members": [
+        "CVE-2025-49586"
+      ],
+      "name": "Missing propagation of restricted execution context flag",
+      "root_cause": "The security flag indicating restricted/sandboxed execution is not propagated to sub-contexts (transformation contexts, async jobs, field registrations, historical versions), causing content to be evaluated with default permissive privileges."
+    },
+    {
+      "cluster_id": 36,
+      "fix_strategy": "Register proper analyzers that declare required rights (e.g., WIKI_ADMIN, PROGRAM, SCRIPT) and add authorization gates before content evaluation.",
+      "members": [
+        "CVE-2025-49587",
+        "CVE-2025-49583",
+        "CVE-2025-49582",
+        "CVE-2025-32973",
+        "CVE-2025-32974",
+        "CVE-2023-26480",
+        "CVE-2023-29206",
+        "CVE-2024-31981"
+      ],
+      "name": "Missing required-rights analysis for editable objects with executable content",
+      "root_cause": "The platform lacks RequiredRightAnalyzer implementations for certain object types or property configurations, or authorization checks (e.g., script rights, VIEW rights) are missing before rendering user-provided scripting content."
+    },
+    {
+      "cluster_id": 36,
+      "fix_strategy": "Execute content with the correct user's rights (author, creator) or parse immediately in the correct context, and disable async/caching that could reuse privileged outputs.",
+      "members": [
+        "CVE-2025-49581",
+        "CVE-2023-40177",
+        "CVE-2023-37912",
+        "CVE-2023-26056"
+      ],
+      "name": "Content executed under wrong user's security context",
+      "root_cause": "User-controlled content (macro parameters, footnotes, UI extensions, cached results) is rendered using the privileges of a different user (viewer, page author, or a high-privilege entity) instead of the content author or creator, allowing privilege escalation."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_privileged_server_side_capability_exposed",
+    "missing programming rights check",
+    "privileged API exposure",
+    "server-side include capability exposure",
+    "lower privilege script capability"
+  ]
+}

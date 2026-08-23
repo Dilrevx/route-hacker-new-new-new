@@ -1,0 +1,56 @@
+{
+  "cluster_summary": "This cluster contains CVEs where input parsing or deserialization code lacks proper termination conditions or recursion depth limits, leading to infinite loops or stack exhaustion from crafted input. The vulnerabilities arise from assumptions about input structure (sequential indices, shallow nesting, single wrapper arrays) that are not enforced, allowing attackers to cause resource exhaustion.",
+  "created_at": "2026-08-22T17:56:09+00:00",
+  "cve_ids": [
+    "CVE-2024-47855"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0017__pending_mech_cluster_17_infinite_loop_due_to_missing_eof_check_in_comment_parser",
+  "guideline_id": "gl_mech_0091",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Check if the stream has more input before pushing back the character; if not, return EOF..",
+  "mechanism": {
+    "aliases": [
+      "malformed",
+      "loop",
+      "occurs",
+      "indefinitely",
+      "returns",
+      "string"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_17_infinite_loop_due_to_missing_eof_check_in_comment_parser",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Infinite loop due to missing EOF check in comment parser",
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Check if the stream has more input before pushing back the character; if not, return EOF."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2024-47855",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    17
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 17,
+      "fix_strategy": "Check if the stream has more input before pushing back the character; if not, return EOF.",
+      "members": [
+        "CVE-2024-47855"
+      ],
+      "name": "Infinite loop due to missing EOF check in comment parser",
+      "root_cause": "The comment-skipping loop pushes back a character after a partial delimiter without checking for end-of-file; when EOF occurs, the pushed-back EOF sentinel causes an infinite loop."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_17_infinite_loop_due_to_missing_eof_check_in_comment_parser",
+    "malformed",
+    "loop",
+    "occurs",
+    "indefinitely"
+  ]
+}

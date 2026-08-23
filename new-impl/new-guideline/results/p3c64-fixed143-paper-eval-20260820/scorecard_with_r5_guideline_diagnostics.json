@@ -1,0 +1,155 @@
+{
+  "claim_boundaries": [
+    {
+      "caveat": "Purity and flags are weak diagnostics; mechanism quality still needs semantic review.",
+      "claim": "guideline_classification_quality",
+      "evidence": [
+        "group structural summary",
+        "source-only and pending-review accounting"
+      ],
+      "status": "supported_as_advisory_diagnostic"
+    },
+    {
+      "caveat": "Judge outputs rank review priority and cannot be converted into hardcoded routing.",
+      "claim": "semantic_guideline_quality",
+      "evidence": [
+        "LLM-as-judge summary"
+      ],
+      "status": "supported_as_advisory_diagnostic"
+    },
+    {
+      "caveat": "This claim is about the evaluated embedding plus guideline/query configuration, not guideline taxonomy quality alone.",
+      "claim": "embedding_recall_improvement",
+      "evidence": [
+        "Hit@30 delta 15 cases / 10.5%",
+        "Hit@50 delta 19 cases / 13.3%",
+        "Hit@100 delta 18 cases / 12.6%"
+      ],
+      "status": "supported_for_reported_budgets"
+    }
+  ],
+  "judge_evidence": {
+    "accepted_count": 0,
+    "average_scores": {
+      "actionability_score": 0.6545000000000002,
+      "coherence_score": 0.5435000000000001,
+      "coverage_score": 0.4185,
+      "retrieval_query_quality": 0.3825
+    },
+    "decision_counts": {
+      "needs_evidence": 8,
+      "revise": 8,
+      "split": 4
+    },
+    "invalid_output_count": 0,
+    "judge_input_count": 20,
+    "low_score_count": 18,
+    "message": "LLM-as-judge output is semantic review evidence; it must not become keyword routing or a hidden optimization target.",
+    "missing_output_count": 0,
+    "parsed_count": 20,
+    "status": "advisory_semantic_diagnostic"
+  },
+  "method_policy": [
+    "Optimize guideline wording and grouping from source/sink/guard evidence, not from keyword checks.",
+    "Use bad recall cases as regression and motivation data, not as per-case hardcoded fixes.",
+    "Treat recall numbers as evidence for a specific embedding plus guideline/query configuration.",
+    "Require same identity sets for paper-facing recall deltas."
+  ],
+  "recall_evidence": {
+    "budgets": [
+      {
+        "budget": 30,
+        "delta_count": 15,
+        "delta_rate": 0.1048951048951049,
+        "left_count": 45,
+        "left_rate": 0.3146853146853147,
+        "right_count": 30,
+        "right_rate": 0.2097902097902098
+      },
+      {
+        "budget": 50,
+        "delta_count": 19,
+        "delta_rate": 0.13286713286713286,
+        "left_count": 56,
+        "left_rate": 0.3916083916083916,
+        "right_count": 37,
+        "right_rate": 0.25874125874125875
+      },
+      {
+        "budget": 100,
+        "delta_count": 18,
+        "delta_rate": 0.1258741258741259,
+        "left_count": 73,
+        "left_rate": 0.5104895104895105,
+        "right_count": 55,
+        "right_rate": 0.38461538461538464
+      },
+      {
+        "budget": 200,
+        "delta_count": 10,
+        "delta_rate": 0.06993006993006994,
+        "left_count": 84,
+        "left_rate": 0.5874125874125874,
+        "right_count": 74,
+        "right_rate": 0.5174825174825175
+      },
+      {
+        "budget": 300,
+        "delta_count": 9,
+        "delta_rate": 0.06293706293706294,
+        "left_count": 91,
+        "left_rate": 0.6363636363636364,
+        "right_count": 82,
+        "right_rate": 0.5734265734265734
+      },
+      {
+        "budget": 500,
+        "delta_count": 9,
+        "delta_rate": 0.06293706293706294,
+        "left_count": 103,
+        "left_rate": 0.7202797202797203,
+        "right_count": 94,
+        "right_rate": 0.6573426573426573
+      }
+    ],
+    "common_count": 143,
+    "left_label": "p3c64-fixed-paper-eval-143",
+    "message": "Recall A/B evidence is valid for retrieval claims because both sides use the same identity set.",
+    "mrr": {
+      "delta": 0.03779435989807441,
+      "left": 0.08852777946015142,
+      "right": 0.050733419562077005
+    },
+    "primary_budget": 200,
+    "right_label": "qwen3-embedding-4b-frozen-paper-eval",
+    "same_identity_order": true,
+    "same_identity_set": true,
+    "status": "valid_same_identity"
+  },
+  "release": {
+    "active_attribution_count": 237,
+    "guideline_count": 202,
+    "override_count": 153,
+    "pending_overrides_included": false,
+    "pending_review_count": 89,
+    "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+    "work_item_count": 326
+  },
+  "release_label": "p3c64-current-guideline-baseline-control",
+  "schema_version": "hcvr_guideline_experiment_scorecard.v1",
+  "structural_evidence": {
+    "assigned_unique_case_count": 185,
+    "case_coverage_rate": 0.2777777777777778,
+    "evaluated_group_count": 68,
+    "guideline_count": 202,
+    "message": "Structural labels are triage signals for guideline grouping, not hard pass/fail gates.",
+    "mixed_cwe_group_count": 10,
+    "mixed_hcvr_group_count": 9,
+    "pending_candidate_count": 89,
+    "source_only_group_count": 134,
+    "status": "advisory_structural_diagnostic",
+    "total_case_count": 666,
+    "weighted_cwe_purity": 0.8675729729729732,
+    "weighted_primary_hcvr_purity": 0.756767027027027
+  }
+}

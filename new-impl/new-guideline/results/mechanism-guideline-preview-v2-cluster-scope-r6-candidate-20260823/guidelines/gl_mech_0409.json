@@ -1,0 +1,85 @@
+{
+  "cluster_summary": "This cluster contains authentication vulnerabilities where the code fails to correctly await asynchronous password validation, skips required authentication validation on login, suffers from race conditions on single-use token consumption due to non-atomic updates, or omits sanitization of authentication data after retrieval. These flaws can lead to authentication bypass, unauthorized access, or reuse of single-use tokens.",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2026-28514",
+    "CVE-2026-33409",
+    "CVE-2026-33624",
+    "CVE-2026-34215",
+    "CVE-2026-34224"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0090__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0409",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 5 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "required_keywords": [],
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-28514",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    90
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 90,
+      "fix_strategy": "Add the await keyword before the call to the asynchronous password validation function.",
+      "members": [
+        "CVE-2026-28514"
+      ],
+      "name": "Missing await on asynchronous password validation",
+      "root_cause": "Asynchronous password validation function is called without the await keyword, causing the Promise object to be evaluated as truthy instead of the actual boolean result."
+    },
+    {
+      "cluster_id": 90,
+      "fix_strategy": "Always call the auth adapter's validateAuthData method on login regardless of allowExpiredAuthDataToken.",
+      "members": [
+        "CVE-2026-33409"
+      ],
+      "name": "Incomplete authentication validation on login with expired token allowance",
+      "root_cause": "Server skips adapter-based validation when incoming authData is a subset of stored authData under assumption that partial token data is sufficient, failing to call validateAuthData."
+    },
+    {
+      "cluster_id": 90,
+      "fix_strategy": "Use optimistic locking by including the original array contents in the WHERE clause of the update query, so that if another request has already modified the array, the update fails.",
+      "members": [
+        "CVE-2026-33624",
+        "CVE-2026-34224"
+      ],
+      "name": "Race condition on single-use token removal without atomic conditional update",
+      "root_cause": "Read-then-write sequence on an array of single-use tokens without atomic conditional update allows concurrent requests to both validate and remove the same token because the update does not verify the token's current presence."
+    },
+    {
+      "cluster_id": 90,
+      "fix_strategy": "Insert await req.config.authDataManager.runAfterFind(req, user.authData) after removeHiddenProperties and before returning the user object.",
+      "members": [
+        "CVE-2026-34215"
+      ],
+      "name": "Missing after-find sanitization for authentication data",
+      "root_cause": "The handleVerifyPassword handler retrieves user object and runs removeHiddenProperties but omits calling authDataManager.runAfterFind, which strips sensitive authentication fields like MFA secrets and recovery codes."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

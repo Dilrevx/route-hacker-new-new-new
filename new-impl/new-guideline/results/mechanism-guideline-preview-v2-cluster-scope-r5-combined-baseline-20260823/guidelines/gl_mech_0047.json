@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "The cluster contains vulnerabilities arising from insufficient input validation when parsing dependency specifications, lack of integrity checks for downloaded packages, and flawed security policies for transitive dependency script execution. These issues can lead to arbitrary code execution, supply chain attacks, or bypass of intended security restrictions.",
+  "created_at": "2026-08-22T20:04:49+00:00",
+  "cve_ids": [
+    "CVE-2025-69263"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0013__pending_mech_cluster_13_missing_integrity_hash_for_http_tarball_dependencies",
+  "guideline_id": "gl_mech_0047",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Compute and store integrity hash (e.g., SHA-256) for each tarball in lockfile; verify hash after download before placing into store..",
+  "mechanism": {
+    "aliases": [
+      "dependency",
+      "package.json",
+      "downloads",
+      "remote",
+      "enabling",
+      "input"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_13_missing_integrity_hash_for_http_tarball_dependencies",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing integrity hash for HTTP tarball dependencies",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Compute and store integrity hash (e.g., SHA-256) for each tarball in lockfile; verify hash after download before placing into store."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2025-69263",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    13
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 13,
+      "fix_strategy": "Compute and store integrity hash (e.g., SHA-256) for each tarball in lockfile; verify hash after download before placing into store.",
+      "members": [
+        "CVE-2025-69263"
+      ],
+      "name": "Missing integrity hash for HTTP tarball dependencies",
+      "root_cause": "Lockfile stores HTTP tarball dependencies without an integrity hash, so software does not verify fetched content matches intended package."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_13_missing_integrity_hash_for_http_tarball_dependencies",
+    "dependency",
+    "package.json",
+    "downloads",
+    "remote"
+  ]
+}

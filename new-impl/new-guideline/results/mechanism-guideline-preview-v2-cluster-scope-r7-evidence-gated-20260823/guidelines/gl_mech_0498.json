@@ -1,0 +1,61 @@
+{
+  "cluster_summary": "This cluster comprises vulnerabilities arising from insecure default configurations (e.g., binding to all network interfaces, missing authentication) and improper origin validation in CORS and CSRF protection. Many members expose administrative interfaces or sensitive data by default, while others involve missing allowlists or incorrect string matching that allow cross-origin attacks.",
+  "created_at": "2026-08-22T20:37:31+00:00",
+  "cve_ids": [
+    "CVE-2026-10214",
+    "CVE-2026-22207",
+    "CVE-2026-33231"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0087__pending_mech_cluster_87_default_network_binding_to_all_interfaces_without_authentication",
+  "guideline_id": "gl_mech_0498",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should Change default binding to localhost (127.0.0.1) or require authentication when binding to all interfaces..",
+  "mechanism": {
+    "aliases": [
+      "sensitive",
+      "panel",
+      "restrict",
+      "runtime",
+      "error",
+      "listening"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_87_default_network_binding_to_all_interfaces_without_authentication",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Default network binding to all interfaces without authentication",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Change default binding to localhost (127.0.0.1) or require authentication when binding to all interfaces."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-10214",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    87
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 87,
+      "fix_strategy": "Change default binding to localhost (127.0.0.1) or require authentication when binding to all interfaces.",
+      "members": [
+        "CVE-2026-10214",
+        "CVE-2026-22207",
+        "CVE-2026-33231"
+      ],
+      "name": "Default network binding to all interfaces without authentication",
+      "root_cause": "Default configuration binds web server to all network interfaces (0.0.0.0) and does not require authentication, allowing remote unauthenticated access."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_87_default_network_binding_to_all_interfaces_without_authentication",
+    "sensitive",
+    "panel",
+    "restrict",
+    "runtime"
+  ]
+}

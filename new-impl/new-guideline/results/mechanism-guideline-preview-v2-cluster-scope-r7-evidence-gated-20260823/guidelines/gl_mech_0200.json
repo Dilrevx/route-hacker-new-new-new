@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "This cluster covers vulnerabilities where user-controlled input is directly concatenated or interpolated into database query strings (SQL, JPQL, Cypher, DQL) without proper parameterization or escaping, leading to injection attacks. The majority are fixed by replacing string concatenation with parameterized queries; a subset rely on improved escaping of special characters. A few involve identifier quoting, type casting, or input validation.",
+  "created_at": "2026-08-22T20:37:28+00:00",
+  "cve_ids": [
+    "CVE-2024-56802"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0036__pending_mech_cluster_36_insecure_direct_string_interpolation_in_database_queries",
+  "guideline_id": "gl_mech_0200",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should add the required guard and bind it to the exact sensitive effect.",
+  "mechanism": {
+    "aliases": [
+      "dql",
+      "item",
+      "sql",
+      "interpolated",
+      "attacker",
+      "set"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_36_insecure_direct_string_interpolation_in_database_queries",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Insecure direct string interpolation in database queries",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "add the required guard and bind it to the exact sensitive effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2024-56802",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    36
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 36,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2024-56802"
+      ],
+      "name": "Insecure direct string interpolation in database queries",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_36_insecure_direct_string_interpolation_in_database_queries",
+    "dql",
+    "item",
+    "sql",
+    "interpolated"
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "cluster_summary": "This cluster consists of vulnerabilities where network protocol code either fails to validate size/length fields from external input, leading to buffer overflows or unbounded allocation, or mismanages resource cleanup and lifecycle, causing leaks or accounting imbalances, or handles errors in a way that leads to resource abuse or security bypass.",
+  "created_at": "2026-08-22T20:04:51+00:00",
+  "cve_ids": [
+    "CVE-2023-34462",
+    "CVE-2024-5642",
+    "CVE-2025-24970",
+    "CVE-2026-27459",
+    "CVE-2026-3298"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0062__pending_mech_cluster_62_missing_bounds_check_on_size_length_fields_from_network_input_or_exte",
+  "guideline_id": "gl_mech_0324",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 5 historical CVE example(s), not as a project-specific signature. A safe implementation should Add validation of length/size against minimum and maximum allowed values, ensure non-negative checks, and reallocate buffers when needed..",
+  "mechanism": {
+    "aliases": [
+      "one",
+      "clienthello",
+      "tcp",
+      "values",
+      "input",
+      "field"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_62_missing_bounds_check_on_size_length_fields_from_network_input_or_exte",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing bounds check on size/length fields from network input or external callback",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Add validation of length/size against minimum and maximum allowed values, ensure non-negative checks, and reallocate buffers when needed."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2023-34462",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    62
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 62,
+      "fix_strategy": "Add validation of length/size against minimum and maximum allowed values, ensure non-negative checks, and reallocate buffers when needed.",
+      "members": [
+        "CVE-2023-34462",
+        "CVE-2024-5642",
+        "CVE-2025-24970",
+        "CVE-2026-27459",
+        "CVE-2026-3298"
+      ],
+      "name": "Missing bounds check on size/length fields from network input or external callback",
+      "root_cause": "Code assumes that length or buffer size values from network packets or external callbacks are safe without validation, leading to buffer overflows, integer underflows, unbounded memory allocation, or infinite loops when reallocation is not performed."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_62_missing_bounds_check_on_size_length_fields_from_network_input_or_exte",
+    "one",
+    "clienthello",
+    "tcp",
+    "values"
+  ]
+}

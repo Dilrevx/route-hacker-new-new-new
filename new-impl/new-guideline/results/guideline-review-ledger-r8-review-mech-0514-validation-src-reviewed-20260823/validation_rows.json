@@ -1,0 +1,47 @@
+[
+  {
+    "boundary_decision": "promote_boundary",
+    "boundary_label": "candidate_boundary_01_inactive_identifier_authentication_acceptance",
+    "errors": [],
+    "guideline_id": "review_mech_0514",
+    "line_no": 1,
+    "valid": true,
+    "warnings": []
+  },
+  {
+    "boundary_decision": "promote_boundary",
+    "boundary_label": "candidate_boundary_02_missing_media_token_filter_rejection",
+    "errors": [],
+    "guideline_id": "review_mech_0514",
+    "line_no": 2,
+    "valid": true,
+    "warnings": []
+  },
+  {
+    "boundary_decision": "promote_boundary",
+    "boundary_label": "candidate_boundary_03_nonempty_token_without_validation",
+    "errors": [],
+    "guideline_id": "review_mech_0514",
+    "line_no": 3,
+    "valid": true,
+    "warnings": []
+  },
+  {
+    "boundary_decision": "promote_boundary",
+    "boundary_label": "candidate_boundary_04_empty_token_scope_authorization_bypass",
+    "errors": [],
+    "guideline_id": "review_mech_0514",
+    "line_no": 4,
+    "valid": true,
+    "warnings": []
+  },
+  {
+    "boundary_decision": "needs_more_evidence",
+    "boundary_label": "candidate_boundary_05_remaining_unreviewed_members",
+    "errors": [],
+    "guideline_id": "review_mech_0514",
+    "line_no": 5,
+    "valid": true,
+    "warnings": []
+  }
+]

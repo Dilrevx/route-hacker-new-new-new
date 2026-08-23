@@ -1,0 +1,135 @@
+{
+  "cluster_summary": "This cluster contains 39 CVEs that expose authentication and authorization weaknesses in webhook and API endpoints. The vulnerabilities arise from missing or insufficient validation of tokens and secrets, over-reliance on untrusted headers or loopback IPs for authentication bypass, timing side-channels from non-constant-time comparisons, missing rate limiting on authentication attempts, resource exhaustion due to body parsing before authentication, insufficient replay protection and deduplication, missing control flow termination, ambiguous routing logic, fail-open defaults on missing security configuration, cached secrets not refreshed after rotation, and missing pre-authentication concurrency throttling.",
+  "created_at": "2026-08-22T20:04:52+00:00",
+  "cve_ids": [
+    "CVE-2022-39205",
+    "CVE-2025-30373",
+    "CVE-2026-27493",
+    "CVE-2026-27577",
+    "CVE-2026-27578",
+    "CVE-2026-28454",
+    "CVE-2026-28469",
+    "CVE-2026-29613",
+    "CVE-2026-32896",
+    "CVE-2026-32980",
+    "CVE-2026-35622",
+    "CVE-2026-35623",
+    "CVE-2026-35626",
+    "CVE-2026-35628",
+    "CVE-2026-35646",
+    "CVE-2026-35652",
+    "CVE-2026-41343",
+    "CVE-2026-8305"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0074__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0374",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 18 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "required_keywords": [],
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2022-39205",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    74
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 74,
+      "fix_strategy": "Add explicit cryptographic validation of the token or secret (e.g., JWT signature, cookie validation, shared secret comparison) and verify required claims (e.g., sub, principal) against expected values. Reject requests that fail validation.",
+      "members": [
+        "CVE-2026-27493",
+        "CVE-2026-27578",
+        "CVE-2026-27577",
+        "CVE-2026-28454",
+        "CVE-2026-35622",
+        "CVE-2026-35652"
+      ],
+      "name": "Missing Token or Secret Validation",
+      "root_cause": "Code assumes existence of a token or secret is sufficient for authentication, but does not cryptographically verify its validity or match required claims against a trusted store or configuration."
+    },
+    {
+      "cluster_id": 74,
+      "fix_strategy": "Remove unconditional trust in headers and loopback IPs. Use configured public URLs, enforce authentication for all requests, or validate headers against a configured allowlist of trusted proxies.",
+      "members": [
+        "CVE-2022-39205",
+        "CVE-2026-29613",
+        "CVE-2026-32896",
+        "CVE-2026-8305"
+      ],
+      "name": "Authentication Bypass via Untrusted Headers or Loopback Trust",
+      "root_cause": "Code trusts client-controlled HTTP headers (X-Forwarded-For, Host, etc.) or IP-based loopback checks to skip authentication, without verifying the source or requiring explicit credentials."
+    },
+    {
+      "cluster_id": 74,
+      "fix_strategy": "Add a per-IP rate limiter that checks and records failures before processing authentication; return HTTP 429 when threshold exceeded; reset on success.",
+      "members": [
+        "CVE-2026-35623",
+        "CVE-2026-35628",
+        "CVE-2026-35646"
+      ],
+      "name": "Missing Rate Limiting on Authentication Failures",
+      "root_cause": "Authentication endpoints do not track or throttle repeated invalid attempts per client IP, enabling brute-force attacks on secrets or passwords."
+    },
+    {
+      "cluster_id": 74,
+      "fix_strategy": "Reorder processing: validate authentication token/signature before reading the body; enforce strict body size and time limits; reject requests missing required headers early.",
+      "members": [
+        "CVE-2026-32980",
+        "CVE-2026-35626"
+      ],
+      "name": "Resource Exhaustion via Pre-Authentication Body Parsing",
+      "root_cause": "Request body is read, buffered, and/or parsed (JSON) before authentication validation, allowing unauthenticated attackers to consume server resources by sending large or slow payloads."
+    },
+    {
+      "cluster_id": 74,
+      "fix_strategy": "Add a return statement after sending the unauthorized response to halt further execution.",
+      "members": [
+        "CVE-2025-30373"
+      ],
+      "name": "Missing Control Flow Termination After Authorization Failure",
+      "root_cause": "After writing an HTTP 401 response, the handler does not return, allowing subsequent request processing to proceed as if authenticated."
+    },
+    {
+      "cluster_id": 74,
+      "fix_strategy": "Collect all matching targets; reject the request if the number of matches is not exactly one; otherwise process the unique match.",
+      "members": [
+        "CVE-2026-28469"
+      ],
+      "name": "Ambiguous Webhook Routing Allowing Cross-Account Context Misrouting",
+      "root_cause": "Routing selects the first webhook target that passes verification, without ensuring exactly one match; multiple targets sharing the same route can cause incorrect authorization context."
+    },
+    {
+      "cluster_id": 74,
+      "fix_strategy": "Introduce a per-key in-flight request limiter at the entry point that rejects excess concurrent requests (HTTP 429) before any body processing or authentication.",
+      "members": [
+        "CVE-2026-41343"
+      ],
+      "name": "Missing Pre-Authentication Concurrency Throttling",
+      "root_cause": "No shared in-flight request limit is imposed before authentication, allowing unauthenticated attackers to exhaust server resources by sending many concurrent requests."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

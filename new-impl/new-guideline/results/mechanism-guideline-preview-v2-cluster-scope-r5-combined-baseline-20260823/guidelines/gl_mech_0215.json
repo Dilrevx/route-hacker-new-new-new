@@ -1,0 +1,55 @@
+{
+  "cluster_summary": "This cluster includes vulnerabilities where applications fail to enforce upper bounds on the size, count, or complexity of external input before performing memory or disk allocation, leading to resource exhaustion. The missing limits occur in various contexts: HTTP request/response body buffering, delimiter-split operations, numeric parameter validation, disk storage (cache, logs, downloads), type validation, size estimation, and parsing complexity.",
+  "created_at": "2026-08-22T20:04:50+00:00",
+  "cve_ids": [
+    "CVE-2026-34756"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0042__mech_toctou_mutable_object_reuse",
+  "guideline_id": "gl_mech_0215",
+  "guideline_text": "Trace mutable files, paths, objects, identities, request fields, or shared state that are checked before use into sensitive file, state, permission, memory, or resource effects that depend on the earlier check. Report code paths where the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary.",
+  "mechanism": {
+    "aliases": [
+      "TOCTOU",
+      "check then use race",
+      "double fetch",
+      "stale object reuse"
+    ],
+    "family": "race_or_lifecycle",
+    "mechanism_id": "mech_toctou_mutable_object_reuse",
+    "missing_guard": "the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect",
+    "name": "time-of-check to time-of-use on mutable object",
+    "required_keywords": [],
+    "sink_shape": "sensitive file, state, permission, memory, or resource effects that depend on the earlier check",
+    "source_shape": "mutable files, paths, objects, identities, request fields, or shared state that are checked before use",
+    "typical_fix": "bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-34756",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    42
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 42,
+      "fix_strategy": "Validate the parameter against configured minimum and maximum bounds, clamping or rejecting out-of-range values before use.",
+      "members": [
+        "CVE-2026-34756"
+      ],
+      "name": "Missing upper bound validation on user-supplied numeric parameters",
+      "root_cause": "Code uses a numeric parameter (e.g., chunk size, number of sequences, canvas dimensions) directly in allocation or iteration without clamping or validating it to a safe range, allowing extremely large values."
+    }
+  ],
+  "tags": [
+    "race_or_lifecycle",
+    "mech_toctou_mutable_object_reuse",
+    "TOCTOU",
+    "check then use race",
+    "double fetch",
+    "stale object reuse"
+  ]
+}

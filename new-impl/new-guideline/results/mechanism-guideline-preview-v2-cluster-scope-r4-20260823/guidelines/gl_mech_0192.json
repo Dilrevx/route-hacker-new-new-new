@@ -1,0 +1,56 @@
+{
+  "cluster_summary": "This cluster covers a variety of authentication and authorization vulnerabilities, including user enumeration via distinct error messages, insecure password storage and hashing, insufficient password strength validation, missing ownership checks on operations, password reset token flaws, and other implementation errors.",
+  "created_at": "2026-08-22T17:56:09+00:00",
+  "cve_ids": [
+    "CVE-2019-14837"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0035__pending_mech_cluster_35_hardcoded_predictable_email_for_service_accounts",
+  "guideline_id": "gl_mech_0192",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Do not assign an email address to service accounts; remove the hardcoded placeholder assignment..",
+  "mechanism": {
+    "aliases": [
+      "email",
+      "emails",
+      "attacker-controlled",
+      "address",
+      "service-account",
+      "null"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_35_hardcoded_predictable_email_for_service_accounts",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Hardcoded predictable email for service accounts",
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Do not assign an email address to service accounts; remove the hardcoded placeholder assignment."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2019-14837",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    35
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 35,
+      "fix_strategy": "Do not assign an email address to service accounts; remove the hardcoded placeholder assignment.",
+      "members": [
+        "CVE-2019-14837"
+      ],
+      "name": "Hardcoded predictable email for service accounts",
+      "root_cause": "Service accounts are assigned a hardcoded, predictable email address (e.g., username@placeholder.org), allowing an attacker who controls the email domain to request password reset and take over the account."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_35_hardcoded_predictable_email_for_service_accounts",
+    "email",
+    "emails",
+    "attacker-controlled",
+    "address"
+  ]
+}

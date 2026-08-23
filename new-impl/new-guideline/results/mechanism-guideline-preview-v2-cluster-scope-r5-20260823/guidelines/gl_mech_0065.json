@@ -1,0 +1,60 @@
+{
+  "cluster_summary": "The majority of these vulnerabilities stem from using untrusted user input (e.g., sort column names, order fields, filter parameters) directly in SQL or HQL queries without allow-list validation, enabling injection. One case has a validation timing flaw, two involve incomplete structural validation of HQL queries, one misses a configuration check for sorting obfuscated fields, and one is an algorithmic complexity issue unrelated to injection.",
+  "created_at": "2026-08-22T18:31:03+00:00",
+  "cve_ids": [
+    "CVE-2021-43863",
+    "CVE-2025-63689",
+    "CVE-2026-5328"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0012__pending_mech_cluster_12_missing_allow_list_validation_for_order_by_column_names",
+  "guideline_id": "gl_mech_0065",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should Introduce an allow-list of valid column names and enforce it before query construction; also restrict sort direction to 'ASC'/'DESC'..",
+  "mechanism": {
+    "aliases": [
+      "parameterized",
+      "passes",
+      "set",
+      "throw",
+      "payloads",
+      "uses"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_12_missing_allow_list_validation_for_order_by_column_names",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing allow-list validation for ORDER BY column names",
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Introduce an allow-list of valid column names and enforce it before query construction; also restrict sort direction to 'ASC'/'DESC'."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2021-43863",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    12
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 12,
+      "fix_strategy": "Introduce an allow-list of valid column names and enforce it before query construction; also restrict sort direction to 'ASC'/'DESC'.",
+      "members": [
+        "CVE-2026-5328",
+        "CVE-2025-63689",
+        "CVE-2021-43863"
+      ],
+      "name": "Missing allow-list validation for ORDER BY column names",
+      "root_cause": "User-supplied column or sort direction is directly interpolated into the ORDER BY clause without restricting input to a predefined set of safe identifiers."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_12_missing_allow_list_validation_for_order_by_column_names",
+    "parameterized",
+    "passes",
+    "set",
+    "throw"
+  ]
+}

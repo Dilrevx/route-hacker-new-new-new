@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "The code deserializes untrusted data using Java's default deserialization mechanisms (ObjectInputStream, XStream, Kryo) without restricting which classes can be instantiated. This allows attackers to craft malicious serialized objects that instantiate arbitrary classes, often leading to remote code execution via gadget chains. Various fixes involve adding class allowlists, replacing deserialization with safe parsing, removing serializable interfaces, disabling endpoints, or removing vulnerable libraries.",
+  "created_at": "2026-08-22T20:37:27+00:00",
+  "cve_ids": [
+    "CVE-2022-39311"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0016__pending_mech_cluster_16_disabling_vulnerable_deserialization_endpoint",
+  "guideline_id": "gl_mech_0080",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Disable the deserialization endpoint by default, only enabling it if a specific system property is set to true..",
+  "mechanism": {
+    "aliases": [
+      "property",
+      "assumed",
+      "spring-remoting-http-invoker",
+      "serialized",
+      "restrict",
+      "unrestricted"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_16_disabling_vulnerable_deserialization_endpoint",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Disabling vulnerable deserialization endpoint",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Disable the deserialization endpoint by default, only enabling it if a specific system property is set to true."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2022-39311",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    16
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 16,
+      "fix_strategy": "Disable the deserialization endpoint by default, only enabling it if a specific system property is set to true.",
+      "members": [
+        "CVE-2022-39311"
+      ],
+      "name": "Disabling vulnerable deserialization endpoint",
+      "root_cause": "The application exposes an HTTP endpoint that deserializes untrusted Java objects from request bodies without restricting allowed types or requiring strong authentication, assuming agent UUID authentication is sufficient."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_16_disabling_vulnerable_deserialization_endpoint",
+    "property",
+    "assumed",
+    "spring-remoting-http-invoker",
+    "serialized"
+  ]
+}

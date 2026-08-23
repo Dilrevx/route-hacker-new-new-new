@@ -1,0 +1,16 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.9,
+  "coverage_score": 0.5,
+  "actionability_score": 0.85,
+  "retrieval_query_quality": 0.8,
+  "main_issue": "Single representative case limits coverage, but the mechanism is coherently defined and well-evidenced. The boundary correctly distinguishes namespace/package URI location loading from classic XXE (parser features already disabled). The recall_follow_up field appropriately acknowledges the need for future same-identity recall expansion.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "archimatetool__archi::CVE-2023-40235: Vulnerable checkout ad679a46 already disables DOCTYPE, external DTD, external general entities, and external parameter entities. Fix bcab676b adds XMLResource.OPTION_USE_PACKAGE_NS_URI_AS_LOCATION=false with explicit comment about preventing unregistered URI loading. This cleanly supports a distinct mechanism boundary.",
+    "The single-case coverage is expected for a newly split boundary (boundary_decision=split_further). The evidence is thorough and directly supports the mechanism claim."
+  ]
+}
+```

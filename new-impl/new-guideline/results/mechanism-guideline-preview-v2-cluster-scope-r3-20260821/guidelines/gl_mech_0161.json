@@ -1,0 +1,74 @@
+{
+  "cluster_summary": "This cluster encompasses vulnerabilities where server-side code fails to implement proper cross-site request forgery (CSRF) protections, perform necessary authorization checks, or employ correct security context handling. These flaws allow attackers to forge requests, escalate privileges, or bypass access controls.",
+  "created_at": "2026-08-21T10:07:21+00:00",
+  "cve_ids": [
+    "CVE-2013-7330",
+    "CVE-2014-2068",
+    "CVE-2017-2611"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0028__mech_object_owner_scope_missing_authz",
+  "guideline_id": "gl_mech_0161",
+  "guideline_text": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where the authorization decision is not bound to both the current principal and the exact resource or tenant being affected. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation.",
+  "mechanism": {
+    "aliases": [
+      "object ownership authorization",
+      "tenant scope check",
+      "IDOR",
+      "resource scoped authorization"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_object_owner_scope_missing_authz",
+    "missing_guard": "the authorization decision is not bound to both the current principal and the exact resource or tenant being affected",
+    "name": "missing object-owner or tenant-scope authorization",
+    "sink_shape": "sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource",
+    "source_shape": "attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets",
+    "typical_fix": "check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2013-7330",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    28
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Add explicit checkPermission(ADMINISTER) calls before executing the action.",
+      "members": [
+        "CVE-2017-2611"
+      ],
+      "name": "Missing permission check on administrative action handlers",
+      "root_cause": "Administrative action methods are accessible without verifying that the caller has ADMINISTER permission, relying only on method constraints (e.g., @RequirePOST) or UI obscurity."
+    },
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Add permission checks (BUILD) on each downstream project during form processing and validation.",
+      "members": [
+        "CVE-2013-7330"
+      ],
+      "name": "Missing authorization check on cross-project build trigger configuration",
+      "root_cause": "Users with CONFIGURE permission on a project can add a build trigger referencing a downstream project without verifying they have BUILD permission on that project."
+    },
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Replace with the correct permission constant.",
+      "members": [
+        "CVE-2014-2068"
+      ],
+      "name": "Incorrect permission constant used in authorization check",
+      "root_cause": "The authorization check for a sensitive operation uses a wrong permission constant (e.g., ADMINISTER instead of RUN_SCRIPTS)."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_object_owner_scope_missing_authz",
+    "object ownership authorization",
+    "tenant scope check",
+    "IDOR",
+    "resource scoped authorization"
+  ]
+}

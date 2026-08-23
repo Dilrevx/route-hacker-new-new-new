@@ -1,0 +1,85 @@
+{
+  "cluster_summary": "This cluster covers vulnerabilities where credentials (cookies, headers, realms) are improperly handled when crossing trust boundaries such as cross-origin redirects, fetch requests, proxy bypass, and shared client contexts. The root causes include missing credential clearing, incomplete header filtering, incorrect origin references, and unisolated mutable state.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2026-40490",
+    "CVE-2026-41345",
+    "CVE-2026-47265"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0038__mech_open_redirect_unsafe_uri_scheme",
+  "guideline_id": "gl_mech_0067",
+  "guideline_text": "Trace attacker-controlled redirect targets, callback URLs, return URLs, OAuth redirect_uri values, or browser navigation destinations into redirect responses, Location headers, OAuth/OIDC/SAML redirect validation, or browser-followed navigation targets. Report code paths where the redirect target is accepted without constraining the final scheme and destination to trusted browser-safe values. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should validate redirect targets with an explicit safe-scheme and destination allowlist after decoding and normalization.",
+  "mechanism": {
+    "aliases": [
+      "unsafe redirect URI scheme",
+      "javascript URI redirect",
+      "data URI redirect",
+      "redirect_uri scheme bypass"
+    ],
+    "family": "open_redirect",
+    "mechanism_id": "mech_open_redirect_unsafe_uri_scheme",
+    "missing_guard": "the redirect target is accepted without constraining the final scheme and destination to trusted browser-safe values",
+    "name": "open redirect through unsafe URI scheme validation",
+    "required_keywords": [],
+    "sink_shape": "redirect responses, Location headers, OAuth/OIDC/SAML redirect validation, or browser-followed navigation targets",
+    "source_shape": "attacker-controlled redirect targets, callback URLs, return URLs, OAuth redirect_uri values, or browser navigation destinations",
+    "typical_fix": "validate redirect targets with an explicit safe-scheme and destination allowlist after decoding and normalization"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 2,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 3,
+    "total_member_count": 3,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2026-40490",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    38
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 38,
+      "fix_strategy": "Ensure all credential sources are cleared when origin changes, including headers and any separate cookies object.",
+      "members": [
+        "CVE-2026-47265"
+      ],
+      "name": "Incomplete credential clearing on redirect",
+      "root_cause": "Code fails to remove all sensitive credential sources (Cookie header, Proxy-Authorization header, per-request cookies dictionary) when following a redirect to a different origin."
+    },
+    {
+      "cluster_id": 38,
+      "fix_strategy": "Implement an allowlist of safe headers (e.g., Accept, Content-Type, User-Agent) that are permitted to be forwarded during cross-origin redirects.",
+      "members": [
+        "CVE-2026-41345"
+      ],
+      "name": "Denylist-based header filtering on redirect",
+      "root_cause": "Code uses a denylist of known sensitive headers or assumes all headers safe, allowing custom authentication headers or common sensitive headers to be forwarded on cross-origin redirects."
+    },
+    {
+      "cluster_id": 38,
+      "fix_strategy": "Compute stripAuth based on origin and scheme comparison; conditionally set realm to null and clear future realm/proxyRealm.",
+      "members": [
+        "CVE-2026-40490"
+      ],
+      "name": "Realm propagation without origin validation",
+      "root_cause": "No validation that redirect target shares the same origin, and even when stripping Authorization headers, the Realm object with plaintext credentials is still propagated."
+    }
+  ],
+  "tags": [
+    "open_redirect",
+    "mech_open_redirect_unsafe_uri_scheme",
+    "unsafe redirect URI scheme",
+    "javascript URI redirect",
+    "data URI redirect",
+    "redirect_uri scheme bypass"
+  ]
+}

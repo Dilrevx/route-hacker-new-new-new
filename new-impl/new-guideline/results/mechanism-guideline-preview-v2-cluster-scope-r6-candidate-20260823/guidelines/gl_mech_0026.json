@@ -1,0 +1,76 @@
+{
+  "cluster_summary": "This cluster encompasses vulnerabilities in tar and zip archive extraction where insufficient validation of member paths, link targets, header fields, and resource limits allows path traversal, arbitrary file writes, denial of service, or race conditions. The flaws commonly arise from missing canonicalization (e.g., os.path.realpath, os.path.normpath), flawed base directory comparison logic, or incomplete input sanitization.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2025-8194",
+    "CVE-2025-8291"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0006__mech_binary_length_unbounded_resource_use",
+  "guideline_id": "gl_mech_0026",
+  "guideline_text": "Trace attacker-controlled binary length fields, size counters, frame lengths, offsets, back-references, or decompressed-size metadata into memory allocation, buffer growth, parsing loops, frame handling, decompression, or resource-consuming work. Report code paths where protocol-specific upper bounds, arithmetic overflow checks, structural consistency checks, or expansion limits are absent before allocation or work expansion. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should enforce explicit size limits, validate arithmetic and offsets before use, reject malformed or oversized records early, and bound decompression or frame-processing work.",
+  "mechanism": {
+    "aliases": [
+      "unbounded length allocation",
+      "binary size field DoS",
+      "frame length resource exhaustion",
+      "decompression size exhaustion"
+    ],
+    "family": "resource_exhaustion_or_bounds",
+    "mechanism_id": "mech_binary_length_unbounded_resource_use",
+    "missing_guard": "protocol-specific upper bounds, arithmetic overflow checks, structural consistency checks, or expansion limits are absent before allocation or work expansion",
+    "name": "unbounded binary length or size field drives resource use",
+    "required_keywords": [
+      [
+        "binary",
+        "frame",
+        "buffer",
+        "allocate",
+        "allocation",
+        "decompress",
+        "compressed",
+        "payload",
+        "offset"
+      ],
+      [
+        "length",
+        "size",
+        "count",
+        "bounds",
+        "overflow"
+      ]
+    ],
+    "sink_shape": "memory allocation, buffer growth, parsing loops, frame handling, decompression, or resource-consuming work",
+    "source_shape": "attacker-controlled binary length fields, size counters, frame lengths, offsets, back-references, or decompressed-size metadata",
+    "typical_fix": "enforce explicit size limits, validate arithmetic and offsets before use, reject malformed or oversized records early, and bound decompression or frame-processing work"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2025-8194",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    6
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 6,
+      "fix_strategy": "Add input validation: reject negative values, verify ZIP64 offset and signature, and use a context flag to conditionally apply type normalization.",
+      "members": [
+        "CVE-2025-8194",
+        "CVE-2025-8291"
+      ],
+      "name": "Input parsing validation errors (header fields)",
+      "root_cause": "Missing validation of header fields such as negative offsets, unverified ZIP64 offsets, or context-insensitive type conversion (AREGTYPE→DIRTYPE) during multi-block header parsing."
+    }
+  ],
+  "tags": [
+    "resource_exhaustion_or_bounds",
+    "mech_binary_length_unbounded_resource_use",
+    "unbounded length allocation",
+    "binary size field DoS",
+    "frame length resource exhaustion",
+    "decompression size exhaustion"
+  ]
+}

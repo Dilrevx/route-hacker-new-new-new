@@ -1,0 +1,21 @@
+{
+  "accepted_count": 2,
+  "average_scores": {
+    "actionability_score": 0.825,
+    "coherence_score": 0.875,
+    "coverage_score": 0.5249999999999999,
+    "retrieval_query_quality": 0.7250000000000001
+  },
+  "decision_counts": {
+    "accept": 2
+  },
+  "invalid_output_count": 0,
+  "judge_input_count": 2,
+  "judge_output_dir": "judge_outputs",
+  "low_score_count": 1,
+  "low_score_threshold": 0.6,
+  "missing_output_count": 0,
+  "needs_revision_count": 0,
+  "parsed_count": 2,
+  "schema_version": "hcvr_guideline_llm_judge_summary.v1"
+}

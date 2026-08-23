@@ -1,0 +1,19 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.92,
+  "coverage_score": 0.70,
+  "actionability_score": 0.88,
+  "retrieval_query_quality": 0.85,
+  "main_issue": "Strong single-case evidence with advisory, PR, pre-patch source, and patch hunk all confirming the mechanism. Coverage is limited to one case but the semantic correction from temp-file-race to output-directory path control is well-supported by source evidence. The guideline is coherent across source shape, sink, missing guard, exploit precondition, and safe fix.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "CVE-2024-35219 advisory (GHSA-g3hr-p86p-593h) confirms arbitrary file read/delete via outputFolder option",
+    "PR #18652 (commit edbb021a) explicitly removes outputFolder usage from the online service",
+    "Pre-patch Generator.java lines 121-148 show the full flow: opts.getOptions().get(\"outputFolder\") -> concatenation -> setOutputDir -> ZIP input -> cleanup delete",
+    "Patch hunk comments note the input can contain ../../ to access other folders",
+    "Single representative case; additional cases with similar output-directory path control in web-exposed code generation services would strengthen coverage"
+  ]
+}
+```

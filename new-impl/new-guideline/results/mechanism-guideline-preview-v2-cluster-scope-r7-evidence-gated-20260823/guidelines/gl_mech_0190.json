@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where sensitive data (passwords, emails) is exposed due to missing type-based filtering, obfuscation, or redaction. It also includes issues with stale cached configuration and specific logic errors in metadata handling and cleanup, leading to unauthorized disclosure of protected information.",
+  "created_at": "2026-08-22T20:37:28+00:00",
+  "cve_ids": [
+    "CVE-2022-41935"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0034__pending_mech_cluster_34_bypass_of_result_count_obfuscation_via_special_parameter",
+  "guideline_id": "gl_mech_0190",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Set returnedrows to the actual number of query results when limit is zero, so subsequent filtering correctly reduces counts..",
+  "mechanism": {
+    "aliases": [
+      "sensitive",
+      "correctly",
+      "includes",
+      "sends",
+      "insufficient",
+      "updated"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_34_bypass_of_result_count_obfuscation_via_special_parameter",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "bypass of result count obfuscation via special parameter",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Set returnedrows to the actual number of query results when limit is zero, so subsequent filtering correctly reduces counts."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2022-41935",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    34
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 34,
+      "fix_strategy": "Set returnedrows to the actual number of query results when limit is zero, so subsequent filtering correctly reduces counts.",
+      "members": [
+        "CVE-2022-41935"
+      ],
+      "name": "bypass of result count obfuscation via special parameter",
+      "root_cause": "The code incorrectly sets returnedrows to 0 when limit=0, bypassing the obfuscation mechanism that reduces counts for unauthorized entries."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_34_bypass_of_result_count_obfuscation_via_special_parameter",
+    "sensitive",
+    "correctly",
+    "includes",
+    "sends"
+  ]
+}

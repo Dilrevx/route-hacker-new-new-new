@@ -1,0 +1,124 @@
+{
+  "cluster_summary": "This cluster consists of vulnerabilities in Java and Python libraries where temporary files or directories are created using non-atomic operations (e.g., create, delete, mkdir sequence) that introduce TOCTOU race conditions, or using APIs that default to overly permissive permissions (world-readable), allowing local attackers to read sensitive data or perform symlink attacks. Additional variants include failing to verify permission changes, manually setting overly permissive permissions, and using predictable file names that enable race attacks.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2021-21290",
+    "CVE-2021-21364",
+    "CVE-2022-24823",
+    "CVE-2022-24913",
+    "CVE-2022-41954",
+    "CVE-2022-4641",
+    "CVE-2023-0482",
+    "CVE-2024-29869",
+    "CVE-2025-24790",
+    "CVE-2025-48382",
+    "CVE-2026-4137"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0000__mech_temp_resource_insecure_permissions",
+  "guideline_id": "gl_mech_0002",
+  "guideline_text": "Trace temporary files or directories created for sensitive data, build artifacts, credentials, extracted content, or intermediate processing into filesystem creation APIs that inherit broad default permissions or fail to apply owner-only permissions before use. Report code paths where the temporary resource is created or exposed with permissions that allow other local users to read, write, replace, or observe sensitive content. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 11 historical CVE example(s), not as a project-specific signature. A safe implementation should create temporary resources with owner-only permissions atomically, verify permission-setting success, and avoid placing secrets in shared-readable locations.",
+  "mechanism": {
+    "aliases": [
+      "insecure temporary file permissions",
+      "world-readable temp file",
+      "temporary directory permissions",
+      "File.createTempFile permissions"
+    ],
+    "family": "filesystem",
+    "mechanism_id": "mech_temp_resource_insecure_permissions",
+    "missing_guard": "the temporary resource is created or exposed with permissions that allow other local users to read, write, replace, or observe sensitive content",
+    "name": "temporary resource created with insecure permissions",
+    "required_keywords": [
+      [
+        "temporary",
+        "temp",
+        "createtempfile",
+        "createtempdirectory"
+      ],
+      [
+        "permissions",
+        "posix",
+        "world-readable",
+        "world-writable",
+        "owner-only",
+        "chmod"
+      ]
+    ],
+    "sink_shape": "filesystem creation APIs that inherit broad default permissions or fail to apply owner-only permissions before use",
+    "source_shape": "temporary files or directories created for sensitive data, build artifacts, credentials, extracted content, or intermediate processing",
+    "typical_fix": "create temporary resources with owner-only permissions atomically, verify permission-setting success, and avoid placing secrets in shared-readable locations"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 4,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 11,
+    "total_member_count": 11,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2021-21290",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    0
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 0,
+      "fix_strategy": "Replace File.createTempFile() or File.mkdir() with java.nio.file.Files.createTempFile() or Files.createTempDirectory(), which create files/directories with owner-only permissions (e.g., 0600/0700) by default, or explicitly set restrictive FileAttributes.",
+      "members": [
+        "CVE-2021-21290",
+        "CVE-2021-21364",
+        "CVE-2022-24913",
+        "CVE-2022-41954",
+        "CVE-2022-4641",
+        "CVE-2023-0482"
+      ],
+      "name": "Insecure default permissions on temporary files created with legacy Java API",
+      "root_cause": "The code uses File.createTempFile() (or File.mkdir()) which creates temporary files/directories with default system-dependent permissions (often world-readable, e.g., 644/755) without enforcing owner-only access, allowing other local users to read sensitive data."
+    },
+    {
+      "cluster_id": 0,
+      "fix_strategy": "Check the return value of setReadable() and throw an IOException if false, ensuring that permission restrictions are actually applied.",
+      "members": [
+        "CVE-2022-24823"
+      ],
+      "name": "Unchecked return value when restricting temporary file permissions",
+      "root_cause": "The code calls File.setReadable(true, true) to restrict permissions but does not check the boolean return value. On systems where the operation fails (e.g., due to filesystem limitations), the file remains world-readable, leading to information disclosure."
+    },
+    {
+      "cluster_id": 0,
+      "fix_strategy": "After file creation, explicitly set owner-only permissions (e.g., using setReadable/setWritable with owner-only flags, or POSIX file attributes) to restrict access to the owner.",
+      "members": [
+        "CVE-2024-29869",
+        "CVE-2025-24790",
+        "CVE-2025-48382"
+      ],
+      "name": "Missing explicit restrictive permissions on temporary files with manual permission setting",
+      "root_cause": "The code creates temporary files using File.createTempFile() or createNewFile() without explicitly restricting permissions after creation, relying on default umask which may leave files world-readable."
+    },
+    {
+      "cluster_id": 0,
+      "fix_strategy": "Restrict permissions to owner-only or owner+group read/execute (e.g., 0o750) to prevent unauthorized writes, while still allowing the intended access.",
+      "members": [
+        "CVE-2026-4137"
+      ],
+      "name": "Overly permissive explicit permissions on temporary directories",
+      "root_cause": "The code explicitly sets temporary directory permissions to 0o777 or 0o770 (world-writable or group-writable) assuming it is necessary for shared access, allowing any local user to write malicious files into the directory."
+    }
+  ],
+  "tags": [
+    "filesystem",
+    "mech_temp_resource_insecure_permissions",
+    "insecure temporary file permissions",
+    "world-readable temp file",
+    "temporary directory permissions",
+    "File.createTempFile permissions"
+  ]
+}

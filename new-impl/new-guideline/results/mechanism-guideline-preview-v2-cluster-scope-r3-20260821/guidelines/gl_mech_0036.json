@@ -1,0 +1,56 @@
+{
+  "cluster_summary": "Applications using SnakeYAML's default `new Yaml()` constructor to parse untrusted YAML input are vulnerable to arbitrary code execution because the default constructor allows instantiation of arbitrary Java classes. The fix involves restricting deserialization to safe types via SafeConstructor, SingleTypeConstructor, library upgrade, or whitelist checks.",
+  "created_at": "2026-08-21T10:07:21+00:00",
+  "cve_ids": [
+    "CVE-2021-39132"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0007__pending_mech_cluster_7_singletypeconstructor_restriction",
+  "guideline_id": "gl_mech_0036",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Use a custom `SingleTypeConstructor` that restricts deserialization to a single expected class (e.g., PluginMeta)..",
+  "mechanism": {
+    "aliases": [
+      "enabling",
+      "restrict",
+      "replace",
+      "server-side",
+      "malicious",
+      "remote"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_7_singletypeconstructor_restriction",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "SingleTypeConstructor restriction",
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Use a custom `SingleTypeConstructor` that restricts deserialization to a single expected class (e.g., PluginMeta)."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2021-39132",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    7
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 7,
+      "fix_strategy": "Use a custom `SingleTypeConstructor` that restricts deserialization to a single expected class (e.g., PluginMeta).",
+      "members": [
+        "CVE-2021-39132"
+      ],
+      "name": "SingleTypeConstructor restriction",
+      "root_cause": "Code uses `new Yaml()` without a SafeConstructor, enabling instantiation of arbitrary classes from untrusted YAML."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_7_singletypeconstructor_restriction",
+    "enabling",
+    "restrict",
+    "replace",
+    "server-side"
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "cluster_summary": "Multiple endpoints and data publications fail to verify that users have appropriate access to the requested resources. This includes missing validation of parent-child resource relationships, using incorrect permission levels, lacking authentication on sensitive data endpoints, failing to project out sensitive fields, trusting client-supplied identifiers for ownership, stale authorization caches, user-supplied projection bypass, and unvalidated webhook URLs leading to SSRF.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2026-25563"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0079__mech_object_owner_scope_missing_authz",
+  "guideline_id": "gl_mech_0138",
+  "guideline_text": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where the authorization decision is not bound to both the current principal and the exact resource or tenant being affected. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation.",
+  "mechanism": {
+    "aliases": [
+      "object ownership authorization",
+      "tenant scope check",
+      "IDOR",
+      "resource scoped authorization"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_object_owner_scope_missing_authz",
+    "missing_guard": "the authorization decision is not bound to both the current principal and the exact resource or tenant being affected",
+    "name": "missing object-owner or tenant-scope authorization",
+    "required_keywords": [],
+    "sink_shape": "sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource",
+    "source_shape": "attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets",
+    "typical_fix": "check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 2,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 1,
+    "total_member_count": 1,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2026-25563",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    79
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 79,
+      "fix_strategy": "After fetching the child resource, verify that its parent ID matches the provided parent ID, or query with a combined filter that ensures the child belongs to the specified parent.",
+      "members": [
+        "CVE-2026-25563"
+      ],
+      "name": "Missing hierarchical ownership validation",
+      "root_cause": "Code assumes user-supplied parent and child resource IDs are consistent without verifying that the child actually belongs to the parent. No cross-reference check is performed before authorization."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_object_owner_scope_missing_authz",
+    "object ownership authorization",
+    "tenant scope check",
+    "IDOR",
+    "resource scoped authorization"
+  ]
+}

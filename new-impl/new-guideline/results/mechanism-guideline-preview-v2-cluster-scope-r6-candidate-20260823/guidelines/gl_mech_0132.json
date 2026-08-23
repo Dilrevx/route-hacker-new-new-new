@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities related to improper use of cryptographic primitives (weak PRNG, insecure modes, insufficient key protection) and failure to validate trust boundaries in inter-component communication (mutable intents, unverified package identity, side-channel). The former lead to predictable ciphertext, key exposure, or credential compromise; the latter allow injection, redirection, or unauthorized access.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2022-4903"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0028__pending_mech_cluster_28_mutable_pendingintent_allowing_intent_redirection",
+  "guideline_id": "gl_mech_0132",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Add FLAG_IMMUTABLE when creating PendingIntent to prevent modification..",
+  "mechanism": {
+    "aliases": [
+      "creating",
+      "accessible",
+      "facilitating",
+      "prevent",
+      "wrapped",
+      "potentially"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_28_mutable_pendingintent_allowing_intent_redirection",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Mutable PendingIntent allowing intent redirection",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Add FLAG_IMMUTABLE when creating PendingIntent to prevent modification."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2022-4903",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    28
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Add FLAG_IMMUTABLE when creating PendingIntent to prevent modification.",
+      "members": [
+        "CVE-2022-4903"
+      ],
+      "name": "Mutable PendingIntent allowing intent redirection",
+      "root_cause": "PendingIntent created without FLAG_IMMUTABLE on Android API >= 23, allowing another app to modify the wrapped Intent."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_28_mutable_pendingintent_allowing_intent_redirection",
+    "creating",
+    "accessible",
+    "facilitating",
+    "prevent"
+  ]
+}

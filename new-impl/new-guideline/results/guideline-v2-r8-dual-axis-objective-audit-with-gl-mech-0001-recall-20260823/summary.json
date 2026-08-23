@@ -1,0 +1,118 @@
+{
+  "decision": "Continue guideline-v2 work through evidence collection before rewriting released guidelines. Do not mark the objective complete until semantic evidence improves and any changed sidecar has a fresh same-identity recall evaluation.",
+  "desired_delta_rate": 0.1,
+  "missing_or_incomplete_requirements": [
+    {
+      "evidence": [
+        "mechanism guideline generator uses offline mechanism attribution, member evidence support, release-ready gating, and review queue quarantine",
+        "weighted_primary_hcvr_purity=0.8659376811594203",
+        "weighted_cwe_purity=0.9245177536231884",
+        "judge_decision_counts={'accept': 2, 'needs_evidence': 10, 'revise': 5, 'split': 3}",
+        "evidence_worklist_actions={'collect_source_sink_guard_evidence': 10, 'keep_as_control_group': 2, 'revise_mechanism_text_from_evidence': 5, 'split_mechanism_boundary': 3}"
+      ],
+      "gap": "TraeX judge still finds many groups needing source/sink/guard evidence or split/revision work.",
+      "requirement": "Design reusable guideline classification that generalizes across CVEs but remains audit-specific.",
+      "status": "partially_satisfied_needs_evidence"
+    },
+    {
+      "evidence": [
+        "recall_status=inherited_same_identity_by_sidecar_equivalence",
+        "same_identity_set=True",
+        "same_identity_order=True",
+        "recall_equivalence_status=valid_consumed_text_equivalence",
+        "primary_budget=100",
+        "boundary_recall_triage_aligned_boundaries=1",
+        "boundary_recall_triage_rank_tables=['p3c64-3case']"
+      ],
+      "gap": "The current r8 recall evidence is inherited by unchanged sidecar text; a fresh run is required after any consumed guideline text changes.",
+      "requirement": "Keep guidelines compatible with the tuned embedding recall path.",
+      "status": "compatible_but_improvement_below_target"
+    }
+  ],
+  "next_gates": [
+    {
+      "current_state": "not passed; evidence worklist has outstanding rows",
+      "gate": "semantic_evidence_gate",
+      "pass_condition": "each promoted group has checked source, sink, missing guard, exploit precondition, and fix semantics for representative member cases",
+      "run_when": "before changing released guideline text or lexicon entries"
+    },
+    {
+      "current_state": "not required for r8 equivalence; required for any next changed sidecar",
+      "gate": "same_identity_recall_gate",
+      "pass_condition": "same_identity_set=true and same_identity_order=true against the frozen comparison baseline",
+      "run_when": "after recall-consumed guideline sidecar text changes"
+    },
+    {
+      "current_state": "policy exists; 1 source-reviewed boundary/boundaries currently have same-identity recall examples aligned",
+      "gate": "taxonomy_vs_embed_triage_gate",
+      "pass_condition": "record whether the miss is caused by guideline wording, candidate slicing, embedding backend, adapter weights, rank fusion, or audit budget",
+      "run_when": "when a semantically clean group misses Top-K"
+    },
+    {
+      "current_state": "satisfied by current scorecard format, but final paper table still needs fresh numbers if guideline text changes",
+      "gate": "paper_claim_boundary_gate",
+      "pass_condition": "semantic judge evidence, structural diagnostics, sidecar equivalence, and recall A/B deltas are reported as separate claims",
+      "run_when": "before writing results into the paper"
+    }
+  ],
+  "overall_status": "not_complete",
+  "requirements": [
+    {
+      "evidence": [
+        "mechanism guideline generator uses offline mechanism attribution, member evidence support, release-ready gating, and review queue quarantine",
+        "weighted_primary_hcvr_purity=0.8659376811594203",
+        "weighted_cwe_purity=0.9245177536231884",
+        "judge_decision_counts={'accept': 2, 'needs_evidence': 10, 'revise': 5, 'split': 3}",
+        "evidence_worklist_actions={'collect_source_sink_guard_evidence': 10, 'keep_as_control_group': 2, 'revise_mechanism_text_from_evidence': 5, 'split_mechanism_boundary': 3}"
+      ],
+      "gap": "TraeX judge still finds many groups needing source/sink/guard evidence or split/revision work.",
+      "requirement": "Design reusable guideline classification that generalizes across CVEs but remains audit-specific.",
+      "status": "partially_satisfied_needs_evidence"
+    },
+    {
+      "evidence": [
+        "recall_status=inherited_same_identity_by_sidecar_equivalence",
+        "same_identity_set=True",
+        "same_identity_order=True",
+        "recall_equivalence_status=valid_consumed_text_equivalence",
+        "primary_budget=100",
+        "boundary_recall_triage_aligned_boundaries=1",
+        "boundary_recall_triage_rank_tables=['p3c64-3case']"
+      ],
+      "gap": "The current r8 recall evidence is inherited by unchanged sidecar text; a fresh run is required after any consumed guideline text changes.",
+      "requirement": "Keep guidelines compatible with the tuned embedding recall path.",
+      "status": "compatible_but_improvement_below_target"
+    },
+    {
+      "evidence": [
+        "known anchors are used after ranking for metrics, not for query construction",
+        "evidence worklist marks judge/bad-case material as review_only_not_release_not_recall_input",
+        "README forbids runtime regex fallback, hidden label routing, and per-case fixes"
+      ],
+      "gap": "Must be rechecked whenever generator or recall query construction changes.",
+      "requirement": "Use recall bad cases as motivation without turning them into answer keys.",
+      "status": "satisfied_by_current_policy"
+    },
+    {
+      "evidence": [
+        "README separates semantic guideline quality from embedding recall compatibility",
+        "revision backlog has actions for embedding/candidate/query mismatch",
+        "scorecard separates structural, judge, recall, and sidecar-equivalence evidence"
+      ],
+      "gap": "Need per-group semantic-vs-recall triage after the next changed-sidecar recall run.",
+      "requirement": "If semantic guideline quality is strong but recall remains weak, inspect recall method before weakening taxonomy.",
+      "status": "satisfied_as_evaluation_policy"
+    },
+    {
+      "evidence": [
+        "scorecard marks recall improvement claim as not_supported_at_desired_delta",
+        "RRF/fusion is documented as a recall-compatible engineering path, not a guideline-quality claim",
+        "TraeX judge output feeds backlog/worklist rather than released guidelines or ranking"
+      ],
+      "gap": "Any future fusion or model substitution needs same-identity A/B and a separate claim boundary.",
+      "requirement": "Avoid hardcoding and be cautious with paper-facing engineering combinations.",
+      "status": "satisfied_by_current_policy"
+    }
+  ],
+  "schema_version": "hcvr_guideline_dual_axis_objective_audit.v1"
+}

@@ -1,0 +1,92 @@
+{
+  "cluster_summary": "This cluster comprises vulnerabilities where size or length fields from untrusted binary input are used to allocate memory or control operations without adequate validation. Common flaws include missing upper bounds, integer overflow in arithmetic, invalid back-reference offsets, and improper handling of edge cases, leading to memory exhaustion, data leaks, or denial of service.",
+  "created_at": "2026-08-21T09:41:09+00:00",
+  "cve_ids": [
+    "CVE-2020-28371",
+    "CVE-2020-28491",
+    "CVE-2023-34453",
+    "CVE-2023-34455",
+    "CVE-2023-46120",
+    "CVE-2024-36114",
+    "CVE-2025-49128",
+    "CVE-2025-67721"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0021__mech_toctou_mutable_object_reuse",
+  "guideline_id": "gl_mech_0114",
+  "guideline_text": "Trace mutable files, paths, objects, identities, request fields, or shared state that are checked before use into sensitive file, state, permission, memory, or resource effects that depend on the earlier check. Report code paths where the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 8 historical CVE example(s), not as a project-specific signature. A safe implementation should bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary.",
+  "mechanism": {
+    "aliases": [
+      "TOCTOU",
+      "check then use race",
+      "double fetch",
+      "stale object reuse"
+    ],
+    "family": "race_or_lifecycle",
+    "mechanism_id": "mech_toctou_mutable_object_reuse",
+    "missing_guard": "the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect",
+    "name": "time-of-check to time-of-use on mutable object",
+    "sink_shape": "sensitive file, state, permission, memory, or resource effects that depend on the earlier check",
+    "source_shape": "mutable files, paths, objects, identities, request fields, or shared state that are checked before use",
+    "typical_fix": "bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2020-28371",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    21
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 21,
+      "fix_strategy": "Introduce a maximum allowed allocation size (configurable or hardcoded) and/or use gradual reading with threshold; throw an exception if the declared length exceeds the limit.",
+      "members": [
+        "CVE-2023-34455",
+        "CVE-2020-28491",
+        "CVE-2023-46120"
+      ],
+      "name": "Unbounded allocation from untrusted length field",
+      "root_cause": "The code directly uses an attacker-controlled length value from the input stream to allocate a buffer without imposing any upper bound or size limit."
+    },
+    {
+      "cluster_id": 21,
+      "fix_strategy": "Add overflow detection checks (e.g., compare product to original factor, use subtraction to avoid overflow) and throw an error on overflow.",
+      "members": [
+        "CVE-2023-34453",
+        "CVE-2024-36114",
+        "CVE-2020-28371"
+      ],
+      "name": "Integer overflow in size/length arithmetic",
+      "root_cause": "Arithmetic operations (multiplication, addition) on attacker-controlled size values are performed without overflow checks, causing integer wrap-around that leads to undersized buffer allocations or bypassed bounds checks."
+    },
+    {
+      "cluster_id": 21,
+      "fix_strategy": "Enforce a positive offset (offset > 0) and/or zero-fill output region when offset is zero.",
+      "members": [
+        "CVE-2025-67721"
+      ],
+      "name": "Invalid back-reference offset in LZ decompression",
+      "root_cause": "LZ77/LZ4 decompression routines do not reject zero or negative back-reference offsets, causing data to be copied from uninitialized or reused buffer memory."
+    },
+    {
+      "cluster_id": 21,
+      "fix_strategy": "Use the content reference's offset and length to slice the snippet.",
+      "members": [
+        "CVE-2025-49128"
+      ],
+      "name": "Error snippet extraction ignores content offset",
+      "root_cause": "When generating error messages, the code reads from index 0 of the underlying buffer instead of using the logical content's offset and length, potentially leaking sensitive data from reused buffers."
+    }
+  ],
+  "tags": [
+    "race_or_lifecycle",
+    "mech_toctou_mutable_object_reuse",
+    "TOCTOU",
+    "check then use race",
+    "double fetch",
+    "stale object reuse"
+  ]
+}

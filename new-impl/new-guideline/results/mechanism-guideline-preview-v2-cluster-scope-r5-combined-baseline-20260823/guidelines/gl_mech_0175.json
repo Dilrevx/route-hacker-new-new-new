@@ -1,0 +1,61 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where untrusted data (user input, configuration values, or system-monitored data) is used directly in SQL or CQL queries without proper validation, escaping, or parameterization. The flaws allow injection of arbitrary commands by exploiting identifiers (table names, column names) or string values. Fixes involve either whitelist-based validation for identifiers, proper identifier quoting, or using parameterized queries for values.",
+  "created_at": "2026-08-22T20:04:50+00:00",
+  "cve_ids": [
+    "CVE-2026-30930",
+    "CVE-2026-32628",
+    "CVE-2026-32714"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0035__pending_mech_cluster_35_missing_parameterized_queries_for_values",
+  "guideline_id": "gl_mech_0175",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should Replace string concatenation with parameterized queries using placeholders (e.g., ?, %s) and pass the values separately to the database driver, ensuring they are safely escaped as string literals..",
+  "mechanism": {
+    "aliases": [
+      "build",
+      "timescaledb",
+      "invocation",
+      "values",
+      "quotes",
+      "exports"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_35_missing_parameterized_queries_for_values",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing parameterized queries for values",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Replace string concatenation with parameterized queries using placeholders (e.g., ?, %s) and pass the values separately to the database driver, ensuring they are safely escaped as string literals."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-30930",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    35
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 35,
+      "fix_strategy": "Replace string concatenation with parameterized queries using placeholders (e.g., ?, %s) and pass the values separately to the database driver, ensuring they are safely escaped as string literals.",
+      "members": [
+        "CVE-2026-30930",
+        "CVE-2026-32628",
+        "CVE-2026-32714"
+      ],
+      "name": "Missing parameterized queries for values",
+      "root_cause": "Code uses string concatenation or formatting (e.g., str.format()) to embed user-controlled values (process names, issuer, key_id, table names treated as strings) into SQL queries. The values are not escaped, allowing an attacker to inject SQL by including string terminators or metacharacters."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_35_missing_parameterized_queries_for_values",
+    "build",
+    "timescaledb",
+    "invocation",
+    "values"
+  ]
+}

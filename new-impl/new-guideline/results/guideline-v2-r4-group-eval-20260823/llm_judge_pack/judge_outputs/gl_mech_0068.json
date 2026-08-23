@@ -1,0 +1,16 @@
+{
+  "decision": "revise",
+  "coherence_score": 0.9,
+  "coverage_score": 0.82,
+  "actionability_score": 0.78,
+  "retrieval_query_quality": 0.42,
+  "main_issue": "The assigned cases consistently indicate SQL injection, but the guideline opens with broad, mechanism-agnostic authorization/state/binding language that obscures the specific source-to-SQL-sink dataflow. It should directly describe dynamic SQL construction from attacker-controlled values and distinguish value binding from structural SQL fragments.",
+  "suggested_guideline": "Identify SQL statements constructed by concatenating, interpolating, or formatting attacker-influenced HTTP parameters, form fields, cookies, headers, request-derived identifiers, or persisted user-controlled values into SQL text passed to Statement.execute*, executeQuery, executeUpdate, JDBC query helpers, or ORM native-query APIs. Report paths where untrusted values become SQL literals or clauses without parameter binding. Confirm exploitability by checking that the value can reach the query text before execution and is not constrained to a strict allowlist for required structural elements such as column names or sort directions. Fix value injection by using PreparedStatement placeholders and typed bind methods such as setString, setInt, and setObject, or the ORM equivalent. For unavoidable dynamic identifiers, map input through a fixed allowlist and bind all data values separately.",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "All three displayed cases are labeled CWE-89 and are grouped under direct string concatenation into SQL query, supporting a shared SQL-injection mechanism.",
+    "The payload provides only changed-file spans and no code excerpts, source-to-sink traces, or vulnerability descriptions, so exact query APIs and whether every case uses the same construction form cannot be confirmed.",
+    "The current safe-fix sentence correctly points toward parameterized queries, but its preceding generic guard language does not provide a focused SQL-audit procedure.",
+    "The guideline lacks concrete retrieval terms for common SQL construction and execution APIs, reducing its usefulness as a reusable audit query."
+  ]
+}

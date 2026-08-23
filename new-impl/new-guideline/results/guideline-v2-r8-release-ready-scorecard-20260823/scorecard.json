@@ -1,0 +1,177 @@
+{
+  "claim_boundaries": [
+    {
+      "caveat": "Purity and flags are weak diagnostics; mechanism quality still needs semantic review.",
+      "claim": "guideline_classification_quality",
+      "evidence": [
+        "group structural summary",
+        "source-only and pending-review accounting"
+      ],
+      "status": "supported_as_advisory_diagnostic"
+    },
+    {
+      "caveat": "Judge outputs rank review priority and cannot be converted into hardcoded routing.",
+      "claim": "semantic_guideline_quality",
+      "evidence": [
+        "LLM-as-judge summary"
+      ],
+      "status": "supported_as_advisory_diagnostic"
+    },
+    {
+      "caveat": "This claim is inherited by sidecar equivalence and still depends on the unchanged identity file, snapshots, candidate slicing, embedding backend, and ranking parameters.",
+      "claim": "embedding_recall_improvement",
+      "evidence": [],
+      "status": "not_supported_at_desired_delta"
+    }
+  ],
+  "judge_evidence": {
+    "accepted_count": 2,
+    "average_scores": {
+      "actionability_score": 0.7454999999999999,
+      "coherence_score": 0.5929999999999999,
+      "coverage_score": 0.4185,
+      "retrieval_query_quality": 0.649
+    },
+    "decision_counts": {
+      "accept": 2,
+      "needs_evidence": 10,
+      "revise": 5,
+      "split": 3
+    },
+    "invalid_output_count": 0,
+    "judge_input_count": 20,
+    "low_score_count": 14,
+    "message": "LLM-as-judge output is semantic review evidence; it must not become keyword routing or a hidden optimization target.",
+    "missing_output_count": 0,
+    "parsed_count": 20,
+    "status": "advisory_semantic_diagnostic"
+  },
+  "method_policy": [
+    "Optimize guideline wording and grouping from source/sink/guard evidence, not from keyword checks.",
+    "Use bad recall cases as regression and motivation data, not as per-case hardcoded fixes.",
+    "Treat recall numbers as evidence for a specific embedding plus guideline/query configuration.",
+    "Require same identity sets for paper-facing recall deltas."
+  ],
+  "recall_equivalence_evidence": {
+    "changed_text_count": 0,
+    "common_count": 189,
+    "left_count": 189,
+    "left_label": "guideline-v2-r7-evidence-gated-sidecar",
+    "left_sha256": "047e5e0db178ba150a23c9e8f2a2487eda569b20b5ed319a9e32c720038690ad",
+    "message": "The released sidecar has the same recall-consumed identity keys and guideline text as the measured sidecar.",
+    "recall_consumed_text_equivalent": true,
+    "right_count": 189,
+    "right_label": "guideline-v2-r8-release-ready-sidecar",
+    "right_sha256": "a45ead53711756d7c27bbbd692d2b9446cd3ce1bf7417939fdb1e901f8f6abf2",
+    "same_key_set": true,
+    "status": "valid_consumed_text_equivalence"
+  },
+  "recall_evidence": {
+    "budgets": [
+      {
+        "budget": 30,
+        "delta_count": 2,
+        "delta_rate": 0.013986013986013986,
+        "left_count": 47,
+        "left_rate": 0.32867132867132864,
+        "right_count": 45,
+        "right_rate": 0.3146853146853147
+      },
+      {
+        "budget": 50,
+        "delta_count": 2,
+        "delta_rate": 0.013986013986013986,
+        "left_count": 58,
+        "left_rate": 0.40559440559440557,
+        "right_count": 56,
+        "right_rate": 0.3916083916083916
+      },
+      {
+        "budget": 100,
+        "delta_count": 3,
+        "delta_rate": 0.02097902097902098,
+        "left_count": 76,
+        "left_rate": 0.5314685314685315,
+        "right_count": 73,
+        "right_rate": 0.5104895104895105
+      },
+      {
+        "budget": 150,
+        "delta_count": 2,
+        "delta_rate": 0.013986013986013986,
+        "left_count": 85,
+        "left_rate": 0.5944055944055944,
+        "right_count": 83,
+        "right_rate": 0.5804195804195804
+      },
+      {
+        "budget": 200,
+        "delta_count": 3,
+        "delta_rate": 0.02097902097902098,
+        "left_count": 87,
+        "left_rate": 0.6083916083916084,
+        "right_count": 84,
+        "right_rate": 0.5874125874125874
+      },
+      {
+        "budget": 300,
+        "delta_count": 5,
+        "delta_rate": 0.03496503496503497,
+        "left_count": 96,
+        "left_rate": 0.6713286713286714,
+        "right_count": 91,
+        "right_rate": 0.6363636363636364
+      },
+      {
+        "budget": 500,
+        "delta_count": 3,
+        "delta_rate": 0.02097902097902098,
+        "left_count": 106,
+        "left_rate": 0.7412587412587412,
+        "right_count": 103,
+        "right_rate": 0.7202797202797203
+      }
+    ],
+    "common_count": 143,
+    "equivalence_left_label": "guideline-v2-r7-evidence-gated-sidecar",
+    "equivalence_right_label": "guideline-v2-r8-release-ready-sidecar",
+    "left_label": "r7-evidence-gated-full143-p3c64",
+    "message": "Recall metrics are inherited from an existing same-identity A/B because the release sidecar is equivalent under recall-consumed identity keys and guideline text. This is not a fresh recall run.",
+    "mrr": {
+      "delta": 0.008536312417000924,
+      "left": 0.09706409187715234,
+      "right": 0.08852777946015142
+    },
+    "primary_budget": 100,
+    "right_label": "old-p3c64-full143-baseline",
+    "same_identity_order": true,
+    "same_identity_set": true,
+    "status": "inherited_same_identity_by_sidecar_equivalence"
+  },
+  "release": {
+    "active_attribution_count": 360,
+    "guideline_count": 177,
+    "override_count": 189,
+    "pending_overrides_included": false,
+    "pending_review_count": 386,
+    "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+    "work_item_count": 746
+  },
+  "release_label": "guideline-v2-r8-release-ready",
+  "schema_version": "hcvr_guideline_experiment_scorecard.v1",
+  "structural_evidence": {
+    "assigned_unique_case_count": 276,
+    "case_coverage_rate": 0.4144144144144144,
+    "evaluated_group_count": 119,
+    "guideline_count": 563,
+    "message": "Structural labels are triage signals for guideline grouping, not hard pass/fail gates.",
+    "mixed_cwe_group_count": 8,
+    "mixed_hcvr_group_count": 8,
+    "pending_candidate_count": 386,
+    "source_only_group_count": 444,
+    "status": "advisory_structural_diagnostic",
+    "total_case_count": 666,
+    "weighted_cwe_purity": 0.9245177536231884,
+    "weighted_primary_hcvr_purity": 0.8659376811594203
+  }
+}

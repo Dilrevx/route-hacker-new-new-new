@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where account modification endpoints (password, email, user role, contact) lack required verification steps such as re-authentication (current password or MFA), ownership confirmation, or token claim validation. The common coding mistake is assuming a valid session alone is sufficient authorization for sensitive actions, without additional proof of identity or ownership. One outlier involves a NoSQL injection vulnerability in password verification.",
+  "created_at": "2026-08-22T20:37:31+00:00",
+  "cve_ids": [
+    "CVE-2026-40352"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0095__pending_mech_cluster_95_missing_authorization_and_authentication_checks_in_account_management",
+  "guideline_id": "gl_mech_0552",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should add the required guard and bind it to the exact sensitive effect.",
+  "mechanism": {
+    "aliases": [
+      "token",
+      "sensitive",
+      "persistent",
+      "modification",
+      "sends",
+      "updateone"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_95_missing_authorization_and_authentication_checks_in_account_management",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing authorization and authentication checks in account management",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "add the required guard and bind it to the exact sensitive effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-40352",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    95
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 95,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2026-40352"
+      ],
+      "name": "Missing authorization and authentication checks in account management",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_95_missing_authorization_and_authentication_checks_in_account_management",
+    "token",
+    "sensitive",
+    "persistent",
+    "modification"
+  ]
+}

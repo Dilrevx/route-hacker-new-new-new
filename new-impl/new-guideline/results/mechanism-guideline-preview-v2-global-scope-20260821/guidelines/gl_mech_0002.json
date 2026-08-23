@@ -1,0 +1,439 @@
+{
+  "cluster_summary": "Applications using SnakeYAML's default `new Yaml()` constructor to parse untrusted YAML input are vulnerable to arbitrary code execution because the default constructor allows instantiation of arbitrary Java classes. The fix involves restricting deserialization to safe types via SafeConstructor, SingleTypeConstructor, library upgrade, or whitelist checks. / Multiple vulnerabilities arise from failing to enforce upper bounds on user-controlled size parameters (query limits, object indices) or from neglecting to check field metadata (types like Password, Email) before exposing data through queries, exports, REST APIs, and diffs. These omissions lead to resource exhaustion or unauthorized disclosure of sensitive information. / The cluster contains Java deserialization vulnerabilities where untrusted byte streams are passed to ObjectInputStream.readObject() (or Kryo) without any class allowlisting or type filtering, allowing arbitrary gadget-chain execution. Fix strategies vary: applying c",
+  "created_at": "2026-08-20T19:59:26+00:00",
+  "cve_ids": [
+    "CVE-2010-3260",
+    "CVE-2013-4521",
+    "CVE-2013-6447",
+    "CVE-2014-125087",
+    "CVE-2014-3490",
+    "CVE-2014-3682",
+    "CVE-2014-8125",
+    "CVE-2014-9515",
+    "CVE-2015-5377",
+    "CVE-2015-7326",
+    "CVE-2016-15011",
+    "CVE-2016-15026",
+    "CVE-2016-2510",
+    "CVE-2017-2582",
+    "CVE-2017-7545",
+    "CVE-2018-1000613",
+    "CVE-2018-1000632",
+    "CVE-2018-14718",
+    "CVE-2018-14719",
+    "CVE-2018-14720",
+    "CVE-2018-14721",
+    "CVE-2018-15531",
+    "CVE-2018-19360",
+    "CVE-2018-19361",
+    "CVE-2018-20433",
+    "CVE-2018-21234",
+    "CVE-2018-6331",
+    "CVE-2018-8038",
+    "CVE-2018-8088",
+    "CVE-2019-16941",
+    "CVE-2019-5748",
+    "CVE-2020-10650",
+    "CVE-2020-10683",
+    "CVE-2020-10990",
+    "CVE-2020-13692",
+    "CVE-2020-15232",
+    "CVE-2020-25020",
+    "CVE-2020-25820",
+    "CVE-2020-36640",
+    "CVE-2020-36641",
+    "CVE-2021-21243",
+    "CVE-2021-21250",
+    "CVE-2021-21266",
+    "CVE-2021-23792",
+    "CVE-2021-27736",
+    "CVE-2021-29505",
+    "CVE-2021-32634",
+    "CVE-2021-33950",
+    "CVE-2021-3836",
+    "CVE-2021-3869",
+    "CVE-2021-3878",
+    "CVE-2021-41098",
+    "CVE-2021-4295",
+    "CVE-2021-43859",
+    "CVE-2021-47621",
+    "CVE-2022-0198",
+    "CVE-2022-0219",
+    "CVE-2022-0239",
+    "CVE-2022-0265",
+    "CVE-2022-24839",
+    "CVE-2022-24898",
+    "CVE-2022-25845",
+    "CVE-2022-41137",
+    "CVE-2022-41958",
+    "CVE-2022-41967",
+    "CVE-2022-42003",
+    "CVE-2022-42004",
+    "CVE-2022-4607",
+    "CVE-2022-4725",
+    "CVE-2023-26119",
+    "CVE-2023-27480",
+    "CVE-2023-36480",
+    "CVE-2023-38689",
+    "CVE-2023-40235",
+    "CVE-2023-41034",
+    "CVE-2023-4218",
+    "CVE-2023-42809",
+    "CVE-2023-46502",
+    "CVE-2023-51389",
+    "CVE-2024-28109",
+    "CVE-2024-28198",
+    "CVE-2024-31464",
+    "CVE-2024-31573",
+    "CVE-2024-36404",
+    "CVE-2024-38374",
+    "CVE-2024-42362",
+    "CVE-2024-47074",
+    "CVE-2024-47552",
+    "CVE-2024-52807",
+    "CVE-2024-55953",
+    "CVE-2024-56322",
+    "CVE-2024-58335",
+    "CVE-2024-5979",
+    "CVE-2024-6441",
+    "CVE-2025-27136",
+    "CVE-2025-31129",
+    "CVE-2025-31487",
+    "CVE-2025-32897",
+    "CVE-2025-47293",
+    "CVE-2025-47771",
+    "CVE-2025-52888",
+    "CVE-2025-54992",
+    "CVE-2025-59952",
+    "CVE-2025-64518",
+    "CVE-2025-6507",
+    "CVE-2026-24400",
+    "CVE-2026-27830",
+    "CVE-2026-33701",
+    "CVE-2026-38429",
+    "CVE-2026-52751"
+  ],
+  "embeddings": {},
+  "group_scope": "mechanism",
+  "guideline_group_key": "mech_deserialization_untrusted_type_graph",
+  "guideline_id": "gl_mech_0002",
+  "guideline_text": "Trace untrusted serialized bytes, object streams, pickles, marshaled payloads, or type metadata into deserializers that instantiate classes, reconstruct object graphs, or invoke callbacks during object creation. Report code paths where allowed classes, object types, and construction side effects are not constrained before deserialization. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 110 historical CVE example(s), not as a project-specific signature. A safe implementation should use type allowlists, safe codecs, signature checks, or data-only formats instead of general object deserialization.",
+  "mechanism": {
+    "aliases": [
+      "unsafe deserialization",
+      "ObjectInputStream.readObject",
+      "pickle load",
+      "marshal load",
+      "serializer type metadata"
+    ],
+    "family": "deserialization",
+    "mechanism_id": "mech_deserialization_untrusted_type_graph",
+    "missing_guard": "allowed classes, object types, and construction side effects are not constrained before deserialization",
+    "name": "untrusted deserialization with attacker-controlled type graph",
+    "sink_shape": "deserializers that instantiate classes, reconstruct object graphs, or invoke callbacks during object creation",
+    "source_shape": "untrusted serialized bytes, object streams, pickles, marshaled payloads, or type metadata",
+    "typical_fix": "use type allowlists, safe codecs, signature checks, or data-only formats instead of general object deserialization"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2010-3260",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    0,
+    7,
+    9,
+    10,
+    11,
+    17,
+    33
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 0,
+      "fix_strategy": "Explicitly disable DTD declarations and external entity resolution by setting appropriate features on the parser factory (e.g., disallow-doctype-decl, external-general-entities=false, external-parameter-entities=false, FEATURE_SECURE_PROCESSING, ACCESS_EXTERNAL_DTD empty) or by providing a restrictive EntityResolver that blocks external resources.",
+      "members": [
+        "CVE-2026-38429",
+        "CVE-2024-52807",
+        "CVE-2026-24400",
+        "CVE-2024-58335",
+        "CVE-2025-64518",
+        "CVE-2025-54992",
+        "CVE-2025-52888",
+        "CVE-2025-47293",
+        "CVE-2020-25020",
+        "CVE-2022-24898",
+        "CVE-2022-41967",
+        "CVE-2020-36640",
+        "CVE-2025-31487",
+        "CVE-2021-33950",
+        "CVE-2021-47621",
+        "CVE-2025-27136",
+        "CVE-2023-27480",
+        "CVE-2014-125087",
+        "CVE-2024-56322",
+        "CVE-2023-41034",
+        "CVE-2010-3260",
+        "CVE-2021-23792",
+        "CVE-2018-8038",
+        "CVE-2023-46502",
+        "CVE-2023-4218",
+        "CVE-2022-0239",
+        "CVE-2016-15026",
+        "CVE-2016-15011",
+        "CVE-2015-7326",
+        "CVE-2014-8125",
+        "CVE-2014-3682",
+        "CVE-2014-3490",
+        "CVE-2013-6447"
+      ],
+      "name": "Missing secure parser configuration against external entity resolution",
+      "root_cause": "XML parser factories (DocumentBuilderFactory, SAXParserFactory, XMLInputFactory, SAXBuilder, etc.) are instantiated with default settings that permit DTD processing and external entity resolution. The code fails to disable these unsafe features before parsing untrusted XML input."
+    },
+    {
+      "cluster_id": 0,
+      "fix_strategy": "Replace XMLDecoder with manual XML parsing using DOM/SAX or a custom parser that only extracts expected fields, preventing arbitrary deserialization.",
+      "members": [
+        "CVE-2024-6441",
+        "CVE-2019-16941"
+      ],
+      "name": "Unsafe XML deserialization via XMLDecoder",
+      "root_cause": "Java's XMLDecoder class is used to deserialize user-supplied XML without any validation or whitelisting, allowing arbitrary class instantiation and method invocation."
+    },
+    {
+      "cluster_id": 0,
+      "fix_strategy": "Explicitly disable extension functions by setting the attribute jdk.xml.enableExtensionFunctions to false and make the secure configuration part of the default factory instance.",
+      "members": [
+        "CVE-2024-31573"
+      ],
+      "name": "Default enabling of XSLT extension functions",
+      "root_cause": "TransformerFactory is configured with default settings that allow XSLT extension functions, which can invoke arbitrary Java methods when processing untrusted stylesheets."
+    },
+    {
+      "cluster_id": 0,
+      "fix_strategy": "Add a break condition when read() returns -1 after reading the character following '?' or '/'.",
+      "members": [
+        "CVE-2022-24839"
+      ],
+      "name": "Missing end-of-file check in character-by-character XML processing instruction parsing",
+      "root_cause": "A loop that reads characters one by one inside a processing instruction expects a closing '>' but does not check for end-of-stream (-1), causing an infinite loop and resource exhaustion on truncated input."
+    },
+    {
+      "cluster_id": 0,
+      "fix_strategy": "Replace the default filter with a no-operation filter that returns null for any key, disabling substitution.",
+      "members": [
+        "CVE-2025-59952"
+      ],
+      "name": "Unrestricted XML variable interpolation of system properties",
+      "root_cause": "An XML serialization library's default variable filter automatically resolves ${...} placeholders to JVM system properties and environment variables without restriction."
+    },
+    {
+      "cluster_id": 0,
+      "fix_strategy": "Disable the use of namespace URIs as external locations by setting the configuration option OPTION_USE_PACKAGE_NS_URI_AS_LOCATION to false.",
+      "members": [
+        "CVE-2023-40235"
+      ],
+      "name": "Namespace URI treated as external resource location leading to credential leakage",
+      "root_cause": "XML resource loader treats namespace URIs as locations to fetch schema files; when an attacker provides a UNC path as namespace URI, the system attempts to connect and leaks NTLM credentials."
+    },
+    {
+      "cluster_id": 0,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2018-20433",
+        "CVE-2018-15531",
+        "CVE-2018-1000632",
+        "CVE-2017-7545",
+        "CVE-2017-2582",
+        "CVE-2021-41098",
+        "CVE-2020-36641",
+        "CVE-2020-25820",
+        "CVE-2020-15232",
+        "CVE-2020-13692",
+        "CVE-2020-10990",
+        "CVE-2020-10683",
+        "CVE-2019-5748",
+        "CVE-2022-4607",
+        "CVE-2022-4725",
+        "CVE-2021-4295",
+        "CVE-2021-3878",
+        "CVE-2021-3869",
+        "CVE-2021-3836",
+        "CVE-2021-27736",
+        "CVE-2021-21266",
+        "CVE-2021-21250",
+        "CVE-2024-38374",
+        "CVE-2024-36404",
+        "CVE-2024-28198",
+        "CVE-2024-28109",
+        "CVE-2023-26119",
+        "CVE-2022-0265",
+        "CVE-2022-0219",
+        "CVE-2022-0198"
+      ],
+      "name": "Missing secure XML parser configuration and unsafe deserialization",
+      "root_cause": ""
+    },
+    {
+      "cluster_id": 7,
+      "fix_strategy": "Replace with `new Yaml(new SafeConstructor())` to restrict deserialization to safe YAML types (maps, lists, scalars).",
+      "members": [
+        "CVE-2022-41958",
+        "CVE-2024-42362"
+      ],
+      "name": "Direct SafeConstructor replacement",
+      "root_cause": "Code uses `new Yaml()` without a SafeConstructor, allowing arbitrary class instantiation from attacker-controlled YAML."
+    },
+    {
+      "cluster_id": 7,
+      "fix_strategy": "Upgrade SnakeYAML to a version that restricts default allowed types and add a blacklist for known dangerous classes (e.g., ScriptEngineManager, URLClassLoader).",
+      "members": [
+        "CVE-2023-51389"
+      ],
+      "name": "Library upgrade with class blacklist",
+      "root_cause": "Code uses `new Yaml()` without a SafeConstructor, allowing arbitrary class instantiation."
+    },
+    {
+      "cluster_id": 9,
+      "fix_strategy": "Monitor cumulative time when adding elements during deserialization; abort if exceeds threshold.",
+      "members": [
+        "CVE-2021-43859"
+      ],
+      "name": "Resource exhaustion via recursive collection references during deserialization",
+      "root_cause": "When deserializing untrusted input, the library constructs collection objects whose hashCode method recursively traverses references. An attacker can inject self-referencing structures causing exponential time complexity without any time or depth bound."
+    },
+    {
+      "cluster_id": 9,
+      "fix_strategy": "Add a configurable allowlist of safe class name prefixes or patterns and validate the class name before loading.",
+      "members": [
+        "CVE-2014-9515",
+        "CVE-2018-21234"
+      ],
+      "name": "Arbitrary class instantiation from user-controlled class name without allowlist",
+      "root_cause": "User-controlled fully qualified class name is used directly in reflective instantiation (e.g., Class.forName) without an allowlist, assuming only trusted classes will be used."
+    },
+    {
+      "cluster_id": 9,
+      "fix_strategy": "Add the missing dangerous class names to the static blocklist (e.g., DEFAULT_NO_DESER_CLASS_NAMES) and maintain an up-to-date comprehensive blocklist.",
+      "members": [
+        "CVE-2021-29505",
+        "CVE-2020-10650",
+        "CVE-2018-19361",
+        "CVE-2018-19360",
+        "CVE-2018-14719",
+        "CVE-2018-14721",
+        "CVE-2018-14720",
+        "CVE-2018-14718"
+      ],
+      "name": "Incomplete blocklist in polymorphic deserialization frameworks",
+      "root_cause": "Deserialization frameworks rely on a static deny-list of dangerous classes to prevent instantiation of gadget chains, but the list is incomplete, allowing attackers to specify unlisted dangerous classes that can trigger arbitrary code execution, JNDI injection, or XXE."
+    },
+    {
+      "cluster_id": 9,
+      "fix_strategy": "Explicitly reject any type that is a subclass of Throwable when autoType is disabled, and extend the deny hash list for known dangerous classes.",
+      "members": [
+        "CVE-2022-25845"
+      ],
+      "name": "AutoType bypass via unhandled Throwable subclasses",
+      "root_cause": "When autoType is disabled, the code only rejects Exception types but not Error or other Throwable subclasses, allowing attackers to deserialize dangerous classes ending with 'Error' or other suffixes."
+    },
+    {
+      "cluster_id": 10,
+      "fix_strategy": "Override resolveClass to check a static allowlist of permitted class names, or set an ObjectInputFilter that rejects any class not in the allowlist. Throw a SecurityException for disallowed classes.",
+      "members": [
+        "CVE-2024-47552",
+        "CVE-2025-32897",
+        "CVE-2018-6331",
+        "CVE-2018-1000613",
+        "CVE-2023-42809",
+        "CVE-2015-5377",
+        "CVE-2013-4521",
+        "CVE-2025-47771"
+      ],
+      "name": "Whitelist-based class filtering in ObjectInputStream",
+      "root_cause": "The code uses a standard ObjectInputStream (or an ObjectInputFilter) that does not restrict which classes can be instantiated during deserialization, assuming all serialized data is safe."
+    },
+    {
+      "cluster_id": 10,
+      "fix_strategy": "Eliminate the use of ObjectInputStream entirely; instead parse the input as primitive fields (int, UTF strings, etc.) using DataInputStream or a custom protocol, or switch to a safe serialization format such as JSON with integrity verification.",
+      "members": [
+        "CVE-2026-27830",
+        "CVE-2026-33701",
+        "CVE-2023-38689",
+        "CVE-2021-32634",
+        "CVE-2021-21243",
+        "CVE-2025-31129"
+      ],
+      "name": "Replacement of native Java deserialization with safe data parsing",
+      "root_cause": "The code relies on Java's ObjectInputStream.readObject() to reconstruct objects from untrusted input, allowing instantiation of arbitrary classes."
+    },
+    {
+      "cluster_id": 10,
+      "fix_strategy": "Remove the Serializable interface from the vulnerable class, deprecate the class, or delete the entire deserialization code path so that no deserialization can occur.",
+      "members": [
+        "CVE-2023-36480",
+        "CVE-2018-8088",
+        "CVE-2016-2510"
+      ],
+      "name": "Elimination of serializable classes to prevent deserialization",
+      "root_cause": "The vulnerability exists because a class implements Serializable and is deserialized from untrusted sources without validation."
+    },
+    {
+      "cluster_id": 10,
+      "fix_strategy": "Introduce a check that the first deserialized class must be assignable to a specific expected type (e.g., ExprNodeDesc) and throw an exception if it is not.",
+      "members": [
+        "CVE-2022-41137"
+      ],
+      "name": "Type restriction for Kryo deserialization",
+      "root_cause": "The code uses Kryo to deserialize objects without any class allowlist, allowing instantiation of arbitrary classes from the classpath."
+    },
+    {
+      "cluster_id": 10,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2026-52751",
+        "CVE-2024-5979"
+      ],
+      "name": "Unrestricted Java deserialization without class filtering",
+      "root_cause": ""
+    },
+    {
+      "cluster_id": 11,
+      "fix_strategy": "Expand the blacklist to cover all known dangerous parameters and protocols, apply the check after full URL assembly and URL-decoding, and use robust regex that matches parameter names regardless of context.",
+      "members": [
+        "CVE-2025-6507",
+        "CVE-2024-55953",
+        "CVE-2024-47074"
+      ],
+      "name": "Incomplete or misapplied blacklist for JDBC connection parameters",
+      "root_cause": "The application relies on a blacklist to filter dangerous JDBC URL parameters, but the blacklist is missing entries (e.g., socketFactory, autoDeserialize, iiop), applied too early (before URL assembly or decoding), or uses overly restrictive regex patterns, allowing bypass."
+    },
+    {
+      "cluster_id": 17,
+      "fix_strategy": "Add a configurable depth limit check before recursing into a new nesting level; throw an exception if limit is exceeded. For array unwrapping, detect consecutive START_ARRAY tokens and reject.",
+      "members": [
+        "CVE-2022-42004",
+        "CVE-2022-42003"
+      ],
+      "name": "Missing recursion depth limit in parsing/deserialization",
+      "root_cause": "The code does not enforce a maximum nesting depth when recursively processing nested structures (arrays, objects), allowing attacker-controlled input with deep nesting to cause stack overflow."
+    },
+    {
+      "cluster_id": 33,
+      "fix_strategy": "Add type-based checks at each output point: skip or mask fields of sensitive types, obfuscate emails according to configuration, and ensure class metadata is preserved in diffs.",
+      "members": [
+        "CVE-2024-31464"
+      ],
+      "name": "Sensitive data exposure via missing field-type checks in query building and serialization",
+      "root_cause": "Code that builds database queries, generates XML exports, computes diffs, or returns REST responses does not inspect field metadata (e.g., Password, Email types) before including or exposing property values, allowing unprivileged users to read confidential data."
+    }
+  ],
+  "tags": [
+    "deserialization",
+    "mech_deserialization_untrusted_type_graph",
+    "unsafe deserialization",
+    "ObjectInputStream.readObject",
+    "pickle load",
+    "marshal load"
+  ]
+}

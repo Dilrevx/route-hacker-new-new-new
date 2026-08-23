@@ -1,0 +1,100 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where untrusted data (user input, configuration values, or system-monitored data) is used directly in SQL or CQL queries without proper validation, escaping, or parameterization. The flaws allow injection of arbitrary commands by exploiting identifiers (table names, column names) or string values. Fixes involve either whitelist-based validation for identifiers, proper identifier quoting, or using parameterized queries for values.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2026-32611",
+    "CVE-2026-32628",
+    "CVE-2026-32714",
+    "CVE-2026-32950",
+    "CVE-2026-35588",
+    "CVE-2026-40315",
+    "CVE-2026-7206"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0035__mech_sql_dynamic_query_untrusted_fragment",
+  "guideline_id": "gl_mech_0165",
+  "guideline_text": "Trace attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values into SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters. Report code paths where values or structural fragments are concatenated into SQL syntax without parameter binding or a strict allowlist for identifiers and operators. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 7 historical CVE example(s), not as a project-specific signature. A safe implementation should use bound parameters for values, allowlist structural SQL fragments, and keep untrusted data out of query syntax.",
+  "mechanism": {
+    "aliases": [
+      "SQL injection",
+      "SQL concatenation",
+      "dynamic SQL injection",
+      "untrusted query fragment"
+    ],
+    "family": "sql_injection",
+    "mechanism_id": "mech_sql_dynamic_query_untrusted_fragment",
+    "missing_guard": "values or structural fragments are concatenated into SQL syntax without parameter binding or a strict allowlist for identifiers and operators",
+    "name": "dynamic SQL query construction from untrusted fragments",
+    "required_keywords": [
+      [
+        "sql",
+        "jdbc",
+        "statement",
+        "preparedstatement",
+        "query"
+      ],
+      [
+        "concatenate",
+        "concat",
+        "interpolation",
+        "fragment",
+        "parameter",
+        "where",
+        "order by"
+      ]
+    ],
+    "sink_shape": "SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters",
+    "source_shape": "attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values",
+    "typical_fix": "use bound parameters for values, allowlist structural SQL fragments, and keep untrusted data out of query syntax"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-32611",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    35
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 35,
+      "fix_strategy": "Add a regular expression whitelist (e.g., ^[a-zA-Z0-9_]+$) to restrict identifiers to safe characters, and optionally use quoting (backticks, square brackets) after validation. Raise an error if the input does not match.",
+      "members": [
+        "CVE-2026-35588",
+        "CVE-2026-40315",
+        "CVE-2026-7206"
+      ],
+      "name": "Missing identifier whitelist validation",
+      "root_cause": "Code assumes that table names, column names, or configuration values (e.g., table_prefix, keyspace) are safe to embed directly into SQL/CQL queries without checking that they contain only allowed characters (e.g., alphanumeric, underscore). Attackers can inject arbitrary SQL by providing crafted identifiers."
+    },
+    {
+      "cluster_id": 35,
+      "fix_strategy": "Use a dedicated identifier quoting function (e.g., wrapping in double quotes and doubling embedded double quotes, or using library functions like psycopg2.sql.Identifier()) to safely embed identifiers in SQL statements.",
+      "members": [
+        "CVE-2026-32611",
+        "CVE-2026-32950"
+      ],
+      "name": "Missing identifier quoting",
+      "root_cause": "Code constructs SQL queries by concatenating table or column names directly into the query string without applying proper escaping or quoting for identifiers. Input that contains double quotes or other special characters can break out of the intended identifier context."
+    },
+    {
+      "cluster_id": 35,
+      "fix_strategy": "Replace string concatenation with parameterized queries using placeholders (e.g., ?, %s) and pass the values separately to the database driver, ensuring they are safely escaped as string literals.",
+      "members": [
+        "CVE-2026-32628",
+        "CVE-2026-32714"
+      ],
+      "name": "Missing parameterized queries for values",
+      "root_cause": "Code uses string concatenation or formatting (e.g., str.format()) to embed user-controlled values (process names, issuer, key_id, table names treated as strings) into SQL queries. The values are not escaped, allowing an attacker to inject SQL by including string terminators or metacharacters."
+    }
+  ],
+  "tags": [
+    "sql_injection",
+    "mech_sql_dynamic_query_untrusted_fragment",
+    "SQL injection",
+    "SQL concatenation",
+    "dynamic SQL injection",
+    "untrusted query fragment"
+  ]
+}

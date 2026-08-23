@@ -1,0 +1,65 @@
+{
+  "cluster_summary": "File operations (read, write, delete, copy) fail to resolve symbolic links or otherwise canonicalize the final path before checking that it stays within an intended sandbox directory. This allows an attacker to escape containment via symlinks, directory traversal, or TOCTOU races where symlinks are swapped between validation and use. The cluster also includes several distinct variants: insufficient pattern-based blocking, input-sanitization flaws, permission mistakes, validation ordering errors, and a concurrency issue on shared file state.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2026-44112",
+    "CVE-2026-49958"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0060__mech_temp_file_delete_mkdir_race",
+  "guideline_id": "gl_mech_0100",
+  "guideline_text": "Trace temporary file or directory names created in shared writable locations into manual temporary directory creation sequences such as createTempFile, delete, then mkdir or mkdirs. Report code paths where the temporary path is released between creation and directory creation, allowing another actor to replace or pre-create it before use. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should use an atomic temporary-directory API such as Files.createTempDirectory and avoid delete-then-mkdir sequences.",
+  "mechanism": {
+    "aliases": [
+      "temporary directory TOCTOU",
+      "createTempFile delete mkdir race",
+      "file-delete-mkdir temporary directory race"
+    ],
+    "family": "race_or_lifecycle",
+    "mechanism_id": "mech_temp_file_delete_mkdir_race",
+    "missing_guard": "the temporary path is released between creation and directory creation, allowing another actor to replace or pre-create it before use",
+    "name": "temporary directory create-delete-mkdir TOCTOU race",
+    "required_keywords": [],
+    "sink_shape": "manual temporary directory creation sequences such as createTempFile, delete, then mkdir or mkdirs",
+    "source_shape": "temporary file or directory names created in shared writable locations",
+    "typical_fix": "use an atomic temporary-directory API such as Files.createTempDirectory and avoid delete-then-mkdir sequences"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 3,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 2,
+    "total_member_count": 2,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2026-44112",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    60
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 60,
+      "fix_strategy": "Use anchored file descriptors (dir_fd) with O_NOFOLLOW, pin the canonical real path early and reuse it, or perform the open and validation atomically (e.g., open with O_NOFOLLOW then verify identity). Replace separated check-then-act with a single atomic operation.",
+      "members": [
+        "CVE-2026-44112",
+        "CVE-2026-49958"
+      ],
+      "name": "Time-of-check time-of-use (TOCTOU) symlink swap race conditions",
+      "root_cause": "Path validation (containment check, symlink resolution) and the subsequent file operation are not performed atomically. An attacker with write access can replace a symlink, rebind a directory, or change the path between the check and use, redirecting the operation outside the sandbox."
+    }
+  ],
+  "tags": [
+    "race_or_lifecycle",
+    "mech_temp_file_delete_mkdir_race",
+    "temporary directory TOCTOU",
+    "createTempFile delete mkdir race",
+    "file-delete-mkdir temporary directory race"
+  ]
+}

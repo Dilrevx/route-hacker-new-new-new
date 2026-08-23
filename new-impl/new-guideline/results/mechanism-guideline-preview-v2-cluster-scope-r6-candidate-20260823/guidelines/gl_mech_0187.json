@@ -1,0 +1,55 @@
+{
+  "cluster_summary": "A collection of vulnerabilities where protocol parsers (HTTP, email, AJP, etc.) fail to validate user-supplied input for control characters, enforce protocol-specific constraints, or limit resource consumption, leading to CRLF injection, request smuggling, denial of service, or email header manipulation.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2026-34525"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0041__mech_object_owner_scope_missing_authz",
+  "guideline_id": "gl_mech_0187",
+  "guideline_text": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where the authorization decision is not bound to both the current principal and the exact resource or tenant being affected. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation.",
+  "mechanism": {
+    "aliases": [
+      "object ownership authorization",
+      "tenant scope check",
+      "IDOR",
+      "resource scoped authorization"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_object_owner_scope_missing_authz",
+    "missing_guard": "the authorization decision is not bound to both the current principal and the exact resource or tenant being affected",
+    "name": "missing object-owner or tenant-scope authorization",
+    "required_keywords": [],
+    "sink_shape": "sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource",
+    "source_shape": "attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets",
+    "typical_fix": "check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-34525",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    41
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 41,
+      "fix_strategy": "Add strict parsing checks: enforce CRLF for all line endings, validate Content-Length and Transfer-Encoding consistency, reject duplicate singleton headers, and use case-insensitive comparisons for header values.",
+      "members": [
+        "CVE-2026-34525"
+      ],
+      "name": "HTTP request smuggling due to inconsistent protocol enforcement",
+      "root_cause": "The parser fails to enforce HTTP/1.1 specification requirements such as requiring CRLF line terminators, validating Content-Length and Transfer-Encoding presence, rejecting duplicate singleton headers, and using case-insensitive comparisons, leading to ambiguous message boundaries."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_object_owner_scope_missing_authz",
+    "object ownership authorization",
+    "tenant scope check",
+    "IDOR",
+    "resource scoped authorization"
+  ]
+}

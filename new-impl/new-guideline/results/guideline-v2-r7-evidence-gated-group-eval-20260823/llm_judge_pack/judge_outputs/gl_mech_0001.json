@@ -1,0 +1,19 @@
+{
+  "decision": "split",
+  "coherence_score": 0.62,
+  "coverage_score": 0.63,
+  "actionability_score": 0.91,
+  "retrieval_query_quality": 0.9,
+  "main_issue": "The createTempFile-delete-mkdir race is a coherent and actionable mechanism, but three assigned file-permission temporary-resource cases lack evidence that they perform this release-and-recreate sequence or expose the same replacement race.",
+  "suggested_guideline": "Trace temporary directory creation that reserves a pathname with createTempFile or an equivalent API, deletes that file, and subsequently calls mkdir or mkdirs on the same pathname. Report flows in shared or attacker-influenceable filesystem locations where an attacker can create, replace, or redirect the released pathname during the gap. Prefer an atomic directory-creation API such as Files.createTempDirectory, and ensure subsequent writes, permission changes, and sensitive loads use the securely created object.",
+  "split_suggestions": [
+    "Temporary pathname release race: create temporary file, delete it, then create/use a directory or file at the same path.",
+    "Temporary-resource permission exposure: temporary files or directories created with overly broad permissions, missing permission verification, or unsafe permission changes."
+  ],
+  "evidence_notes": [
+    "CVE-2022-4817, CVE-2018-25068, CVE-2022-3969, and CVE-2021-21363 explicitly show the create-temp-file, delete, mkdir pattern and a Files.createTempDirectory fix.",
+    "CVE-2013-2035 supports insecure temporary native-library extraction followed by System.load, but the supplied evidence does not explicitly establish the delete-then-mkdir submechanism; retain only if source inspection confirms the same released-path race.",
+    "CVE-2020-15250, CVE-2022-3952, and CVE-2022-41946 are labeled file_permission_temp_resource, while their supplied evidence only confirms source-ready anchors and does not demonstrate this TOCTOU sequence.",
+    "The cluster summary combines replacement races, permission weaknesses, permission-check failures, predictable names, and symlink risks; these have overlapping filesystem context but distinct missing guards and safe fixes."
+  ]
+}

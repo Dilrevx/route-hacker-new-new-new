@@ -1,0 +1,55 @@
+{
+  "cluster_summary": "This cluster comprises vulnerabilities where size or length fields from untrusted binary input are used to allocate memory or control operations without adequate validation. Common flaws include missing upper bounds, integer overflow in arithmetic, invalid back-reference offsets, and improper handling of edge cases, leading to memory exhaustion, data leaks, or denial of service.",
+  "created_at": "2026-08-20T19:54:08+00:00",
+  "cve_ids": [
+    "CVE-2024-7254"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0021__mech_path_traversal_missing_canonical_prefix",
+  "guideline_id": "gl_mech_0088",
+  "guideline_text": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under the intended base directory before the file operation. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check.",
+  "mechanism": {
+    "aliases": [
+      "path traversal",
+      "directory traversal",
+      "Zip Slip",
+      "archive entry traversal",
+      "canonical path bypass"
+    ],
+    "family": "filesystem",
+    "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+    "missing_guard": "the normalized absolute path is not checked to remain under the intended base directory before the file operation",
+    "name": "path traversal through missing canonical prefix check",
+    "sink_shape": "file read, write, delete, extraction, or resource-loading APIs",
+    "source_shape": "attacker-controlled filenames, archive entries, path fragments, or resource names",
+    "typical_fix": "normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2024-7254",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    21
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 21,
+      "fix_strategy": "Change the method visibility to private to force all parsing through the depth-limited path.",
+      "members": [
+        "CVE-2024-7254"
+      ],
+      "name": "Exposed public parse method bypasses recursion depth limit",
+      "root_cause": "A recursive parsing utility method is publicly accessible, allowing callers to bypass the depth-limited entry point and cause stack overflow."
+    }
+  ],
+  "tags": [
+    "filesystem",
+    "mech_path_traversal_missing_canonical_prefix",
+    "path traversal",
+    "directory traversal",
+    "Zip Slip",
+    "archive entry traversal"
+  ]
+}

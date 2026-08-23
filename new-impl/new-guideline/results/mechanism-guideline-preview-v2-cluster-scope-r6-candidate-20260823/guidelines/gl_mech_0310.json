@@ -1,0 +1,59 @@
+{
+  "cluster_summary": "These vulnerabilities involve OS command injection where user-supplied input is executed as part of a shell command. Two common mistakes are: (1) using shell-invoking execution APIs (exec, execSync) with concatenated strings instead of non-shell variants (execFile, spawn) with argument arrays, and (2) failing to validate user-specified command names against an allowlist before execution, allowing arbitrary commands or abusable utilities.",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2026-30625",
+    "CVE-2026-34935",
+    "CVE-2026-41497"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0068__mech_toctou_mutable_object_reuse",
+  "guideline_id": "gl_mech_0310",
+  "guideline_text": "Trace mutable files, paths, objects, identities, request fields, or shared state that are checked before use into sensitive file, state, permission, memory, or resource effects that depend on the earlier check. Report code paths where the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary.",
+  "mechanism": {
+    "aliases": [
+      "TOCTOU",
+      "check then use race",
+      "double fetch",
+      "stale object reuse"
+    ],
+    "family": "race_or_lifecycle",
+    "mechanism_id": "mech_toctou_mutable_object_reuse",
+    "missing_guard": "the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect",
+    "name": "time-of-check to time-of-use on mutable object",
+    "required_keywords": [],
+    "sink_shape": "sensitive file, state, permission, memory, or resource effects that depend on the earlier check",
+    "source_shape": "mutable files, paths, objects, identities, request fields, or shared state that are checked before use",
+    "typical_fix": "bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-30625",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    68
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 68,
+      "fix_strategy": "Add an allowlist of permitted executable basenames. Validate the command's basename against this list before execution. For allowed commands that have dangerous flags, restrict or validate arguments against a positive list of safe flags.",
+      "members": [
+        "CVE-2026-30625",
+        "CVE-2026-34935",
+        "CVE-2026-41497"
+      ],
+      "name": "Missing command allowlist and argument validation",
+      "root_cause": "User-supplied command names and arguments were passed to execution functions without restricting the executable to a predefined allowlist. Even when a check was present, allowed commands (like npm, npx) could be abused via their arguments to execute arbitrary commands."
+    }
+  ],
+  "tags": [
+    "race_or_lifecycle",
+    "mech_toctou_mutable_object_reuse",
+    "TOCTOU",
+    "check then use race",
+    "double fetch",
+    "stale object reuse"
+  ]
+}

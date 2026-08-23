@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "Six of the seven CVEs in this cluster involve denial of service through user-supplied regular expressions that trigger catastrophic backtracking. The root causes vary: using a backtracking regex engine (Java/JavaScript) without linear-time alternatives, lacking input validation or heuristic checks, or missing execution timeouts. The fixes accordingly include engine replacement, pattern validation, default literal search with explicit opt-in, and adding timeouts. One unrelated CVE concerns missing authorization for data stream indices.",
+  "created_at": "2026-08-22T20:04:49+00:00",
+  "cve_ids": [
+    "CVE-2026-44796"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0023__pending_mech_cluster_23_add_execution_timeouts_to_regex_operations",
+  "guideline_id": "gl_mech_0104",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Add a timeout (e.g., using regex library's timeout parameter or signal-based alarms) to bound the maximum CPU time spent on regex operations..",
+  "mechanism": {
+    "aliases": [
+      "one",
+      "rename",
+      "selected",
+      "alarms",
+      "input",
+      "field"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_23_add_execution_timeouts_to_regex_operations",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Add execution timeouts to regex operations",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Add a timeout (e.g., using regex library's timeout parameter or signal-based alarms) to bound the maximum CPU time spent on regex operations."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-44796",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    23
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 23,
+      "fix_strategy": "Add a timeout (e.g., using regex library's timeout parameter or signal-based alarms) to bound the maximum CPU time spent on regex operations.",
+      "members": [
+        "CVE-2026-44796"
+      ],
+      "name": "Add execution timeouts to regex operations",
+      "root_cause": "User-supplied regex is applied in a substitution or matching operation without any limit on execution time, allowing crafted patterns to cause indefinite CPU consumption."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_23_add_execution_timeouts_to_regex_operations",
+    "one",
+    "rename",
+    "selected",
+    "alarms"
+  ]
+}

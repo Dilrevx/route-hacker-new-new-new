@@ -1,0 +1,69 @@
+{
+  "cluster_summary": "This cluster consists of vulnerabilities in archive extraction (ZIP, TAR, RAR) that allow directory traversal, arbitrary file write, or infinite loops. The most common root cause is the assumption that entry names are safe relative paths without canonicalization, enabling '..' sequences to escape the extraction directory. Other variants include insufficient string-based prefix checks, missing backslash normalization, symlink bypass, and missing cycle/null checks causing infinite loops.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2023-37460"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0004__mech_archive_symlink_extraction_escape",
+  "guideline_id": "gl_mech_0020",
+  "guideline_text": "Trace attacker-controlled archive entries, symlink entries, link targets, or extraction order into archive extraction code that creates links, opens output files, or writes entry contents into the extraction tree. Report code paths where later writes can follow an existing or archive-created symbolic link outside the extraction root despite lexical or canonical path containment checks. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should reject unsafe symlink targets, use no-follow or race-safe filesystem operations for writes, and validate the final opened target remains inside the extraction root.",
+  "mechanism": {
+    "aliases": [
+      "archive symlink traversal",
+      "symlink overwrite during extraction",
+      "tar symlink escape",
+      "zip symlink escape"
+    ],
+    "family": "filesystem",
+    "mechanism_id": "mech_archive_symlink_extraction_escape",
+    "missing_guard": "later writes can follow an existing or archive-created symbolic link outside the extraction root despite lexical or canonical path containment checks",
+    "name": "archive extraction escape through symlink-following writes",
+    "required_keywords": [
+      [
+        "archive",
+        "zip",
+        "tar",
+        "extract",
+        "extraction"
+      ],
+      [
+        "symlink",
+        "symbolic link",
+        "link target",
+        "nofollow"
+      ]
+    ],
+    "sink_shape": "archive extraction code that creates links, opens output files, or writes entry contents into the extraction tree",
+    "source_shape": "attacker-controlled archive entries, symlink entries, link targets, or extraction order",
+    "typical_fix": "reject unsafe symlink targets, use no-follow or race-safe filesystem operations for writes, and validate the final opened target remains inside the extraction root"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2023-37460",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    4
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 4,
+      "fix_strategy": "After verifying containment, check if the destination is a symbolic link (not a symlink entry) and abort extraction; use Files.copy to handle symlinks correctly.",
+      "members": [
+        "CVE-2023-37460"
+      ],
+      "name": "Symlink bypass in archive extraction",
+      "root_cause": "Code checks only path containment and does not verify if the destination path is an existing symbolic link pointing outside the allowed directory."
+    }
+  ],
+  "tags": [
+    "filesystem",
+    "mech_archive_symlink_extraction_escape",
+    "archive symlink traversal",
+    "symlink overwrite during extraction",
+    "tar symlink escape",
+    "zip symlink escape"
+  ]
+}

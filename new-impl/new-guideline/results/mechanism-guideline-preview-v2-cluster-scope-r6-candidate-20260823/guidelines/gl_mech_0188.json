@@ -1,0 +1,55 @@
+{
+  "cluster_summary": "A collection of vulnerabilities where protocol parsers (HTTP, email, AJP, etc.) fail to validate user-supplied input for control characters, enforce protocol-specific constraints, or limit resource consumption, leading to CRLF injection, request smuggling, denial of service, or email header manipulation.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2023-46136"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0041__mech_request_body_resource_mismatch_authz",
+  "guideline_id": "gl_mech_0188",
+  "guideline_text": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources. Report code paths where the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation.",
+  "mechanism": {
+    "aliases": [
+      "path parameter authorization mismatch",
+      "request body resource mismatch",
+      "bulk operation target mismatch",
+      "namespace sync authorization bypass"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_request_body_resource_mismatch_authz",
+    "missing_guard": "the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check",
+    "name": "request-body resource identifiers bypass path-scoped authorization",
+    "required_keywords": [],
+    "sink_shape": "bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources",
+    "source_shape": "attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body",
+    "typical_fix": "validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2023-46136",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    41
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 41,
+      "fix_strategy": "Introduce configurable limits (e.g., maxFields, maxBytes, maxHeaders), use efficient algorithms (e.g., O(n log n) sort), and track cumulative sizes incrementally to prevent resource exhaustion.",
+      "members": [
+        "CVE-2023-46136"
+      ],
+      "name": "Resource exhaustion due to missing limits in input parsing",
+      "root_cause": "The parser does not impose limits on the number of fields, field sizes, buffer sizes, or algorithmic complexity, allowing an attacker to cause unbounded memory or CPU consumption."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_request_body_resource_mismatch_authz",
+    "path parameter authorization mismatch",
+    "request body resource mismatch",
+    "bulk operation target mismatch",
+    "namespace sync authorization bypass"
+  ]
+}

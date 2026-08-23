@@ -1,0 +1,29 @@
+{
+  "boundary_count": 1,
+  "budgets": [
+    30,
+    50,
+    100,
+    150,
+    200
+  ],
+  "next_action_counts": {
+    "run_same_identity_recall_for_this_boundary_before_claiming_embedding_effect": 1
+  },
+  "policy": [
+    "Source-reviewed guideline boundaries and embedding recall evidence are separate axes.",
+    "Bad recall cases can motivate query, slicing, embedding, or ranking investigation, but they are not per-case guideline fixes.",
+    "A promotable boundary is semantically ready only; it becomes recall-proven only after same-identity rank evidence covers its representative cases.",
+    "This report does not update released guidelines, sidecars, rank tables, or audit prompts."
+  ],
+  "primary_budget": 100,
+  "rank_table_labels": [
+    "r7-p3c64",
+    "old-p3c64",
+    "qwen4b"
+  ],
+  "schema_version": "hcvr_guideline_boundary_recall_triage.v1",
+  "semantic_status_counts": {
+    "source_reviewed_promotable": 1
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "cluster_summary": "User-controlled string values are directly interpolated into HTML markup or templates without context-appropriate HTML entity escaping. This allows injection of arbitrary HTML or JavaScript, resulting in stored or reflected cross-site scripting (XSS). The fix applies HTML encoding using utilities like StringEscapeUtils.escapeHtml(), SafeHtmlUtils.htmlEscape(), markup formatters, or template auto-escaping to neutralize dangerous characters.",
+  "created_at": "2026-08-22T17:56:09+00:00",
+  "cve_ids": [
+    "CVE-2013-6465",
+    "CVE-2014-2067",
+    "CVE-2017-2601",
+    "CVE-2021-43288",
+    "CVE-2022-4593"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0029__mech_template_expression_untrusted_eval",
+  "guideline_id": "gl_mech_0166",
+  "guideline_text": "Trace attacker-controlled template text, expression strings, macro content, or rendering parameters into template engines, expression evaluators, macro renderers, or scriptable configuration evaluators. Report code paths where untrusted expression content is evaluated without sandboxing, escaping, allowlisting, or disabling reflective execution features. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 5 historical CVE example(s), not as a project-specific signature. A safe implementation should separate data from templates, sandbox expression evaluation, and disable reflection or method invocation features for untrusted input.",
+  "mechanism": {
+    "aliases": [
+      "template injection",
+      "expression language injection",
+      "SpEL injection",
+      "OGNL injection",
+      "Velocity macro injection",
+      "FreeMarker template injection"
+    ],
+    "family": "code_or_template_injection",
+    "mechanism_id": "mech_template_expression_untrusted_eval",
+    "missing_guard": "untrusted expression content is evaluated without sandboxing, escaping, allowlisting, or disabling reflective execution features",
+    "name": "untrusted template or expression evaluation",
+    "sink_shape": "template engines, expression evaluators, macro renderers, or scriptable configuration evaluators",
+    "source_shape": "attacker-controlled template text, expression strings, macro content, or rendering parameters",
+    "typical_fix": "separate data from templates, sandbox expression evaluation, and disable reflection or method invocation features for untrusted input"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2013-6465",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    29
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 29,
+      "fix_strategy": "Apply HTML entity encoding to all user-controlled values before they are embedded in HTML output. Use library-specific escaping functions (e.g., StringEscapeUtils.escapeHtml(), SafeHtmlUtils.htmlEscape(), markupFormatter.translate()) or enable template auto-escaping (e.g., rename .ftl to .ftlh) and use manual escaping where required.",
+      "members": [
+        "CVE-2022-4593",
+        "CVE-2014-2067",
+        "CVE-2013-6465",
+        "CVE-2017-2601",
+        "CVE-2021-43288"
+      ],
+      "name": "Unescaped user data in HTML rendering contexts",
+      "root_cause": "The code assumes that user-supplied data (e.g., project names, email addresses, notes, artifact names) is safe for direct HTML interpolation. It lacks output encoding when concatenating into HTML strings, building DOM via innerHTML, or rendering in templates (FreeMarker, Jelly, localized messages)."
+    }
+  ],
+  "tags": [
+    "code_or_template_injection",
+    "mech_template_expression_untrusted_eval",
+    "template injection",
+    "expression language injection",
+    "SpEL injection",
+    "OGNL injection"
+  ]
+}

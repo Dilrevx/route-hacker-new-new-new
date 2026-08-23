@@ -1,0 +1,175 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities that allow attackers to bypass authentication or authorization by exploiting missing validation checks, timing side-channels, insecure cryptographic operations, and session management flaws. The issues include failure to verify user existence, token validity, claim correctness, and the use of non-constant-time comparisons, weak PRNGs, and untrusted algorithm handling.",
+  "created_at": "2026-08-22T20:04:52+00:00",
+  "cve_ids": [
+    "CVE-2012-5571",
+    "CVE-2014-0086",
+    "CVE-2014-2062",
+    "CVE-2014-2066",
+    "CVE-2014-9634",
+    "CVE-2014-9635",
+    "CVE-2015-2913",
+    "CVE-2019-11808",
+    "CVE-2019-12395",
+    "CVE-2020-5206",
+    "CVE-2021-29455",
+    "CVE-2021-45890",
+    "CVE-2023-36820",
+    "CVE-2024-23679",
+    "CVE-2024-24823",
+    "CVE-2024-52295",
+    "CVE-2024-8642",
+    "CVE-2025-11429",
+    "CVE-2025-53003",
+    "CVE-2025-53864",
+    "CVE-2025-62604",
+    "CVE-2025-62614",
+    "CVE-2025-8546",
+    "CVE-2025-8814",
+    "CVE-2026-11618",
+    "CVE-2026-28490",
+    "CVE-2026-28802",
+    "CVE-2026-34531",
+    "CVE-2026-35039",
+    "CVE-2026-35040",
+    "CVE-2026-35041",
+    "CVE-2026-40939",
+    "CVE-2026-40942",
+    "CVE-2026-42869"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0089__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0435",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 34 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "required_keywords": [],
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2012-5571",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    89
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 89,
+      "fix_strategy": "Always verify signature using a method that validates the algorithm against a whitelist, reject empty/unsupported algorithms.",
+      "members": [
+        "CVE-2026-28490"
+      ],
+      "name": "JWT signature verification and algorithm handling failures",
+      "root_cause": "Trusting attacker-controlled algorithm or signature data, using non-verifying parse methods, or allowing deprecated algorithms."
+    },
+    {
+      "cluster_id": 89,
+      "fix_strategy": "Invalidate the old session and create a new session upon successful authentication.",
+      "members": [
+        "CVE-2014-2066",
+        "CVE-2024-23679",
+        "CVE-2024-24823"
+      ],
+      "name": "Session fixation",
+      "root_cause": "Reusing the existing HTTP session after authentication without invalidation, allowing an attacker to fixate a session ID."
+    },
+    {
+      "cluster_id": 89,
+      "fix_strategy": "Add explicit validation checks for each missing condition, correct logical errors (e.g., OR→AND), and invalidate one-time tokens after use.",
+      "members": [
+        "CVE-2012-5571",
+        "CVE-2014-2062",
+        "CVE-2019-12395",
+        "CVE-2020-5206",
+        "CVE-2021-45890",
+        "CVE-2025-62614",
+        "CVE-2026-11618",
+        "CVE-2025-62604",
+        "CVE-2025-8546",
+        "CVE-2025-11429",
+        "CVE-2021-29455",
+        "CVE-2024-8642",
+        "CVE-2023-36820",
+        "CVE-2025-53003"
+      ],
+      "name": "Missing validation in authentication/authorization flows",
+      "root_cause": "Authentication or authorization code omits necessary checks on user identity (existence, active flag, roles), token presence, token claims (expiration, audience, scopes), or session state (captcha reuse, realm configuration)."
+    },
+    {
+      "cluster_id": 89,
+      "fix_strategy": "Replace with java.security.SecureRandom or UUID.randomUUID() which uses a cryptographically strong PRNG.",
+      "members": [
+        "CVE-2015-2913",
+        "CVE-2019-11808"
+      ],
+      "name": "Weak PRNG for session IDs",
+      "root_cause": "Using java.util.Random or ThreadLocalRandom (non-cryptographic PRNG) to generate session IDs, making them predictable."
+    },
+    {
+      "cluster_id": 89,
+      "fix_strategy": "Set security flags at the correct initialization phase, catch exceptions gracefully, and use framework methods that ensure attributes are applied.",
+      "members": [
+        "CVE-2014-9634",
+        "CVE-2014-9635",
+        "CVE-2025-8814"
+      ],
+      "name": "Session cookie security attributes not properly set",
+      "root_cause": "Failure to set the secure, HttpOnly, or SameSite flags on session cookies due to silent exceptions or missing configuration."
+    },
+    {
+      "cluster_id": 89,
+      "fix_strategy": "Add validation before heavy allocation, impose maximum expiration bounds, and enforce nesting depth limits.",
+      "members": [
+        "CVE-2014-0086",
+        "CVE-2025-53864"
+      ],
+      "name": "Resource exhaustion due to missing limits",
+      "root_cause": "Unbounded resource allocation (memory or stack) because of missing limits on object creation, token cache expiration, or JSON nesting depth."
+    },
+    {
+      "cluster_id": 89,
+      "fix_strategy": "Use configurable secrets loaded from environment variables, require prior authentication to issue tokens.",
+      "members": [
+        "CVE-2024-52295"
+      ],
+      "name": "Insecure cryptographic key storage",
+      "root_cause": "Hardcoded static JWT signing secret and user identifiers, allowing token forgery."
+    },
+    {
+      "cluster_id": 89,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2026-28802",
+        "CVE-2026-34531",
+        "CVE-2026-35039",
+        "CVE-2026-35040",
+        "CVE-2026-35041",
+        "CVE-2026-40939",
+        "CVE-2026-40942",
+        "CVE-2026-42869"
+      ],
+      "name": "Authentication bypass and token validation flaws",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

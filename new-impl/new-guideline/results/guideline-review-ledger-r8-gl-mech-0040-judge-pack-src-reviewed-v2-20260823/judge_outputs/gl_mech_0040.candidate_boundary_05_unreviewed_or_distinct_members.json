@@ -1,0 +1,24 @@
+```json
+{
+  "decision": "needs_evidence",
+  "coherence_score": 0.2,
+  "coverage_score": 0.3,
+  "actionability_score": 0.1,
+  "retrieval_query_quality": 0.2,
+  "main_issue": "The row correctly identifies that the 7 historical members of gl_mech_0040 span multiple evaluator technologies (FreeMarker, AviatorScript, Bean Validation EL, general EL) and lack per-case source review for source shape, sink, missing guard, exploit precondition, and fix semantics. The boundary decision to withhold promotion until source evidence is collected is prudent and well-founded.",
+  "suggested_guideline": "",
+  "split_suggestions": [
+    "FreeMarker unrestricted class resolution (CVE-2021-21244, CVE-2023-51387, CVE-2023-51388 — needs source confirmation)",
+    "AviatorScript permissive feature set (CVE-2023-29213 — needs source confirmation)",
+    "Bean Validation unsafe default EL interpolation (CVE-2024-41667 — needs source confirmation)",
+    "General EL/expression injection (CVE-2010-5327, CVE-2025-35036 — needs source confirmation)"
+  ],
+  "evidence_notes": [
+    "No source-level evidence provided for any of the 7 representative cases: source shape, sink, missing guard, exploit precondition, and fix semantics are all unconfirmed.",
+    "The evidence_ref points to gl_mech_0040.json which lists sub-pattern names but does not include reviewed source spans, patch analysis, or fix confirmation.",
+    "CVE-2021-21244, CVE-2023-51387, CVE-2023-51388 are grouped under FreeMarker but their specific vulnerable code paths and fix approaches may differ.",
+    "CVE-2023-29213 (AviatorScript) and CVE-2024-41667 (Bean Validation) are distinctly different evaluator technologies from the FreeMarker group and from each other.",
+    "CVE-2010-5327 and CVE-2025-35036 are labeled as general EL but have no source evidence to confirm mechanism fit."
+  ]
+}
+```

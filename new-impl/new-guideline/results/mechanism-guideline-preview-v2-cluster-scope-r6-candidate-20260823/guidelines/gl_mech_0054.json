@@ -1,0 +1,69 @@
+{
+  "cluster_summary": "The cluster contains vulnerabilities in DNS handling within a network library that uses a proxy trust model. The primary defect is performing DNS pinning (hostname resolution and IP binding) before checking whether a trusted proxy is active, which bypasses proxy security controls and can lead to SSRF, information leakage, and authorization bypass. Additional sub-patterns include DNS rebinding due to separation of hostname validation and fetch, and several unrelated DNS issues.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2026-41911",
+    "CVE-2026-42420",
+    "CVE-2026-42428",
+    "CVE-2026-6011"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0014__mech_ssrf_webhook_url_fetch",
+  "guideline_id": "gl_mech_0054",
+  "guideline_text": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 4 historical CVE example(s), not as a project-specific signature. A safe implementation should enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets.",
+  "mechanism": {
+    "aliases": [
+      "webhook SSRF",
+      "callback URL fetch",
+      "user controlled URL fetch",
+      "outbound HTTP client SSRF"
+    ],
+    "family": "ssrf",
+    "mechanism_id": "mech_ssrf_webhook_url_fetch",
+    "missing_guard": "scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request",
+    "name": "attacker-controlled webhook or callback URL fetch",
+    "required_keywords": [],
+    "sink_shape": "outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers",
+    "source_shape": "attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations",
+    "typical_fix": "enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-41911",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    14
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 14,
+      "fix_strategy": "Move DNS pinning resolution into the else branch so it only executes when not using a trusted proxy mode, ensuring the proxy's DNS resolution takes precedence.",
+      "members": [
+        "CVE-2026-41911",
+        "CVE-2026-42420",
+        "CVE-2026-42428"
+      ],
+      "name": "unconditional DNS pinning before trusted proxy mode check",
+      "root_cause": "Code performs DNS pinning resolution unconditionally before evaluating whether a trusted proxy is active, causing the pinned IP to be used even when the proxy should handle DNS resolution, bypassing proxy security controls."
+    },
+    {
+      "cluster_id": 14,
+      "fix_strategy": "Combine hostname validation and the network request into an atomic operation, or pin the resolved IP immediately after validation to prevent subsequent DNS changes.",
+      "members": [
+        "CVE-2026-6011"
+      ],
+      "name": "DNS rebinding due to missing pinning after hostname validation",
+      "root_cause": "Hostname allowlist validation is performed separately from the actual network request, and DNS resolution is not pinned, allowing an attacker to change the resolved IP between validation and fetch (DNS rebinding)."
+    }
+  ],
+  "tags": [
+    "ssrf",
+    "mech_ssrf_webhook_url_fetch",
+    "webhook SSRF",
+    "callback URL fetch",
+    "user controlled URL fetch",
+    "outbound HTTP client SSRF"
+  ]
+}

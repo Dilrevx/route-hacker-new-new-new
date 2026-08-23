@@ -1,0 +1,53 @@
+{
+  "cluster_summary": "This cluster covers vulnerabilities where credentials (cookies, headers, realms) are improperly handled when crossing trust boundaries such as cross-origin redirects, fetch requests, proxy bypass, and shared client contexts. The root causes include missing credential clearing, incomplete header filtering, incorrect origin references, and unisolated mutable state.",
+  "created_at": "2026-08-22T20:04:50+00:00",
+  "cve_ids": [
+    "CVE-2026-32913"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0038__mech_ssrf_redirect_following_client",
+  "guideline_id": "gl_mech_0191",
+  "guideline_text": "Trace attacker-controlled URLs or server-controlled redirect responses into HTTP clients that automatically follow redirects or reuse a previously validated URL decision. Report code paths where the final redirected scheme, host, port, and resolved address are not revalidated before the sensitive network request. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should disable automatic redirects or revalidate every redirect hop against the same allowlist and address policy.",
+  "mechanism": {
+    "aliases": [
+      "redirect-follow SSRF",
+      "HTTP redirect SSRF",
+      "Location header SSRF"
+    ],
+    "family": "ssrf",
+    "mechanism_id": "mech_ssrf_redirect_following_client",
+    "missing_guard": "the final redirected scheme, host, port, and resolved address are not revalidated before the sensitive network request",
+    "name": "SSRF through redirect-following client",
+    "required_keywords": [],
+    "sink_shape": "HTTP clients that automatically follow redirects or reuse a previously validated URL decision",
+    "source_shape": "attacker-controlled URLs or server-controlled redirect responses",
+    "typical_fix": "disable automatic redirects or revalidate every redirect hop against the same allowlist and address policy"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-32913",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    38
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 38,
+      "fix_strategy": "Implement an allowlist of safe headers (e.g., Accept, Content-Type, User-Agent) that are permitted to be forwarded during cross-origin redirects.",
+      "members": [
+        "CVE-2026-32913"
+      ],
+      "name": "Denylist-based header filtering on redirect",
+      "root_cause": "Code uses a denylist of known sensitive headers or assumes all headers safe, allowing custom authentication headers or common sensitive headers to be forwarded on cross-origin redirects."
+    }
+  ],
+  "tags": [
+    "ssrf",
+    "mech_ssrf_redirect_following_client",
+    "redirect-follow SSRF",
+    "HTTP redirect SSRF",
+    "Location header SSRF"
+  ]
+}

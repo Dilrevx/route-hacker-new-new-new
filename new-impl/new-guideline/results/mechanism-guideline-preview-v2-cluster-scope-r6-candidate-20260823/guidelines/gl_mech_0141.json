@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "This cluster covers vulnerabilities arising from insufficient validation of plugin origins and user-controlled paths during plugin installation and resolution. Common themes include failure to filter untrusted workspace plugins in privileged operations, lack of path canonicalization and input sanitization leading to directory traversal, and unsafe error handling that bypasses security scans. These flaws can allow attackers to escalate privileges, execute arbitrary code, or bypass security controls.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2026-45004"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0030__pending_mech_cluster_30_unrestricted_module_loading_from_current_working_directory",
+  "guideline_id": "gl_mech_0141",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Remove process.cwd() from the candidate root list; restrict module loading to the bundled extension directory..",
+  "mechanism": {
+    "aliases": [
+      "unrestricted",
+      "extension",
+      "extensions",
+      "reporootcandidates",
+      "locating",
+      "malicious"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_30_unrestricted_module_loading_from_current_working_directory",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Unrestricted module loading from current working directory",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Remove process.cwd() from the candidate root list; restrict module loading to the bundled extension directory."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-45004",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    30
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 30,
+      "fix_strategy": "Remove process.cwd() from the candidate root list; restrict module loading to the bundled extension directory.",
+      "members": [
+        "CVE-2026-45004"
+      ],
+      "name": "Unrestricted module loading from current working directory",
+      "root_cause": "The function includes process.cwd() as a candidate root for locating plugin setup modules without validation, allowing arbitrary code execution from an attacker-influenced location."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_30_unrestricted_module_loading_from_current_working_directory",
+    "unrestricted",
+    "extension",
+    "extensions",
+    "reporootcandidates"
+  ]
+}

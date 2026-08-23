@@ -1,0 +1,68 @@
+{
+  "cluster_summary": "A cluster of vulnerabilities where user-supplied command arguments are insufficiently validated against allowlists or safe-bin policies, leading to bypass of intended restrictions via dangerous flags, wrapper chains, inconsistent approval display, shell expansion, or filesystem oracle leaks.",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2026-22175",
+    "CVE-2026-29607",
+    "CVE-2026-32059"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0065__mech_path_traversal_missing_canonical_prefix",
+  "guideline_id": "gl_mech_0296",
+  "guideline_text": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under the intended base directory before the file operation. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check.",
+  "mechanism": {
+    "aliases": [
+      "path traversal",
+      "directory traversal",
+      "Zip Slip",
+      "archive entry traversal",
+      "canonical path bypass"
+    ],
+    "family": "filesystem",
+    "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+    "missing_guard": "the normalized absolute path is not checked to remain under the intended base directory before the file operation",
+    "name": "path traversal through missing canonical prefix check",
+    "required_keywords": [],
+    "sink_shape": "file read, write, delete, extraction, or resource-loading APIs",
+    "source_shape": "attacker-controlled filenames, archive entries, path fragments, or resource names",
+    "typical_fix": "normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-22175",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    65
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 65,
+      "fix_strategy": "Add all dangerous flags to per-binary blocked lists, enforce canonicalization of long options, and disallow options that specify file paths.",
+      "members": [
+        "CVE-2026-32059"
+      ],
+      "name": "Missing dangerous flags and options in safe-bin policies",
+      "root_cause": "The safe-bin allowlist policy does not block all flags or options that can lead to arbitrary file operations or command execution, such as --compress-program, -o, -r, or shell init-file options. Additionally, long-option abbreviations are not canonicalized before matching."
+    },
+    {
+      "cluster_id": 65,
+      "fix_strategy": "Add missing wrappers to the recognized list, implement recursive unwrapping of wrapper chains, enforce depth limits, and correctly persist the inner executable path.",
+      "members": [
+        "CVE-2026-22175",
+        "CVE-2026-29607"
+      ],
+      "name": "Incomplete wrapper resolution and authorization",
+      "root_cause": "The authorization code fails to properly identify and resolve dispatch wrappers (env, timeout, time, busybox, etc.) to the inner executable or fails to enforce depth limits, allowing nested wrapper chains to bypass approval checks."
+    }
+  ],
+  "tags": [
+    "filesystem",
+    "mech_path_traversal_missing_canonical_prefix",
+    "path traversal",
+    "directory traversal",
+    "Zip Slip",
+    "archive entry traversal"
+  ]
+}

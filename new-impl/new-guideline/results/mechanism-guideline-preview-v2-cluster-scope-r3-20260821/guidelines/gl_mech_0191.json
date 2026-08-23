@@ -1,0 +1,68 @@
+{
+  "cluster_summary": "This cluster covers a variety of authentication and authorization vulnerabilities, including user enumeration via distinct error messages, insecure password storage and hashing, insufficient password strength validation, missing ownership checks on operations, password reset token flaws, and other implementation errors.",
+  "created_at": "2026-08-21T10:07:21+00:00",
+  "cve_ids": [
+    "CVE-2020-10194",
+    "CVE-2021-45890",
+    "CVE-2025-8547",
+    "CVE-2025-8549"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0035__mech_request_body_resource_mismatch_authz",
+  "guideline_id": "gl_mech_0191",
+  "guideline_text": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources. Report code paths where the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 4 historical CVE example(s), not as a project-specific signature. A safe implementation should validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation.",
+  "mechanism": {
+    "aliases": [
+      "path parameter authorization mismatch",
+      "request body resource mismatch",
+      "bulk operation target mismatch",
+      "namespace sync authorization bypass"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_request_body_resource_mismatch_authz",
+    "missing_guard": "the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check",
+    "name": "request-body resource identifiers bypass path-scoped authorization",
+    "sink_shape": "bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources",
+    "source_shape": "attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body",
+    "typical_fix": "validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2020-10194",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    35
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 35,
+      "fix_strategy": "Impose a strict password policy with required character classes (uppercase, lowercase, digit, special), minimum length, and optionally prevent reuse of the current password. Validate programmatically in all code paths.",
+      "members": [
+        "CVE-2025-8549"
+      ],
+      "name": "Insufficient password complexity enforcement",
+      "root_cause": "The application lacks proper validation of password strength (character classes, length, reuse) before accepting or storing the password, allowing weak or easily guessable passwords."
+    },
+    {
+      "cluster_id": 35,
+      "fix_strategy": "Add server-side checks to ensure the target resource belongs to the authenticated user or is in the user's domain, and verify status flags (e.g., active) before proceeding.",
+      "members": [
+        "CVE-2025-8547",
+        "CVE-2021-45890",
+        "CVE-2020-10194"
+      ],
+      "name": "Missing ownership or status verification on user operations",
+      "root_cause": "Authenticated endpoints accept resource identifiers (email, account IDs) without verifying that the requesting user owns or is authorized for that resource, allowing cross-user actions."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_request_body_resource_mismatch_authz",
+    "path parameter authorization mismatch",
+    "request body resource mismatch",
+    "bulk operation target mismatch",
+    "namespace sync authorization bypass"
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "cluster_summary": "This cluster includes 37 CVEs in XWiki where user-controlled input is embedded into template outputs (wiki syntax, HTML, URLs, scripts) without proper escaping or context-aware handling. The root causes vary: missing HTML escaping, missing wiki syntax escaping, missing URL encoding, missing validation, incomplete escaping functions, or improper use of rendering macros. All lead to injection of wiki macros, Velocity, Groovy, or HTML/JavaScript with server-side privileges.",
+  "created_at": "2026-08-22T20:04:51+00:00",
+  "cve_ids": [
+    "CVE-2023-50722",
+    "CVE-2026-40105"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0053__pending_mech_cluster_53_missing_url_encoding",
+  "guideline_id": "gl_mech_0276",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should Encode query parameter values using $escapetool.url() before constructing URLs..",
+  "mechanism": {
+    "aliases": [
+      "one",
+      "escalated",
+      "rev2",
+      "values",
+      "quotes",
+      "tags"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_53_missing_url_encoding",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing URL encoding",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Encode query parameter values using $escapetool.url() before constructing URLs."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2023-50722",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    53
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 53,
+      "fix_strategy": "Encode query parameter values using $escapetool.url() before constructing URLs.",
+      "members": [
+        "CVE-2023-50722",
+        "CVE-2026-40105"
+      ],
+      "name": "Missing URL encoding",
+      "root_cause": "User-controlled strings are concatenated into URL query parameters without percent-encoding, allowing injection of arbitrary query parameters or HTML."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_53_missing_url_encoding",
+    "one",
+    "escalated",
+    "rev2",
+    "values"
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "cluster_summary": "This cluster comprises 26 cross-site scripting (XSS) vulnerabilities caused by insufficient handling of user-supplied input. The common flaw is that user input is reflected or stored without proper HTML encoding, sanitization, or validation, allowing injection of arbitrary HTML/JavaScript. Fixes range from adding global input sanitization filters to per-field encoding, input validation, and removal of insecure features like JSONP.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2018-1000129",
+    "CVE-2018-25084",
+    "CVE-2018-25097",
+    "CVE-2019-12741",
+    "CVE-2020-15231",
+    "CVE-2020-21316",
+    "CVE-2020-36636",
+    "CVE-2021-25932",
+    "CVE-2021-33561",
+    "CVE-2021-4289",
+    "CVE-2022-4859",
+    "CVE-2023-0300",
+    "CVE-2025-8550",
+    "CVE-2025-8551",
+    "CVE-2025-8553",
+    "CVE-2025-8554",
+    "CVE-2025-8555",
+    "CVE-2025-8812"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0058__mech_html_sanitizer_policy_gap",
+  "guideline_id": "gl_mech_0265",
+  "guideline_text": "Trace attacker-controlled markup, HTML fragments, rich text, comments, DOM nodes, style blocks, attributes, or URI values into HTML cleaners, SafeHtml validators, DOM sanitizers, rich-text renderers, or browser-rendered sanitized output. Report code paths where the active sanitizer policy does not allowlist dangerous elements, attributes, URI schemes, DOM child nodes, comments, or malformed inputs before rendering. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 18 historical CVE example(s), not as a project-specific signature. A safe implementation should activate the restrictive sanitizer for the relevant mode, enforce element/attribute/URI allowlists after parsing, and add regression tests for the bypass form.",
+  "mechanism": {
+    "aliases": [
+      "HTML sanitizer bypass",
+      "SafeHtml policy gap",
+      "missing sanitizer allowlist",
+      "restricted cleaner bypass"
+    ],
+    "family": "html_sanitization",
+    "mechanism_id": "mech_html_sanitizer_policy_gap",
+    "missing_guard": "the active sanitizer policy does not allowlist dangerous elements, attributes, URI schemes, DOM child nodes, comments, or malformed inputs before rendering",
+    "name": "HTML sanitizer policy gap or inactive allowlist",
+    "required_keywords": [
+      [
+        "html",
+        "sanitize",
+        "sanitizer",
+        "safehtml",
+        "cleaner",
+        "dompurify",
+        "antisamy",
+        "bleach"
+      ]
+    ],
+    "sink_shape": "HTML cleaners, SafeHtml validators, DOM sanitizers, rich-text renderers, or browser-rendered sanitized output",
+    "source_shape": "attacker-controlled markup, HTML fragments, rich text, comments, DOM nodes, style blocks, attributes, or URI values",
+    "typical_fix": "activate the restrictive sanitizer for the relevant mode, enforce element/attribute/URI allowlists after parsing, and add regression tests for the bypass form"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2018-1000129",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    58
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 58,
+      "fix_strategy": "Add a global servlet filter that wraps the HttpServletRequest and sanitizes all parameter values using Jsoup.clean with a whitelist (e.g., Whitelist.basic()) before they reach controllers.",
+      "members": [
+        "CVE-2021-33561",
+        "CVE-2025-8550",
+        "CVE-2025-8551",
+        "CVE-2025-8553",
+        "CVE-2025-8554",
+        "CVE-2025-8555",
+        "CVE-2025-8812"
+      ],
+      "name": "Global servlet filter for input sanitization",
+      "root_cause": "The application lacked a centralized input sanitization mechanism; user-supplied parameters were processed and stored/rendered without any filtering of HTML tags or JavaScript, enabling XSS."
+    },
+    {
+      "cluster_id": 58,
+      "fix_strategy": "Apply HTML entity encoding (e.g., HtmlUtils.htmlEscape, StringEscapeUtils.escapeHtml, custom sanitize function) to all user-supplied values before embedding them in HTML context, either at the controller/model level or in templates.",
+      "members": [
+        "CVE-2018-25084",
+        "CVE-2019-12741",
+        "CVE-2020-36636",
+        "CVE-2021-25932",
+        "CVE-2021-4289"
+      ],
+      "name": "Output HTML entity encoding omitted",
+      "root_cause": "User-controlled data was inserted directly into HTML output (model attributes, template variables, or string concatenation) without HTML entity encoding."
+    },
+    {
+      "cluster_id": 58,
+      "fix_strategy": "Either validate the callback parameter against a strict whitelist of valid JavaScript identifiers and set safe content-type, or completely remove JSONP support.",
+      "members": [
+        "CVE-2018-1000129",
+        "CVE-2020-15231"
+      ],
+      "name": "Unvalidated JSONP callback parameter",
+      "root_cause": "The JSONP callback parameter was directly reflected in the HTTP response as a JavaScript function name without validation or proper content-type, enabling arbitrary script execution."
+    },
+    {
+      "cluster_id": 58,
+      "fix_strategy": "Apply input sanitization (e.g., Jsoup.clean with whitelist, OWASP HTML sanitizer, HTML tag stripping) to those fields before persisting them in the database or using them in further processing.",
+      "members": [
+        "CVE-2018-25097",
+        "CVE-2020-21316",
+        "CVE-2022-4859",
+        "CVE-2023-0300"
+      ],
+      "name": "Missing input sanitization on specific fields",
+      "root_cause": "Specific input fields (e.g., solutionId, nickname, firstName, lastName, group name) were stored without any sanitization or encoding, assuming they were safe."
+    }
+  ],
+  "tags": [
+    "html_sanitization",
+    "mech_html_sanitizer_policy_gap",
+    "HTML sanitizer bypass",
+    "SafeHtml policy gap",
+    "missing sanitizer allowlist",
+    "restricted cleaner bypass"
+  ]
+}

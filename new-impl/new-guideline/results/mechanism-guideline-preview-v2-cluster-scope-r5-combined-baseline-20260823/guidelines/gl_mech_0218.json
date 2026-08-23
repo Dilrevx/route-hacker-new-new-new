@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "This cluster includes vulnerabilities where applications fail to enforce upper bounds on the size, count, or complexity of external input before performing memory or disk allocation, leading to resource exhaustion. The missing limits occur in various contexts: HTTP request/response body buffering, delimiter-split operations, numeric parameter validation, disk storage (cache, logs, downloads), type validation, size estimation, and parsing complexity.",
+  "created_at": "2026-08-22T20:04:50+00:00",
+  "cve_ids": [
+    "CVE-2026-29612"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0042__pending_mech_cluster_42_missing_pre_allocation_size_estimation",
+  "guideline_id": "gl_mech_0218",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Estimate the decoded size from the input length without full allocation, and reject before performing the actual decode or processing..",
+  "mechanism": {
+    "aliases": [
+      "input",
+      "node-js",
+      "b64",
+      "causing",
+      "processes",
+      "attachment"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_42_missing_pre_allocation_size_estimation",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing pre-allocation size estimation",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Estimate the decoded size from the input length without full allocation, and reject before performing the actual decode or processing."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-29612",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    42
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 42,
+      "fix_strategy": "Estimate the decoded size from the input length without full allocation, and reject before performing the actual decode or processing.",
+      "members": [
+        "CVE-2026-29612"
+      ],
+      "name": "Missing pre-allocation size estimation",
+      "root_cause": "Code decodes or fully processes input (e.g., base64 string) into memory before checking the resulting size against a limit, causing memory exhaustion even if the limit would later reject it."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_42_missing_pre_allocation_size_estimation",
+    "input",
+    "node-js",
+    "b64",
+    "causing"
+  ]
+}

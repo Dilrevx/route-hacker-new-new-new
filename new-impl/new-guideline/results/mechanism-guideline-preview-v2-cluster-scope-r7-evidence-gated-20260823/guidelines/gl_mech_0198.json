@@ -1,0 +1,142 @@
+{
+  "cluster_summary": "This cluster covers vulnerabilities where user-controlled input is directly concatenated or interpolated into database query strings (SQL, JPQL, Cypher, DQL) without proper parameterization or escaping, leading to injection attacks. The majority are fixed by replacing string concatenation with parameterized queries; a subset rely on improved escaping of special characters. A few involve identifier quoting, type casting, or input validation.",
+  "created_at": "2026-08-22T20:37:28+00:00",
+  "cve_ids": [
+    "CVE-2013-10008",
+    "CVE-2013-10013",
+    "CVE-2013-10019",
+    "CVE-2014-125038",
+    "CVE-2014-125047",
+    "CVE-2014-125052",
+    "CVE-2014-125075",
+    "CVE-2014-125083",
+    "CVE-2015-10020",
+    "CVE-2015-10047",
+    "CVE-2015-10048",
+    "CVE-2015-10061",
+    "CVE-2015-10068",
+    "CVE-2016-15018",
+    "CVE-2016-4999",
+    "CVE-2018-25075",
+    "CVE-2019-11343",
+    "CVE-2022-24831",
+    "CVE-2022-24848",
+    "CVE-2022-4454",
+    "CVE-2024-32888",
+    "CVE-2026-26980",
+    "CVE-2026-34400",
+    "CVE-2026-34612",
+    "CVE-2026-34825",
+    "CVE-2026-41640",
+    "CVE-2026-42087",
+    "CVE-2026-7290"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0036__mech_sql_dynamic_query_untrusted_fragment",
+  "guideline_id": "gl_mech_0198",
+  "guideline_text": "Trace attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values into SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters. Report code paths where values or structural fragments are concatenated into SQL syntax without parameter binding or a strict allowlist for identifiers and operators. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 28 historical CVE example(s), not as a project-specific signature. A safe implementation should use bound parameters for values, allowlist structural SQL fragments, and keep untrusted data out of query syntax.",
+  "mechanism": {
+    "aliases": [
+      "SQL injection",
+      "SQL concatenation",
+      "dynamic SQL injection",
+      "untrusted query fragment"
+    ],
+    "family": "sql_injection",
+    "mechanism_id": "mech_sql_dynamic_query_untrusted_fragment",
+    "missing_guard": "values or structural fragments are concatenated into SQL syntax without parameter binding or a strict allowlist for identifiers and operators",
+    "name": "dynamic SQL query construction from untrusted fragments",
+    "required_keywords": [
+      [
+        "sql",
+        "jdbc",
+        "statement",
+        "preparedstatement",
+        "query"
+      ],
+      [
+        "concatenate",
+        "concat",
+        "interpolation",
+        "fragment",
+        "parameter",
+        "where",
+        "order by"
+      ]
+    ],
+    "sink_shape": "SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters",
+    "source_shape": "attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values",
+    "typical_fix": "use bound parameters for values, allowlist structural SQL fragments, and keep untrusted data out of query syntax"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2013-10008",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    36
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 36,
+      "fix_strategy": "Replace string concatenation with parameterized queries (PreparedStatement, JPA named parameters, etc.) to separate code from data.",
+      "members": [
+        "CVE-2013-10008",
+        "CVE-2013-10019",
+        "CVE-2013-10013",
+        "CVE-2014-125047",
+        "CVE-2014-125038",
+        "CVE-2014-125052",
+        "CVE-2014-125075",
+        "CVE-2015-10020",
+        "CVE-2015-10047",
+        "CVE-2015-10048",
+        "CVE-2015-10061",
+        "CVE-2015-10068",
+        "CVE-2016-15018",
+        "CVE-2018-25075",
+        "CVE-2019-11343",
+        "CVE-2022-24831",
+        "CVE-2022-4454",
+        "CVE-2026-26980",
+        "CVE-2026-34612",
+        "CVE-2026-34825",
+        "CVE-2026-41640",
+        "CVE-2026-42087",
+        "CVE-2026-34400"
+      ],
+      "name": "Standard SQL injection via string concatenation fixed by parameterization",
+      "root_cause": "User input is directly concatenated into SQL query strings without using parameterized queries, allowing arbitrary SQL syntax injection."
+    },
+    {
+      "cluster_id": 36,
+      "fix_strategy": "Escape all relevant characters (single quotes, backslashes, LIKE wildcards) using dedicated escaping functions or doubling quotes, ensuring string literals are properly enclosed.",
+      "members": [
+        "CVE-2014-125083",
+        "CVE-2016-4999",
+        "CVE-2022-24848",
+        "CVE-2026-7290"
+      ],
+      "name": "SQL injection via insufficient escaping of special characters fixed by improved escaping",
+      "root_cause": "The code attempts to sanitize input by escaping only single quotes (or missing backslash escaping) but fails to neutralize all metacharacters, allowing injection via other escape sequences or remaining unescaped characters."
+    },
+    {
+      "cluster_id": 36,
+      "fix_strategy": "Add a unified method that wraps the escaped literal in quotes and appends the appropriate type cast for all supported types.",
+      "members": [
+        "CVE-2024-32888"
+      ],
+      "name": "SQL injection via missing type cast in parameterized literal generation fixed by adding quoting and type casting",
+      "root_cause": "In simple query mode, parameter values are converted to strings without proper type casting and quoting for certain OIDs, allowing injection when the value is used in contexts that expect a specific type."
+    }
+  ],
+  "tags": [
+    "sql_injection",
+    "mech_sql_dynamic_query_untrusted_fragment",
+    "SQL injection",
+    "SQL concatenation",
+    "dynamic SQL injection",
+    "untrusted query fragment"
+  ]
+}

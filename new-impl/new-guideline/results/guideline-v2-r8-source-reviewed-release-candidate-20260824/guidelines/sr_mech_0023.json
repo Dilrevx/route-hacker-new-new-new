@@ -1,0 +1,21 @@
+{
+  "boundary_label": "candidate_boundary_01_jwt_none_algorithm_default",
+  "guideline_group_key": "review_mech_0509__candidate_boundary_01_jwt_none_algorithm_default__mech_jwt_default_allows_none_algorithm",
+  "guideline_id": "sr_mech_0023",
+  "guideline_text": "Audit for JWT default verifier includes unsigned none algorithm. JWT none-algorithm default acceptance: a JWT helper, decoder, encoder, request-object parser, userinfo endpoint, or token utility constructs its default allowed-algorithm set from every registered JWS algorithm, including the unsecured `none` algorithm, and then uses that default for authentication or identity-bearing token operations. Report code paths where unsigned JWTs can be accepted or generated without an explicit per-call opt-in to `none`. Required missing-guard check: The vulnerable default does not exclude `none` from the general-purpose allowed algorithm list and does not require callers to instantiate an explicit `JsonWebToken([\"none\"])` object for unsecured JWT behavior. The guard must be bound to default construction of the token helper used by auth flows, not only to test code. Safe implementation should: Construct the default JWT helper with a signed-algorithm allowlist that omits `none`, and create a narrowly scoped `JsonWebToken([\"none\"])` only in flows or tests that intentionally exercise unsecured JWT behavior. Encoding paths should instantiate `JsonWebToken([alg])` for the configured algorithm instead of relying on the all-algorithm default. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 1 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_jwt_default_allows_none_algorithm",
+    "name": "JWT default verifier includes unsigned none algorithm"
+  },
+  "old_guideline_id": "review_mech_0509",
+  "release_status": {
+    "blockers": [
+      "singleton_or_missing_case_support"
+    ],
+    "release_ready": false,
+    "status": "review_only"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 1
+}

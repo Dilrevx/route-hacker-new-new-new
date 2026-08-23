@@ -1,0 +1,21 @@
+{
+  "boundary_label": "candidate_boundary_03_oidc_none_algorithm_requires_opt_in",
+  "guideline_group_key": "review_mech_0513__candidate_boundary_03_oidc_none_algorithm_requires_opt_in__mech_oidc_unsigned_id_token_default_allowed",
+  "guideline_id": "sr_mech_0029",
+  "guideline_text": "Audit for OIDC unsigned ID token accepted without explicit opt-in. OIDC unsigned ID token acceptance: OpenID Connect client configuration builds an ID token validator for provider-advertised `none` JWS algorithm values without an explicit application opt-in. Report code paths where unsigned ID tokens can be accepted by default, or where `none` algorithm support is enabled implicitly, before user identity/profile claims are trusted. Required missing-guard check: The vulnerable code treats `none` as a null algorithm and creates an unsigned IDTokenValidator without requiring an explicit allowUnsignedIdTokens configuration decision. Safe implementation should: Introduce an explicit allowUnsignedIdTokens configuration flag defaulting to false, reject `none` unless that flag is enabled, and surface the configuration in documentation/tests. The guard must occur before constructing the unsigned IDTokenValidator. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 1 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_oidc_unsigned_id_token_default_allowed",
+    "name": "OIDC unsigned ID token accepted without explicit opt-in"
+  },
+  "old_guideline_id": "review_mech_0513",
+  "release_status": {
+    "blockers": [
+      "singleton_or_missing_case_support"
+    ],
+    "release_ready": false,
+    "status": "review_only"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 1
+}

@@ -1,0 +1,54 @@
+{
+  "cluster_summary": "A set of vulnerabilities in inventory/GUI storage code that lead to item duplication due to inadequate synchronization between GUI and backing storage, missing player context in storage updates, and lack of validation of slot properties (fake slots, modification permissions). One outlier involves a missing permission check in a packet handler for file modification.",
+  "created_at": "2026-08-22T17:56:09+00:00",
+  "cve_ids": [
+    "CVE-2025-62784"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0019__mech_state_precondition_missing_before_effect",
+  "guideline_id": "gl_mech_0111",
+  "guideline_text": "Trace requests or events that select an operation, workflow step, account, resource, or state transition into sensitive state changes, billing effects, entitlement changes, resource consumption, or workflow transitions. Report code paths where the required lifecycle state, quota, ownership state, or operation ordering is not enforced before the effect. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should validate the required state immediately before the effect and make the check and mutation atomic when needed.",
+  "mechanism": {
+    "aliases": [
+      "business state precondition",
+      "state transition guard",
+      "lifecycle check",
+      "quota check"
+    ],
+    "family": "business_logic",
+    "mechanism_id": "mech_state_precondition_missing_before_effect",
+    "missing_guard": "the required lifecycle state, quota, ownership state, or operation ordering is not enforced before the effect",
+    "name": "missing business-state precondition before sensitive effect",
+    "sink_shape": "sensitive state changes, billing effects, entitlement changes, resource consumption, or workflow transitions",
+    "source_shape": "requests or events that select an operation, workflow step, account, resource, or state transition",
+    "typical_fix": "validate the required state immediately before the effect and make the check and mutation atomic when needed"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2025-62784",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    19
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 19,
+      "fix_strategy": "After any click operation, compare GUI slot item with storage item and redraw if they differ; also intercept right-click events on bundle items to force a redraw and skip normal logic.",
+      "members": [
+        "CVE-2025-62784"
+      ],
+      "name": "Missing GUI state synchronization for bundle items",
+      "root_cause": "The GUI storage handler does not invalidate the GUI proxy after modifications for bundle items, and does not block secondary implicit actions (right-click) that bypass synchronization, leading to inconsistent state and duplication."
+    }
+  ],
+  "tags": [
+    "business_logic",
+    "mech_state_precondition_missing_before_effect",
+    "business state precondition",
+    "state transition guard",
+    "lifecycle check",
+    "quota check"
+  ]
+}

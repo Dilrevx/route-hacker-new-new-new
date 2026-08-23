@@ -1,0 +1,99 @@
+{
+  "cluster_summary": "The cluster comprises vulnerabilities where user-controlled input is used to construct URLs (redirect targets, server-side fetch URLs, navigation destinations, or URL query strings) without adequate validation or encoding. This leads to open redirect, server-side request forgery (SSRF), cross-site scripting (XSS), token leakage, and exposure of sensitive data. The root causes include missing host allowlist checks, incomplete URL parsing allowing bypasses, and failure to encode or filter sensitive data.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2025-66035",
+    "CVE-2026-3049",
+    "CVE-2026-35404",
+    "CVE-2026-40074",
+    "CVE-2026-41423",
+    "CVE-2026-41513",
+    "CVE-2026-42140"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0037__mech_ssrf_redirect_following_client",
+  "guideline_id": "gl_mech_0065",
+  "guideline_text": "Trace attacker-controlled URLs or server-controlled redirect responses into HTTP clients that automatically follow redirects or reuse a previously validated URL decision. Report code paths where the final redirected scheme, host, port, and resolved address are not revalidated before the sensitive network request. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 7 historical CVE example(s), not as a project-specific signature. A safe implementation should disable automatic redirects or revalidate every redirect hop against the same allowlist and address policy.",
+  "mechanism": {
+    "aliases": [
+      "redirect-follow SSRF",
+      "HTTP redirect SSRF",
+      "Location header SSRF"
+    ],
+    "family": "ssrf",
+    "mechanism_id": "mech_ssrf_redirect_following_client",
+    "missing_guard": "the final redirected scheme, host, port, and resolved address are not revalidated before the sensitive network request",
+    "name": "SSRF through redirect-following client",
+    "required_keywords": [],
+    "sink_shape": "HTTP clients that automatically follow redirects or reuse a previously validated URL decision",
+    "source_shape": "attacker-controlled URLs or server-controlled redirect responses",
+    "typical_fix": "disable automatic redirects or revalidate every redirect hop against the same allowlist and address policy"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 2,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 7,
+    "total_member_count": 7,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2025-66035",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    37
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 37,
+      "fix_strategy": "Add allowlist validation (e.g., URLSecurityManager, url_has_allowed_host_and_scheme) or compare the URL's origin/host against the current request's origin or a configured list of trusted hosts.",
+      "members": [
+        "CVE-2026-3049",
+        "CVE-2026-41513",
+        "CVE-2026-42140"
+      ],
+      "name": "Missing host/domain allowlist validation for redirect and server-side requests",
+      "root_cause": "Code assumes user-controlled URL is safe and does not validate the destination host against a whitelist of trusted domains or the current origin before using it in a redirect or server-side request."
+    },
+    {
+      "cluster_id": 37,
+      "fix_strategy": "Improve URL parsing to catch all absolute URL variants: explicitly reject protocol-relative URLs, expand regex to match single-slash schemes, strip control characters, and parse URI components for proper validation.",
+      "members": [
+        "CVE-2025-66035",
+        "CVE-2026-41423"
+      ],
+      "name": "Incomplete URL validation allowing bypass via alternative absolute URL representations",
+      "root_cause": "Validation logic (regex or string prefix check) fails to recognize protocol-relative URLs (starting with //), malformed scheme separators (single slash), control characters, or leading slash sequences, allowing an attacker to bypass host trust checks."
+    },
+    {
+      "cluster_id": 37,
+      "fix_strategy": "Eliminate the user-controlled redirect source entirely by removing the parameter or header usage and always redirecting to a hardcoded safe URL.",
+      "members": [
+        "CVE-2026-35404"
+      ],
+      "name": "Removal of user-controlled redirect source",
+      "root_cause": "Code directly uses user-controlled input (query parameter or HTTP header) as the redirect target without any validation."
+    },
+    {
+      "cluster_id": 37,
+      "fix_strategy": "Validate the redirect location by attempting to set it in a Headers object (which throws on invalid) and catch errors early; wrap redirect handling in try-catch.",
+      "members": [
+        "CVE-2026-40074"
+      ],
+      "name": "Missing validation of redirect location HTTP header value",
+      "root_cause": "Code passes user-controlled redirect location directly to the HTTP response without validating that the string conforms to header field value rules, causing unhandled exceptions when invalid characters are present."
+    }
+  ],
+  "tags": [
+    "ssrf",
+    "mech_ssrf_redirect_following_client",
+    "redirect-follow SSRF",
+    "HTTP redirect SSRF",
+    "Location header SSRF"
+  ]
+}

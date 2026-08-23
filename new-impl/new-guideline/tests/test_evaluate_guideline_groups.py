@@ -1,0 +1,491 @@
+from __future__ import annotations
+
+import importlib.util
+import json
+import sys
+from pathlib import Path
+
+
+SCRIPT = Path(__file__).parents[1] / "scripts" / "evaluate_guideline_groups.py"
+
+
+def load_module():
+    spec = importlib.util.spec_from_file_location("evaluate_guideline_groups", SCRIPT)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def write_json(path: Path, value: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def write_jsonl(path: Path, rows: list[dict]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("".join(json.dumps(row, ensure_ascii=False) + "\n" for row in rows), encoding="utf-8")
+
+
+def guideline(
+    guideline_id: str,
+    *,
+    cves: list[str],
+    mechanism_id: str = "mech_object_owner_scope_missing_authz",
+) -> dict:
+    return {
+        "guideline_id": guideline_id,
+        "guideline_group_key": f"cluster_0001__{mechanism_id}",
+        "guideline_text": "Trace resource IDs into protected object operations.",
+        "mechanism": {
+            "mechanism_id": mechanism_id,
+            "name": "missing object-owner or tenant-scope authorization",
+            "family": "authorization",
+            "source_shape": "attacker-selected resource identifiers",
+            "sink_shape": "sensitive object operations",
+            "missing_guard": "object ownership is not checked",
+            "typical_fix": "bind authorization to the selected object",
+        },
+        "cve_ids": cves,
+    }
+
+
+def case(identity: str, cve: str, hcvr: str, cwes: list[str]) -> dict:
+    return {
+        "identity_key": identity,
+        "new_unified_case_id": f"case::{identity}",
+        "vulnerability": {"id": cve, "aliases": []},
+        "classification": {"primary_hcvr_type": hcvr, "cwe_ids": cwes},
+    }
+
+
+def build_release(tmp_path: Path, payloads: list[dict], overrides: list[dict]) -> Path:
+    release = tmp_path / "release"
+    for payload in payloads:
+        write_json(release / "guidelines" / f"{payload['guideline_id']}.json", payload)
+    write_json(
+        release / "index.json",
+        {
+            "items": [
+                {
+                    "guideline_id": payload["guideline_id"],
+                    "file_name": f"{payload['guideline_id']}.json",
+                }
+                for payload in payloads
+            ]
+        },
+    )
+    write_jsonl(release / "guideline_overrides.jsonl", overrides)
+    write_jsonl(release / "mechanism_candidates.jsonl", [])
+    return release
+
+
+def test_evaluate_release_flags_mixed_groups_without_recall_rank(tmp_path: Path):
+    module = load_module()
+    cases_file = tmp_path / "cases.jsonl"
+    write_jsonl(
+        cases_file,
+        [
+            case("case-a", "CVE-1", "authorization_bypass", ["CWE-862"]),
+            case("case-b", "CVE-2", "ssrf", ["CWE-918"]),
+        ],
+    )
+    release = build_release(
+        tmp_path,
+        [guideline("gl_mech_0001", cves=["CVE-1", "CVE-2"])],
+        [
+            {
+                "identity_key": "case-a",
+                "case_id": "case::case-a",
+                "guideline_ids": ["gl_mech_0001"],
+                "cve_ids": ["CVE-1"],
+            },
+            {
+                "identity_key": "case-b",
+                "case_id": "case::case-b",
+                "guideline_ids": ["gl_mech_0001"],
+                "cve_ids": ["CVE-2"],
+            },
+        ],
+    )
+
+    summary, group_rows, assignments = module.evaluate_release(
+        release_dir=release,
+        cases_file=cases_file,
+        min_purity=0.67,
+        singleton_soft_cap=1,
+    )
+
+    assert summary["assigned_unique_case_count"] == 2
+    assert summary["mixed_hcvr_group_count"] == 1
+    assert summary["mixed_cwe_group_count"] == 1
+    assert group_rows[0]["flags"] == ["mixed_hcvr", "mixed_cwe"]
+    assert {row["identity_key"] for row in assignments} == {"case-a", "case-b"}
+    assert all("rank" not in row for row in assignments)
+
+
+def test_evaluate_release_accepts_pure_actionable_group(tmp_path: Path):
+    module = load_module()
+    cases_file = tmp_path / "cases.jsonl"
+    write_jsonl(
+        cases_file,
+        [
+            case("case-a", "CVE-1", "authorization_bypass", ["CWE-862"]),
+            case("case-b", "CVE-2", "authorization_bypass", ["CWE-862"]),
+        ],
+    )
+    release = build_release(
+        tmp_path,
+        [guideline("gl_mech_0001", cves=["CVE-1", "CVE-2"])],
+        [
+            {
+                "identity_key": "case-a",
+                "case_id": "case::case-a",
+                "guideline_ids": ["gl_mech_0001"],
+                "cve_ids": ["CVE-1"],
+            },
+            {
+                "identity_key": "case-b",
+                "case_id": "case::case-b",
+                "guideline_ids": ["gl_mech_0001"],
+                "cve_ids": ["CVE-2"],
+            },
+        ],
+    )
+
+    summary, group_rows, _ = module.evaluate_release(
+        release_dir=release,
+        cases_file=cases_file,
+        min_purity=0.67,
+        singleton_soft_cap=1,
+    )
+
+    assert summary["mixed_hcvr_group_count"] == 0
+    assert summary["mixed_cwe_group_count"] == 0
+    assert summary["weighted_primary_hcvr_purity"] == 1.0
+    assert summary["weighted_cwe_purity"] == 1.0
+    assert group_rows[0]["flags"] == []
+
+
+def test_evaluate_release_excludes_source_only_groups_from_purity(tmp_path: Path):
+    module = load_module()
+    cases_file = tmp_path / "cases.jsonl"
+    write_jsonl(cases_file, [case("case-a", "CVE-1", "authorization_bypass", ["CWE-862"])])
+    release = build_release(
+        tmp_path,
+        [
+            guideline("gl_mech_0001", cves=["CVE-1"]),
+            guideline("gl_mech_0002", cves=["CVE-NOT-IN-DATASET"]),
+        ],
+        [
+            {
+                "identity_key": "case-a",
+                "case_id": "case::case-a",
+                "guideline_ids": ["gl_mech_0001"],
+                "cve_ids": ["CVE-1"],
+            }
+        ],
+    )
+
+    summary, group_rows, assignments = module.evaluate_release(
+        release_dir=release,
+        cases_file=cases_file,
+        min_purity=0.67,
+        singleton_soft_cap=0,
+    )
+
+    assert summary["guideline_count"] == 2
+    assert summary["evaluated_group_count"] == 1
+    assert summary["source_only_group_count"] == 1
+    assert summary["source_only_no_case_metadata_count"] == 1
+    assert summary["weighted_primary_hcvr_purity"] == 1.0
+    assert summary["weighted_cwe_purity"] == 1.0
+    assert len(assignments) == 1
+    source_only = [row for row in group_rows if row["guideline_id"] == "gl_mech_0002"][0]
+    assert source_only["flags"] == ["source_only_no_case_metadata"]
+
+
+def test_evaluate_release_uses_case_assignments_for_review_only_source_reviewed_guidelines(tmp_path: Path):
+    module = load_module()
+    cases_file = tmp_path / "cases.jsonl"
+    write_jsonl(cases_file, [case("case-a", "CVE-1", "ssrf", ["CWE-918"])])
+    release = build_release(
+        tmp_path,
+        [
+            {
+                "guideline_id": "sr_mech_0001",
+                "guideline_group_key": "gl_old__candidate_boundary__mech_jndi_lookup_ssrf",
+                "guideline_text": "Audit JNDI lookup values that can trigger outbound resource access.",
+                "mechanism": {
+                    "mechanism_id": "mech_jndi_lookup_ssrf",
+                    "name": "JNDI lookup SSRF",
+                    "family": "source_reviewed_boundary",
+                },
+                "release_status": {
+                    "release_ready": False,
+                    "status": "review_only",
+                    "blockers": ["singleton_or_missing_case_support"],
+                },
+                "schema_version": "hcvr_source_reviewed_guideline.v1",
+            }
+        ],
+        [],
+    )
+    write_jsonl(
+        release / "case_assignments.jsonl",
+        [
+            {
+                "identity_key": "case-a",
+                "case_id": "case::case-a",
+                "cve_ids": ["CVE-1"],
+                "guideline_id": "sr_mech_0001",
+                "primary_hcvr_type": "ssrf",
+                "cwe_ids": ["CWE-918"],
+            }
+        ],
+    )
+
+    summary, group_rows, assignments = module.evaluate_release(
+        release_dir=release,
+        cases_file=cases_file,
+        min_purity=0.67,
+        singleton_soft_cap=0,
+    )
+
+    assert summary["assignment_link_count"] == 1
+    assert summary["assignment_link_group_count"] == 1
+    assert summary["source_only_group_count"] == 0
+    assert summary["assigned_unique_case_count"] == 1
+    assert group_rows[0]["actionability_source"] == "source_reviewed_text"
+    assert "incomplete_actionability_fields" not in group_rows[0]["flags"]
+    assert group_rows[0]["flags"] == ["review_only"]
+    assert assignments[0]["identity_key"] == "case-a"
+
+
+def test_review_queue_is_only_evaluated_when_requested(tmp_path: Path):
+    module = load_module()
+    cases_file = tmp_path / "cases.jsonl"
+    write_jsonl(cases_file, [case("case-a", "CVE-1", "authorization_bypass", ["CWE-862"])])
+    release = build_release(tmp_path, [], [])
+    write_jsonl(
+        release / "review_queue.jsonl",
+        [
+            {
+                "review_id": "review_mech_0001",
+                "guideline_group_key": "cluster_0001__pending_mech_parser_state",
+                "guideline_text": "Trace parser state into privileged parser transitions.",
+                "mechanism": {
+                    "mechanism_id": "pending_mech_parser_state",
+                    "name": "parser state confusion",
+                    "family": "pending_review",
+                    "source_shape": "attacker-controlled parser state",
+                    "sink_shape": "privileged parser transition",
+                    "missing_guard": "state validation is not enforced",
+                    "typical_fix": "validate parser state before transition",
+                },
+                "cve_ids": ["CVE-1"],
+                "release_status": {"release_ready": False, "status": "review_only"},
+            }
+        ],
+    )
+
+    summary_without_queue, rows_without_queue, _ = module.evaluate_release(
+        release_dir=release,
+        cases_file=cases_file,
+        min_purity=0.67,
+        singleton_soft_cap=1,
+    )
+    summary_with_queue, rows_with_queue, _ = module.evaluate_release(
+        release_dir=release,
+        cases_file=cases_file,
+        min_purity=0.67,
+        singleton_soft_cap=1,
+        include_review_queue=True,
+    )
+
+    assert summary_without_queue["guideline_count"] == 0
+    assert rows_without_queue == []
+    assert summary_with_queue["guideline_count"] == 1
+    assert summary_with_queue["include_review_queue"] is True
+    assert rows_with_queue[0]["guideline_id"] == "review_mech_0001"
+    assert rows_with_queue[0]["flags"] == ["small_group", "pending_review", "review_only"]
+
+
+def test_write_judge_pack_for_flagged_groups(tmp_path: Path):
+    module = load_module()
+    group_rows = [
+        {
+            "guideline_id": "gl_mech_0001",
+            "guideline_group_key": "cluster_0001__mech_a",
+            "mechanism_id": "mech_a",
+            "mechanism_name": "mechanism A",
+            "mechanism_family": "authz",
+            "assigned_case_count": 2,
+            "source_cve_count": 2,
+            "metadata_cve_count": 2,
+            "primary_hcvr_majority": "authorization_bypass",
+            "primary_hcvr_purity": 0.5,
+            "cwe_majority": "CWE-862",
+            "cwe_purity": 0.5,
+            "flags": ["mixed_hcvr"],
+            "guideline_text": "Trace object use without object authorization.",
+            "cluster_summary": "Mixed authorization cases.",
+            "judge_case_examples": [{"identity_key": "case-a", "cve_ids": ["CVE-1"]}],
+        },
+        {
+            "guideline_id": "gl_mech_0002",
+            "guideline_group_key": "cluster_0002__mech_b",
+            "mechanism_id": "mech_b",
+            "mechanism_name": "mechanism B",
+            "mechanism_family": "ssrf",
+            "assigned_case_count": 1,
+            "source_cve_count": 1,
+            "metadata_cve_count": 1,
+            "primary_hcvr_majority": "ssrf",
+            "primary_hcvr_purity": 1.0,
+            "cwe_majority": "CWE-918",
+            "cwe_purity": 1.0,
+            "flags": [],
+            "guideline_text": "Trace outbound fetches.",
+            "cluster_summary": "SSRF cases.",
+            "judge_case_examples": [{"identity_key": "case-b", "cve_ids": ["CVE-2"]}],
+        },
+    ]
+
+    judge_dir = tmp_path / "judge"
+    module.write_judge_pack(judge_dir, group_rows=group_rows, group_filter="flagged", max_groups=10)
+
+    rows = [json.loads(line) for line in (judge_dir / "judge_inputs.jsonl").read_text(encoding="utf-8").splitlines()]
+    assert [row["guideline_id"] for row in rows] == ["gl_mech_0001"]
+    assert (judge_dir / "prompts" / "gl_mech_0001.md").is_file()
+    assert (judge_dir / "judge_rubric.v1.md").is_file()
+    assert "Return JSON only" in (judge_dir / "prompts" / "gl_mech_0001.md").read_text(encoding="utf-8")
+    assert "Guideline Semantic Judge Rubric" in (judge_dir / "prompts" / "gl_mech_0001.md").read_text(encoding="utf-8")
+    assert "judgment criteria can be reviewed and versioned" in (judge_dir / "README.md").read_text(encoding="utf-8")
+    runner = (judge_dir / "run_traex_judge.sh").read_text(encoding="utf-8")
+    assert "TRAE_JUDGE_CONCURRENCY" in runner
+    assert 'TRAE_JUDGE_CLI="${TRAE_JUDGE_CLI:-traex}"' in runner
+    assert 'TRAE_JUDGE_MODEL="${TRAE_JUDGE_MODEL:-}"' in runner
+    assert 'args+=(--model "$TRAE_JUDGE_MODEL")' in runner
+    assert "TRAE_JUDGE_EXTRA_ARGS" in runner
+    assert "--disallowed-tool exec" in (judge_dir / "README.md").read_text(encoding="utf-8")
+    assert 'OUT_DIR="${1:-judge_outputs}"' in runner
+    assert 'xargs -n 1 -P "$CONCURRENCY"' in runner
+    assert runner.index('OUT_DIR="${1:-judge_outputs}"') < runner.index("export OUT_DIR")
+
+
+def test_balanced_judge_pack_samples_diagnostics_and_controls(tmp_path: Path):
+    module = load_module()
+    group_rows = [
+        {
+            "guideline_id": "gl_evidence_limited",
+            "guideline_group_key": "cluster_0001__pending",
+            "mechanism_id": "pending_mech_a",
+            "mechanism_name": "pending",
+            "mechanism_family": "pending_review",
+            "assigned_case_count": 4,
+            "source_cve_count": 4,
+            "metadata_cve_count": 4,
+            "primary_hcvr_majority": "ssrf",
+            "primary_hcvr_purity": 1.0,
+            "cwe_majority": "CWE-918",
+            "cwe_purity": 1.0,
+            "flags": ["pending_review"],
+            "guideline_text": "Pending evidence.",
+            "cluster_summary": "Needs source/sink/guard evidence.",
+            "judge_case_examples": [],
+        },
+        {
+            "guideline_id": "gl_label_mixed",
+            "guideline_group_key": "cluster_0002__mech_mixed",
+            "mechanism_id": "mech_mixed",
+            "mechanism_name": "mixed",
+            "mechanism_family": "authz",
+            "assigned_case_count": 5,
+            "source_cve_count": 5,
+            "metadata_cve_count": 5,
+            "primary_hcvr_majority": "authorization_bypass",
+            "primary_hcvr_purity": 0.6,
+            "cwe_majority": "CWE-862",
+            "cwe_purity": 0.6,
+            "flags": ["mixed_hcvr", "mixed_cwe"],
+            "guideline_text": "Mixed labels.",
+            "cluster_summary": "Needs semantic review.",
+            "judge_case_examples": [],
+        },
+        {
+            "guideline_id": "gl_clean",
+            "guideline_group_key": "cluster_0003__mech_clean",
+            "mechanism_id": "mech_clean",
+            "mechanism_name": "clean",
+            "mechanism_family": "authz",
+            "assigned_case_count": 6,
+            "source_cve_count": 6,
+            "metadata_cve_count": 6,
+            "primary_hcvr_majority": "authorization_bypass",
+            "primary_hcvr_purity": 1.0,
+            "cwe_majority": "CWE-862",
+            "cwe_purity": 1.0,
+            "flags": [],
+            "guideline_text": "Clean control.",
+            "cluster_summary": "Control group.",
+            "judge_case_examples": [],
+        },
+        {
+            "guideline_id": "gl_small",
+            "guideline_group_key": "cluster_0004__mech_small",
+            "mechanism_id": "mech_small",
+            "mechanism_name": "small",
+            "mechanism_family": "path",
+            "assigned_case_count": 1,
+            "source_cve_count": 1,
+            "metadata_cve_count": 1,
+            "primary_hcvr_majority": "path_traversal",
+            "primary_hcvr_purity": 1.0,
+            "cwe_majority": "CWE-22",
+            "cwe_purity": 1.0,
+            "flags": ["small_group"],
+            "guideline_text": "Small group.",
+            "cluster_summary": "Single case.",
+            "judge_case_examples": [],
+        },
+        {
+            "guideline_id": "gl_source_only",
+            "guideline_group_key": "cluster_0005__mech_source_only",
+            "mechanism_id": "mech_source_only",
+            "mechanism_name": "source only",
+            "mechanism_family": "deserialization",
+            "assigned_case_count": 0,
+            "source_cve_count": 2,
+            "metadata_cve_count": 0,
+            "primary_hcvr_majority": "",
+            "primary_hcvr_purity": 0.0,
+            "cwe_majority": "",
+            "cwe_purity": 0.0,
+            "flags": ["source_only_no_case_metadata"],
+            "guideline_text": "Source-only historical mechanism.",
+            "cluster_summary": "No unified case metadata.",
+            "judge_case_examples": [],
+        },
+    ]
+
+    judge_dir = tmp_path / "judge"
+    module.write_judge_pack(judge_dir, group_rows=group_rows, group_filter="balanced", max_groups=5)
+
+    rows = [json.loads(line) for line in (judge_dir / "judge_inputs.jsonl").read_text(encoding="utf-8").splitlines()]
+    assert [row["guideline_id"] for row in rows] == [
+        "gl_evidence_limited",
+        "gl_label_mixed",
+        "gl_clean",
+        "gl_small",
+        "gl_source_only",
+    ]
+    assert [row["judge_selection_reason"] for row in rows] == [
+        "evidence_limited",
+        "label_mixed",
+        "clean_control",
+        "small_group",
+        "source_only",
+    ]
+    assert "balanced" in (judge_dir / "README.md").read_text(encoding="utf-8")

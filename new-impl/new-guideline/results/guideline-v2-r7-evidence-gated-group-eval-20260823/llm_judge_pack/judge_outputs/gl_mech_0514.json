@@ -1,0 +1,20 @@
+{
+  "decision": "needs_evidence",
+  "coherence_score": 0.42,
+  "coverage_score": 0.31,
+  "actionability_score": 0.46,
+  "retrieval_query_quality": 0.28,
+  "main_issue": "The group is broadly auth-related, but the supplied evidence supports at least two different mechanisms—accepting inactive account identifiers and treating anonymous/failed remember-me authentication as an authenticated user—while five cases provide only file anchors without source or patch semantics. The guideline also introduces unsupported mechanisms such as timing side channels, weak PRNGs, cryptographic comparison, and one-time-token reuse.",
+  "suggested_guideline": "",
+  "split_suggestions": [
+    "Authentication succeeds despite an account, identifier, credential, or token state that should make it invalid or inactive",
+    "Authorization code derives an effective user or privilege from unauthenticated, anonymous, failed, or insufficiently validated security-context data"
+  ],
+  "evidence_notes": [
+    "AuthGuard CVE-2021-45890 provides direct evidence that credential verification omitted an inactive-identifier check; this supports a lifecycle/state-validity guard mechanism.",
+    "Opencast CVE-2020-5206 provides direct evidence that AnonymousAuthenticationToken was treated as sufficient authentication and an attacker-controlled remember-me username became the effective user; this supports an authentication-context classification/binding mechanism.",
+    "Booklore, Taier, Grassroot, Jans, and MeterSphere include source-ready anchors but no patch semantics, vulnerable source excerpts, input-to-effect path, or safe-fix evidence in this payload.",
+    "The stated cluster summary and guideline mention timing side channels, insecure cryptographic operations, weak PRNGs, untrusted algorithm handling, OR-to-AND corrections, and one-time-token invalidation, none of which is evidenced by the listed examples.",
+    "Obtain patch-derived before/after behavior and source-to-sink paths for each undocumented case before deciding whether the group should be split or rewritten."
+  ]
+}

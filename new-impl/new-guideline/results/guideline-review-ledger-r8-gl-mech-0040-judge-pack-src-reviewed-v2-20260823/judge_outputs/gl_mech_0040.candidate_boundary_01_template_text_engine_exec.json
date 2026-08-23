@@ -1,0 +1,17 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.90,
+  "coverage_score": 0.70,
+  "actionability_score": 0.90,
+  "retrieval_query_quality": 0.85,
+  "main_issue": "Solid mechanism-level boundary: source shape (editable template content loaded as string), sink shape (FreeMarker/Velocity render with unrestricted features), missing guard (no SAFER_RESOLVER/SecureUberspector), and safe fix (add engine sandbox before render) are tightly aligned. Only one representative case, but the evidence is thorough with source, sink, and fix-commit confirmation.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "ballcat_projects__ballcat_codegen::CVE-2022-24881: source-to-sink trace confirmed — GeneratorServiceImpl.generatorCode obtains templateFile.getContent() and passes to templateEngineDelegator.render(), with both Velocity.evaluate() and FreeMarker Template.process() sinks consuming the untrusted content directly.",
+    "ballcat_projects__ballcat_codegen::CVE-2022-24881: fix commit 84a7cb38 confirms missing guard — adds FreeMarker TemplateClassResolver.SAFER_RESOLVER and Velocity SecureUberspector, precisely matching the claimed safe-fix semantics.",
+    "Boundary scope is correctly narrow: reviewer notes explicitly exclude Bean Validation message interpolation, SpEL notifier template evaluation, and Jinjava sandbox-bypass as distinct mechanisms with different sources/sinks/fixes."
+  ]
+}
+```

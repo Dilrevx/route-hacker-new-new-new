@@ -1,0 +1,21 @@
+{
+  "decision": "split",
+  "coherence_score": 0.08,
+  "coverage_score": 0.05,
+  "actionability_score": 0.42,
+  "retrieval_query_quality": 0.18,
+  "main_issue": "The sole assigned case is described by the cluster as an insecure XML-processing/XXE-style issue, while the guideline targets attacker-controlled object-type deserialization. These mechanisms have different sources, sinks, guards, exploit prerequisites, and fixes.",
+  "suggested_guideline": "Submechanism A — XML external entity processing: Trace attacker-controlled XML into parser, transformer, schema, or resource-loading configuration. Report paths where DTD processing, external general or parameter entities, external schema resolution, XInclude, or URI resolution remains enabled for untrusted input. Confirm that secure-processing and external-access restrictions are configured on the concrete parser or transformer instance before parsing. Use parser settings that disable DTDs and external entity resolution, or install a resolver that rejects external resources.",
+  "split_suggestions": [
+    "XML parser or transformer configuration permitting DTD, external entity, schema, XInclude, or namespace URI resolution",
+    "Untrusted object deserialization permitting attacker-controlled classes, type metadata, callbacks, or object graphs",
+    "XMLDecoder or XML-based object reconstruction with unsafe class construction",
+    "XSLT extension-function execution or variable interpolation exposing system properties",
+    "XML resource-exhaustion conditions caused by incomplete bounds or EOF validation"
+  ],
+  "evidence_notes": [
+    "case::88e6c956e089802f9f52 is CVE-2023-40235 in Archi and points to ArchimateResourceFactory.java, an XML resource-factory context rather than an identified object deserializer.",
+    "The supplied case has no vulnerability description or trace evidence establishing serialized bytes, type metadata, class instantiation, callback execution, or an absent deserialization allowlist.",
+    "The cluster summary explicitly groups several distinct XML mechanisms; XXE/default XML parser configuration is the only mechanism plausibly connected to the listed case, but must be confirmed from the patch or source."
+  ]
+}

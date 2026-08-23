@@ -1,0 +1,18 @@
+{
+  "active_attribution_count": 612,
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "files": {
+    "guideline_overrides": "guideline_overrides.jsonl",
+    "index": "index.json",
+    "mechanism_candidates": "mechanism_candidates.jsonl"
+  },
+  "group_scope": "cluster-mechanism",
+  "guideline_count": 433,
+  "override_count": 252,
+  "pending_overrides_included": false,
+  "pending_review_count": 148,
+  "schema_version": "hcvr_mechanism_guideline_release.v1",
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "work_item_count": 760
+}

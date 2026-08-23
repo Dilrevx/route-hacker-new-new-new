@@ -1,0 +1,75 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where account modification endpoints (password, email, user role, contact) lack required verification steps such as re-authentication (current password or MFA), ownership confirmation, or token claim validation. The common coding mistake is assuming a valid session alone is sufficient authorization for sensitive actions, without additional proof of identity or ownership. One outlier involves a NoSQL injection vulnerability in password verification.",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2024-6895",
+    "CVE-2026-35407",
+    "CVE-2026-39851",
+    "CVE-2026-53981"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0095__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0428",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 4 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "required_keywords": [],
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2024-6895",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    95
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 95,
+      "fix_strategy": "Add a required field for current password (or MFA) and verify it before applying the change; optionally invalidate prior tokens.",
+      "members": [
+        "CVE-2024-6895",
+        "CVE-2026-53981"
+      ],
+      "name": "Missing re-authentication for sensitive account attribute changes",
+      "root_cause": "API endpoints for changing password or email do not require the current password (or MFA) before allowing the change, assuming a valid session is sufficient authorization."
+    },
+    {
+      "cluster_id": 95,
+      "fix_strategy": "Embed user_id, token type, and old_email into the token payload; during confirmation, validate that token type matches, user_id matches authenticated user, and old_email matches current email.",
+      "members": [
+        "CVE-2026-35407"
+      ],
+      "name": "Insufficient token claim validation in email change confirmation",
+      "root_cause": "Email change confirmation tokens are generated without embedding user identity and are not validated for token type, user_id, or old_email claims, allowing token reuse across accounts or for unintended purposes."
+    },
+    {
+      "cluster_id": 95,
+      "fix_strategy": "Remove the early existence check and defer it to the confirmation step where the user is authenticated via a one-time token sent to the new email, making the disclosure harmless.",
+      "members": [
+        "CVE-2026-39851"
+      ],
+      "name": "Information disclosure via email existence oracle",
+      "root_cause": "The requestEmailChange mutation performs an early database existence check for the new email and returns distinct error messages, creating an oracle that reveals whether an email is registered."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

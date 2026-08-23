@@ -1,0 +1,90 @@
+{
+  "cluster_summary": "User-controlled data is rendered into HTML without proper entity encoding, enabling stored cross-site scripting (XSS). The root cause is either directly interpolating unsanitized input or bypassing automatic escaping via safe markers. The fix requires applying context-appropriate escaping functions or removing unsafe markers.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2024-11319",
+    "CVE-2024-6639",
+    "CVE-2026-42857",
+    "CVE-2026-44737"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0049__mech_html_sanitizer_policy_gap",
+  "guideline_id": "gl_mech_0082",
+  "guideline_text": "Trace attacker-controlled markup, HTML fragments, rich text, comments, DOM nodes, style blocks, attributes, or URI values into HTML cleaners, SafeHtml validators, DOM sanitizers, rich-text renderers, or browser-rendered sanitized output. Report code paths where the active sanitizer policy does not allowlist dangerous elements, attributes, URI schemes, DOM child nodes, comments, or malformed inputs before rendering. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 4 historical CVE example(s), not as a project-specific signature. A safe implementation should activate the restrictive sanitizer for the relevant mode, enforce element/attribute/URI allowlists after parsing, and add regression tests for the bypass form.",
+  "mechanism": {
+    "aliases": [
+      "HTML sanitizer bypass",
+      "SafeHtml policy gap",
+      "missing sanitizer allowlist",
+      "restricted cleaner bypass"
+    ],
+    "family": "html_sanitization",
+    "mechanism_id": "mech_html_sanitizer_policy_gap",
+    "missing_guard": "the active sanitizer policy does not allowlist dangerous elements, attributes, URI schemes, DOM child nodes, comments, or malformed inputs before rendering",
+    "name": "HTML sanitizer policy gap or inactive allowlist",
+    "required_keywords": [
+      [
+        "html",
+        "sanitize",
+        "sanitizer",
+        "safehtml",
+        "cleaner",
+        "dompurify",
+        "antisamy",
+        "bleach"
+      ]
+    ],
+    "sink_shape": "HTML cleaners, SafeHtml validators, DOM sanitizers, rich-text renderers, or browser-rendered sanitized output",
+    "source_shape": "attacker-controlled markup, HTML fragments, rich text, comments, DOM nodes, style blocks, attributes, or URI values",
+    "typical_fix": "activate the restrictive sanitizer for the relevant mode, enforce element/attribute/URI allowlists after parsing, and add regression tests for the bypass form"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 3,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 4,
+    "total_member_count": 4,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2024-11319",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    49
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 49,
+      "fix_strategy": "Apply context-appropriate escaping functions such as Django's escape() or format_html(), WordPress's esc_html() for text and esc_attr() for attributes, or jQuery's .attr() and .text() methods.",
+      "members": [
+        "CVE-2024-11319",
+        "CVE-2024-6639",
+        "CVE-2026-44737"
+      ],
+      "name": "Insufficient output encoding in string interpolation",
+      "root_cause": "User-controlled data is interpolated into HTML strings without any output encoding, or with only tag stripping that does not escape special characters."
+    },
+    {
+      "cluster_id": 49,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2026-42857"
+      ],
+      "name": "Missing output encoding in HTML context",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "html_sanitization",
+    "mech_html_sanitizer_policy_gap",
+    "HTML sanitizer bypass",
+    "SafeHtml policy gap",
+    "missing sanitizer allowlist",
+    "restricted cleaner bypass"
+  ]
+}

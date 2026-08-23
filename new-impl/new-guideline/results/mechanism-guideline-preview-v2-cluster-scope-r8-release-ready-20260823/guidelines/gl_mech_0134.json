@@ -1,0 +1,93 @@
+{
+  "cluster_summary": "The cluster comprises vulnerabilities in OAuth2 and OIDC clients where the callback processing fails to properly validate or bind security parameters such as state, nonce, and PKCE challenge/verifier, enabling attacks including cross-site request forgery, authorization code injection, and secret leakage. Some members also involve mass assignment and vault misconfiguration related to OAuth flows.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2024-12369",
+    "CVE-2026-28477"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0078__mech_authentication_artifact_incomplete_validation",
+  "guideline_id": "gl_mech_0134",
+  "guideline_text": "Trace externally supplied authentication artifacts such as JWTs, SAML responses, OAuth authorization codes, bearer tokens, session cookies, or client credentials into session creation, identity binding, privilege assignment, protected API access, or credential exchange decisions. Report code paths where signature, issuer, audience, expiry, nonce, binding, proof-of-possession, or protocol state validation is incomplete before accepting the identity. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should validate all required cryptographic and protocol fields before creating a principal or granting access, and bind the artifact to the intended client, audience, and session.",
+  "mechanism": {
+    "aliases": [
+      "JWT validation bypass",
+      "SAML validation bypass",
+      "OAuth token validation bypass",
+      "session artifact validation bypass"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_authentication_artifact_incomplete_validation",
+    "missing_guard": "signature, issuer, audience, expiry, nonce, binding, proof-of-possession, or protocol state validation is incomplete before accepting the identity",
+    "name": "authentication artifact accepted without complete validation",
+    "required_keywords": [
+      [
+        "jwt",
+        "saml",
+        "oauth",
+        "token",
+        "session",
+        "credential"
+      ],
+      [
+        "signature",
+        "claims",
+        "audience",
+        "issuer",
+        "nonce",
+        "proof-of-possession",
+        "validation"
+      ]
+    ],
+    "sink_shape": "session creation, identity binding, privilege assignment, protected API access, or credential exchange decisions",
+    "source_shape": "externally supplied authentication artifacts such as JWTs, SAML responses, OAuth authorization codes, bearer tokens, session cookies, or client credentials",
+    "typical_fix": "validate all required cryptographic and protocol fields before creating a principal or granting access, and bind the artifact to the intended client, audience, and session"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 2,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 2,
+    "total_member_count": 2,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2024-12369",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    78
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 78,
+      "fix_strategy": "Ensure state is generated per-session, stored in session, and validated against the request state before any further processing. Bind state to session identity to prevent cross-session reuse.",
+      "members": [
+        "CVE-2026-28477"
+      ],
+      "name": "Missing OAuth state parameter validation",
+      "root_cause": "The OAuth callback handler either does not compare the state parameter from the request against the value stored in the user session, or does not bind the state to the session, allowing an attacker to inject a valid state from another session or skip validation entirely."
+    },
+    {
+      "cluster_id": 78,
+      "fix_strategy": "Generate a cryptographic nonce, include it in the authorization request as the nonce parameter, and validate the nonce claim in the returned ID token against the stored session value.",
+      "members": [
+        "CVE-2024-12369"
+      ],
+      "name": "Missing nonce validation in OIDC",
+      "root_cause": "The OIDC client does not generate a nonce, store it in the session, and validate the nonce claim in the ID token, allowing an attacker to inject a stolen authorization code into a different session."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_authentication_artifact_incomplete_validation",
+    "JWT validation bypass",
+    "SAML validation bypass",
+    "OAuth token validation bypass",
+    "session artifact validation bypass"
+  ]
+}

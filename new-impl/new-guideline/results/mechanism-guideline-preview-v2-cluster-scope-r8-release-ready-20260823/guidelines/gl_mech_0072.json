@@ -1,0 +1,92 @@
+{
+  "cluster_summary": "A collection of vulnerabilities where protocol parsers (HTTP, email, AJP, etc.) fail to validate user-supplied input for control characters, enforce protocol-specific constraints, or limit resource consumption, leading to CRLF injection, request smuggling, denial of service, or email header manipulation.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2024-29025",
+    "CVE-2024-49767",
+    "CVE-2026-34516",
+    "CVE-2026-34517",
+    "CVE-2026-45292"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0041__mech_binary_length_unbounded_resource_use",
+  "guideline_id": "gl_mech_0072",
+  "guideline_text": "Trace attacker-controlled binary length fields, size counters, frame lengths, offsets, back-references, or decompressed-size metadata into memory allocation, buffer growth, parsing loops, frame handling, decompression, or resource-consuming work. Report code paths where protocol-specific upper bounds, arithmetic overflow checks, structural consistency checks, or expansion limits are absent before allocation or work expansion. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 5 historical CVE example(s), not as a project-specific signature. A safe implementation should enforce explicit size limits, validate arithmetic and offsets before use, reject malformed or oversized records early, and bound decompression or frame-processing work.",
+  "mechanism": {
+    "aliases": [
+      "unbounded length allocation",
+      "binary size field DoS",
+      "frame length resource exhaustion",
+      "decompression size exhaustion"
+    ],
+    "family": "resource_exhaustion_or_bounds",
+    "mechanism_id": "mech_binary_length_unbounded_resource_use",
+    "missing_guard": "protocol-specific upper bounds, arithmetic overflow checks, structural consistency checks, or expansion limits are absent before allocation or work expansion",
+    "name": "unbounded binary length or size field drives resource use",
+    "required_keywords": [
+      [
+        "binary",
+        "frame",
+        "buffer",
+        "allocate",
+        "allocation",
+        "decompress",
+        "compressed",
+        "payload",
+        "offset"
+      ],
+      [
+        "length",
+        "size",
+        "count",
+        "bounds",
+        "overflow"
+      ]
+    ],
+    "sink_shape": "memory allocation, buffer growth, parsing loops, frame handling, decompression, or resource-consuming work",
+    "source_shape": "attacker-controlled binary length fields, size counters, frame lengths, offsets, back-references, or decompressed-size metadata",
+    "typical_fix": "enforce explicit size limits, validate arithmetic and offsets before use, reject malformed or oversized records early, and bound decompression or frame-processing work"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 4,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 5,
+    "total_member_count": 5,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2024-29025",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    41
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 41,
+      "fix_strategy": "Introduce configurable limits (e.g., maxFields, maxBytes, maxHeaders), use efficient algorithms (e.g., O(n log n) sort), and track cumulative sizes incrementally to prevent resource exhaustion.",
+      "members": [
+        "CVE-2024-29025",
+        "CVE-2024-49767",
+        "CVE-2026-34516",
+        "CVE-2026-34517",
+        "CVE-2026-45292"
+      ],
+      "name": "Resource exhaustion due to missing limits in input parsing",
+      "root_cause": "The parser does not impose limits on the number of fields, field sizes, buffer sizes, or algorithmic complexity, allowing an attacker to cause unbounded memory or CPU consumption."
+    }
+  ],
+  "tags": [
+    "resource_exhaustion_or_bounds",
+    "mech_binary_length_unbounded_resource_use",
+    "unbounded length allocation",
+    "binary size field DoS",
+    "frame length resource exhaustion",
+    "decompression size exhaustion"
+  ]
+}

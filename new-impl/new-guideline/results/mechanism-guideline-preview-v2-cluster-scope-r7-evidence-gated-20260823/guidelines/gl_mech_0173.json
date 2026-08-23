@@ -1,0 +1,56 @@
+{
+  "cluster_summary": "The cluster includes vulnerabilities where untrusted user input is passed to dangerous functions like eval, exec, pickle.load, or f-string formatting without proper sanitization or restrictions, allowing arbitrary code execution. The root cause is the assumption that input is safe due to internal trust or incomplete validation. Fix strategies vary from whitelist-based replacement to removing vulnerable endpoints.",
+  "created_at": "2026-08-22T20:37:28+00:00",
+  "cve_ids": [
+    "CVE-2026-7597"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0032__mech_deserialization_untrusted_type_graph",
+  "guideline_id": "gl_mech_0173",
+  "guideline_text": "Trace untrusted serialized bytes, object streams, pickles, marshaled payloads, or type metadata into deserializers that instantiate classes, reconstruct object graphs, or invoke callbacks during object creation. Report code paths where allowed classes, object types, and construction side effects are not constrained before deserialization. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should use type allowlists, safe codecs, signature checks, or data-only formats instead of general object deserialization.",
+  "mechanism": {
+    "aliases": [
+      "unsafe deserialization",
+      "ObjectInputStream.readObject",
+      "pickle load",
+      "marshal load",
+      "serializer type metadata"
+    ],
+    "family": "deserialization",
+    "mechanism_id": "mech_deserialization_untrusted_type_graph",
+    "missing_guard": "allowed classes, object types, and construction side effects are not constrained before deserialization",
+    "name": "untrusted deserialization with attacker-controlled type graph",
+    "required_keywords": [],
+    "sink_shape": "deserializers that instantiate classes, reconstruct object graphs, or invoke callbacks during object creation",
+    "source_shape": "untrusted serialized bytes, object streams, pickles, marshaled payloads, or type metadata",
+    "typical_fix": "use type allowlists, safe codecs, signature checks, or data-only formats instead of general object deserialization"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-7597",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    32
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 32,
+      "fix_strategy": "Replace with a restricted deserializer (e.g., SafeUnpickler) that whitelists allowed types.",
+      "members": [
+        "CVE-2026-7597"
+      ],
+      "name": "Unsafe pickle deserialization",
+      "root_cause": "Use of pickle.loads or pickle.load on attacker-controlled data without a restricted unpickler, assuming data is safe."
+    }
+  ],
+  "tags": [
+    "deserialization",
+    "mech_deserialization_untrusted_type_graph",
+    "unsafe deserialization",
+    "ObjectInputStream.readObject",
+    "pickle load",
+    "marshal load"
+  ]
+}

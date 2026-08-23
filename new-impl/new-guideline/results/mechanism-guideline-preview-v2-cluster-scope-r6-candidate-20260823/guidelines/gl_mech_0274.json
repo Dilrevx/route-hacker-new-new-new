@@ -1,0 +1,134 @@
+{
+  "cluster_summary": "File operations (read, write, delete, copy) fail to resolve symbolic links or otherwise canonicalize the final path before checking that it stays within an intended sandbox directory. This allows an attacker to escape containment via symlinks, directory traversal, or TOCTOU races where symlinks are swapped between validation and use. The cluster also includes several distinct variants: insufficient pattern-based blocking, input-sanitization flaws, permission mistakes, validation ordering errors, and a concurrency issue on shared file state.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2026-27523",
+    "CVE-2026-28684",
+    "CVE-2026-31990",
+    "CVE-2026-32002",
+    "CVE-2026-32007",
+    "CVE-2026-32013",
+    "CVE-2026-32033",
+    "CVE-2026-32054",
+    "CVE-2026-32055",
+    "CVE-2026-32060",
+    "CVE-2026-34451",
+    "CVE-2026-34604",
+    "CVE-2026-39981",
+    "CVE-2026-40518",
+    "CVE-2026-43567",
+    "CVE-2026-43989",
+    "CVE-2026-44111",
+    "CVE-2026-45403",
+    "CVE-2026-49957",
+    "CVE-2026-5627",
+    "CVE-2026-7237",
+    "CVE-2026-7397",
+    "CVE-2026-7400",
+    "CVE-2026-7728"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0060__mech_path_traversal_missing_canonical_prefix",
+  "guideline_id": "gl_mech_0274",
+  "guideline_text": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under the intended base directory before the file operation. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 24 historical CVE example(s), not as a project-specific signature. A safe implementation should normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check.",
+  "mechanism": {
+    "aliases": [
+      "path traversal",
+      "directory traversal",
+      "Zip Slip",
+      "archive entry traversal",
+      "canonical path bypass"
+    ],
+    "family": "filesystem",
+    "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+    "missing_guard": "the normalized absolute path is not checked to remain under the intended base directory before the file operation",
+    "name": "path traversal through missing canonical prefix check",
+    "required_keywords": [],
+    "sink_shape": "file read, write, delete, extraction, or resource-loading APIs",
+    "source_shape": "attacker-controlled filenames, archive entries, path fragments, or resource names",
+    "typical_fix": "normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-27523",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    60
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 60,
+      "fix_strategy": "Use fs.realpathSync (or equivalent) to resolve symlinks, then verify the resolved path starts with (or is equal to) the canonical base directory. For prefixes, ensure a trailing path separator is appended. For file operations, use lstat to detect symlinks and O_NOFOLLOW to prevent following. When leaf does not exist, resolve the deepest existing ancestor first.",
+      "members": [
+        "CVE-2026-27523",
+        "CVE-2026-28684",
+        "CVE-2026-31990",
+        "CVE-2026-32002",
+        "CVE-2026-32007",
+        "CVE-2026-32013",
+        "CVE-2026-32054",
+        "CVE-2026-32055",
+        "CVE-2026-32060",
+        "CVE-2026-34451",
+        "CVE-2026-34604",
+        "CVE-2026-39981",
+        "CVE-2026-43567",
+        "CVE-2026-43989",
+        "CVE-2026-45403",
+        "CVE-2026-5627",
+        "CVE-2026-7237"
+      ],
+      "name": "Missing symlink resolution and canonicalization before path containment validation",
+      "root_cause": "Code uses lexical path operations (path.resolve, path.normpath, startswith) without resolving symbolic links or canonicalizing (realpath). Attackers can place symlinks inside allowed directories that point outside, or use non-existent leaf paths with symlinked ancestors. Also includes cases where a trailing separator is missing from a prefix check, allowing sibling directories with a common prefix to bypass containment."
+    },
+    {
+      "cluster_id": 60,
+      "fix_strategy": "Add a configurable blocklist (regex patterns for dangerous paths) or allowlist (explicit list of allowed paths). Reject operations that match a blocked pattern or are not in the allowed list. For directory copies, exclude dangerous subdirectories via an excludeDirs parameter.",
+      "members": [
+        "CVE-2026-44111"
+      ],
+      "name": "Missing allowlist or blocklist for sensitive file paths",
+      "root_cause": "File operations allow writing to (or reading from) any location under a base directory without checking for known dangerous file names or directories (e.g., .git hooks, pipeline metadata files, executable hook directories, or arbitrary workspace paths). Some cases also lack an allowlist of permissible paths."
+    },
+    {
+      "cluster_id": 60,
+      "fix_strategy": "Normalize the input early by stripping known prefixes (e.g., '@'), or validate the input against a restrictive regex (e.g., alphanumeric and hyphens) before any path operation.",
+      "members": [
+        "CVE-2026-32033",
+        "CVE-2026-40518"
+      ],
+      "name": "Missing input sanitization before path construction",
+      "root_cause": "User-supplied input (e.g., agent name, @-prefixed path) is used directly in filesystem path construction without stripping special prefixes, normalizing path components, or validating against an allowlist. This allows directory traversal or absolute path escapes."
+    },
+    {
+      "cluster_id": 60,
+      "fix_strategy": "Reorder the checks: call the blocked-path guard on both candidate and base paths before the containment check.",
+      "members": [
+        "CVE-2026-49957"
+      ],
+      "name": "Validation ordering flaw allowing blocked-path bypass",
+      "root_cause": "In a workspace resolution function, the containment check (candidate is within base directory) is performed before a blocked-path guard. An attacker can set the working directory to a system directory (e.g., /etc) so that the containment check succeeds early, skipping the blocked-path guard entirely."
+    },
+    {
+      "cluster_id": 60,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2026-7397",
+        "CVE-2026-7400",
+        "CVE-2026-7728"
+      ],
+      "name": "Missing path canonicalization and symlink handling before filesystem operations",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "filesystem",
+    "mech_path_traversal_missing_canonical_prefix",
+    "path traversal",
+    "directory traversal",
+    "Zip Slip",
+    "archive entry traversal"
+  ]
+}

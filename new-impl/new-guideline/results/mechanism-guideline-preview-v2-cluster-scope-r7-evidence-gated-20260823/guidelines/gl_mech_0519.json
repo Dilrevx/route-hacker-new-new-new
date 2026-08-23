@@ -1,0 +1,59 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities that allow attackers to bypass authentication or authorization by exploiting missing validation checks, timing side-channels, insecure cryptographic operations, and session management flaws. The issues include failure to verify user existence, token validity, claim correctness, and the use of non-constant-time comparisons, weak PRNGs, and untrusted algorithm handling.",
+  "created_at": "2026-08-22T20:37:31+00:00",
+  "cve_ids": [
+    "CVE-2015-2913",
+    "CVE-2019-11808"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0089__pending_mech_cluster_89_weak_prng_for_session_ids",
+  "guideline_id": "gl_mech_0519",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should Replace with java.security.SecureRandom or UUID.randomUUID() which uses a cryptographically strong PRNG..",
+  "mechanism": {
+    "aliases": [
+      "token",
+      "making",
+      "threadlocalrandom",
+      "securerandom",
+      "typically",
+      "attacker"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_89_weak_prng_for_session_ids",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Weak PRNG for session IDs",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Replace with java.security.SecureRandom or UUID.randomUUID() which uses a cryptographically strong PRNG."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2015-2913",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    89
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 89,
+      "fix_strategy": "Replace with java.security.SecureRandom or UUID.randomUUID() which uses a cryptographically strong PRNG.",
+      "members": [
+        "CVE-2015-2913",
+        "CVE-2019-11808"
+      ],
+      "name": "Weak PRNG for session IDs",
+      "root_cause": "Using java.util.Random or ThreadLocalRandom (non-cryptographic PRNG) to generate session IDs, making them predictable."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_89_weak_prng_for_session_ids",
+    "token",
+    "making",
+    "threadlocalrandom",
+    "securerandom"
+  ]
+}

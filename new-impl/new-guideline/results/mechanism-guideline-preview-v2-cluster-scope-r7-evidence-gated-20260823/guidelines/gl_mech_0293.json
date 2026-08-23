@@ -1,0 +1,84 @@
+{
+  "cluster_summary": "This cluster includes 37 CVEs in XWiki where user-controlled input is embedded into template outputs (wiki syntax, HTML, URLs, scripts) without proper escaping or context-aware handling. The root causes vary: missing HTML escaping, missing wiki syntax escaping, missing URL encoding, missing validation, incomplete escaping functions, or improper use of rendering macros. All lead to injection of wiki macros, Velocity, Groovy, or HTML/JavaScript with server-side privileges.",
+  "created_at": "2026-08-22T20:37:29+00:00",
+  "cve_ids": [
+    "CVE-2023-29211",
+    "CVE-2023-50722",
+    "CVE-2026-40105"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0053__mech_sql_dynamic_query_untrusted_fragment",
+  "guideline_id": "gl_mech_0293",
+  "guideline_text": "Trace attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values into SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters. Report code paths where values or structural fragments are concatenated into SQL syntax without parameter binding or a strict allowlist for identifiers and operators. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should use bound parameters for values, allowlist structural SQL fragments, and keep untrusted data out of query syntax.",
+  "mechanism": {
+    "aliases": [
+      "SQL injection",
+      "SQL concatenation",
+      "dynamic SQL injection",
+      "untrusted query fragment"
+    ],
+    "family": "sql_injection",
+    "mechanism_id": "mech_sql_dynamic_query_untrusted_fragment",
+    "missing_guard": "values or structural fragments are concatenated into SQL syntax without parameter binding or a strict allowlist for identifiers and operators",
+    "name": "dynamic SQL query construction from untrusted fragments",
+    "required_keywords": [
+      [
+        "sql",
+        "jdbc",
+        "statement",
+        "preparedstatement",
+        "query"
+      ],
+      [
+        "concatenate",
+        "concat",
+        "interpolation",
+        "fragment",
+        "parameter",
+        "where",
+        "order by"
+      ]
+    ],
+    "sink_shape": "SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters",
+    "source_shape": "attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values",
+    "typical_fix": "use bound parameters for values, allowlist structural SQL fragments, and keep untrusted data out of query syntax"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2023-29211",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    53
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 53,
+      "fix_strategy": "Encode query parameter values using $escapetool.url() before constructing URLs.",
+      "members": [
+        "CVE-2023-50722",
+        "CVE-2026-40105"
+      ],
+      "name": "Missing URL encoding",
+      "root_cause": "User-controlled strings are concatenated into URL query parameters without percent-encoding, allowing injection of arbitrary query parameters or HTML."
+    },
+    {
+      "cluster_id": 53,
+      "fix_strategy": "Escape or sanitize the input before evaluation, or use a safer API that avoids dynamic Groovy evaluation.",
+      "members": [
+        "CVE-2023-29211"
+      ],
+      "name": "Groovy script injection via unescaped input",
+      "root_cause": "User-controlled strings are concatenated into dynamically evaluated Groovy code without escaping or sanitization."
+    }
+  ],
+  "tags": [
+    "sql_injection",
+    "mech_sql_dynamic_query_untrusted_fragment",
+    "SQL injection",
+    "SQL concatenation",
+    "dynamic SQL injection",
+    "untrusted query fragment"
+  ]
+}

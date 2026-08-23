@@ -1,0 +1,56 @@
+{
+  "cluster_summary": "This cluster contains 18 Netty CVEs covering a range of input parsing and validation flaws, including missing CRLF validation, disabled header validation, insufficient boundary checks, resource exhaustion, memory leaks, and incorrect protocol state handling. The vulnerabilities span HTTP, SMTP, WebSocket, AJP, and binary HTTP parsers.",
+  "created_at": "2026-08-22T17:56:09+00:00",
+  "cve_ids": [
+    "CVE-2022-1319"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0018__pending_mech_cluster_18_incorrect_ajp_connection_reuse_flag",
+  "guideline_id": "gl_mech_0103",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Change the reuse flag to 0 for bad request responses to force connection close..",
+  "mechanism": {
+    "aliases": [
+      "handlebadrequest",
+      "incorrect",
+      "end",
+      "bad",
+      "parsing",
+      "always"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_18_incorrect_ajp_connection_reuse_flag",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Incorrect AJP connection reuse flag",
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Change the reuse flag to 0 for bad request responses to force connection close."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2022-1319",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    18
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 18,
+      "fix_strategy": "Change the reuse flag to 0 for bad request responses to force connection close.",
+      "members": [
+        "CVE-2022-1319"
+      ],
+      "name": "Incorrect AJP connection reuse flag",
+      "root_cause": "The code unconditionally sets the connection reuse flag to true for all responses, including error responses, causing misinterpretation of subsequent requests."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_18_incorrect_ajp_connection_reuse_flag",
+    "handlebadrequest",
+    "incorrect",
+    "end",
+    "bad"
+  ]
+}

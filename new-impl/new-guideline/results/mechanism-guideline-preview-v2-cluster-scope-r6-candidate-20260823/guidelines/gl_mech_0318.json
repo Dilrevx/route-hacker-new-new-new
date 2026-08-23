@@ -1,0 +1,55 @@
+{
+  "cluster_summary": "This cluster contains 40 CVEs primarily related to Server-Side Request Forgery (SSRF) due to missing or incomplete validation of user-supplied URLs before making outbound HTTP requests. It also includes issues with TLS certificate validation, credential exposure, authorization context confusion, regular expression denial of service, and concurrency race conditions. The common thread is inadequate security checks in network-facing operations.",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2018-8039"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0070__mech_bean_property_reflection_escape",
+  "guideline_id": "gl_mech_0318",
+  "guideline_text": "Trace attacker-controlled property names, bean paths, binding keys, or conversion metadata into bean introspection, property-copy, nested binding, conversion, or reflective access APIs. Report code paths where dangerous meta-properties, nested class-loader paths, or reflective properties are not suppressed before binding. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should denylist dangerous meta-properties, restrict nested binding, and avoid exposing reflective class-loader reachable fields.",
+  "mechanism": {
+    "aliases": [
+      "BeanUtils property injection",
+      "bean introspection",
+      "classloader property escape",
+      "nested property binding"
+    ],
+    "family": "reflection_or_binding",
+    "mechanism_id": "mech_bean_property_reflection_escape",
+    "missing_guard": "dangerous meta-properties, nested class-loader paths, or reflective properties are not suppressed before binding",
+    "name": "bean property reflection escape",
+    "required_keywords": [],
+    "sink_shape": "bean introspection, property-copy, nested binding, conversion, or reflective access APIs",
+    "source_shape": "attacker-controlled property names, bean paths, binding keys, or conversion metadata",
+    "typical_fix": "denylist dangerous meta-properties, restrict nested binding, and avoid exposing reflective class-loader reachable fields"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2018-8039",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    70
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 70,
+      "fix_strategy": "Remove custom trust-all configurations and rely on default SSL context with proper certificate validation. For HTTP-to-HTTPS migration, use HTTPS URLs and proper SSL initialization. Add an explicit insecure flag if trust-all is needed.",
+      "members": [
+        "CVE-2018-8039"
+      ],
+      "name": "Disabled or missing TLS certificate validation",
+      "root_cause": "The application either uses a custom TrustManager that trusts all certificates, a HostnameVerifier that accepts all hostnames, or falls back to plain HTTP when HTTPS should be enforced. This disables encryption and server authentication."
+    }
+  ],
+  "tags": [
+    "reflection_or_binding",
+    "mech_bean_property_reflection_escape",
+    "BeanUtils property injection",
+    "bean introspection",
+    "classloader property escape",
+    "nested property binding"
+  ]
+}

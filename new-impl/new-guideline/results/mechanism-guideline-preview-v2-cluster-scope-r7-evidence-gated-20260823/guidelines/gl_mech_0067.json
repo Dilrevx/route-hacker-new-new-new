@@ -1,0 +1,55 @@
+{
+  "cluster_summary": "The cluster contains vulnerabilities in DNS handling within a network library that uses a proxy trust model. The primary defect is performing DNS pinning (hostname resolution and IP binding) before checking whether a trusted proxy is active, which bypasses proxy security controls and can lead to SSRF, information leakage, and authorization bypass. Additional sub-patterns include DNS rebinding due to separation of hostname validation and fetch, and several unrelated DNS issues.",
+  "created_at": "2026-08-22T20:37:27+00:00",
+  "cve_ids": [
+    "CVE-2026-40037"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0014__mech_request_body_resource_mismatch_authz",
+  "guideline_id": "gl_mech_0067",
+  "guideline_text": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources. Report code paths where the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation.",
+  "mechanism": {
+    "aliases": [
+      "path parameter authorization mismatch",
+      "request body resource mismatch",
+      "bulk operation target mismatch",
+      "namespace sync authorization bypass"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_request_body_resource_mismatch_authz",
+    "missing_guard": "the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check",
+    "name": "request-body resource identifiers bypass path-scoped authorization",
+    "required_keywords": [],
+    "sink_shape": "bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources",
+    "source_shape": "attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body",
+    "typical_fix": "validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-40037",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    14
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 14,
+      "fix_strategy": "Move DNS pinning resolution into the else branch so it only executes when not using a trusted proxy mode, ensuring the proxy's DNS resolution takes precedence.",
+      "members": [
+        "CVE-2026-40037"
+      ],
+      "name": "unconditional DNS pinning before trusted proxy mode check",
+      "root_cause": "Code performs DNS pinning resolution unconditionally before evaluating whether a trusted proxy is active, causing the pinned IP to be used even when the proxy should handle DNS resolution, bypassing proxy security controls."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_request_body_resource_mismatch_authz",
+    "path parameter authorization mismatch",
+    "request body resource mismatch",
+    "bulk operation target mismatch",
+    "namespace sync authorization bypass"
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "cluster_summary": "These vulnerabilities arise from insufficient validation of external inputs (HTTP headers) and lack of uniform responses in password reset and email verification flows, leading to user enumeration, token leakage, and resource abuse.",
+  "created_at": "2026-08-22T20:04:52+00:00",
+  "cve_ids": [
+    "CVE-2026-33877"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0094__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0454",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "required_keywords": [],
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-33877",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    94
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 94,
+      "fix_strategy": "Enforce a constant total response time by measuring wall-clock time at entry and introducing a delay after processing so that the elapsed time equals a configured constant minimum.",
+      "members": [
+        "CVE-2026-33877"
+      ],
+      "name": "Timing side-channel user enumeration",
+      "root_cause": "The authentication endpoint performs different operations (e.g., database updates, email sending) on successful user existence vs. failure, causing measurably different response times, and the added fixed delay only on failure paths is insufficient to mask the timing difference."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

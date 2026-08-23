@@ -1,0 +1,65 @@
+{
+  "cluster_summary": "A cluster of vulnerabilities in a JavaScript sandbox where attackers can escape due to (1) incomplete blocklists or allowlists that fail to restrict dangerous properties, builtin modules, or APIs, and (2) missing explicit isolation of JavaScript runtime features such as the `this` context, `Function` constructor, constructor properties, handler prototypes, proxy traps, and Promise species.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2025-68613"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0011__mech_bean_property_reflection_escape",
+  "guideline_id": "gl_mech_0023",
+  "guideline_text": "Trace attacker-controlled property names, bean paths, binding keys, or conversion metadata into bean introspection, property-copy, nested binding, conversion, or reflective access APIs. Report code paths where dangerous meta-properties, nested class-loader paths, or reflective properties are not suppressed before binding. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should denylist dangerous meta-properties, restrict nested binding, and avoid exposing reflective class-loader reachable fields.",
+  "mechanism": {
+    "aliases": [
+      "BeanUtils property injection",
+      "bean introspection",
+      "classloader property escape",
+      "nested property binding"
+    ],
+    "family": "reflection_or_binding",
+    "mechanism_id": "mech_bean_property_reflection_escape",
+    "missing_guard": "dangerous meta-properties, nested class-loader paths, or reflective properties are not suppressed before binding",
+    "name": "bean property reflection escape",
+    "required_keywords": [],
+    "sink_shape": "bean introspection, property-copy, nested binding, conversion, or reflective access APIs",
+    "source_shape": "attacker-controlled property names, bean paths, binding keys, or conversion metadata",
+    "typical_fix": "denylist dangerous meta-properties, restrict nested binding, and avoid exposing reflective class-loader reachable fields"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 3,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 1,
+    "total_member_count": 1,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2025-68613",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    11
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 11,
+      "fix_strategy": "Add explicit sandboxing steps: pre-evaluation AST transformation to bind `this`, use of `vm.createContext` instead of `Function`, neutralization of constructor property on host arrays before calls, enforcement of a construction token for handler instances, correct receiver handling in proxy traps, and resetting `Symbol.species` before using `Promise.prototype.then`.",
+      "members": [
+        "CVE-2025-68613"
+      ],
+      "name": "Missing explicit sandboxing of JavaScript runtime features",
+      "root_cause": "The sandbox fails to intercept or transform specific runtime mechanisms that can be used to access host objects, such as the `this` binding in function expressions, the `Function` constructor, the constructor property on arrays, the constructor property on handler prototypes, the receiver parameter in proxy set traps, and the `Symbol.species` protocol."
+    }
+  ],
+  "tags": [
+    "reflection_or_binding",
+    "mech_bean_property_reflection_escape",
+    "BeanUtils property injection",
+    "bean introspection",
+    "classloader property escape",
+    "nested property binding"
+  ]
+}

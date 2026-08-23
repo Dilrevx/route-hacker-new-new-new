@@ -1,0 +1,59 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where deserialization or configuration loading fails to enforce security-critical flags or validate external data, leading to arbitrary code execution or attribute injection. The common coding mistake is assuming that input data is safe without proper sanitization, allowlists, or propagation of user security settings.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2026-27893",
+    "CVE-2026-5241"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0031__pending_mech_cluster_31_trust_remote_code_flag_set_from_inappropriate_source",
+  "guideline_id": "gl_mech_0146",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should Ensure the trust_remote_code flag is derived solely from the user's explicit input; either propagate the user's setting or remove the flag from untrusted configuration paths..",
+  "mechanism": {
+    "aliases": [
+      "kimi_k25",
+      "model-loading-configuration",
+      "either",
+      "causes",
+      "sub-components",
+      "transformers"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_31_trust_remote_code_flag_set_from_inappropriate_source",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Trust_remote_code flag set from inappropriate source",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Ensure the trust_remote_code flag is derived solely from the user's explicit input; either propagate the user's setting or remove the flag from untrusted configuration paths."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-27893",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    31
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 31,
+      "fix_strategy": "Ensure the trust_remote_code flag is derived solely from the user's explicit input; either propagate the user's setting or remove the flag from untrusted configuration paths.",
+      "members": [
+        "CVE-2026-27893",
+        "CVE-2026-5241"
+      ],
+      "name": "Trust_remote_code flag set from inappropriate source",
+      "root_cause": "The trust_remote_code flag is forced to true either by hardcoded default or by loading from an attacker-controlled config file, bypassing the user's explicit security setting."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_31_trust_remote_code_flag_set_from_inappropriate_source",
+    "kimi_k25",
+    "model-loading-configuration",
+    "either",
+    "causes"
+  ]
+}

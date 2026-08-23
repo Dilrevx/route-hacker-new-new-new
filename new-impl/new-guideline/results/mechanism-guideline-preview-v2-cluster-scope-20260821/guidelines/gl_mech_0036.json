@@ -1,0 +1,56 @@
+{
+  "cluster_summary": "The majority of these vulnerabilities stem from using untrusted user input (e.g., sort column names, order fields, filter parameters) directly in SQL or HQL queries without allow-list validation, enabling injection. One case has a validation timing flaw, two involve incomplete structural validation of HQL queries, one misses a configuration check for sorting obfuscated fields, and one is an algorithmic complexity issue unrelated to injection.",
+  "created_at": "2026-08-20T19:54:07+00:00",
+  "cve_ids": [
+    "CVE-2025-32429"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0012__mech_template_expression_untrusted_eval",
+  "guideline_id": "gl_mech_0036",
+  "guideline_text": "Trace attacker-controlled template text, expression strings, macro content, or rendering parameters into template engines, expression evaluators, macro renderers, or scriptable configuration evaluators. Report code paths where untrusted expression content is evaluated without sandboxing, escaping, allowlisting, or disabling reflective execution features. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should separate data from templates, sandbox expression evaluation, and disable reflection or method invocation features for untrusted input.",
+  "mechanism": {
+    "aliases": [
+      "template injection",
+      "expression language injection",
+      "SpEL injection",
+      "OGNL injection",
+      "Velocity macro injection",
+      "FreeMarker template injection"
+    ],
+    "family": "code_or_template_injection",
+    "mechanism_id": "mech_template_expression_untrusted_eval",
+    "missing_guard": "untrusted expression content is evaluated without sandboxing, escaping, allowlisting, or disabling reflective execution features",
+    "name": "untrusted template or expression evaluation",
+    "sink_shape": "template engines, expression evaluators, macro renderers, or scriptable configuration evaluators",
+    "source_shape": "attacker-controlled template text, expression strings, macro content, or rendering parameters",
+    "typical_fix": "separate data from templates, sandbox expression evaluation, and disable reflection or method invocation features for untrusted input"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2025-32429",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    12
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 12,
+      "fix_strategy": "Move the validation call after any conditional remapping so that the value actually used is the one validated.",
+      "members": [
+        "CVE-2025-32429"
+      ],
+      "name": "ORDER BY injection due to validation before variable remapping",
+      "root_cause": "A validation function is called on the raw user input, but afterward the variable is reassigned without re-validation, so the final value used in the ORDER BY clause can differ and contain malicious SQL."
+    }
+  ],
+  "tags": [
+    "code_or_template_injection",
+    "mech_template_expression_untrusted_eval",
+    "template injection",
+    "expression language injection",
+    "SpEL injection",
+    "OGNL injection"
+  ]
+}

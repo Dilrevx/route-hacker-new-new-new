@@ -1,0 +1,103 @@
+{
+  "schema_version": "hcvr_mechanism_lexicon.v1",
+  "release": "candidate-r6-20260823",
+  "description": "Review-candidate mechanism extensions derived from r5 judge/backlog evidence. These entries are offline lexicon candidates; they are not online regex routing rules and require same-identity recall evaluation before paper-facing use.",
+  "mechanisms": [
+    {
+      "mechanism_id": "mech_ldap_filter_unescaped_input",
+      "name": "LDAP filter or distinguished-name injection through unescaped input",
+      "family": "directory_query_injection",
+      "aliases": ["LDAP injection", "LDAP filter injection", "distinguished name injection", "unescaped LDAP filter"],
+      "keywords": ["ldap", "filter", "distinguished name", "dn", "search filter", "ldapsearch", "dircontext", "searchcontrols", "escape", "escaping"],
+      "required_keywords": [["ldap", "dircontext", "ldapsearch", "distinguished name"]],
+      "source_shape": "attacker-controlled usernames, account names, directory attributes, filter fragments, distinguished names, or LDAP query parameters",
+      "sink_shape": "LDAP search filters, distinguished-name construction, directory queries, or LDAP bind/search operations",
+      "missing_guard": "LDAP metacharacters and distinguished-name syntax are not escaped or parameterized for the exact LDAP context before the query",
+      "typical_fix": "use context-specific LDAP filter or DN escaping, parameterized filter construction where available, and allowlist structural query fragments"
+    },
+    {
+      "mechanism_id": "mech_html_sanitizer_policy_gap",
+      "name": "HTML sanitizer policy gap or inactive allowlist",
+      "family": "html_sanitization",
+      "aliases": ["HTML sanitizer bypass", "SafeHtml policy gap", "missing sanitizer allowlist", "restricted cleaner bypass"],
+      "keywords": ["html", "sanitize", "sanitizer", "safehtml", "cleaner", "allowlist", "whitelist", "dom", "node", "attribute", "uri scheme", "comment"],
+      "required_keywords": [["html", "sanitize", "sanitizer", "safehtml", "cleaner", "dompurify", "antisamy", "bleach"]],
+      "source_shape": "attacker-controlled markup, HTML fragments, rich text, comments, DOM nodes, style blocks, attributes, or URI values",
+      "sink_shape": "HTML cleaners, SafeHtml validators, DOM sanitizers, rich-text renderers, or browser-rendered sanitized output",
+      "missing_guard": "the active sanitizer policy does not allowlist dangerous elements, attributes, URI schemes, DOM child nodes, comments, or malformed inputs before rendering",
+      "typical_fix": "activate the restrictive sanitizer for the relevant mode, enforce element/attribute/URI allowlists after parsing, and add regression tests for the bypass form"
+    },
+    {
+      "mechanism_id": "mech_binary_length_unbounded_resource_use",
+      "name": "unbounded binary length or size field drives resource use",
+      "family": "resource_exhaustion_or_bounds",
+      "aliases": ["unbounded length allocation", "binary size field DoS", "frame length resource exhaustion", "decompression size exhaustion"],
+      "keywords": ["length", "size", "count", "offset", "frame", "buffer", "allocate", "allocation", "decompress", "compressed", "payload", "bounds", "overflow"],
+      "required_keywords": [["binary", "frame", "buffer", "allocate", "allocation", "decompress", "compressed", "payload", "offset"], ["length", "size", "count", "bounds", "overflow"]],
+      "source_shape": "attacker-controlled binary length fields, size counters, frame lengths, offsets, back-references, or decompressed-size metadata",
+      "sink_shape": "memory allocation, buffer growth, parsing loops, frame handling, decompression, or resource-consuming work",
+      "missing_guard": "protocol-specific upper bounds, arithmetic overflow checks, structural consistency checks, or expansion limits are absent before allocation or work expansion",
+      "typical_fix": "enforce explicit size limits, validate arithmetic and offsets before use, reject malformed or oversized records early, and bound decompression or frame-processing work"
+    },
+    {
+      "mechanism_id": "mech_authentication_artifact_incomplete_validation",
+      "name": "authentication artifact accepted without complete validation",
+      "family": "authentication",
+      "aliases": ["JWT validation bypass", "SAML validation bypass", "OAuth token validation bypass", "session artifact validation bypass"],
+      "keywords": ["jwt", "saml", "oauth", "token", "signature", "claims", "audience", "issuer", "nonce", "proof-of-possession", "session", "credential"],
+      "required_keywords": [["jwt", "saml", "oauth", "token", "session", "credential"], ["signature", "claims", "audience", "issuer", "nonce", "proof-of-possession", "validation"]],
+      "source_shape": "externally supplied authentication artifacts such as JWTs, SAML responses, OAuth authorization codes, bearer tokens, session cookies, or client credentials",
+      "sink_shape": "session creation, identity binding, privilege assignment, protected API access, or credential exchange decisions",
+      "missing_guard": "signature, issuer, audience, expiry, nonce, binding, proof-of-possession, or protocol state validation is incomplete before accepting the identity",
+      "typical_fix": "validate all required cryptographic and protocol fields before creating a principal or granting access, and bind the artifact to the intended client, audience, and session"
+    },
+    {
+      "mechanism_id": "mech_sql_dynamic_query_untrusted_fragment",
+      "name": "dynamic SQL query construction from untrusted fragments",
+      "family": "sql_injection",
+      "aliases": ["SQL injection", "SQL concatenation", "dynamic SQL injection", "untrusted query fragment"],
+      "keywords": ["sql", "query", "where", "order by", "jdbc", "statement", "preparedstatement", "concatenate", "concat", "filter", "sort", "parameter"],
+      "required_keywords": [["sql", "jdbc", "statement", "preparedstatement", "query"], ["concatenate", "concat", "interpolation", "fragment", "parameter", "where", "order by"]],
+      "source_shape": "attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values",
+      "sink_shape": "SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters",
+      "missing_guard": "values or structural fragments are concatenated into SQL syntax without parameter binding or a strict allowlist for identifiers and operators",
+      "typical_fix": "use bound parameters for values, allowlist structural SQL fragments, and keep untrusted data out of query syntax"
+    },
+    {
+      "mechanism_id": "mech_inline_content_disposition_xss",
+      "name": "browser-rendered file download through unsafe inline content disposition",
+      "family": "content_rendering",
+      "aliases": ["inline content disposition XSS", "unsafe file download disposition", "stored file rendered inline", "browser-rendered upload"],
+      "keywords": ["content-disposition", "inline", "attachment", "download", "upload", "mime", "content type", "xss", "render", "browser"],
+      "required_keywords": [["content-disposition", "inline", "attachment", "download"], ["xss", "browser", "render", "mime", "content type", "upload"]],
+      "source_shape": "stored or user-uploaded file content, MIME metadata, filenames, or request parameters that choose inline versus attachment rendering",
+      "sink_shape": "HTTP file-download responses, browser-rendered attachments, content-disposition headers, or content-type selection",
+      "missing_guard": "browser-renderable content is served inline without an allowlist, forced attachment disposition, safe content type, or content sniffing protection",
+      "typical_fix": "force attachment for untrusted content unless an allowlisted safe type is proven, set safe content types and nosniff headers, and separate trusted preview paths from raw downloads"
+    },
+    {
+      "mechanism_id": "mech_temp_resource_insecure_permissions",
+      "name": "temporary resource created with insecure permissions",
+      "family": "filesystem",
+      "aliases": ["insecure temporary file permissions", "world-readable temp file", "temporary directory permissions", "File.createTempFile permissions"],
+      "keywords": ["temporary", "temp", "createtempfile", "createtempdirectory", "permissions", "posix", "world-readable", "world-writable", "owner-only", "chmod"],
+      "required_keywords": [["temporary", "temp", "createtempfile", "createtempdirectory"], ["permissions", "posix", "world-readable", "world-writable", "owner-only", "chmod"]],
+      "source_shape": "temporary files or directories created for sensitive data, build artifacts, credentials, extracted content, or intermediate processing",
+      "sink_shape": "filesystem creation APIs that inherit broad default permissions or fail to apply owner-only permissions before use",
+      "missing_guard": "the temporary resource is created or exposed with permissions that allow other local users to read, write, replace, or observe sensitive content",
+      "typical_fix": "create temporary resources with owner-only permissions atomically, verify permission-setting success, and avoid placing secrets in shared-readable locations"
+    },
+    {
+      "mechanism_id": "mech_archive_symlink_extraction_escape",
+      "name": "archive extraction escape through symlink-following writes",
+      "family": "filesystem",
+      "aliases": ["archive symlink traversal", "symlink overwrite during extraction", "tar symlink escape", "zip symlink escape"],
+      "keywords": ["archive", "zip", "tar", "symlink", "symbolic link", "link target", "extract", "extraction", "nofollow", "overwrite", "canonical"],
+      "required_keywords": [["archive", "zip", "tar", "extract", "extraction"], ["symlink", "symbolic link", "link target", "nofollow"]],
+      "source_shape": "attacker-controlled archive entries, symlink entries, link targets, or extraction order",
+      "sink_shape": "archive extraction code that creates links, opens output files, or writes entry contents into the extraction tree",
+      "missing_guard": "later writes can follow an existing or archive-created symbolic link outside the extraction root despite lexical or canonical path containment checks",
+      "typical_fix": "reject unsafe symlink targets, use no-follow or race-safe filesystem operations for writes, and validate the final opened target remains inside the extraction root"
+    }
+  ]
+}

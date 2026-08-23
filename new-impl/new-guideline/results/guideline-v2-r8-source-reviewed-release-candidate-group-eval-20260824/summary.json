@@ -1,0 +1,31 @@
+{
+  "assigned_unique_case_count": 48,
+  "assignment_link_count": 48,
+  "assignment_link_group_count": 28,
+  "case_coverage_rate": 0.07207207207207207,
+  "cases_file": "new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl",
+  "evaluated_group_count": 28,
+  "flag_counts": {
+    "mixed_cwe": 2,
+    "mixed_hcvr": 2,
+    "review_only": 21,
+    "small_group": 16,
+    "source_only_no_case_metadata": 5
+  },
+  "flagged_group_count": 24,
+  "guideline_count": 33,
+  "include_review_queue": false,
+  "macro_cwe_purity": 0.9642857142857143,
+  "macro_primary_hcvr_purity": 0.9642857142857143,
+  "mixed_cwe_group_count": 2,
+  "mixed_hcvr_group_count": 2,
+  "pending_candidate_count": 0,
+  "release_dir": "new-impl/guideline-agent-pipeline/results/guideline-v2-r8-source-reviewed-release-candidate-20260824",
+  "schema_version": "hcvr_guideline_group_eval.v1",
+  "small_group_count": 16,
+  "source_only_group_count": 5,
+  "source_only_no_case_metadata_count": 5,
+  "total_case_count": 666,
+  "weighted_cwe_purity": 0.9375,
+  "weighted_primary_hcvr_purity": 0.9375
+}

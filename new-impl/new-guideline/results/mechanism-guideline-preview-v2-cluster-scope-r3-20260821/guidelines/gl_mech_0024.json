@@ -1,0 +1,114 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where user-supplied URLs or redirect targets are used in server-side network operations (redirects, HTTP requests, OS commands, DNS) without proper validation, allowing attackers to redirect users to malicious sites, perform SSRF, leak credentials, or execute commands.",
+  "created_at": "2026-08-21T10:07:21+00:00",
+  "cve_ids": [
+    "CVE-2021-29061",
+    "CVE-2021-29506",
+    "CVE-2021-32700",
+    "CVE-2022-1379",
+    "CVE-2022-1713",
+    "CVE-2022-4096",
+    "CVE-2023-41045",
+    "CVE-2023-48240",
+    "CVE-2024-25638",
+    "CVE-2025-62371",
+    "CVE-2026-22816",
+    "CVE-2026-3789"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0005__mech_ssrf_redirect_following_client",
+  "guideline_id": "gl_mech_0024",
+  "guideline_text": "Trace attacker-controlled URLs or server-controlled redirect responses into HTTP clients that automatically follow redirects or reuse a previously validated URL decision. Report code paths where the final redirected scheme, host, port, and resolved address are not revalidated before the sensitive network request. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 12 historical CVE example(s), not as a project-specific signature. A safe implementation should disable automatic redirects or revalidate every redirect hop against the same allowlist and address policy.",
+  "mechanism": {
+    "aliases": [
+      "redirect-follow SSRF",
+      "HTTP redirect SSRF",
+      "Location header SSRF"
+    ],
+    "family": "ssrf",
+    "mechanism_id": "mech_ssrf_redirect_following_client",
+    "missing_guard": "the final redirected scheme, host, port, and resolved address are not revalidated before the sensitive network request",
+    "name": "SSRF through redirect-following client",
+    "sink_shape": "HTTP clients that automatically follow redirects or reuse a previously validated URL decision",
+    "source_shape": "attacker-controlled URLs or server-controlled redirect responses",
+    "typical_fix": "disable automatic redirects or revalidate every redirect hop against the same allowlist and address policy"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2021-29061",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    5
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 5,
+      "fix_strategy": "Add destination validation (domain allow-list, scheme restriction, IP range blocking) or replace with controlled paths.",
+      "members": [
+        "CVE-2026-3789"
+      ],
+      "name": "SSRF due to missing destination validation in server-side HTTP clients",
+      "root_cause": "User-supplied URL is used directly in an outgoing HTTP request without any allow-list or block-list for hosts, schemes, or IPs."
+    },
+    {
+      "cluster_id": 5,
+      "fix_strategy": "Resolve hostname to IP address before checking, or use a more robust host parser that handles edge cases.",
+      "members": [
+        "CVE-2022-1713",
+        "CVE-2022-4096"
+      ],
+      "name": "SSRF due to hostname resolution and parsing bypass",
+      "root_cause": "Validation relies on hostname string checks without resolving to IP, or uses a host parser that returns null for certain hostnames, allowing bypass."
+    },
+    {
+      "cluster_id": 5,
+      "fix_strategy": "Validate record authenticity based on section (answer vs additional) and use multiple random source ports.",
+      "members": [
+        "CVE-2024-25638",
+        "CVE-2023-41045"
+      ],
+      "name": "DNS cache poisoning due to insufficient response validation",
+      "root_cause": "DNS client caches all records from a response without checking if they are in-bailiwick or uses a single source port, allowing cache poisoning."
+    },
+    {
+      "cluster_id": 5,
+      "fix_strategy": "Only enable trust-all when explicitly set; otherwise use default JVM trust store.",
+      "members": [
+        "CVE-2025-62371"
+      ],
+      "name": "SSL/TLS certificate validation disabled by default",
+      "root_cause": "The default SSL context trusts all certificates without requiring an explicit insecure flag, disabling certificate validation."
+    },
+    {
+      "cluster_id": 5,
+      "fix_strategy": "Disable repository after exhausting retries regardless of error type.",
+      "members": [
+        "CVE-2026-22816"
+      ],
+      "name": "Dependency resolver fallback to untrusted repository after non-critical errors",
+      "root_cause": "Non-critical network errors do not disable a repository, allowing fallback to an attacker-controlled repository if the primary fails."
+    },
+    {
+      "cluster_id": 5,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2022-1379",
+        "CVE-2021-32700",
+        "CVE-2021-29506",
+        "CVE-2021-29061",
+        "CVE-2023-48240"
+      ],
+      "name": "Missing validation of user-provided URL targets in server-side network operations",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "ssrf",
+    "mech_ssrf_redirect_following_client",
+    "redirect-follow SSRF",
+    "HTTP redirect SSRF",
+    "Location header SSRF"
+  ]
+}

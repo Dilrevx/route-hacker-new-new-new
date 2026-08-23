@@ -1,0 +1,58 @@
+{
+  "cluster_summary": "This cluster covers multiple distinct vulnerability types including OS command injection via shell metacharacters and argument separator issues, credential leakage from git URLs in build outputs, null byte injection into process execution, and missing access controls for privileged operations such as Docker socket mounting and command whitelisting.",
+  "created_at": "2026-08-21T09:41:09+00:00",
+  "cve_ids": [
+    "CVE-2017-1000487",
+    "CVE-2026-35582"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0006__pending_mech_cluster_6_os_command_injection_via_unsanitized_shell_metacharacters",
+  "guideline_id": "gl_mech_0030",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should Use allow-list sanitization for input, or switch to array-based execution with proper quoting (e.g., single quotes)..",
+  "mechanism": {
+    "aliases": [
+      "instead",
+      "outfileending",
+      "but",
+      "pseudocode",
+      "replaces",
+      "entry"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_6_os_command_injection_via_unsanitized_shell_metacharacters",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "OS command injection via unsanitized shell metacharacters",
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Use allow-list sanitization for input, or switch to array-based execution with proper quoting (e.g., single quotes)."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2017-1000487",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    6
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 6,
+      "fix_strategy": "Use allow-list sanitization for input, or switch to array-based execution with proper quoting (e.g., single quotes).",
+      "members": [
+        "CVE-2026-35582",
+        "CVE-2017-1000487"
+      ],
+      "name": "OS command injection via unsanitized shell metacharacters",
+      "root_cause": "User-controlled input is concatenated into a shell command string without escaping or allow-list filtering, allowing shell metacharacters to be interpreted."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_6_os_command_injection_via_unsanitized_shell_metacharacters",
+    "instead",
+    "outfileending",
+    "but",
+    "pseudocode"
+  ]
+}

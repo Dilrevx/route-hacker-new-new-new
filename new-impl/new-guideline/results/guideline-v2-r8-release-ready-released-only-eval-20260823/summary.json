@@ -1,0 +1,28 @@
+{
+  "assigned_unique_case_count": 189,
+  "case_coverage_rate": 0.28378378378378377,
+  "cases_file": "new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl",
+  "evaluated_group_count": 56,
+  "flag_counts": {
+    "mixed_cwe": 5,
+    "mixed_hcvr": 6,
+    "small_group": 35,
+    "source_only_no_case_metadata": 121
+  },
+  "flagged_group_count": 164,
+  "guideline_count": 177,
+  "include_review_queue": false,
+  "macro_cwe_purity": 0.9514392857142857,
+  "macro_primary_hcvr_purity": 0.9403839285714286,
+  "mixed_cwe_group_count": 5,
+  "mixed_hcvr_group_count": 6,
+  "pending_candidate_count": 386,
+  "release_dir": "new-impl/guideline-agent-pipeline/results/mechanism-guideline-preview-v2-cluster-scope-r8-release-ready-20260823",
+  "schema_version": "hcvr_guideline_group_eval.v1",
+  "small_group_count": 35,
+  "source_only_group_count": 121,
+  "source_only_no_case_metadata_count": 121,
+  "total_case_count": 666,
+  "weighted_cwe_purity": 0.9171079365079364,
+  "weighted_primary_hcvr_purity": 0.8306825396825397
+}

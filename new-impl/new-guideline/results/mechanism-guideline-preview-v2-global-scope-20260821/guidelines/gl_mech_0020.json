@@ -1,0 +1,62 @@
+{
+  "cluster_summary": "Multiple vulnerabilities arise from user-controlled input being concatenated directly into SQL query strings without proper escaping or use of parameterized queries, leading to SQL injection. A few related issues involve regex backtracking, OS command injection, and Elasticsearch query malformation causing denial of service.",
+  "created_at": "2026-08-20T19:59:26+00:00",
+  "cve_ids": [
+    "CVE-2016-4999",
+    "CVE-2022-24848",
+    "CVE-2023-25157",
+    "CVE-2026-7290"
+  ],
+  "embeddings": {},
+  "group_scope": "mechanism",
+  "guideline_group_key": "pending_mech_cluster_14_sql_injection_mitigated_by_input_escaping",
+  "guideline_id": "gl_mech_0020",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 4 historical CVE example(s), not as a project-specific signature. A safe implementation should Escape special characters (single quotes by doubling, comment delimiters by backslash) or apply blacklist filtering before concatenation..",
+  "mechanism": {
+    "aliases": [
+      "vulnerabilities",
+      "user-controlled",
+      "comment",
+      "attacker",
+      "validation",
+      "modification"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_14_sql_injection_mitigated_by_input_escaping",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "SQL injection mitigated by input escaping",
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Escape special characters (single quotes by doubling, comment delimiters by backslash) or apply blacklist filtering before concatenation."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2016-4999",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    14
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 14,
+      "fix_strategy": "Escape special characters (single quotes by doubling, comment delimiters by backslash) or apply blacklist filtering before concatenation.",
+      "members": [
+        "CVE-2026-7290",
+        "CVE-2022-24848",
+        "CVE-2023-25157",
+        "CVE-2016-4999"
+      ],
+      "name": "SQL injection mitigated by input escaping",
+      "root_cause": "User input is concatenated into SQL string literals or comments without escaping special characters (e.g., single quotes, comment delimiters), allowing injection."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_14_sql_injection_mitigated_by_input_escaping",
+    "vulnerabilities",
+    "user-controlled",
+    "comment",
+    "attacker"
+  ]
+}

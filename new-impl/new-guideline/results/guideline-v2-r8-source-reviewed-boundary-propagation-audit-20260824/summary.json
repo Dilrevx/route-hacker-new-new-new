@@ -1,0 +1,20 @@
+{
+  "boundary_count": 33,
+  "fixed_identity_input_count": 143,
+  "fixed_identity_output_count": 9,
+  "group_count": 18,
+  "min_group_representatives": 2,
+  "policy": [
+    "diagnostic_only",
+    "no_bad_case_answer_key",
+    "no_regex_fallback",
+    "no_release_or_sidecar_mutation",
+    "same_identity_recall_required_for_paper_claims"
+  ],
+  "schema_version": "hcvr_source_reviewed_boundary_propagation_audit.v1",
+  "status_counts": {
+    "group_ablation_candidate_outside_fixed_set": 1,
+    "group_ablation_ready": 1,
+    "requires_release_regeneration": 31
+  }
+}

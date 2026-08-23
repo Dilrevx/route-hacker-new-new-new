@@ -1,0 +1,17 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.90,
+  "coverage_score": 0.30,
+  "actionability_score": 0.95,
+  "retrieval_query_quality": 0.85,
+  "main_issue": "Single-case coverage is inherently limited, but the mechanism is narrow, specific, and internally coherent. The evidence is solid: a concrete fix commit replacing StandardEvaluationContext with SimpleEvaluationContext across multiple notifier paths. The boundary text names specific classes, APIs, and guard conditions, making it highly retrievable and actionable.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "CVE-2022-46166 fix commit c14c3ec12533f71f84de9ce3ce5ceb7991975f75 shows the exact API replacement: StandardEvaluationContext + MapAccessor → SimpleEvaluationContext.forPropertyAccessors(DataBindingPropertyAccessor.forReadOnlyAccess(), new MapAccessor()).withRootObject(root).build() across DingTalk, Discord, Hipchat, and LetsChat notifiers.",
+    "The boundary is correctly kept separate from Bean Validation message interpolation and Jinjava property resolution — those have different sinks and fix semantics.",
+    "Future cases with similar SpEL evaluation-context selection (e.g., other Spring projects using StandardEvaluationContext for untrusted expressions) would strengthen coverage."
+  ]
+}
+```

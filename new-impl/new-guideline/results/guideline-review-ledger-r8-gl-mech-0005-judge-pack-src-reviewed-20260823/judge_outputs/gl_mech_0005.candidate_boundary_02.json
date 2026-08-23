@@ -1,0 +1,21 @@
+The ledger row describes a **process gate**, not a shared vulnerability mechanism. There are no representative cases, no evidence refs, and every mechanism dimension (source, sink, guard, precondition, fix) is marked "needs per-case evidence." The row's own boundary decision is `needs_more_evidence`, which is consistent with the semantic reality.
+
+```json
+{
+  "decision": "needs_evidence",
+  "coherence_score": 0.15,
+  "coverage_score": 0.0,
+  "actionability_score": 0.25,
+  "retrieval_query_quality": 0.4,
+  "main_issue": "This boundary describes an evidentiary holding queue, not a coherent vulnerability mechanism. No representative cases are listed, and every mechanism dimension (source shape, sink, missing guard, exploit precondition, safe fix) is 'needs per-case evidence.' The cases share only that they lack sufficient source review — they may not share the same path-traversal submechanism at all. As a semantic guideline, it has no mechanism-level content to judge.",
+  "suggested_guideline": "Path traversal cases with review-entry-only or partial source evidence must remain in the review queue. Before promotion to the normalized-containment boundary, each case needs source-reviewed confirmation of: (1) attacker-controlled path material reaching a filesystem/resource sink outside the intended base, (2) missing, bypassable, or misapplied canonical containment, and (3) a safe fix tied to the vulnerable sink. Cases confirmed to share the same missing-containment pattern should be promoted to the normalized-containment boundary; cases with different mechanisms should form new boundaries.",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "No representative cases are listed in the ledger row; the boundary is empty.",
+    "No evidence refs are provided; the row itself flags this as needs_more_evidence.",
+    "The source_shape field lists candidate cases (Zrlog, JClouds, sz-boot-parent, GeoWebCache, Venice, Graylog) but none are linked as confirmed representatives.",
+    "Graylog evidence is flagged as ambiguous: downloadBundle validates the filename before resolving under bundleDir, so the missing-guard claim is unconfirmed.",
+    "The recall_follow_up explicitly instructs not to evaluate these cases as positives for the promoted boundary, confirming this is a holding queue, not a mechanism group."
+  ]
+}
+```

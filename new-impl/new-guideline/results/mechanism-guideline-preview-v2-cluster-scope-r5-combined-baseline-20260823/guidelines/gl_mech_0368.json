@@ -1,0 +1,93 @@
+{
+  "cluster_summary": "This cluster comprises vulnerabilities in a document management system where privilege escalation arises from improper handling of document author identity during save operations, missing authorization checks on sensitive API methods and state-changing actions, and use of non-contextual permission checks that ignore current user context or dropped permissions. A distinct error handling flaw can also bypass authorization enforcement.",
+  "created_at": "2026-08-22T20:04:52+00:00",
+  "cve_ids": [
+    "CVE-2022-23615",
+    "CVE-2023-29507",
+    "CVE-2023-40573",
+    "CVE-2023-46242",
+    "CVE-2025-32971",
+    "CVE-2025-32972",
+    "CVE-2025-48063",
+    "CVE-2025-49580"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0072__mech_privileged_server_side_capability_exposed",
+  "guideline_id": "gl_mech_0368",
+  "guideline_text": "Trace lower-privilege script, template, macro, plugin, or API callers that can invoke privileged server-side capabilities into server-side include, template rendering, servlet dispatch, raw object access, internal file reads, or privileged framework APIs. Report code paths where a higher privilege check is not enforced at the API entry point before exposing the server-side capability. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 8 historical CVE example(s), not as a project-specific signature. A safe implementation should check the required higher privilege at the exposed API boundary and return no sensitive result when the caller lacks that privilege.",
+  "mechanism": {
+    "aliases": [
+      "missing programming rights check",
+      "privileged API exposure",
+      "server-side include capability exposure",
+      "lower privilege script capability"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_privileged_server_side_capability_exposed",
+    "missing_guard": "a higher privilege check is not enforced at the API entry point before exposing the server-side capability",
+    "name": "privileged server-side capability exposed to lower privilege context",
+    "required_keywords": [],
+    "sink_shape": "server-side include, template rendering, servlet dispatch, raw object access, internal file reads, or privileged framework APIs",
+    "source_shape": "lower-privilege script, template, macro, plugin, or API callers that can invoke privileged server-side capabilities",
+    "typical_fix": "check the required higher privilege at the exposed API boundary and return no sensitive result when the caller lacks that privilege"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2022-23615",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    72
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 72,
+      "fix_strategy": "Ensure that during document save operations the author reference is correctly updated to the current user or the legitimate author, and that authorization checks use the current user's identity or the properly updated author field.",
+      "members": [
+        "CVE-2022-23615",
+        "CVE-2023-40573",
+        "CVE-2025-49580"
+      ],
+      "name": "Incorrect author identity during document save or authorization check",
+      "root_cause": "The code either fails to update the document's author reference to the current user when saving edited content, or uses a stale author field (e.g., content author, effective author) for authorization decisions, allowing a lower-privileged user to inherit higher privileges from the original author."
+    },
+    {
+      "cluster_id": 72,
+      "fix_strategy": "Add appropriate authorization checks (e.g., privilege verification, CSRF token validation) before allowing the operation, and return read-only wrappers for mutable objects when the caller lacks necessary rights.",
+      "members": [
+        "CVE-2023-29507",
+        "CVE-2023-46242"
+      ],
+      "name": "Missing authorization checks on sensitive API methods or state-changing operations",
+      "root_cause": "Sensitive operations such as retrieving mutable author objects, modifying document authors, or saving over existing documents are performed without verifying the caller's privileges or without CSRF token validation, assuming that the request is legitimate."
+    },
+    {
+      "cluster_id": 72,
+      "fix_strategy": "Replace the non-contextual authorization check with a contextual one that automatically uses the current execution context and respects dynamically dropped permissions.",
+      "members": [
+        "CVE-2025-32971",
+        "CVE-2025-32972"
+      ],
+      "name": "Non-contextual authorization check ignoring current user context or dropped permissions",
+      "root_cause": "Authorization checks use a static user identity (document author) or a non-contextual permission manager that does not respect dynamically dropped permissions from the execution context, allowing users with script rights to perform actions requiring programming rights."
+    },
+    {
+      "cluster_id": 72,
+      "fix_strategy": "Remove the method call that causes the null pointer (e.g., .getLowerCase() on a nullable field) to safely handle null values in error messages.",
+      "members": [
+        "CVE-2025-48063"
+      ],
+      "name": "Error handling flaw leading to authorization bypass",
+      "root_cause": "A NullPointerException in error message formatting inside a security enforcement catch block aborts the cancellation logic, allowing the required right to be set without proper authorization."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_privileged_server_side_capability_exposed",
+    "missing programming rights check",
+    "privileged API exposure",
+    "server-side include capability exposure",
+    "lower privilege script capability"
+  ]
+}

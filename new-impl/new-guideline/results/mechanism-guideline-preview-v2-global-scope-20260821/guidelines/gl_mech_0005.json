@@ -1,0 +1,552 @@
+{
+  "cluster_summary": "A cluster of vulnerabilities where user-controlled wiki content is executed with the wrong security context (e.g., viewer's or page author's privileges instead of content owner's) or where missing required-rights analyses allow low-privileged users to inject script content that later executes with elevated privileges. / A collection of 18 vulnerabilities where HTTP endpoints lack proper authentication or authorization checks. The root causes span missing authentication guards, missing permission annotations, missing object-level ownership verification, insufficient privilege validation, and other authorization bypass issues, allowing unauthenticated or unauthorized access to sensitive operations. / A collection of authentication and authorization vulnerabilities where tokens or credentials are not properly validated, either cryptographically, temporally, or through binding checks, leading to bypass, impersonation, or unauthorized access. / A collection of vulnerabilities where the appl",
+  "created_at": "2026-08-20T19:59:26+00:00",
+  "cve_ids": [
+    "CVE-2013-7330",
+    "CVE-2014-125071",
+    "CVE-2014-2058",
+    "CVE-2014-2068",
+    "CVE-2017-1000487",
+    "CVE-2017-2604",
+    "CVE-2017-2611",
+    "CVE-2017-2613",
+    "CVE-2019-14837",
+    "CVE-2020-10194",
+    "CVE-2020-1732",
+    "CVE-2020-28191",
+    "CVE-2020-5242",
+    "CVE-2021-25924",
+    "CVE-2021-32620",
+    "CVE-2021-43286",
+    "CVE-2022-1848",
+    "CVE-2022-23615",
+    "CVE-2022-25914",
+    "CVE-2022-29184",
+    "CVE-2022-39206",
+    "CVE-2022-39243",
+    "CVE-2022-41935",
+    "CVE-2022-41936",
+    "CVE-2023-26056",
+    "CVE-2023-26471",
+    "CVE-2023-26475",
+    "CVE-2023-26478",
+    "CVE-2023-26480",
+    "CVE-2023-29206",
+    "CVE-2023-29208",
+    "CVE-2023-29507",
+    "CVE-2023-29510",
+    "CVE-2023-32310",
+    "CVE-2023-36468",
+    "CVE-2023-37911",
+    "CVE-2023-37912",
+    "CVE-2023-38494",
+    "CVE-2023-40177",
+    "CVE-2023-40572",
+    "CVE-2023-40573",
+    "CVE-2023-49280",
+    "CVE-2023-50720",
+    "CVE-2024-21648",
+    "CVE-2024-31981",
+    "CVE-2024-31983",
+    "CVE-2024-37898",
+    "CVE-2024-37899",
+    "CVE-2024-3825",
+    "CVE-2024-42698",
+    "CVE-2024-45591",
+    "CVE-2024-48645",
+    "CVE-2024-55876",
+    "CVE-2025-14908",
+    "CVE-2025-24363",
+    "CVE-2025-2559",
+    "CVE-2025-27604",
+    "CVE-2025-29924",
+    "CVE-2025-29925",
+    "CVE-2025-32972",
+    "CVE-2025-32973",
+    "CVE-2025-32974",
+    "CVE-2025-46554",
+    "CVE-2025-49582",
+    "CVE-2025-49583",
+    "CVE-2025-49584",
+    "CVE-2025-49586",
+    "CVE-2025-49587",
+    "CVE-2025-53103",
+    "CVE-2025-53836",
+    "CVE-2025-8548",
+    "CVE-2026-2010",
+    "CVE-2026-25526",
+    "CVE-2026-33137",
+    "CVE-2026-34832",
+    "CVE-2026-35582"
+  ],
+  "embeddings": {},
+  "group_scope": "mechanism",
+  "guideline_group_key": "mech_object_owner_scope_missing_authz",
+  "guideline_id": "gl_mech_0005",
+  "guideline_text": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where the authorization decision is not bound to both the current principal and the exact resource or tenant being affected. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 76 historical CVE example(s), not as a project-specific signature. A safe implementation should check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation.",
+  "mechanism": {
+    "aliases": [
+      "object ownership authorization",
+      "tenant scope check",
+      "IDOR",
+      "resource scoped authorization"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_object_owner_scope_missing_authz",
+    "missing_guard": "the authorization decision is not bound to both the current principal and the exact resource or tenant being affected",
+    "name": "missing object-owner or tenant-scope authorization",
+    "sink_shape": "sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource",
+    "source_shape": "attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets",
+    "typical_fix": "check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2013-7330",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    3,
+    6,
+    19,
+    22,
+    23,
+    28,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 3,
+      "fix_strategy": "Extend the restricted class list to include dangerous types (java.lang.reflect.Method, Field, Constructor, JinjavaInterpreter) and ensure property resolution goes through sandboxed checks that return null for restricted base objects.",
+      "members": [
+        "CVE-2026-25526"
+      ],
+      "name": "Sandbox Bypass via Unrestricted Property Access on Interpreter Internals",
+      "root_cause": "Template engine sandboxes do not restrict access to dangerous object types (e.g., reflection objects, engine interpreter object) that allow further traversal to unsafe functionality like arbitrary class instantiation, because the sandbox's blocklist is incomplete."
+    },
+    {
+      "cluster_id": 6,
+      "fix_strategy": "Use allow-list sanitization for input, or switch to array-based execution with proper quoting (e.g., single quotes).",
+      "members": [
+        "CVE-2026-35582",
+        "CVE-2017-1000487"
+      ],
+      "name": "OS command injection via unsanitized shell metacharacters",
+      "root_cause": "User-controlled input is concatenated into a shell command string without escaping or allow-list filtering, allowing shell metacharacters to be interpreted."
+    },
+    {
+      "cluster_id": 6,
+      "fix_strategy": "Insert a '--' token before user-controlled positional arguments to end option parsing, or validate input format to reject patterns that could be options.",
+      "members": [
+        "CVE-2022-29184",
+        "CVE-2021-43286"
+      ],
+      "name": "Command option injection via missing argument separator",
+      "root_cause": "User-supplied strings are passed as arguments to a subprocess without a stop-parsing delimiter (like '--'), allowing special characters to introduce additional command options."
+    },
+    {
+      "cluster_id": 6,
+      "fix_strategy": "Validate command strings and reject any containing NUL bytes before execution.",
+      "members": [
+        "CVE-2022-39243"
+      ],
+      "name": "Null byte injection in process execution",
+      "root_cause": "Strings containing NUL characters are passed to native process execution, where the NUL is interpreted as a string terminator, enabling argument injection."
+    },
+    {
+      "cluster_id": 6,
+      "fix_strategy": "Strip credentials from URLs before inclusion, or make inclusion opt-in.",
+      "members": [
+        "CVE-2025-53103",
+        "CVE-2025-24363"
+      ],
+      "name": "Credential leakage in build/test outputs",
+      "root_cause": "Git remote URLs containing credentials are included verbatim in output files without sanitization."
+    },
+    {
+      "cluster_id": 6,
+      "fix_strategy": "Make socket mounting configurable, defaulting to off, and only mount when explicitly enabled.",
+      "members": [
+        "CVE-2022-39206"
+      ],
+      "name": "Unconditional mount of privileged host resource",
+      "root_cause": "Host Docker socket is unconditionally mounted into job containers without any access control, allowing container escape."
+    },
+    {
+      "cluster_id": 6,
+      "fix_strategy": "Replace execution with file existence check, and hardcode the executable path for non-default cases.",
+      "members": [
+        "CVE-2022-25914"
+      ],
+      "name": "Arbitrary command execution via user-controlled executable path",
+      "root_cause": "User-supplied path is used directly as an executable in ProcessBuilder without validation."
+    },
+    {
+      "cluster_id": 6,
+      "fix_strategy": "Implement a whitelist of allowed commands that is consulted before execution.",
+      "members": [
+        "CVE-2020-5242"
+      ],
+      "name": "Missing command whitelist before execution",
+      "root_cause": "No authorization check is performed before executing user-supplied commands, allowing arbitrary command execution."
+    },
+    {
+      "cluster_id": 19,
+      "fix_strategy": "Add explicit checks for slot.isFake() and slot.allowModification()/canPlace() before proceeding with any read/write operations; reject transfers on violation.",
+      "members": [
+        "CVE-2024-42698"
+      ],
+      "name": "Missing slot property validation before item transfer",
+      "root_cause": "Item transfer logic assumed all slots are valid and writable without checking whether the slot is fake (display-only) or whether modification is allowed, allowing operations on restricted slots that can lead to duplication."
+    },
+    {
+      "cluster_id": 19,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2024-48645"
+      ],
+      "name": "Missing state synchronization and validation in GUI storage operations",
+      "root_cause": ""
+    },
+    {
+      "cluster_id": 22,
+      "fix_strategy": "Replace the shared instance with a Supplier that creates a new instance per request, ensuring per-request isolation.",
+      "members": [
+        "CVE-2020-1732"
+      ],
+      "name": "Thread-unsafe reuse of mutable authentication handler",
+      "root_cause": "A shared ServerAuthModule instance is reused across concurrent requests without synchronization, allowing race conditions that corrupt authentication state."
+    },
+    {
+      "cluster_id": 23,
+      "fix_strategy": "Add validation of exp, nbf, iat claims and a configurable maximum allowed expiration duration; reject tokens outside valid time window.",
+      "members": [
+        "CVE-2025-2559"
+      ],
+      "name": "Missing token temporal validity checks",
+      "root_cause": "The code does not validate token expiration (exp), not-before (nbf), or issuance time (iat) against a trusted clock, or does not enforce a maximum allowed expiration, allowing use of expired or arbitrarily long-lived tokens."
+    },
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Add CSRF token generation, embed in forms or headers, and validate on the server side before processing.",
+      "members": [
+        "CVE-2020-28191",
+        "CVE-2023-40572",
+        "CVE-2024-3825"
+      ],
+      "name": "Missing synchronizer token (CSRF token) on state-changing requests",
+      "root_cause": "The application relies solely on cookie-based authentication without a server-generated token that must be submitted with each state-changing request, allowing cross-site request forgery."
+    },
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Insert an explicit permission check (e.g., hasAccess) after CSRF validation.",
+      "members": [
+        "CVE-2024-55876"
+      ],
+      "name": "Missing authorization check after CSRF token validation",
+      "root_cause": "The endpoint validates CSRF tokens but fails to verify the user holds the required permission (e.g., programming rights) before executing the action."
+    },
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Add explicit checkPermission(ADMINISTER) calls before executing the action.",
+      "members": [
+        "CVE-2017-2611",
+        "CVE-2017-2604"
+      ],
+      "name": "Missing permission check on administrative action handlers",
+      "root_cause": "Administrative action methods are accessible without verifying that the caller has ADMINISTER permission, relying only on method constraints (e.g., @RequirePOST) or UI obscurity."
+    },
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Add permission checks (BUILD) on each downstream project during form processing and validation.",
+      "members": [
+        "CVE-2013-7330"
+      ],
+      "name": "Missing authorization check on cross-project build trigger configuration",
+      "root_cause": "Users with CONFIGURE permission on a project can add a build trigger referencing a downstream project without verifying they have BUILD permission on that project."
+    },
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Impersonate system (ACL.SYSTEM) before resolving project names.",
+      "members": [
+        "CVE-2014-2058"
+      ],
+      "name": "Missing privileged impersonation during project name resolution",
+      "root_cause": "User-controlled project name resolution is performed without impersonating a system security context, allowing bypass of access restrictions."
+    },
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Replace with the correct permission constant.",
+      "members": [
+        "CVE-2014-2068"
+      ],
+      "name": "Incorrect permission constant used in authorization check",
+      "root_cause": "The authorization check for a sensitive operation uses a wrong permission constant (e.g., ADMINISTER instead of RUN_SCRIPTS)."
+    },
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Parse and verify Origin header against server URI and require a CSRF token in query parameter.",
+      "members": [
+        "CVE-2014-125071"
+      ],
+      "name": "Missing origin validation and CSRF token for WebSocket upgrade",
+      "root_cause": "WebSocket handshake does not validate the Origin header or require a CSRF token, allowing cross-site WebSocket hijacking."
+    },
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Add before filter to check Content-Type matches expected type (e.g., application/json).",
+      "members": [
+        "CVE-2021-25924"
+      ],
+      "name": "Missing Content-Type validation as CSRF defense",
+      "root_cause": "Endpoints accept state-changing requests without CSRF token but rely on Content-Type header to prevent cross-origin form submissions, which is insufficient."
+    },
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Introduce a system property to disable user creation via URL and add additional permission check.",
+      "members": [
+        "CVE-2017-2613"
+      ],
+      "name": "CSRF-induced user creation via GET request with insufficient guard",
+      "root_cause": "A GET request creates a user record with only a permission check, lacking CSRF protection, allowing bulk user creation via forged requests."
+    },
+    {
+      "cluster_id": 32,
+      "fix_strategy": "Wrap the internal object in its public API facade (e.g., new Attachment(...)) before returning to the scripting layer.",
+      "members": [
+        "CVE-2023-26478"
+      ],
+      "name": "Returning raw internal objects without access-controlled wrapper",
+      "root_cause": "Script service methods return internal domain objects directly, bypassing the API wrapper that enforces authorization checks."
+    },
+    {
+      "cluster_id": 33,
+      "fix_strategy": "Correct the returnedrows calculation: if limit > 0, use min(items.size(), limit); otherwise use items.size().",
+      "members": [
+        "CVE-2022-41935"
+      ],
+      "name": "Authorization bypass due to miscalculated row count when limit is zero",
+      "root_cause": "When limit=0, returnedrows is computed as min(items.size(), 0) which yields 0, causing a downstream access-control filter to be skipped and leaking protected items."
+    },
+    {
+      "cluster_id": 33,
+      "fix_strategy": "Add an event listener to clear the search index cache when mail configuration is updated, and ensure indexing logic checks the obfuscation flag before including email properties.",
+      "members": [
+        "CVE-2023-50720"
+      ],
+      "name": "Stale configuration leads to indexed sensitive data remaining accessible",
+      "root_cause": "The search index includes email properties without checking the obfuscation setting, and the index is not invalidated when the configuration changes, so previously indexed emails remain accessible even after obfuscation is enabled."
+    },
+    {
+      "cluster_id": 34,
+      "fix_strategy": "Add an ownership or membership check (e.g., verify user owns the object or belongs to the resource) before performing the operation, or remove the vulnerable endpoint.",
+      "members": [
+        "CVE-2026-34832",
+        "CVE-2026-2010",
+        "CVE-2025-14908",
+        "CVE-2023-32310",
+        "CVE-2023-38494"
+      ],
+      "name": "Missing object-level authorization (IDOR and ownership check)",
+      "root_cause": "Endpoints use user-supplied resource identifiers to fetch or act on objects without verifying that the authenticated user owns or has permission to access that specific object."
+    },
+    {
+      "cluster_id": 35,
+      "fix_strategy": "Replace all user-existence-dependent responses with a generic message or behavior, such as always returning a success message regardless of account existence.",
+      "members": [
+        "CVE-2025-8548"
+      ],
+      "name": "Distinct error responses revealing user existence",
+      "root_cause": "The application returns different error messages or statuses for existing versus non-existing users, allowing an attacker to enumerate valid accounts."
+    },
+    {
+      "cluster_id": 35,
+      "fix_strategy": "Impose a strict password policy with required character classes (uppercase, lowercase, digit, special), minimum length, and optionally prevent reuse of the current password. Validate programmatically in all code paths.",
+      "members": [
+        "CVE-2022-1848"
+      ],
+      "name": "Insufficient password complexity enforcement",
+      "root_cause": "The application lacks proper validation of password strength (character classes, length, reuse) before accepting or storing the password, allowing weak or easily guessable passwords."
+    },
+    {
+      "cluster_id": 35,
+      "fix_strategy": "Add server-side checks to ensure the target resource belongs to the authenticated user or is in the user's domain, and verify status flags (e.g., active) before proceeding.",
+      "members": [
+        "CVE-2020-10194"
+      ],
+      "name": "Missing ownership or status verification on user operations",
+      "root_cause": "Authenticated endpoints accept resource identifiers (email, account IDs) without verifying that the requesting user owns or is authorized for that resource, allowing cross-user actions."
+    },
+    {
+      "cluster_id": 35,
+      "fix_strategy": "Do not assign an email address to service accounts; remove the hardcoded placeholder assignment.",
+      "members": [
+        "CVE-2019-14837"
+      ],
+      "name": "Hardcoded predictable email for service accounts",
+      "root_cause": "Service accounts are assigned a hardcoded, predictable email address (e.g., username@placeholder.org), allowing an attacker who controls the email domain to request password reset and take over the account."
+    },
+    {
+      "cluster_id": 35,
+      "fix_strategy": "Clear the token field in the user record upon successful validation before saving.",
+      "members": [
+        "CVE-2021-32620"
+      ],
+      "name": "Token not invalidated after use",
+      "root_cause": "Email validation tokens are not cleared after successful activation, enabling replay attacks to re-enable a disabled account."
+    },
+    {
+      "cluster_id": 36,
+      "fix_strategy": "Explicitly pass the restricted flag to all derived contexts, or set it on documents.",
+      "members": [
+        "CVE-2025-53836",
+        "CVE-2025-49586",
+        "CVE-2023-26475",
+        "CVE-2023-26471",
+        "CVE-2023-36468"
+      ],
+      "name": "Missing propagation of restricted execution context flag",
+      "root_cause": "The security flag indicating restricted/sandboxed execution is not propagated to sub-contexts (transformation contexts, async jobs, field registrations, historical versions), causing content to be evaluated with default permissive privileges."
+    },
+    {
+      "cluster_id": 36,
+      "fix_strategy": "Register proper analyzers that declare required rights (e.g., WIKI_ADMIN, PROGRAM, SCRIPT) and add authorization gates before content evaluation.",
+      "members": [
+        "CVE-2025-49587",
+        "CVE-2025-49583",
+        "CVE-2025-49582",
+        "CVE-2025-32973",
+        "CVE-2025-32974",
+        "CVE-2023-26480",
+        "CVE-2023-29206",
+        "CVE-2024-31981"
+      ],
+      "name": "Missing required-rights analysis for editable objects with executable content",
+      "root_cause": "The platform lacks RequiredRightAnalyzer implementations for certain object types or property configurations, or authorization checks (e.g., script rights, VIEW rights) are missing before rendering user-provided scripting content."
+    },
+    {
+      "cluster_id": 36,
+      "fix_strategy": "Execute content with the correct user's rights (author, creator) or parse immediately in the correct context, and disable async/caching that could reuse privileged outputs.",
+      "members": [
+        "CVE-2023-40177",
+        "CVE-2023-37912",
+        "CVE-2023-26056"
+      ],
+      "name": "Content executed under wrong user's security context",
+      "root_cause": "User-controlled content (macro parameters, footnotes, UI extensions, cached results) is rendered using the privileges of a different user (viewer, page author, or a high-privilege entity) instead of the content author or creator, allowing privilege escalation."
+    },
+    {
+      "cluster_id": 37,
+      "fix_strategy": "Replace the manual identity gathering with a context-aware authorization manager that checks the current user.",
+      "members": [
+        "CVE-2025-32972",
+        "CVE-2023-40573"
+      ],
+      "name": "Authorization check using document author instead of current user",
+      "root_cause": "The authorization guard queries the document's author reference rather than the current execution context's principal, allowing callers who can manipulate the document author to bypass the check."
+    },
+    {
+      "cluster_id": 37,
+      "fix_strategy": "Preserve the existing content author by using setOriginalMetadataAuthor instead of setAuthorReference during automated saves.",
+      "members": [
+        "CVE-2024-37899"
+      ],
+      "name": "Content author overwritten during automated operations",
+      "root_cause": "Automated saves (e.g., rename, disable user) set the document's content author to the acting user, granting that user the privileges associated with the original author for embedded scripts."
+    },
+    {
+      "cluster_id": 37,
+      "fix_strategy": "Add an explicit authorization check (e.g., access control, content inspection) before performing the operation.",
+      "members": [
+        "CVE-2024-21648",
+        "CVE-2024-31983",
+        "CVE-2024-37898",
+        "CVE-2023-49280"
+      ],
+      "name": "Missing authorization check before state-changing operations",
+      "root_cause": "Sensitive operations (rollback, translation access, document override, content-based actions) execute without verifying the current user's permissions on the target resource or its content."
+    },
+    {
+      "cluster_id": 37,
+      "fix_strategy": "Add the missing USER case and require Right.SCRIPT on the document author before allowing registration.",
+      "members": [
+        "CVE-2023-29510"
+      ],
+      "name": "Incomplete authorization switch case for translation scopes",
+      "root_cause": "A switch statement for translation registration lacks a case for USER scope, falling through to a no-op and allowing unprivileged users to register translations that execute as privileged content."
+    },
+    {
+      "cluster_id": 37,
+      "fix_strategy": "Introduce a configuration property to enforce checking the script author's programming rights before saving with the current user's identity.",
+      "members": [
+        "CVE-2022-23615"
+      ],
+      "name": "Missing script author privilege check on document save",
+      "root_cause": "The save operation only checks the current user's programming rights, not the script author's, enabling a user with SCRIPT right to escalate privileges via a victim with programming rights."
+    },
+    {
+      "cluster_id": 37,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2023-29507"
+      ],
+      "name": "Authorization flaws in document author identity handling",
+      "root_cause": ""
+    },
+    {
+      "cluster_id": 38,
+      "fix_strategy": "Inject an authorization manager and call checkAccess() or hasAccess() with the appropriate right (e.g., VIEW, ADMIN) before performing the operation or including data in the response.",
+      "members": [
+        "CVE-2026-33137",
+        "CVE-2025-49584",
+        "CVE-2025-46554",
+        "CVE-2022-41936",
+        "CVE-2024-45591"
+      ],
+      "name": "Missing authorization checks on REST endpoints and data retrieval operations",
+      "root_cause": "The code does not perform authentication/authorization checks before executing sensitive operations or returning data via REST endpoints, leaving resources accessible to unauthorized users."
+    },
+    {
+      "cluster_id": 38,
+      "fix_strategy": "Explicitly set the current entity reference to the target resource's wiki before performing authorization checks, and scope database queries to the intended wiki using methods like setWiki().",
+      "members": [
+        "CVE-2025-29924",
+        "CVE-2025-29925"
+      ],
+      "name": "Missing tenant scoping in authorization checks and queries",
+      "root_cause": "Authorization checks or data queries are performed without properly scoping to the target wiki/tenant context, causing the application to use the default (main) wiki's settings or data instead of the intended tenant's, leading to cross-tenant information exposure."
+    },
+    {
+      "cluster_id": 38,
+      "fix_strategy": "Add authorization checks specific to the non-current state, such as calling recycleBinStore.hasAccess() for deleted documents or checkAccess() on the DocumentRevisionProvider before returning the content.",
+      "members": [
+        "CVE-2023-29208",
+        "CVE-2023-37911"
+      ],
+      "name": "Missing authorization checks for non-current document states (deleted documents and revisions)",
+      "root_cause": "The code assumes that authorization checks on the current document version are sufficient and does not verify access rights when retrieving deleted documents from the recycle bin or historical revisions, allowing unauthorized access to sensitive content."
+    },
+    {
+      "cluster_id": 38,
+      "fix_strategy": "Create a WebPreferences document for the space with appropriate viewRights, and set the hidden property to true on all internal data documents at creation time.",
+      "members": [
+        "CVE-2025-27604"
+      ],
+      "name": "Missing access control configuration for wiki spaces and internal documents",
+      "root_cause": "A new application space is created without defining a WebPreferences document to restrict access, and internal data documents are not marked as hidden, causing the wiki default (public access) to apply and expose sensitive documents to unauthenticated users."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_object_owner_scope_missing_authz",
+    "object ownership authorization",
+    "tenant scope check",
+    "IDOR",
+    "resource scoped authorization"
+  ]
+}

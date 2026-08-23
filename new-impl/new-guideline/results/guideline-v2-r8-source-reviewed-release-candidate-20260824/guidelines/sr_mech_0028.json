@@ -1,0 +1,21 @@
+{
+  "boundary_label": "candidate_boundary_02_jose_header_supplied_jwk_trust",
+  "guideline_group_key": "review_mech_0513__candidate_boundary_02_jose_header_supplied_jwk_trust__mech_jose_header_supplied_jwk_key_trust",
+  "guideline_id": "sr_mech_0028",
+  "guideline_text": "Audit for JOSE token header-supplied JWK trusted as verification or decryption key. JOSE header-supplied JWK trust: JWS or JWE processing falls back to a `jwk` value carried inside the untrusted token header when the caller does not provide a key. Report code paths where token-controlled header key material is passed to algorithm.prepare_key or an equivalent verification/decryption key preparation step before the token's authenticity or key policy has been established. Required missing-guard check: The vulnerable fallback accepts token header `jwk` automatically when key is None, without requiring application-provided key material, configured trust policy, or explicit opt-in to header-provided keys. Safe implementation should: Remove the automatic header[\"jwk\"] fallback from JWS/JWE key preparation. Applications that want embedded keys must implement an explicit trusted-key selection policy outside the generic parser path. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 1 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_jose_header_supplied_jwk_key_trust",
+    "name": "JOSE token header-supplied JWK trusted as verification or decryption key"
+  },
+  "old_guideline_id": "review_mech_0513",
+  "release_status": {
+    "blockers": [
+      "singleton_or_missing_case_support"
+    ],
+    "release_ready": false,
+    "status": "review_only"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 1
+}

@@ -1,0 +1,11 @@
+[
+  {
+    "boundary_decision": "promote_boundary",
+    "boundary_label": "candidate_boundary_01",
+    "errors": [],
+    "guideline_id": "gl_mech_0001",
+    "line_no": 1,
+    "valid": true,
+    "warnings": []
+  }
+]

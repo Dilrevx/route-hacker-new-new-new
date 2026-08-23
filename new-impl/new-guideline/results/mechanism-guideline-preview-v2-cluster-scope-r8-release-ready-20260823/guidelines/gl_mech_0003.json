@@ -1,0 +1,92 @@
+{
+  "cluster_summary": "This cluster comprises vulnerabilities where user-controlled input is used to construct file paths or resource identifiers without proper validation, canonicalization, or containment checks, enabling directory traversal, unauthorized file read/write, or resource access. A minority of outliers involve unrelated vulnerabilities like deserialization, SSRF, regular expression injection, and stored XSS.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2021-43841",
+    "CVE-2023-51445",
+    "CVE-2024-38364",
+    "CVE-2025-32951",
+    "CVE-2025-32960",
+    "CVE-2025-32961",
+    "CVE-2026-32859"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0002__mech_inline_content_disposition_xss",
+  "guideline_id": "gl_mech_0003",
+  "guideline_text": "Trace stored or user-uploaded file content, MIME metadata, filenames, or request parameters that choose inline versus attachment rendering into HTTP file-download responses, browser-rendered attachments, content-disposition headers, or content-type selection. Report code paths where browser-renderable content is served inline without an allowlist, forced attachment disposition, safe content type, or content sniffing protection. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 7 historical CVE example(s), not as a project-specific signature. A safe implementation should force attachment for untrusted content unless an allowlisted safe type is proven, set safe content types and nosniff headers, and separate trusted preview paths from raw downloads.",
+  "mechanism": {
+    "aliases": [
+      "inline content disposition XSS",
+      "unsafe file download disposition",
+      "stored file rendered inline",
+      "browser-rendered upload"
+    ],
+    "family": "content_rendering",
+    "mechanism_id": "mech_inline_content_disposition_xss",
+    "missing_guard": "browser-renderable content is served inline without an allowlist, forced attachment disposition, safe content type, or content sniffing protection",
+    "name": "browser-rendered file download through unsafe inline content disposition",
+    "required_keywords": [
+      [
+        "content-disposition",
+        "inline",
+        "attachment",
+        "download"
+      ],
+      [
+        "xss",
+        "browser",
+        "render",
+        "mime",
+        "content type",
+        "upload"
+      ]
+    ],
+    "sink_shape": "HTTP file-download responses, browser-rendered attachments, content-disposition headers, or content-type selection",
+    "source_shape": "stored or user-uploaded file content, MIME metadata, filenames, or request parameters that choose inline versus attachment rendering",
+    "typical_fix": "force attachment for untrusted content unless an allowlisted safe type is proven, set safe content types and nosniff headers, and separate trusted preview paths from raw downloads"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 4,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 7,
+    "total_member_count": 7,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2021-43841",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    2
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 2,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2021-43841",
+        "CVE-2023-51445",
+        "CVE-2024-38364",
+        "CVE-2025-32951",
+        "CVE-2025-32960",
+        "CVE-2025-32961",
+        "CVE-2026-32859"
+      ],
+      "name": "Missing or insufficient path validation for file and resource access",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "content_rendering",
+    "mech_inline_content_disposition_xss",
+    "inline content disposition XSS",
+    "unsafe file download disposition",
+    "stored file rendered inline",
+    "browser-rendered upload"
+  ]
+}

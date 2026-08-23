@@ -1,0 +1,65 @@
+{
+  "cluster_summary": "Multiple endpoints across different modules accept state-changing HTTP requests (POST, GET with side effects) without requiring a per-request CSRF token. Attackers can forge cross-origin requests that execute actions using the victim's authenticated session. Fixes involve generating a unique token, embedding it in forms or as a header, and validating it server-side before processing.",
+  "created_at": "2026-08-22T20:04:51+00:00",
+  "cve_ids": [
+    "CVE-2013-7251",
+    "CVE-2020-28191",
+    "CVE-2021-32732",
+    "CVE-2023-37277",
+    "CVE-2024-31985",
+    "CVE-2024-31986",
+    "CVE-2024-31988"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0066__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0340",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 7 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "required_keywords": [],
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2013-7251",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    66
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 66,
+      "fix_strategy": "Add server-side CSRF token generation and validation: embed a unique token as a hidden field in forms or as a custom header (e.g., X-CSRF-Token), and reject any request where the token is missing, invalid, or mismatched with the session. Use existing framework CSRF services (e.g., `$services.csrf.isTokenValid()`) to enforce the check before processing the action.",
+      "members": [
+        "CVE-2013-7251",
+        "CVE-2020-28191",
+        "CVE-2021-32732",
+        "CVE-2023-37277",
+        "CVE-2024-31985",
+        "CVE-2024-31986",
+        "CVE-2024-31988"
+      ],
+      "name": "missing CSRF token validation on state-changing endpoints",
+      "root_cause": "The application does not generate or validate a unique anti-CSRF token (nonce) for HTTP requests that perform state-changing operations (e.g., creating, updating, deleting resources, executing scheduler actions). The server trusts that any authenticated request is intentional, lacking a mechanism to distinguish legitimate user actions from forged cross-site requests."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "cluster_summary": "This cluster covers vulnerabilities where input parsing code makes unchecked assumptions about string characteristics (null-termination, quote delimiters) and integer sizes (minimum length, maximum value, non-zero record size). These assumptions lead to out-of-bounds reads, heap buffer overflows, integer underflow/overflow, and infinite loops. Fixes require adding explicit validation checks before performing memory operations or arithmetic.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2026-25884",
+    "CVE-2026-27596",
+    "CVE-2026-27631",
+    "CVE-2026-32889",
+    "CVE-2026-8086",
+    "CVE-2026-8087",
+    "CVE-2026-8212",
+    "CVE-2026-8213",
+    "CVE-2026-8813"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0040__mech_binary_length_unbounded_resource_use",
+  "guideline_id": "gl_mech_0185",
+  "guideline_text": "Trace attacker-controlled binary length fields, size counters, frame lengths, offsets, back-references, or decompressed-size metadata into memory allocation, buffer growth, parsing loops, frame handling, decompression, or resource-consuming work. Report code paths where protocol-specific upper bounds, arithmetic overflow checks, structural consistency checks, or expansion limits are absent before allocation or work expansion. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 9 historical CVE example(s), not as a project-specific signature. A safe implementation should enforce explicit size limits, validate arithmetic and offsets before use, reject malformed or oversized records early, and bound decompression or frame-processing work.",
+  "mechanism": {
+    "aliases": [
+      "unbounded length allocation",
+      "binary size field DoS",
+      "frame length resource exhaustion",
+      "decompression size exhaustion"
+    ],
+    "family": "resource_exhaustion_or_bounds",
+    "mechanism_id": "mech_binary_length_unbounded_resource_use",
+    "missing_guard": "protocol-specific upper bounds, arithmetic overflow checks, structural consistency checks, or expansion limits are absent before allocation or work expansion",
+    "name": "unbounded binary length or size field drives resource use",
+    "required_keywords": [
+      [
+        "binary",
+        "frame",
+        "buffer",
+        "allocate",
+        "allocation",
+        "decompress",
+        "compressed",
+        "payload",
+        "offset"
+      ],
+      [
+        "length",
+        "size",
+        "count",
+        "bounds",
+        "overflow"
+      ]
+    ],
+    "sink_shape": "memory allocation, buffer growth, parsing loops, frame handling, decompression, or resource-consuming work",
+    "source_shape": "attacker-controlled binary length fields, size counters, frame lengths, offsets, back-references, or decompressed-size metadata",
+    "typical_fix": "enforce explicit size limits, validate arithmetic and offsets before use, reject malformed or oversized records early, and bound decompression or frame-processing work"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-25884",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    40
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 40,
+      "fix_strategy": "Validate string length and content (e.g., check for null terminator presence, leading/trailing quotes) before using them in memory operations; use explicit lengths or bounds checks to prevent over-reads and overflows.",
+      "members": [
+        "CVE-2026-25884",
+        "CVE-2026-32889",
+        "CVE-2026-8087",
+        "CVE-2026-8086",
+        "CVE-2026-8212",
+        "CVE-2026-8213"
+      ],
+      "name": "Unchecked assumptions on string terminator and quote delimiters",
+      "root_cause": "Code assumes that parsed strings are always null-terminated, enclosed in double quotes, or have a specific minimal length without verifying these properties, causing out-of-bounds reads, heap overflows, or infinite loops when the assumption fails."
+    },
+    {
+      "cluster_id": 40,
+      "fix_strategy": "Add enforce() or assert() checks to ensure integer values are within expected bounds (e.g., size >= threshold, size <= max, record size > 0) before using them in arithmetic, allocation, or loop control.",
+      "members": [
+        "CVE-2026-27596",
+        "CVE-2026-27631",
+        "CVE-2026-8813"
+      ],
+      "name": "Missing lower and upper bound checks on integer fields used in pointer arithmetic or loops",
+      "root_cause": "Code assumes that integer values (size, count) are within safe ranges (e.g., >= minimum, <= maximum, >0) without validation, leading to integer underflow/overflow, out-of-bounds access, or infinite loops."
+    }
+  ],
+  "tags": [
+    "resource_exhaustion_or_bounds",
+    "mech_binary_length_unbounded_resource_use",
+    "unbounded length allocation",
+    "binary size field DoS",
+    "frame length resource exhaustion",
+    "decompression size exhaustion"
+  ]
+}

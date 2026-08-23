@@ -1,0 +1,21 @@
+{
+  "boundary_label": "candidate_boundary_04_empty_token_scope_authorization_bypass",
+  "guideline_group_key": "review_mech_0514__candidate_boundary_04_empty_token_scope_authorization_bypass__mech_empty_token_scope_satisfies_required_scope",
+  "guideline_id": "sr_mech_0033",
+  "guideline_text": "Audit for empty token scope set treated as satisfying required resource scopes. Empty-token-scope authorization bypass: authorization helpers compare resource-required scopes against scopes carried by an access token, but treat an empty or missing token-scope list as if no required scopes are missing. Report code paths where a token without the required scope can access protected API resources because the missing-scope calculation returns an empty difference for both empty required-scope and empty token-scope inputs. Required missing-guard check: The vulnerable AuthUtil.findMissingElements helper returns Collections.emptyList() when either the required-scope list or token-scope list is null/empty, so an empty token-scope list satisfies any nonempty resource requirement. Safe implementation should: Return no missing scopes only when the resource-required scope list itself is empty. If token scopes are null or empty while resource scopes are required, return the full required scope list as missing and reject the request. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 1 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_empty_token_scope_satisfies_required_scope",
+    "name": "empty token scope set treated as satisfying required resource scopes"
+  },
+  "old_guideline_id": "review_mech_0514",
+  "release_status": {
+    "blockers": [
+      "singleton_or_missing_case_support"
+    ],
+    "release_ready": false,
+    "status": "review_only"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 1
+}

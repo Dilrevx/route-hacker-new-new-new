@@ -1,0 +1,20 @@
+{
+  "decision": "split",
+  "coherence_score": 0.38,
+  "coverage_score": 0.33,
+  "actionability_score": 0.74,
+  "retrieval_query_quality": 0.42,
+  "main_issue": "Only the JStachio case provides evidence for missing context-dependent HTML attribute encoding. The Para and OpenTSDB entries expose only patch locations, while CWE-74 and the broad cluster description permit materially different injection and sanitization mechanisms. The current guideline also begins with generic authorization/state-binding language unrelated to output encoding.",
+  "suggested_guideline": "Identify attacker-controlled values rendered into HTML, especially quoted attribute, JavaScript-string, URL, CSS, or element-text contexts. Verify that the encoder/sanitizer selected for that exact output context escapes every delimiter that can terminate or alter the surrounding syntax. Report paths where a default HTML escaper is used in a more specific context but leaves a required delimiter unescaped, such as a single quote in a single-quoted attribute. Fix by applying a context-appropriate encoder at the final interpolation boundary and add regression tests using delimiter-breaking payloads.",
+  "split_suggestions": [
+    "Incomplete context-specific output encoding, including HTML attribute and JavaScript/string delimiter escaping",
+    "HTML sanitization and allowlist bypasses, including dangerous attributes, URI schemes, DOM-node handling, and malformed-input normalization",
+    "Non-HTML injection paths such as query, command, or expression-language injection, if the OpenTSDB patch confirms a separate CWE-74 sink"
+  ],
+  "evidence_notes": [
+    "JStachio CVE-2023-33962 is a strong fit: HtmlEscaper is the default HTML escaper and handles ampersand, angle brackets, and double quotes but not single quotes, enabling attribute-context break-out when output is placed in single-quoted attributes.",
+    "Para CVE-2022-1782 is labeled CWE-79, but the supplied hunk locations and empty trace evidence do not establish whether the fix is missing encoding, sanitization, template-context handling, or another XSS mechanism.",
+    "OpenTSDB CVE-2023-36812 is labeled CWE-74 and has no source or trace explanation; CWE-74 alone does not demonstrate an HTML output-encoding mechanism.",
+    "The guideline's initial source-to-sensitive-operation and authorization/isolation/state-binding language is generic boilerplate and should be removed from an output-encoding-specific guideline."
+  ]
+}

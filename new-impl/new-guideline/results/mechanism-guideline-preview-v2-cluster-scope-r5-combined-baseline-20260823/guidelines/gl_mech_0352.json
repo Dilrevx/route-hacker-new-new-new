@@ -1,0 +1,55 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where user-supplied data flows into sensitive operations (file I/O, shell execution, SQL queries, database updates, configuration modifications) without proper validation, sanitization, or authorization checks. The issues include path traversal, command injection, SQL injection, mass assignment, and missing authorization for security-critical configuration options.",
+  "created_at": "2026-08-22T20:04:51+00:00",
+  "cve_ids": [
+    "CVE-2026-35463"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0069__mech_object_owner_scope_missing_authz",
+  "guideline_id": "gl_mech_0352",
+  "guideline_text": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where the authorization decision is not bound to both the current principal and the exact resource or tenant being affected. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation.",
+  "mechanism": {
+    "aliases": [
+      "object ownership authorization",
+      "tenant scope check",
+      "IDOR",
+      "resource scoped authorization"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_object_owner_scope_missing_authz",
+    "missing_guard": "the authorization decision is not bound to both the current principal and the exact resource or tenant being affected",
+    "name": "missing object-owner or tenant-scope authorization",
+    "required_keywords": [],
+    "sink_shape": "sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource",
+    "source_shape": "attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets",
+    "typical_fix": "check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-35463",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    69
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 69,
+      "fix_strategy": "Add the vulnerable options to an admin-only set and enforce role checks before allowing modification.",
+      "members": [
+        "CVE-2026-35463"
+      ],
+      "name": "Missing authorization for sensitive configuration options",
+      "root_cause": "Certain configuration options that affect security (e.g., plugin exec path, storage folder) are not restricted to admin users, allowing low-privileged users to modify them."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_object_owner_scope_missing_authz",
+    "object ownership authorization",
+    "tenant scope check",
+    "IDOR",
+    "resource scoped authorization"
+  ]
+}

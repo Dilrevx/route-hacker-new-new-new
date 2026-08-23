@@ -1,0 +1,20 @@
+{
+  "changed_text_count": 0,
+  "changed_text_sample": [],
+  "common_count": 189,
+  "left_count": 189,
+  "left_label": "guideline-v2-r7-evidence-gated-sidecar",
+  "left_only_count": 0,
+  "left_only_sample": [],
+  "left_path": "/Users/bytedance/workspace/route-hacker-new-new-p3c64/new-impl/guideline-agent-pipeline/results/mechanism-guideline-preview-v2-cluster-scope-r7-evidence-gated-20260823/guideline_overrides.jsonl",
+  "left_sha256": "047e5e0db178ba150a23c9e8f2a2487eda569b20b5ed319a9e32c720038690ad",
+  "recall_consumed_text_equivalent": true,
+  "right_count": 189,
+  "right_label": "guideline-v2-r8-release-ready-sidecar",
+  "right_only_count": 0,
+  "right_only_sample": [],
+  "right_path": "/Users/bytedance/workspace/route-hacker-new-new-p3c64/new-impl/guideline-agent-pipeline/results/mechanism-guideline-preview-v2-cluster-scope-r8-release-ready-20260823/guideline_overrides.jsonl",
+  "right_sha256": "a45ead53711756d7c27bbbd692d2b9446cd3ce1bf7417939fdb1e901f8f6abf2",
+  "same_key_set": true,
+  "schema_version": "hcvr_guideline_sidecar_comparison.v1"
+}

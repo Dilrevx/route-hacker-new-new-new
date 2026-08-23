@@ -1,0 +1,120 @@
+{
+  "cluster_summary": "This cluster contains 19 CVEs primarily in parsing, decompression, and memory management code. Common mistakes include trusting untrusted size fields for allocation without validation, integer overflow in size arithmetic, and various logical errors such as missing type validation, unbounded recursion, and incorrect buffer offset handling. These vulnerabilities can lead to denial of service, out-of-bounds reads/writes, or memory exhaustion.",
+  "created_at": "2026-08-22T20:37:29+00:00",
+  "cve_ids": [
+    "CVE-2019-11938",
+    "CVE-2020-28371",
+    "CVE-2020-28491",
+    "CVE-2023-34453",
+    "CVE-2023-34454",
+    "CVE-2023-34455",
+    "CVE-2023-43642",
+    "CVE-2024-36114",
+    "CVE-2025-13837",
+    "CVE-2025-49128",
+    "CVE-2025-66566",
+    "CVE-2026-21452"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0056__mech_binary_length_unbounded_resource_use",
+  "guideline_id": "gl_mech_0302",
+  "guideline_text": "Trace attacker-controlled binary length fields, size counters, frame lengths, offsets, back-references, or decompressed-size metadata into memory allocation, buffer growth, parsing loops, frame handling, decompression, or resource-consuming work. Report code paths where protocol-specific upper bounds, arithmetic overflow checks, structural consistency checks, or expansion limits are absent before allocation or work expansion. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 12 historical CVE example(s), not as a project-specific signature. A safe implementation should enforce explicit size limits, validate arithmetic and offsets before use, reject malformed or oversized records early, and bound decompression or frame-processing work.",
+  "mechanism": {
+    "aliases": [
+      "unbounded length allocation",
+      "binary size field DoS",
+      "frame length resource exhaustion",
+      "decompression size exhaustion"
+    ],
+    "family": "resource_exhaustion_or_bounds",
+    "mechanism_id": "mech_binary_length_unbounded_resource_use",
+    "missing_guard": "protocol-specific upper bounds, arithmetic overflow checks, structural consistency checks, or expansion limits are absent before allocation or work expansion",
+    "name": "unbounded binary length or size field drives resource use",
+    "required_keywords": [
+      [
+        "binary",
+        "frame",
+        "buffer",
+        "allocate",
+        "allocation",
+        "decompress",
+        "compressed",
+        "payload",
+        "offset"
+      ],
+      [
+        "length",
+        "size",
+        "count",
+        "bounds",
+        "overflow"
+      ]
+    ],
+    "sink_shape": "memory allocation, buffer growth, parsing loops, frame handling, decompression, or resource-consuming work",
+    "source_shape": "attacker-controlled binary length fields, size counters, frame lengths, offsets, back-references, or decompressed-size metadata",
+    "typical_fix": "enforce explicit size limits, validate arithmetic and offsets before use, reject malformed or oversized records early, and bound decompression or frame-processing work"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2019-11938",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    56
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 56,
+      "fix_strategy": "Validate size against available input buffer, impose absolute maximum limits, or switch to chunked/streaming allocation.",
+      "members": [
+        "CVE-2019-11938",
+        "CVE-2020-28491",
+        "CVE-2023-34455",
+        "CVE-2023-43642",
+        "CVE-2025-13837",
+        "CVE-2026-21452"
+      ],
+      "name": "Unvalidated size from input used for memory allocation",
+      "root_cause": "Code trusts externally provided size/length values (e.g., container size, chunk length, payload length) and allocates memory without verifying that the size is reasonable or that the input contains enough data."
+    },
+    {
+      "cluster_id": 56,
+      "fix_strategy": "Use safe arithmetic (e.g., subtraction-based checks or explicit overflow detection) before using computed sizes.",
+      "members": [
+        "CVE-2020-28371",
+        "CVE-2023-34453",
+        "CVE-2023-34454",
+        "CVE-2024-36114"
+      ],
+      "name": "Integer overflow in size/length arithmetic",
+      "root_cause": "Multiplication or addition of controlled lengths without overflow detection leads to negative or truncated size, bypassing bounds checks or causing undersized allocation."
+    },
+    {
+      "cluster_id": 56,
+      "fix_strategy": "Reject zero offset or explicitly zero-fill the output region when match distance is zero.",
+      "members": [
+        "CVE-2025-66566"
+      ],
+      "name": "Missing validation of match offset in decompression",
+      "root_cause": "Decompression code allows zero match distance/offset, which either copies from the same position (no-op leaving stale data) or reads from current output pointer, leading to data leakage or out-of-bounds."
+    },
+    {
+      "cluster_id": 56,
+      "fix_strategy": "Always use contentOffset() and contentLength() for slicing; add bounds checks before buffer writes.",
+      "members": [
+        "CVE-2025-49128"
+      ],
+      "name": "Missing offset validation in buffer operations",
+      "root_cause": "Code fails to use or validate buffer offset/length when reading for error messages or writing fixed-size blocks, leading to inclusion of out-of-scope memory or out-of-bounds writes."
+    }
+  ],
+  "tags": [
+    "resource_exhaustion_or_bounds",
+    "mech_binary_length_unbounded_resource_use",
+    "unbounded length allocation",
+    "binary size field DoS",
+    "frame length resource exhaustion",
+    "decompression size exhaustion"
+  ]
+}

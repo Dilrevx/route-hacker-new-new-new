@@ -1,0 +1,19 @@
+{
+  "boundary_label": "candidate_boundary_01_jjwt_parse_without_jws_verification",
+  "guideline_group_key": "review_mech_0513__candidate_boundary_01_jjwt_parse_without_jws_verification__mech_jjwt_parse_without_jws_signature_verification",
+  "guideline_id": "sr_mech_0027",
+  "guideline_text": "Audit for JJWT parser API accepts JWT without forcing JWS signature verification. JJWT parser API misuse: attacker-controlled bearer, session, or authentication tokens are parsed with Jwts.parser().setSigningKey(...).parse(...) or another generic JWT parse API whose return path does not force a signed JWS validation step before authentication claims are trusted. Report code paths where parsed claims or principals are accepted for authentication or authorization without using parseJws, parseClaimsJws, or an equivalent signature-verifying API on the same token path. Required missing-guard check: The vulnerable code uses the generic parse(...) API instead of parseJws(...) or parseClaimsJws(...), so signature verification is not forced before claims/principal extraction on the same authentication path. Safe implementation should: Use a JJWT API that requires a signed JWS and validates the signature with the configured key, such as parseJws or parseClaimsJws, before extracting claims or constructing the authenticated principal. The fix must replace the exact parser call used by the authentication path. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 2 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_jjwt_parse_without_jws_signature_verification",
+    "name": "JJWT parser API accepts JWT without forcing JWS signature verification"
+  },
+  "old_guideline_id": "review_mech_0513",
+  "release_status": {
+    "blockers": [],
+    "release_ready": true,
+    "status": "release_ready"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 2
+}

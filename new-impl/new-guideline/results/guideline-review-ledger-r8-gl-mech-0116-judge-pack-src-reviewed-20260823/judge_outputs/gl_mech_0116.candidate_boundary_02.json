@@ -1,0 +1,17 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.85,
+  "coverage_score": 0.80,
+  "actionability_score": 0.85,
+  "retrieval_query_quality": 0.80,
+  "main_issue": "The two cases represent two sub-flavors of renderer-based SSRF (content-triggered external resource resolution in DHIS2/Batik vs. render-service destination SSRF in XWiki/PlantUML), but the core mechanism—rich-content input reaches a renderer/transcoder that initiates network requests without an enforced external-resource policy—is coherent and the boundary text covers both sub-flavors adequately. The missing_guard field already acknowledges renderer-specific variations. Keeping them together as a single mechanism is justified because both are renderer-path SSRF, distinct from direct HTTP proxy or redirect-following SSRF.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "DHIS2 CVE-2022-41949: source evidence confirms SVG → Batik PNGTranscoder.transcode without KEY_ALLOW_EXTERNAL_RESOURCES=false; fix adds the flag. Strong evidence of content-triggered external resource resolution.",
+    "XWiki CVE-2026-42140: source evidence confirms PlantUML server URL from macro parameters → renderDiagram without trusted-domain validation; fix parses URL and checks URLSecurityManager.isDomainTrusted. Strong evidence of render-service destination SSRF.",
+    "Both cases have committed source evidence that directly supports the mechanism boundary. The exploit precondition (attacker supplies content/parameters → renderer initiates network requests) is satisfied in both cases."
+  ]
+}
+```

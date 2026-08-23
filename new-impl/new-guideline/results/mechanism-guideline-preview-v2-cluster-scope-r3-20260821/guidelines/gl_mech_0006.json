@@ -1,0 +1,106 @@
+{
+  "cluster_summary": "The cluster involves vulnerabilities where temporary files or directories are created with default permissions that are world-readable, or where directory creation uses a non-atomic sequence enabling TOCTOU races. The root cause is using older Java APIs (File.createTempFile, File.mkdir) or non-temporary file creation APIs without explicitly setting restrictive owner-only permissions. The fix strategies involve switching to atomic APIs like Files.createTempDirectory/Files.createTempFile with owner-only permissions, explicitly setting permissions, or checking return values of permission-setting calls.",
+  "created_at": "2026-08-21T10:07:21+00:00",
+  "cve_ids": [
+    "CVE-2018-25068",
+    "CVE-2020-15250",
+    "CVE-2020-8908",
+    "CVE-2021-21363",
+    "CVE-2022-21126",
+    "CVE-2022-24823",
+    "CVE-2022-3952",
+    "CVE-2022-3969",
+    "CVE-2022-41946",
+    "CVE-2022-41954",
+    "CVE-2022-4817",
+    "CVE-2024-29869"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0001__mech_temp_file_delete_mkdir_race",
+  "guideline_id": "gl_mech_0006",
+  "guideline_text": "Trace temporary file or directory names created in shared writable locations into manual temporary directory creation sequences such as createTempFile, delete, then mkdir or mkdirs. Report code paths where the temporary path is released between creation and directory creation, allowing another actor to replace or pre-create it before use. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 12 historical CVE example(s), not as a project-specific signature. A safe implementation should use an atomic temporary-directory API such as Files.createTempDirectory and avoid delete-then-mkdir sequences.",
+  "mechanism": {
+    "aliases": [
+      "temporary directory TOCTOU",
+      "createTempFile delete mkdir race",
+      "file-delete-mkdir temporary directory race"
+    ],
+    "family": "race_or_lifecycle",
+    "mechanism_id": "mech_temp_file_delete_mkdir_race",
+    "missing_guard": "the temporary path is released between creation and directory creation, allowing another actor to replace or pre-create it before use",
+    "name": "temporary directory create-delete-mkdir TOCTOU race",
+    "sink_shape": "manual temporary directory creation sequences such as createTempFile, delete, then mkdir or mkdirs",
+    "source_shape": "temporary file or directory names created in shared writable locations",
+    "typical_fix": "use an atomic temporary-directory API such as Files.createTempDirectory and avoid delete-then-mkdir sequences"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2018-25068",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    1
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 1,
+      "fix_strategy": "Replace the manual delete-and-mkdir sequence with the atomic Files.createTempDirectory() API, which atomically creates a unique temporary directory with owner-only permissions.",
+      "members": [
+        "CVE-2022-21126",
+        "CVE-2022-3952",
+        "CVE-2022-3969",
+        "CVE-2022-4817",
+        "CVE-2018-25068",
+        "CVE-2021-21363"
+      ],
+      "name": "Non-atomic temporary directory creation via file-delete-mkdir sequence",
+      "root_cause": "A temporary directory is created by first creating a temporary file, deleting it, then calling mkdir/mkdirs on the same path. This non-atomic sequence allows a local attacker to win a TOCTOU race by replacing the path with a symbolic link, leading to directory creation at an attacker-controlled location."
+    },
+    {
+      "cluster_id": 1,
+      "fix_strategy": "Replace File.createTempFile() with java.nio.file.Files.createTempFile(), which defaults to owner-only (0600) permissions, or immediately call setReadable/setWritable with owner-only flags after creation, optionally checking return values.",
+      "members": [
+        "CVE-2022-41946",
+        "CVE-2022-41954"
+      ],
+      "name": "Insecure default permissions on temporary files created with File.createTempFile",
+      "root_cause": "The code uses java.io.File.createTempFile() which on Unix-like systems creates temporary files with default umask-based permissions (often world-readable). No subsequent permission hardening is applied, leaving sensitive spooled data accessible to other local users."
+    },
+    {
+      "cluster_id": 1,
+      "fix_strategy": "Use java.nio.file.Files.createTempDirectory() which creates directories with owner-only (0700) permissions by default, or explicitly set permissions to 0700 after creation.",
+      "members": [
+        "CVE-2020-8908",
+        "CVE-2020-15250"
+      ],
+      "name": "Insecure default permissions on temporary directories created with mkdir",
+      "root_cause": "Temporary directories are created using File.mkdir() or manual delete-then-mkdir sequences that inherit the system umask, often resulting in world-readable (0755) permissions instead of owner-only (0700). No explicit restrictive permissions are applied."
+    },
+    {
+      "cluster_id": 1,
+      "fix_strategy": "Check the return value of every file.setReadable() call and throw an IOException if any call indicates failure, ensuring the insecure file is not used.",
+      "members": [
+        "CVE-2022-24823"
+      ],
+      "name": "Unchecked return value of file permission hardening API",
+      "root_cause": "The code attempts to restrict file permissions using File.setReadable() but ignores the boolean return value. If the permission change fails silently (e.g., due to filesystem restrictions), the file retains insecure default permissions."
+    },
+    {
+      "cluster_id": 1,
+      "fix_strategy": "Pass an explicit PosixFilePermissions attribute set (e.g., OWNER_READ, OWNER_WRITE) to Files.createFile(), or open the file with a restrictive permission mask before writing; also validate permissions on subsequent reads.",
+      "members": [
+        "CVE-2024-29869"
+      ],
+      "name": "Sensitive file creation without explicit restrictive permissions using non-temporary APIs",
+      "root_cause": "Sensitive data (e.g., credential caches, token files) is written to a file created via Files.createFile() or Credentials.writeTokenStorageFile() without specifying explicit file permissions. The file inherits the process umask, typically resulting in world-readable permissions."
+    }
+  ],
+  "tags": [
+    "race_or_lifecycle",
+    "mech_temp_file_delete_mkdir_race",
+    "temporary directory TOCTOU",
+    "createTempFile delete mkdir race",
+    "file-delete-mkdir temporary directory race"
+  ]
+}

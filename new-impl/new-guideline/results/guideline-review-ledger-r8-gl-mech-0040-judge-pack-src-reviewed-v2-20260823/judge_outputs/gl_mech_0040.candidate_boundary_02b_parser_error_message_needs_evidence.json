@@ -1,0 +1,17 @@
+```json
+{
+  "decision": "needs_evidence",
+  "coherence_score": 0.55,
+  "coverage_score": 0.2,
+  "actionability_score": 0.25,
+  "retrieval_query_quality": 0.5,
+  "main_issue": "The mechanism is conceptually coherent but the sink half is entirely hypothetical. The patch only proves that raw attacker input was removed from an error message; there is no source-reviewed evidence that the resulting exception message reaches an EL-capable interpolation sink (e.g., buildConstraintViolationWithTemplate, JEXL, or a UI template engine). Without confirming the downstream sink, the boundary cannot be promoted or used for reliable recall.",
+  "suggested_guideline": "Parser error message downstream EL risk: attacker-controlled parser input is copied into an exception or error message containing EL payload syntax, and that message is later consumed by an EL-capable interpolation or rendering layer. The confirmed source shape is CronParser.parse including the raw cron expression in an IllegalArgumentException message. The sink shape (e.g., buildConstraintViolationWithTemplate, JEXL interpolation, or template rendering) must be source-reviewed and confirmed in at least one deployable code path before this boundary can be promoted.",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "jmrozanec__cron-utils::CVE-2021-41269: Source side confirmed — CronParser.parse included raw cron expression in IllegalArgumentException, and the fix commit cfd2880f80e62ea74b92fa83474c2aabdb9899da removed it. EL payload tests (${...} Runtime.exec-style) are present in the patch. However, no evidence shows the exception message reaches an EL-capable interpolation sink in a vulnerable deployment.",
+    "traex_judge_gl_mech_0040_initial: Prior judge correctly split this case away from Bean Validation because no buildConstraintViolationWithTemplate or equivalent EL interpolation sink was demonstrated.",
+    "The ledger row correctly identifies the evidence gap. Before promoting, source-review the downstream consumption path: trace whether the IllegalArgumentException from CronParser.parse is caught and its message interpolated through an EL-capable context (validation layer, logging framework with expression evaluation, template engine, or UI rendering)."
+  ]
+}
+```

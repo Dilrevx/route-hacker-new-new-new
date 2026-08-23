@@ -1,0 +1,80 @@
+{
+  "cluster_summary": "File operations (read, write, delete, copy) fail to resolve symbolic links or otherwise canonicalize the final path before checking that it stays within an intended sandbox directory. This allows an attacker to escape containment via symlinks, directory traversal, or TOCTOU races where symlinks are swapped between validation and use. The cluster also includes several distinct variants: insufficient pattern-based blocking, input-sanitization flaws, permission mistakes, validation ordering errors, and a concurrency issue on shared file state.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2026-45246"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0060__mech_temp_resource_insecure_permissions",
+  "guideline_id": "gl_mech_0101",
+  "guideline_text": "Trace temporary files or directories created for sensitive data, build artifacts, credentials, extracted content, or intermediate processing into filesystem creation APIs that inherit broad default permissions or fail to apply owner-only permissions before use. Report code paths where the temporary resource is created or exposed with permissions that allow other local users to read, write, replace, or observe sensitive content. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should create temporary resources with owner-only permissions atomically, verify permission-setting success, and avoid placing secrets in shared-readable locations.",
+  "mechanism": {
+    "aliases": [
+      "insecure temporary file permissions",
+      "world-readable temp file",
+      "temporary directory permissions",
+      "File.createTempFile permissions"
+    ],
+    "family": "filesystem",
+    "mechanism_id": "mech_temp_resource_insecure_permissions",
+    "missing_guard": "the temporary resource is created or exposed with permissions that allow other local users to read, write, replace, or observe sensitive content",
+    "name": "temporary resource created with insecure permissions",
+    "required_keywords": [
+      [
+        "temporary",
+        "temp",
+        "createtempfile",
+        "createtempdirectory"
+      ],
+      [
+        "permissions",
+        "posix",
+        "world-readable",
+        "world-writable",
+        "owner-only",
+        "chmod"
+      ]
+    ],
+    "sink_shape": "filesystem creation APIs that inherit broad default permissions or fail to apply owner-only permissions before use",
+    "source_shape": "temporary files or directories created for sensitive data, build artifacts, credentials, extracted content, or intermediate processing",
+    "typical_fix": "create temporary resources with owner-only permissions atomically, verify permission-setting success, and avoid placing secrets in shared-readable locations"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 4,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 1,
+    "total_member_count": 1,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2026-45246",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    60
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 60,
+      "fix_strategy": "Explicitly set file mode to 0o600 and directory mode to 0o700 on creation, and apply chmod afterward to cover pre-existing files.",
+      "members": [
+        "CVE-2026-45246"
+      ],
+      "name": "Missing restrictive file permissions on sensitive files",
+      "root_cause": "Sensitive files (config files, daemon state) are created with default permissions (0o666 files, 0o777 directories) relying on umask. When umask is permissive (e.g., in Docker), files become world-readable or world-writable."
+    }
+  ],
+  "tags": [
+    "filesystem",
+    "mech_temp_resource_insecure_permissions",
+    "insecure temporary file permissions",
+    "world-readable temp file",
+    "temporary directory permissions",
+    "File.createTempFile permissions"
+  ]
+}

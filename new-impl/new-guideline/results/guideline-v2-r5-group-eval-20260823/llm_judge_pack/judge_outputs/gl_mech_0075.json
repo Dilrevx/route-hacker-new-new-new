@@ -1,0 +1,19 @@
+{
+  "decision": "split",
+  "coherence_score": 0.08,
+  "coverage_score": 0.05,
+  "actionability_score": 0.58,
+  "retrieval_query_quality": 0.22,
+  "main_issue": "The assigned cases do not evidence attacker-controlled JNDI or remote lookup targets. One concerns LDAP filter construction/escaping, while the other is an authorization bypass caused by treating an unknown capture-filter type as an unrestricted null filter.",
+  "suggested_guideline": "Split this group into distinct mechanisms. LDAP injection: trace untrusted values interpolated into LDAP search filters or distinguished names; require context-appropriate LDAP escaping or parameterized filter construction before directory queries. Authorization fallback bypass: trace user-selected identifiers through lookup and policy resolution; reject unknown or missing policy objects rather than converting lookup failure or null values into an unrestricted/default-allow configuration.",
+  "split_suggestions": [
+    "LDAP filter or distinguished-name injection through unescaped attacker-controlled values",
+    "Authorization bypass when an unknown requested policy/filter identifier resolves to null and is treated as unrestricted access"
+  ],
+  "evidence_notes": [
+    "CVE-2022-24832 anchors are in LDAP client classes and are consistent with LDAP-operation input handling, but the payload provides no evidence of JNDI, RMI, naming-context, remote object factory, scheme, authority, or destination control.",
+    "CVE-2021-39196 explicitly states that an unknown URL suffix yields null, allowing an authenticated low-privilege user to obtain an all-traffic capture filter; the safe fix rejects an absent CaptureType before returning its filter.",
+    "The cluster summary itself lists multiple LDAP-related mechanisms and unrelated outliers, so it cannot substantiate a single remote-lookup mechanism.",
+    "The guideline's claim of three historical CVE examples is unsupported by the two assigned cases shown."
+  ]
+}

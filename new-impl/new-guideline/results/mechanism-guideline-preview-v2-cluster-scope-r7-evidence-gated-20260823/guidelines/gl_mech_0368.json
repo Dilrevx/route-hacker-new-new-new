@@ -1,0 +1,73 @@
+{
+  "cluster_summary": "These vulnerabilities involve OS command injection where user-supplied input is executed as part of a shell command. Two common mistakes are: (1) using shell-invoking execution APIs (exec, execSync) with concatenated strings instead of non-shell variants (execFile, spawn) with argument arrays, and (2) failing to validate user-specified command names against an allowlist before execution, allowing arbitrary commands or abusable utilities.",
+  "created_at": "2026-08-22T20:37:30+00:00",
+  "cve_ids": [
+    "CVE-2026-3484",
+    "CVE-2026-34977",
+    "CVE-2026-43943",
+    "CVE-2026-5602",
+    "CVE-2026-5603",
+    "CVE-2026-5831",
+    "CVE-2026-5833",
+    "CVE-2026-7446",
+    "CVE-2026-8112"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0068__pending_mech_cluster_68_using_shell_invoking_execution_functions_with_string_interpolation",
+  "guideline_id": "gl_mech_0368",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 9 historical CVE example(s), not as a project-specific signature. A safe implementation should Replace the shell-invoking API with a non-shell equivalent (e.g., execFile, execFileSync, or spawn) that accepts command and arguments as an array, bypassing shell interpretation. If that is not possible, apply shell escaping or validation..",
+  "mechanism": {
+    "aliases": [
+      "allowlist",
+      "command-execution-handler",
+      "argument",
+      "thus",
+      "sends",
+      "dangerous"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_68_using_shell_invoking_execution_functions_with_string_interpolation",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Using shell-invoking execution functions with string interpolation",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Replace the shell-invoking API with a non-shell equivalent (e.g., execFile, execFileSync, or spawn) that accepts command and arguments as an array, bypassing shell interpretation. If that is not possible, apply shell escaping or validation."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-3484",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    68
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 68,
+      "fix_strategy": "Replace the shell-invoking API with a non-shell equivalent (e.g., execFile, execFileSync, or spawn) that accepts command and arguments as an array, bypassing shell interpretation. If that is not possible, apply shell escaping or validation.",
+      "members": [
+        "CVE-2026-3484",
+        "CVE-2026-34977",
+        "CVE-2026-43943",
+        "CVE-2026-5602",
+        "CVE-2026-5603",
+        "CVE-2026-5831",
+        "CVE-2026-5833",
+        "CVE-2026-7446",
+        "CVE-2026-8112"
+      ],
+      "name": "Using shell-invoking execution functions with string interpolation",
+      "root_cause": "Developers used execution functions that spawn a shell (like exec, execSync) and passed user-controlled data concatenated into a command string, assuming it would be safe. This allows shell metacharacters to inject arbitrary commands."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_68_using_shell_invoking_execution_functions_with_string_interpolation",
+    "allowlist",
+    "command-execution-handler",
+    "argument",
+    "thus"
+  ]
+}

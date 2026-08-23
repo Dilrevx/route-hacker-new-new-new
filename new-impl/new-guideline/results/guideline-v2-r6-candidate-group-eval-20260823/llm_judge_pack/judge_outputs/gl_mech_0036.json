@@ -1,0 +1,22 @@
+{
+  "decision": "split",
+  "coherence_score": 0.58,
+  "coverage_score": 0.54,
+  "actionability_score": 0.9,
+  "retrieval_query_quality": 0.86,
+  "main_issue": "The core guideline is a strong, actionable XXE/external-resource-resolution pattern, but the assigned group includes cases whose supplied evidence does not establish that mechanism and several apparent non-XXE XML issues. Broad XML/XPath wording also risks pulling parser-validation, expression-injection, authentication, and unrelated XML handling flaws into the same group.",
+  "suggested_guideline": "Trace externally supplied XML, SOAP, XML-report, or configuration documents into a concrete XML parser or transformer instance. Flag paths where that instance can process a DOCTYPE, external general entity, external parameter entity, external DTD, schema, stylesheet, or other external URI without an effective restriction on the same execution path. Verify the parser configuration before parsing and require a safe fix that disables or rejects external entity and DTD processing, restricts JAXP external-access properties, and/or installs a rejecting EntityResolver or URIResolver. Keep XPath expression validation, XML name validation, XMLDecoder deserialization, and non-parser authentication or template-processing issues outside this guideline unless they demonstrably invoke external XML resource resolution.",
+  "split_suggestions": [
+    "Unsafe XML parser or transformer external-resource resolution: DOM/SAX/StAX/JAXB/SOAP parsing of untrusted XML with DTD or external-entity/schema/stylesheet access enabled.",
+    "Other XML processing defects: XPath or template-expression injection, XML validation/name handling, XML deserialization, and authentication/session semantics should be separately evidenced and clustered by their own source-to-sink mechanisms."
+  ],
+  "evidence_notes": [
+    "Allure CVE-2025-52888 is directly supported: default DocumentBuilderFactory/DocumentBuilder instances parse XML files without an EntityResolver or external-entity restrictions.",
+    "Bonita CVE-2020-36640 and DBeaver CVE-2021-3836 have CWE-611 labels and XML utility/parser hunks, so they are plausible members, but the payload lacks source-path evidence showing external resolution remained enabled.",
+    "CXF Fediz CVE-2018-8038 has only hunk locations and CWE-20; no evidence in the payload confirms XXE, external DTD resolution, or a shared parser configuration flaw.",
+    "Archi CVE-2023-40235 is labeled information disclosure with only a factory hunk; its relationship to external XML resolution is unproven.",
+    "AWS Android CVE-2022-4725 is labeled SSRF, but its sole trace note explicitly says the materialized span is review-entry ground truth rather than exploit proof. It needs source-level confirmation that an XML parser performs unrestricted external retrieval before inclusion.",
+    "changedetection.io CVE-2026-29039 is labeled template_expression_injection and centers on XPath validation/evaluation. XPath input alone is not evidence of XXE or external resource resolution.",
+    "authentik CVE-2026-40165 is labeled authentication_session_token_validation; its NameID-handling review window has no demonstrated XML external-resource sink and should be separated unless further evidence establishes one."
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "cluster_summary": "This cluster comprises 40 XWiki vulnerabilities, primarily server-side template injection (SSTI) and cross-site scripting (XSS), caused by user-controlled data being interpolated into templates without proper context-specific escaping (HTML, wiki syntax, or URL). Variants include incomplete delimiter escaping, bypassing the rendering pipeline, misconfigured output directives, unsafe wrapper removal, direct code evaluation, and one unrelated error-handling issue.",
+  "created_at": "2026-08-21T09:41:10+00:00",
+  "cve_ids": [
+    "CVE-2023-29213",
+    "CVE-2023-34464",
+    "CVE-2023-40176",
+    "CVE-2024-55662"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0031__mech_privileged_server_side_capability_exposed",
+  "guideline_id": "gl_mech_0167",
+  "guideline_text": "Trace lower-privilege script, template, macro, plugin, or API callers that can invoke privileged server-side capabilities into server-side include, template rendering, servlet dispatch, raw object access, internal file reads, or privileged framework APIs. Report code paths where a higher privilege check is not enforced at the API entry point before exposing the server-side capability. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 4 historical CVE example(s), not as a project-specific signature. A safe implementation should check the required higher privilege at the exposed API boundary and return no sensitive result when the caller lacks that privilege.",
+  "mechanism": {
+    "aliases": [
+      "missing programming rights check",
+      "privileged API exposure",
+      "server-side include capability exposure",
+      "lower privilege script capability"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_privileged_server_side_capability_exposed",
+    "missing_guard": "a higher privilege check is not enforced at the API entry point before exposing the server-side capability",
+    "name": "privileged server-side capability exposed to lower privilege context",
+    "sink_shape": "server-side include, template rendering, servlet dispatch, raw object access, internal file reads, or privileged framework APIs",
+    "source_shape": "lower-privilege script, template, macro, plugin, or API callers that can invoke privileged server-side capabilities",
+    "typical_fix": "check the required higher privilege at the exposed API boundary and return no sensitive result when the caller lacks that privilege"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2023-29213",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    31
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 31,
+      "fix_strategy": "Apply escapetool.xml() or equivalent HTML/XML escaping function to all dynamic values before embedding in HTML.",
+      "members": [
+        "CVE-2023-29213"
+      ],
+      "name": "Missing HTML/XML escaping in template output",
+      "root_cause": "User-controlled values are interpolated into HTML attributes or text nodes without applying HTML entity encoding, allowing injection of arbitrary HTML/JavaScript."
+    },
+    {
+      "cluster_id": 31,
+      "fix_strategy": "Use $services.rendering.escape(value, 'xwiki/2.1') to escape the value for the wiki syntax context before interpolation.",
+      "members": [
+        "CVE-2024-55662"
+      ],
+      "name": "Missing wiki syntax escaping in template output",
+      "root_cause": "User-controlled values are interpolated into XWiki wiki syntax markup without escaping special characters that denote macros or directives, enabling server-side template injection."
+    },
+    {
+      "cluster_id": 31,
+      "fix_strategy": "Set Content-Type to text/plain for non-HTML output; remove form-related tags from sanitizer allowlist.",
+      "members": [
+        "CVE-2023-34464"
+      ],
+      "name": "Missing Content-Type header or improper sanitizer allowlist",
+      "root_cause": "Non-HTML output is served with default text/html Content-Type, or the HTML sanitizer allows form tags that enable Groovy injection."
+    },
+    {
+      "cluster_id": 31,
+      "fix_strategy": "Use a helper that unwraps and applies HTML escaping.",
+      "members": [
+        "CVE-2023-40176"
+      ],
+      "name": "Unsafe stripping of safe HTML wrapper",
+      "root_cause": "Code removes the {{html}} wrapper that provides escaping, then outputs the unwrapped content without re-escaping."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_privileged_server_side_capability_exposed",
+    "missing programming rights check",
+    "privileged API exposure",
+    "server-side include capability exposure",
+    "lower privilege script capability"
+  ]
+}

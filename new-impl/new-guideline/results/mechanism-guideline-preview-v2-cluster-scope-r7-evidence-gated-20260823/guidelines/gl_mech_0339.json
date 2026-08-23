@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "This cluster consists of vulnerabilities where network protocol code either fails to validate size/length fields from external input, leading to buffer overflows or unbounded allocation, or mismanages resource cleanup and lifecycle, causing leaks or accounting imbalances, or handles errors in a way that leads to resource abuse or security bypass.",
+  "created_at": "2026-08-22T20:37:29+00:00",
+  "cve_ids": [
+    "CVE-2022-39368",
+    "CVE-2026-42577"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0062__mech_state_precondition_missing_before_effect",
+  "guideline_id": "gl_mech_0339",
+  "guideline_text": "Trace requests or events that select an operation, workflow step, account, resource, or state transition into sensitive state changes, billing effects, entitlement changes, resource consumption, or workflow transitions. Report code paths where the required lifecycle state, quota, ownership state, or operation ordering is not enforced before the effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should validate the required state immediately before the effect and make the check and mutation atomic when needed.",
+  "mechanism": {
+    "aliases": [
+      "business state precondition",
+      "state transition guard",
+      "lifecycle check",
+      "quota check"
+    ],
+    "family": "business_logic",
+    "mechanism_id": "mech_state_precondition_missing_before_effect",
+    "missing_guard": "the required lifecycle state, quota, ownership state, or operation ordering is not enforced before the effect",
+    "name": "missing business-state precondition before sensitive effect",
+    "required_keywords": [],
+    "sink_shape": "sensitive state changes, billing effects, entitlement changes, resource consumption, or workflow transitions",
+    "source_shape": "requests or events that select an operation, workflow step, account, resource, or state transition",
+    "typical_fix": "validate the required state immediately before the effect and make the check and mutation atomic when needed"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2022-39368",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    62
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 62,
+      "fix_strategy": "Ensure proper cleanup on all exit paths, add finalize() methods, deregister when interest becomes zero, and execute pending jobs before removal to trigger correct accounting.",
+      "members": [
+        "CVE-2022-39368",
+        "CVE-2026-42577"
+      ],
+      "name": "Resource lifecycle mismanagement causing leaks or accounting errors",
+      "root_cause": "Cleanup or deallocation of resources (native memory, file descriptors, counters) is not performed on all code paths, such as missing finalizers, missing deregistration of epoll fds, or missing counter restoration when jobs are discarded."
+    }
+  ],
+  "tags": [
+    "business_logic",
+    "mech_state_precondition_missing_before_effect",
+    "business state precondition",
+    "state transition guard",
+    "lifecycle check",
+    "quota check"
+  ]
+}

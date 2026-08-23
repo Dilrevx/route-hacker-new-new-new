@@ -1,0 +1,84 @@
+{
+  "cluster_summary": "A wide range of cross-site scripting (XSS) vulnerabilities caused by failing to neutralize user-supplied data—either through HTML entity encoding, input sanitization, or input validation—before it is embedded in web pages. The cluster includes reflected, stored, and JSONP-based XSS, with fixes ranging from global input filters to per-field encoding and strict allowlist validation.",
+  "created_at": "2026-08-22T18:31:03+00:00",
+  "cve_ids": [
+    "CVE-2014-1904",
+    "CVE-2020-15231",
+    "CVE-2021-33562",
+    "CVE-2026-10514"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0025__mech_ssrf_webhook_url_fetch",
+  "guideline_id": "gl_mech_0143",
+  "guideline_text": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 4 historical CVE example(s), not as a project-specific signature. A safe implementation should enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets.",
+  "mechanism": {
+    "aliases": [
+      "webhook SSRF",
+      "callback URL fetch",
+      "user controlled URL fetch",
+      "outbound HTTP client SSRF"
+    ],
+    "family": "ssrf",
+    "mechanism_id": "mech_ssrf_webhook_url_fetch",
+    "missing_guard": "scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request",
+    "name": "attacker-controlled webhook or callback URL fetch",
+    "sink_shape": "outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers",
+    "source_shape": "attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations",
+    "typical_fix": "enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2014-1904",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    25
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 25,
+      "fix_strategy": "Introduce a global servlet filter and AOP aspect that sanitize all request parameters using Jsoup.clean (or equivalent) before they reach any controller.",
+      "members": [
+        "CVE-2021-33562"
+      ],
+      "name": "missing input sanitization via global servlet filter",
+      "root_cause": "Ad-hoc, inconsistent sanitization in individual controllers; developers forgot to call sanitization functions, leaving endpoints unprotected."
+    },
+    {
+      "cluster_id": 25,
+      "fix_strategy": "Replace the global toggle with a URL pattern allowlist that conditionally applies HtmlUtils.htmlEscape only for specific endpoints.",
+      "members": [
+        "CVE-2026-10514"
+      ],
+      "name": "missing HTML escaping during JSON deserialization with URL pattern allowlist",
+      "root_cause": "Reliance on a global opt-in flag (off by default) to enable HTML escaping during JSON deserialization, leading to unescaped strings when the flag is not enabled."
+    },
+    {
+      "cluster_id": 25,
+      "fix_strategy": "Remove JSONP support entirely by deleting the callback parameter and related functionality.",
+      "members": [
+        "CVE-2020-15231"
+      ],
+      "name": "JSONP callback injection",
+      "root_cause": "User-controlled callback parameter reflected directly in JavaScript function wrapper without sanitization, enabling script injection."
+    },
+    {
+      "cluster_id": 25,
+      "fix_strategy": "Encode the request URI path using UriUtils.encodePath before embedding it in the HTML attribute.",
+      "members": [
+        "CVE-2014-1904"
+      ],
+      "name": "missing URI encoding in HTML attribute",
+      "root_cause": "Request URI used directly as HTML form action attribute without URL encoding, allowing injection via malicious characters."
+    }
+  ],
+  "tags": [
+    "ssrf",
+    "mech_ssrf_webhook_url_fetch",
+    "webhook SSRF",
+    "callback URL fetch",
+    "user controlled URL fetch",
+    "outbound HTTP client SSRF"
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "cluster_summary": "These vulnerabilities result from failing to apply proper output encoding when embedding user-controlled data into web content (HTML, XML, JavaScript). The code assumes data is safe and concatenates it directly into output strings, allowing injection of arbitrary markup or script. The fix requires applying context-appropriate escaping (HTML entity, XML entity, or JavaScript string escaping) depending on the output context.",
+  "created_at": "2026-08-22T20:04:51+00:00",
+  "cve_ids": [
+    "CVE-2024-23818"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0047__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0246",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "required_keywords": [],
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2024-23818",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    47
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 47,
+      "fix_strategy": "Set FreeMarker template configuration to use HTMLOutputFormat globally, wrap script blocks with <#outputformat \"JavaScript\">, and apply ?js_string built-in to all string variables in JavaScript contexts.",
+      "members": [
+        "CVE-2024-23818"
+      ],
+      "name": "Missing JavaScript context escaping in FreeMarker templates",
+      "root_cause": "FreeMarker templates generate JavaScript code for OpenLayers maps without applying JavaScript-specific escaping (e.g., ?js_string) to user-controlled values, assuming default escaping is sufficient."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

@@ -1,0 +1,18 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.9,
+  "coverage_score": 0.75,
+  "actionability_score": 0.85,
+  "retrieval_query_quality": 0.8,
+  "main_issue": "Narrow, well-defined mechanism with strong evidence from two independent projects. The source-sink-guard-fix chain is complete and consistent across both cases. Slightly small case count (2) but evidence quality is high with concrete commit hashes and line-level changes.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "nimble-platform__common::CVE-2021-32631: commit 12197a75 changes Jwts.parser().setSigningKey(...).parse(...).getBody() to parseJws(...).getBody() on the authentication token path",
+    "manydesigns__portofino::CVE-2021-29451: commit 8c754a0 changes Jwts.parser().setSigningKey(key).parse(...) to parseClaimsJws(...) in JWTRealm.java, and a parallel change in AbstractPortofinoRealm.java replaces generic parse with parseClaimsJws on the same authentication path",
+    "Both patches independently converge on the same fix pattern: replace generic JJWT parse with a signed-JWS parse variant on authentication/authorization code paths",
+    "Reviewer notes correctly scope this mechanism away from JOSE header-supplied key trust and OIDC none-algorithm acceptance, which have different source APIs, trust decisions, and fixes"
+  ]
+}
+```

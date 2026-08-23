@@ -1,0 +1,21 @@
+guideline_id	mechanism_id	decision	coherence_score	coverage_score	actionability_score	retrieval_query_quality	min_score	low_score	parse_error	main_issue
+gl_mech_0006	mech_temp_file_delete_mkdir_race	missing							missing_output	
+gl_mech_0007	pending_mech_cluster_1_insecure_default_permissions_on_temporary_files_created_with_file_crea	missing							missing_output	
+gl_mech_0008	mech_path_traversal_missing_canonical_prefix	missing							missing_output	
+gl_mech_0009	mech_bean_property_reflection_escape	missing							missing_output	
+gl_mech_0010	mech_object_owner_scope_missing_authz	missing							missing_output	
+gl_mech_0012	pending_mech_cluster_3_unsanitized_input_in_dynamically_generated_code	missing							missing_output	
+gl_mech_0014	mech_path_traversal_missing_canonical_prefix	missing							missing_output	
+gl_mech_0018	pending_mech_cluster_4_missing_allow_list_for_inline_content_disposition_leading_to_xss	missing							missing_output	
+gl_mech_0047	mech_deserialization_untrusted_type_graph	missing							missing_output	
+gl_mech_0050	mech_jndi_untrusted_lookup_target	missing							missing_output	
+gl_mech_0068	pending_mech_cluster_13_direct_string_concatenation_into_sql_query	missing							missing_output	
+gl_mech_0073	pending_mech_cluster_14_sql_injection_mitigated_by_input_escaping	missing							missing_output	
+gl_mech_0075	mech_jndi_untrusted_lookup_target	missing							missing_output	
+gl_mech_0082	mech_privileged_server_side_capability_exposed	missing							missing_output	
+gl_mech_0084	pending_mech_cluster_16_incomplete_dom_node_handling_in_sanitization	missing							missing_output	
+gl_mech_0087	pending_mech_cluster_16_missing_context_dependent_output_encoding	missing							missing_output	
+gl_mech_0118	mech_toctou_mutable_object_reuse	missing							missing_output	
+gl_mech_0129	mech_missing_authentication_before_privileged_action	missing							missing_output	
+gl_mech_0132	pending_mech_cluster_23_missing_cryptographic_token_verification	missing							missing_output	
+gl_mech_0001	mech_deserialization_untrusted_type_graph	revise	0.5800	0.0800	0.1000	0.0500	0.0500	True		The supplied guideline describes general object deserialization with attacker-controlled type graphs, but the evidenced cases primarily concern unsafe XML parser configuration that permits DTD/external-entity processing (XXE). The source shape, sensitive behavior, required guard, and safe fixes are materially different.

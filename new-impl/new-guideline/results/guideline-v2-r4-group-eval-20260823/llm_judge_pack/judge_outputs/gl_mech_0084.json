@@ -1,0 +1,16 @@
+{
+  "decision": "revise",
+  "coherence_score": 0.94,
+  "coverage_score": 0.9,
+  "actionability_score": 0.91,
+  "retrieval_query_quality": 0.32,
+  "main_issue": "The two cases share one coherent sanitizer-bypass mechanism, but the guideline is dominated by generic validation/authorization language and does not precisely describe the multi-child DOM sanitization invariant or the cleanup failure.",
+  "suggested_guideline": "When sanitizing a DOM element whose content may be split across multiple child nodes, process the complete effective content rather than only the first child. After producing sanitized output, replace the original child content atomically or remove every original child safely, accounting for live NodeList mutation (for example, remove in descending order or rebuild the element). Report paths where unscanned or stale sibling child nodes can remain in the output and carry attacker-controlled HTML, CSS, or script-relevant content past the sanitizer.",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "CVE-2022-28367: processStyleTag scanned and rewrote only getFirstChild(), leaving later STYLE child nodes outside the CSS sanitization input and output replacement.",
+    "CVE-2022-29577: the partial fix aggregated children for scanning, but wrote sanitized CSS only to the first child; safety still depended on correctly removing all remaining original children.",
+    "Both examples have the same source shape (multi-child STYLE element), missing guard (complete child coverage and cleanup), exploit precondition (attacker-controlled content in later child nodes), and safe fix (scan aggregate content and reliably eliminate original sibling nodes).",
+    "The current query language about resource identity, authorization, isolation, and state binding is unrelated noise that would retrieve many non-DOM mechanisms."
+  ]
+}

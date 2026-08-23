@@ -1,0 +1,225 @@
+{
+  "cluster_summary": "This cluster contains 40 CVEs primarily related to Server-Side Request Forgery (SSRF) due to missing or incomplete validation of user-supplied URLs before making outbound HTTP requests. It also includes issues with TLS certificate validation, credential exposure, authorization context confusion, regular expression denial of service, and concurrency race conditions. The common thread is inadequate security checks in network-facing operations.",
+  "created_at": "2026-08-22T20:04:52+00:00",
+  "cve_ids": [
+    "CVE-2020-26234",
+    "CVE-2022-1711",
+    "CVE-2022-1713",
+    "CVE-2022-1722",
+    "CVE-2023-33176",
+    "CVE-2023-37262",
+    "CVE-2024-42467",
+    "CVE-2025-66033",
+    "CVE-2025-7759",
+    "CVE-2026-10661",
+    "CVE-2026-10662",
+    "CVE-2026-22664",
+    "CVE-2026-2393",
+    "CVE-2026-25545",
+    "CVE-2026-27829",
+    "CVE-2026-28451",
+    "CVE-2026-28476",
+    "CVE-2026-28677",
+    "CVE-2026-30844",
+    "CVE-2026-31818",
+    "CVE-2026-32019",
+    "CVE-2026-32236",
+    "CVE-2026-32255",
+    "CVE-2026-32982",
+    "CVE-2026-33626",
+    "CVE-2026-33992",
+    "CVE-2026-34244",
+    "CVE-2026-34504",
+    "CVE-2026-34590",
+    "CVE-2026-35187",
+    "CVE-2026-35459",
+    "CVE-2026-35587",
+    "CVE-2026-35629",
+    "CVE-2026-3788",
+    "CVE-2026-39921",
+    "CVE-2026-39974",
+    "CVE-2026-40168",
+    "CVE-2026-40346",
+    "CVE-2026-40516",
+    "CVE-2026-41302",
+    "CVE-2026-42175",
+    "CVE-2026-42264",
+    "CVE-2026-42352",
+    "CVE-2026-42449",
+    "CVE-2026-42858",
+    "CVE-2026-43526",
+    "CVE-2026-43897",
+    "CVE-2026-43993",
+    "CVE-2026-44116",
+    "CVE-2026-44284",
+    "CVE-2026-44502",
+    "CVE-2026-44694",
+    "CVE-2026-44797",
+    "CVE-2026-48710",
+    "CVE-2026-49120",
+    "CVE-2026-49139",
+    "CVE-2026-6141",
+    "CVE-2026-9813"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0070__mech_ssrf_webhook_url_fetch",
+  "guideline_id": "gl_mech_0362",
+  "guideline_text": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 58 historical CVE example(s), not as a project-specific signature. A safe implementation should enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets.",
+  "mechanism": {
+    "aliases": [
+      "webhook SSRF",
+      "callback URL fetch",
+      "user controlled URL fetch",
+      "outbound HTTP client SSRF"
+    ],
+    "family": "ssrf",
+    "mechanism_id": "mech_ssrf_webhook_url_fetch",
+    "missing_guard": "scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request",
+    "name": "attacker-controlled webhook or callback URL fetch",
+    "required_keywords": [],
+    "sink_shape": "outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers",
+    "source_shape": "attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations",
+    "typical_fix": "enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2020-26234",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    70
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 70,
+      "fix_strategy": "Add a validation function that checks the URL scheme (allow only http/https), resolves the hostname to IP addresses, and rejects requests to private, loopback, link-local, or cloud metadata IP ranges. Optionally require a domain allowlist.",
+      "members": [
+        "CVE-2023-33176",
+        "CVE-2025-7759",
+        "CVE-2026-10662",
+        "CVE-2026-22664",
+        "CVE-2026-2393",
+        "CVE-2026-27829",
+        "CVE-2026-28451"
+      ],
+      "name": "Missing URL host and IP validation before outbound HTTP requests",
+      "root_cause": "The code assumes user-supplied URLs are safe and performs no validation of the hostname, IP address, or scheme before making outbound HTTP requests. There is no allowlist of allowed hosts or blocklist of private/internal IP ranges."
+    },
+    {
+      "cluster_id": 70,
+      "fix_strategy": "Extend the IP blocklist to include all private ranges, loopback, link-local, multicast, unique local addresses, and known cloud metadata IPs. Ensure hostnames are resolved to IP addresses before validation.",
+      "members": [
+        "CVE-2022-1711",
+        "CVE-2022-1722",
+        "CVE-2022-1713",
+        "CVE-2023-37262"
+      ],
+      "name": "Incomplete private IP address blocklist in SSRF validation",
+      "root_cause": "Existing validation checks are incomplete, missing specific private/reserved IP ranges such as link-local (169.254.0.0/16), IPv6 link-local (fe80::/10), cloud metadata IPs (e.g., 169.254.169.254), or failing to resolve hostnames to IPs before checking. This allows bypassing the intended restrictions."
+    },
+    {
+      "cluster_id": 70,
+      "fix_strategy": "Set redirect mode to 'manual' and manually follow each redirect only after re-validating the new URL against the same security checks. Enforce a maximum number of redirects.",
+      "members": [
+        "CVE-2026-25545"
+      ],
+      "name": "Unvalidated HTTP redirect following in URL fetching",
+      "root_cause": "The code automatically follows HTTP redirects after an initial URL passes validation, without re-validating the redirect target against allowlists or private IP blocklists. This allows an attacker to redirect the server to an internal host."
+    },
+    {
+      "cluster_id": 70,
+      "fix_strategy": "Remove the dangerous proxy endpoints or add authentication and restrict allowed targets via an allowlist.",
+      "members": [
+        "CVE-2024-42467"
+      ],
+      "name": "Unauthenticated proxy endpoints without URL validation",
+      "root_cause": "The application exposes generic proxy endpoints (e.g., wildcard mappings) that forward user-supplied URLs to HTTP clients without any authentication or host validation, enabling arbitrary SSRF."
+    },
+    {
+      "cluster_id": 70,
+      "fix_strategy": "Remove custom trust-all configurations and rely on default SSL context with proper certificate validation. For HTTP-to-HTTPS migration, use HTTPS URLs and proper SSL initialization. Add an explicit insecure flag if trust-all is needed.",
+      "members": [
+        "CVE-2020-26234"
+      ],
+      "name": "Disabled or missing TLS certificate validation",
+      "root_cause": "The application either uses a custom TrustManager that trusts all certificates, a HostnameVerifier that accepts all hostnames, or falls back to plain HTTP when HTTPS should be enforced. This disables encryption and server authentication."
+    },
+    {
+      "cluster_id": 70,
+      "fix_strategy": "Introduce immutable per-request response objects and lazy iterators that isolate pagination state to each thread.",
+      "members": [
+        "CVE-2025-66033"
+      ],
+      "name": "Shared mutable pagination state leading to thread leaks",
+      "root_cause": "The HTTP client stores pagination state (e.g., next page URL) in a mutable field shared across threads without synchronization. Concurrent threads overwrite each other's state, preventing proper cleanup and causing resource leaks."
+    },
+    {
+      "cluster_id": 70,
+      "fix_strategy": "For local paths, validate file extension against an allowlist and resolve symlinks using os.path.realpath. For URLs, resolve hostname to IP and reject if private/loopback/link-local.",
+      "members": [
+        "CVE-2026-10661"
+      ],
+      "name": "Unsanitized user input used as file path or URL for fetch operations",
+      "root_cause": "The code assumes user-supplied strings can be either local file paths or URLs without validating file extensions, resolving symlinks, or checking that resolved IPs are public. This allows arbitrary file reads and SSRF."
+    },
+    {
+      "cluster_id": 70,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2026-28476",
+        "CVE-2026-28677",
+        "CVE-2026-30844",
+        "CVE-2026-31818",
+        "CVE-2026-32019",
+        "CVE-2026-32236",
+        "CVE-2026-32255",
+        "CVE-2026-32982",
+        "CVE-2026-33626",
+        "CVE-2026-33992",
+        "CVE-2026-34244",
+        "CVE-2026-34504",
+        "CVE-2026-34590",
+        "CVE-2026-35187",
+        "CVE-2026-35459",
+        "CVE-2026-35587",
+        "CVE-2026-35629",
+        "CVE-2026-3788",
+        "CVE-2026-39921",
+        "CVE-2026-39974",
+        "CVE-2026-40168",
+        "CVE-2026-40346",
+        "CVE-2026-40516",
+        "CVE-2026-41302",
+        "CVE-2026-42175",
+        "CVE-2026-42264",
+        "CVE-2026-42352",
+        "CVE-2026-42449",
+        "CVE-2026-42858",
+        "CVE-2026-43526",
+        "CVE-2026-43897",
+        "CVE-2026-43993",
+        "CVE-2026-44116",
+        "CVE-2026-44284",
+        "CVE-2026-44502",
+        "CVE-2026-44694",
+        "CVE-2026-44797",
+        "CVE-2026-48710",
+        "CVE-2026-49120",
+        "CVE-2026-49139",
+        "CVE-2026-6141",
+        "CVE-2026-9813"
+      ],
+      "name": "Missing pre-request validation and secure configuration in network operations",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "ssrf",
+    "mech_ssrf_webhook_url_fetch",
+    "webhook SSRF",
+    "callback URL fetch",
+    "user controlled URL fetch",
+    "outbound HTTP client SSRF"
+  ]
+}

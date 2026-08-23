@@ -1,0 +1,60 @@
+{
+  "cluster_summary": "This cluster contains 12 cryptographic vulnerabilities covering several distinct coding errors: non-constant-time comparisons that enable timing oracles, use of weak hash algorithms (SHA-1) for digital signatures, insufficient validation of DER-encoded signature structure, missing checks for empty signature sets, missing public key commitment verification, signature verification over wrong payload, acceptance of short key identifiers, and lack of DH subgroup validation. Each vulnerability allows an attacker to bypass cryptographic security guarantees.",
+  "created_at": "2026-08-20T19:54:08+00:00",
+  "cve_ids": [
+    "CVE-2019-16370",
+    "CVE-2022-29161",
+    "CVE-2025-27508"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0026__pending_mech_cluster_26_weak_cryptographic_hash_algorithm_used_for_digital_signatures",
+  "guideline_id": "gl_mech_0121",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should Replace SHA-1 with a strong hash (SHA-256 or SHA-512) or restrict algorithm selection and document non-cryptographic usage..",
+  "mechanism": {
+    "aliases": [
+      "weak",
+      "purposes",
+      "potential",
+      "insufficient",
+      "identifier",
+      "distinguished"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_26_weak_cryptographic_hash_algorithm_used_for_digital_signatures",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Weak cryptographic hash algorithm used for digital signatures",
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Replace SHA-1 with a strong hash (SHA-256 or SHA-512) or restrict algorithm selection and document non-cryptographic usage."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2019-16370",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    26
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 26,
+      "fix_strategy": "Replace SHA-1 with a strong hash (SHA-256 or SHA-512) or restrict algorithm selection and document non-cryptographic usage.",
+      "members": [
+        "CVE-2022-29161",
+        "CVE-2025-27508",
+        "CVE-2019-16370"
+      ],
+      "name": "Weak cryptographic hash algorithm used for digital signatures",
+      "root_cause": "Code hard-codes or defaults to SHA-1 (or other broken algorithm) for signing, making signatures susceptible to collision attacks."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_26_weak_cryptographic_hash_algorithm_used_for_digital_signatures",
+    "weak",
+    "purposes",
+    "potential",
+    "insufficient"
+  ]
+}

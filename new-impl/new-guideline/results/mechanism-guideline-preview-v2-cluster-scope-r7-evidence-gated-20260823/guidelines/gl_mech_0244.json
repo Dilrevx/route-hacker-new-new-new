@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "A cluster of vulnerabilities in error page generation where user-controlled input is embedded without escaping (leading to XSS), exception stack traces are exposed (information disclosure), and an unbounded cache keyed by error messages leads to denial of service.",
+  "created_at": "2026-08-22T20:37:29+00:00",
+  "cve_ids": [
+    "CVE-2026-33012"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0043__pending_mech_cluster_43_unbounded_error_page_cache_leading_to_denial_of_service",
+  "guideline_id": "gl_mech_0244",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Replace the unbounded ConcurrentHashMap with a bounded cache (e.g., ConcurrentLinkedHashMap with maximumWeightedCapacity) to limit memory consumption..",
+  "mechanism": {
+    "aliases": [
+      "includes",
+      "consumption",
+      "error",
+      "attacker",
+      "allocation",
+      "entries"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_43_unbounded_error_page_cache_leading_to_denial_of_service",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Unbounded error-page cache leading to denial of service",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Replace the unbounded ConcurrentHashMap with a bounded cache (e.g., ConcurrentLinkedHashMap with maximumWeightedCapacity) to limit memory consumption."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-33012",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    43
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 43,
+      "fix_strategy": "Replace the unbounded ConcurrentHashMap with a bounded cache (e.g., ConcurrentLinkedHashMap with maximumWeightedCapacity) to limit memory consumption.",
+      "members": [
+        "CVE-2026-33012"
+      ],
+      "name": "Unbounded error-page cache leading to denial of service",
+      "root_cause": "The cache uses a ConcurrentHashMap without any eviction policy, and the cache key includes attacker-controlled error message fields, allowing uncontrolled memory allocation and eventual OutOfMemoryError."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_43_unbounded_error_page_cache_leading_to_denial_of_service",
+    "includes",
+    "consumption",
+    "error",
+    "attacker"
+  ]
+}

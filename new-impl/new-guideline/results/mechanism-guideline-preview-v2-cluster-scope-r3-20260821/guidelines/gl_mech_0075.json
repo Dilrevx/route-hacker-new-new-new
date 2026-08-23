@@ -1,0 +1,67 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities stemming from improper handling of user-controllable data in LDAP operations, including missing or incorrect escaping in LDAP filter construction, unbounded recursion during alias dereferencing, credential disclosure in logs, and cross-site scripting via LDAP attribute values. Two outliers involve unrelated SQL injection and database validation bypass.",
+  "created_at": "2026-08-21T10:07:21+00:00",
+  "cve_ids": [
+    "CVE-2021-32651",
+    "CVE-2021-39196",
+    "CVE-2022-24832"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0015__mech_jndi_untrusted_lookup_target",
+  "guideline_id": "gl_mech_0075",
+  "guideline_text": "Trace attacker-controlled names, URLs, headers, configuration values, or lookup keys into JNDI, LDAP, RMI, naming-context, or remote lookup APIs. Report code paths where the lookup scheme, authority, object factory, object type, and network destination are not constrained before lookup. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should bind lookup inputs to trusted constants or allowlists, restrict schemes and destinations, and disable remote object factories.",
+  "mechanism": {
+    "aliases": [
+      "JNDI lookup",
+      "LDAP lookup",
+      "RMI lookup",
+      "InitialContext.lookup",
+      "naming context lookup"
+    ],
+    "family": "remote_lookup_or_ssrf",
+    "mechanism_id": "mech_jndi_untrusted_lookup_target",
+    "missing_guard": "the lookup scheme, authority, object factory, object type, and network destination are not constrained before lookup",
+    "name": "attacker-controlled JNDI lookup target",
+    "sink_shape": "JNDI, LDAP, RMI, naming-context, or remote lookup APIs",
+    "source_shape": "attacker-controlled names, URLs, headers, configuration values, or lookup keys",
+    "typical_fix": "bind lookup inputs to trusted constants or allowlists, restrict schemes and destinations, and disable remote object factories"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2021-32651",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    15
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 15,
+      "fix_strategy": "Use a dedicated LDAP filter encoding function (RFC 2254 / RFC 4515) to escape all metacharacters before interpolation.",
+      "members": [
+        "CVE-2022-24832",
+        "CVE-2021-32651"
+      ],
+      "name": "Missing or improper LDAP filter escaping",
+      "root_cause": "User-controlled input is inserted into LDAP search filter strings without proper escaping of special characters, or with incorrect encoding (e.g., DN encoding instead of filter encoding), or with incomplete escape tables that fail to cover all metacharacters."
+    },
+    {
+      "cluster_id": 15,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2021-39196"
+      ],
+      "name": "Inadequate input sanitization and output handling in LDAP-related code",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "remote_lookup_or_ssrf",
+    "mech_jndi_untrusted_lookup_target",
+    "JNDI lookup",
+    "LDAP lookup",
+    "RMI lookup",
+    "InitialContext.lookup"
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "cluster_summary": "This cluster comprises vulnerabilities in Jenkins where authorization checks are missing or incorrectly scoped, authorization logic is bypassed due to flawed assumptions, sensitive data is exposed through serialization of full user objects, and CSRF protection is missing on GET endpoints. These issues allow unauthorized access to sensitive information and state-changing actions.",
+  "created_at": "2026-08-22T20:04:49+00:00",
+  "cve_ids": [
+    "CVE-2024-3825"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0017__mech_missing_authentication_before_privileged_action",
+  "guideline_id": "gl_mech_0060",
+  "guideline_text": "Trace externally reachable requests, RPC messages, management calls, or background command triggers into privileged commands, administrative state changes, credential operations, or protected data access. Report code paths where caller identity is not established before the privileged action begins. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should require a validated session, principal, token, or authentication filter before any privileged effect.",
+  "mechanism": {
+    "aliases": [
+      "missing authentication",
+      "unauthenticated privileged action",
+      "missing login check"
+    ],
+    "family": "authentication",
+    "mechanism_id": "mech_missing_authentication_before_privileged_action",
+    "missing_guard": "caller identity is not established before the privileged action begins",
+    "name": "missing authentication before privileged action",
+    "required_keywords": [],
+    "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+    "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+    "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2024-3825",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    17
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 17,
+      "fix_strategy": "Add @RequirePOST annotation or otherwise enforce POST-only access and CSRF protection.",
+      "members": [
+        "CVE-2024-3825"
+      ],
+      "name": "Missing CSRF protection on GET endpoints",
+      "root_cause": "State-changing or sensitive data enumeration endpoints accept GET requests without CSRF token validation."
+    }
+  ],
+  "tags": [
+    "authentication",
+    "mech_missing_authentication_before_privileged_action",
+    "missing authentication",
+    "unauthenticated privileged action",
+    "missing login check"
+  ]
+}

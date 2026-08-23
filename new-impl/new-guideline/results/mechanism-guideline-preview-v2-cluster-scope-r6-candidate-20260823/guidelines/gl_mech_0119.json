@@ -1,0 +1,132 @@
+{
+  "cluster_summary": "This cluster covers vulnerabilities where user-supplied data is used to construct database connection URLs, load classes, or configure resources without adequate validation, allowing attackers to inject dangerous parameters, load arbitrary classes, or trigger deserialization and SSRF. The fixes involve adding blacklists, encoding, type checks, or prefix validation.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2022-21724",
+    "CVE-2023-41886",
+    "CVE-2023-41887",
+    "CVE-2024-10553",
+    "CVE-2024-23328",
+    "CVE-2024-23833",
+    "CVE-2024-55952",
+    "CVE-2024-55953",
+    "CVE-2025-48999",
+    "CVE-2025-5662",
+    "CVE-2025-58748",
+    "CVE-2025-62420",
+    "CVE-2025-6544",
+    "CVE-2026-32939",
+    "CVE-2026-3960"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0027__mech_sql_dynamic_query_untrusted_fragment",
+  "guideline_id": "gl_mech_0119",
+  "guideline_text": "Trace attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values into SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters. Report code paths where values or structural fragments are concatenated into SQL syntax without parameter binding or a strict allowlist for identifiers and operators. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 15 historical CVE example(s), not as a project-specific signature. A safe implementation should use bound parameters for values, allowlist structural SQL fragments, and keep untrusted data out of query syntax.",
+  "mechanism": {
+    "aliases": [
+      "SQL injection",
+      "SQL concatenation",
+      "dynamic SQL injection",
+      "untrusted query fragment"
+    ],
+    "family": "sql_injection",
+    "mechanism_id": "mech_sql_dynamic_query_untrusted_fragment",
+    "missing_guard": "values or structural fragments are concatenated into SQL syntax without parameter binding or a strict allowlist for identifiers and operators",
+    "name": "dynamic SQL query construction from untrusted fragments",
+    "required_keywords": [
+      [
+        "sql",
+        "jdbc",
+        "statement",
+        "preparedstatement",
+        "query"
+      ],
+      [
+        "concatenate",
+        "concat",
+        "interpolation",
+        "fragment",
+        "parameter",
+        "where",
+        "order by"
+      ]
+    ],
+    "sink_shape": "SQL statement strings, JDBC Statement execution, query builders with raw fragments, or database filters",
+    "source_shape": "attacker-controlled request values, filters, identifiers, sort fields, expressions, or configuration values",
+    "typical_fix": "use bound parameters for values, allowlist structural SQL fragments, and keep untrusted data out of query syntax"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2022-21724",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    27
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 27,
+      "fix_strategy": "Add type checking (e.g., Class.asSubclass()) or verify JAR contents before loading the class.",
+      "members": [
+        "CVE-2022-21724"
+      ],
+      "name": "Unvalidated class instantiation",
+      "root_cause": "The code assumes user-supplied class names or JAR files are safe and does not verify that the class implements the expected interface or that the JAR contains the declared class, allowing arbitrary class loading."
+    },
+    {
+      "cluster_id": 27,
+      "fix_strategy": "Add a blocklist check for dangerous parameters (e.g., autoDeserialize, socketFactory) or use URI encoding to prevent injection.",
+      "members": [
+        "CVE-2023-41886",
+        "CVE-2023-41887",
+        "CVE-2024-10553",
+        "CVE-2024-23833",
+        "CVE-2024-55952",
+        "CVE-2024-55953",
+        "CVE-2025-48999"
+      ],
+      "name": "Basic JDBC URL parameter injection",
+      "root_cause": "User-supplied data (host, port, database name, extra parameters) is concatenated directly into a JDBC URL without any validation or encoding, allowing injection of arbitrary connection parameters."
+    },
+    {
+      "cluster_id": 27,
+      "fix_strategy": "Improve regex to match all parameter patterns, iteratively decode URL, or use safe glob-to-regex conversion.",
+      "members": [
+        "CVE-2024-23328",
+        "CVE-2025-5662",
+        "CVE-2025-6544"
+      ],
+      "name": "Bypass of JDBC parameter validation via insufficient decoding or regex",
+      "root_cause": "Existing validation (blacklist) can be bypassed by URL-encoding, double-encoding, or inadequate regex that fails to capture all parameter syntax variants."
+    },
+    {
+      "cluster_id": 27,
+      "fix_strategy": "Add the missing entries to the blacklist after thorough review of all drivers and protocols.",
+      "members": [
+        "CVE-2026-32939",
+        "CVE-2026-3960"
+      ],
+      "name": "Incomplete blacklist of JDBC parameters/protocols",
+      "root_cause": "A blacklist exists but is incomplete, omitting certain dangerous parameters or protocol prefixes (e.g., IniFile, dns, file, ftp, postgres-specific params)."
+    },
+    {
+      "cluster_id": 27,
+      "fix_strategy": "Add a prefix check on the actual JDBC URL string before use, ensuring it matches the expected driver.",
+      "members": [
+        "CVE-2025-58748",
+        "CVE-2025-62420"
+      ],
+      "name": "Missing JDBC URL scheme/prefix validation",
+      "root_cause": "The code does not verify that the JDBC URL starts with the expected prefix (e.g., 'jdbc:h2') or validates the wrong field, allowing use of arbitrary driver URLs."
+    }
+  ],
+  "tags": [
+    "sql_injection",
+    "mech_sql_dynamic_query_untrusted_fragment",
+    "SQL injection",
+    "SQL concatenation",
+    "dynamic SQL injection",
+    "untrusted query fragment"
+  ]
+}

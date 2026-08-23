@@ -1,0 +1,81 @@
+{
+  "cluster_summary": "This cluster includes vulnerabilities where applications fail to enforce upper bounds on the size, count, or complexity of external input before performing memory or disk allocation, leading to resource exhaustion. The missing limits occur in various contexts: HTTP request/response body buffering, delimiter-split operations, numeric parameter validation, disk storage (cache, logs, downloads), type validation, size estimation, and parsing complexity.",
+  "created_at": "2026-08-22T20:04:50+00:00",
+  "cve_ids": [
+    "CVE-2025-13836",
+    "CVE-2026-27980",
+    "CVE-2026-32049",
+    "CVE-2026-3449",
+    "CVE-2026-35633",
+    "CVE-2026-53781"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0042__mech_ssrf_webhook_url_fetch",
+  "guideline_id": "gl_mech_0214",
+  "guideline_text": "Trace attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations into outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers. Report code paths where scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 6 historical CVE example(s), not as a project-specific signature. A safe implementation should enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets.",
+  "mechanism": {
+    "aliases": [
+      "webhook SSRF",
+      "callback URL fetch",
+      "user controlled URL fetch",
+      "outbound HTTP client SSRF"
+    ],
+    "family": "ssrf",
+    "mechanism_id": "mech_ssrf_webhook_url_fetch",
+    "missing_guard": "scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request",
+    "name": "attacker-controlled webhook or callback URL fetch",
+    "required_keywords": [],
+    "sink_shape": "outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers",
+    "source_shape": "attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations",
+    "typical_fix": "enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2025-13836",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    42
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 42,
+      "fix_strategy": "Enforce a maximum byte limit during streaming (e.g., check Content-Length upfront, or accumulate size per chunk and cancel the stream if exceeded) to prevent unbounded memory allocation.",
+      "members": [
+        "CVE-2025-13836",
+        "CVE-2026-32049",
+        "CVE-2026-35633",
+        "CVE-2026-53781"
+      ],
+      "name": "Missing size limit on HTTP request/response body buffering",
+      "root_cause": "Code reads the entire HTTP request or response body into memory without checking cumulative size against a limit, assuming the body is small or that Content-Length is reliable."
+    },
+    {
+      "cluster_id": 42,
+      "fix_strategy": "Implement rotating file handlers with max size and backup count, LRU eviction for caches, and per-file/per-message byte and count caps for downloads.",
+      "members": [
+        "CVE-2026-27980"
+      ],
+      "name": "Missing resource capacity limits on persistent storage",
+      "root_cause": "Code writes to disk (log files, cache, downloaded media) without any capacity limit or eviction policy, allowing unbounded disk space consumption from repeated or large inputs."
+    },
+    {
+      "cluster_id": 42,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2026-3449"
+      ],
+      "name": "Unbounded resource allocation from missing input size limits",
+      "root_cause": ""
+    }
+  ],
+  "tags": [
+    "ssrf",
+    "mech_ssrf_webhook_url_fetch",
+    "webhook SSRF",
+    "callback URL fetch",
+    "user controlled URL fetch",
+    "outbound HTTP client SSRF"
+  ]
+}

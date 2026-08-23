@@ -1,0 +1,30 @@
+{
+  "coverage_row_count": 20,
+  "coverage_status_counts": {
+    "not_source_reviewed": 13,
+    "source_reviewed_and_judge_accepted": 5,
+    "source_reviewed_validation_only": 2
+  },
+  "judge_row_count": 11,
+  "ledger_row_count": 15,
+  "next_action_counts": {
+    "fill_source_review_ledger": 11,
+    "optional_control_source_review": 2,
+    "run_ledger_judge_pack": 2,
+    "run_same_identity_recall_after_sidecar_change": 5
+  },
+  "policy": [
+    "This artifact audits evidence coverage only.",
+    "It does not update released guidelines, guideline sidecars, lexicon entries, recall ranking, or audit prompts.",
+    "TraeX LLM-as-judge rows are advisory semantic QA; they are not recall evidence and not hidden routing.",
+    "Bad cases and known anchors remain post-ranking diagnostics only."
+  ],
+  "promotable_judge_accept_boundary_count": 6,
+  "promotable_valid_boundary_count": 8,
+  "schema_version": "hcvr_guideline_evidence_coverage_summary.v1",
+  "source_review_action_count": 18,
+  "source_review_judge_accepted_count": 5,
+  "source_review_validation_only_count": 2,
+  "validation_row_count": 15,
+  "worklist_count": 20
+}

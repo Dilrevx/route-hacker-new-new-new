@@ -1,0 +1,93 @@
+```json
+{
+  "candidate_scores": [
+    {
+      "candidate_id": "C001",
+      "audit_priority": "none",
+      "relevance": 0.0,
+      "rationale": "License header and import block for UserInfoController; no mutation logic or resource-ID handling visible in the snippet.",
+      "key_evidence": []
+    },
+    {
+      "candidate_id": "C002",
+      "audit_priority": "none",
+      "relevance": 0.0,
+      "rationale": "License header and import block for ServerConfigService; no mutation logic or resource-ID handling visible in the snippet.",
+      "key_evidence": []
+    },
+    {
+      "candidate_id": "C003",
+      "audit_priority": "medium",
+      "relevance": 0.5,
+      "rationale": "OpenAPI item service with createItem and partial updateItem. The createItem method shows body-field protection (id=0, lineNum=0) suggesting awareness of body-selected ID injection. The updateItem path is cut off, but the pattern is adjacent to the guideline — body-selected item fields in an administrative mutation context.",
+      "key_evidence": [
+        "toCreate.setId(0); toCreate.setLineNum(0); // protect against body-controlled IDs",
+        "itemService.createItem(appId, Env.valueOf(env), clusterName, namespaceName, toCreate) — body-selected fields passed into mutation"
+      ]
+    },
+    {
+      "candidate_id": "C004",
+      "audit_priority": "high",
+      "relevance": 0.9,
+      "rationale": "Directly matches the guideline pattern. The update method takes itemId from the path and ItemDTO from the body, then explicitly validates that the namespace from the body matches the path-scoped namespace before allowing the mutation. The comment 'In case someone constructs an attack scenario' confirms this is a body-selected resource-ID authorization bypass guard. The snippet also shows field-level protection ('only value,type,comment,lastModifiedBy can be modified').",
+      "key_evidence": [
+        "Comment: 'In case someone constructs an attack scenario' — explicit authorization-bypass concern",
+        "namespace.getId() != managedEntity.getNamespaceId() — validates body-selected namespace against path-scoped identity",
+        "managedEntity.setType/Value/Comment — only allowlisted fields are mutated; body-selected IDs are blocked"
+      ]
+    },
+    {
+      "candidate_id": "C005",
+      "audit_priority": "none",
+      "relevance": 0.0,
+      "rationale": "Import block for AppController; no mutation logic or resource-ID handling visible in the snippet.",
+      "key_evidence": []
+    },
+    {
+      "candidate_id": "C006",
+      "audit_priority": "none",
+      "relevance": 0.05,
+      "rationale": "Import block and class declaration for OpenAPI v1 ItemController, plus a getItem read method. No mutation logic or body-selected resource-ID handling visible.",
+      "key_evidence": []
+    },
+    {
+      "candidate_id": "C007",
+      "audit_priority": "low",
+      "relevance": 0.2,
+      "rationale": "createOrUpdateUser takes a UserPO body and acts on it. The authorization check is a super-admin gate (@PreAuthorize) rather than body-selected resource-ID validation against path-scoped identity. The body contains the resource to create/update (the user), not a cross-resource tenant/namespace/object ID. Marginally relevant as a body-driven mutation, but the authorization bypass pattern differs from the guideline.",
+      "key_evidence": [
+        "@PreAuthorize(value = \"@permissionValidator.isSuperAdmin()\") — role-based gate, not body-vs-path resource-ID validation",
+        "RequestBody UserPO user — body contains the target resource, not a cross-resource selector"
+      ]
+    },
+    {
+      "candidate_id": "C008",
+      "audit_priority": "none",
+      "relevance": 0.0,
+      "rationale": "YAML configuration file for OIDC sample setup. No code, no mutation logic, no resource-ID handling.",
+      "key_evidence": []
+    },
+    {
+      "candidate_id": "C009",
+      "audit_priority": "none",
+      "relevance": 0.0,
+      "rationale": "AppController constructor and read-only findApps/findAppsByOwner methods. No mutation logic or body-selected resource-ID handling.",
+      "key_evidence": []
+    },
+    {
+      "candidate_id": "C010",
+      "audit_priority": "none",
+      "relevance": 0.05,
+      "rationale": "OIDC authentication success listener handling user info sync from OIDC claims. This is authentication flow, not authorization bypass with body-selected resource IDs in administrative mutations.",
+      "key_evidence": []
+    }
+  ],
+  "top_choices": ["C004", "C003"],
+  "confidence": 0.8,
+  "missing_information": [
+    "Full method body for C003's updateItem to see whether body-selected resource IDs are validated against path-scoped identity before the mutation",
+    "Full method body for C004's update to see the complete mutation logic and whether all body-selected fields are properly guarded",
+    "The guideline references 2 historical CVE examples; knowing which specific CVEs would help calibrate the pattern more precisely"
+  ]
+}
+```

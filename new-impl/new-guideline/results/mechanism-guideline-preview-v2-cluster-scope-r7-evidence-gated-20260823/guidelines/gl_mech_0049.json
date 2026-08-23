@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "The cluster predominantly consists of XML External Entity (XXE) vulnerabilities caused by using default Java XML parser configurations that permit external entity processing, DTD declarations, or external DTD loading. The majority of CVEs are due to missing explicit disabling of these features on SAX, DOM, StAX, or JAXB parsers. A few distinct members involve other XML-related issues: system property substitution, XML name validation, XMLDecoder deserialization, and removal of a vulnerable third-party library.",
+  "created_at": "2026-08-22T20:37:27+00:00",
+  "cve_ids": [
+    "CVE-2018-1000632"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0010__pending_mech_cluster_10_missing_xml_name_validation_leading_to_injection",
+  "guideline_id": "gl_mech_0049",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Validate name strings against XML NCName/QName regular expressions before constructing QName or Namespace objects, throwing an IllegalArgumentException on invalid names..",
+  "mechanism": {
+    "aliases": [
+      "argument",
+      "containing",
+      "regular",
+      "attacker",
+      "content",
+      "add"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_10_missing_xml_name_validation_leading_to_injection",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing XML name validation leading to injection",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Validate name strings against XML NCName/QName regular expressions before constructing QName or Namespace objects, throwing an IllegalArgumentException on invalid names."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2018-1000632",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    10
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 10,
+      "fix_strategy": "Validate name strings against XML NCName/QName regular expressions before constructing QName or Namespace objects, throwing an IllegalArgumentException on invalid names.",
+      "members": [
+        "CVE-2018-1000632"
+      ],
+      "name": "Missing XML name validation leading to injection",
+      "root_cause": "User-supplied strings are used to construct XML element/attribute names without validating they conform to XML name specifications (NCName), enabling injection of illegal characters or namespace prefixes."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_10_missing_xml_name_validation_leading_to_injection",
+    "argument",
+    "containing",
+    "regular",
+    "attacker"
+  ]
+}

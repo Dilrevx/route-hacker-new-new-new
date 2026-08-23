@@ -1,0 +1,13 @@
+identity_key	old_rank	new_rank	delta	old_hit100	new_hit100	old_hit200	new_hit200	mechanism_id
+apache__axis-axis1-java::CVE-2023-51441	2729	134	2595	False	False	False	True	None
+apolloconfig__apollo::CVE-2024-43397	554	751	-197	False	False	False	False	None
+jeecgboot__jeecgboot::CVE-2025-14908	445	273	172	False	False	False	False	None
+jeecgboot__jeecgboot::CVE-2026-5616	1002	525	477	False	False	False	False	None
+keycloak__keycloak::CVE-2022-4361	2524	2	2522	False	True	False	True	None
+mezz__justenoughitems::CVE-2024-41565	128	36	92	False	True	True	True	None
+sanluan__publiccms::CVE-2026-2010	255	94	161	False	True	False	True	None
+swagger-api__swagger-codegen::CVE-2021-21363	276	317	-41	False	False	False	False	None
+swagger-api__swagger-codegen::CVE-2021-21364	None	None	None	False	False	False	False	None
+xwiki__xwiki-commons::CVE-2024-31996	150	42	108	False	True	True	True	None
+xwiki__xwiki-rendering::CVE-2025-66474	248	93	155	False	True	False	True	None
+xwiki__xwiki_platform::CVE-2022-23621	3671	5865	-2194	False	False	False	False	None

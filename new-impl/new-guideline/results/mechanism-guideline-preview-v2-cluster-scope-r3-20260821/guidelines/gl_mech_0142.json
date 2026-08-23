@@ -1,0 +1,74 @@
+{
+  "cluster_summary": "A wide range of cross-site scripting (XSS) vulnerabilities caused by failing to neutralize user-supplied data—either through HTML entity encoding, input sanitization, or input validation—before it is embedded in web pages. The cluster includes reflected, stored, and JSONP-based XSS, with fixes ranging from global input filters to per-field encoding and strict allowlist validation.",
+  "created_at": "2026-08-21T10:07:21+00:00",
+  "cve_ids": [
+    "CVE-2023-0300",
+    "CVE-2025-8555",
+    "CVE-2026-10567"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0025__mech_request_body_resource_mismatch_authz",
+  "guideline_id": "gl_mech_0142",
+  "guideline_text": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources. Report code paths where the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation.",
+  "mechanism": {
+    "aliases": [
+      "path parameter authorization mismatch",
+      "request body resource mismatch",
+      "bulk operation target mismatch",
+      "namespace sync authorization bypass"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_request_body_resource_mismatch_authz",
+    "missing_guard": "the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check",
+    "name": "request-body resource identifiers bypass path-scoped authorization",
+    "sink_shape": "bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources",
+    "source_shape": "attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body",
+    "typical_fix": "validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2023-0300",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    25
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 25,
+      "fix_strategy": "Introduce a global servlet filter and AOP aspect that sanitize all request parameters using Jsoup.clean (or equivalent) before they reach any controller.",
+      "members": [
+        "CVE-2025-8555"
+      ],
+      "name": "missing input sanitization via global servlet filter",
+      "root_cause": "Ad-hoc, inconsistent sanitization in individual controllers; developers forgot to call sanitization functions, leaving endpoints unprotected."
+    },
+    {
+      "cluster_id": 25,
+      "fix_strategy": "Replace the global toggle with a URL pattern allowlist that conditionally applies HtmlUtils.htmlEscape only for specific endpoints.",
+      "members": [
+        "CVE-2026-10567"
+      ],
+      "name": "missing HTML escaping during JSON deserialization with URL pattern allowlist",
+      "root_cause": "Reliance on a global opt-in flag (off by default) to enable HTML escaping during JSON deserialization, leading to unescaped strings when the flag is not enabled."
+    },
+    {
+      "cluster_id": 25,
+      "fix_strategy": "Apply HTML entity encoding (e.g., StringEscapeUtils.escapeHtml4, fn:escapeXml, writer.writeText, or template auto-escaping) either at the point of output or before persistence to ensure safe rendering.",
+      "members": [
+        "CVE-2023-0300"
+      ],
+      "name": "missing HTML entity encoding in output rendering",
+      "root_cause": "Assumption that user-controlled data (stored or reflected) is safe for direct inclusion in HTML pages without any encoding."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_request_body_resource_mismatch_authz",
+    "path parameter authorization mismatch",
+    "request body resource mismatch",
+    "bulk operation target mismatch",
+    "namespace sync authorization bypass"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "boundary_label": "candidate_boundary_02_empty_token_callback",
+  "guideline_group_key": "review_mech_0509__candidate_boundary_02_empty_token_callback__mech_empty_token_reaches_auth_callback",
+  "guideline_id": "sr_mech_0024",
+  "guideline_text": "Audit for empty bearer or custom token reaches authentication callback. Empty token accepted by authentication callback: an HTTP token-authentication implementation extracts a bearer token, custom header token, API key, or similar credential into an empty string when the credential is missing or blank, and still invokes the configured verification callback. Report code paths where blank credentials can enter identity validation or produce an authenticated principal instead of being rejected before callback dispatch. Required missing-guard check: The vulnerable path did not require the token value to be non-empty before invoking the verification callback. The missing guard is a local credential-presence check on the same `token` value that reaches callback-based identity establishment. Safe implementation should: Represent missing tokens as `None` and require `if token and self.verify_token_callback` before calling the verifier. Add regression tests asserting that empty Authorization and custom-token headers return 401 and do not call verifier logic with an empty string. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 1 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_empty_token_reaches_auth_callback",
+    "name": "empty bearer or custom token reaches authentication callback"
+  },
+  "old_guideline_id": "review_mech_0509",
+  "release_status": {
+    "blockers": [
+      "singleton_or_missing_case_support"
+    ],
+    "release_ready": false,
+    "status": "review_only"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 1
+}

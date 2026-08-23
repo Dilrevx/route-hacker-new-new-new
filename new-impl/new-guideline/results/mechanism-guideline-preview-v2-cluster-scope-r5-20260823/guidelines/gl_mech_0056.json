@@ -1,0 +1,72 @@
+{
+  "cluster_summary": "This cluster covers injection vulnerabilities (JDBC parameter injection, JNDI scheme injection, SQL injection) caused by incomplete blacklists, missing scheme or prefix validation, or direct string concatenation of user input into sensitive constructs. The majority of issues stem from assuming user-controlled data is safe when building JDBC URLs or SQL queries without proper validation, canonicalization, or parameterization.",
+  "created_at": "2026-08-22T18:31:03+00:00",
+  "cve_ids": [
+    "CVE-2022-39312",
+    "CVE-2024-23833",
+    "CVE-2024-55952",
+    "CVE-2024-56158",
+    "CVE-2025-62419",
+    "CVE-2025-6544"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0011__mech_toctou_mutable_object_reuse",
+  "guideline_id": "gl_mech_0056",
+  "guideline_text": "Trace mutable files, paths, objects, identities, request fields, or shared state that are checked before use into sensitive file, state, permission, memory, or resource effects that depend on the earlier check. Report code paths where the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 6 historical CVE example(s), not as a project-specific signature. A safe implementation should bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary.",
+  "mechanism": {
+    "aliases": [
+      "TOCTOU",
+      "check then use race",
+      "double fetch",
+      "stale object reuse"
+    ],
+    "family": "race_or_lifecycle",
+    "mechanism_id": "mech_toctou_mutable_object_reuse",
+    "missing_guard": "the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect",
+    "name": "time-of-check to time-of-use on mutable object",
+    "sink_shape": "sensitive file, state, permission, memory, or resource effects that depend on the earlier check",
+    "source_shape": "mutable files, paths, objects, identities, request fields, or shared state that are checked before use",
+    "typical_fix": "bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2022-39312",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    11
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 11,
+      "fix_strategy": "Expand the blacklist to cover all known dangerous parameters and protocols, apply the check after full URL assembly and URL-decoding, and use robust regex that matches parameter names regardless of context.",
+      "members": [
+        "CVE-2025-62419",
+        "CVE-2025-6544",
+        "CVE-2024-23833",
+        "CVE-2022-39312",
+        "CVE-2024-55952"
+      ],
+      "name": "Incomplete or misapplied blacklist for JDBC connection parameters",
+      "root_cause": "The application relies on a blacklist to filter dangerous JDBC URL parameters, but the blacklist is missing entries (e.g., socketFactory, autoDeserialize, iiop), applied too early (before URL assembly or decoding), or uses overly restrictive regex patterns, allowing bypass."
+    },
+    {
+      "cluster_id": 11,
+      "fix_strategy": "Use parameterized queries (PreparedStatement) or, if necessary, apply strict allow-list validation or proper escaping.",
+      "members": [
+        "CVE-2024-56158"
+      ],
+      "name": "SQL injection via direct string concatenation",
+      "root_cause": "User-controlled input is concatenated into SQL query strings without parameterization, escaping, or allow-list validation, allowing injection of arbitrary SQL."
+    }
+  ],
+  "tags": [
+    "race_or_lifecycle",
+    "mech_toctou_mutable_object_reuse",
+    "TOCTOU",
+    "check then use race",
+    "double fetch",
+    "stale object reuse"
+  ]
+}

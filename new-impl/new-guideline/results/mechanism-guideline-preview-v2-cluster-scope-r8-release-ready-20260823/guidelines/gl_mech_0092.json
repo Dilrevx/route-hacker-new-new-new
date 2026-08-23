@@ -1,0 +1,134 @@
+{
+  "cluster_summary": "This cluster comprises 15 CVEs in various HTML sanitizer libraries (e.g., bleach, sanitize-html, DOMPurify). The vulnerabilities arise from a range of coding mistakes: incorrect assumptions about DOM node iteration, incomplete denylists for dangerous tags and URI schemes, flawed regex patterns for attribute/value validation, missing decoding of CSS or HTML entities before security checks, and logic errors in sanitizer configuration handling. These flaws allow attackers to bypass sanitization and inject malicious scripts, resulting in cross-site scripting (XSS).",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2019-10219",
+    "CVE-2020-11022",
+    "CVE-2022-28367",
+    "CVE-2022-29577",
+    "CVE-2023-31126",
+    "CVE-2025-15599",
+    "CVE-2025-7865",
+    "CVE-2025-9796",
+    "CVE-2026-0540",
+    "CVE-2026-28350",
+    "CVE-2026-33979",
+    "CVE-2026-39315",
+    "CVE-2026-40186",
+    "CVE-2026-41240"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0055__mech_html_sanitizer_policy_gap",
+  "guideline_id": "gl_mech_0092",
+  "guideline_text": "Trace attacker-controlled markup, HTML fragments, rich text, comments, DOM nodes, style blocks, attributes, or URI values into HTML cleaners, SafeHtml validators, DOM sanitizers, rich-text renderers, or browser-rendered sanitized output. Report code paths where the active sanitizer policy does not allowlist dangerous elements, attributes, URI schemes, DOM child nodes, comments, or malformed inputs before rendering. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 14 historical CVE example(s), not as a project-specific signature. A safe implementation should activate the restrictive sanitizer for the relevant mode, enforce element/attribute/URI allowlists after parsing, and add regression tests for the bypass form.",
+  "mechanism": {
+    "aliases": [
+      "HTML sanitizer bypass",
+      "SafeHtml policy gap",
+      "missing sanitizer allowlist",
+      "restricted cleaner bypass"
+    ],
+    "family": "html_sanitization",
+    "mechanism_id": "mech_html_sanitizer_policy_gap",
+    "missing_guard": "the active sanitizer policy does not allowlist dangerous elements, attributes, URI schemes, DOM child nodes, comments, or malformed inputs before rendering",
+    "name": "HTML sanitizer policy gap or inactive allowlist",
+    "required_keywords": [
+      [
+        "html",
+        "sanitize",
+        "sanitizer",
+        "safehtml",
+        "cleaner",
+        "dompurify",
+        "antisamy",
+        "bleach"
+      ]
+    ],
+    "sink_shape": "HTML cleaners, SafeHtml validators, DOM sanitizers, rich-text renderers, or browser-rendered sanitized output",
+    "source_shape": "attacker-controlled markup, HTML fragments, rich text, comments, DOM nodes, style blocks, attributes, or URI values",
+    "typical_fix": "activate the restrictive sanitizer for the relevant mode, enforce element/attribute/URI allowlists after parsing, and add regression tests for the bypass form"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 2,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 14,
+    "total_member_count": 14,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2019-10219",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    55
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 55,
+      "fix_strategy": "Use `childNodes()` to iterate all node types, iterate over all children in style elements, and capture the initial node count then iterate backwards to safely remove extraneous nodes.",
+      "members": [
+        "CVE-2019-10219",
+        "CVE-2022-28367",
+        "CVE-2022-29577"
+      ],
+      "name": "incomplete iteration over DOM child nodes during sanitization",
+      "root_cause": "The sanitizer assumes that only specific types or counts of child nodes exist (e.g., only element nodes, exactly one child, static NodeList length), causing it to skip dangerous content (e.g., comment nodes, extra child nodes, or nodes shifted by removal)."
+    },
+    {
+      "cluster_id": 55,
+      "fix_strategy": "Extend the regex alternation or kill-list to include all relevant dangerous tags, schemes, and rawtext elements (e.g., add script, xmp, data: to corresponding lists).",
+      "members": [
+        "CVE-2025-15599",
+        "CVE-2026-0540",
+        "CVE-2025-9796",
+        "CVE-2026-28350",
+        "CVE-2026-40186"
+      ],
+      "name": "missing entries in blacklist for dangerous tags, URI schemes, and rawtext elements",
+      "root_cause": "Denylist regexes or kill-lists omit specific unsafe elements (e.g., script, xmp, base), URI schemes (e.g., data:), or rawtext element names (e.g., noscript, iframe), allowing attackers to use those items to bypass the filter."
+    },
+    {
+      "cluster_id": 55,
+      "fix_strategy": "Correct the regex: use `matches()` for full string match, restrict character sets, remove digit caps, and adjust lookahead to allow whitespace and self-closing tags.",
+      "members": [
+        "CVE-2023-31126",
+        "CVE-2025-7865",
+        "CVE-2026-39315"
+      ],
+      "name": "incorrect regex pattern construction for input validation",
+      "root_cause": "Regex patterns use flawed logic such as `find()` instead of `matches()`, overly permissive character classes, fixed digit caps, or lookaheads that are too restrictive, allowing malicious input to pass the validation."
+    },
+    {
+      "cluster_id": 55,
+      "fix_strategy": "Remove the prefilter entirely and return the original HTML unchanged.",
+      "members": [
+        "CVE-2020-11022"
+      ],
+      "name": "unsafe HTML preprocessing via regex transformation",
+      "root_cause": "A regex-based prefilter expands self-closing tags (e.g., <div/>) into open/close tags under the incorrect assumption that this transformation is safe, but crafted input can exploit the expansion to inject script."
+    },
+    {
+      "cluster_id": 55,
+      "fix_strategy": "Distinguish between undefined and empty explicit configuration (e.g., check `hasOwn` or `length` before falling back), and enforce the forbidden-tag check independently of the allow function.",
+      "members": [
+        "CVE-2026-33979",
+        "CVE-2026-41240"
+      ],
+      "name": "sanitizer configuration logic errors",
+      "root_cause": "The code either falls back to permissive defaults when empty allow-lists are provided (treating empty as 'not provided') or short-circuits the forbidden-tag check when a custom allow function returns true, allowing unrestricted tags."
+    }
+  ],
+  "tags": [
+    "html_sanitization",
+    "mech_html_sanitizer_policy_gap",
+    "HTML sanitizer bypass",
+    "SafeHtml policy gap",
+    "missing sanitizer allowlist",
+    "restricted cleaner bypass"
+  ]
+}

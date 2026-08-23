@@ -1,0 +1,79 @@
+{
+  "cluster_summary": "File operations (read, write, delete, copy) fail to resolve symbolic links or otherwise canonicalize the final path before checking that it stays within an intended sandbox directory. This allows an attacker to escape containment via symlinks, directory traversal, or TOCTOU races where symlinks are swapped between validation and use. The cluster also includes several distinct variants: insufficient pattern-based blocking, input-sanitization flaws, permission mistakes, validation ordering errors, and a concurrency issue on shared file state.",
+  "created_at": "2026-08-22T22:57:05+00:00",
+  "cve_ids": [
+    "CVE-2026-41338"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0060__mech_archive_symlink_extraction_escape",
+  "guideline_id": "gl_mech_0098",
+  "guideline_text": "Trace attacker-controlled archive entries, symlink entries, link targets, or extraction order into archive extraction code that creates links, opens output files, or writes entry contents into the extraction tree. Report code paths where later writes can follow an existing or archive-created symbolic link outside the extraction root despite lexical or canonical path containment checks. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should reject unsafe symlink targets, use no-follow or race-safe filesystem operations for writes, and validate the final opened target remains inside the extraction root.",
+  "mechanism": {
+    "aliases": [
+      "archive symlink traversal",
+      "symlink overwrite during extraction",
+      "tar symlink escape",
+      "zip symlink escape"
+    ],
+    "family": "filesystem",
+    "mechanism_id": "mech_archive_symlink_extraction_escape",
+    "missing_guard": "later writes can follow an existing or archive-created symbolic link outside the extraction root despite lexical or canonical path containment checks",
+    "name": "archive extraction escape through symlink-following writes",
+    "required_keywords": [
+      [
+        "archive",
+        "zip",
+        "tar",
+        "extract",
+        "extraction"
+      ],
+      [
+        "symlink",
+        "symbolic link",
+        "link target",
+        "nofollow"
+      ]
+    ],
+    "sink_shape": "archive extraction code that creates links, opens output files, or writes entry contents into the extraction tree",
+    "source_shape": "attacker-controlled archive entries, symlink entries, link targets, or extraction order",
+    "typical_fix": "reject unsafe symlink targets, use no-follow or race-safe filesystem operations for writes, and validate the final opened target remains inside the extraction root"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "release_status": {
+    "blockers": [],
+    "member_support_rate": 1.0,
+    "min_evidence_role_count": 3,
+    "release_ready": true,
+    "status": "release_ready",
+    "supported_member_count": 1,
+    "total_member_count": 1,
+    "unsupported_members": []
+  },
+  "representative_cve": "CVE-2026-41338",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    60
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 60,
+      "fix_strategy": "Use anchored file descriptors (dir_fd) with O_NOFOLLOW, pin the canonical real path early and reuse it, or perform the open and validation atomically (e.g., open with O_NOFOLLOW then verify identity). Replace separated check-then-act with a single atomic operation.",
+      "members": [
+        "CVE-2026-41338"
+      ],
+      "name": "Time-of-check time-of-use (TOCTOU) symlink swap race conditions",
+      "root_cause": "Path validation (containment check, symlink resolution) and the subsequent file operation are not performed atomically. An attacker with write access can replace a symlink, rebind a directory, or change the path between the check and use, redirecting the operation outside the sandbox."
+    }
+  ],
+  "tags": [
+    "filesystem",
+    "mech_archive_symlink_extraction_escape",
+    "archive symlink traversal",
+    "symlink overwrite during extraction",
+    "tar symlink escape",
+    "zip symlink escape"
+  ]
+}

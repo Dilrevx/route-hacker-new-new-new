@@ -1,0 +1,17 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.90,
+  "coverage_score": 0.85,
+  "actionability_score": 0.92,
+  "retrieval_query_quality": 0.85,
+  "main_issue": "All three cases share the exact same mechanism: createTempFile, delete, then mkdir/mkdirs on the same pathname. Source shape, sink/trusted-directory-use effect, missing guard (no atomic binding across the delete-to-mkdir gap), exploit precondition (race within the parent directory), and safe fix (Files.createTempDirectory) are fully consistent. The reviewer has already scoped this boundary to exclude temporary-resource permission exposure, which is correct.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "centic9__jgit-cookbook::CVE-2022-4817: patch_hunk_before confirms createTempFile -> delete -> mkdirs sequence; fixed source uses Files.createTempDirectory.",
+    "devent__globalpom-utils::CVE-2018-25068: patch_hunk_before confirms createTempFile -> tmp.delete() -> tmp.mkdir(); fixed source uses Files.createTempDirectory.",
+    "openkm__document-management-system::CVE-2022-3969: both patch_hunk_before and old source confirm createTempFile -> delete -> mkdir; fixed source uses Files.createTempDirectory."
+  ]
+}
+```

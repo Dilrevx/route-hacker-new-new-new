@@ -1,0 +1,56 @@
+{
+  "cluster_summary": "The majority of these vulnerabilities stem from using untrusted user input (e.g., sort column names, order fields, filter parameters) directly in SQL or HQL queries without allow-list validation, enabling injection. One case has a validation timing flaw, two involve incomplete structural validation of HQL queries, one misses a configuration check for sorting obfuscated fields, and one is an algorithmic complexity issue unrelated to injection.",
+  "created_at": "2026-08-22T17:56:09+00:00",
+  "cve_ids": [
+    "CVE-2023-38509"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0012__pending_mech_cluster_12_missing_configuration_check_for_sorting_on_obfuscated_fields",
+  "guideline_id": "gl_mech_0066",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Conditionally disable sorting on the obfuscated field by checking the configuration flag before building the HQL sort clause..",
+  "mechanism": {
+    "aliases": [
+      "proceed",
+      "email",
+      "column",
+      "user-controllable",
+      "always",
+      "components"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_12_missing_configuration_check_for_sorting_on_obfuscated_fields",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing configuration check for sorting on obfuscated fields",
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Conditionally disable sorting on the obfuscated field by checking the configuration flag before building the HQL sort clause."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2023-38509",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    12
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 12,
+      "fix_strategy": "Conditionally disable sorting on the obfuscated field by checking the configuration flag before building the HQL sort clause.",
+      "members": [
+        "CVE-2023-38509"
+      ],
+      "name": "Missing configuration check for sorting on obfuscated fields",
+      "root_cause": "The code allows sorting by a sensitive field (email) without checking the obfuscation configuration flag, leaking data when obfuscation is enabled."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_12_missing_configuration_check_for_sorting_on_obfuscated_fields",
+    "proceed",
+    "email",
+    "column",
+    "user-controllable"
+  ]
+}

@@ -1,0 +1,106 @@
+```json
+{
+  "candidate_scores": [
+    {
+      "audit_priority": "high",
+      "candidate_id": "C011",
+      "key_evidence": [
+        "Uses File.createTempFile in a shared writable location (system temp folder or configurable tempFolderPath)",
+        "prepareDownloadFile method name suggests file download path, a security-sensitive sink"
+      ],
+      "rationale": "Directly matches the guideline's temp-file-in-shared-location pattern. The snippet shows File.createTempFile usage — the exact API mentioned — but the delete-then-mkdir follow-up is not visible in this window.",
+      "relevance": 0.75
+    },
+    {
+      "audit_priority": "high",
+      "candidate_id": "C012",
+      "key_evidence": [
+        "Same prepareDownloadFile pattern as C011 using File.createTempFile in a shared writable location",
+        "jersey2-java6 variant of the same API client code"
+      ],
+      "rationale": "Structurally identical to C011. The temp file creation in a shared location is present; the full delete-then-mkdir chain is not visible in this snippet.",
+      "relevance": 0.75
+    },
+    {
+      "audit_priority": "none",
+      "candidate_id": "C013",
+      "key_evidence": [],
+      "rationale": "This is a Java logging properties file configuring ConsoleHandler and FileHandler. No code, no temp file creation logic, no TOCTOU pattern. Irrelevant.",
+      "relevance": 0.0
+    },
+    {
+      "audit_priority": "low",
+      "candidate_id": "C014",
+      "key_evidence": [
+        "writeToFile creates parent directories via mkdirs() before writing"
+      ],
+      "rationale": "General file-writing utility. Creates directories but does not use temp files or the createTempFile-delete-mkdir sequence. Only tangentially related as a file-system effect sink.",
+      "relevance": 0.15
+    },
+    {
+      "audit_priority": "none",
+      "candidate_id": "C015",
+      "key_evidence": [],
+      "rationale": "Apache2 config code generator with a hardcoded userInfoPath. No temp files, no shared writable locations, no TOCTOU pattern. Irrelevant.",
+      "relevance": 0.0
+    },
+    {
+      "audit_priority": "low",
+      "candidate_id": "C016",
+      "key_evidence": [
+        "getTempFolderPath / setTempFolderPath configure the shared writable directory used by File.createTempFile in prepareDownloadFile"
+      ],
+      "rationale": "Supportive config — defines where temp files land. Not the actual temp-file creation or TOCTOU site, but useful for tracing the full path.",
+      "relevance": 0.35
+    },
+    {
+      "audit_priority": "high",
+      "candidate_id": "C017",
+      "key_evidence": [
+        "Same prepareDownloadFile with File.createTempFile as C011/C012",
+        "jersey2 variant of the same API client code"
+      ],
+      "rationale": "Structurally identical to C011/C012. Temp file creation in a shared writable location is present; the delete-then-mkdir follow-up is not visible in this snippet.",
+      "relevance": 0.75
+    },
+    {
+      "audit_priority": "low",
+      "candidate_id": "C018",
+      "key_evidence": [
+        "getTempFolderPath / setTempFolderPath configure the shared writable directory for temp files in the petstore-security-test variant"
+      ],
+      "rationale": "Same supporting role as C016 — defines the temp folder path used by prepareDownloadFile. Not the actual creation site or TOCTOU pattern.",
+      "relevance": 0.35
+    },
+    {
+      "audit_priority": "high",
+      "candidate_id": "C019",
+      "key_evidence": [
+        "Same prepareDownloadFile with File.createTempFile as C011",
+        "petstore-security-test okhttp-gson variant"
+      ],
+      "rationale": "Structurally identical to C011. Temp file creation in a shared writable location; the delete-then-mkdir chain is not visible in this snippet.",
+      "relevance": 0.75
+    },
+    {
+      "audit_priority": "none",
+      "candidate_id": "C020",
+      "key_evidence": [],
+      "rationale": "Same as C013 — a Java logging properties file for vertx-rx. No code, no temp file logic, no TOCTOU pattern. Irrelevant.",
+      "relevance": 0.0
+    }
+  ],
+  "confidence": 0.8,
+  "missing_information": [
+    "Callers of prepareDownloadFile to check whether the returned temp file is subsequently deleted and a directory created via mkdir/mkdirs in its place — the delete-then-mkdir TOCTOU sequence",
+    "Whether the tempFolderPath is attacker-controllable or points to a world-writable location like /tmp",
+    "The full source-to-sink path from temp file creation through release to directory creation to confirm the TOCTOU window is exploitable"
+  ],
+  "top_choices": [
+    "C011",
+    "C012",
+    "C017",
+    "C019"
+  ]
+}
+```

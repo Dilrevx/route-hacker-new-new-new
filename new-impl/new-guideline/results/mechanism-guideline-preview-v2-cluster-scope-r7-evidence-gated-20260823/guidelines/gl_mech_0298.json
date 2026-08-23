@@ -1,0 +1,96 @@
+{
+  "cluster_summary": "This cluster covers vulnerabilities arising from insufficient validation or sanitization of input data when constructing DOM attributes, URLs, or URL templates. The flaws include missing context-specific sanitization, lack of decoding before pattern checks, absence of attribute name whitelisting, and failure to validate URL schemes or path components. Attackers can bypass security checks to inject malicious code or traverse paths.",
+  "created_at": "2026-08-22T20:37:29+00:00",
+  "cve_ids": [
+    "CVE-2026-22610",
+    "CVE-2026-27166",
+    "CVE-2026-27970",
+    "CVE-2026-41692"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0054__mech_html_sanitizer_policy_gap",
+  "guideline_id": "gl_mech_0298",
+  "guideline_text": "Trace attacker-controlled markup, HTML fragments, rich text, comments, DOM nodes, style blocks, attributes, or URI values into HTML cleaners, SafeHtml validators, DOM sanitizers, rich-text renderers, or browser-rendered sanitized output. Report code paths where the active sanitizer policy does not allowlist dangerous elements, attributes, URI schemes, DOM child nodes, comments, or malformed inputs before rendering. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 4 historical CVE example(s), not as a project-specific signature. A safe implementation should activate the restrictive sanitizer for the relevant mode, enforce element/attribute/URI allowlists after parsing, and add regression tests for the bypass form.",
+  "mechanism": {
+    "aliases": [
+      "HTML sanitizer bypass",
+      "SafeHtml policy gap",
+      "missing sanitizer allowlist",
+      "restricted cleaner bypass"
+    ],
+    "family": "html_sanitization",
+    "mechanism_id": "mech_html_sanitizer_policy_gap",
+    "missing_guard": "the active sanitizer policy does not allowlist dangerous elements, attributes, URI schemes, DOM child nodes, comments, or malformed inputs before rendering",
+    "name": "HTML sanitizer policy gap or inactive allowlist",
+    "required_keywords": [
+      [
+        "html",
+        "sanitize",
+        "sanitizer",
+        "safehtml",
+        "cleaner",
+        "dompurify",
+        "antisamy",
+        "bleach"
+      ]
+    ],
+    "sink_shape": "HTML cleaners, SafeHtml validators, DOM sanitizers, rich-text renderers, or browser-rendered sanitized output",
+    "source_shape": "attacker-controlled markup, HTML fragments, rich text, comments, DOM nodes, style blocks, attributes, or URI values",
+    "typical_fix": "activate the restrictive sanitizer for the relevant mode, enforce element/attribute/URI allowlists after parsing, and add regression tests for the bypass form"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-22610",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    54
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 54,
+      "fix_strategy": "Add specific classification for 'script|href' and 'script|xlink:href'; in the sanitizer selection logic, return ɵɵsanitizeResourceUrl for these cases.",
+      "members": [
+        "CVE-2026-22610"
+      ],
+      "name": "Missing security context for SVG script href attributes",
+      "root_cause": "The security schema and sanitizer selector did not classify href or xlink:href attributes on SVG <script> elements as resource URL context, causing them to be sanitized with the general URL sanitizer that allows javascript: protocols."
+    },
+    {
+      "cluster_id": 54,
+      "fix_strategy": "Decode the URL using decodeURIComponent before performing the relative path check and the allow list regex match.",
+      "members": [
+        "CVE-2026-27166"
+      ],
+      "name": "Missing URL decoding before validation",
+      "root_cause": "The code validates the iframe src attribute against an allow list and blocks relative path patterns using a regular expression on the raw string without first URL-decoding encoded sequences, allowing bypass via URL-encoded path traversal."
+    },
+    {
+      "cluster_id": 54,
+      "fix_strategy": "Add a whitelist check for attribute names (VALID_ATTRS); block URI attributes entirely; for unknown attributes, ignore them; for URI attributes, set value to 'unsafe:blocked'.",
+      "members": [
+        "CVE-2026-27970"
+      ],
+      "name": "Missing whitelist and URI sanitization for translation attributes",
+      "root_cause": "The code assumed translation content from third-party translators is safe unless it contains Angular binding expressions, lacking validation of attribute names against a whitelist and sanitization of URI attributes."
+    },
+    {
+      "cluster_id": 54,
+      "fix_strategy": "Add a function to check if the substituted value starts with a forbidden scheme (case-insensitive, ignoring leading whitespace) and if so, skip the substitution (drop the value).",
+      "members": [
+        "CVE-2026-41692"
+      ],
+      "name": "Missing URL scheme validation for translated href/src attributes",
+      "root_cause": "The code assumes translation values for href/src attributes are safe as long as they don't duplicate the http:// prefix, with no validation of the URL scheme, allowing injection of dangerous schemes like javascript:."
+    }
+  ],
+  "tags": [
+    "html_sanitization",
+    "mech_html_sanitizer_policy_gap",
+    "HTML sanitizer bypass",
+    "SafeHtml policy gap",
+    "missing sanitizer allowlist",
+    "restricted cleaner bypass"
+  ]
+}

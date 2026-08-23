@@ -1,0 +1,21 @@
+{
+  "boundary_label": "candidate_boundary_03_public_jwt_secret_fallback",
+  "guideline_group_key": "review_mech_0509__candidate_boundary_03_public_jwt_secret_fallback__mech_public_default_jwt_secret_fallback",
+  "guideline_id": "sr_mech_0025",
+  "guideline_text": "Audit for public default JWT signing secret fallback. Public default JWT secret fallback: authentication code signs, verifies, encrypts, decrypts, or derives security keys from an environment variable or configuration value but silently falls back to a hardcoded default secret that is published in examples or source code. Report code paths where deployments without an explicit secret keep using a known shared value for JWTs, session tokens, OAuth state, TOTP encryption, or related authentication artifacts. Required missing-guard check: The vulnerable code does not fail closed when `JWT_SECRET` is unset and does not reject the known compromised default value. It also duplicates the fallback in the TOTP path instead of deriving from a single validated secret source. Safe implementation should: Load JWT_SECRET through a single helper that raises at startup if it is unset or equals the known compromised default, replace the example secret with `REPLACE_ME`, and make dependent services such as TOTP derive from the validated AuthHandler secret rather than carrying their own fallback. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 1 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_public_default_jwt_secret_fallback",
+    "name": "public default JWT signing secret fallback"
+  },
+  "old_guideline_id": "review_mech_0509",
+  "release_status": {
+    "blockers": [
+      "singleton_or_missing_case_support"
+    ],
+    "release_ready": false,
+    "status": "review_only"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 1
+}

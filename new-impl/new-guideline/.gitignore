@@ -1,0 +1,9 @@
+run/
+runs/
+outputs/
+repo-cache/
+snapshots/
+tmp/
+*.events.jsonl
+*.prompt.txt
+*.attempt-*.md

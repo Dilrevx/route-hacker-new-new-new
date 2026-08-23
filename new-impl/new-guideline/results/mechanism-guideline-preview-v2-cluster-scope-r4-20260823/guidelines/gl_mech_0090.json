@@ -1,0 +1,54 @@
+{
+  "cluster_summary": "This cluster contains CVEs where input parsing or deserialization code lacks proper termination conditions or recursion depth limits, leading to infinite loops or stack exhaustion from crafted input. The vulnerabilities arise from assumptions about input structure (sequential indices, shallow nesting, single wrapper arrays) that are not enforced, allowing attackers to cause resource exhaustion.",
+  "created_at": "2026-08-22T17:56:09+00:00",
+  "cve_ids": [
+    "CVE-2026-33013"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0017__mech_toctou_mutable_object_reuse",
+  "guideline_id": "gl_mech_0090",
+  "guideline_text": "Trace mutable files, paths, objects, identities, request fields, or shared state that are checked before use into sensitive file, state, permission, memory, or resource effects that depend on the earlier check. Report code paths where the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary.",
+  "mechanism": {
+    "aliases": [
+      "TOCTOU",
+      "check then use race",
+      "double fetch",
+      "stale object reuse"
+    ],
+    "family": "race_or_lifecycle",
+    "mechanism_id": "mech_toctou_mutable_object_reuse",
+    "missing_guard": "the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect",
+    "name": "time-of-check to time-of-use on mutable object",
+    "sink_shape": "sensitive file, state, permission, memory, or resource effects that depend on the earlier check",
+    "source_shape": "mutable files, paths, objects, identities, request fields, or shared state that are checked before use",
+    "typical_fix": "bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-33013",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    17
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 17,
+      "fix_strategy": "Change the loop condition to use less-than (`<`) so padding only occurs when the array is smaller than needed.",
+      "members": [
+        "CVE-2026-33013"
+      ],
+      "name": "Infinite loop due to wrong loop termination condition in array expansion",
+      "root_cause": "The loop condition uses strict inequality (`!=`) to pad an array to a target size, but when indices are inserted out of order the array size may already exceed the target, causing the condition to remain true indefinitely."
+    }
+  ],
+  "tags": [
+    "race_or_lifecycle",
+    "mech_toctou_mutable_object_reuse",
+    "TOCTOU",
+    "check then use race",
+    "double fetch",
+    "stale object reuse"
+  ]
+}

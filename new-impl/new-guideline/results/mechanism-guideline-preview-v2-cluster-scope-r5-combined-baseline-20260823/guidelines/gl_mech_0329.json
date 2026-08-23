@@ -1,0 +1,73 @@
+{
+  "cluster_summary": "These vulnerabilities stem from failures to correctly establish, propagate, or enforce the security context (e.g., document author permissions or restricted mode flags) when processing user-supplied content within macro and rendering pipelines. This leads to unauthorized script execution or privilege escalation. The fixes involve reordering context switches, adding permission checks, propagating restriction flags, or using correct rendering APIs.",
+  "created_at": "2026-08-22T20:04:51+00:00",
+  "cve_ids": [
+    "CVE-2023-26056",
+    "CVE-2023-26480",
+    "CVE-2023-37912",
+    "CVE-2023-40177",
+    "CVE-2025-49581",
+    "CVE-2025-49586"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0064__mech_privileged_server_side_capability_exposed",
+  "guideline_id": "gl_mech_0329",
+  "guideline_text": "Trace lower-privilege script, template, macro, plugin, or API callers that can invoke privileged server-side capabilities into server-side include, template rendering, servlet dispatch, raw object access, internal file reads, or privileged framework APIs. Report code paths where a higher privilege check is not enforced at the API entry point before exposing the server-side capability. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 6 historical CVE example(s), not as a project-specific signature. A safe implementation should check the required higher privilege at the exposed API boundary and return no sensitive result when the caller lacks that privilege.",
+  "mechanism": {
+    "aliases": [
+      "missing programming rights check",
+      "privileged API exposure",
+      "server-side include capability exposure",
+      "lower privilege script capability"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_privileged_server_side_capability_exposed",
+    "missing_guard": "a higher privilege check is not enforced at the API entry point before exposing the server-side capability",
+    "name": "privileged server-side capability exposed to lower privilege context",
+    "required_keywords": [],
+    "sink_shape": "server-side include, template rendering, servlet dispatch, raw object access, internal file reads, or privileged framework APIs",
+    "source_shape": "lower-privilege script, template, macro, plugin, or API callers that can invoke privileged server-side capabilities",
+    "typical_fix": "check the required higher privilege at the exposed API boundary and return no sensitive result when the caller lacks that privilege"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2023-26056",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    64
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 64,
+      "fix_strategy": "Ensure that content is processed with the security context of its author or intended user, either by reordering context switches, adding explicit authorization checks, or using APIs that automatically use the correct context.",
+      "members": [
+        "CVE-2023-26056",
+        "CVE-2023-26480",
+        "CVE-2023-37912",
+        "CVE-2023-40177",
+        "CVE-2025-49581"
+      ],
+      "name": "Improper authorization context when processing user-supplied content",
+      "root_cause": "The code uses the wrong user or document context (e.g., viewer, document author, or macro author) when parsing or rendering user-supplied content, leading to unauthorized execution of scripts."
+    },
+    {
+      "cluster_id": 64,
+      "fix_strategy": "Propagate the restricted flag from the parent context to new child contexts, or pass the document's restricted flag to rendering functions.",
+      "members": [
+        "CVE-2025-49586"
+      ],
+      "name": "Missing propagation of restricted execution flag to child or nested contexts",
+      "root_cause": "When creating new transformation contexts (e.g., for async macros, nested macros, or custom displayers), the restricted flag from the parent context is not copied, allowing macros that should be disabled in restricted mode to execute."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_privileged_server_side_capability_exposed",
+    "missing programming rights check",
+    "privileged API exposure",
+    "server-side include capability exposure",
+    "lower privilege script capability"
+  ]
+}

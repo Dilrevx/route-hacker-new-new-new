@@ -1,0 +1,76 @@
+{
+  "backend": "sentence-transformers direct",
+  "candidate_count_mean": 11642.066666666668,
+  "candidate_count_total": 349262,
+  "case_count": 30,
+  "completed_count": 30,
+  "duration_seconds_total_sum": 26292.703,
+  "duration_seconds_wall_from_status_approx": "2026-08-19T04:11:59+08:00..2026-08-19T07:11:07+08:00",
+  "failed_count": 0,
+  "failures": [],
+  "hit_at": {
+    "1": 0.03333333333333333,
+    "10": 0.13333333333333333,
+    "100": 0.4,
+    "1000": 0.6333333333333333,
+    "10000": 0.9666666666666667,
+    "20": 0.2,
+    "200": 0.4666666666666667,
+    "3": 0.03333333333333333,
+    "30": 0.23333333333333334,
+    "5": 0.06666666666666667,
+    "50": 0.26666666666666666,
+    "500": 0.5666666666666667,
+    "5000": 0.8666666666666667,
+    "50000": 1.0
+  },
+  "hit_cases_full_saved_rank": 30,
+  "hit_count_at": {
+    "1": 1,
+    "10": 4,
+    "100": 12,
+    "1000": 19,
+    "10000": 29,
+    "20": 6,
+    "200": 14,
+    "3": 1,
+    "30": 7,
+    "5": 2,
+    "50": 8,
+    "500": 17,
+    "5000": 26,
+    "50000": 30
+  },
+  "miss_cases_full_saved_rank": 0,
+  "model": "/data/lhq/workspace/hcvr-embedding-service/models/Qwen3-Embedding-8B",
+  "model_label": "Qwen3-Embedding-8B",
+  "mrr_all_cases": 0.05773042912159005,
+  "output_root": "/data/lhq/workspace/hcvr-embedding-qwen-size-runs/run-30-qwen8b-20260819T041159/direct-qwen3-8b-top50000",
+  "rank_percentiles_hits_only_linear": {
+    "p50": 245.0,
+    "p90": 7162.8,
+    "p95": 7469.25,
+    "p99": 10207.530000000002
+  },
+  "rank_percentiles_hits_only_nearest_rank": {
+    "p50": 236,
+    "p90": 7159,
+    "p95": 7692,
+    "p99": 11235
+  },
+  "rank_percentiles_penalized_miss_as_candidate_count_plus_1_linear": {
+    "p50": 245.0,
+    "p90": 7162.8,
+    "p95": 7469.25,
+    "p99": 10207.530000000002
+  },
+  "rank_percentiles_penalized_miss_as_candidate_count_plus_1_nearest_rank": {
+    "p50": 236,
+    "p90": 7159,
+    "p95": 7692,
+    "p99": 11235
+  },
+  "run_base": "/data/lhq/workspace/hcvr-embedding-qwen-size-runs/run-30-qwen8b-20260819T041159",
+  "schema_version": "hcvr_embedding_rank_metrics.v1",
+  "top_k_saved": 50000
+}

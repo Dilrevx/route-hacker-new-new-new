@@ -1,0 +1,397 @@
+{
+  "cluster_summary": "A cluster of vulnerabilities where user-controlled wiki content is executed with the wrong security context (e.g., viewer's or page author's privileges instead of content owner's) or where missing required-rights analyses allow low-privileged users to inject script content that later executes with elevated privileges. / A wide range of cross-site scripting (XSS) vulnerabilities caused by failing to neutralize user-supplied data—either through HTML entity encoding, input sanitization, or input validation—before it is embedded in web pages. The cluster includes reflected, stored, and JSONP-based XSS, with fixes ranging from global input filters to per-field encoding and strict allowlist validation. / The majority of these vulnerabilities stem from using untrusted user input (e.g., sort column names, order fields, filter parameters) directly in SQL or HQL queries without allow-list validation, enabling injection. One case has a validation timing flaw, two involve incomplete structural val",
+  "created_at": "2026-08-20T19:59:26+00:00",
+  "cve_ids": [
+    "CVE-2010-5327",
+    "CVE-2013-6465",
+    "CVE-2014-2067",
+    "CVE-2017-2601",
+    "CVE-2018-25084",
+    "CVE-2019-12741",
+    "CVE-2020-11002",
+    "CVE-2020-12668",
+    "CVE-2020-26282",
+    "CVE-2020-5245",
+    "CVE-2021-21244",
+    "CVE-2021-21248",
+    "CVE-2021-3644",
+    "CVE-2021-41269",
+    "CVE-2021-43288",
+    "CVE-2022-24816",
+    "CVE-2022-24881",
+    "CVE-2022-4593",
+    "CVE-2022-46166",
+    "CVE-2023-26472",
+    "CVE-2023-26477",
+    "CVE-2023-26479",
+    "CVE-2023-29016",
+    "CVE-2023-29211",
+    "CVE-2023-29212",
+    "CVE-2023-29213",
+    "CVE-2023-29511",
+    "CVE-2023-29512",
+    "CVE-2023-29514",
+    "CVE-2023-29516",
+    "CVE-2023-29518",
+    "CVE-2023-29522",
+    "CVE-2023-29523",
+    "CVE-2023-30537",
+    "CVE-2023-34464",
+    "CVE-2023-35152",
+    "CVE-2023-35153",
+    "CVE-2023-36469",
+    "CVE-2023-36470",
+    "CVE-2023-36471",
+    "CVE-2023-37462",
+    "CVE-2023-37909",
+    "CVE-2023-37914",
+    "CVE-2023-40176",
+    "CVE-2023-46731",
+    "CVE-2023-50721",
+    "CVE-2023-51387",
+    "CVE-2023-51388",
+    "CVE-2024-21650",
+    "CVE-2024-23818",
+    "CVE-2024-23819",
+    "CVE-2024-31465",
+    "CVE-2024-31982",
+    "CVE-2024-31984",
+    "CVE-2024-31996",
+    "CVE-2024-31997",
+    "CVE-2024-37901",
+    "CVE-2024-41667",
+    "CVE-2024-41947",
+    "CVE-2024-47882",
+    "CVE-2024-55662",
+    "CVE-2024-55877",
+    "CVE-2025-24893",
+    "CVE-2025-32429",
+    "CVE-2025-32430",
+    "CVE-2025-35036",
+    "CVE-2025-46558",
+    "CVE-2025-49581",
+    "CVE-2025-53835",
+    "CVE-2025-59340",
+    "CVE-2025-59954",
+    "CVE-2025-66474",
+    "CVE-2026-24128",
+    "CVE-2026-40105",
+    "CVE-2026-7045"
+  ],
+  "embeddings": {},
+  "group_scope": "mechanism",
+  "guideline_group_key": "mech_template_expression_untrusted_eval",
+  "guideline_id": "gl_mech_0010",
+  "guideline_text": "Trace attacker-controlled template text, expression strings, macro content, or rendering parameters into template engines, expression evaluators, macro renderers, or scriptable configuration evaluators. Report code paths where untrusted expression content is evaluated without sandboxing, escaping, allowlisting, or disabling reflective execution features. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 75 historical CVE example(s), not as a project-specific signature. A safe implementation should separate data from templates, sandbox expression evaluation, and disable reflection or method invocation features for untrusted input.",
+  "mechanism": {
+    "aliases": [
+      "template injection",
+      "expression language injection",
+      "SpEL injection",
+      "OGNL injection",
+      "Velocity macro injection",
+      "FreeMarker template injection"
+    ],
+    "family": "code_or_template_injection",
+    "mechanism_id": "mech_template_expression_untrusted_eval",
+    "missing_guard": "untrusted expression content is evaluated without sandboxing, escaping, allowlisting, or disabling reflective execution features",
+    "name": "untrusted template or expression evaluation",
+    "sink_shape": "template engines, expression evaluators, macro renderers, or scriptable configuration evaluators",
+    "source_shape": "attacker-controlled template text, expression strings, macro content, or rendering parameters",
+    "typical_fix": "separate data from templates, sandbox expression evaluation, and disable reflection or method invocation features for untrusted input"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2010-5327",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    3,
+    12,
+    15,
+    24,
+    25,
+    29,
+    30,
+    31,
+    32,
+    36
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 3,
+      "fix_strategy": "Restrict the evaluation context by disabling dangerous features: use SimpleEvaluationContext for SpEL, set empty function library for JXPath, restrict feature set for AviatorScript, set SAFER_RESOLVER for FreeMarker, and use SecureUberspector for Velocity.",
+      "members": [
+        "CVE-2026-7045",
+        "CVE-2025-59954",
+        "CVE-2022-46166",
+        "CVE-2022-24881",
+        "CVE-2023-51388",
+        "CVE-2024-41667",
+        "CVE-2010-5327",
+        "CVE-2023-51387"
+      ],
+      "name": "Unrestricted Expression Language Engine Configuration",
+      "root_cause": "Expression language engines (SpEL, JXPath, AviatorScript, FreeMarker, Velocity) are used with default settings that allow dangerous operations (type references, method invocation, object instantiation) on attacker-controlled expressions, because the code assumes the input is trusted."
+    },
+    {
+      "cluster_id": 3,
+      "fix_strategy": "Escape EL delimiters (e.g., `${` with `\\${`) in user input, replace dynamic templates with static safe messages, or switch to a non-EL interpolator such as ParameterMessageInterpolator, or disable EL interpolation by default.",
+      "members": [
+        "CVE-2025-35036",
+        "CVE-2021-41269",
+        "CVE-2020-5245",
+        "CVE-2020-26282",
+        "CVE-2020-11002",
+        "CVE-2021-21244"
+      ],
+      "name": "Unescaped User Input in Bean Validation Message Templates",
+      "root_cause": "User-supplied strings are passed to Hibernate Validator's message interpolation, which interprets EL expressions, without escaping special characters ('${', etc.) or using a non-EL interpolator."
+    },
+    {
+      "cluster_id": 3,
+      "fix_strategy": "Extend the restricted class list to include dangerous types (java.lang.reflect.Method, Field, Constructor, JinjavaInterpreter) and ensure property resolution goes through sandboxed checks that return null for restricted base objects.",
+      "members": [
+        "CVE-2025-59340",
+        "CVE-2020-12668"
+      ],
+      "name": "Sandbox Bypass via Unrestricted Property Access on Interpreter Internals",
+      "root_cause": "Template engine sandboxes do not restrict access to dangerous object types (e.g., reflection objects, engine interpreter object) that allow further traversal to unsafe functionality like arbitrary class instantiation, because the sandbox's blocklist is incomplete."
+    },
+    {
+      "cluster_id": 3,
+      "fix_strategy": "Escape or sanitize user input before embedding into generated code: for Java comments escape '*/' and '/*', for Groovy scripts escape quotes and dollar signs.",
+      "members": [
+        "CVE-2022-24816",
+        "CVE-2021-21248"
+      ],
+      "name": "Unsanitized Input in Dynamically Generated Code",
+      "root_cause": "User-controlled input is directly concatenated into generated source code (e.g., Java comments, Groovy scripts) without escaping language-specific special characters (comment terminators, quotes, dollar signs)."
+    },
+    {
+      "cluster_id": 3,
+      "fix_strategy": "",
+      "members": [
+        "CVE-2021-3644"
+      ],
+      "name": "Unrestricted Evaluation of User-Supplied Expressions in Template Engines and Validation Messages",
+      "root_cause": ""
+    },
+    {
+      "cluster_id": 12,
+      "fix_strategy": "Move the validation call after any conditional remapping so that the value actually used is the one validated.",
+      "members": [
+        "CVE-2025-32429"
+      ],
+      "name": "ORDER BY injection due to validation before variable remapping",
+      "root_cause": "A validation function is called on the raw user input, but afterward the variable is reassigned without re-validation, so the final value used in the ORDER BY clause can differ and contain malicious SQL."
+    },
+    {
+      "cluster_id": 15,
+      "fix_strategy": "Apply HTML escaping (e.g., HtmlUtils.htmlEscape()) before adding to the model.",
+      "members": [
+        "CVE-2018-25084"
+      ],
+      "name": "Stored cross-site scripting from unsanitized LDAP attributes",
+      "root_cause": "LDAP attribute values are added to a Spring model without HTML escaping, assuming they are safe for rendering."
+    },
+    {
+      "cluster_id": 24,
+      "fix_strategy": "Apply HTML escaping to the data (e.g., using StringEscapeUtils.escapeHtml4 or HtmlEscapers) before inserting it into the HTML template.",
+      "members": [
+        "CVE-2024-47882"
+      ],
+      "name": "Missing HTML escaping of user-controllable error content leading to XSS",
+      "root_cause": "User-controlled data (error messages or exception stack traces) is embedded directly into an HTML response without HTML entity encoding, allowing injection of arbitrary HTML/JavaScript."
+    },
+    {
+      "cluster_id": 25,
+      "fix_strategy": "Apply input validation (regex allowlist, @Pattern, bean validation) or sanitization (Jsoup.clean, OWASP HTML Sanitizer, tag stripping) to reject or neutralize dangerous HTML characters before they are stored or reflected.",
+      "members": [
+        "CVE-2023-29016",
+        "CVE-2019-12741"
+      ],
+      "name": "missing input validation/sanitization using allowlists or tag stripping",
+      "root_cause": "Trust that user input contains only safe characters; no validation or sanitization is performed before storage or reflection, allowing injection of HTML/JavaScript."
+    },
+    {
+      "cluster_id": 29,
+      "fix_strategy": "Apply HTML entity encoding to all user-controlled values before they are embedded in HTML output. Use library-specific escaping functions (e.g., StringEscapeUtils.escapeHtml(), SafeHtmlUtils.htmlEscape(), markupFormatter.translate()) or enable template auto-escaping (e.g., rename .ftl to .ftlh) and use manual escaping where required.",
+      "members": [
+        "CVE-2022-4593",
+        "CVE-2014-2067",
+        "CVE-2013-6465",
+        "CVE-2017-2601",
+        "CVE-2021-43288"
+      ],
+      "name": "Unescaped user data in HTML rendering contexts",
+      "root_cause": "The code assumes that user-supplied data (e.g., project names, email addresses, notes, artifact names) is safe for direct HTML interpolation. It lacks output encoding when concatenating into HTML strings, building DOM via innerHTML, or rendering in templates (FreeMarker, Jelly, localized messages)."
+    },
+    {
+      "cluster_id": 30,
+      "fix_strategy": "Apply HTML entity encoding (e.g., escapeHtml4(), Velocity escape tool) to all untrusted values before insertion into HTML output.",
+      "members": [
+        "CVE-2025-32430",
+        "CVE-2024-23819"
+      ],
+      "name": "Missing HTML entity encoding in HTML content and attributes",
+      "root_cause": "User-controlled strings are directly concatenated into HTML templates or string builders without HTML entity encoding, assuming data is safe for HTML context."
+    },
+    {
+      "cluster_id": 30,
+      "fix_strategy": "Use JavaScript string escaping (e.g., ?js_string, escapeJavaScript) and, for event handler attributes, also apply URL encoding to ensure safe embedding.",
+      "members": [
+        "CVE-2024-23818"
+      ],
+      "name": "Missing JavaScript context escaping in server-generated JavaScript code",
+      "root_cause": "User-controlled values are embedded into JavaScript string literals or event handler attributes without JavaScript-specific escaping, allowing injection of arbitrary JavaScript."
+    },
+    {
+      "cluster_id": 31,
+      "fix_strategy": "Apply escapetool.xml() or equivalent HTML/XML escaping function to all dynamic values before embedding in HTML.",
+      "members": [
+        "CVE-2026-24128",
+        "CVE-2023-29522",
+        "CVE-2023-29511",
+        "CVE-2023-29512",
+        "CVE-2023-29518",
+        "CVE-2023-35153",
+        "CVE-2023-37909",
+        "CVE-2024-41947",
+        "CVE-2023-29213"
+      ],
+      "name": "Missing HTML/XML escaping in template output",
+      "root_cause": "User-controlled values are interpolated into HTML attributes or text nodes without applying HTML entity encoding, allowing injection of arbitrary HTML/JavaScript."
+    },
+    {
+      "cluster_id": 31,
+      "fix_strategy": "Use $services.rendering.escape(value, 'xwiki/2.1') to escape the value for the wiki syntax context before interpolation.",
+      "members": [
+        "CVE-2024-21650",
+        "CVE-2023-26477",
+        "CVE-2023-26472",
+        "CVE-2023-30537",
+        "CVE-2023-29211",
+        "CVE-2023-29212",
+        "CVE-2023-29516",
+        "CVE-2023-29514",
+        "CVE-2024-55877",
+        "CVE-2024-55662",
+        "CVE-2023-36470",
+        "CVE-2023-37462",
+        "CVE-2023-46731",
+        "CVE-2024-31465",
+        "CVE-2023-50721"
+      ],
+      "name": "Missing wiki syntax escaping in template output",
+      "root_cause": "User-controlled values are interpolated into XWiki wiki syntax markup without escaping special characters that denote macros or directives, enabling server-side template injection."
+    },
+    {
+      "cluster_id": 31,
+      "fix_strategy": "Escape all possible delimiter sequences, including opening and closing macros, and add trailing character guards.",
+      "members": [
+        "CVE-2025-66474",
+        "CVE-2023-29523",
+        "CVE-2024-31996"
+      ],
+      "name": "Incomplete delimiter escaping in template blocks",
+      "root_cause": "Only a subset of the closing delimiter sequences (e.g., '{{/html}}') are escaped, allowing attackers to break out of literal blocks by using alternative forms or partial prefixes."
+    },
+    {
+      "cluster_id": 31,
+      "fix_strategy": "Use rawResponse macro for complete bypass, or write directly to the response writer and mark the request as finished, or route raw HTML through a sanitizing macro.",
+      "members": [
+        "CVE-2025-24893",
+        "CVE-2024-31982",
+        "CVE-2025-53835",
+        "CVE-2025-46558",
+        "CVE-2023-36469"
+      ],
+      "name": "Bypassing the template rendering pipeline",
+      "root_cause": "User-controlled content is rendered through the full wiki rendering engine, which interprets embedded macros; the fix is to write the output directly to the response or use a macro that bypasses further processing."
+    },
+    {
+      "cluster_id": 31,
+      "fix_strategy": "Apply escapetool.url() to the query parameter values.",
+      "members": [
+        "CVE-2026-40105"
+      ],
+      "name": "Missing URL encoding in href attributes",
+      "root_cause": "User-controlled revision IDs are concatenated into query strings without URL encoding, allowing injection of HTML attributes/scripts via quotes and brackets."
+    },
+    {
+      "cluster_id": 31,
+      "fix_strategy": "Set wiki='false' in the Velocity macro directive.",
+      "members": [
+        "CVE-2023-35152",
+        "CVE-2023-37914"
+      ],
+      "name": "Missing Velocity directive to disable wiki parsing",
+      "root_cause": "Velocity macro output is processed as wiki markup by default; missing wiki='false' allows injected macros to be evaluated."
+    },
+    {
+      "cluster_id": 31,
+      "fix_strategy": "Set Content-Type to text/plain for non-HTML output; remove form-related tags from sanitizer allowlist.",
+      "members": [
+        "CVE-2023-34464",
+        "CVE-2023-36471"
+      ],
+      "name": "Missing Content-Type header or improper sanitizer allowlist",
+      "root_cause": "Non-HTML output is served with default text/html Content-Type, or the HTML sanitizer allows form tags that enable Groovy injection."
+    },
+    {
+      "cluster_id": 31,
+      "fix_strategy": "Use a helper that unwraps and applies HTML escaping.",
+      "members": [
+        "CVE-2023-40176"
+      ],
+      "name": "Unsafe stripping of safe HTML wrapper",
+      "root_cause": "Code removes the {{html}} wrapper that provides escaping, then outputs the unwrapped content without re-escaping."
+    },
+    {
+      "cluster_id": 31,
+      "fix_strategy": "Sanitize input or avoid dynamic evaluation.",
+      "members": [
+        "CVE-2024-31984"
+      ],
+      "name": "Direct code evaluation without sanitization",
+      "root_cause": "User-controlled document title is concatenated into a Groovy evaluation string without escaping, leading to code injection."
+    },
+    {
+      "cluster_id": 31,
+      "fix_strategy": "Catch StackOverflowError and rethrow as checked exception.",
+      "members": [
+        "CVE-2023-26479"
+      ],
+      "name": "Uncaught StackOverflow error",
+      "root_cause": "Parser invocation is not wrapped in a try-catch for Errors, allowing StackOverflow to propagate."
+    },
+    {
+      "cluster_id": 32,
+      "fix_strategy": "Add authorization check (hasAccess(Right.SCRIPT)) before evaluation; optionally restrict evaluation to safe properties or escape output.",
+      "members": [
+        "CVE-2024-37901",
+        "CVE-2024-31997"
+      ],
+      "name": "Missing script rights check before Velocity template evaluation",
+      "root_cause": "User-controlled content (object properties, headings, UI extension parameters) is passed to Velocity #evaluate() without verifying that the content author has script rights, allowing arbitrary code execution."
+    },
+    {
+      "cluster_id": 36,
+      "fix_strategy": "Execute content with the correct user's rights (author, creator) or parse immediately in the correct context, and disable async/caching that could reuse privileged outputs.",
+      "members": [
+        "CVE-2025-49581"
+      ],
+      "name": "Content executed under wrong user's security context",
+      "root_cause": "User-controlled content (macro parameters, footnotes, UI extensions, cached results) is rendered using the privileges of a different user (viewer, page author, or a high-privilege entity) instead of the content author or creator, allowing privilege escalation."
+    }
+  ],
+  "tags": [
+    "code_or_template_injection",
+    "mech_template_expression_untrusted_eval",
+    "template injection",
+    "expression language injection",
+    "SpEL injection",
+    "OGNL injection"
+  ]
+}

@@ -1,0 +1,19 @@
+```json
+{
+  "candidate_a_relevance": 0.1,
+  "candidate_b_relevance": 0.7,
+  "choice": "B",
+  "confidence": 0.85,
+  "key_evidence": [
+    "Candidate B contains tenant-scoped operations (exitUserTenant, changeOwenUserTenant, invitationUser, addTenantPackUser) that directly handle resource identifiers (tenantId, userId, phone) in administrative mutations",
+    "exitUserTenant performs user-tenant existence check and password verification before the tenant-exit effect, which is exactly the ownership/scope-before-effect pattern the guideline audits",
+    "changeOwenUserTenant accepts userId and tenantId as request parameters to change tenant ownership — a high-value authorization-bypass audit target"
+  ],
+  "missing_information": [
+    "Full method body of changeOwenUserTenant to see whether it enforces principal-bound authorization before reassigning tenant ownership",
+    "Whether the @PostMapping endpoints have any interceptor or annotation-based authorization guard (e.g., @RequiresPermissions) not visible in the snippet",
+    "Guideline-relevant CVE examples to confirm the exact mechanism-level pattern being matched"
+  ],
+  "rationale": "Candidate A is JWT authentication infrastructure (token creation/verification, error response formatting) — it does not trace resource identifiers into sensitive operations, so it is a poor match for the authorization_bypass guideline. Candidate B is a tenant controller with methods that accept tenant IDs and user IDs as parameters and perform administrative mutations (exit tenant, change owner, invite user, manage tenant packs). The exitUserTenant method demonstrates the guideline's core pattern: check user-tenant relationship, verify credentials, then perform the effect. Several methods (notably changeOwenUserTenant) accept attacker-controllable resource identifiers without visible authorization guards in the snippet, making them directly useful for a downstream security audit."
+}
+```

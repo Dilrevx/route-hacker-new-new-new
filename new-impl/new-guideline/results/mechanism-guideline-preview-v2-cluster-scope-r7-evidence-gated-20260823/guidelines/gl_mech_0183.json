@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities in a GraphQL and LiveQuery system where input validation, depth limits, authorization checks, and concurrency safety are absent or incomplete. Attackers can cause denial of service, leak information, or trigger race conditions. The fixes involve adding explicit validation, limits, authorization checks, and per-subscriber cloning.",
+  "created_at": "2026-08-22T20:37:28+00:00",
+  "cve_ids": [
+    "CVE-2026-34595"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0033__pending_mech_cluster_33_missing_array_type_validation_for_logical_operators",
+  "guideline_id": "gl_mech_0183",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Use Array.isArray to enforce that the value is a true Array before processing..",
+  "mechanism": {
+    "aliases": [
+      "sends",
+      "iterates",
+      "instances",
+      "array",
+      "authenticated",
+      "attacker"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_33_missing_array_type_validation_for_logical_operators",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing array type validation for logical operators",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Use Array.isArray to enforce that the value is a true Array before processing."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-34595",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    33
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 33,
+      "fix_strategy": "Use Array.isArray to enforce that the value is a true Array before processing.",
+      "members": [
+        "CVE-2026-34595"
+      ],
+      "name": "Missing array type validation for logical operators",
+      "root_cause": "The code assumes that the value of $or, $and, $nor is always an Array, without validating the type, allowing array-like objects to bypass security checks."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_33_missing_array_type_validation_for_logical_operators",
+    "sends",
+    "iterates",
+    "instances",
+    "array"
+  ]
+}

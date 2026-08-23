@@ -1,0 +1,128 @@
+{
+  "budgets": [
+    30,
+    50,
+    100,
+    150,
+    200
+  ],
+  "candidate_count_on_common": {
+    "different_count": 0,
+    "left_total": 150604,
+    "right_total": 150604
+  },
+  "common_count": 28,
+  "left_count": 28,
+  "left_label": "source-reviewed-release-candidate-common28",
+  "left_only_count": 0,
+  "left_only_sample": [],
+  "metrics_on_common_identities": {
+    "hit_at_100": {
+      "delta_count": 6,
+      "delta_rate": 0.21428571428571427,
+      "left_count": 24,
+      "left_rate": 0.8571428571428571,
+      "right_count": 18,
+      "right_rate": 0.6428571428571429
+    },
+    "hit_at_150": {
+      "delta_count": 4,
+      "delta_rate": 0.14285714285714285,
+      "left_count": 24,
+      "left_rate": 0.8571428571428571,
+      "right_count": 20,
+      "right_rate": 0.7142857142857143
+    },
+    "hit_at_200": {
+      "delta_count": 5,
+      "delta_rate": 0.17857142857142858,
+      "left_count": 25,
+      "left_rate": 0.8928571428571429,
+      "right_count": 20,
+      "right_rate": 0.7142857142857143
+    },
+    "hit_at_30": {
+      "delta_count": 6,
+      "delta_rate": 0.21428571428571427,
+      "left_count": 20,
+      "left_rate": 0.7142857142857143,
+      "right_count": 14,
+      "right_rate": 0.5
+    },
+    "hit_at_50": {
+      "delta_count": 6,
+      "delta_rate": 0.21428571428571427,
+      "left_count": 21,
+      "left_rate": 0.75,
+      "right_count": 15,
+      "right_rate": 0.5357142857142857
+    },
+    "mrr": {
+      "delta": 0.053471124177576934,
+      "left": 0.25686401332282666,
+      "right": 0.20339288914524972
+    }
+  },
+  "primary_budget": 200,
+  "primary_budget_crossing": {
+    "both_hit_count": 20,
+    "both_miss_count": 3,
+    "left_only_hit_count": 5,
+    "left_only_hits": [
+      {
+        "cwe_ids": [],
+        "hcvr_type": "template_expression_injection",
+        "identity_key": "hubspot__jinjava::CVE-2020-12668",
+        "left_candidate_count": 775,
+        "left_rank": 1,
+        "right_candidate_count": 775,
+        "right_rank": null
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "template_expression_injection",
+        "identity_key": "hubspot__jinjava::CVE-2025-59340",
+        "left_candidate_count": 1548,
+        "left_rank": 3,
+        "right_candidate_count": 1548,
+        "right_rank": null
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "template_expression_injection",
+        "identity_key": "browserup__browserup-proxy::CVE-2020-26282",
+        "left_candidate_count": 529,
+        "left_rank": 5,
+        "right_candidate_count": 529,
+        "right_rank": null
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "template_expression_injection",
+        "identity_key": "hubspot__jinjava::CVE-2026-25526",
+        "left_candidate_count": 1579,
+        "left_rank": 5,
+        "right_candidate_count": 1579,
+        "right_rank": null
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "ssrf",
+        "identity_key": "dhis2__dhis2-core::CVE-2022-41949",
+        "left_candidate_count": 20373,
+        "left_rank": 10,
+        "right_candidate_count": 20373,
+        "right_rank": null
+      }
+    ],
+    "right_only_hit_count": 0,
+    "right_only_hits": []
+  },
+  "right_count": 28,
+  "right_label": "r8-release-ready-sidecar-common28",
+  "right_only_count": 0,
+  "right_only_sample": [],
+  "same_identity_order": true,
+  "same_identity_set": true,
+  "schema_version": "hcvr_recall_rank_comparison.v1"
+}

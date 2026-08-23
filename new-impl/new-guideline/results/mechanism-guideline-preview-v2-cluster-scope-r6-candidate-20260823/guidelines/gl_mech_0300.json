@@ -1,0 +1,65 @@
+{
+  "cluster_summary": "A cluster of vulnerabilities where user-supplied command arguments are insufficiently validated against allowlists or safe-bin policies, leading to bypass of intended restrictions via dangerous flags, wrapper chains, inconsistent approval display, shell expansion, or filesystem oracle leaks.",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2026-22169",
+    "CVE-2026-32010",
+    "CVE-2026-32017",
+    "CVE-2026-32022",
+    "CVE-2026-41392"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0065__pending_mech_cluster_65_missing_dangerous_flags_and_options_in_safe_bin_policies",
+  "guideline_id": "gl_mech_0300",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 5 historical CVE example(s), not as a project-specific signature. A safe implementation should Add all dangerous flags to per-binary blocked lists, enforce canonicalization of long options, and disallow options that specify file paths..",
+  "mechanism": {
+    "aliases": [
+      "fails",
+      "out",
+      "operands",
+      "arguments",
+      "long-option",
+      "allowlist"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_65_missing_dangerous_flags_and_options_in_safe_bin_policies",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing dangerous flags and options in safe-bin policies",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Add all dangerous flags to per-binary blocked lists, enforce canonicalization of long options, and disallow options that specify file paths."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-22169",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    65
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 65,
+      "fix_strategy": "Add all dangerous flags to per-binary blocked lists, enforce canonicalization of long options, and disallow options that specify file paths.",
+      "members": [
+        "CVE-2026-22169",
+        "CVE-2026-32010",
+        "CVE-2026-32017",
+        "CVE-2026-41392",
+        "CVE-2026-32022"
+      ],
+      "name": "Missing dangerous flags and options in safe-bin policies",
+      "root_cause": "The safe-bin allowlist policy does not block all flags or options that can lead to arbitrary file operations or command execution, such as --compress-program, -o, -r, or shell init-file options. Additionally, long-option abbreviations are not canonicalized before matching."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_65_missing_dangerous_flags_and_options_in_safe_bin_policies",
+    "fails",
+    "out",
+    "operands",
+    "arguments"
+  ]
+}

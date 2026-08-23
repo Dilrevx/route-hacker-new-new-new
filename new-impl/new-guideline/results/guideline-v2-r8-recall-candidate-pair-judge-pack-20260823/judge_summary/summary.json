@@ -1,0 +1,29 @@
+{
+  "anchor_overlap_choice_rate": 0.8333333333333334,
+  "average_scores": {
+    "candidate_a_relevance": 0.26666666666666666,
+    "candidate_b_relevance": 0.3083333333333333,
+    "confidence": 0.8666666666666667
+  },
+  "choice_counts": {
+    "A": 3,
+    "B": 2,
+    "neither": 1
+  },
+  "choice_outcome_counts": {
+    "anchor_overlap_chosen": 5,
+    "neither": 1
+  },
+  "invalid_output_count": 0,
+  "judge_input_count": 6,
+  "judge_output_dir": "judge_outputs",
+  "missing_output_count": 0,
+  "parsed_count": 6,
+  "policy": [
+    "This is advisory semantic pair-judging for recall diagnostics.",
+    "It does not update guidelines, sidecars, ranking, embedding weights, or audit prompts.",
+    "Hidden labels are used only after judge output is collected to estimate reranker potential."
+  ],
+  "schema_version": "hcvr_recall_candidate_pair_judge_summary.v1",
+  "top1_choice_rate": 0.0
+}

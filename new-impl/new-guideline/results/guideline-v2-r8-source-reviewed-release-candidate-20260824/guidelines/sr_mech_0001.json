@@ -1,0 +1,19 @@
+{
+  "boundary_label": "candidate_boundary_01",
+  "guideline_group_key": "gl_mech_0001__candidate_boundary_01__mech_temp_file_delete_mkdir_race",
+  "guideline_id": "sr_mech_0001",
+  "guideline_text": "Audit for temporary directory create-delete-mkdir TOCTOU race. Temporary directory create-delete-mkdir TOCTOU: create a temporary file, delete it, then recreate the same pathname as a directory before writing, copying, loading, or otherwise relying on that path. Required missing-guard check: The old-side pattern has no atomic directory creation, stable directory handle, or synchronization binding the checked temporary name to the later directory use. The delete-to-mkdir interval releases the pathname, and checking mkdir or mkdirs after the fact does not prevent replacement within the race window. Safe implementation should: Use an atomic temporary-directory creation API such as Files.createTempDirectory, keep and use the returned Path, and fail closed if creation cannot be performed with the intended ownership and permissions. Do not implement directory creation as createTempFile-delete-mkdir or createTempFile-delete-mkdirs. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 3 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_temp_file_delete_mkdir_race",
+    "name": "temporary directory create-delete-mkdir TOCTOU race"
+  },
+  "old_guideline_id": "gl_mech_0001",
+  "release_status": {
+    "blockers": [],
+    "release_ready": true,
+    "status": "release_ready"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 3
+}

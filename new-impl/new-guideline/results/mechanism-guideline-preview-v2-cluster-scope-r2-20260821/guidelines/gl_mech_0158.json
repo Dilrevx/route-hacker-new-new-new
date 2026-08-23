@@ -1,0 +1,74 @@
+{
+  "cluster_summary": "This cluster encompasses vulnerabilities where server-side code fails to implement proper cross-site request forgery (CSRF) protections, perform necessary authorization checks, or employ correct security context handling. These flaws allow attackers to forge requests, escalate privileges, or bypass access controls.",
+  "created_at": "2026-08-21T09:41:10+00:00",
+  "cve_ids": [
+    "CVE-2014-2058",
+    "CVE-2017-2604",
+    "CVE-2017-2613"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0028__mech_request_body_resource_mismatch_authz",
+  "guideline_id": "gl_mech_0158",
+  "guideline_text": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources. Report code paths where the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation.",
+  "mechanism": {
+    "aliases": [
+      "path parameter authorization mismatch",
+      "request body resource mismatch",
+      "bulk operation target mismatch",
+      "namespace sync authorization bypass"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_request_body_resource_mismatch_authz",
+    "missing_guard": "the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check",
+    "name": "request-body resource identifiers bypass path-scoped authorization",
+    "sink_shape": "bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources",
+    "source_shape": "attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body",
+    "typical_fix": "validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2014-2058",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    28
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Add explicit checkPermission(ADMINISTER) calls before executing the action.",
+      "members": [
+        "CVE-2017-2604"
+      ],
+      "name": "Missing permission check on administrative action handlers",
+      "root_cause": "Administrative action methods are accessible without verifying that the caller has ADMINISTER permission, relying only on method constraints (e.g., @RequirePOST) or UI obscurity."
+    },
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Impersonate system (ACL.SYSTEM) before resolving project names.",
+      "members": [
+        "CVE-2014-2058"
+      ],
+      "name": "Missing privileged impersonation during project name resolution",
+      "root_cause": "User-controlled project name resolution is performed without impersonating a system security context, allowing bypass of access restrictions."
+    },
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Introduce a system property to disable user creation via URL and add additional permission check.",
+      "members": [
+        "CVE-2017-2613"
+      ],
+      "name": "CSRF-induced user creation via GET request with insufficient guard",
+      "root_cause": "A GET request creates a user record with only a permission check, lacking CSRF protection, allowing bulk user creation via forged requests."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_request_body_resource_mismatch_authz",
+    "path parameter authorization mismatch",
+    "request body resource mismatch",
+    "bulk operation target mismatch",
+    "namespace sync authorization bypass"
+  ]
+}

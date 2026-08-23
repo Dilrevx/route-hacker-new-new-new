@@ -1,0 +1,63 @@
+{
+  "cluster_summary": "This cluster contains 25 CVEs where user-controlled input is processed without proper validation, leading to code injection, prototype pollution, stack overflow, infinite loops, ReDoS, and resource exhaustion. The vulnerabilities arise from missing bounds checks, missing escaping, insufficient key validation, and unsafe recursion patterns across various libraries.",
+  "created_at": "2026-08-22T20:37:28+00:00",
+  "cve_ids": [
+    "CVE-2026-27837",
+    "CVE-2026-28794",
+    "CVE-2026-45302",
+    "CVE-2026-8657"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0022__pending_mech_cluster_22_prototype_pollution_via_insufficient_key_validation_in_path_traversal",
+  "guideline_id": "gl_mech_0124",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 4 historical CVE example(s), not as a project-specific signature. A safe implementation should Add checks on every segment using a forbidden key set, enforce own-property membership via hasOwnProperty, and skip inherited properties..",
+  "mechanism": {
+    "aliases": [
+      "blocklist",
+      "presegment",
+      "includes",
+      "positions",
+      "modification",
+      "object-prototype"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_22_prototype_pollution_via_insufficient_key_validation_in_path_traversal",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Prototype pollution via insufficient key validation in path traversal",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Add checks on every segment using a forbidden key set, enforce own-property membership via hasOwnProperty, and skip inherited properties."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-27837",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    22
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 22,
+      "fix_strategy": "Add checks on every segment using a forbidden key set, enforce own-property membership via hasOwnProperty, and skip inherited properties.",
+      "members": [
+        "CVE-2026-27837",
+        "CVE-2026-28794",
+        "CVE-2026-45302",
+        "CVE-2026-8657"
+      ],
+      "name": "Prototype pollution via insufficient key validation in path traversal",
+      "root_cause": "Property path segments are not validated against dangerous keys (__proto__, constructor, prototype) at all positions, allowing prototype pollution."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_22_prototype_pollution_via_insufficient_key_validation_in_path_traversal",
+    "blocklist",
+    "presegment",
+    "includes",
+    "positions"
+  ]
+}

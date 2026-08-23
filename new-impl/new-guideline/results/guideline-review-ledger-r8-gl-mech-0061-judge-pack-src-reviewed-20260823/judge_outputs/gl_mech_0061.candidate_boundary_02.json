@@ -1,0 +1,21 @@
+```json
+{
+  "decision": "needs_evidence",
+  "coherence_score": 0.0,
+  "coverage_score": 0.0,
+  "actionability_score": 0.0,
+  "retrieval_query_quality": 0.0,
+  "main_issue": "No representative cases or evidence refs are attached to this boundary. The ledger row itself acknowledges that the old guideline over-focused on URI schemes while the evidence supports a broader final-destination policy boundary. Without at least one source-reviewed case showing unsafe scheme handling as the primary bypass mechanism (with a concrete source-to-sink trace, exploit precondition, and fix evidence), semantic coherence cannot be assessed.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "representative_cases is empty — no case anchors exist to evaluate whether the mechanism is coherent",
+    "evidence_refs is empty — no source-reviewed traces, fix evidence, or exploit preconditions are provided",
+    "source_shape note says the current packet shows broader final-destination policy issues, not isolated unsafe URI scheme handling",
+    "safe_fix_semantics note explicitly states 'Needs source-reviewed fix evidence'",
+    "exploit_precondition note explicitly states 'Needs a representative case'",
+    "missing_guard note says the checked packet does not prove scheme filtering is the key absent guard",
+    "sink_or_sensitive_effect note says the boundary would need old-side source-to-sink trace showing malicious scheme reaching redirect/navigation sink because scheme validation was absent"
+  ]
+}
+```

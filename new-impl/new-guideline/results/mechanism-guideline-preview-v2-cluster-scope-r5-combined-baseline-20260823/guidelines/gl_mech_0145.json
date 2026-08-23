@@ -1,0 +1,76 @@
+{
+  "cluster_summary": "This cluster covers vulnerabilities arising from insufficient validation of plugin origins and user-controlled paths during plugin installation and resolution. Common themes include failure to filter untrusted workspace plugins in privileged operations, lack of path canonicalization and input sanitization leading to directory traversal, and unsafe error handling that bypasses security scans. These flaws can allow attackers to escalate privileges, execute arbitrary code, or bypass security controls.",
+  "created_at": "2026-08-22T20:04:50+00:00",
+  "cve_ids": [
+    "CVE-2026-28447",
+    "CVE-2026-43570",
+    "CVE-2026-43571"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0030__mech_path_traversal_missing_canonical_prefix",
+  "guideline_id": "gl_mech_0145",
+  "guideline_text": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under the intended base directory before the file operation. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 3 historical CVE example(s), not as a project-specific signature. A safe implementation should normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check.",
+  "mechanism": {
+    "aliases": [
+      "path traversal",
+      "directory traversal",
+      "Zip Slip",
+      "archive entry traversal",
+      "canonical path bypass"
+    ],
+    "family": "filesystem",
+    "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+    "missing_guard": "the normalized absolute path is not checked to remain under the intended base directory before the file operation",
+    "name": "path traversal through missing canonical prefix check",
+    "required_keywords": [],
+    "sink_shape": "file read, write, delete, extraction, or resource-loading APIs",
+    "source_shape": "attacker-controlled filenames, archive entries, path fragments, or resource names",
+    "typical_fix": "normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-28447",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    30
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 30,
+      "fix_strategy": "Validate hook ID to reject reserved path segments ('.', '..') and path separators before constructing installation path; throw error if invalid.",
+      "members": [
+        "CVE-2026-28447"
+      ],
+      "name": "Missing validation of user-controlled hook ID for path traversal",
+      "root_cause": "The hook ID derived from package metadata is used directly in path.join without sanitization, allowing directory traversal via '..' or '.' sequences."
+    },
+    {
+      "cluster_id": 30,
+      "fix_strategy": "Canonicalize the candidate path by resolving symlinks and compare the realpath against the canonical root directory.",
+      "members": [
+        "CVE-2026-43570"
+      ],
+      "name": "Missing symlink canonicalization before path containment check",
+      "root_cause": "The resolved path is checked for containment without canonicalizing symlinks, so a symlink pointing outside the root directory can bypass the containment check."
+    },
+    {
+      "cluster_id": 30,
+      "fix_strategy": "Add origin field and filter out workspace-origin plugins unless explicitly trusted; separate trusted catalog lookups from discovery functions.",
+      "members": [
+        "CVE-2026-43571"
+      ],
+      "name": "Trust bypass due to missing origin filtering for workspace plugins in sensitive operations",
+      "root_cause": "The code does not distinguish between trusted bundled plugins and untrusted workspace plugins when selecting plugins for channel setup, auth choice resolution, or plugin loading, allowing untrusted workspace plugins to override trusted ones."
+    }
+  ],
+  "tags": [
+    "filesystem",
+    "mech_path_traversal_missing_canonical_prefix",
+    "path traversal",
+    "directory traversal",
+    "Zip Slip",
+    "archive entry traversal"
+  ]
+}

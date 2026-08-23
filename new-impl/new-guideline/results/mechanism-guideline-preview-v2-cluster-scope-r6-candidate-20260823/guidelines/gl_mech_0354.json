@@ -1,0 +1,55 @@
+{
+  "cluster_summary": "The cluster comprises vulnerabilities in OAuth2 and OIDC clients where the callback processing fails to properly validate or bind security parameters such as state, nonce, and PKCE challenge/verifier, enabling attacks including cross-site request forgery, authorization code injection, and secret leakage. Some members also involve mass assignment and vault misconfiguration related to OAuth flows.",
+  "created_at": "2026-08-22T19:56:43+00:00",
+  "cve_ids": [
+    "CVE-2021-27582"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0078__mech_object_owner_scope_missing_authz",
+  "guideline_id": "gl_mech_0354",
+  "guideline_text": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where the authorization decision is not bound to both the current principal and the exact resource or tenant being affected. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation.",
+  "mechanism": {
+    "aliases": [
+      "object ownership authorization",
+      "tenant scope check",
+      "IDOR",
+      "resource scoped authorization"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_object_owner_scope_missing_authz",
+    "missing_guard": "the authorization decision is not bound to both the current principal and the exact resource or tenant being affected",
+    "name": "missing object-owner or tenant-scope authorization",
+    "required_keywords": [],
+    "sink_shape": "sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource",
+    "source_shape": "attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets",
+    "typical_fix": "check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2021-27582",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    78
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 78,
+      "fix_strategy": "Remove the @ModelAttribute annotation and retrieve the server-managed AuthorizationRequest from the model map, ensuring only intended server-controlled fields are used.",
+      "members": [
+        "CVE-2021-27582"
+      ],
+      "name": "Mass assignment on OAuth authorization request object",
+      "root_cause": "The controller uses @ModelAttribute annotation to bind HTTP request parameters directly to an AuthorizationRequest object without an allowlist, allowing attackers to set sensitive fields such as scope or redirect_uri."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_object_owner_scope_missing_authz",
+    "object ownership authorization",
+    "tenant scope check",
+    "IDOR",
+    "resource scoped authorization"
+  ]
+}

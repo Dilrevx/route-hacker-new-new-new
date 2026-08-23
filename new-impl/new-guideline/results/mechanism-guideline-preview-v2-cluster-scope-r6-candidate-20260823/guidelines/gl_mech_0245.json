@@ -1,0 +1,99 @@
+{
+  "cluster_summary": "This cluster includes 37 CVEs in XWiki where user-controlled input is embedded into template outputs (wiki syntax, HTML, URLs, scripts) without proper escaping or context-aware handling. The root causes vary: missing HTML escaping, missing wiki syntax escaping, missing URL encoding, missing validation, incomplete escaping functions, or improper use of rendering macros. All lead to injection of wiki macros, Velocity, Groovy, or HTML/JavaScript with server-side privileges.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2023-29514",
+    "CVE-2023-34464",
+    "CVE-2023-35152",
+    "CVE-2023-36470",
+    "CVE-2023-50723",
+    "CVE-2024-55662",
+    "CVE-2026-24128"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0053__mech_privileged_server_side_capability_exposed",
+  "guideline_id": "gl_mech_0245",
+  "guideline_text": "Trace lower-privilege script, template, macro, plugin, or API callers that can invoke privileged server-side capabilities into server-side include, template rendering, servlet dispatch, raw object access, internal file reads, or privileged framework APIs. Report code paths where a higher privilege check is not enforced at the API entry point before exposing the server-side capability. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 7 historical CVE example(s), not as a project-specific signature. A safe implementation should check the required higher privilege at the exposed API boundary and return no sensitive result when the caller lacks that privilege.",
+  "mechanism": {
+    "aliases": [
+      "missing programming rights check",
+      "privileged API exposure",
+      "server-side include capability exposure",
+      "lower privilege script capability"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_privileged_server_side_capability_exposed",
+    "missing_guard": "a higher privilege check is not enforced at the API entry point before exposing the server-side capability",
+    "name": "privileged server-side capability exposed to lower privilege context",
+    "required_keywords": [],
+    "sink_shape": "server-side include, template rendering, servlet dispatch, raw object access, internal file reads, or privileged framework APIs",
+    "source_shape": "lower-privilege script, template, macro, plugin, or API callers that can invoke privileged server-side capabilities",
+    "typical_fix": "check the required higher privilege at the exposed API boundary and return no sensitive result when the caller lacks that privilege"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2023-29514",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    53
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 53,
+      "fix_strategy": "Apply $services.rendering.escape(value, 'xwiki/2.1') before embedding user input into wiki syntax.",
+      "members": [
+        "CVE-2023-29514",
+        "CVE-2023-50723",
+        "CVE-2024-55662"
+      ],
+      "name": "Missing wiki syntax escaping",
+      "root_cause": "User-controlled strings are directly embedded into XWiki/2.1 syntax without escaping, allowing injection of wiki macros and script directives."
+    },
+    {
+      "cluster_id": 53,
+      "fix_strategy": "Apply $escapetool.xml() to all user-controlled values before outputting them in an HTML context.",
+      "members": [
+        "CVE-2026-24128"
+      ],
+      "name": "Missing HTML/XML escaping",
+      "root_cause": "User-controlled values are embedded directly into HTML output or attributes without escaping, allowing injection of arbitrary HTML/JavaScript."
+    },
+    {
+      "cluster_id": 53,
+      "fix_strategy": "Disable wiki syntax in the Velocity macro by adding wiki=\"false\" attribute.",
+      "members": [
+        "CVE-2023-35152"
+      ],
+      "name": "Velocity macro with wiki syntax enabled",
+      "root_cause": "User-controlled input is placed inside a Velocity macro that parses wiki syntax, allowing injection of nested script macros."
+    },
+    {
+      "cluster_id": 53,
+      "fix_strategy": "Override HTTP response Content-Type to 'text/plain' when the output syntax is not HTML or XHTML.",
+      "members": [
+        "CVE-2023-34464"
+      ],
+      "name": "Missing Content-Type enforcement for non-HTML output",
+      "root_cause": "Output syntax parameter changes the response body format but the Content-Type remains text/html, allowing user-supplied HTML to be rendered as active content."
+    },
+    {
+      "cluster_id": 53,
+      "fix_strategy": "Introduce a dedicated macro that escapes icon names and delegates rendering within a limited document context.",
+      "members": [
+        "CVE-2023-36470"
+      ],
+      "name": "Missing escaping of icon set content",
+      "root_cause": "User-controlled icon set definitions (wiki content) are included directly in rendering without escaping or context isolation, allowing script macro injection."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_privileged_server_side_capability_exposed",
+    "missing programming rights check",
+    "privileged API exposure",
+    "server-side include capability exposure",
+    "lower privilege script capability"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "boundary_label": "candidate_boundary_02_multipart_original_filename_write",
+  "guideline_group_key": "review_mech_0017__candidate_boundary_02_multipart_original_filename_write__mech_multipart_original_filename_path_write",
+  "guideline_id": "sr_mech_0021",
+  "guideline_text": "Audit for multipart original filename used in server-side file path without basename normalization. Multipart original-filename path write: a web upload handler reads MultipartFile.getOriginalFilename or an equivalent client-supplied upload filename and concatenates it into a local temporary directory, permanent upload directory, remote SFTP destination, script dependency path, or artifact storage path before stripping client path components and rejecting empty or unsafe names. Report code paths where an authenticated or unauthenticated uploader can use path separators or traversal-bearing filenames to write outside the intended per-user directory or influence the stored file path. Required missing-guard check: The vulnerable code uses MultipartFile.getOriginalFilename directly and only checks null or blankness in some paths. It does not reduce the supplied filename to its basename, reject path separators, or prove the final path remains inside the intended per-user upload directory before writing or forwarding the file. Safe implementation should: Centralize upload filename extraction through a helper that returns null for empty filenames and strips all client-supplied directory components before the name is concatenated into local or remote upload paths. A stronger implementation would also reject traversal-like names and enforce canonical containment at the final write path. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 1 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_multipart_original_filename_path_write",
+    "name": "multipart original filename used in server-side file path without basename normalization"
+  },
+  "old_guideline_id": "review_mech_0017",
+  "release_status": {
+    "blockers": [
+      "singleton_or_missing_case_support"
+    ],
+    "release_ready": false,
+    "status": "review_only"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 1
+}

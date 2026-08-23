@@ -1,0 +1,54 @@
+{
+  "cluster_summary": "A set of vulnerabilities in inventory/GUI storage code that lead to item duplication due to inadequate synchronization between GUI and backing storage, missing player context in storage updates, and lack of validation of slot properties (fake slots, modification permissions). One outlier involves a missing permission check in a packet handler for file modification.",
+  "created_at": "2026-08-22T18:31:03+00:00",
+  "cve_ids": [
+    "CVE-2024-42698"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0019__mech_object_owner_scope_missing_authz",
+  "guideline_id": "gl_mech_0109",
+  "guideline_text": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where the authorization decision is not bound to both the current principal and the exact resource or tenant being affected. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation.",
+  "mechanism": {
+    "aliases": [
+      "object ownership authorization",
+      "tenant scope check",
+      "IDOR",
+      "resource scoped authorization"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_object_owner_scope_missing_authz",
+    "missing_guard": "the authorization decision is not bound to both the current principal and the exact resource or tenant being affected",
+    "name": "missing object-owner or tenant-scope authorization",
+    "sink_shape": "sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource",
+    "source_shape": "attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets",
+    "typical_fix": "check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2024-42698",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    19
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 19,
+      "fix_strategy": "Add explicit checks for slot.isFake() and slot.allowModification()/canPlace() before proceeding with any read/write operations; reject transfers on violation.",
+      "members": [
+        "CVE-2024-42698"
+      ],
+      "name": "Missing slot property validation before item transfer",
+      "root_cause": "Item transfer logic assumed all slots are valid and writable without checking whether the slot is fake (display-only) or whether modification is allowed, allowing operations on restricted slots that can lead to duplication."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_object_owner_scope_missing_authz",
+    "object ownership authorization",
+    "tenant scope check",
+    "IDOR",
+    "resource scoped authorization"
+  ]
+}

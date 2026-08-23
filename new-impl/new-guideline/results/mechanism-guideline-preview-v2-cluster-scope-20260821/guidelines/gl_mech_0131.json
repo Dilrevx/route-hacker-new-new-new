@@ -1,0 +1,140 @@
+{
+  "cluster_summary": "This cluster encompasses vulnerabilities where server-side code fails to implement proper cross-site request forgery (CSRF) protections, perform necessary authorization checks, or employ correct security context handling. These flaws allow attackers to forge requests, escalate privileges, or bypass access controls.",
+  "created_at": "2026-08-20T19:54:08+00:00",
+  "cve_ids": [
+    "CVE-2013-7330",
+    "CVE-2014-125071",
+    "CVE-2014-2058",
+    "CVE-2014-2068",
+    "CVE-2017-2604",
+    "CVE-2017-2611",
+    "CVE-2017-2613",
+    "CVE-2020-28191",
+    "CVE-2021-25924",
+    "CVE-2023-40572",
+    "CVE-2024-3825",
+    "CVE-2024-55876"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0028__mech_object_owner_scope_missing_authz",
+  "guideline_id": "gl_mech_0131",
+  "guideline_text": "Trace attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets into sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource. Report code paths where the authorization decision is not bound to both the current principal and the exact resource or tenant being affected. Confirm that the guard is enforced before the sensitive effect and remains bound to the same resource, principal, destination, or object that the effect uses. Treat this as a reusable mechanism-level pattern derived from 12 historical CVE example(s), not as a project-specific signature. A safe implementation should check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation.",
+  "mechanism": {
+    "aliases": [
+      "object ownership authorization",
+      "tenant scope check",
+      "IDOR",
+      "resource scoped authorization"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_object_owner_scope_missing_authz",
+    "missing_guard": "the authorization decision is not bound to both the current principal and the exact resource or tenant being affected",
+    "name": "missing object-owner or tenant-scope authorization",
+    "sink_shape": "sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource",
+    "source_shape": "attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets",
+    "typical_fix": "check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2013-7330",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    28
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Add CSRF token generation, embed in forms or headers, and validate on the server side before processing.",
+      "members": [
+        "CVE-2020-28191",
+        "CVE-2023-40572",
+        "CVE-2024-3825"
+      ],
+      "name": "Missing synchronizer token (CSRF token) on state-changing requests",
+      "root_cause": "The application relies solely on cookie-based authentication without a server-generated token that must be submitted with each state-changing request, allowing cross-site request forgery."
+    },
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Insert an explicit permission check (e.g., hasAccess) after CSRF validation.",
+      "members": [
+        "CVE-2024-55876"
+      ],
+      "name": "Missing authorization check after CSRF token validation",
+      "root_cause": "The endpoint validates CSRF tokens but fails to verify the user holds the required permission (e.g., programming rights) before executing the action."
+    },
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Add explicit checkPermission(ADMINISTER) calls before executing the action.",
+      "members": [
+        "CVE-2017-2611",
+        "CVE-2017-2604"
+      ],
+      "name": "Missing permission check on administrative action handlers",
+      "root_cause": "Administrative action methods are accessible without verifying that the caller has ADMINISTER permission, relying only on method constraints (e.g., @RequirePOST) or UI obscurity."
+    },
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Add permission checks (BUILD) on each downstream project during form processing and validation.",
+      "members": [
+        "CVE-2013-7330"
+      ],
+      "name": "Missing authorization check on cross-project build trigger configuration",
+      "root_cause": "Users with CONFIGURE permission on a project can add a build trigger referencing a downstream project without verifying they have BUILD permission on that project."
+    },
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Impersonate system (ACL.SYSTEM) before resolving project names.",
+      "members": [
+        "CVE-2014-2058"
+      ],
+      "name": "Missing privileged impersonation during project name resolution",
+      "root_cause": "User-controlled project name resolution is performed without impersonating a system security context, allowing bypass of access restrictions."
+    },
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Replace with the correct permission constant.",
+      "members": [
+        "CVE-2014-2068"
+      ],
+      "name": "Incorrect permission constant used in authorization check",
+      "root_cause": "The authorization check for a sensitive operation uses a wrong permission constant (e.g., ADMINISTER instead of RUN_SCRIPTS)."
+    },
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Parse and verify Origin header against server URI and require a CSRF token in query parameter.",
+      "members": [
+        "CVE-2014-125071"
+      ],
+      "name": "Missing origin validation and CSRF token for WebSocket upgrade",
+      "root_cause": "WebSocket handshake does not validate the Origin header or require a CSRF token, allowing cross-site WebSocket hijacking."
+    },
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Add before filter to check Content-Type matches expected type (e.g., application/json).",
+      "members": [
+        "CVE-2021-25924"
+      ],
+      "name": "Missing Content-Type validation as CSRF defense",
+      "root_cause": "Endpoints accept state-changing requests without CSRF token but rely on Content-Type header to prevent cross-origin form submissions, which is insufficient."
+    },
+    {
+      "cluster_id": 28,
+      "fix_strategy": "Introduce a system property to disable user creation via URL and add additional permission check.",
+      "members": [
+        "CVE-2017-2613"
+      ],
+      "name": "CSRF-induced user creation via GET request with insufficient guard",
+      "root_cause": "A GET request creates a user record with only a permission check, lacking CSRF protection, allowing bulk user creation via forged requests."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_object_owner_scope_missing_authz",
+    "object ownership authorization",
+    "tenant scope check",
+    "IDOR",
+    "resource scoped authorization"
+  ]
+}

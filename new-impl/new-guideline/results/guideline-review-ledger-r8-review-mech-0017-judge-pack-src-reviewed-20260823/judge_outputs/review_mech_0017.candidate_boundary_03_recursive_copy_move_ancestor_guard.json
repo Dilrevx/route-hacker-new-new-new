@@ -1,0 +1,17 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.85,
+  "coverage_score": 0.65,
+  "actionability_score": 0.80,
+  "retrieval_query_quality": 0.75,
+  "main_issue": "Single representative case limits coverage confidence, but the mechanism is narrow, well-defined, and thoroughly evidenced: source shape (FilesResource.updateFile dispatching copy/move), sink (Selectors.SELECT_ALL recursive copy into descendant path), missing guard (no ancestor check before moveTo/copyFrom), exploit precondition (authenticated user places parent into child), and safe fix (checkSourceIsNotParent walking getParent() upward) are all coherent and derived from the same codebase. The guideline text is specific enough to generalize to other systems with recursive copy/move APIs lacking ancestor guards.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "Pre-patch code at 9e42d565a14f confirms copyFrom uses Selectors.SELECT_ALL for folder sources and moveToFolder moves source folders into destination without ancestor checks.",
+    "Fix commit fca7dc9c8348 adds checkSourceIsNotParent comparing resolved FileObject identities and walking getParent() upward before both moveTo and copyFrom.",
+    "Public advisory confirms the impact: copying a parent directory into /temp/ exposes files the user should not access, affecting all users including low-privilege DataShield users."
+  ]
+}
+```

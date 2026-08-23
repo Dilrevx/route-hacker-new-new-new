@@ -1,0 +1,21 @@
+{
+  "boundary_label": "candidate_boundary_03_recursive_copy_move_ancestor_guard",
+  "guideline_group_key": "review_mech_0017__candidate_boundary_03_recursive_copy_move_ancestor_guard__mech_recursive_copy_move_missing_ancestor_guard",
+  "guideline_id": "sr_mech_0022",
+  "guideline_text": "Audit for recursive copy or move allows source folder to be placed under itself without ancestor guard. Recursive copy/move ancestor guard bypass: a file-management API accepts a destination folder and one or more source file or folder paths, verifies readability, writability, or existence, and then copies or moves an entire source folder into a destination without proving the destination is not the source itself or a child of that source. Report code paths where recursive copy or move can duplicate a parent tree into one of its own descendants, causing unauthorized file disclosure, filesystem expansion, or cross-user file exposure. Required missing-guard check: The vulnerable old-side checks existence, readability, writability, destination type, and allowed file extension, but it does not check whether destinationFolder is the same as sourceFile or one of sourceFile's descendants before recursive copy or move. A same-path string check is insufficient because the vulnerable condition must compare resolved FileObject ancestry. Safe implementation should: Before recursive copy or move, compare resolved FileObject identities and walk destination.getParent() upward to reject destination == source and any destination parent equal to source. Apply this guard to both moveToFolder and copyFrom before sourceFile.moveTo or destinationFile.copyFrom. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 1 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_recursive_copy_move_missing_ancestor_guard",
+    "name": "recursive copy or move allows source folder to be placed under itself without ancestor guard"
+  },
+  "old_guideline_id": "review_mech_0017",
+  "release_status": {
+    "blockers": [
+      "singleton_or_missing_case_support"
+    ],
+    "release_ready": false,
+    "status": "review_only"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 1
+}

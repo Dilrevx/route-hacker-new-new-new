@@ -1,0 +1,18 @@
+{
+  "decision": "split",
+  "coherence_score": 0.5,
+  "coverage_score": 0.5,
+  "actionability_score": 0.9,
+  "retrieval_query_quality": 0.78,
+  "main_issue": "The guideline precisely captures the createTempFile-delete-mkdir TOCTOU mechanism, but only four of eight listed cases have evidence for that sequence. The remaining cases are labeled as temporary-resource permission issues and provide no evidence of releasing and reusing a path.",
+  "suggested_guideline": "Split into two guidelines. (1) Temporary-directory replacement race: trace code that reserves a temporary pathname with createTempFile or equivalent, deletes that object, and then creates a directory or sensitive resource at the same pathname. Report when an attacker able to write in the parent directory can replace or pre-create the path during this interval. Fix with an atomic API such as Files.createTempDirectory and retain the returned path/handle. (2) Temporary-resource permissions: review temporary files, directories, and extracted resources for inherited or overly broad permissions, especially when data is sensitive or the location is shared. Require owner-restricted creation permissions or an immediately verified restrictive-permission setting before exposing or using the resource.",
+  "split_suggestions": [
+    "Create-temp-file, delete, then mkdir/mkdirs at the same pathname: filesystem replacement TOCTOU race",
+    "Temporary file or directory created with overly broad or unchecked permissions: temporary-resource disclosure or tampering exposure"
+  ],
+  "evidence_notes": [
+    "CVE-2022-4817, CVE-2018-25068, CVE-2022-3969, and CVE-2021-21363 explicitly describe the same create-temp-file -> delete -> mkdir race and fixes using Files.createTempDirectory.",
+    "CVE-2020-15250, CVE-2022-3952, CVE-2022-24823, and CVE-2022-41946 are only supported here as source-ready review anchors under file_permission_temp_resource; their supplied evidence does not establish a delete-then-mkdir race.",
+    "The current query is strong for the race subgroup because it names concrete source and sink operations plus the atomic replacement, but it should not claim coverage of generic temporary-resource permission defects."
+  ]
+}

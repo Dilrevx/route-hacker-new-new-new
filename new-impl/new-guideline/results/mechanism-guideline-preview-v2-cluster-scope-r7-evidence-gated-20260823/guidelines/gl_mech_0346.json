@@ -1,0 +1,57 @@
+{
+  "cluster_summary": "This cluster covers multiple vulnerabilities in XWiki where dynamic code execution (especially Velocity templates) is performed without proper authorization checks, input validation, or sandbox restrictions. The issues include missing script/programming rights checks, insufficient method-level sandboxing, validation gaps for document origins, and incorrect handling of default content types. Fixes involve adding authorization checks, method whitelists, and proper default values to prevent unauthorized code execution.",
+  "created_at": "2026-08-22T20:37:29+00:00",
+  "cve_ids": [
+    "CVE-2022-24897"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0063__pending_mech_cluster_63_insufficient_method_level_sandbox_restrictions",
+  "guideline_id": "gl_mech_0346",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Add a per-class method whitelist (Map<Class, Set<String>>) and check lowercased method names before allowing execution..",
+  "mechanism": {
+    "aliases": [
+      "users",
+      "objects",
+      "restrict",
+      "dangerous",
+      "authenticated",
+      "set"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_63_insufficient_method_level_sandbox_restrictions",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Insufficient method-level sandbox restrictions",
+    "required_keywords": [],
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Add a per-class method whitelist (Map<Class, Set<String>>) and check lowercased method names before allowing execution."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2022-24897",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    63
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 63,
+      "fix_strategy": "Add a per-class method whitelist (Map<Class, Set<String>>) and check lowercased method names before allowing execution.",
+      "members": [
+        "CVE-2022-24897"
+      ],
+      "name": "Insufficient method-level sandbox restrictions",
+      "root_cause": "The Velocity sandbox only restricted which classes could be used, not which methods could be called on allowed classes like java.io.File, allowing arbitrary method invocation."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_63_insufficient_method_level_sandbox_restrictions",
+    "users",
+    "objects",
+    "restrict",
+    "dangerous"
+  ]
+}

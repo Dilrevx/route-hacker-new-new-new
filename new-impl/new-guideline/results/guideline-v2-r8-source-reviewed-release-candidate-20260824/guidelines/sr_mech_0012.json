@@ -1,0 +1,21 @@
+{
+  "boundary_label": "candidate_boundary_01_template_text_engine_exec",
+  "guideline_group_key": "gl_mech_0040__candidate_boundary_01_template_text_engine_exec__mech_untrusted_template_text_engine_exec",
+  "guideline_id": "sr_mech_0012",
+  "guideline_text": "Audit for untrusted template text evaluated by template engine. Untrusted template text evaluated by a template engine: attacker-controlled template source text, macro content, or code-generation template content is passed into a template engine such as FreeMarker or Velocity and rendered with a powerful default configuration. Report code paths where the template text itself is untrusted and the engine can resolve classes, invoke methods, or otherwise execute reflective features without a sandbox, safe class resolver, allowlist, or equivalent restriction applied before rendering. Required missing-guard check: The vulnerable flow lacks a template-engine sandbox or feature restriction on the exact render path. In particular, the old FreeMarker configuration does not install TemplateClassResolver.SAFER_RESOLVER and the old Velocity configuration does not use a SecureUberspector before evaluating templateContent. Safe implementation should: Configure the engine before rendering untrusted template source: FreeMarker should use TemplateClassResolver.SAFER_RESOLVER or an equivalent safe resolver, and Velocity should use a SecureUberspector or equivalent sandbox. The fix must apply to the engine instance used by the vulnerable render call, not merely sanitize downstream output. Confirm that the source, sensitive effect, and missing guard occur on the same code path before reporting. Treat this as a source-reviewed mechanism boundary currently supported by 1 representative case(s); broaden scope only after additional source review.",
+  "mechanism": {
+    "family": "source_reviewed_boundary",
+    "mechanism_id": "mech_untrusted_template_text_engine_exec",
+    "name": "untrusted template text evaluated by template engine"
+  },
+  "old_guideline_id": "gl_mech_0040",
+  "release_status": {
+    "blockers": [
+      "singleton_or_missing_case_support"
+    ],
+    "release_ready": false,
+    "status": "review_only"
+  },
+  "schema_version": "hcvr_source_reviewed_guideline.v1",
+  "source_reviewed_representative_count": 1
+}

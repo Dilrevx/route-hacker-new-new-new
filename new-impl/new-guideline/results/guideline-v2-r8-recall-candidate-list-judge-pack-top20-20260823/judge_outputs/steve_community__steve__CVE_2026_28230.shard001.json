@@ -1,0 +1,100 @@
+```json
+{
+  "candidate_scores": [
+    {
+      "candidate_id": "C001",
+      "relevance": 0.55,
+      "audit_priority": "medium",
+      "key_evidence": [
+        "DSLContext ctx field indicates jOOQ-based query construction; getInternal() likely executes SQL queries against the SETTINGS table"
+      ],
+      "rationale": "Repository implementation with jOOQ DSLContext. The snippet shows the class structure and a getInternal() call chain but does not reveal the actual SQL construction method bodies. A useful entry point for auditing SQL patterns in the settings domain."
+    },
+    {
+      "candidate_id": "C002",
+      "relevance": 0.15,
+      "audit_priority": "low",
+      "key_evidence": [
+        "BatchInsertConverter registered for idList and mailSettings.recipients suggests batch database insert operations"
+      ],
+      "rationale": "Spring MVC controller advice with custom data binding. The BatchInsertConverter name hints at database insert operations, but the snippet shows only data binding registration, not SQL construction. Low relevance without seeing the converter implementation."
+    },
+    {
+      "candidate_id": "C003",
+      "relevance": 0.3,
+      "audit_priority": "low",
+      "key_evidence": [
+        "afterStart creates admin user from configuration properties; delegates to webUserRepository.createUser()",
+        "passwordEncoder.encode() applied to auth password values"
+      ],
+      "rationale": "User creation service that delegates to the repository layer. Configuration-sourced values flow through passwordEncoder to webUserRepository.createUser(). Useful for tracing user data flow to the SQL layer, but the snippet shows no SQL construction itself."
+    },
+    {
+      "candidate_id": "C004",
+      "relevance": 0.2,
+      "audit_priority": "low",
+      "key_evidence": [
+        "loadUserByUsernameForApiInternal builds a User object from a database record; fromJson deserializes authorities from a JSON column"
+      ],
+      "rationale": "User loading with JSON deserialization of authorities via jacksonObjectMapper. No SQL construction visible. The JSON parsing is a secondary concern, not the primary SQL injection audit target."
+    },
+    {
+      "candidate_id": "C005",
+      "relevance": 0.1,
+      "audit_priority": "low",
+      "key_evidence": [
+        "Imports JdbcUserDetailsManager and implements UserDetailsManager; uses tools.jackson ObjectMapper"
+      ],
+      "rationale": "Import section and class declaration only. References to JdbcUserDetailsManager suggest JDBC-based user management, but the snippet contains no executable code showing SQL construction."
+    },
+    {
+      "candidate_id": "C006",
+      "relevance": 0.0,
+      "audit_priority": "none",
+      "key_evidence": [],
+      "rationale": "License header and import statements only. No code logic, no SQL, no data flow. Not useful as an audit entry point."
+    },
+    {
+      "candidate_id": "C007",
+      "relevance": 0.45,
+      "audit_priority": "medium",
+      "key_evidence": [
+        "DSLContext and JSON imports indicate jOOQ-based database operations with JSON column handling",
+        "WebUserRepository implementation is the direct database access layer for user operations"
+      ],
+      "rationale": "Repository implementation with jOOQ DSLContext and JSON handling. The imports suggest SQL query construction for user data, but the snippet is only imports and class declaration. A useful entry point for auditing user-related SQL queries."
+    },
+    {
+      "candidate_id": "C008",
+      "relevance": 0.0,
+      "audit_priority": "none",
+      "key_evidence": [],
+      "rationale": "Configuration properties POJO with @ConfigurationProperties and Lombok @Data. No SQL, no user input processing, no database interaction. Completely irrelevant to SQL injection auditing."
+    },
+    {
+      "candidate_id": "C009",
+      "relevance": 0.2,
+      "audit_priority": "low",
+      "key_evidence": [
+        "PasswordEncoder import suggests authentication handling; UnidentifiedIncomingObjectService dependency may process external input"
+      ],
+      "rationale": "Service class with authentication-related imports and an UnidentifiedIncomingObjectService dependency. The snippet shows only imports and field declarations. Could be relevant if charge point operations involve SQL queries with external input, but no evidence in this snippet."
+    },
+    {
+      "candidate_id": "C010",
+      "relevance": 0.0,
+      "audit_priority": "none",
+      "key_evidence": [],
+      "rationale": "Simple enum defining OcppTransport values (SOAP). No SQL, no user input, no database interaction. Completely irrelevant."
+    }
+  ],
+  "confidence": 0.45,
+  "missing_information": [
+    "Full method bodies of getInternal() in C001 and the SQL query methods in C007 would reveal whether jOOQ is used with parameter binding or raw SQL concatenation",
+    "The BatchInsertConverter implementation referenced in C002 would show whether it builds SQL safely",
+    "Complete repository method signatures and bodies would allow tracing attacker-controlled values to SQL sinks",
+    "How the authorization_bypass HCVR type connects to these SQL injection patterns is not visible in the provided snippets"
+  ],
+  "top_choices": ["C001", "C007", "C003"]
+}
+```

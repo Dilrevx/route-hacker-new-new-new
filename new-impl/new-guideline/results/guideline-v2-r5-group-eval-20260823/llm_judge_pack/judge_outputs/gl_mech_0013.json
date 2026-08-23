@@ -1,0 +1,18 @@
+{
+  "decision": "needs_evidence",
+  "coherence_score": 0.72,
+  "coverage_score": 0.58,
+  "actionability_score": 0.9,
+  "retrieval_query_quality": 0.88,
+  "main_issue": "The guideline precisely describes traversal caused by resolving attacker-controlled path components without normalized containment, but most supplied cases provide only patch-anchor provenance rather than source-to-sink evidence. The cluster summary is also overbroad, mixing upload validation, XSS, SSRF, and disk-exhaustion mechanisms that do not belong to this path-containment mechanism.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "Dspace CVE-2022-31194 supports the mechanism: request-controlled resumableIdentifier is appended under a temporary directory and used for file checks/deletion without canonical containment.",
+    "S3Proxy CVE-2025-24961 strongly supports the mechanism across list, read, write, delete, and access-control operations using caller-controlled object keys/prefixes resolved beneath a container path.",
+    "Graylog CVE-2023-41044 is plausibly relevant because an HTTP filename parameter reaches download/delete operations, but the evidence does not show whether ensureFileWithinBundleDir is actually insufficient, bypassable, or absent on every sink path.",
+    "The Zrlog, JClouds, sz-boot-parent, GeoWebCache, and Venice examples lack concrete source, path-resolution, guard, and sink evidence in this payload; their review-entry labels alone do not establish the shared mechanism.",
+    "Before accepting the full 21-case group, provide per-case proof that attacker-controlled path material reaches a filesystem/resource sink and that normalization plus containment under the intended base is missing or ineffective.",
+    "Remove file-extension/MIME validation, inline disposition, size-limit, XSS, SSRF, and disk-exhaustion language from the cluster summary unless those cases are moved into separate guideline groups."
+  ]
+}

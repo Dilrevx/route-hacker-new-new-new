@@ -1,0 +1,64 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where cryptographic secrets are generated using non-cryptographic pseudorandom number generators (PRNGs) or hardcoded keys, leading to predictability and potential forgery. The weaknesses stem from using java.util.Random, ThreadLocalRandom, or insecure random string utilities instead of SecureRandom, or embedding static keys in source code.",
+  "created_at": "2026-08-22T18:31:03+00:00",
+  "cve_ids": [
+    "CVE-2015-2913",
+    "CVE-2019-10908",
+    "CVE-2019-11808",
+    "CVE-2023-24828",
+    "CVE-2025-62710"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0020__pending_mech_cluster_20_use_of_non_cryptographic_prng_for_security_sensitive_values",
+  "guideline_id": "gl_mech_0116",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 5 historical CVE example(s), not as a project-specific signature. A safe implementation should Replace all such calls with a cryptographically secure random number generator (e.g., java.security.SecureRandom) and ensure sufficient entropy length..",
+  "mechanism": {
+    "aliases": [
+      "system.currenttimemillis",
+      "key",
+      "produced",
+      "involve",
+      "math.random",
+      "predictable"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_20_use_of_non_cryptographic_prng_for_security_sensitive_values",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Use of non-cryptographic PRNG for security-sensitive values",
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Replace all such calls with a cryptographically secure random number generator (e.g., java.security.SecureRandom) and ensure sufficient entropy length."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2015-2913",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    20
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 20,
+      "fix_strategy": "Replace all such calls with a cryptographically secure random number generator (e.g., java.security.SecureRandom) and ensure sufficient entropy length.",
+      "members": [
+        "CVE-2025-62710",
+        "CVE-2023-24828",
+        "CVE-2015-2913",
+        "CVE-2019-11808",
+        "CVE-2019-10908"
+      ],
+      "name": "Use of non-cryptographic PRNG for security-sensitive values",
+      "root_cause": "Developers mistakenly assumed that non-cryptographic PRNGs (java.util.Random, ThreadLocalRandom, or libraries wrapping them) provide sufficient unpredictability for cryptographic keys, session IDs, tokens, or passwords, ignoring that these PRNGs have predictable state and low seed entropy."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_20_use_of_non_cryptographic_prng_for_security_sensitive_values",
+    "system.currenttimemillis",
+    "key",
+    "produced",
+    "involve"
+  ]
+}

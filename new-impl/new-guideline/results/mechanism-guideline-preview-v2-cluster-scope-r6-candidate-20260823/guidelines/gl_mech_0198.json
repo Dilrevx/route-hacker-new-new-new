@@ -1,0 +1,69 @@
+{
+  "cluster_summary": "This cluster includes vulnerabilities where applications fail to enforce upper bounds on the size, count, or complexity of external input before performing memory or disk allocation, leading to resource exhaustion. The missing limits occur in various contexts: HTTP request/response body buffering, delimiter-split operations, numeric parameter validation, disk storage (cache, logs, downloads), type validation, size estimation, and parsing complexity.",
+  "created_at": "2026-08-22T19:56:42+00:00",
+  "cve_ids": [
+    "CVE-2026-28478",
+    "CVE-2026-32689",
+    "CVE-2026-40073",
+    "CVE-2026-40608"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0042__mech_request_body_resource_mismatch_authz",
+  "guideline_id": "gl_mech_0198",
+  "guideline_text": "Trace attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body into bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources. Report code paths where the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 4 historical CVE example(s), not as a project-specific signature. A safe implementation should validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation.",
+  "mechanism": {
+    "aliases": [
+      "path parameter authorization mismatch",
+      "request body resource mismatch",
+      "bulk operation target mismatch",
+      "namespace sync authorization bypass"
+    ],
+    "family": "authorization",
+    "mechanism_id": "mech_request_body_resource_mismatch_authz",
+    "missing_guard": "the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check",
+    "name": "request-body resource identifiers bypass path-scoped authorization",
+    "required_keywords": [],
+    "sink_shape": "bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources",
+    "source_shape": "attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body",
+    "typical_fix": "validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-28478",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    42
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 42,
+      "fix_strategy": "Enforce a maximum byte limit during streaming (e.g., check Content-Length upfront, or accumulate size per chunk and cancel the stream if exceeded) to prevent unbounded memory allocation.",
+      "members": [
+        "CVE-2026-28478",
+        "CVE-2026-40073",
+        "CVE-2026-40608"
+      ],
+      "name": "Missing size limit on HTTP request/response body buffering",
+      "root_cause": "Code reads the entire HTTP request or response body into memory without checking cumulative size against a limit, assuming the body is small or that Content-Length is reliable."
+    },
+    {
+      "cluster_id": 42,
+      "fix_strategy": "Use lazy splitting (e.g., a splitter that yields elements one by one) or apply an explicit maxsplit limit to avoid eager materialization of a huge list.",
+      "members": [
+        "CVE-2026-32689"
+      ],
+      "name": "Missing limit on delimiter-split operations causing memory amplification",
+      "root_cause": "User-supplied input is split on a delimiter without a maximum count, creating a list that can be orders of magnitude larger than the original input (e.g., splitting an all-delimiter body into millions of empty strings)."
+    }
+  ],
+  "tags": [
+    "authorization",
+    "mech_request_body_resource_mismatch_authz",
+    "path parameter authorization mismatch",
+    "request body resource mismatch",
+    "bulk operation target mismatch",
+    "namespace sync authorization bypass"
+  ]
+}

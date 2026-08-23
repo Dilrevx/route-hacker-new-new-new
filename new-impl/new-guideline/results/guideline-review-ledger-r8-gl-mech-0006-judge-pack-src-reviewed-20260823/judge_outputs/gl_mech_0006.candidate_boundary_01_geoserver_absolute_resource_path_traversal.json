@@ -1,0 +1,17 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.85,
+  "coverage_score": 0.35,
+  "actionability_score": 0.80,
+  "retrieval_query_quality": 0.65,
+  "main_issue": "Mechanism is internally coherent and well-evidenced for the single representative case, but boundary generality across multiple cases is not demonstrated.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "Strong evidence chain: advisory (GHSA-9v5q-2gwq-q9hq) describes the absolute-vs-relative resource wrapper distinction, pre-patch source (Files.java:49-50, 201-202; URIs.java:30-31) confirms missing validation, and PR #7222 / commit ca683170 adds the fix with traversal tests.",
+    "Only one representative case (geoserver__geoserver::CVE-2023-51444) supports this boundary. The mechanism is well-defined but cross-case coverage is unverified.",
+    "The reviewer's correction from 'request-body authorization mismatch' to 'absolute resource wrapper traversal validation gap' is well-supported by the cited evidence."
+  ]
+}
+```

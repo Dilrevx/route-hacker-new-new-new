@@ -1,0 +1,56 @@
+{
+  "cluster_summary": "This cluster contains vulnerabilities where user-controlled data is embedded into web output (HTML, JavaScript, XML) without proper context-specific escaping, leading to cross-site scripting (XSS) or code injection. The root cause is the assumption that untrusted data is safe for direct inclusion in the output, without applying appropriate encoding for the target context (HTML entity, JavaScript string, XML attribute). The fixes involve using escaping functions or safe DOM APIs to ensure data is treated as text, not executable code.",
+  "created_at": "2026-08-22T18:31:03+00:00",
+  "cve_ids": [
+    "CVE-2024-43400"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0030__pending_mech_cluster_30_missing_javascript_context_escaping_in_server_generated_javascript_co",
+  "guideline_id": "gl_mech_0171",
+  "guideline_text": "Trace attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs into the sensitive operation or security boundary described by the member CVEs. Report code paths where the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 1 historical CVE example(s), not as a project-specific signature. A safe implementation should Use JavaScript string escaping (e.g., ?js_string, escapeJavaScript) and, for event handler attributes, also apply URL encoding to ensure safe embedding..",
+  "mechanism": {
+    "aliases": [
+      "set",
+      "onfocus",
+      "privileged",
+      "values",
+      "url-encoding",
+      "controlling"
+    ],
+    "family": "pending_review",
+    "mechanism_id": "pending_mech_cluster_30_missing_javascript_context_escaping_in_server_generated_javascript_co",
+    "missing_guard": "the required validation, authorization, isolation, state check, or binding is absent or not connected to the sensitive effect",
+    "name": "Missing JavaScript context escaping in server-generated JavaScript code",
+    "sink_shape": "the sensitive operation or security boundary described by the member CVEs",
+    "source_shape": "attacker-influenced inputs, resource identities, state values, or configuration described by the member CVEs",
+    "typical_fix": "Use JavaScript string escaping (e.g., ?js_string, escapeJavaScript) and, for event handler attributes, also apply URL encoding to ensure safe embedding."
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2024-43400",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    30
+  ],
+  "source_fingerprint": "f9e23911d32fc30b341dcd06eadeec715d6cd51c687ac0e7f14d8d5a2059c8c0",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 30,
+      "fix_strategy": "Use JavaScript string escaping (e.g., ?js_string, escapeJavaScript) and, for event handler attributes, also apply URL encoding to ensure safe embedding.",
+      "members": [
+        "CVE-2024-43400"
+      ],
+      "name": "Missing JavaScript context escaping in server-generated JavaScript code",
+      "root_cause": "User-controlled values are embedded into JavaScript string literals or event handler attributes without JavaScript-specific escaping, allowing injection of arbitrary JavaScript."
+    }
+  ],
+  "tags": [
+    "pending_review",
+    "pending_mech_cluster_30_missing_javascript_context_escaping_in_server_generated_javascript_co",
+    "set",
+    "onfocus",
+    "privileged",
+    "values"
+  ]
+}

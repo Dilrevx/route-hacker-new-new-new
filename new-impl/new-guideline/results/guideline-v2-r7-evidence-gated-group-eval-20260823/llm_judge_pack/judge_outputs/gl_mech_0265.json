@@ -1,0 +1,20 @@
+{
+  "decision": "needs_evidence",
+  "coherence_score": 0.28,
+  "coverage_score": 0.12,
+  "actionability_score": 0.42,
+  "retrieval_query_quality": 0.24,
+  "main_issue": "The supplied cases contain only patch-derived review-entry locations and no source, patch, or vulnerability descriptions establishing that either case involves missing validation of cryptographic parameters or keys. The cluster summary spans many unrelated cryptographic failure modes, while the guideline mixes generic authorization/state/isolation language with several distinct crypto-specific checks.",
+  "suggested_guideline": "",
+  "split_suggestions": [
+    "Cryptographic public-key and domain-parameter validation before verification, key agreement, or signature operations",
+    "Cryptographic verification-result handling and encoding/canonicality checks",
+    "Arithmetic, bounds, and algorithm-selection defects in cryptographic implementations"
+  ],
+  "evidence_notes": [
+    "bitcoinj CVE-2026-44714 is represented only by ScriptExecution.correctlySpends review-entry lines; no evidence connects the location to public-key range, subgroup, hash-binding, or parameter validation.",
+    "jsrsasign CVE-2026-4600 is represented only by two dsa-2.0.js review windows; no source excerpt or patch rationale establishes the relevant source, sensitive operation, missing guard, or fix.",
+    "The cluster summary explicitly combines timing leakage, insecure algorithms, arithmetic defects, loops, caching, protocol sequencing, certificate validation, and malformed-key validation; these require separate mechanisms.",
+    "Provide pre-patch and fix-side snippets for each assigned case showing attacker-controlled cryptographic input, the consuming primitive or security decision, the missing validation, and the added safe guard before accepting or splitting this group."
+  ]
+}

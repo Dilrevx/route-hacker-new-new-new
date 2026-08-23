@@ -1,0 +1,16 @@
+{
+  "decision": "needs_evidence",
+  "coherence_score": 0.08,
+  "coverage_score": 0.1,
+  "actionability_score": 0.38,
+  "retrieval_query_quality": 0.22,
+  "main_issue": "The sole case is labeled as a business-state precondition issue in an inventory Bundle click handler, but the supplied evidence contains no mutable-object check, race window, or later use after a stale check. The TOCTOU guideline is therefore unsupported and likely mismatched.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "The anchor is limited to GuiStorageElement.setAction lines 97-108 and is described only as a compact source-contract review entry.",
+    "The case metadata identifies business_state_precondition, while the proposed mechanism requires a check-use relationship over mutable state.",
+    "The cluster summary mentions slot validation, authorization, and special Bundle-item behavior; these may represent state-validation or inventory-consistency mechanisms rather than TOCTOU.",
+    "Provide the relevant before/after patch or source-level control flow showing a precondition check, an intervening state change, and a sensitive effect before assigning this case to a TOCTOU guideline."
+  ]
+}

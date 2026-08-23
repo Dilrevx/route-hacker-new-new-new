@@ -1,0 +1,403 @@
+{
+  "budgets": [
+    30,
+    50,
+    100,
+    200,
+    300,
+    500
+  ],
+  "candidate_count_on_common": {
+    "different_count": 1,
+    "left_total": 1094013,
+    "right_total": 1095817
+  },
+  "common_count": 143,
+  "left_count": 143,
+  "left_label": "p3c64-fixed-paper-eval-143",
+  "left_only_count": 0,
+  "left_only_sample": [],
+  "metrics_on_common_identities": {
+    "hit_at_100": {
+      "delta_count": 18,
+      "delta_rate": 0.1258741258741259,
+      "left_count": 73,
+      "left_rate": 0.5104895104895105,
+      "right_count": 55,
+      "right_rate": 0.38461538461538464
+    },
+    "hit_at_200": {
+      "delta_count": 10,
+      "delta_rate": 0.06993006993006994,
+      "left_count": 84,
+      "left_rate": 0.5874125874125874,
+      "right_count": 74,
+      "right_rate": 0.5174825174825175
+    },
+    "hit_at_30": {
+      "delta_count": 15,
+      "delta_rate": 0.1048951048951049,
+      "left_count": 45,
+      "left_rate": 0.3146853146853147,
+      "right_count": 30,
+      "right_rate": 0.2097902097902098
+    },
+    "hit_at_300": {
+      "delta_count": 9,
+      "delta_rate": 0.06293706293706294,
+      "left_count": 91,
+      "left_rate": 0.6363636363636364,
+      "right_count": 82,
+      "right_rate": 0.5734265734265734
+    },
+    "hit_at_50": {
+      "delta_count": 19,
+      "delta_rate": 0.13286713286713286,
+      "left_count": 56,
+      "left_rate": 0.3916083916083916,
+      "right_count": 37,
+      "right_rate": 0.25874125874125875
+    },
+    "hit_at_500": {
+      "delta_count": 9,
+      "delta_rate": 0.06293706293706294,
+      "left_count": 103,
+      "left_rate": 0.7202797202797203,
+      "right_count": 94,
+      "right_rate": 0.6573426573426573
+    },
+    "mrr": {
+      "delta": 0.03779435989807441,
+      "left": 0.08852777946015142,
+      "right": 0.050733419562077005
+    }
+  },
+  "primary_budget": 200,
+  "primary_budget_crossing": {
+    "both_hit_count": 62,
+    "both_miss_count": 47,
+    "left_only_hit_count": 22,
+    "left_only_hits": [
+      {
+        "cwe_ids": [],
+        "hcvr_type": "toctou_check_use_race",
+        "identity_key": "envoyproxy__gateway::CVE-2026-53715",
+        "left_candidate_count": 16204,
+        "left_rank": 2,
+        "right_candidate_count": 16204,
+        "right_rank": 2647
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "authorization_bypass",
+        "identity_key": "jeecgboot__jeecgboot::CVE-2025-14909",
+        "left_candidate_count": 6551,
+        "left_rank": 2,
+        "right_candidate_count": 6551,
+        "right_rank": 1360
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "file_permission_temp_resource",
+        "identity_key": "cyberjunky__python-garminconnect::CVE-2026-54447",
+        "left_candidate_count": 596,
+        "left_rank": 3,
+        "right_candidate_count": 596,
+        "right_rank": 347
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "m9_wave4",
+        "identity_key": "getkin__kin-openapi::GHSA-R277-6W6Q-XMQW",
+        "left_candidate_count": 1808,
+        "left_rank": 3,
+        "right_candidate_count": 1808,
+        "right_rank": 554
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "m9_expansion",
+        "identity_key": "earendil-works__pi::CVE-2026-54327",
+        "left_candidate_count": 4596,
+        "left_rank": 6,
+        "right_candidate_count": 4596,
+        "right_rank": 2064
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "business_state_precondition",
+        "identity_key": "filamentphp__filament::CVE-2026-48505",
+        "left_candidate_count": 9915,
+        "left_rank": 10,
+        "right_candidate_count": 9915,
+        "right_rank": 2141
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "m9_expansion",
+        "identity_key": "coder__coder::CVE-2026-55435",
+        "left_candidate_count": 30860,
+        "left_rank": 15,
+        "right_candidate_count": 30860,
+        "right_rank": 5073
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "m9_wave4",
+        "identity_key": "jandedobbeleer__oh-my-posh::GHSA-6XJ8-QV9J-XCJQ",
+        "left_candidate_count": 1755,
+        "left_rank": 35,
+        "right_candidate_count": 1755,
+        "right_rank": 339
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "concurrent_object_lifecycle",
+        "identity_key": "nesquena__hermes-webui::CVE-2026-6830",
+        "left_candidate_count": 588,
+        "left_rank": 43,
+        "right_candidate_count": 588,
+        "right_rank": 203
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "iris",
+        "identity_key": "cuba-platform__cuba::CVE-2025-32959",
+        "left_candidate_count": 14451,
+        "left_rank": 52,
+        "right_candidate_count": 14451,
+        "right_rank": 745
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "iris",
+        "identity_key": "apache__commons-fileupload::CVE-2025-48976",
+        "left_candidate_count": 419,
+        "left_rank": 64,
+        "right_candidate_count": 419,
+        "right_rank": 310
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "authorization_bypass",
+        "identity_key": "graylog2__graylog2-server::CVE-2025-53106",
+        "left_candidate_count": 19039,
+        "left_rank": 72,
+        "right_candidate_count": 19039,
+        "right_rank": 226
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "iris",
+        "identity_key": "apache__incubator-seata::CVE-2025-32897",
+        "left_candidate_count": 6793,
+        "left_rank": 74,
+        "right_candidate_count": 6793,
+        "right_rank": 352
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "m9_expansion",
+        "identity_key": "code16__sharp::CVE-2026-53634",
+        "left_candidate_count": 899,
+        "left_rank": 74,
+        "right_candidate_count": 899,
+        "right_rank": 564
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "ssrf",
+        "identity_key": "subzeroid__aiograpi::CVE-2026-47157",
+        "left_candidate_count": 783,
+        "left_rank": 82,
+        "right_candidate_count": 783,
+        "right_rank": 265
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "iris",
+        "identity_key": "jeremylong__dependencycheck::CVE-2018-12036",
+        "left_candidate_count": 1950,
+        "left_rank": 93,
+        "right_candidate_count": 1950,
+        "right_rank": 463
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "ssrf",
+        "identity_key": "useplunk__plunk::CVE-2026-32096",
+        "left_candidate_count": 2105,
+        "left_rank": 106,
+        "right_candidate_count": 2105,
+        "right_rank": 514
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "iris",
+        "identity_key": "apache__activemq::CVE-2020-11998",
+        "left_candidate_count": 16951,
+        "left_rank": 109,
+        "right_candidate_count": 16951,
+        "right_rank": 4546
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "business_state_precondition",
+        "identity_key": "ethyca__fides::CVE-2026-42303",
+        "left_candidate_count": 18387,
+        "left_rank": 111,
+        "right_candidate_count": 18387,
+        "right_rank": 589
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "authorization_bypass",
+        "identity_key": "modelcontextprotocol__python-sdk::CVE-2026-52869",
+        "left_candidate_count": 1550,
+        "left_rank": 115,
+        "right_candidate_count": 1550,
+        "right_rank": 632
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "iris",
+        "identity_key": "spring-cloud__spring-cloud-gateway::CVE-2022-22947",
+        "left_candidate_count": 944,
+        "left_rank": 130,
+        "right_candidate_count": 944,
+        "right_rank": 207
+      },
+      {
+        "cwe_ids": [
+          "CWE-770"
+        ],
+        "hcvr_type": "business_state_precondition",
+        "identity_key": "eclipse__milo::CVE-2022-25897",
+        "left_candidate_count": 5687,
+        "left_rank": 142,
+        "right_candidate_count": 5687,
+        "right_rank": 861
+      }
+    ],
+    "right_only_hit_count": 12,
+    "right_only_hits": [
+      {
+        "cwe_ids": [],
+        "hcvr_type": "authorization_bypass",
+        "identity_key": "openremote__openremote::CVE-2026-49439",
+        "left_candidate_count": 5659,
+        "left_rank": 434,
+        "right_candidate_count": 5659,
+        "right_rank": 17
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "iris",
+        "identity_key": "apache__inlong::CVE-2025-27531",
+        "left_candidate_count": 19871,
+        "left_rank": 623,
+        "right_candidate_count": 19871,
+        "right_rank": 20
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "toctou_check_use_race",
+        "identity_key": "parse-community__parse-server::CVE-2026-34363",
+        "left_candidate_count": 3732,
+        "left_rank": 367,
+        "right_candidate_count": 3732,
+        "right_rank": 20
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "authorization_bypass",
+        "identity_key": "apolloconfig__apollo::CVE-2024-43397",
+        "left_candidate_count": 1833,
+        "left_rank": 554,
+        "right_candidate_count": 1833,
+        "right_rank": 23
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "template_expression_injection",
+        "identity_key": "xwiki__xwiki-rendering::CVE-2025-66474",
+        "left_candidate_count": 2254,
+        "left_rank": 248,
+        "right_candidate_count": 2254,
+        "right_rank": 25
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "iris",
+        "identity_key": "apache__dubbo::CVE-2021-30181",
+        "left_candidate_count": 3837,
+        "left_rank": 1100,
+        "right_candidate_count": 3837,
+        "right_rank": 51
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "concurrent_object_lifecycle",
+        "identity_key": "api-platform__core::CVE-2026-49858",
+        "left_candidate_count": 2133,
+        "left_rank": 737,
+        "right_candidate_count": 2133,
+        "right_rank": 78
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "iris",
+        "identity_key": "conductor-oss__conductor::CVE-2025-26074",
+        "left_candidate_count": 4188,
+        "left_rank": 1321,
+        "right_candidate_count": 4188,
+        "right_rank": 80
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "authorization_bypass",
+        "identity_key": "steve-community__steve::CVE-2026-28230",
+        "left_candidate_count": 880,
+        "left_rank": 355,
+        "right_candidate_count": 880,
+        "right_rank": 127
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "authorization_bypass",
+        "identity_key": "chartbrew__chartbrew::CVE-2026-32252",
+        "left_candidate_count": 2837,
+        "left_rank": 722,
+        "right_candidate_count": 2837,
+        "right_rank": 148
+      },
+      {
+        "cwe_ids": [],
+        "hcvr_type": "business_state_precondition",
+        "identity_key": "wevm__mppx::CVE-2026-34210",
+        "left_candidate_count": 1139,
+        "left_rank": 409,
+        "right_candidate_count": 1139,
+        "right_rank": 162
+      },
+      {
+        "cwe_ids": [
+          "CWE-862"
+        ],
+        "hcvr_type": "authorization_bypass",
+        "identity_key": "xwiki__xwiki-platform::CVE-2022-23617",
+        "left_candidate_count": 30087,
+        "left_rank": 1013,
+        "right_candidate_count": 30087,
+        "right_rank": 183
+      }
+    ]
+  },
+  "right_count": 143,
+  "right_label": "qwen3-embedding-4b-frozen-paper-eval",
+  "right_only_count": 0,
+  "right_only_sample": [],
+  "same_identity_order": true,
+  "same_identity_set": true,
+  "schema_version": "hcvr_recall_rank_comparison.v1"
+}

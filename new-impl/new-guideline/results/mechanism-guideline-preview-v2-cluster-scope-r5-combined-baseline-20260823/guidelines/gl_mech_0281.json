@@ -1,0 +1,66 @@
+{
+  "cluster_summary": "This cluster covers vulnerabilities arising from insufficient validation or sanitization of input data when constructing DOM attributes, URLs, or URL templates. The flaws include missing context-specific sanitization, lack of decoding before pattern checks, absence of attribute name whitelisting, and failure to validate URL schemes or path components. Attackers can bypass security checks to inject malicious code or traverse paths.",
+  "created_at": "2026-08-22T20:04:51+00:00",
+  "cve_ids": [
+    "CVE-2026-27166",
+    "CVE-2026-41691"
+  ],
+  "embeddings": {},
+  "group_scope": "cluster-mechanism",
+  "guideline_group_key": "cluster_0054__mech_path_traversal_missing_canonical_prefix",
+  "guideline_id": "gl_mech_0281",
+  "guideline_text": "Trace attacker-controlled filenames, archive entries, path fragments, or resource names into file read, write, delete, extraction, or resource-loading APIs. Report code paths where the normalized absolute path is not checked to remain under the intended base directory before the file operation. Confirm that the required guard is enforced on the same source-to-sink path before the sensitive effect. Treat this as a reusable mechanism-level pattern derived from 2 historical CVE example(s), not as a project-specific signature. A safe implementation should normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check.",
+  "mechanism": {
+    "aliases": [
+      "path traversal",
+      "directory traversal",
+      "Zip Slip",
+      "archive entry traversal",
+      "canonical path bypass"
+    ],
+    "family": "filesystem",
+    "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+    "missing_guard": "the normalized absolute path is not checked to remain under the intended base directory before the file operation",
+    "name": "path traversal through missing canonical prefix check",
+    "required_keywords": [],
+    "sink_shape": "file read, write, delete, extraction, or resource-loading APIs",
+    "source_shape": "attacker-controlled filenames, archive entries, path fragments, or resource names",
+    "typical_fix": "normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check"
+  },
+  "model_used": "cluster_assisted_mechanism_attribution.v1",
+  "representative_cve": "CVE-2026-27166",
+  "schema_version": "hcvr_audit_guideline.v2",
+  "source_cluster_ids": [
+    54
+  ],
+  "source_fingerprint": "a13744b6cc0f4dfd88044c2389310908010efd011e4e3e03461953f113d9640c",
+  "source_method": "traditional",
+  "sub_patterns": [
+    {
+      "cluster_id": 54,
+      "fix_strategy": "Decode the URL using decodeURIComponent before performing the relative path check and the allow list regex match.",
+      "members": [
+        "CVE-2026-27166"
+      ],
+      "name": "Missing URL decoding before validation",
+      "root_cause": "The code validates the iframe src attribute against an allow list and blocks relative path patterns using a regular expression on the raw string without first URL-decoding encoded sequences, allowing bypass via URL-encoded path traversal."
+    },
+    {
+      "cluster_id": 54,
+      "fix_strategy": "Introduce a safe interpolation function that validates each segment against a whitelist of allowed characters (alphanumeric, underscore, hyphen, dot, plus) and rejects values containing path separators, URL structure characters, control characters, or exceeding 128 characters.",
+      "members": [
+        "CVE-2026-41691"
+      ],
+      "name": "Missing input validation for template interpolation in URL construction",
+      "root_cause": "The code assumes user-provided language and namespace values are safe to embed directly into URL templates without encoding, validation, or path sanitization, allowing path traversal and URL structure injection."
+    }
+  ],
+  "tags": [
+    "filesystem",
+    "mech_path_traversal_missing_canonical_prefix",
+    "path traversal",
+    "directory traversal",
+    "Zip Slip",
+    "archive entry traversal"
+  ]
+}

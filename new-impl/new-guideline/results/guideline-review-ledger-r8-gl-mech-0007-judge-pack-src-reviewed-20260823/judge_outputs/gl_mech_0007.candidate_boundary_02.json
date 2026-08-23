@@ -1,0 +1,19 @@
+```json
+{
+  "decision": "needs_evidence",
+  "coherence_score": 0.4,
+  "coverage_score": 0.0,
+  "actionability_score": 0.2,
+  "retrieval_query_quality": 0.3,
+  "main_issue": "The mechanism describes a coherent webhook/callback SSRF pattern but has zero representative cases. The only reviewed evidence (CommonServiceImpl.urlDownload) supports direct file-download SSRF, not server-initiated callback or notification delivery to a user-selected endpoint. The source shape, sink shape, missing guard, exploit precondition, and safe fix are all described hypothetically without any case-level support.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "representative_cases is empty — no case in the current evidence set matches the webhook/callback SSRF mechanism",
+    "The only reviewed case (feiyuchuixue__sz-boot-parent::CVE-2026-3189) is a direct file download URL, not a webhook dispatch, callback invocation, or stored integration endpoint callback flow",
+    "The sink shape required for webhook/callback SSRF (server-initiated callback or notification delivery to a user-selected endpoint) is not present in any reviewed evidence",
+    "Missing guard, exploit precondition, and safe fix semantics are all hypothetical and cannot be verified against real source code without a representative case",
+    "Recall follow-up correctly directs: do not evaluate CVE-2026-3189 as a positive for this mechanism; wait for a genuine callback/webhook case before promoting this boundary"
+  ]
+}
+```

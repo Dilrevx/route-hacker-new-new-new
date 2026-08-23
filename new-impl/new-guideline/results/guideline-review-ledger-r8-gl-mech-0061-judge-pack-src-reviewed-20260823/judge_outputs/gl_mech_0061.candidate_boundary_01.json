@@ -1,0 +1,17 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.85,
+  "coverage_score": 0.80,
+  "actionability_score": 0.85,
+  "retrieval_query_quality": 0.80,
+  "main_issue": "The mechanism is coherent across both representative cases: attacker-controlled destination (login redirect state / HTTP request parameter) reaches a browser-visible navigation sink (window.location.href / response.sendRedirect) without a final normalized destination policy check. The safe-fix semantics (parse, normalize, resolve against origin, reject unsafe schemes) apply consistently to both server-side and client-side sinks. The chamilo case provides fix-side validation but is not used as primary evidence, which is appropriate.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "aces__loris::CVE-2026-39985: source evidence clearly traces this.props.redirect → window.location.href after login; patch enforces origin match via URL parsing. This is a client-side redirect sink.",
+    "dspace__dspace::CVE-2022-31193: source evidence traces callerUrl from HTTP request → response.sendRedirect in ControlledVocabularyServlet.doDSGet; patch adds context-path check. This is a server-side redirect sink.",
+    "chamilo__chamilo-lms::CVE-2025-66447: fix-side evidence only (normalizeRedirectUrl with relative normalization, protocol validation, same-origin checks). Confirms safe-fix semantics but does not independently establish the old-side source-to-sink trace. Not used as primary promotion evidence, which is correctly noted."
+  ]
+}
+```
