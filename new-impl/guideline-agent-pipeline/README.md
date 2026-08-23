@@ -882,6 +882,19 @@ often prefers the known-anchor-overlap candidate, that motivates a
 same-identity reranker A/B; it is not itself a recall result, a vulnerability
 verdict, or a guideline release gate.
 
+The r8 candidate-pair judge pack and completed TraeX judge summary are
+committed under
+`results/guideline-v2-r8-recall-candidate-pair-judge-pack-20260823/`. The pack
+contains the 6 Top300-within/Top100-miss cases above, generated on `bobo5090`
+where the source snapshots were readable. Prompts include non-empty snippets
+and omit concrete CVE IDs, known-anchor flags, hidden labels, ranks, and scores.
+The DeepSeek-V4-Pro judge run parsed 6/6 outputs with no invalid rows:
+`anchor_overlap_chosen=5`, `top1_chosen=0`, and `neither=1`. This supports a
+recall-side hypothesis that several misses are ranking/query failures rather
+than guideline-boundary failures. It also flags
+`steve-community__steve::CVE-2026-28230` for deeper inspection because neither
+candidate showed the SQL-construction mechanism in the visible snippet.
+
 Build a revision backlog from the semantic judge and recall-alignment outputs:
 
 ```bash

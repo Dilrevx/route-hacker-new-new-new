@@ -1,0 +1,16 @@
+```json
+{
+  "candidate_a_relevance": 0.15,
+  "candidate_b_relevance": 0.1,
+  "choice": "neither",
+  "confidence": 0.85,
+  "key_evidence": [],
+  "missing_information": [
+    "No SQL construction, JDBC, or query builder usage visible in either snippet",
+    "Candidate A delegates to webUserService.loadUserByUsernameForApi — the actual SQL/query logic is hidden",
+    "Candidate B delegates to repository methods — the actual SQL/query logic is hidden",
+    "Both snippets lack the source-to-sink SQL concatenation pattern the guideline targets"
+  ],
+  "rationale": "Neither candidate shows the SQL injection pattern described in the guideline. Candidate A is an authentication manager using PasswordEncoder and Spring Security — no SQL construction is visible. Candidate B is an OCPP service layer passing parameters to repository methods — no SQL, JDBC, or query builder fragments are visible. The guideline requires concrete evidence of untrusted values concatenated into SQL syntax without parameter binding; both snippets delegate data access to hidden layers, making neither a useful match for a downstream security audit targeting this mechanism."
+}
+```
