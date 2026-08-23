@@ -1,0 +1,38 @@
+{
+  "action_counts": {
+    "collect_source_sink_guard_evidence": 10,
+    "keep_as_control_group": 2,
+    "revise_mechanism_text_from_evidence": 5,
+    "split_mechanism_boundary": 3
+  },
+  "case_evidence_state_counts": {
+    "missing_trace_evidence": 8,
+    "review_entry_only": 56,
+    "source_trace_present": 24
+  },
+  "evidence_gap_counts": {
+    "assigned_case_examples": 4,
+    "candidate_split_validation": 7,
+    "case_source_shape": 10,
+    "case_to_split_bucket_assignment": 3,
+    "control_case_invariant": 2,
+    "mechanism_boundary": 3,
+    "mechanism_scope_correction": 5,
+    "missing_guard": 10,
+    "mixed_membership_boundary": 6,
+    "safe_fix_semantics": 15,
+    "sink_or_sensitive_effect": 10,
+    "source_level_trace_evidence": 15,
+    "split_specific_source_sink_guard": 3,
+    "strong_positive_source_sink_guard": 5
+  },
+  "max_cases_per_item": 6,
+  "policy": [
+    "This artifact is a reviewer worklist only.",
+    "It does not change released guidelines, guideline sidecars, lexicon entries, recall ranking, or audit prompts.",
+    "TraeX LLM-as-judge output is advisory semantic evidence; source/sink/guard/fix evidence must be checked before changing a guideline.",
+    "Do not convert judge notes, labels, known anchors, or bad cases into hidden routing or hard gates."
+  ],
+  "schema_version": "hcvr_guideline_evidence_worklist.v1",
+  "worklist_count": 20
+}

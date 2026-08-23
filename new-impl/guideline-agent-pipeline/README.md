@@ -84,6 +84,11 @@ P3C64-vs-Qwen4B model-improvement claim.
     revision backlog.
   - Produces a review artifact only: it does not update released guidelines,
     change ranking, or add fallback rules.
+- `scripts/build_guideline_evidence_worklist.py`
+  - Converts a revision backlog plus grouped case evidence into a concrete
+    source/sink/guard/fix collection queue.
+  - Produces a review artifact only: it does not update released guidelines,
+    lexicon entries, sidecars, ranking, or audit prompts.
 - `scripts/propose_mechanism_lexicon_updates.py`
   - Converts a revision backlog into review-only candidate lexicon updates and
     recall investigation tasks.
@@ -526,6 +531,16 @@ the release boundary is cleaner, while the next guideline-generation bottleneck
 is still member-level source/sink/guard evidence and mechanism boundary
 precision, especially for broad SSRF, XML, temporary-resource, authorization,
 and template/expression groups.
+The follow-up evidence collection worklist is committed under
+`results/guideline-v2-r8-evidence-worklist-20260823/`. It keeps the same
+review-only boundary and turns the judge backlog into concrete reviewer work:
+20 rows, 15 rows needing source-level trace evidence, 10 rows needing explicit
+source/sink/missing-guard/fix collection, 5 rows needing mechanism-scope
+revision from checked evidence, 3 rows needing split-boundary validation, and
+2 accepted control groups. Its case evidence states are 24
+`source_trace_present`, 56 `review_entry_only`, and 8
+`missing_trace_evidence`, which is why the next step is evidence collection
+rather than direct guideline rewriting.
 
 The r8 experiment scorecard is committed under
 `results/guideline-v2-r8-release-ready-scorecard-20260823/`. It records the
@@ -666,6 +681,24 @@ Judge-suggested guideline text is marked
 before entering `guideline_overrides.jsonl`; do not copy it directly into a
 release and do not turn suggested phrases or example misses into runtime
 matching rules.
+
+Turn that backlog into a concrete evidence-collection worklist before changing
+the generator or lexicon:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/build_guideline_evidence_worklist.py \
+  --revision-backlog new-impl/guideline-agent-pipeline/results/guideline-v2-r8-release-ready-group-eval-20260823/llm_judge_pack/revision_backlog_judge_only/revision_backlog.jsonl \
+  --group-report new-impl/guideline-agent-pipeline/results/guideline-v2-r8-release-ready-group-eval-20260823/group_report.jsonl \
+  --output-dir /path/to/guideline-evidence-worklist \
+  --max-cases-per-item 6
+```
+
+Read `evidence_worklist.jsonl` as the next reviewer queue. Each row lists the
+problematic guideline, action, mechanism, concrete evidence gaps, compact case
+examples, and the next reviewer action. This step exists to prevent hardcoded
+evaluation from shaping the generator: TraeX judge notes, labels, known
+anchors, and bad cases are review hints only. They are not hidden routing
+features and they are not release gates.
 
 Convert the backlog into review-only mechanism lexicon proposals:
 
