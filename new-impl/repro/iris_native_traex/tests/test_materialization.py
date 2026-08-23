@@ -11,6 +11,8 @@ def test_scripts_are_present():
     assert (root / "materialize_iris_case.py").is_file()
     assert (root / "run_native_iris_case.py").is_file()
     assert (root / "run_native_iris_batch.py").is_file()
+    assert (root / "run_official_codeql_baseline.py").is_file()
+    assert (root / "summarize_codeql_iris_comparison.py").is_file()
     assert (root / "summarize_native_iris_metrics.py").is_file()
     assert (root / "build_codeql_source_overlay.py").is_file()
 
@@ -104,6 +106,21 @@ def test_native_runner_resume_flag_is_present():
     assert "--resume-existing-run" in source
     assert "refusing to resume a run already marked completed_verified" in source
     assert '"resume_existing_run": args.resume_existing_run' in source
+
+
+def test_official_codeql_baseline_uses_pinned_query_name_only():
+    module = runpy.run_path(
+        str(Path(__file__).resolve().parents[1] / "scripts" / "run_official_codeql_baseline.py")
+    )
+
+    assert module["official_codeql_query"]("cwe-022wLLM") == "cwe-022wCodeQL"
+    assert module["codeql_cwe_directory"]("cwe-094wLLM") == "CWE-094"
+    try:
+        module["official_codeql_query"]("cwe-022wCodeQL")
+    except ValueError as exc:
+        assert "unsupported native IRIS query" in str(exc)
+    else:
+        raise AssertionError("baseline query must derive only from a native IRIS query")
 
 
 def test_batch_rejects_overcommitted_llm_concurrency(tmp_path):
