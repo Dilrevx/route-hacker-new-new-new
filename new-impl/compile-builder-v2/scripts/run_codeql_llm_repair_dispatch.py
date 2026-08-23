@@ -80,6 +80,7 @@ MAX_MODEL_TRANSPORT_ATTEMPTS = 2
 DEFAULT_MAX_BUILD_FEEDBACK_REPLAN_ATTEMPTS = 3
 DEFAULT_MAX_NETWORK_RATE_LIMIT_RETRIES = 2
 DEFAULT_NETWORK_RATE_LIMIT_BACKOFF_SECONDS = 60
+DEFAULT_GLOBAL_RATE_LIMIT_COOLDOWN_SECONDS = 900
 
 
 def append_unique(values: list[str], additions: Iterable[str]) -> list[str]:
@@ -171,6 +172,75 @@ def network_rate_limit_backoff_seconds(
         raise ValueError("base_seconds must be positive")
     spread_seconds = int(hashlib.sha256(case_id.encode("utf-8")).hexdigest()[:2], 16) % 15
     return base_seconds * (2 ** (retry_number - 1)) + spread_seconds
+
+
+class GlobalRateLimitCooldown:
+    """Coordinate a bounded pause after an upstream dependency HTTP 429.
+
+    This is controller-only execution scheduling: it never changes the
+    command, source, dependency repository, or model-visible action schema.
+    """
+
+    def __init__(self, cooldown_seconds: float) -> None:
+        if cooldown_seconds <= 0:
+            raise ValueError("cooldown_seconds must be positive")
+        self.cooldown_seconds = cooldown_seconds
+        self._condition = threading.Condition()
+        self._cooldown_until = 0.0
+        self._last_trigger: dict[str, Any] | None = None
+
+    def wait_before_attempt(self, *, case_id: str, phase: str) -> dict[str, Any] | None:
+        started = time.monotonic()
+        waited = False
+        with self._condition:
+            while time.monotonic() < self._cooldown_until:
+                waited = True
+                self._condition.wait(timeout=self._cooldown_until - time.monotonic())
+            trigger = dict(self._last_trigger) if self._last_trigger else None
+        elapsed = time.monotonic() - started
+        if not waited:
+            return None
+        return {
+            "event": "global_upstream_rate_limit_cooldown_wait",
+            "case_id": case_id,
+            "phase": phase,
+            "waited_seconds": round(elapsed, 3),
+            "released_at": utc_now(),
+            "trigger": trigger,
+        }
+
+    def record_rate_limit(
+        self,
+        *,
+        case_id: str,
+        phase: str,
+        cooldown_seconds: float | None = None,
+    ) -> dict[str, Any]:
+        effective_cooldown_seconds = (
+            self.cooldown_seconds
+            if cooldown_seconds is None
+            else cooldown_seconds
+        )
+        if effective_cooldown_seconds <= 0:
+            raise ValueError("cooldown_seconds must be positive")
+        recorded_at = utc_now()
+        with self._condition:
+            now = time.monotonic()
+            self._cooldown_until = max(
+                self._cooldown_until,
+                now + effective_cooldown_seconds,
+            )
+            self._last_trigger = {
+                "case_id": case_id,
+                "phase": phase,
+                "recorded_at": recorded_at,
+                "cooldown_seconds": effective_cooldown_seconds,
+            }
+            self._condition.notify_all()
+        return {
+            "event": "global_upstream_rate_limit_cooldown_set",
+            **self._last_trigger,
+        }
 
 
 def utc_now() -> str:
@@ -1083,6 +1153,7 @@ def run_case(
     max_build_feedback_replan_attempts: int = DEFAULT_MAX_BUILD_FEEDBACK_REPLAN_ATTEMPTS,
     max_network_rate_limit_retries: int = DEFAULT_MAX_NETWORK_RATE_LIMIT_RETRIES,
     network_rate_limit_backoff_seconds_base: float = DEFAULT_NETWORK_RATE_LIMIT_BACKOFF_SECONDS,
+    global_rate_limit_cooldown: GlobalRateLimitCooldown | None = None,
     dry_run: bool = False,
 ) -> dict[str, Any]:
     if max_build_feedback_replan_attempts < 0:
@@ -1180,6 +1251,48 @@ def run_case(
         },
         "verified_gradle_cache": gradle_cache_evidence,
     }
+    global_rate_limit_events: list[dict[str, Any]] = []
+
+    def execute_with_global_rate_limit_cooldown(
+        receipt: dict[str, Any],
+        decision: dict[str, Any],
+        *,
+        phase: str,
+        attempt_dir: Path,
+        execution_source_receipt: dict[str, Any],
+    ) -> dict[str, Any]:
+        if global_rate_limit_cooldown is not None:
+            wait_event = global_rate_limit_cooldown.wait_before_attempt(
+                case_id=case_id,
+                phase=phase,
+            )
+            if wait_event is not None:
+                global_rate_limit_events.append(wait_event)
+        attempt_result = execute_repair_attempt(
+            receipt,
+            decision,
+            attempt_dir=attempt_dir,
+            timeout_seconds=codeql_timeout_seconds,
+            inactivity_timeout_seconds=codeql_inactivity_timeout_seconds,
+            approved_java_homes=approved_java_homes,
+            approved_maven_homes=approved_maven_homes,
+            source_receipt=execution_source_receipt,
+            verified_gradle_user_home_source=verified_gradle_home,
+            isolate_build_home=True,
+            historical_toolchain_receipt=failed_receipt,
+        )
+        if (
+            global_rate_limit_cooldown is not None
+            and is_dependency_rate_limit_failure(attempt_result)
+        ):
+            global_rate_limit_events.append(
+                global_rate_limit_cooldown.record_rate_limit(
+                    case_id=case_id,
+                    phase=phase,
+                )
+            )
+        return attempt_result
+
     if not source_evidence["verified"]:
         return {
             **base,
@@ -1199,18 +1312,12 @@ def run_case(
                 "mandatory isolated build-home contract before model evaluation."
             ),
         }
-        environment_preflight = execute_repair_attempt(
+        environment_preflight = execute_with_global_rate_limit_cooldown(
             verified_failed_receipt,
             preflight_decision,
+            phase="isolated_build_home_preflight",
             attempt_dir=case_dir / "isolated-build-home-preflight",
-            timeout_seconds=codeql_timeout_seconds,
-            inactivity_timeout_seconds=codeql_inactivity_timeout_seconds,
-            approved_java_homes=approved_java_homes,
-            approved_maven_homes=approved_maven_homes,
-            source_receipt=verified_source_receipt,
-            verified_gradle_user_home_source=verified_gradle_home,
-            isolate_build_home=True,
-            historical_toolchain_receipt=failed_receipt,
+            execution_source_receipt=verified_source_receipt,
         )
         base["environment_preflight"] = environment_preflight
         if environment_preflight["status"] != "repair_attempt_failed":
@@ -1457,18 +1564,12 @@ def run_case(
                 "validated_decision": validated,
                 "decision_rounds": decision_rounds,
             }
-        attempt = execute_repair_attempt(
+        attempt = execute_with_global_rate_limit_cooldown(
             execution_failed_receipt,
             executed_decision,
+            phase=f"decision_round_{decision_round:03d}",
             attempt_dir=attempt_dir,
-            timeout_seconds=codeql_timeout_seconds,
-            inactivity_timeout_seconds=codeql_inactivity_timeout_seconds,
-            approved_java_homes=approved_java_homes,
-            approved_maven_homes=approved_maven_homes,
-            source_receipt=execution_source_receipt,
-            verified_gradle_user_home_source=verified_gradle_home,
-            isolate_build_home=True,
-            historical_toolchain_receipt=failed_receipt,
+            execution_source_receipt=execution_source_receipt,
         )
         attempt["source_materialization"] = source_materialization
         network_rate_limit_retries: list[dict[str, Any]] = []
@@ -1528,18 +1629,15 @@ def run_case(
                     "repair_attempts": decision_rounds,
                     "build_feedback_replan_count": decision_round,
                 }
-            attempt = execute_repair_attempt(
+            attempt = execute_with_global_rate_limit_cooldown(
                 retry_failed_receipt,
                 executed_decision,
+                phase=(
+                    f"decision_round_{decision_round:03d}_"
+                    f"network_rate_limit_retry_{network_retry_number:03d}"
+                ),
                 attempt_dir=attempt_dir / f"network-rate-limit-retry-{network_retry_number:03d}",
-                timeout_seconds=codeql_timeout_seconds,
-                inactivity_timeout_seconds=codeql_inactivity_timeout_seconds,
-                approved_java_homes=approved_java_homes,
-                approved_maven_homes=approved_maven_homes,
-                source_receipt=retry_source_receipt,
-                verified_gradle_user_home_source=verified_gradle_home,
-                isolate_build_home=True,
-                historical_toolchain_receipt=failed_receipt,
+                execution_source_receipt=retry_source_receipt,
             )
             attempt["source_materialization"] = retry_source_materialization
             retry_record.update(
@@ -1569,6 +1667,7 @@ def run_case(
                 "repair_attempts": decision_rounds,
                 "build_feedback_replan_count": decision_round,
                 "network_rate_limit_retry_count": len(network_rate_limit_retries),
+                "global_rate_limit_events": global_rate_limit_events,
             }
         if attempt["status"] != "repair_attempt_failed":
             return {
@@ -1582,6 +1681,7 @@ def run_case(
                 "repair_attempts": decision_rounds,
                 "build_feedback_replan_count": decision_round,
                 "network_rate_limit_retry_count": len(network_rate_limit_retries),
+                "global_rate_limit_events": global_rate_limit_events,
             }
         if decision_round == max_build_feedback_replan_attempts:
             return {
@@ -1725,6 +1825,25 @@ def parse_args() -> argparse.Namespace:
             "0-14 second spread avoids synchronized retries."
         ),
     )
+    parser.add_argument(
+        "--global-rate-limit-cooldown-seconds",
+        type=float,
+        default=DEFAULT_GLOBAL_RATE_LIMIT_COOLDOWN_SECONDS,
+        help=(
+            "Global controller cooldown after an upstream HTTP 429. It delays "
+            "subsequent unchanged build attempts without modifying their commands."
+        ),
+    )
+    parser.add_argument(
+        "--initial-global-rate-limit-cooldown-seconds",
+        type=float,
+        default=0,
+        help=(
+            "Apply the global rate-limit cooldown before the first build attempt. "
+            "Use only when a current endpoint probe or prior invocation has already "
+            "established upstream HTTP 429 throttling."
+        ),
+    )
     parser.add_argument("--case-id", action="append", default=[])
     parser.add_argument("--case-id-file", type=Path)
     parser.add_argument("--limit", type=int)
@@ -1754,6 +1873,12 @@ def main() -> int:
         raise SystemExit("--max-network-rate-limit-retries must be non-negative")
     if args.network_rate_limit_backoff_seconds <= 0:
         raise SystemExit("--network-rate-limit-backoff-seconds must be positive")
+    if args.global_rate_limit_cooldown_seconds <= 0:
+        raise SystemExit("--global-rate-limit-cooldown-seconds must be positive")
+    if args.initial_global_rate_limit_cooldown_seconds < 0:
+        raise SystemExit(
+            "--initial-global-rate-limit-cooldown-seconds must be non-negative"
+        )
     if args.limit is not None and args.limit < 0:
         raise SystemExit("--limit must be non-negative")
     if args.case_id and args.case_id_file:
@@ -1801,6 +1926,15 @@ def main() -> int:
         if args.verified_gradle_user_home is not None
         else None
     )
+    global_rate_limit_cooldown = GlobalRateLimitCooldown(
+        args.global_rate_limit_cooldown_seconds
+    )
+    if args.initial_global_rate_limit_cooldown_seconds:
+        global_rate_limit_cooldown.record_rate_limit(
+            case_id="controller",
+            phase="initial_global_rate_limit_cooldown",
+            cooldown_seconds=args.initial_global_rate_limit_cooldown_seconds,
+        )
     output_dir = args.output_dir.resolve()
     ledger = output_dir / "w1_llm_repair_receipts.jsonl"
     summary_path = output_dir / "summary.json"
@@ -1950,6 +2084,7 @@ def main() -> int:
                     max_build_feedback_replan_attempts=args.max_build_feedback_replan_attempts,
                     max_network_rate_limit_retries=args.max_network_rate_limit_retries,
                     network_rate_limit_backoff_seconds_base=args.network_rate_limit_backoff_seconds,
+                    global_rate_limit_cooldown=global_rate_limit_cooldown,
                     dry_run=args.dry_run,
                 )
 

@@ -20,6 +20,7 @@ from scripts.run_codeql_llm_repair_dispatch import (
     build_repair_prompt,
     command_for_claude,
     extract_structured_output,
+    GlobalRateLimitCooldown,
     invoke_openai_bridge_model,
     is_dependency_rate_limit_failure,
     materialize_isolated_attempt_receipts,
@@ -184,6 +185,21 @@ def test_network_rate_limit_backoff_is_bounded_and_case_deterministic():
     assert 10 <= first <= 24
     assert 20 <= second <= 34
     assert second - first == 10
+
+
+def test_global_rate_limit_cooldown_waits_after_recorded_429():
+    cooldown = GlobalRateLimitCooldown(0.02)
+
+    assert cooldown.wait_before_attempt(case_id="v8:first", phase="before") is None
+    trigger = cooldown.record_rate_limit(case_id="v8:first", phase="build")
+    waited = cooldown.wait_before_attempt(case_id="v8:second", phase="before")
+
+    assert trigger["event"] == "global_upstream_rate_limit_cooldown_set"
+    assert waited is not None
+    assert waited["event"] == "global_upstream_rate_limit_cooldown_wait"
+    assert waited["case_id"] == "v8:second"
+    assert waited["waited_seconds"] >= 0.01
+    assert waited["trigger"]["case_id"] == "v8:first"
 
 
 def gradle_failed_receipt(source: Path, case_id: str, revision: str) -> dict:
