@@ -89,6 +89,12 @@ P3C64-vs-Qwen4B model-improvement claim.
     source/sink/guard/fix collection queue.
   - Produces a review artifact only: it does not update released guidelines,
     lexicon entries, sidecars, ranking, or audit prompts.
+- `scripts/audit_guideline_dual_axis_objective.py`
+  - Audits the current guideline iteration against the two coupled goals:
+    semantic CVE-mechanism guideline quality and tuned-embedding recall
+    compatibility.
+  - Produces a completion-gate artifact only: it does not change generation,
+    recall, ranking, or paper result tables.
 - `scripts/propose_mechanism_lexicon_updates.py`
   - Converts a revision backlog into review-only candidate lexicon updates and
     recall investigation tasks.
@@ -562,6 +568,17 @@ requirements to concrete artifacts and marks the remaining gaps: r8 is a
 cleaner, recall-compatible release boundary, but the semantic judge sample and
 recall deltas do not yet justify calling the guideline-generation problem
 solved.
+The stricter dual-axis completion audit is
+`results/guideline-v2-r8-dual-axis-objective-audit-20260823/`. It checks the
+active objective against the current scorecard and evidence worklist. Its
+status is `not_complete`: semantic guideline classification is
+`partially_satisfied_needs_evidence`, and embedding recall is
+`compatible_but_improvement_below_target`. The audit also records the required
+next gates: source/sink/guard/fix evidence before changing guideline text,
+fresh same-identity recall after sidecar text changes, taxonomy-vs-embed triage
+for clean groups that still miss Top-K, and separated paper claim boundaries
+for semantic quality, recall deltas, sidecar equivalence, and any engineering
+fusion.
 
 Build a cautious experiment scorecard when reporting a guideline iteration:
 
@@ -699,6 +716,22 @@ examples, and the next reviewer action. This step exists to prevent hardcoded
 evaluation from shaping the generator: TraeX judge notes, labels, known
 anchors, and bad cases are review hints only. They are not hidden routing
 features and they are not release gates.
+
+Run a completion audit for the two-axis guideline objective:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/audit_guideline_dual_axis_objective.py \
+  --scorecard new-impl/guideline-agent-pipeline/results/guideline-v2-r8-release-ready-scorecard-20260823/scorecard.json \
+  --evidence-worklist-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-evidence-worklist-20260823/summary.json \
+  --output-dir /path/to/guideline-dual-axis-objective-audit \
+  --desired-delta-rate 0.10
+```
+
+Use this audit before declaring a guideline iteration complete. Passing
+structural checks, TraeX judge parsing, sidecar equivalence, or a recall table
+is not enough by itself. The completion gate requires semantic evidence for
+the guideline taxonomy and same-identity recall evidence for the exact
+sidecar/query configuration being claimed.
 
 Convert the backlog into review-only mechanism lexicon proposals:
 
