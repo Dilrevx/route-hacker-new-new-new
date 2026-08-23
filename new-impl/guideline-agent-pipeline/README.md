@@ -150,6 +150,12 @@ P3C64-vs-Qwen4B model-improvement claim.
     into a mechanism lexicon or guideline sidecar.
   - Requires source/sink/missing-guard/exploit-precondition/fix evidence for
     `promote_boundary` rows and still does not edit released artifacts.
+- `scripts/summarize_guideline_evidence_coverage.py`
+  - Joins the r8 evidence worklist with filled source-review ledgers,
+    validation rows, and optional ledger-level judge reports.
+  - Produces a source-reviewed coverage matrix and next review queue only; it
+    does not update guidelines, sidecars, rank tables, embeddings, or audit
+    prompts.
 - `scripts/build_guideline_ledger_judge_pack.py`
   - Builds a TraeX LLM-as-judge prompt pack from filled source-review ledger
     rows.
@@ -1051,6 +1057,33 @@ Allowed `boundary_decision` values are `promote_boundary`, `revise_boundary`,
 filled source/sink/missing-guard/exploit-precondition/fix fields are counted as
 promotable; that still means semantically ready, not recall-proven.
 
+Summarize which evidence-worklist rows already have source-reviewed ledgers,
+which still need ledger-level judge, and which remain unfixed:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/summarize_guideline_evidence_coverage.py \
+  --evidence-worklist new-impl/guideline-agent-pipeline/results/guideline-v2-r8-evidence-worklist-20260823/evidence_worklist.jsonl \
+  --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0001.jsonl \
+  --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0007.jsonl \
+  --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0022.jsonl \
+  --ledger new-impl/guideline-agent-pipeline/guidelines/guideline_review_ledger.r8.gl_mech_0116.jsonl \
+  --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0001-validation-20260823/validation_rows.json \
+  --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0007-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0022-validation-src-reviewed-20260823/validation_rows.json \
+  --validation-rows new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0116-validation-src-reviewed-20260823/validation_rows.json \
+  --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0007-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0022-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --judge-report new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0116-judge-pack-src-reviewed-20260823/judge_summary/judge_report.jsonl \
+  --output-dir /path/to/guideline-evidence-coverage
+```
+
+Read `next_review_queue.jsonl` as the next semantic-evidence queue. A row with
+`source_reviewed_and_judge_accepted` is semantic boundary evidence only; it
+still requires a fresh same-identity recall run if the recall-consumed sidecar
+changes. A row with `source_reviewed_validation_only` should usually get a
+ledger-level TraeX judge pack before being cited as semantic evidence. A row
+with `not_source_reviewed` still needs a filled source-review ledger.
+
 Optionally build a TraeX judge pack from the filled ledger:
 
 ```bash
@@ -1172,6 +1205,15 @@ rows are evidence-preserving candidate boundaries, not recall positives: one
 redirect-following SSRF row that needs an initial-approved-URL to unsafe
 redirect case, and one webhook/callback SSRF row that needs a true
 server-initiated callback or notification endpoint case.
+The current evidence-coverage summary is under
+`results/guideline-v2-r8-evidence-coverage-20260823/`. It joins the 20-row r8
+worklist with the four filled ledgers, validation rows, and ledger-level judge
+reports. It records the remaining semantic queue without changing released
+guidelines: 3 worklist groups are `source_reviewed_and_judge_accepted`, 1 is
+`source_reviewed_validation_only`, 16 are `not_source_reviewed`, and the next
+actions are 14 `fill_source_review_ledger`, 2 `optional_control_source_review`,
+1 `run_ledger_judge_pack`, and 3
+`run_same_identity_recall_after_sidecar_change`.
 
 Convert the backlog into review-only mechanism lexicon proposals:
 
