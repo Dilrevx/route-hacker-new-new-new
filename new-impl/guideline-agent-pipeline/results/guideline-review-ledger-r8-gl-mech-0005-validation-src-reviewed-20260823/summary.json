@@ -1,0 +1,16 @@
+{
+  "decision_counts": {
+    "needs_more_evidence": 1,
+    "promote_boundary": 1
+  },
+  "invalid_count": 0,
+  "policy": [
+    "Only promote_boundary rows with all source/sink/guard/fix fields filled are promotable.",
+    "This verifier does not update guidelines, lexicon entries, sidecars, rank tables, or audit prompts.",
+    "Promotable rows still require a fresh same-identity recall run after recall-consumed text changes."
+  ],
+  "promotable_count": 1,
+  "row_count": 2,
+  "schema_version": "hcvr_guideline_review_ledger_validation.v1",
+  "valid_count": 2
+}

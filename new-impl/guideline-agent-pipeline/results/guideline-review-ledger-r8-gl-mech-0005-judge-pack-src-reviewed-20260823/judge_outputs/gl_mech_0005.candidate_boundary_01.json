@@ -1,0 +1,17 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.85,
+  "coverage_score": 0.80,
+  "actionability_score": 0.85,
+  "retrieval_query_quality": 0.75,
+  "main_issue": "The two representative cases share a coherent core mechanism: attacker-controlled path fragments are resolved beneath a base directory and then used for filesystem operations (create, read, write, delete, list, metadata) without first normalizing or canonicalizing the resolved path and verifying it stays under the intended root. DSpace demonstrates this through upload temp directory and chunk path construction from request parameters; S3Proxy demonstrates it through object key and prefix resolution under a container root. The boundary text accurately captures the source shape, sink effects, missing guard, exploit precondition, and safe fix semantics across both cases. No revision needed.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "DSpace CVE-2022-31194: resumableIdentifier, chunkNumber, and filename are request-controlled; resolved paths are used for mkdir, delete, and write under upload.temp.dir without canonical containment. The 5.x fix adds canonical path checks.",
+    "S3Proxy CVE-2025-24961: list(), getBlob(), putBlob(), removeBlob, and access-permission operations all resolve caller-controlled keys/prefixes under root.resolve(container) and use the resulting paths for filesystem effects without normalized containment guards.",
+    "Both cases are source-reviewed with concrete trace evidence; the boundary does not overclaim by restricting promotion to these two reviewed anchors."
+  ]
+}
+```
