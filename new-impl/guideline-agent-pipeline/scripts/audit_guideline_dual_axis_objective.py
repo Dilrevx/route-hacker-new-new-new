@@ -18,6 +18,77 @@ def write_json(path: Path, value: Any) -> None:
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
+def add_counts(target: dict[str, int], source: dict[str, Any]) -> None:
+    for key, value in source.items():
+        target[str(key)] = target.get(str(key), 0) + int(value or 0)
+
+
+def aggregate_ledger_validations(summaries: list[dict[str, Any]]) -> dict[str, Any] | None:
+    if not summaries:
+        return None
+    decision_counts: dict[str, int] = {}
+    result = {
+        "schema_version": "hcvr_guideline_review_ledger_validation.aggregate.v1",
+        "summary_count": len(summaries),
+        "row_count": 0,
+        "valid_count": 0,
+        "invalid_count": 0,
+        "promotable_count": 0,
+        "decision_counts": decision_counts,
+    }
+    for summary in summaries:
+        result["row_count"] += int(summary.get("row_count") or 0)
+        result["valid_count"] += int(summary.get("valid_count") or 0)
+        result["invalid_count"] += int(summary.get("invalid_count") or 0)
+        result["promotable_count"] += int(summary.get("promotable_count") or 0)
+        add_counts(decision_counts, summary.get("decision_counts") or {})
+    result["decision_counts"] = dict(sorted(decision_counts.items()))
+    return result
+
+
+def aggregate_ledger_judges(summaries: list[dict[str, Any]]) -> dict[str, Any] | None:
+    if not summaries:
+        return None
+    decision_counts: dict[str, int] = {}
+    score_sums: dict[str, float] = {}
+    score_weights: dict[str, int] = {}
+    result = {
+        "schema_version": "hcvr_guideline_llm_judge_summary.aggregate.v1",
+        "summary_count": len(summaries),
+        "judge_input_count": 0,
+        "parsed_count": 0,
+        "missing_output_count": 0,
+        "invalid_output_count": 0,
+        "accepted_count": 0,
+        "needs_revision_count": 0,
+        "low_score_count": 0,
+        "decision_counts": decision_counts,
+        "average_scores": {},
+    }
+    for summary in summaries:
+        parsed_count = int(summary.get("parsed_count") or 0)
+        result["judge_input_count"] += int(summary.get("judge_input_count") or 0)
+        result["parsed_count"] += parsed_count
+        result["missing_output_count"] += int(summary.get("missing_output_count") or 0)
+        result["invalid_output_count"] += int(summary.get("invalid_output_count") or 0)
+        result["accepted_count"] += int(summary.get("accepted_count") or 0)
+        result["needs_revision_count"] += int(summary.get("needs_revision_count") or 0)
+        result["low_score_count"] += int(summary.get("low_score_count") or 0)
+        add_counts(decision_counts, summary.get("decision_counts") or {})
+        average_scores = summary.get("average_scores") if isinstance(summary.get("average_scores"), dict) else {}
+        for field, value in average_scores.items():
+            if value is None:
+                continue
+            score_sums[field] = score_sums.get(field, 0.0) + float(value) * parsed_count
+            score_weights[field] = score_weights.get(field, 0) + parsed_count
+    result["decision_counts"] = dict(sorted(decision_counts.items()))
+    result["average_scores"] = {
+        field: (score_sums[field] / score_weights[field] if score_weights.get(field) else None)
+        for field in sorted(score_sums)
+    }
+    return result
+
+
 def status_for_semantic_quality(scorecard: dict[str, Any], worklist: dict[str, Any]) -> str:
     judge = scorecard.get("judge_evidence") if isinstance(scorecard.get("judge_evidence"), dict) else {}
     decision_counts = judge.get("decision_counts") if isinstance(judge.get("decision_counts"), dict) else {}
@@ -320,8 +391,8 @@ def main() -> None:
     parser.add_argument("--scorecard", type=Path, required=True)
     parser.add_argument("--evidence-worklist-summary", type=Path, required=True)
     parser.add_argument("--boundary-recall-triage-summary", type=Path)
-    parser.add_argument("--ledger-validation-summary", type=Path)
-    parser.add_argument("--ledger-judge-summary", type=Path)
+    parser.add_argument("--ledger-validation-summary", type=Path, action="append")
+    parser.add_argument("--ledger-judge-summary", type=Path, action="append")
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--desired-delta-rate", type=float, default=0.10)
     args = parser.parse_args()
@@ -336,8 +407,12 @@ def main() -> None:
             if args.boundary_recall_triage_summary
             else None
         ),
-        ledger_validation=read_json(args.ledger_validation_summary) if args.ledger_validation_summary else None,
-        ledger_judge=read_json(args.ledger_judge_summary) if args.ledger_judge_summary else None,
+        ledger_validation=aggregate_ledger_validations(
+            [read_json(path) for path in (args.ledger_validation_summary or [])]
+        ),
+        ledger_judge=aggregate_ledger_judges(
+            [read_json(path) for path in (args.ledger_judge_summary or [])]
+        ),
     )
     args.output_dir.mkdir(parents=True, exist_ok=True)
     write_json(args.output_dir / "summary.json", audit)

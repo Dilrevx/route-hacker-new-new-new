@@ -886,6 +886,13 @@ python new-impl/guideline-agent-pipeline/scripts/audit_guideline_dual_axis_objec
   --desired-delta-rate 0.10
 ```
 
+`--ledger-validation-summary` and `--ledger-judge-summary` are repeatable.
+Pass one pair for every source-reviewed boundary ledger that should count in
+the cumulative semantic-evidence view. The script aggregates row counts,
+decision counts, promotable boundary counts, judge decisions, and weighted
+average judge scores. This keeps per-guideline repair work incremental without
+losing evidence from previous rounds.
+
 Use this audit before declaring a guideline iteration complete. Passing
 structural checks, TraeX judge parsing, sidecar equivalence, or a recall table
 is not enough by itself. The completion gate requires semantic evidence for
@@ -899,6 +906,26 @@ candidate slicing, embedding backend, adapter weights, reranking, or fusion
 under a same-identity A/B setup. Do not weaken a source-supported mechanism
 taxonomy merely to satisfy one embedder, and do not turn the ledger, judge
 notes, CVE labels, or bad-case anchors into hidden routing rules.
+
+Current source-reviewed boundary ledgers:
+
+- `guidelines/guideline_review_ledger.r8.gl_mech_0022.jsonl`: splits classic
+  XML external entity or DTD/parser external-resource resolution from Archi's
+  XML namespace/package URI-as-location loading.
+- `guidelines/guideline_review_ledger.r8.gl_mech_0116.jsonl`: splits the old
+  redirect-following SSRF bucket into direct URL/proxy SSRF and
+  renderer/document-converter external-resource SSRF as promotable boundaries;
+  trusted-client/credential forwarding still needs more source evidence, and
+  redirect-following SSRF remains a coherent candidate mechanism with no
+  source-reviewed representative case in this group yet.
+
+The cumulative audit with both ledgers is under
+`results/guideline-v2-r8-dual-axis-objective-audit-with-source-reviewed-boundaries-plus-0116-20260823/`.
+It has 6 valid source-reviewed ledger rows, 3 promotable boundaries, and
+TraeX judge decisions of `accept=4` and `needs_evidence=1`. The non-accept row
+is the redirect-following SSRF candidate, which stays out of recall-positive
+claims until source evidence shows an initial approved URL followed by an
+unsafe redirected destination.
 
 Convert the backlog into review-only mechanism lexicon proposals:
 

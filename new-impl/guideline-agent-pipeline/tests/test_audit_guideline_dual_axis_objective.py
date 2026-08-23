@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import math
 import subprocess
 import sys
 from pathlib import Path
@@ -127,6 +128,65 @@ def test_source_reviewed_boundary_evidence_is_separate_from_recall_completion():
     assert "replacement embedder" in substitution_gate["pass_condition"]
 
 
+def test_aggregate_multiple_source_reviewed_summaries():
+    module = load_module()
+
+    validation = module.aggregate_ledger_validations(
+        [
+            {
+                "row_count": 2,
+                "valid_count": 2,
+                "invalid_count": 0,
+                "promotable_count": 1,
+                "decision_counts": {"promote_boundary": 1, "split_further": 1},
+            },
+            {
+                "row_count": 4,
+                "valid_count": 4,
+                "invalid_count": 0,
+                "promotable_count": 2,
+                "decision_counts": {"promote_boundary": 2, "split_further": 1, "needs_more_evidence": 1},
+            },
+        ]
+    )
+    judge = module.aggregate_ledger_judges(
+        [
+            {
+                "judge_input_count": 2,
+                "parsed_count": 2,
+                "accepted_count": 2,
+                "needs_revision_count": 0,
+                "low_score_count": 1,
+                "decision_counts": {"accept": 2},
+                "average_scores": {"coherence_score": 0.9},
+            },
+            {
+                "judge_input_count": 3,
+                "parsed_count": 3,
+                "accepted_count": 2,
+                "needs_revision_count": 1,
+                "low_score_count": 1,
+                "decision_counts": {"accept": 2, "needs_evidence": 1},
+                "average_scores": {"coherence_score": 0.8},
+            },
+        ]
+    )
+
+    assert validation["summary_count"] == 2
+    assert validation["row_count"] == 6
+    assert validation["promotable_count"] == 3
+    assert validation["decision_counts"] == {
+        "needs_more_evidence": 1,
+        "promote_boundary": 3,
+        "split_further": 2,
+    }
+    assert judge["summary_count"] == 2
+    assert judge["parsed_count"] == 5
+    assert judge["accepted_count"] == 4
+    assert judge["decision_counts"] == {"accept": 4, "needs_evidence": 1}
+    assert math.isclose(judge["average_scores"]["coherence_score"], 0.84)
+
+
 def test_cli_writes_dual_axis_audit(tmp_path: Path):
     scorecard_path = tmp_path / "scorecard.json"
     worklist_path = tmp_path / "worklist.json"
@@ -174,3 +234,53 @@ def test_cli_writes_dual_axis_audit(tmp_path: Path):
     readme = (output / "README.md").read_text(encoding="utf-8")
     assert "Guideline Dual-Axis Objective Audit" in readme
     assert "Source-Reviewed Boundary Evidence" in readme
+
+
+def test_cli_accepts_repeated_source_reviewed_summaries(tmp_path: Path):
+    scorecard_path = tmp_path / "scorecard.json"
+    worklist_path = tmp_path / "worklist.json"
+    validation_one = tmp_path / "ledger_validation_one.json"
+    validation_two = tmp_path / "ledger_validation_two.json"
+    judge_one = tmp_path / "ledger_judge_one.json"
+    judge_two = tmp_path / "ledger_judge_two.json"
+    output = tmp_path / "audit"
+    scorecard_path.write_text(json.dumps(scorecard()), encoding="utf-8")
+    worklist_path.write_text(
+        json.dumps({"worklist_count": 1, "action_counts": {"collect_source_sink_guard_evidence": 1}}),
+        encoding="utf-8",
+    )
+    validation_one.write_text(json.dumps({"row_count": 1, "valid_count": 1, "invalid_count": 0, "promotable_count": 1}), encoding="utf-8")
+    validation_two.write_text(json.dumps({"row_count": 1, "valid_count": 1, "invalid_count": 0, "promotable_count": 1}), encoding="utf-8")
+    judge_one.write_text(json.dumps({"judge_input_count": 1, "parsed_count": 1, "accepted_count": 1, "decision_counts": {"accept": 1}}), encoding="utf-8")
+    judge_two.write_text(json.dumps({"judge_input_count": 1, "parsed_count": 1, "accepted_count": 1, "decision_counts": {"accept": 1}}), encoding="utf-8")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(SCRIPT),
+            "--scorecard",
+            str(scorecard_path),
+            "--evidence-worklist-summary",
+            str(worklist_path),
+            "--ledger-validation-summary",
+            str(validation_one),
+            "--ledger-validation-summary",
+            str(validation_two),
+            "--ledger-judge-summary",
+            str(judge_one),
+            "--ledger-judge-summary",
+            str(judge_two),
+            "--output-dir",
+            str(output),
+        ],
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+
+    assert result.returncode == 0
+    reviewed = json.loads((output / "summary.json").read_text(encoding="utf-8"))["source_reviewed_boundary_evidence"]
+    assert reviewed["valid_count"] == 2
+    assert reviewed["promotable_count"] == 2
+    assert reviewed["judge_accepted_count"] == 2
