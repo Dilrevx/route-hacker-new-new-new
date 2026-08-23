@@ -116,6 +116,64 @@ def test_selected_anchor_uses_winning_query_guideline():
     assert selected["guideline_query_label"] == "baseline"
 
 
+def test_exported_candidate_rows_flatten_retained_top_candidates():
+    module = load_module()
+    results = [
+        {
+            "identity_key": "case-a",
+            "case_id": "case::a",
+            "repo_key": "repo-a",
+            "checkout_revision": "abc123",
+            "hcvr_type": "authorization_bypass",
+            "guideline_mode": "override",
+            "guideline_queries": [{"label": "primary", "text": "guideline"}],
+            "candidate_count": 10,
+            "known_anchor_count": 2,
+            "top_anchors": [
+                {
+                    "anchor_id": "anchor-1",
+                    "file": "A.java",
+                    "start_line": 1,
+                    "end_line": 80,
+                    "rank": 1,
+                    "known_anchor_overlap": False,
+                },
+                {
+                    "anchor_id": "anchor-2",
+                    "file": "B.java",
+                    "start_line": 81,
+                    "end_line": 160,
+                    "rank": 2,
+                    "known_anchor_overlap": True,
+                },
+            ],
+        }
+    ]
+
+    rows = module.exported_candidate_rows(results, 1)
+
+    assert rows == [
+        {
+            "identity_key": "case-a",
+            "case_id": "case::a",
+            "repo_key": "repo-a",
+            "checkout_revision": "abc123",
+            "hcvr_type": "authorization_bypass",
+            "guideline_mode": "override",
+            "guideline_query_count": 1,
+            "candidate_count": 10,
+            "known_anchor_count": 2,
+            "anchor_id": "anchor-1",
+            "file": "A.java",
+            "start_line": 1,
+            "end_line": 80,
+            "rank": 1,
+            "known_anchor_overlap": False,
+        }
+    ]
+    assert module.exported_candidate_rows(results, 0) == []
+
+
 def test_identity_list_writes_auditable_identity_file_and_adjusts_default_limit(tmp_path: Path):
     module = load_module()
 

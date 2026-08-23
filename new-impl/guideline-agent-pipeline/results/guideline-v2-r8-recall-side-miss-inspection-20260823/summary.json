@@ -1,0 +1,42 @@
+{
+  "case_count": 15,
+  "debug_group_count": 6,
+  "diagnosis_counts": {
+    "identity_absent_from_rank_table": 9,
+    "known_anchor_ranked_below_primary_budget": 6,
+    "large_candidate_pool_budget_pressure": 3,
+    "top1_candidate_does_not_overlap_known_anchor": 6
+  },
+  "input_capability": {
+    "case_alignment_rows": true,
+    "case_rank_summary_rows": true,
+    "full_ranked_candidate_lists": false,
+    "known_anchor_span_details": false
+  },
+  "miss_state_counts": {
+    "coverage_gap_not_in_rank_table": 9,
+    "ranked_below_primary_budget": 6
+  },
+  "next_check_counts": {
+    "compare_embedding_backend_or_query_adapter_on_same_identity": 6,
+    "inspect_budget_or_reranker_need_on_same_identity": 3,
+    "inspect_candidate_slicing_for_known_anchor_context": 6,
+    "inspect_guideline_query_wording_against_source_evidence": 6,
+    "verify_identity_filter_dataset_split_and_rank_table_coverage": 9
+  },
+  "policy": [
+    "This is a rank-only recall-side inspection artifact.",
+    "It does not update guidelines, sidecars, ranking, embedding weights, or audit prompts.",
+    "It separates rank-table coverage gaps from joined cases whose known anchor ranks below the primary budget.",
+    "It cannot prove candidate-slicing failure without full ranked candidate lists and known-anchor span details."
+  ],
+  "primary_budget": 100,
+  "ranked_miss_rank_stats": {
+    "count": 6,
+    "max": 275,
+    "mean": 215,
+    "min": 136
+  },
+  "recall_label": "r7-p3c64-full143",
+  "schema_version": "hcvr_recall_side_miss_inspection.v1"
+}

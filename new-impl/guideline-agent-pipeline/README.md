@@ -58,6 +58,8 @@ P3C64-vs-Qwen4B model-improvement claim.
   - Supports `openai`, `sentence-transformers`, and the recovered
     `p3c64-query-residual` backend.
   - Uses known anchors only after ranking to compute Hit@K and MRR.
+  - Optionally writes a flat `top_candidates.jsonl` for recall-side debugging
+    when `--export-top-candidates N` is supplied.
 - `scripts/compare_recall_rank_tables.py`
   - Compares two recall rank tables by `identity_key`.
   - Fails by default when the identity sets differ, so model A/B runs do not
@@ -69,6 +71,21 @@ P3C64-vs-Qwen4B model-improvement claim.
     `README.md`.
   - Recomputes Hit@K and MRR from merged results.
   - Marks identity-file rows with missing shard outputs as missing cases.
+- `scripts/diagnose_guideline_recall_alignment.py`
+  - Joins released guideline-group diagnostics with same-identity recall ranks.
+  - Separates guideline-quality attention, label-mixture structural attention,
+    rank-table coverage gaps, and clean groups that still miss the primary
+    budget.
+- `scripts/build_recall_side_debug_pack.py`
+  - Builds a review-only debug pack for semantically clean guideline groups
+    whose same-identity recall rows still miss the primary Top-K budget.
+  - Separates rank-table coverage gaps from joined Top-K misses.
+- `scripts/inspect_recall_side_misses.py`
+  - Expands recall-side debug groups into case-level rank-only rows.
+  - Records rank distance, Top-1 location, known-anchor count, candidate-count
+    bucket, and next recall-side checks.
+  - Does not claim candidate-slicing failure unless full ranked candidate lists
+    and known-anchor span details are available.
 - `scripts/evaluate_guideline_groups.py`
   - Evaluates the guideline release itself, independent of embedding recall.
   - Reports coverage, source-only groups, mixed HCVR/CWE sanity checks, and
@@ -769,6 +786,33 @@ coverage gaps relative to the rank table. Use it to inspect query wording,
 candidate slicing, embedding backend, adapter behavior, and rank-table coverage
 without changing guideline taxonomy or adding runtime fallback rules.
 
+Expand the clean-group misses to case-level rank-only rows:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/inspect_recall_side_misses.py \
+  --recall-side-debug-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-recall-side-debug-pack-20260823/summary.json \
+  --group-alignment new-impl/guideline-agent-pipeline/results/guideline-v2-r8-release-ready-p3c64-alignment-20260823/group_recall_alignment.jsonl \
+  --case-alignment new-impl/guideline-agent-pipeline/results/guideline-v2-r8-release-ready-p3c64-alignment-20260823/case_recall_alignment.jsonl \
+  --recall-rank-table new-impl/guideline-agent-pipeline/results/guideline-v2-r7-full143-p3c64-20260823/r7_case_rank_table.jsonl \
+  --output-dir /path/to/recall-side-miss-inspection
+```
+
+The r8 case-level inspection is committed under
+`results/guideline-v2-r8-recall-side-miss-inspection-20260823/`. It inspects 15
+miss rows: 9 identities are absent from the rank table, and 6 identities are
+present but have known anchors below Top-100. For those 6 ranked misses, the
+Top-1 location does not overlap the known anchor; 3 also have large candidate
+pools. This points the next recall-side work toward query wording, full
+candidate export/slicing checks, and same-identity embedding adapter comparison
+before weakening the guideline taxonomy. The inspection is explicitly
+rank-only because the current case rank table does not contain full Top-N
+candidate lists or known-anchor span details.
+For the next recall run, add `--export-top-candidates 300` or another explicit
+debug budget to `recall_guideline_anchors.py`, then rerun
+`inspect_recall_side_misses.py --top-candidates /path/to/top_candidates.jsonl`.
+That enables candidate-overlap summaries while keeping the default recall
+metrics unchanged.
+
 Build a revision backlog from the semantic judge and recall-alignment outputs:
 
 ```bash
@@ -919,6 +963,9 @@ Run a completion audit for the two-axis guideline objective:
 python new-impl/guideline-agent-pipeline/scripts/audit_guideline_dual_axis_objective.py \
   --scorecard new-impl/guideline-agent-pipeline/results/guideline-v2-r8-release-ready-scorecard-20260823/scorecard.json \
   --evidence-worklist-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-evidence-worklist-20260823/summary.json \
+  --recall-alignment-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-release-ready-p3c64-alignment-20260823/summary.json \
+  --recall-side-debug-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-recall-side-debug-pack-20260823/summary.json \
+  --recall-side-miss-inspection-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-recall-side-miss-inspection-20260823/summary.json \
   --boundary-recall-triage-summary new-impl/guideline-agent-pipeline/results/guideline-boundary-recall-triage-r8-gl-mech-0001-p3c64-3case-20260823/summary.json \
   --ledger-validation-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0022-validation-src-reviewed-20260823/summary.json \
   --ledger-judge-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0022-judge-pack-src-reviewed-20260823/judge_summary/summary.json \

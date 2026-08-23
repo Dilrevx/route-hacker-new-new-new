@@ -155,6 +155,44 @@ def test_recall_side_debug_pack_is_recorded_as_work_queue():
     assert "recall-side debug pack separates rank misses from rank-table coverage gaps" in audit["requirements"][3]["evidence"]
 
 
+def test_recall_side_miss_inspection_is_rank_only_diagnostic_evidence():
+    module = load_module()
+
+    audit = module.build_audit(
+        scorecard=scorecard(),
+        worklist={"worklist_count": 1, "action_counts": {"collect_source_sink_guard_evidence": 1}},
+        desired_delta_rate=0.10,
+        recall_side_miss_inspection={
+            "recall_label": "p3c64",
+            "case_count": 15,
+            "miss_state_counts": {
+                "coverage_gap_not_in_rank_table": 9,
+                "ranked_below_primary_budget": 6,
+            },
+            "diagnosis_counts": {
+                "known_anchor_ranked_below_primary_budget": 6,
+            },
+            "next_check_counts": {
+                "compare_embedding_backend_or_query_adapter_on_same_identity": 6,
+            },
+            "input_capability": {
+                "full_ranked_candidate_lists": False,
+            },
+        },
+    )
+
+    assert audit["overall_status"] == "not_complete"
+    inspection = audit["recall_side_miss_inspection_evidence"]
+    assert inspection["status"] == "provided"
+    assert inspection["case_count"] == 15
+    assert inspection["input_capability"]["full_ranked_candidate_lists"] is False
+    assert "recall_side_miss_inspection_case_count=15" in audit["requirements"][3]["evidence"]
+    assert (
+        "recall_side_miss_inspection_states={'coverage_gap_not_in_rank_table': 9, 'ranked_below_primary_budget': 6}"
+        in audit["requirements"][3]["evidence"]
+    )
+
+
 def test_source_reviewed_boundary_evidence_is_separate_from_recall_completion():
     module = load_module()
 
@@ -252,6 +290,7 @@ def test_cli_writes_dual_axis_audit(tmp_path: Path):
     worklist_path = tmp_path / "worklist.json"
     recall_alignment_path = tmp_path / "recall_alignment.json"
     recall_side_debug_path = tmp_path / "recall_side_debug.json"
+    recall_side_miss_inspection_path = tmp_path / "recall_side_miss_inspection.json"
     ledger_validation_path = tmp_path / "ledger_validation.json"
     ledger_judge_path = tmp_path / "ledger_judge.json"
     output = tmp_path / "audit"
@@ -286,6 +325,16 @@ def test_cli_writes_dual_axis_audit(tmp_path: Path):
         ),
         encoding="utf-8",
     )
+    recall_side_miss_inspection_path.write_text(
+        json.dumps(
+            {
+                "recall_label": "p3c64",
+                "case_count": 15,
+                "miss_state_counts": {"ranked_below_primary_budget": 6},
+            }
+        ),
+        encoding="utf-8",
+    )
     ledger_validation_path.write_text(
         json.dumps({"valid_count": 1, "invalid_count": 0, "promotable_count": 1}),
         encoding="utf-8",
@@ -307,6 +356,8 @@ def test_cli_writes_dual_axis_audit(tmp_path: Path):
             str(recall_alignment_path),
             "--recall-side-debug-summary",
             str(recall_side_debug_path),
+            "--recall-side-miss-inspection-summary",
+            str(recall_side_miss_inspection_path),
             "--ledger-validation-summary",
             str(ledger_validation_path),
             "--ledger-judge-summary",
@@ -328,6 +379,7 @@ def test_cli_writes_dual_axis_audit(tmp_path: Path):
     assert "Source-Reviewed Boundary Evidence" in readme
     assert "Recall Alignment Diagnostics" in readme
     assert "Recall-Side Debug Evidence" in readme
+    assert "Recall-Side Case Inspection" in readme
 
 
 def test_cli_accepts_repeated_source_reviewed_summaries(tmp_path: Path):

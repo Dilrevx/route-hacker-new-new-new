@@ -680,6 +680,29 @@ def selected_anchor_row(case_result: dict[str, Any], rank: int) -> dict[str, Any
     return None
 
 
+def exported_candidate_rows(results: list[dict[str, Any]], limit: int) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    if limit <= 0:
+        return rows
+    for case_result in results:
+        for anchor in (case_result.get("top_anchors") or [])[:limit]:
+            rows.append(
+                {
+                    "identity_key": case_result["identity_key"],
+                    "case_id": case_result.get("case_id"),
+                    "repo_key": case_result.get("repo_key"),
+                    "checkout_revision": case_result.get("checkout_revision"),
+                    "hcvr_type": case_result.get("hcvr_type"),
+                    "guideline_mode": case_result.get("guideline_mode"),
+                    "guideline_query_count": len(case_result.get("guideline_queries") or []),
+                    "candidate_count": case_result.get("candidate_count"),
+                    "known_anchor_count": case_result.get("known_anchor_count"),
+                    **anchor,
+                }
+            )
+    return rows
+
+
 def summarize(results: list[dict[str, Any]], budgets: list[int]) -> dict[str, Any]:
     completed = [row for row in results if row.get("state", "completed") == "completed"]
     ranks = [int(row["best_known_anchor_rank"]) for row in completed if row.get("best_known_anchor_rank")]
@@ -761,6 +784,15 @@ def main() -> None:
     parser.add_argument("--clone-timeout", type=int, default=600)
     parser.add_argument("--case-workers", type=int, default=4)
     parser.add_argument("--top-k", type=int, default=200)
+    parser.add_argument(
+        "--export-top-candidates",
+        type=int,
+        default=0,
+        help=(
+            "Optional debug export. When positive, writes a flat top_candidates.jsonl "
+            "with up to this many retained candidates per case. The value cannot exceed --top-k."
+        ),
+    )
     parser.add_argument("--audit-anchor-rank", type=int, default=1)
     parser.add_argument("--window-lines", type=int, default=80)
     parser.add_argument("--stride-lines", type=int, default=40)
@@ -795,8 +827,12 @@ def main() -> None:
 
     if args.limit < 1 or args.case_workers < 1 or args.top_k < 1 or args.audit_anchor_rank < 1:
         raise SystemExit("limit, case-workers, top-k, and audit-anchor-rank must be positive")
+    if args.export_top_candidates < 0:
+        raise SystemExit("--export-top-candidates cannot be negative")
     if args.audit_anchor_rank > args.top_k:
         raise SystemExit("--audit-anchor-rank cannot exceed --top-k")
+    if args.export_top_candidates > args.top_k:
+        raise SystemExit("--export-top-candidates cannot exceed --top-k because only retained candidates can be exported")
     if args.embedding_backend == "p3c64-query-residual" and not args.p3c64_state.is_file():
         raise SystemExit(f"--p3c64-state is unavailable: {args.p3c64_state}")
 
@@ -921,6 +957,9 @@ def main() -> None:
     selected.sort(key=lambda row: order.get(row["identity_key"], 10**9))
     write_jsonl(recall_path, results)
     write_jsonl(selected_path, selected)
+    top_candidates_path = output / "top_candidates.jsonl"
+    if args.export_top_candidates > 0:
+        write_jsonl(top_candidates_path, exported_candidate_rows(results, args.export_top_candidates))
     budgets = sorted({1, 3, 5, 10, 20, 30, 50, 100, args.top_k})
     summary = {
         "schema_version": "hcvr_guideline_anchor_recall_run.v1",
@@ -957,6 +996,7 @@ def main() -> None:
         "artifacts": {
             "recall_results": str(recall_path),
             "selected_cases": str(selected_path),
+            "top_candidates": str(top_candidates_path) if args.export_top_candidates > 0 else None,
         },
     }
     write_json(output / "summary.json", summary)

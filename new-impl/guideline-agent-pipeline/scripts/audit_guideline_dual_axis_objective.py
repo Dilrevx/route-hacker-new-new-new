@@ -165,6 +165,7 @@ def build_audit(
     desired_delta_rate: float,
     recall_alignment: dict[str, Any] | None = None,
     recall_side_debug: dict[str, Any] | None = None,
+    recall_side_miss_inspection: dict[str, Any] | None = None,
     boundary_recall_triage: dict[str, Any] | None = None,
     ledger_validation: dict[str, Any] | None = None,
     ledger_judge: dict[str, Any] | None = None,
@@ -194,6 +195,7 @@ def build_audit(
         else {}
     )
     recall_side_debug = recall_side_debug or {}
+    recall_side_miss_inspection = recall_side_miss_inspection or {}
     boundary_recall_triage = boundary_recall_triage or {}
     boundary_next_actions = (
         boundary_recall_triage.get("next_action_counts")
@@ -258,6 +260,8 @@ def build_audit(
                 f"label_mixture_is_blocking={alignment_policy.get('label_mixture_is_blocking')}",
                 f"min_clean_purity_is_blocking={alignment_policy.get('min_clean_purity_is_blocking')}",
                 "recall-side debug pack separates rank misses from rank-table coverage gaps",
+                f"recall_side_miss_inspection_case_count={recall_side_miss_inspection.get('case_count')}",
+                f"recall_side_miss_inspection_states={recall_side_miss_inspection.get('miss_state_counts')}",
             ],
             "status": "satisfied_as_evaluation_policy",
             "gap": "Need per-group semantic-vs-recall triage after the next changed-sidecar recall run.",
@@ -348,6 +352,19 @@ def build_audit(
                 "and rank-table coverage checks for semantically clean groups that still miss Top-K."
             ),
         },
+        "recall_side_miss_inspection_evidence": {
+            "status": "provided" if recall_side_miss_inspection else "not_provided",
+            "recall_label": recall_side_miss_inspection.get("recall_label"),
+            "case_count": recall_side_miss_inspection.get("case_count"),
+            "miss_state_counts": recall_side_miss_inspection.get("miss_state_counts") or {},
+            "diagnosis_counts": recall_side_miss_inspection.get("diagnosis_counts") or {},
+            "next_check_counts": recall_side_miss_inspection.get("next_check_counts") or {},
+            "input_capability": recall_side_miss_inspection.get("input_capability") or {},
+            "message": (
+                "Case-level miss inspection is rank-only when full candidate lists are unavailable. It narrows the "
+                "next recall-side checks but does not prove candidate slicing failure or change guideline quality."
+            ),
+        },
         "missing_or_incomplete_requirements": missing,
         "next_gates": next_gates,
         "decision": (
@@ -388,6 +405,7 @@ def write_readme(path: Path, audit: dict[str, Any]) -> None:
     reviewed = audit.get("source_reviewed_boundary_evidence") or {}
     alignment = audit.get("recall_alignment_evidence") or {}
     recall_debug = audit.get("recall_side_debug_evidence") or {}
+    recall_miss_inspection = audit.get("recall_side_miss_inspection_evidence") or {}
     lines.extend(
         [
             "",
@@ -435,6 +453,22 @@ def write_readme(path: Path, audit: dict[str, Any]) -> None:
     lines.extend(
         [
             "",
+            "## Recall-Side Case Inspection",
+            "",
+            f"- Status: `{recall_miss_inspection.get('status')}`",
+            f"- Recall label: `{recall_miss_inspection.get('recall_label')}`",
+            f"- Cases inspected: {recall_miss_inspection.get('case_count')}",
+            f"- Miss states: {recall_miss_inspection.get('miss_state_counts')}",
+            f"- Diagnosis counts: {recall_miss_inspection.get('diagnosis_counts')}",
+            f"- Next checks: {recall_miss_inspection.get('next_check_counts')}",
+            f"- Input capability: {recall_miss_inspection.get('input_capability')}",
+            "",
+            "This is the case-level expansion of the recall-side debug queue. With the current rank summary table it can distinguish coverage gaps from ranked-below-budget misses, but it cannot prove candidate-slicing quality without full ranked candidate exports.",
+        ]
+    )
+    lines.extend(
+        [
+            "",
             "## Required Gates For The Next Round",
             "",
             "| Gate | Run When | Pass Condition | Current State |",
@@ -470,6 +504,7 @@ def main() -> None:
     parser.add_argument("--evidence-worklist-summary", type=Path, required=True)
     parser.add_argument("--recall-alignment-summary", type=Path)
     parser.add_argument("--recall-side-debug-summary", type=Path)
+    parser.add_argument("--recall-side-miss-inspection-summary", type=Path)
     parser.add_argument("--boundary-recall-triage-summary", type=Path)
     parser.add_argument("--ledger-validation-summary", type=Path, action="append")
     parser.add_argument("--ledger-judge-summary", type=Path, action="append")
@@ -490,6 +525,11 @@ def main() -> None:
         recall_side_debug=(
             read_json(args.recall_side_debug_summary)
             if args.recall_side_debug_summary
+            else None
+        ),
+        recall_side_miss_inspection=(
+            read_json(args.recall_side_miss_inspection_summary)
+            if args.recall_side_miss_inspection_summary
             else None
         ),
         boundary_recall_triage=(
