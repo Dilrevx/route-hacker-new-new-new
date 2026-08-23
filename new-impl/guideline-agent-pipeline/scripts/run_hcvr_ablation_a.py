@@ -717,16 +717,23 @@ def validate_candidate_dispositions(
     return True, ""
 
 
-def parse_opencode_events(text: str) -> tuple[str, dict[str, Any]]:
-    final_text = ""
-    usage = {
+TOKEN_USAGE_KEYS = ("input", "output", "reasoning", "cache_read", "cache_write", "usage_event_count")
+
+
+def empty_token_usage() -> dict[str, int]:
+    return {
         "input": 0,
         "output": 0,
         "reasoning": 0,
         "cache_read": 0,
         "cache_write": 0,
-        "step_finish_count": 0,
+        "usage_event_count": 0,
     }
+
+
+def parse_audit_events(text: str) -> tuple[str, dict[str, Any]]:
+    final_text = ""
+    usage = empty_token_usage()
     for line in text.splitlines():
         if not line.strip():
             continue
@@ -745,8 +752,64 @@ def parse_opencode_events(text: str) -> tuple[str, dict[str, Any]]:
             usage["reasoning"] += int(tokens.get("reasoning") or 0)
             usage["cache_read"] += int(cache.get("read") or 0)
             usage["cache_write"] += int(cache.get("write") or 0)
-            usage["step_finish_count"] += 1
+            usage["usage_event_count"] += 1
+        if event.get("type") == "turn.completed":
+            tokens = event.get("usage") or {}
+            usage["input"] += int(tokens.get("input_tokens") or tokens.get("input") or 0)
+            usage["output"] += int(tokens.get("output_tokens") or tokens.get("output") or 0)
+            usage["reasoning"] += int(
+                tokens.get("reasoning_output_tokens") or tokens.get("reasoning") or 0
+            )
+            usage["cache_read"] += int(
+                tokens.get("cached_input_tokens") or tokens.get("cache_read") or 0
+            )
+            usage["cache_write"] += int(
+                tokens.get("cache_creation_input_tokens") or tokens.get("cache_write") or 0
+            )
+            usage["usage_event_count"] += 1
     return final_text, usage
+
+
+def normalize_token_usage(value: dict[str, Any] | None) -> dict[str, int]:
+    usage = empty_token_usage()
+    if not isinstance(value, dict):
+        return usage
+    for key in TOKEN_USAGE_KEYS:
+        usage[key] = int(value.get(key) or 0)
+    if "usage_event_count" not in value and "step_finish_count" in value:
+        usage["usage_event_count"] = int(value.get("step_finish_count") or 0)
+    return usage
+
+
+def token_usage_has_counts(value: dict[str, int]) -> bool:
+    return any(value.get(key, 0) for key in ("input", "output", "reasoning", "cache_read", "cache_write"))
+
+
+def token_usage_for_row(row: dict[str, Any] | None) -> dict[str, int]:
+    if not isinstance(row, dict):
+        return empty_token_usage()
+    usage = normalize_token_usage(row.get("token_usage"))
+    if token_usage_has_counts(usage):
+        return usage
+    events = row.get("events")
+    if isinstance(events, str) and events:
+        events_path = Path(events)
+        if events_path.is_file():
+            try:
+                _, parsed_usage = parse_audit_events(events_path.read_text(encoding="utf-8", errors="replace"))
+                return parsed_usage
+            except OSError:
+                return usage
+    return usage
+
+
+def merge_token_usage_values(values: Iterable[dict[str, Any]]) -> dict[str, int]:
+    merged = empty_token_usage()
+    for value in values:
+        usage = normalize_token_usage(value)
+        for key in TOKEN_USAGE_KEYS:
+            merged[key] += usage[key]
+    return merged
 
 
 def run_anchor_group_audit(
@@ -819,7 +882,7 @@ def run_anchor_group_audit(
             timeout=timeout,
         )
         events_path.write_text(output_text, encoding="utf-8")
-        report_text, token_usage = parse_opencode_events(output_text)
+        report_text, token_usage = parse_audit_events(output_text)
         report_path.write_text(report_text, encoding="utf-8")
         if state == "completed" and returncode != 0:
             state = "opencode_failed"
@@ -856,6 +919,7 @@ def run_anchor_group_audit(
             timeout=timeout,
         )
         events_path.write_text(output_text, encoding="utf-8")
+        _, token_usage = parse_audit_events(output_text)
         if state == "completed" and returncode != 0:
             state = "codex_failed"
         report_text = report_path.read_text(encoding="utf-8") if report_path.is_file() else ""
@@ -903,11 +967,16 @@ def run_anchor_group_audit(
 
 
 def merge_group_token_usage(group_rows: list[dict[str, Any]]) -> dict[str, int]:
-    keys = ("input", "output", "reasoning", "cache_read", "cache_write", "step_finish_count")
-    return {
-        key: sum(int((row.get("token_usage") or {}).get(key) or 0) for row in group_rows)
-        for key in keys
-    }
+    return merge_token_usage_values(token_usage_for_row(row) for row in group_rows)
+
+
+def token_usage_for_case_row(row: dict[str, Any] | None) -> dict[str, int]:
+    if not isinstance(row, dict):
+        return empty_token_usage()
+    groups = row.get("groups")
+    if isinstance(groups, list) and groups:
+        return merge_group_token_usage([group for group in groups if isinstance(group, dict)])
+    return token_usage_for_row(row)
 
 
 def reusable_completed_group(
@@ -994,7 +1063,7 @@ def run_case_grouped_audit(
             variant=variant,
             case=case,
             snapshot=snapshot,
-                anchors=prompt_group,
+            anchors=prompt_group,
             group_index=group_index,
             group_count=len(groups),
             timeout=group_timeout,
@@ -1002,7 +1071,7 @@ def run_case_grouped_audit(
             source_context=source_context,
             include_case_metadata=include_case_metadata,
             guideline_overrides=guideline_overrides,
-                retry_attempt=(int(previous.get("retry_attempt") or 0) + 1) if previous else 0,
+            retry_attempt=(int(previous.get("retry_attempt") or 0) + 1) if previous else 0,
         )
         if previous:
             fresh["retry_of_state"] = previous.get("state")
@@ -1141,6 +1210,7 @@ def score_variant(
     fn = 0
     emitted_finding_count = 0
     extra_truth_hit_count = 0
+    case_token_usages: list[dict[str, int]] = []
     completeness_failures: list[dict[str, str]] = []
     for identity, case in cases_by_identity.items():
         row = rows_by_identity.get(identity)
@@ -1172,6 +1242,8 @@ def score_variant(
         fn += case_fn
         emitted_finding_count += case_alarms
         extra_truth_hit_count += max(0, len(matched_finding_indexes) - case_tp)
+        row_token_usage = token_usage_for_case_row(row)
+        case_token_usages.append(row_token_usage)
         case_scores.append(
             {
                 "identity_key": identity,
@@ -1189,13 +1261,15 @@ def score_variant(
                 "extra_truth_hit_count": max(0, len(matched_finding_indexes) - case_tp),
                 "scored_true_finding_index": matched_finding_indexes[0] if matched_finding_indexes else None,
                 "truth_method_count": len(truth),
+                "token_usage": row_token_usage,
             }
         )
     recall = tp / denominator if denominator else 0.0
     alarms = tp + fp
     precision = tp / alarms if alarms else 0.0
     f1 = (2 * tp) / (2 * tp + fp + fn) if (2 * tp + fp + fn) else 0.0
-    states = collections.Counter((row.get("state") or "unknown") for row in rows)
+    states = collections.Counter((row.get("state") or "unknown") for row in rows_by_identity.values())
+    historical_states = collections.Counter((row.get("state") or "unknown") for row in rows)
     score = {
         "schema_version": "hcvr_ablation_a_score.v1",
         "variant": variant_dir.name,
@@ -1206,6 +1280,9 @@ def score_variant(
         "completeness_failure_count": len(completeness_failures),
         "completeness_failure_examples": completeness_failures[:10],
         "state_counts": dict(states),
+        "historical_state_counts": dict(historical_states),
+        "case_result_row_count": len(rows),
+        "latest_case_result_count": len(rows_by_identity),
         "tp": tp,
         "fp": fp,
         "fn": fn,
@@ -1215,6 +1292,7 @@ def score_variant(
         "alarms": alarms,
         "emitted_finding_count": emitted_finding_count,
         "extra_truth_hit_count": extra_truth_hit_count,
+        "token_usage": merge_token_usage_values(case_token_usages),
         "confirmed": "N/A (confirmation stage not integrated)",
         "case_scores": case_scores,
     }
@@ -1417,6 +1495,17 @@ def write_run_report(
             f"{score['variant_label']} | TP={score['tp']} | FP={score['fp']} | FN={score['fn']} | "
             f"formal_eligible={score.get('formal_eligible')} | receipt_failures={score.get('completeness_failure_count')} | states={score['state_counts']}"
         )
+    token_rows = []
+    for variant in ("full", "minus_rank", "minus_guideline", "minus_poc"):
+        score = by_variant.get(variant)
+        if score is None:
+            continue
+        usage = score.get("token_usage") or {}
+        token_rows.append(
+            f"{score['variant_label']} | input={usage.get('input', 0)} | "
+            f"cached_input={usage.get('cache_read', 0)} | output={usage.get('output', 0)} | "
+            f"reasoning={usage.get('reasoning', 0)} | usage_events={usage.get('usage_event_count', 0)}"
+        )
     flips = build_flip_notes(by_variant)
     report = f"""# Unified V2 Experiment A Ablation Report
 
@@ -1474,6 +1563,9 @@ Variant | Recall | Precision | F1 | Alarms | Confirmed
 
 Raw TP/FP/FN counts:
 {chr(10).join(count_rows) if count_rows else 'No completed rows yet.'}
+
+Token usage:
+{chr(10).join(token_rows) if token_rows else 'No completed rows yet.'}
 
 Representative hit/miss flips:
 {flips}

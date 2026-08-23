@@ -178,6 +178,15 @@ def main() -> None:
     parser.add_argument("--group-timeout", type=int, default=3600)
     parser.add_argument("--clone-timeout", type=int, default=600)
     parser.add_argument("--resume", action="store_true")
+    parser.add_argument(
+        "--retry-incomplete-groups",
+        action="store_true",
+        help=(
+            "Accepted for parity with run_hcvr_ablation_a.py. With --resume, "
+            "this queue runner already reruns incomplete groups and reuses "
+            "completed groups."
+        ),
+    )
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--qa", type=Path, default=dataset_root / "receipts/hcvr_new_unified_paper_eval_rebalance_qa.v2.json")
     parser.add_argument("--cases-file", type=Path, default=dataset_root / "dataset/new_unified_cases.v1.jsonl")
@@ -214,6 +223,7 @@ def main() -> None:
             "case_count": len(identities),
             "top_k": args.top_k,
             "m": args.group_size,
+            "retry_incomplete_groups": bool(args.retry_incomplete_groups),
             "groups_per_full_case": (args.top_k + args.group_size - 1) // args.group_size,
             "recall_projection": str(projection.resolve()),
             "fixed_parts": [
@@ -230,7 +240,7 @@ def main() -> None:
     ledger = args.output_dir / "backend_b_queue_events.jsonl"
     for offset, identity in enumerate(identities, start=args.case_start):
         case_dir = args.output_dir / "per-case-runs" / f"case-{offset:03d}"
-        if args.resume and case_completed(case_dir):
+        if args.resume and not args.retry_incomplete_groups and case_completed(case_dir):
             append_jsonl(
                 ledger,
                 {
