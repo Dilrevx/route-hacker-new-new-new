@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -417,3 +418,21 @@ def test_ensure_snapshot_uses_existing_commit_without_fetch(tmp_path: Path, monk
 
     assert snapshot == snapshot_dir
     assert calls == []
+
+
+def test_run_git_with_retries_recovers_from_transient_failure(monkeypatch):
+    module = load_module()
+    calls: list[list[str]] = []
+
+    def fake_run(command, check, timeout):
+        calls.append(command)
+        if len(calls) == 1:
+            raise subprocess.CalledProcessError(128, command)
+        return subprocess.CompletedProcess(command, 0)
+
+    monkeypatch.setattr(module.subprocess, "run", fake_run)
+    monkeypatch.setattr(module.time, "sleep", lambda seconds: None)
+
+    module.run_git_with_retries(["git", "fetch"], timeout=1, attempts=2)
+
+    assert calls == [["git", "fetch"], ["git", "fetch"]]

@@ -432,12 +432,27 @@ def choose_anchor(
     return pick_anchor(case, anchor_index)
 
 
+def run_git_with_retries(command: list[str], *, timeout: int | None = None, attempts: int = 3) -> None:
+    last_error: subprocess.CalledProcessError | subprocess.TimeoutExpired | None = None
+    for attempt in range(1, attempts + 1):
+        try:
+            subprocess.run(command, check=True, timeout=timeout)
+            return
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
+            last_error = error
+            if attempt >= attempts:
+                break
+            time.sleep(min(30, 2 ** attempt))
+    assert last_error is not None
+    raise last_error
+
+
 def clone_or_fetch(repo_url: str, repo_dir: Path, timeout: int | None = None) -> None:
     if repo_dir.exists():
-        subprocess.run(["git", "-C", str(repo_dir), "fetch", "--all", "--tags"], check=True, timeout=timeout)
+        run_git_with_retries(["git", "-C", str(repo_dir), "fetch", "--all", "--tags"], timeout=timeout)
         return
     repo_dir.parent.mkdir(parents=True, exist_ok=True)
-    subprocess.run(["git", "clone", "--no-checkout", repo_url, str(repo_dir)], check=True, timeout=timeout)
+    run_git_with_retries(["git", "clone", "--no-checkout", repo_url, str(repo_dir)], timeout=timeout)
 
 
 def repo_has_commit(repo_dir: Path, commit: str) -> bool:
