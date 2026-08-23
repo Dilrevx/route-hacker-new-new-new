@@ -429,6 +429,43 @@ def test_evidence_coverage_can_be_semantic_ready_pending_recall_followup():
     assert coverage["recall_followup_count"] == 3
 
 
+def test_source_review_coverage_plus_fresh_recall_completes_scoped_audit():
+    module = load_module()
+
+    audit = module.build_audit(
+        scorecard=scorecard(),
+        worklist={"worklist_count": 20, "action_counts": {"collect_source_sink_guard_evidence": 10}},
+        desired_delta_rate=0.10,
+        evidence_coverage={
+            "worklist_count": 20,
+            "coverage_row_count": 20,
+            "coverage_status_counts": {
+                "not_source_reviewed": 2,
+                "source_reviewed_and_judge_accepted": 18,
+            },
+            "next_action_counts": {
+                "optional_control_source_review": 2,
+                "run_same_identity_recall_after_sidecar_change": 18,
+            },
+            "source_review_action_count": 18,
+            "source_review_judge_accepted_count": 18,
+        },
+    )
+
+    assert audit["overall_status"] == "complete"
+    assert not audit["missing_or_incomplete_requirements"]
+    assert (
+        requirement(audit, "Design reusable guideline classification")["status"]
+        == "satisfied_by_source_review_coverage"
+    )
+    coverage_requirement = requirement(audit, "Cover the semantic evidence worklist")
+    assert coverage_requirement["status"] == "satisfied_semantic_coverage_with_recall_evidence"
+    assert "valid same-identity recall A/B" in coverage_requirement["gap"]
+    assert requirement(audit, "Keep guidelines compatible")["status"] == "satisfied_for_reported_same_identity_budget"
+    same_identity_gate = next(gate for gate in audit["next_gates"] if gate["gate"] == "same_identity_recall_gate")
+    assert "satisfied for the current changed sidecar" in same_identity_gate["current_state"]
+
+
 def test_aggregate_multiple_source_reviewed_summaries():
     module = load_module()
 
@@ -630,6 +667,63 @@ def test_cli_writes_dual_axis_audit(tmp_path: Path):
     assert "Recall-Side Case Inspection" in readme
     assert "Recall-Candidate Judge Diagnostics" in readme
     assert "coverage_gap_only_not_rerank_hit_evidence" in readme
+
+
+def test_cli_writes_complete_dual_axis_audit(tmp_path: Path):
+    scorecard_path = tmp_path / "scorecard.json"
+    worklist_path = tmp_path / "worklist.json"
+    coverage_path = tmp_path / "coverage.json"
+    output = tmp_path / "audit"
+    scorecard_path.write_text(json.dumps(scorecard()), encoding="utf-8")
+    worklist_path.write_text(
+        json.dumps({"worklist_count": 20, "action_counts": {"collect_source_sink_guard_evidence": 10}}),
+        encoding="utf-8",
+    )
+    coverage_path.write_text(
+        json.dumps(
+            {
+                "worklist_count": 20,
+                "coverage_row_count": 20,
+                "coverage_status_counts": {
+                    "not_source_reviewed": 2,
+                    "source_reviewed_and_judge_accepted": 18,
+                },
+                "next_action_counts": {
+                    "optional_control_source_review": 2,
+                    "run_same_identity_recall_after_sidecar_change": 18,
+                },
+                "source_review_action_count": 18,
+                "source_review_judge_accepted_count": 18,
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(SCRIPT),
+            "--scorecard",
+            str(scorecard_path),
+            "--evidence-worklist-summary",
+            str(worklist_path),
+            "--evidence-coverage-summary",
+            str(coverage_path),
+            "--output-dir",
+            str(output),
+        ],
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+
+    assert result.returncode == 0
+    summary = json.loads((output / "summary.json").read_text(encoding="utf-8"))
+    assert summary["overall_status"] == "complete"
+    readme = (output / "README.md").read_text(encoding="utf-8")
+    assert "fresh same-identity recall evidence" in readme
+    assert "not an unconditional claim" in readme
 
 
 def test_cli_accepts_repeated_source_reviewed_summaries(tmp_path: Path):

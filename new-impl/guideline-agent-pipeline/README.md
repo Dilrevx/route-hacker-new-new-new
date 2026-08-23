@@ -1849,6 +1849,26 @@ for the old sidecar and 12594 seconds for the source-reviewed candidate. The
 embedding service used here does not return token usage, so the committed
 artifact reports candidate counts and timing rather than token totals.
 
+The fresh scorecard for this evidence chain is
+`results/guideline-v2-r8-source-reviewed-release-candidate-scorecard-with-fresh-recall-20260824/`.
+It uses the source-reviewed release candidate structural summary plus the fresh
+32-case same-identity recall comparison directly. It does not pass the invalid
+old sidecar-equivalence report, because the changed source-reviewed sidecar
+needs its own recall evidence.
+
+The completion audit that joins the source-review coverage gate with the fresh
+recall A/B is
+`results/guideline-v2-r8-dual-axis-objective-audit-source-reviewed-fresh-recall-20260824/`.
+It reports `overall_status=complete` and `missing_count=0` for this scoped
+candidate. The semantic axis is satisfied by the cumulative source-review
+coverage matrix: 20/20 worklist rows covered, 18/18 source-review actions
+accepted by judge, 2 remaining rows kept as optional controls, and 0 blocking
+next actions. The recall axis is satisfied by the fresh same-identity A/B above:
+all reported budgets exceed the +10pp target on the 32-case fixed identity set.
+This is a paper-facing completion signal for the evaluated guideline/query plus
+embedding configuration, not an unconditional claim that the taxonomy is optimal
+for future embedders, rerankers, datasets, or regenerated guideline text.
+
 Convert the backlog into review-only mechanism lexicon proposals:
 
 ```bash
