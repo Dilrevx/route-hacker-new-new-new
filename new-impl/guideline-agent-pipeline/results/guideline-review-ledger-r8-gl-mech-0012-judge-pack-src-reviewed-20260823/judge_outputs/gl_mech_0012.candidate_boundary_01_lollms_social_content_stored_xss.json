@@ -1,0 +1,17 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.80,
+  "coverage_score": 0.70,
+  "actionability_score": 0.85,
+  "retrieval_query_quality": 0.75,
+  "main_issue": "Single representative case limits cross-project coherence validation, but the mechanism is internally consistent: the same source shape (FastAPI/Pydantic request models), sink (ORM objects before sanitization), missing guard (no allowlist sanitizer), and safe fix (bleach.clean before persistence) are demonstrated across multiple route files (social/__init__.py, social/dm.py) and content types (posts, comments, DMs, group names). The boundary is appropriately narrow ('missing', not 'broken' sanitizer).",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "GHSA-8wrq-fv5f-pfp2: stored XSS in create_post, unsanitized content assigned to DBPost, executed in victim browser.",
+    "Patch 9767b882: imports bleach, defines sanitize_content, applies to create_post, update_post, and add_comment_to_post before DB assignment.",
+    "Same patch extends to dm.py: sanitizes broadcast DM content, group conversation names, and send_direct_message content; adds migration script for existing content."
+  ]
+}
+```

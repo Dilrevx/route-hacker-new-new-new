@@ -1,0 +1,18 @@
+```json
+{
+  "decision": "needs_evidence",
+  "coherence_score": 0.55,
+  "coverage_score": 0.15,
+  "actionability_score": 0.15,
+  "retrieval_query_quality": 0.45,
+  "main_issue": "The advisory describes a coherent stored-XSS mechanism through AppLollmsMessage.from_dict deserialization without sanitization, but the referenced commit 9767b882 only touches social routes, direct-message routes, and a migration script — not backend/message.py. Raw file checks confirm the from_dict assignment content=data.get(\"content\", \"\") is unchanged between parent and patch. The boundary cannot be accepted, revised, split, or merged until the actual source delta proving the described from_dict fix is located.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "Advisory GHSA-w676-j9x4-3hq2 claims CVE-2026-1116 is from_dict XSS fixed by commit 9767b882, but the fetched diff for that commit does not include a backend/message.py hunk — the commit modifies social routes, direct-message routes, and a migration script.",
+    "Raw old/new file checks at commit 9767b882 and its parent both show AppLollmsMessage.from_dict returning content=data.get(\"content\", \"\") — no sanitization change is visible at the claimed fix point.",
+    "Downstream rendering risk exists in backend/routers/discussion/message.py (MessageOutput returns target_message.content, HTML export paths exist), but the exact source-to-sink chain for CVE-2026-1116 remains unconfirmed.",
+    "Reviewer correctly recommends preserving this as needs_more_evidence to prevent CVE-2026-1116 from being counted as fully source-reviewed. The actual fix may be in a different commit, a different file, or applied through a different mechanism than described by the advisory."
+  ]
+}
+```

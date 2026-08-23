@@ -1,0 +1,17 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.85,
+  "coverage_score": 0.55,
+  "actionability_score": 0.80,
+  "retrieval_query_quality": 0.80,
+  "main_issue": "The boundary is narrow (single representative case) but internally consistent: source shape (getattr producing empty string for missing token), sink (verify_token_callback invoked with empty string), missing guard (no non-empty check before callback dispatch), exploit precondition (attacker sends empty bearer/custom-header token), and safe fix (None sentinel + if token guard) all align tightly. The boundary text generalizes beyond Flask-HTTPAuth to any HTTP token-auth implementation that converts missing credentials to empty strings before callback invocation, which is a real and reusable pattern.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "Patch b15ffe9e confirms the exact defect: getattr(auth, 'token', '') -> getattr(auth, 'token', None) and if self.verify_token_callback -> if token and self.verify_token_callback.",
+    "Regression tests test_token_auth_login_empty_token and test_token_auth_custom_header_empty_token both assert HTTP 401 and verify callback is not called with empty string.",
+    "Only one case currently supports this boundary; additional cases from other frameworks with similar token-extraction-empty-string patterns would strengthen coverage."
+  ]
+}
+```

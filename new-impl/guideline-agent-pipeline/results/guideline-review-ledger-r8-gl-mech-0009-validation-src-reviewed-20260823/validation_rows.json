@@ -1,0 +1,11 @@
+[
+  {
+    "boundary_decision": "promote_boundary",
+    "boundary_label": "candidate_boundary_01_onedev_artifact_content_sniffing_xss",
+    "errors": [],
+    "guideline_id": "gl_mech_0009",
+    "line_no": 1,
+    "valid": true,
+    "warnings": []
+  }
+]

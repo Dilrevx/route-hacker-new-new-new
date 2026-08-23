@@ -1318,6 +1318,20 @@ Current source-reviewed boundary ledgers:
   does not support the previous temporary-directory create/delete/mkdir TOCTOU
   label. Treat this as a semantic correction and rerun same-identity recall if
   the recall-consumed sidecar text changes.
+- `guidelines/guideline_review_ledger.r8.gl_mech_0009.jsonl`: corrects the old
+  template/expression-evaluation attribution for CVE-2022-39207. The
+  source-reviewed evidence supports artifact download content-sniffing XSS:
+  uploaded or generated artifact bytes can be served back without a restrictive
+  content type or attachment policy, letting active content execute in a browser
+  context. Treat this as a semantic correction, not a template-injection recall
+  claim.
+- `guidelines/guideline_review_ledger.r8.gl_mech_0012.jsonl`: splits stored
+  social/message content HTML-sanitization issues into a promotable social
+  content boundary and a holding row for `AppLollmsMessage.from_dict`. The
+  social-content boundary is source-reviewed and judge-accepted; the
+  `from_dict` row remains `needs_more_evidence` because the advisory and the
+  checked patch/source window do not yet isolate a matching source/sink/fix
+  path.
 - `guidelines/guideline_review_ledger.r8.review_mech_0017.jsonl`: splits the
   broad pending path/resource validation bucket into three source-backed
   promotable boundaries: static-resource request path traversal without final
@@ -1332,6 +1346,11 @@ Current source-reviewed boundary ledgers:
   misuse, and Jinjava sandbox bypass through property or method restriction
   gaps. Parser-error-message downstream EL risk and the remaining unreviewed
   evaluator members stay `needs_more_evidence`.
+- `guidelines/guideline_review_ledger.r8.review_mech_0509.jsonl`: splits the
+  broad authentication-bypass and token-validation bucket into four
+  source-reviewed promotable boundaries: default acceptance of JWT `none`,
+  empty-token callback reachability, public default JWT secret fallback, and
+  OIDC server sessions not bound to token expiry.
 
 The earlier cumulative audit after the `gl_mech_0007` ledger is under
 `results/guideline-v2-r8-dual-axis-objective-audit-with-source-reviewed-boundaries-plus-0007-20260823/`.
@@ -1574,6 +1593,36 @@ it still reports `overall_status=not_complete`, `missing_count=3`, and 3
 blocking source-review next actions. This is semantic-evidence progress only;
 changing recall-consumed sidecar text still requires a fresh same-identity
 recall run at the declared Top-K budgets.
+
+The final three high-priority r8 source-review follow-ups in this batch are
+committed under `guidelines/guideline_review_ledger.r8.review_mech_0509.jsonl`,
+`guidelines/guideline_review_ledger.r8.gl_mech_0009.jsonl`, and
+`guidelines/guideline_review_ledger.r8.gl_mech_0012.jsonl`. `review_mech_0509`
+adds 4 valid promotable authentication/token boundaries; the TraeX
+DeepSeek-V4-Pro ledger judge accepts all 4, with average coherence `0.8675`,
+coverage `0.5875`, actionability `0.8500`, and retrieval-query quality
+`0.8200`. `gl_mech_0009` corrects artifact download content-sniffing XSS as a
+single valid promotable boundary; the judge accepts it with coherence `0.9000`,
+coverage `0.7000`, actionability `0.9500`, and retrieval-query quality
+`0.8500`. `gl_mech_0012` records 1 valid promotable stored-social-content HTML
+sanitization boundary plus 1 `needs_more_evidence` row for the unresolved
+`AppLollmsMessage.from_dict` advisory/source mismatch; the judge accepts the
+promoted row and marks the unresolved row `needs_evidence`.
+
+The latest cumulative coverage matrix is
+`results/guideline-v2-r8-evidence-coverage-plus-0509-0009-0012-judge-20260823/`:
+18 worklist groups are now `source_reviewed_and_judge_accepted`, 2 groups are
+the intended optional control reviews, and there are no blocking source-review
+next actions. Across the accumulated source-reviewed ledgers there are 47
+ledger rows, 40 validation rows, 46 judge rows, and 33 promotable boundaries
+accepted by judge in the coverage matrix. The latest dual-axis audit is
+`results/guideline-v2-r8-dual-axis-objective-audit-plus-0509-0009-0012-judge-20260823/`;
+it still reports `overall_status=not_complete`, but source-review coverage is
+now `satisfied_semantic_coverage_pending_recall_followup` with
+`blocking_next_action_count=0`. The remaining objective gaps are no longer
+unfilled source-review blockers: they are the paper-facing recall target gap
+and the requirement to run fresh same-identity recall after any
+recall-consumed sidecar text changes.
 
 Convert the backlog into review-only mechanism lexicon proposals:
 

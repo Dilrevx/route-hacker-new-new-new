@@ -1,0 +1,38 @@
+[
+  {
+    "boundary_decision": "promote_boundary",
+    "boundary_label": "candidate_boundary_01_jwt_none_algorithm_default",
+    "errors": [],
+    "guideline_id": "review_mech_0509",
+    "line_no": 1,
+    "valid": true,
+    "warnings": []
+  },
+  {
+    "boundary_decision": "promote_boundary",
+    "boundary_label": "candidate_boundary_02_empty_token_callback",
+    "errors": [],
+    "guideline_id": "review_mech_0509",
+    "line_no": 2,
+    "valid": true,
+    "warnings": []
+  },
+  {
+    "boundary_decision": "promote_boundary",
+    "boundary_label": "candidate_boundary_03_public_jwt_secret_fallback",
+    "errors": [],
+    "guideline_id": "review_mech_0509",
+    "line_no": 3,
+    "valid": true,
+    "warnings": []
+  },
+  {
+    "boundary_decision": "promote_boundary",
+    "boundary_label": "candidate_boundary_04_oidc_session_expiry_binding",
+    "errors": [],
+    "guideline_id": "review_mech_0509",
+    "line_no": 4,
+    "valid": true,
+    "warnings": []
+  }
+]

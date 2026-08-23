@@ -1,0 +1,16 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.85,
+  "coverage_score": 0.6,
+  "actionability_score": 0.9,
+  "retrieval_query_quality": 0.85,
+  "main_issue": "Mechanism is well-defined and internally coherent (source shape, sink, missing guard, exploit precondition, and safe fix all align), but the boundary generalizes beyond Authlib with only one representative case. The single case has strong source-reviewed evidence that directly supports the mechanism.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "authlib__authlib::CVE-2026-28802: Patch b87c32ed07b8 clearly removes `none` from the default JWT helper's algorithm list and forces explicit `JsonWebToken([\"none\"])` for unsecured JWT usage. OAuth/OIDC helpers are also patched to construct context-specific algorithm lists instead of importing the default. Evidence directly validates the mechanism.",
+    "Only one case is present. The boundary text generalizes to 'a JWT helper, decoder, encoder, request-object parser, userinfo endpoint, or token utility' — additional cases from other libraries would strengthen the coverage claim."
+  ]
+}
+```

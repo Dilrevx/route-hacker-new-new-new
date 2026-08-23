@@ -1,0 +1,16 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.85,
+  "coverage_score": 0.55,
+  "actionability_score": 0.80,
+  "retrieval_query_quality": 0.78,
+  "main_issue": "Mechanism is coherent and well-sourced from a single CVE. Source shape, sink, missing guard, exploit precondition, and safe fix all align around the same OIDC session-timeout binding pattern. The reviewer notes correctly distinguish this from generic missing-auth-endpoint or JWT-claim-validation boundaries. Coverage is limited to one representative case, which is acceptable for a candidate boundary but may benefit from additional cases before promotion.",
+  "suggested_guideline": "OIDC session lifetime not bound to token expiry: a web application establishes a server-side session for OIDC login but leaves the servlet/session timeout or OpenID configuration independent of provider token expiration, allowing an authenticated server session to remain valid beyond the intended inactivity or ID-token lifetime. Report security-handler or OIDC configuration paths where `sessionHandler.setMaxInactiveInterval(...)` with an OIDC-specific timeout and `OpenIdConfiguration` builder with `logoutWhenIdTokenIsExpired(true)` are both absent on the same authentication flow.",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "CVE-2026-40939 (datasharingframework__dsf): patch f4ecb002f7 adds both setMaxInactiveInterval(oidcSessionTimeout()) and logoutWhenIdTokenIsExpired(true) to AbstractJettyConfig.configureSecurityHandler — both bindings are needed for the mechanism.",
+    "Only one representative case is source-reviewed. The mechanism is valid but coverage is thin. Consider searching for analogous OIDC/Jetty session lifetime bugs in related projects to strengthen the boundary before final promotion."
+  ]
+}
+```

@@ -1,0 +1,20 @@
+[
+  {
+    "boundary_decision": "promote_boundary",
+    "boundary_label": "candidate_boundary_01_lollms_social_content_stored_xss",
+    "errors": [],
+    "guideline_id": "gl_mech_0012",
+    "line_no": 1,
+    "valid": true,
+    "warnings": []
+  },
+  {
+    "boundary_decision": "needs_more_evidence",
+    "boundary_label": "candidate_boundary_02_lollms_from_dict_needs_patch_evidence",
+    "errors": [],
+    "guideline_id": "gl_mech_0012",
+    "line_no": 2,
+    "valid": true,
+    "warnings": []
+  }
+]
