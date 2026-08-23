@@ -1,0 +1,356 @@
+{
+  "decision": "Continue guideline-v2 work through evidence collection before rewriting released guidelines. Do not mark the objective complete until semantic evidence improves and any changed sidecar has a fresh same-identity recall evaluation.",
+  "desired_delta_rate": 0.1,
+  "missing_or_incomplete_requirements": [
+    {
+      "evidence": [
+        "mechanism guideline generator uses offline mechanism attribution, member evidence support, release-ready gating, and review queue quarantine",
+        "weighted_primary_hcvr_purity=0.8659376811594203",
+        "weighted_cwe_purity=0.9245177536231884",
+        "judge_decision_counts={'accept': 2, 'needs_evidence': 10, 'revise': 5, 'split': 3}",
+        "evidence_worklist_actions={'collect_source_sink_guard_evidence': 10, 'keep_as_control_group': 2, 'revise_mechanism_text_from_evidence': 5, 'split_mechanism_boundary': 3}",
+        "source_reviewed_boundary_status=partially_satisfied_source_reviewed_boundaries_need_judge_or_revision",
+        "source_reviewed_boundary_validation_decisions={'needs_more_evidence': 5, 'promote_boundary': 8, 'split_further': 2}",
+        "source_reviewed_boundary_judge_decisions={'accept': 7, 'needs_evidence': 4}"
+      ],
+      "gap": "TraeX judge still finds many groups needing source/sink/guard evidence or split/revision work.",
+      "requirement": "Design reusable guideline classification that generalizes across CVEs but remains audit-specific.",
+      "status": "partially_satisfied_needs_evidence"
+    },
+    {
+      "evidence": [
+        "evidence_coverage_status=not_satisfied_source_review_coverage_incomplete",
+        "coverage_rows=20/20",
+        "coverage_status_counts={'not_source_reviewed': 13, 'source_reviewed_and_judge_accepted': 5, 'source_reviewed_validation_only': 2}",
+        "coverage_next_action_counts={'fill_source_review_ledger': 11, 'optional_control_source_review': 2, 'run_ledger_judge_pack': 2, 'run_same_identity_recall_after_sidecar_change': 5}",
+        "coverage_blocking_next_action_count=13",
+        "coverage_recall_followup_count=5",
+        "source_review_judge_accepted=5/18"
+      ],
+      "gap": "Blocking source-review actions remain before the guideline taxonomy can be treated as semantically covered.",
+      "requirement": "Cover the semantic evidence worklist before treating guideline classification as complete.",
+      "status": "not_satisfied_source_review_coverage_incomplete"
+    },
+    {
+      "evidence": [
+        "recall_status=inherited_same_identity_by_sidecar_equivalence",
+        "same_identity_set=True",
+        "same_identity_order=True",
+        "recall_equivalence_status=valid_consumed_text_equivalence",
+        "primary_budget=100",
+        "recall_alignment_joined=28/143",
+        "recall_alignment_attention_counts={'embedding_or_candidate_recall_attention': 6, 'guideline_quality_attention': 121, 'label_mixed_structural_attention': 8, 'missing_recall_rows': 44}",
+        "recall_side_debug_group_count=6",
+        "recall_side_debug_miss_state_totals={'coverage_gap_not_in_rank_table': 9, 'ranked_below_primary_budget': 6}",
+        "boundary_recall_triage_aligned_boundaries=1",
+        "boundary_recall_triage_rank_tables=['p3c64-3case']"
+      ],
+      "gap": "The current r8 recall evidence is inherited by unchanged sidecar text; a fresh run is required after any consumed guideline text changes.",
+      "requirement": "Keep guidelines compatible with the tuned embedding recall path.",
+      "status": "compatible_but_improvement_below_target"
+    }
+  ],
+  "next_gates": [
+    {
+      "current_state": "not_satisfied_source_review_coverage_incomplete; blocking_next_actions=13; next_actions={'fill_source_review_ledger': 11, 'optional_control_source_review': 2, 'run_ledger_judge_pack': 2, 'run_same_identity_recall_after_sidecar_change': 5}",
+      "gate": "semantic_evidence_gate",
+      "pass_condition": "each promoted group has checked source, sink, missing guard, exploit precondition, and fix semantics for representative member cases",
+      "run_when": "before changing released guideline text or lexicon entries"
+    },
+    {
+      "current_state": "not required for r8 equivalence; required for any next changed sidecar",
+      "gate": "same_identity_recall_gate",
+      "pass_condition": "same_identity_set=true and same_identity_order=true against the frozen comparison baseline",
+      "run_when": "after recall-consumed guideline sidecar text changes"
+    },
+    {
+      "current_state": "policy exists; 1 source-reviewed boundary/boundaries currently have same-identity recall examples aligned",
+      "gate": "taxonomy_vs_embed_triage_gate",
+      "pass_condition": "record whether the miss is caused by guideline wording, candidate slicing, embedding backend, adapter weights, rank fusion, or audit budget",
+      "run_when": "when a semantically clean group misses Top-K"
+    },
+    {
+      "current_state": "allowed by policy; no paper-facing method substitution claim until same-identity evidence exists",
+      "gate": "recall_method_substitution_gate",
+      "pass_condition": "compare any replacement embedder, reranker, or fusion method on the same identities, snapshots, candidates, and budgets without regex fallback or label routing",
+      "run_when": "when a source-reviewed guideline is coherent but the current embedding recall misses representative cases"
+    },
+    {
+      "current_state": "satisfied by current scorecard format, but final paper table still needs fresh numbers if guideline text changes",
+      "gate": "paper_claim_boundary_gate",
+      "pass_condition": "semantic judge evidence, source-reviewed boundary evidence, structural diagnostics, sidecar equivalence, recall A/B deltas, and engineering fusion are reported as separate claims",
+      "run_when": "before writing results into the paper"
+    }
+  ],
+  "overall_status": "not_complete",
+  "recall_alignment_evidence": {
+    "attention_counts": {
+      "embedding_or_candidate_recall_attention": 6,
+      "guideline_quality_attention": 121,
+      "label_mixed_structural_attention": 8,
+      "missing_recall_rows": 44
+    },
+    "cleanliness_policy": {
+      "blocking_flags": [
+        "incomplete_actionability_fields",
+        "pending_review",
+        "review_only",
+        "source_only_no_case_metadata"
+      ],
+      "label_mixed_flags": [
+        "mixed_cwe",
+        "mixed_hcvr"
+      ],
+      "label_mixture_is_blocking": false,
+      "min_clean_purity_is_blocking": false,
+      "rationale": "Clean-enough means source/sink/guard evidence is release-usable. HCVR/CWE mixture remains a review signal because reusable mechanisms can cross labels."
+    },
+    "joined_recall_case_count": 28,
+    "message": "Recall alignment is diagnostic only. Limited joins or clean-group misses should guide recall-side inspection, not hidden routing or hardcoded guideline changes.",
+    "recall_case_count": 143,
+    "recall_label": "r7-p3c64-full143",
+    "same_identity_baseline": true,
+    "status": "provided"
+  },
+  "recall_candidate_judge_evidence": {
+    "list_judge": {
+      "identities_with_known_anchor_candidate": 0,
+      "identities_with_scored_known_anchor_candidate": 0,
+      "identity_count": 6,
+      "identity_coverage_gap_count": 6,
+      "invalid_candidate_score_count": 0,
+      "invalid_prompt_count": 2,
+      "judge_input_count": 12,
+      "judge_rerank_hit_counts": {
+        "top_1": 0,
+        "top_10": 0,
+        "top_3": 0,
+        "top_5": 0
+      },
+      "judge_rerank_hit_rate_denominator": 0,
+      "judge_rerank_hit_rates": {
+        "top_1": null,
+        "top_10": null,
+        "top_3": null,
+        "top_5": null
+      },
+      "missing_prompt_count": 0,
+      "parsed_prompt_count": 11,
+      "prompt_counts": {
+        "invalid": 1,
+        "invalid_candidate_scores": 1,
+        "parsed": 11
+      },
+      "schema_version": "hcvr_recall_candidate_list_judge_summary.aggregate.v1",
+      "summary_count": 1
+    },
+    "list_judge_status": "coverage_gap_only_not_rerank_hit_evidence",
+    "message": "Recall-candidate judge evidence is advisory for query/reranker design only. Pair prompts are oracle-shaped sanity checks, while list-wise prompts are closer to production reranking but only estimate Hit@K when the judged candidate set contains known-anchor-overlap candidates. These diagnostics are not recall evidence and do not update guidelines, sidecars, ranking, embedding weights, or paper recall metrics.",
+    "pair_judge": {
+      "anchor_overlap_choice_rate": 0.8333333333333334,
+      "choice_counts": {
+        "A": 3,
+        "B": 2,
+        "neither": 1
+      },
+      "choice_outcome_counts": {
+        "anchor_overlap_chosen": 5,
+        "neither": 1
+      },
+      "invalid_output_count": 0,
+      "judge_input_count": 6,
+      "missing_output_count": 0,
+      "parsed_count": 6,
+      "schema_version": "hcvr_recall_candidate_pair_judge_summary.aggregate.v1",
+      "summary_count": 1,
+      "top1_choice_rate": 0.0
+    },
+    "status": "provided"
+  },
+  "recall_side_debug_evidence": {
+    "debug_group_count": 6,
+    "message": "Recall-side debug rows are not guideline changes. They queue query, slicing, embedder, adapter, and rank-table coverage checks for semantically clean groups that still miss Top-K.",
+    "miss_state_totals": {
+      "coverage_gap_not_in_rank_table": 9,
+      "ranked_below_primary_budget": 6
+    },
+    "recall_label": "r7-p3c64-full143",
+    "recommended_check_counts": {
+      "compare_embedding_backend_or_query_adapter_on_same_identity": 6,
+      "inspect_candidate_slicing_for_known_anchor_context": 6,
+      "inspect_guideline_query_wording_against_source_evidence": 6,
+      "review_label_mixture_without_treating_it_as_hard_failure": 2,
+      "verify_identity_filter_dataset_split_and_rank_table_coverage": 3
+    },
+    "status": "provided"
+  },
+  "recall_side_miss_inspection_evidence": {
+    "case_count": 15,
+    "diagnosis_counts": {
+      "identity_absent_from_rank_table": 9,
+      "known_anchor_present_in_export_but_below_primary_budget": 6,
+      "known_anchor_ranked_below_primary_budget": 6,
+      "large_candidate_pool_budget_pressure": 3
+    },
+    "input_capability": {
+      "case_alignment_rows": true,
+      "case_rank_summary_rows": true,
+      "full_ranked_candidate_lists": true,
+      "known_anchor_span_details": true
+    },
+    "message": "Case-level miss inspection includes exported Top-N candidate rows. It can separate candidate-generation absence from known anchors that are present but ranked below the primary budget; it still does not prove vulnerability precision or change guideline quality.",
+    "miss_state_counts": {
+      "coverage_gap_not_in_rank_table": 9,
+      "ranked_below_primary_budget": 6
+    },
+    "next_check_counts": {
+      "compare_embedding_backend_or_query_adapter_on_same_identity": 6,
+      "inspect_budget_or_reranker_need_on_same_identity": 3,
+      "inspect_candidate_slicing_for_known_anchor_context": 6,
+      "inspect_guideline_query_wording_against_source_evidence": 6,
+      "verify_identity_filter_dataset_split_and_rank_table_coverage": 9
+    },
+    "recall_label": "r7-p3c64-full143",
+    "status": "provided"
+  },
+  "requirements": [
+    {
+      "evidence": [
+        "mechanism guideline generator uses offline mechanism attribution, member evidence support, release-ready gating, and review queue quarantine",
+        "weighted_primary_hcvr_purity=0.8659376811594203",
+        "weighted_cwe_purity=0.9245177536231884",
+        "judge_decision_counts={'accept': 2, 'needs_evidence': 10, 'revise': 5, 'split': 3}",
+        "evidence_worklist_actions={'collect_source_sink_guard_evidence': 10, 'keep_as_control_group': 2, 'revise_mechanism_text_from_evidence': 5, 'split_mechanism_boundary': 3}",
+        "source_reviewed_boundary_status=partially_satisfied_source_reviewed_boundaries_need_judge_or_revision",
+        "source_reviewed_boundary_validation_decisions={'needs_more_evidence': 5, 'promote_boundary': 8, 'split_further': 2}",
+        "source_reviewed_boundary_judge_decisions={'accept': 7, 'needs_evidence': 4}"
+      ],
+      "gap": "TraeX judge still finds many groups needing source/sink/guard evidence or split/revision work.",
+      "requirement": "Design reusable guideline classification that generalizes across CVEs but remains audit-specific.",
+      "status": "partially_satisfied_needs_evidence"
+    },
+    {
+      "evidence": [
+        "evidence_coverage_status=not_satisfied_source_review_coverage_incomplete",
+        "coverage_rows=20/20",
+        "coverage_status_counts={'not_source_reviewed': 13, 'source_reviewed_and_judge_accepted': 5, 'source_reviewed_validation_only': 2}",
+        "coverage_next_action_counts={'fill_source_review_ledger': 11, 'optional_control_source_review': 2, 'run_ledger_judge_pack': 2, 'run_same_identity_recall_after_sidecar_change': 5}",
+        "coverage_blocking_next_action_count=13",
+        "coverage_recall_followup_count=5",
+        "source_review_judge_accepted=5/18"
+      ],
+      "gap": "Blocking source-review actions remain before the guideline taxonomy can be treated as semantically covered.",
+      "requirement": "Cover the semantic evidence worklist before treating guideline classification as complete.",
+      "status": "not_satisfied_source_review_coverage_incomplete"
+    },
+    {
+      "evidence": [
+        "recall_status=inherited_same_identity_by_sidecar_equivalence",
+        "same_identity_set=True",
+        "same_identity_order=True",
+        "recall_equivalence_status=valid_consumed_text_equivalence",
+        "primary_budget=100",
+        "recall_alignment_joined=28/143",
+        "recall_alignment_attention_counts={'embedding_or_candidate_recall_attention': 6, 'guideline_quality_attention': 121, 'label_mixed_structural_attention': 8, 'missing_recall_rows': 44}",
+        "recall_side_debug_group_count=6",
+        "recall_side_debug_miss_state_totals={'coverage_gap_not_in_rank_table': 9, 'ranked_below_primary_budget': 6}",
+        "boundary_recall_triage_aligned_boundaries=1",
+        "boundary_recall_triage_rank_tables=['p3c64-3case']"
+      ],
+      "gap": "The current r8 recall evidence is inherited by unchanged sidecar text; a fresh run is required after any consumed guideline text changes.",
+      "requirement": "Keep guidelines compatible with the tuned embedding recall path.",
+      "status": "compatible_but_improvement_below_target"
+    },
+    {
+      "evidence": [
+        "known anchors are used after ranking for metrics, not for query construction",
+        "evidence worklist marks judge/bad-case material as review_only_not_release_not_recall_input",
+        "README forbids runtime regex fallback, hidden label routing, and per-case fixes"
+      ],
+      "gap": "Must be rechecked whenever generator or recall query construction changes.",
+      "requirement": "Use recall bad cases as motivation without turning them into answer keys.",
+      "status": "satisfied_by_current_policy"
+    },
+    {
+      "evidence": [
+        "README separates semantic guideline quality from embedding recall compatibility",
+        "revision backlog has actions for embedding/candidate/query mismatch",
+        "scorecard separates structural, judge, recall, and sidecar-equivalence evidence",
+        "source-reviewed boundaries can be marked semantically ready without being counted as recall-proven",
+        "label_mixture_is_blocking=False",
+        "min_clean_purity_is_blocking=False",
+        "recall-side debug pack separates rank misses from rank-table coverage gaps",
+        "recall_side_miss_inspection_case_count=15",
+        "recall_side_miss_inspection_states={'coverage_gap_not_in_rank_table': 9, 'ranked_below_primary_budget': 6}"
+      ],
+      "gap": "Need per-group semantic-vs-recall triage after the next changed-sidecar recall run.",
+      "requirement": "If semantic guideline quality is strong but recall remains weak, inspect recall method before weakening taxonomy.",
+      "status": "satisfied_as_evaluation_policy"
+    },
+    {
+      "evidence": [
+        "scorecard marks recall improvement claim as not_supported_at_desired_delta",
+        "RRF/fusion is documented as a recall-compatible engineering path, not a guideline-quality claim",
+        "TraeX judge output feeds backlog/worklist rather than released guidelines or ranking",
+        "new embedders, fusion, or rerankers are allowed only as explicit same-identity A/B configurations",
+        "recall_candidate_pair_anchor_overlap_choice_rate=0.8333333333333334",
+        "recall_candidate_list_status=coverage_gap_only_not_rerank_hit_evidence",
+        "recall_candidate_list_denominator=0"
+      ],
+      "gap": "Any future fusion or model substitution needs same-identity A/B and a separate claim boundary.",
+      "requirement": "Avoid hardcoding and be cautious with paper-facing engineering combinations.",
+      "status": "satisfied_by_current_policy"
+    }
+  ],
+  "schema_version": "hcvr_guideline_dual_axis_objective_audit.v1",
+  "source_review_coverage_evidence": {
+    "blocking_next_action_count": 13,
+    "coverage_row_count": 20,
+    "coverage_status_counts": {
+      "not_source_reviewed": 13,
+      "source_reviewed_and_judge_accepted": 5,
+      "source_reviewed_validation_only": 2
+    },
+    "message": "Source-review coverage is a completion gate for semantic guideline work. It is diagnostic only and does not update released guidelines, sidecars, embeddings, rank tables, or audit prompts.",
+    "next_action_counts": {
+      "fill_source_review_ledger": 11,
+      "optional_control_source_review": 2,
+      "run_ledger_judge_pack": 2,
+      "run_same_identity_recall_after_sidecar_change": 5
+    },
+    "optional_control_count": 2,
+    "promotable_judge_accept_boundary_count": 6,
+    "promotable_valid_boundary_count": 8,
+    "recall_followup_count": 5,
+    "source_review_action_count": 18,
+    "source_review_judge_accepted_count": 5,
+    "source_review_validation_only_count": 2,
+    "status": "not_satisfied_source_review_coverage_incomplete",
+    "worklist_count": 20
+  },
+  "source_reviewed_boundary_evidence": {
+    "invalid_count": 0,
+    "judge_accepted_count": 7,
+    "judge_average_scores": {
+      "actionability_score": 0.6227272727272727,
+      "coherence_score": 0.6927272727272727,
+      "coverage_score": 0.4636363636363637,
+      "retrieval_query_quality": 0.6390909090909092
+    },
+    "judge_decision_counts": {
+      "accept": 7,
+      "needs_evidence": 4
+    },
+    "judge_low_score_count": 6,
+    "judge_parsed_count": 11,
+    "message": "Source-reviewed boundary evidence is semantic QA only. It can justify a boundary as review-ready, but it does not prove embedding recall.",
+    "promotable_count": 8,
+    "status": "partially_satisfied_source_reviewed_boundaries_need_judge_or_revision",
+    "valid_count": 15,
+    "validation_decision_counts": {
+      "needs_more_evidence": 5,
+      "promote_boundary": 8,
+      "split_further": 2
+    }
+  }
+}

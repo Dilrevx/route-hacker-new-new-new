@@ -1,0 +1,19 @@
+```json
+{
+  "decision": "needs_evidence",
+  "coherence_score": 0.45,
+  "coverage_score": 0.0,
+  "actionability_score": 0.2,
+  "retrieval_query_quality": 0.5,
+  "main_issue": "The boundary describes a conceptually coherent mechanism (webhook/callback SSRF) but has zero representative cases and zero evidence refs. The source_shape, sink_or_sensitive_effect, exploit_precondition, and safe_fix_semantics fields all describe what would be needed, not what exists. There is no case-level evidence to evaluate whether the claimed mechanism actually binds the group together.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "No representative cases are assigned to this candidate boundary.",
+    "No evidence_refs are provided.",
+    "The source_shape field acknowledges only one webhook URL validator case and one general HTTP address-policy case, neither of which is sufficient to establish webhook/callback dispatch as a shared released boundary.",
+    "The safe_fix_semantics field describes what fix evidence would be needed (destination validation, allowlisting, private-range blocking, parser-consistent checks, redirect-hop validation), but none of this evidence is present.",
+    "The exploit_precondition and sink_or_sensitive_effect fields are phrased as aspirational requirements rather than observed evidence."
+  ]
+}
+```
