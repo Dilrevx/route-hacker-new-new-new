@@ -99,6 +99,50 @@ def write_json(path: Path, value: Any) -> None:
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
+def parse_identity_list(value: str) -> list[str]:
+    identities = [
+        part.strip()
+        for chunk in value.splitlines()
+        for part in chunk.split(",")
+        if part.strip()
+    ]
+    if not identities:
+        raise ValueError("--identity-list did not contain any identity_key values")
+    duplicates = sorted({identity for identity in identities if identities.count(identity) > 1})
+    if duplicates:
+        raise ValueError(f"--identity-list contains duplicate identity_key values: {duplicates}")
+    return identities
+
+
+def write_inline_identity_file(path: Path, identities: list[str]) -> None:
+    write_jsonl(path, ({"identity_key": identity} for identity in identities))
+
+
+def resolve_identity_selection(
+    *,
+    output: Path,
+    identity_file: Path | None,
+    identity_list: str | None,
+    limit: int,
+    default_limit: int,
+) -> tuple[Path | None, int, int | None]:
+    if identity_file is not None and identity_list:
+        raise ValueError("--identity-file and --identity-list are mutually exclusive")
+    if not identity_list:
+        return identity_file.resolve() if identity_file else None, limit, None
+    identities = parse_identity_list(identity_list)
+    if limit == default_limit:
+        limit = len(identities)
+    elif limit != len(identities):
+        raise ValueError(
+            f"--identity-list contains {len(identities)} identities, "
+            f"but --limit is {limit}; set --limit to the same value or omit it"
+        )
+    inline_identity_file = output / ".inline_identities.jsonl"
+    write_inline_identity_file(inline_identity_file, identities)
+    return inline_identity_file, limit, len(identities)
+
+
 def l2_normalize(vector: Iterable[float]) -> list[float]:
     values = [float(value) for value in vector]
     norm = math.sqrt(sum(value * value for value in values))
@@ -681,6 +725,14 @@ def main() -> None:
     parser.add_argument("--cases-file", type=Path)
     parser.add_argument("--identity-file", type=Path)
     parser.add_argument(
+        "--identity-list",
+        help=(
+            "Comma- or newline-separated identity_key values for small focused runs. "
+            "The script writes them to an output-local identity file so summary.json "
+            "keeps the exact selection auditable."
+        ),
+    )
+    parser.add_argument(
         "--guideline-file",
         type=Path,
         help=(
@@ -756,13 +808,23 @@ def main() -> None:
     snapshot_root = args.snapshot_root.resolve()
     repo_cache.mkdir(parents=True, exist_ok=True)
     snapshot_root.mkdir(parents=True, exist_ok=True)
+    try:
+        identity_file, args.limit, identity_list_count = resolve_identity_selection(
+            output=output,
+            identity_file=args.identity_file,
+            identity_list=args.identity_list,
+            limit=args.limit,
+            default_limit=parser.get_default("limit"),
+        )
+    except ValueError as error:
+        raise SystemExit(str(error)) from error
     cases = load_selected_cases(
         args.qa.resolve(),
         args.limit,
         args.skip,
         args.selection,
         args.cases_file.resolve() if args.cases_file else None,
-        args.identity_file.resolve() if args.identity_file else None,
+        identity_file,
         None,
     )
     guideline_file = args.guideline_file.resolve() if args.guideline_file else None
@@ -865,7 +927,8 @@ def main() -> None:
         "scope": "mechanical source slicing -> guideline embedding recall; known anchors used only for evaluation",
         "qa": str(args.qa.resolve()),
         "cases_file": str(args.cases_file.resolve()) if args.cases_file else None,
-        "identity_file": str(args.identity_file.resolve()) if args.identity_file else None,
+        "identity_file": str(identity_file) if identity_file else None,
+        "identity_list_count": identity_list_count,
         "guideline_file": str(guideline_file) if guideline_file else None,
         "guideline_mode": args.guideline_mode,
         "guideline_override_count": guideline_override_count,

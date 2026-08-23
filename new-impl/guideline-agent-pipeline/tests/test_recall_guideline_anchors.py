@@ -114,3 +114,58 @@ def test_selected_anchor_uses_winning_query_guideline():
     assert selected is not None
     assert selected["guideline"] == "baseline guideline"
     assert selected["guideline_query_label"] == "baseline"
+
+
+def test_identity_list_writes_auditable_identity_file_and_adjusts_default_limit(tmp_path: Path):
+    module = load_module()
+
+    identity_file, limit, count = module.resolve_identity_selection(
+        output=tmp_path,
+        identity_file=None,
+        identity_list="case-a, case-b\ncase-c",
+        limit=20,
+        default_limit=20,
+    )
+
+    assert identity_file == tmp_path / ".inline_identities.jsonl"
+    assert limit == 3
+    assert count == 3
+    assert identity_file.read_text(encoding="utf-8").splitlines() == [
+        '{"identity_key": "case-a"}',
+        '{"identity_key": "case-b"}',
+        '{"identity_key": "case-c"}',
+    ]
+
+
+def test_identity_list_rejects_mismatched_explicit_limit(tmp_path: Path):
+    module = load_module()
+
+    try:
+        module.resolve_identity_selection(
+            output=tmp_path,
+            identity_file=None,
+            identity_list="case-a,case-b",
+            limit=3,
+            default_limit=20,
+        )
+    except ValueError as error:
+        assert "--identity-list contains 2 identities" in str(error)
+    else:
+        raise AssertionError("expected mismatched identity-list limit to fail")
+
+
+def test_identity_list_and_identity_file_are_mutually_exclusive(tmp_path: Path):
+    module = load_module()
+
+    try:
+        module.resolve_identity_selection(
+            output=tmp_path,
+            identity_file=tmp_path / "ids.jsonl",
+            identity_list="case-a",
+            limit=20,
+            default_limit=20,
+        )
+    except ValueError as error:
+        assert "mutually exclusive" in str(error)
+    else:
+        raise AssertionError("expected identity source conflict to fail")

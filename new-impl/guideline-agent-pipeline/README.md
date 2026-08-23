@@ -870,6 +870,32 @@ For model A/B evaluation, always pass the same `--identity-file` to every run.
 `--selection all --limit N` without `--identity-file` selects the first N
 accepted cases in `new_unified_cases.v1.jsonl`; that is useful for quick smoke
 runs, but it is not interchangeable with the frozen paper-eval allowlist.
+For a tiny boundary-debug run, use `--identity-list` instead of editing the
+dataset or creating an ad hoc sidecar. The script writes the inline identities
+to `.inline_identities.jsonl` inside the output directory and, when `--limit`
+is omitted, automatically limits the run to exactly those identities.
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python new-impl/guideline-agent-pipeline/scripts/recall_guideline_anchors.py \
+  --qa new-impl/hcvr_new_unified_dataset_v2/receipts/hcvr_new_unified_paper_eval_rebalance_qa.v2.json \
+  --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
+  --identity-list 'centic9__jgit-cookbook::CVE-2022-4817,devent__globalpom-utils::CVE-2018-25068,openkm__document-management-system::CVE-2022-3969' \
+  --guideline-file new-impl/guideline-agent-pipeline/results/mechanism-guideline-preview-v2-cluster-scope-r8-release-ready-20260823/guideline_overrides.jsonl \
+  --guideline-mode baseline-plus-override \
+  --output-dir /path/to/run/gl-mech-0001-boundary-recall \
+  --repo-cache /path/to/run/repo-cache \
+  --snapshot-root /path/to/run/snapshots \
+  --selection all \
+  --top-k 200 \
+  --audit-anchor-rank 1 \
+  --case-workers 2 \
+  --embedding-backend p3c64-query-residual \
+  --embedding-model /data/lhq/workspace/hcvr-embedding-service/models/Qwen3-Embedding-0.6B \
+  --embedding-device cuda:0 \
+  --embedding-batch-size 128 \
+  --max-seq-length 512 \
+  --p3c64-state /data/lhq/workspace/p3-hard-competition-query-adapter-v1/selection_run_v1/p3c64_state.pt
+```
 
 ```bash
 CUDA_VISIBLE_DEVICES=0 python new-impl/guideline-agent-pipeline/scripts/recall_guideline_anchors.py \
