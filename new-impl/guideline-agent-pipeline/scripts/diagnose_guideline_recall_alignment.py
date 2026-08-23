@@ -282,6 +282,16 @@ def diagnose(
         "primary_budget": primary_budget,
         "budgets": budgets,
         "attention_counts": dict(sorted(attention_counts.items())),
+        "cleanliness_policy": {
+            "blocking_flags": sorted(BLOCKING_GUIDELINE_FLAGS),
+            "label_mixed_flags": sorted(LABEL_MIXED_FLAGS),
+            "label_mixture_is_blocking": False,
+            "min_clean_purity_is_blocking": False,
+            "rationale": (
+                "Clean-enough means source/sink/guard evidence is release-usable. "
+                "HCVR/CWE mixture remains a review signal because reusable mechanisms can cross labels."
+            ),
+        },
         "interpretation": [
             "Guideline-group cleanliness and recall hit rates are separate evidence axes.",
             "A clean group with weak recall points to embedding, candidate slicing, or query wording mismatch.",
@@ -313,6 +323,8 @@ def write_readme(path: Path, summary: dict[str, Any], group_rows: list[dict[str,
         f"- Groups with assignments: {summary['group_with_assignments_count']}",
         f"- Primary budget: Top-{summary['primary_budget']}",
         f"- Attention counts: {summary['attention_counts']}",
+        f"- Blocking guideline flags: {summary['cleanliness_policy']['blocking_flags']}",
+        f"- Label-mixed flags are blocking: {summary['cleanliness_policy']['label_mixture_is_blocking']}",
         "",
         "## Highest Priority Groups",
         "",

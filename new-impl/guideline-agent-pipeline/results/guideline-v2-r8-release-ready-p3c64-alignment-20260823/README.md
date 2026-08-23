@@ -16,6 +16,8 @@ It does not generate guidelines, change ranking, call an LLM, or add fallback ru
 - Groups with assignments: 56
 - Primary budget: Top-100
 - Attention counts: {'embedding_or_candidate_recall_attention': 44, 'guideline_quality_attention': 121, 'label_mixed_structural_attention': 8, 'missing_recall_rows': 44}
+- Blocking guideline flags: ['incomplete_actionability_fields', 'pending_review', 'review_only', 'source_only_no_case_metadata']
+- Label-mixed flags are blocking: False
 
 ## Highest Priority Groups
 

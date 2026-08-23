@@ -122,6 +122,9 @@ def test_mixed_labels_are_structural_attention_not_cleanliness_blocker():
     assert "guideline_quality_attention" not in row["attention"]
     assert "embedding_or_candidate_recall_attention" in row["attention"]
     assert summary["attention_counts"]["label_mixed_structural_attention"] == 1
+    assert summary["cleanliness_policy"]["label_mixture_is_blocking"] is False
+    assert "mixed_hcvr" in summary["cleanliness_policy"]["label_mixed_flags"]
+    assert "mixed_hcvr" not in summary["cleanliness_policy"]["blocking_flags"]
 
 
 def test_baseline_identity_mismatch_is_debug_only():
@@ -174,5 +177,6 @@ def test_cli_writes_alignment_outputs(tmp_path: Path):
     assert result.returncode == 0
     summary = json.loads((output / "summary.json").read_text(encoding="utf-8"))
     assert summary["recall_label"] == "fixture-recall"
+    assert summary["cleanliness_policy"]["min_clean_purity_is_blocking"] is False
     assert (output / "group_recall_alignment.tsv").is_file()
     assert "Guideline Recall Alignment" in (output / "README.md").read_text(encoding="utf-8")

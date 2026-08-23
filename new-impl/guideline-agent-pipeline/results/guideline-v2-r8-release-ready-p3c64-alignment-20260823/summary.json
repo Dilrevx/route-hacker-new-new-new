@@ -16,6 +16,21 @@
     300,
     500
   ],
+  "cleanliness_policy": {
+    "blocking_flags": [
+      "incomplete_actionability_fields",
+      "pending_review",
+      "review_only",
+      "source_only_no_case_metadata"
+    ],
+    "label_mixed_flags": [
+      "mixed_cwe",
+      "mixed_hcvr"
+    ],
+    "label_mixture_is_blocking": false,
+    "min_clean_purity_is_blocking": false,
+    "rationale": "Clean-enough means source/sink/guard evidence is release-usable. HCVR/CWE mixture remains a review signal because reusable mechanisms can cross labels."
+  },
   "group_count": 177,
   "group_with_assignments_count": 56,
   "interpretation": [
