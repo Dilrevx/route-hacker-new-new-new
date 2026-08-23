@@ -726,8 +726,23 @@ python new-impl/guideline-agent-pipeline/scripts/diagnose_guideline_recall_align
 Read the alignment report as a diagnosis, not as a guideline-v2 recall result,
 unless the recall table was generated with the same guideline sidecar being
 evaluated. A clean guideline group with weak recall points toward embedding,
-candidate slicing, or query wording; a mixed or pending group should be fixed
-as guideline evidence before blaming the embedder.
+candidate slicing, or query wording. A pending, review-only, source-only, or
+actionability-incomplete group should be fixed as guideline evidence before
+blaming the embedder. A group that only has mixed HCVR/CWE structural labels
+should be reviewed, but label mixture is not a hard failure by itself because a
+real mechanism can cut across public CWE or dataset labels.
+
+The r8 released-only/P3C64 alignment sanity report is committed under
+`results/guideline-v2-r8-release-ready-p3c64-alignment-20260823/`. It uses the
+r8 released-only group assignments and the existing r7 full143 P3C64 rank
+table. It joins only 28 of the 143 recall identities, so treat it as a
+diagnostic check for the taxonomy-vs-embed triage logic rather than a recall
+claim. Its attention counts are: 44
+`embedding_or_candidate_recall_attention`, 121 `guideline_quality_attention`,
+8 `label_mixed_structural_attention`, and 44 `missing_recall_rows`. The useful
+change is that mixed-label groups now keep `label_mixed_structural_attention`
+as a review signal while still allowing clean source/sink/guard groups to
+trigger recall-side debugging.
 
 Build a revision backlog from the semantic judge and recall-alignment outputs:
 

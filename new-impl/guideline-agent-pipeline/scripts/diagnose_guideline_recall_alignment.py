@@ -11,6 +11,13 @@ from typing import Any
 
 
 DEFAULT_BUDGETS = (30, 50, 100, 150, 200, 300, 500)
+BLOCKING_GUIDELINE_FLAGS = {
+    "pending_review",
+    "review_only",
+    "incomplete_actionability_fields",
+    "source_only_no_case_metadata",
+}
+LABEL_MIXED_FLAGS = {"mixed_hcvr", "mixed_cwe"}
 
 
 def read_jsonl(path: Path) -> list[dict[str, Any]]:
@@ -108,11 +115,7 @@ def index_by_identity(rows: list[dict[str, Any]], label: str) -> dict[str, dict[
 
 def group_clean_enough(group: dict[str, Any], min_purity: float) -> bool:
     flags = set(group.get("flags") or [])
-    blocking_flags = {"pending_review", "mixed_hcvr", "mixed_cwe", "incomplete_actionability_fields"}
-    if flags & blocking_flags:
-        return False
-    purity = group.get("primary_hcvr_purity")
-    if isinstance(purity, (int, float)) and purity < min_purity:
+    if flags & BLOCKING_GUIDELINE_FLAGS:
         return False
     return True
 
@@ -208,6 +211,8 @@ def diagnose(
         attention: list[str] = []
         if "pending_review" in set(group.get("flags") or []):
             attention.append("guideline_pending_review")
+        if set(group.get("flags") or []) & LABEL_MIXED_FLAGS:
+            attention.append("label_mixed_structural_attention")
         if not clean:
             attention.append("guideline_quality_attention")
         if clean and identities and primary_hits == 0:
@@ -280,7 +285,8 @@ def diagnose(
         "interpretation": [
             "Guideline-group cleanliness and recall hit rates are separate evidence axes.",
             "A clean group with weak recall points to embedding, candidate slicing, or query wording mismatch.",
-            "A dirty or pending group with weak recall should be fixed as guideline evidence before retraining.",
+            "A pending, review-only, source-only, or actionability-incomplete group with weak recall should be fixed as guideline evidence before retraining.",
+            "Mixed HCVR/CWE labels are structural review signals, not automatic proof that a mechanism boundary is wrong.",
             "Baseline deltas are paper-facing only when same_identity_baseline is true.",
         ],
     }
@@ -327,7 +333,8 @@ def write_readme(path: Path, summary: dict[str, Any], group_rows: list[dict[str,
             "## Interpretation",
             "",
             "- If a guideline is clean enough but recall misses many assigned cases, inspect embedding behavior, candidate slicing, or query wording before changing the taxonomy.",
-            "- If a guideline is mixed, pending, or lacks actionability fields, fix the guideline evidence and mechanism boundary before attributing failure to the embedding model.",
+            "- If a guideline is pending, review-only, source-only, or lacks actionability fields, fix the guideline evidence and mechanism boundary before attributing failure to the embedding model.",
+            "- If a guideline only has mixed HCVR/CWE structural labels, review the examples but do not treat label purity as a hard gate; reusable mechanisms can cut across public CWE or dataset labels.",
             "- If a baseline is provided and `same_identity_baseline` is false, treat deltas as debugging context only.",
             "",
         ]

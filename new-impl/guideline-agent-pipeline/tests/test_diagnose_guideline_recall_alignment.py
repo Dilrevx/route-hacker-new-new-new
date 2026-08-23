@@ -49,6 +49,19 @@ def pending_group() -> dict:
     }
 
 
+def mixed_label_group() -> dict:
+    return {
+        "guideline_id": "gl_mixed",
+        "guideline_group_key": "cluster_c__mech_cross_label",
+        "mechanism_id": "mech_cross_label",
+        "mechanism_name": "cross-label mechanism",
+        "mechanism_family": "ssrf",
+        "flags": ["mixed_hcvr", "mixed_cwe"],
+        "primary_hcvr_purity": 0.5,
+        "cwe_purity": 0.5,
+    }
+
+
 def test_clean_group_with_misses_points_to_embedding_or_candidate_recall():
     module = load_module()
     summary, group_rows, case_rows = module.diagnose(
@@ -79,6 +92,36 @@ def test_clean_group_with_misses_points_to_embedding_or_candidate_recall():
     assert "guideline_quality_attention" not in by_guideline["gl_clean"]["attention"]
     assert "guideline_pending_review" in by_guideline["gl_pending"]["attention"]
     assert len(case_rows) == 3
+
+
+def test_mixed_labels_are_structural_attention_not_cleanliness_blocker():
+    module = load_module()
+    summary, group_rows, _ = module.diagnose(
+        group_rows=[mixed_label_group()],
+        assignments={
+            "gl_mixed": [
+                {"identity_key": "case-a", "primary_hcvr_type": "ssrf"},
+                {"identity_key": "case-b", "primary_hcvr_type": "jndi"},
+            ]
+        },
+        recall_rows=[
+            {"identity_key": "case-a", "rank": None},
+            {"identity_key": "case-b", "rank": 500},
+        ],
+        recall_label="candidate",
+        baseline_rows=None,
+        baseline_label=None,
+        budgets=[100],
+        primary_budget=100,
+        min_purity=0.67,
+    )
+
+    row = group_rows[0]
+    assert row["guideline_clean_enough"] is True
+    assert "label_mixed_structural_attention" in row["attention"]
+    assert "guideline_quality_attention" not in row["attention"]
+    assert "embedding_or_candidate_recall_attention" in row["attention"]
+    assert summary["attention_counts"]["label_mixed_structural_attention"] == 1
 
 
 def test_baseline_identity_mismatch_is_debug_only():
