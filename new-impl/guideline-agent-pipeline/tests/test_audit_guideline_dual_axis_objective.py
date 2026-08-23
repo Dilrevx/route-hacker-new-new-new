@@ -71,6 +71,29 @@ def test_audit_marks_recall_below_target():
     assert audit["requirements"][1]["status"] == "compatible_but_improvement_below_target"
 
 
+def test_boundary_triage_is_recorded_without_completing_global_audit():
+    module = load_module()
+
+    audit = module.build_audit(
+        scorecard=scorecard(),
+        worklist={"worklist_count": 1, "action_counts": {"collect_source_sink_guard_evidence": 1}},
+        desired_delta_rate=0.10,
+        boundary_recall_triage={
+            "rank_table_labels": ["p3c64-3case"],
+            "next_action_counts": {
+                "semantic_boundary_and_recall_examples_are_aligned_for_next_ablation": 1,
+            },
+        },
+    )
+
+    assert audit["overall_status"] == "not_complete"
+    assert (
+        "boundary_recall_triage_aligned_boundaries=1"
+        in audit["requirements"][1]["evidence"]
+    )
+    assert "1 source-reviewed boundary" in audit["next_gates"][2]["current_state"]
+
+
 def test_cli_writes_dual_axis_audit(tmp_path: Path):
     scorecard_path = tmp_path / "scorecard.json"
     worklist_path = tmp_path / "worklist.json"

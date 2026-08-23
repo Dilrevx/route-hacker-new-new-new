@@ -836,12 +836,23 @@ tables do not cover the three representative cases. That is a recall coverage
 gap, not evidence that the boundary is semantically wrong and not evidence that
 the embedding misses those cases.
 
+The follow-up focused P3C64 run is under
+`results/guideline-boundary-recall-r8-gl-mech-0001-p3c64-3case-20260823/`,
+with its joined triage report under
+`results/guideline-boundary-recall-triage-r8-gl-mech-0001-p3c64-3case-20260823/`.
+It uses the source-reviewed `gl_mech_0001` boundary, the real
+`p3c64-query-residual` embedder, and the same three representative identities.
+All three complete and hit the known anchor by Top-30 with ranks `5`, `1`, and
+`27`. Treat this as boundary-level smoke evidence, not a paper-level aggregate
+claim.
+
 Run a completion audit for the two-axis guideline objective:
 
 ```bash
 python new-impl/guideline-agent-pipeline/scripts/audit_guideline_dual_axis_objective.py \
   --scorecard new-impl/guideline-agent-pipeline/results/guideline-v2-r8-release-ready-scorecard-20260823/scorecard.json \
   --evidence-worklist-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-evidence-worklist-20260823/summary.json \
+  --boundary-recall-triage-summary new-impl/guideline-agent-pipeline/results/guideline-boundary-recall-triage-r8-gl-mech-0001-p3c64-3case-20260823/summary.json \
   --output-dir /path/to/guideline-dual-axis-objective-audit \
   --desired-delta-rate 0.10
 ```

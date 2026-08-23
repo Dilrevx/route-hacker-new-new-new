@@ -50,6 +50,7 @@ def build_audit(
     scorecard: dict[str, Any],
     worklist: dict[str, Any],
     desired_delta_rate: float,
+    boundary_recall_triage: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     recall = scorecard.get("recall_evidence") if isinstance(scorecard.get("recall_evidence"), dict) else {}
     judge = scorecard.get("judge_evidence") if isinstance(scorecard.get("judge_evidence"), dict) else {}
@@ -61,6 +62,16 @@ def build_audit(
     )
     semantic_status = status_for_semantic_quality(scorecard, worklist)
     recall_status = status_for_recall(scorecard, desired_delta_rate)
+    boundary_recall_triage = boundary_recall_triage or {}
+    boundary_next_actions = (
+        boundary_recall_triage.get("next_action_counts")
+        if isinstance(boundary_recall_triage.get("next_action_counts"), dict)
+        else {}
+    )
+    aligned_boundary_count = int(
+        boundary_next_actions.get("semantic_boundary_and_recall_examples_are_aligned_for_next_ablation")
+        or 0
+    )
     requirements = [
         {
             "requirement": "Design reusable guideline classification that generalizes across CVEs but remains audit-specific.",
@@ -82,6 +93,8 @@ def build_audit(
                 f"same_identity_order={recall.get('same_identity_order')}",
                 f"recall_equivalence_status={recall_equivalence.get('status')}",
                 f"primary_budget={recall.get('primary_budget')}",
+                f"boundary_recall_triage_aligned_boundaries={aligned_boundary_count}",
+                f"boundary_recall_triage_rank_tables={boundary_recall_triage.get('rank_table_labels')}",
             ],
             "status": recall_status,
             "gap": "The current r8 recall evidence is inherited by unchanged sidecar text; a fresh run is required after any consumed guideline text changes.",
@@ -140,7 +153,12 @@ def build_audit(
             "gate": "taxonomy_vs_embed_triage_gate",
             "run_when": "when a semantically clean group misses Top-K",
             "pass_condition": "record whether the miss is caused by guideline wording, candidate slicing, embedding backend, adapter weights, rank fusion, or audit budget",
-            "current_state": "policy exists; needs per-group run after next recall table",
+            "current_state": (
+                f"policy exists; {aligned_boundary_count} source-reviewed boundary/boundaries currently have "
+                "same-identity recall examples aligned"
+                if aligned_boundary_count
+                else "policy exists; needs per-group run after next recall table"
+            ),
         },
         {
             "gate": "paper_claim_boundary_gate",
@@ -228,6 +246,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--scorecard", type=Path, required=True)
     parser.add_argument("--evidence-worklist-summary", type=Path, required=True)
+    parser.add_argument("--boundary-recall-triage-summary", type=Path)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--desired-delta-rate", type=float, default=0.10)
     args = parser.parse_args()
@@ -237,6 +256,11 @@ def main() -> None:
         scorecard=read_json(args.scorecard),
         worklist=read_json(args.evidence_worklist_summary),
         desired_delta_rate=args.desired_delta_rate,
+        boundary_recall_triage=(
+            read_json(args.boundary_recall_triage_summary)
+            if args.boundary_recall_triage_summary
+            else None
+        ),
     )
     args.output_dir.mkdir(parents=True, exist_ok=True)
     write_json(args.output_dir / "summary.json", audit)
