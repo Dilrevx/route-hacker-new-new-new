@@ -102,6 +102,18 @@ P3C64-vs-Qwen4B model-improvement claim.
     candidate, current Top-1, a tie, or neither.
   - Produces diagnostic evidence only; it does not update ranking, guidelines,
     sidecars, training labels, or paper recall metrics.
+- `scripts/build_recall_candidate_list_judge_pack.py`
+  - Builds an advisory list-wise TraeX judge pack over shuffled Top-N recall
+    candidates.
+  - Prompts ask for per-candidate relevance and audit priority, while hiding
+    original rank, score, known-anchor labels, CVE IDs, and benchmark metadata.
+  - Use this to assess reranker potential without constructing oracle
+    Top1-vs-anchor prompts.
+- `scripts/summarize_recall_candidate_list_judge_outputs.py`
+  - Summarizes list-wise judge scores and computes offline known-anchor
+    rerank Hit@1/3/5/10 using hidden metadata after the judge run.
+  - Produces diagnostic evidence only; it does not update ranking, guidelines,
+    sidecars, training labels, or paper recall metrics.
 - `scripts/evaluate_guideline_groups.py`
   - Evaluates the guideline release itself, independent of embedding recall.
   - Reports coverage, source-only groups, mixed HCVR/CWE sanity checks, and
@@ -894,6 +906,35 @@ recall-side hypothesis that several misses are ranking/query failures rather
 than guideline-boundary failures. It also flags
 `steve-community__steve::CVE-2026-28230` for deeper inspection because neither
 candidate showed the SQL-construction mechanism in the visible snippet.
+
+For a production-shaped reranker diagnostic, prefer list-wise scoring over the
+pair sanity check:
+
+```bash
+python new-impl/guideline-agent-pipeline/scripts/build_recall_candidate_list_judge_pack.py \
+  --recall-results /path/to/recall_results.jsonl \
+  --top-candidates /path/to/top_candidates.jsonl \
+  --output-dir /path/to/recall-candidate-list-judge-pack \
+  --max-rank 20 \
+  --candidates-per-prompt 10 \
+  --default-cli traex \
+  --default-model DeepSeek-V4-Pro
+```
+
+This pack shuffles candidates and hides original rank/score/known-anchor
+metadata from the prompt. After TraeX scores every candidate, summarize with:
+
+```bash
+python3 ../../scripts/summarize_recall_candidate_list_judge_outputs.py \
+  --judge-inputs judge_inputs.jsonl \
+  --judge-output-dir judge_outputs \
+  --output-dir judge_summary
+```
+
+The summary computes offline known-anchor rerank Hit@1/3/5/10 using hidden
+metadata. Treat this as a reranker-design diagnostic only; paper-facing recall
+still requires a same-identity retrieval or reranking run that does not use
+known-anchor labels at inference time.
 
 Build a revision backlog from the semantic judge and recall-alignment outputs:
 
