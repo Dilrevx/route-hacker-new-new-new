@@ -1706,6 +1706,15 @@ and 5 source-reviewed representative cases absent from the supplied cases file.
 This is the next same-identity recall A/B input, not a release replacement and
 not a recall result.
 
+A wiring smoke for this candidate is recorded under
+`results/guideline-v2-r8-source-reviewed-sidecar-recall-smoke-20260824/`. The
+cached 3-case run completed with all three cases hitting Top-200, while the
+12-case attempt is environment-contaminated because 9 cases failed during
+GitHub HTTPS clone with `gnutls_handshake() failed`. Treat this as evidence
+that the sidecar is consumable by P3C64 recall, not as a paper-facing recall
+metric. A full 48-sidecar or 143-case claim still requires stable source
+materialization and same-identity evaluation.
+
 Convert the backlog into review-only mechanism lexicon proposals:
 
 ```bash
