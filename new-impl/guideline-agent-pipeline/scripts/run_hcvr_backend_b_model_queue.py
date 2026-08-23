@@ -25,6 +25,8 @@ import time
 from pathlib import Path
 from typing import Any, Iterable
 
+from run_hcvr_case_anchor_audits import ensure_snapshot, safe_slug
+
 
 def read_jsonl(path: Path) -> Iterable[dict[str, Any]]:
     with path.open(encoding="utf-8") as handle:
@@ -56,6 +58,53 @@ def selected_identities(allowlist: Path, start: int, end: int | None) -> list[st
     if stop < start:
         raise SystemExit("--case-end must be >= --case-start")
     return identities[start - 1 : stop]
+
+
+def cases_by_identity(cases_file: Path, identities: list[str]) -> dict[str, dict[str, Any]]:
+    """Load exactly the selected immutable case records for snapshot preparation."""
+
+    needed = set(identities)
+    selected = {
+        str(row["identity_key"]): row
+        for row in read_jsonl(cases_file)
+        if row.get("identity_key") in needed
+    }
+    missing = [identity for identity in identities if identity not in selected]
+    if missing:
+        raise SystemExit(f"selected identities missing from cases file: {missing[:10]}")
+    return selected
+
+
+def prewarm_snapshot(
+    *,
+    case: dict[str, Any],
+    repo_cache: Path,
+    snapshot_root: Path,
+    clone_timeout: int,
+) -> Path:
+    """Materialize one snapshot before concurrent model calls.
+
+    Git ``index-pack`` has a substantially higher local-memory peak than an
+    audit process.  Preparing snapshots serially prevents two repository clones
+    from contending with the model queue.  A failed clone may leave a corrupt
+    cache directory, so retry once after preserving that entry as evidence.
+    """
+
+    try:
+        return ensure_snapshot(case, repo_cache, snapshot_root, clone_timeout)
+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired):
+        repo_key = safe_slug(str(case["repository"]["repo_key"]))
+        commit = str(case["revisions"]["checkout_revision"])
+        repo_dir = repo_cache / repo_key
+        snapshot = snapshot_root / f"{repo_key}__{commit[:12]}"
+        # Preserve rather than delete an incomplete cache/snapshot: --repo-cache
+        # can be shared by callers, and this evidence is useful for diagnosis.
+        suffix = f".failed-{int(time.time())}"
+        if repo_dir.exists():
+            repo_dir.rename(repo_dir.with_name(repo_dir.name + suffix))
+        if snapshot.exists():
+            snapshot.rename(snapshot.with_name(snapshot.name + suffix))
+        return ensure_snapshot(case, repo_cache, snapshot_root, clone_timeout)
 
 
 def prepare_recall_projection(
@@ -297,6 +346,14 @@ def main() -> None:
         default=1,
         help="Maximum simultaneously active cases; groups within each case remain sequential.",
     )
+    parser.add_argument(
+        "--prewarm-snapshots",
+        action="store_true",
+        help=(
+            "Serially clone/fetch and materialize snapshots before parallel audit calls. "
+            "Recommended when repository preparation could exhaust local memory."
+        ),
+    )
     parser.add_argument("--resume", action="store_true")
     parser.add_argument(
         "--retry-incomplete-groups",
@@ -344,6 +401,7 @@ def main() -> None:
             "top_k": args.top_k,
             "m": args.group_size,
             "case_concurrency": args.case_concurrency,
+            "prewarm_snapshots": bool(args.prewarm_snapshots),
             "retry_incomplete_groups": bool(args.retry_incomplete_groups),
             "groups_per_full_case": (args.top_k + args.group_size - 1) // args.group_size,
             "recall_projection": str(projection.resolve()),
@@ -388,6 +446,51 @@ def main() -> None:
                 ),
             )
         )
+
+    if args.prewarm_snapshots and not args.dry_run:
+        all_cases = cases_by_identity(args.cases_file.resolve(), identities)
+        for offset, identity, _, _ in pending:
+            started = time.time()
+            append_jsonl(
+                ledger,
+                {
+                    "event": "snapshot_prewarm_start",
+                    "case_index": offset,
+                    "identity_key": identity,
+                    "time": started,
+                },
+            )
+            try:
+                snapshot = prewarm_snapshot(
+                    case=all_cases[identity],
+                    repo_cache=args.repo_cache.resolve(),
+                    snapshot_root=args.snapshot_root.resolve(),
+                    clone_timeout=args.clone_timeout,
+                )
+            except Exception as error:
+                append_jsonl(
+                    ledger,
+                    {
+                        "event": "snapshot_prewarm_failed",
+                        "case_index": offset,
+                        "identity_key": identity,
+                        "error": f"{type(error).__name__}: {error}",
+                        "duration_seconds": round(time.time() - started, 3),
+                        "time": time.time(),
+                    },
+                )
+                raise
+            append_jsonl(
+                ledger,
+                {
+                    "event": "snapshot_prewarm_complete",
+                    "case_index": offset,
+                    "identity_key": identity,
+                    "snapshot": str(snapshot),
+                    "duration_seconds": round(time.time() - started, 3),
+                    "time": time.time(),
+                },
+            )
 
     if args.case_concurrency == 1:
         for offset, identity, case_dir, command in pending:
