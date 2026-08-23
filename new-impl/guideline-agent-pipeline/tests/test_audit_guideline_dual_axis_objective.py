@@ -94,13 +94,56 @@ def test_boundary_triage_is_recorded_without_completing_global_audit():
     assert "1 source-reviewed boundary" in audit["next_gates"][2]["current_state"]
 
 
+def test_source_reviewed_boundary_evidence_is_separate_from_recall_completion():
+    module = load_module()
+
+    audit = module.build_audit(
+        scorecard=scorecard(),
+        worklist={"worklist_count": 1, "action_counts": {"collect_source_sink_guard_evidence": 1}},
+        desired_delta_rate=0.10,
+        ledger_validation={
+            "valid_count": 2,
+            "invalid_count": 0,
+            "promotable_count": 1,
+            "decision_counts": {"promote_boundary": 1, "split_further": 1},
+        },
+        ledger_judge={
+            "parsed_count": 2,
+            "accepted_count": 2,
+            "low_score_count": 1,
+            "decision_counts": {"accept": 2},
+            "average_scores": {"coherence_score": 0.925},
+        },
+    )
+
+    assert audit["overall_status"] == "not_complete"
+    reviewed = audit["source_reviewed_boundary_evidence"]
+    assert reviewed["status"] == "satisfied_for_source_reviewed_boundaries"
+    assert reviewed["promotable_count"] == 1
+    assert "source_reviewed_boundary_status=satisfied_for_source_reviewed_boundaries" in audit["requirements"][0]["evidence"]
+    substitution_gate = next(
+        gate for gate in audit["next_gates"] if gate["gate"] == "recall_method_substitution_gate"
+    )
+    assert "replacement embedder" in substitution_gate["pass_condition"]
+
+
 def test_cli_writes_dual_axis_audit(tmp_path: Path):
     scorecard_path = tmp_path / "scorecard.json"
     worklist_path = tmp_path / "worklist.json"
+    ledger_validation_path = tmp_path / "ledger_validation.json"
+    ledger_judge_path = tmp_path / "ledger_judge.json"
     output = tmp_path / "audit"
     scorecard_path.write_text(json.dumps(scorecard()), encoding="utf-8")
     worklist_path.write_text(
         json.dumps({"worklist_count": 1, "action_counts": {"collect_source_sink_guard_evidence": 1}}),
+        encoding="utf-8",
+    )
+    ledger_validation_path.write_text(
+        json.dumps({"valid_count": 1, "invalid_count": 0, "promotable_count": 1}),
+        encoding="utf-8",
+    )
+    ledger_judge_path.write_text(
+        json.dumps({"parsed_count": 1, "accepted_count": 1, "decision_counts": {"accept": 1}}),
         encoding="utf-8",
     )
 
@@ -112,6 +155,10 @@ def test_cli_writes_dual_axis_audit(tmp_path: Path):
             str(scorecard_path),
             "--evidence-worklist-summary",
             str(worklist_path),
+            "--ledger-validation-summary",
+            str(ledger_validation_path),
+            "--ledger-judge-summary",
+            str(ledger_judge_path),
             "--output-dir",
             str(output),
         ],
@@ -124,4 +171,6 @@ def test_cli_writes_dual_axis_audit(tmp_path: Path):
     assert result.returncode == 0
     summary = json.loads((output / "summary.json").read_text(encoding="utf-8"))
     assert summary["overall_status"] == "not_complete"
-    assert "Guideline Dual-Axis Objective Audit" in (output / "README.md").read_text(encoding="utf-8")
+    readme = (output / "README.md").read_text(encoding="utf-8")
+    assert "Guideline Dual-Axis Objective Audit" in readme
+    assert "Source-Reviewed Boundary Evidence" in readme

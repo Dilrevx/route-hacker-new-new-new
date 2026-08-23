@@ -880,6 +880,8 @@ python new-impl/guideline-agent-pipeline/scripts/audit_guideline_dual_axis_objec
   --scorecard new-impl/guideline-agent-pipeline/results/guideline-v2-r8-release-ready-scorecard-20260823/scorecard.json \
   --evidence-worklist-summary new-impl/guideline-agent-pipeline/results/guideline-v2-r8-evidence-worklist-20260823/summary.json \
   --boundary-recall-triage-summary new-impl/guideline-agent-pipeline/results/guideline-boundary-recall-triage-r8-gl-mech-0001-p3c64-3case-20260823/summary.json \
+  --ledger-validation-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0022-validation-src-reviewed-20260823/summary.json \
+  --ledger-judge-summary new-impl/guideline-agent-pipeline/results/guideline-review-ledger-r8-gl-mech-0022-judge-pack-src-reviewed-20260823/judge_summary/summary.json \
   --output-dir /path/to/guideline-dual-axis-objective-audit \
   --desired-delta-rate 0.10
 ```
@@ -889,6 +891,14 @@ structural checks, TraeX judge parsing, sidecar equivalence, or a recall table
 is not enough by itself. The completion gate requires semantic evidence for
 the guideline taxonomy and same-identity recall evidence for the exact
 sidecar/query configuration being claimed.
+Filled ledger validation and ledger-level TraeX judge summaries can be attached
+to record source-reviewed boundary evidence. This can show that a boundary is
+semantically coherent even when the current embedding backend fails to retrieve
+its representative cases. In that situation, first diagnose query wording,
+candidate slicing, embedding backend, adapter weights, reranking, or fusion
+under a same-identity A/B setup. Do not weaken a source-supported mechanism
+taxonomy merely to satisfy one embedder, and do not turn the ledger, judge
+notes, CVE labels, or bad-case anchors into hidden routing rules.
 
 Convert the backlog into review-only mechanism lexicon proposals:
 

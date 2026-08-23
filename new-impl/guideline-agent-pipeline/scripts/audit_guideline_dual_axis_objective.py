@@ -45,12 +45,56 @@ def status_for_recall(scorecard: dict[str, Any], desired_delta_rate: float) -> s
     return "not_satisfied_missing_recall_evidence"
 
 
+def source_reviewed_boundary_evidence(
+    ledger_validation: dict[str, Any] | None,
+    ledger_judge: dict[str, Any] | None,
+) -> dict[str, Any]:
+    if not ledger_validation and not ledger_judge:
+        return {
+            "status": "not_provided",
+            "message": "No source-reviewed boundary ledger evidence was provided.",
+        }
+
+    valid_count = int((ledger_validation or {}).get("valid_count") or 0)
+    invalid_count = int((ledger_validation or {}).get("invalid_count") or 0)
+    promotable_count = int((ledger_validation or {}).get("promotable_count") or 0)
+    parsed = int((ledger_judge or {}).get("parsed_count") or 0)
+    accepted = int((ledger_judge or {}).get("accepted_count") or 0)
+    low_score_count = int((ledger_judge or {}).get("low_score_count") or 0)
+    if invalid_count:
+        status = "not_satisfied_invalid_source_reviewed_ledger"
+    elif valid_count and parsed and accepted == parsed:
+        status = "satisfied_for_source_reviewed_boundaries"
+    elif valid_count:
+        status = "partially_satisfied_source_reviewed_boundaries_need_judge_or_revision"
+    else:
+        status = "not_satisfied_missing_source_reviewed_boundaries"
+    return {
+        "status": status,
+        "valid_count": valid_count,
+        "invalid_count": invalid_count,
+        "promotable_count": promotable_count,
+        "validation_decision_counts": (ledger_validation or {}).get("decision_counts") or {},
+        "judge_parsed_count": parsed,
+        "judge_accepted_count": accepted,
+        "judge_low_score_count": low_score_count,
+        "judge_decision_counts": (ledger_judge or {}).get("decision_counts") or {},
+        "judge_average_scores": (ledger_judge or {}).get("average_scores") or {},
+        "message": (
+            "Source-reviewed boundary evidence is semantic QA only. It can justify a boundary as review-ready, "
+            "but it does not prove embedding recall."
+        ),
+    }
+
+
 def build_audit(
     *,
     scorecard: dict[str, Any],
     worklist: dict[str, Any],
     desired_delta_rate: float,
     boundary_recall_triage: dict[str, Any] | None = None,
+    ledger_validation: dict[str, Any] | None = None,
+    ledger_judge: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     recall = scorecard.get("recall_evidence") if isinstance(scorecard.get("recall_evidence"), dict) else {}
     judge = scorecard.get("judge_evidence") if isinstance(scorecard.get("judge_evidence"), dict) else {}
@@ -62,6 +106,7 @@ def build_audit(
     )
     semantic_status = status_for_semantic_quality(scorecard, worklist)
     recall_status = status_for_recall(scorecard, desired_delta_rate)
+    reviewed_boundary = source_reviewed_boundary_evidence(ledger_validation, ledger_judge)
     boundary_recall_triage = boundary_recall_triage or {}
     boundary_next_actions = (
         boundary_recall_triage.get("next_action_counts")
@@ -81,6 +126,9 @@ def build_audit(
                 f"weighted_cwe_purity={structural.get('weighted_cwe_purity')}",
                 f"judge_decision_counts={judge.get('decision_counts')}",
                 f"evidence_worklist_actions={worklist.get('action_counts')}",
+                f"source_reviewed_boundary_status={reviewed_boundary.get('status')}",
+                f"source_reviewed_boundary_validation_decisions={reviewed_boundary.get('validation_decision_counts')}",
+                f"source_reviewed_boundary_judge_decisions={reviewed_boundary.get('judge_decision_counts')}",
             ],
             "status": semantic_status,
             "gap": "TraeX judge still finds many groups needing source/sink/guard evidence or split/revision work.",
@@ -115,6 +163,7 @@ def build_audit(
                 "README separates semantic guideline quality from embedding recall compatibility",
                 "revision backlog has actions for embedding/candidate/query mismatch",
                 "scorecard separates structural, judge, recall, and sidecar-equivalence evidence",
+                "source-reviewed boundaries can be marked semantically ready without being counted as recall-proven",
             ],
             "status": "satisfied_as_evaluation_policy",
             "gap": "Need per-group semantic-vs-recall triage after the next changed-sidecar recall run.",
@@ -125,6 +174,7 @@ def build_audit(
                 "scorecard marks recall improvement claim as not_supported_at_desired_delta",
                 "RRF/fusion is documented as a recall-compatible engineering path, not a guideline-quality claim",
                 "TraeX judge output feeds backlog/worklist rather than released guidelines or ranking",
+                "new embedders, fusion, or rerankers are allowed only as explicit same-identity A/B configurations",
             ],
             "status": "satisfied_by_current_policy",
             "gap": "Any future fusion or model substitution needs same-identity A/B and a separate claim boundary.",
@@ -161,9 +211,15 @@ def build_audit(
             ),
         },
         {
+            "gate": "recall_method_substitution_gate",
+            "run_when": "when a source-reviewed guideline is coherent but the current embedding recall misses representative cases",
+            "pass_condition": "compare any replacement embedder, reranker, or fusion method on the same identities, snapshots, candidates, and budgets without regex fallback or label routing",
+            "current_state": "allowed by policy; no paper-facing method substitution claim until same-identity evidence exists",
+        },
+        {
             "gate": "paper_claim_boundary_gate",
             "run_when": "before writing results into the paper",
-            "pass_condition": "semantic judge evidence, structural diagnostics, sidecar equivalence, and recall A/B deltas are reported as separate claims",
+            "pass_condition": "semantic judge evidence, source-reviewed boundary evidence, structural diagnostics, sidecar equivalence, recall A/B deltas, and engineering fusion are reported as separate claims",
             "current_state": "satisfied by current scorecard format, but final paper table still needs fresh numbers if guideline text changes",
         },
     ]
@@ -173,6 +229,7 @@ def build_audit(
         "desired_delta_rate": desired_delta_rate,
         "overall_status": overall_status,
         "requirements": requirements,
+        "source_reviewed_boundary_evidence": reviewed_boundary,
         "missing_or_incomplete_requirements": missing,
         "next_gates": next_gates,
         "decision": (
@@ -210,6 +267,22 @@ def write_readme(path: Path, audit: dict[str, Any]) -> None:
         evidence = "<br>".join(str(item).replace("|", "\\|") for item in row["evidence"])
         gap = str(row.get("gap") or "").replace("|", "\\|")
         lines.append(f"| {row['requirement']} | `{row['status']}` | {evidence} | {gap} |")
+    reviewed = audit.get("source_reviewed_boundary_evidence") or {}
+    lines.extend(
+        [
+            "",
+            "## Source-Reviewed Boundary Evidence",
+            "",
+            f"- Status: `{reviewed.get('status')}`",
+            f"- Ledger valid/invalid: {reviewed.get('valid_count')} / {reviewed.get('invalid_count')}",
+            f"- Promotable boundaries: {reviewed.get('promotable_count')}",
+            f"- Ledger decisions: {reviewed.get('validation_decision_counts')}",
+            f"- Judge decisions: {reviewed.get('judge_decision_counts')}",
+            f"- Judge average scores: {reviewed.get('judge_average_scores')}",
+            "",
+            "This section records source-reviewed guideline-boundary evidence. It can support a semantic boundary decision, but it does not prove recall. If one of these boundaries misses Top-K, the next action is recall-side diagnosis or a same-identity model/ranking A/B, not automatic taxonomy degradation.",
+        ]
+    )
     lines.extend(
         [
             "",
@@ -247,6 +320,8 @@ def main() -> None:
     parser.add_argument("--scorecard", type=Path, required=True)
     parser.add_argument("--evidence-worklist-summary", type=Path, required=True)
     parser.add_argument("--boundary-recall-triage-summary", type=Path)
+    parser.add_argument("--ledger-validation-summary", type=Path)
+    parser.add_argument("--ledger-judge-summary", type=Path)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--desired-delta-rate", type=float, default=0.10)
     args = parser.parse_args()
@@ -261,6 +336,8 @@ def main() -> None:
             if args.boundary_recall_triage_summary
             else None
         ),
+        ledger_validation=read_json(args.ledger_validation_summary) if args.ledger_validation_summary else None,
+        ledger_judge=read_json(args.ledger_judge_summary) if args.ledger_judge_summary else None,
     )
     args.output_dir.mkdir(parents=True, exist_ok=True)
     write_json(args.output_dir / "summary.json", audit)
