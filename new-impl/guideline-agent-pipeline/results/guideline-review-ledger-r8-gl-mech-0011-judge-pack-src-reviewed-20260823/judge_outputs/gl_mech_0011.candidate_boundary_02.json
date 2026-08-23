@@ -1,0 +1,20 @@
+{
+  "decision": "needs_evidence",
+  "coherence_score": 0.45,
+  "coverage_score": 0.0,
+  "actionability_score": 0.15,
+  "retrieval_query_quality": 0.2,
+  "main_issue": "Zero representative cases and zero evidence refs. The mechanism description (cyclic links, null entries, unbounded extraction loops causing DoS) is conceptually coherent, but without a single source-to-sink trace showing a concrete vulnerable extraction loop, null-sensitive parser, or unbounded recursion, the boundary is purely theoretical. The ledger row itself confirms this in all four guard fields — source_shape, sink_or_sensitive_effect, exploit_precondition, and safe_fix_semantics all explicitly state evidence is absent.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "representative_cases is empty — no case-level evidence at all",
+    "evidence_refs is empty — no source traces, diffs, or fix references",
+    "source_shape field confirms: 'does not provide a representative source-to-sink trace'",
+    "sink_or_sensitive_effect field confirms: 'evidence is not present in the checked packet'",
+    "exploit_precondition field confirms: 'Needs a representative case'",
+    "safe_fix_semantics field confirms: 'Needs source-reviewed fix evidence'",
+    "missing_guard field confirms: packet should remain out of released recall sidecar until source evidence exists",
+    "boundary_decision is already 'needs_more_evidence' — the row correctly self-identifies as a review queue item, not a recall-ready guideline"
+  ]
+}

@@ -1,0 +1,18 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.88,
+  "coverage_score": 0.82,
+  "actionability_score": 0.87,
+  "retrieval_query_quality": 0.83,
+  "main_issue": "The three representative cases share a clean mechanism: archive entry name → path resolution beneath an extraction root → filesystem write/create before a same-path containment guard. The source shape (iterate archive entries, combine entry name with temp/extraction dir), sink shape (FileOutputStream, Files.copyFile, directory/symlink creation on the resolved path), missing guard (no normalized/canonical containment check applied to the exact destination used by the write), and exploit precondition (attacker-supplied archive with malicious entry names) are all coherent. The boundary text is well-scoped — it explicitly covers traversal components, absolute paths, separator variants, and prefix-confusion, which distinguishes it from a generic path-traversal guideline. The DSpace SAF import case uses string concatenation rather than File API, but the mechanism pattern is the same. The boundary is actionable with concrete safe-fix semantics.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "TestNG: extractSuitesFrom / testngXmlExistsInJar — new File(tempDir, jeName) + Files.copyFile without path validation — clean JarEntry traversal write",
+    "Plexus Archiver: AbstractUnArchiver.extractFile — FileUtils.resolveFile(dir, entryName) + FileOutputStream(f) / symlink / directory creation without containment check — canonical archive extraction escape",
+    "DSpace: processUIImport → ItemImport.unzip — string-built zipDir prepended to ZIP entry names, writes extracted content without containment validation — SAF import traversal write",
+    "All three share the same trigger shape (archive entry name → resolved path → filesystem effect before guard) and the guard is missing at the same point in the flow"
+  ]
+}
+```
