@@ -1,0 +1,16 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.85,
+  "coverage_score": 0.80,
+  "actionability_score": 0.85,
+  "retrieval_query_quality": 0.80,
+  "main_issue": "The two cases share the same mechanism core: an HTTP request path enters a static-resource resolver, the path is decoded/transformed, and the resolved resource is served without verifying containment within the intended root. Implementation details differ (OpenHAB uses java.io.File canonicalization; Solon uses string prefix matching and repository.find), but the semantic mechanism is coherent. The reviewer notes appropriately scope to static-resource request path resolution, excluding upload filename traversal, archive extraction, and recursive copy/move patterns.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "Both cases provide pre-patch and fix-commit evidence with line-level references. OpenHAB CVE-2024-42468: CometVisuServlet.getRequestedFile constructs File objects from decoded pathInfo without canonical containment; fix adds canonical path prefix check. Solon CVE-2025-1584: StaticMappings.find strips prefix and calls repository.find without rejecting /../; fix adds contains('/../') guard. Evidence is sufficient and consistent with the claimed mechanism.",
+    "The mechanism boundary is narrow enough to be actionable: both fixes apply containment validation at the same point in the flow (after path resolution, before serving). The reviewer notes correctly exclude related but distinct patterns like upload filename traversal."
+  ]
+}
+```

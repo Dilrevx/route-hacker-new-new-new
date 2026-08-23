@@ -1,0 +1,17 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.85,
+  "coverage_score": 0.6,
+  "actionability_score": 0.85,
+  "retrieval_query_quality": 0.8,
+  "main_issue": "The mechanism is internally coherent — source shape (MultipartFile.getOriginalFilename), sink (filesystem path concatenation + write), missing guard (no basename normalization), and safe fix (centralized basename extraction) are all well-aligned. However, the boundary is demonstrated by a single representative case from one product (zdh_web), which limits confidence in cross-project generalizability. The reviewer notes correctly distinguish this from static-resource path traversal and archive traversal.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "All three evidence references point to the same identity (zhaoyachao__zdh_web::CVE-2025-65897) — the pre-patch vulnerable code paths and the post-patch fix are clearly documented and consistent with the boundary.",
+    "Single-case coverage: the mechanism would be stronger if at least one additional representative case from a different project demonstrated the same source→sink→fix pattern.",
+    "The fix commit (b2423378) shows a clean, reusable mitigation: Paths.get(fileName).getFileName().toString() — this is a strong signal for mechanism extraction."
+  ]
+}
+```

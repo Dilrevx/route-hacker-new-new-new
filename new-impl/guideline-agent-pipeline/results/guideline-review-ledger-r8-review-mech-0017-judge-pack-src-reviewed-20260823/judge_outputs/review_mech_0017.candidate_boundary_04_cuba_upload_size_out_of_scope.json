@@ -1,0 +1,17 @@
+```json
+{
+  "decision": "accept",
+  "coherence_score": 0.9,
+  "coverage_score": 0.6,
+  "actionability_score": 0.85,
+  "retrieval_query_quality": 0.8,
+  "main_issue": "Well-defined boundary row. The mechanism (unbounded file upload causing storage exhaustion) is coherent: source shape (FileStorage.saveStream writing InputStream to FileDescriptor), sink (disk consumption), missing guard (no max bytes before IOUtils.copyLarge), exploit precondition (large upload exhausts disk), and safe fix (configured max, truncate, delete partial, error) are all internally consistent. Pre-patch and post-patch evidence from commit diffs confirms the mechanism is about upload size, not path containment. The mark_out_of_scope decision is sound — this should not be counted as path traversal recall.",
+  "suggested_guideline": "",
+  "split_suggestions": [],
+  "evidence_notes": [
+    "Pre-patch code (9ab5f77) at FileStorage.saveStream lines 116-124 confirms IOUtils.copyLarge with no size limit.",
+    "Fix commit (42b6c00) adds ServerConfig.getFileStorageMaxFileSize and size-bounded copy with partial-file cleanup.",
+    "No evidence of path traversal, archive escape, or path containment failure in source or patch."
+  ]
+}
+```
