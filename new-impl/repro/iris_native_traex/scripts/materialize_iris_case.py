@@ -94,6 +94,8 @@ def add_traex_model_aliases(gpt_model_path: Path) -> dict[str, str]:
     aliases = (
         '    "gpt-traex-flash": "DeepSeek-V4-Flash",\n'
         '    "gpt-traex-pro": "DeepSeek-V4-Pro",\n'
+        '    "deepseek-v4-flash": "DeepSeek-V4-Flash",\n'
+        '    "deepseek-v4-pro": "DeepSeek-V4-Pro",\n'
     )
     if '"gpt-traex-flash"' not in source:
         marker = "\n}\n_OPENAI_DEFAULT_PARAMS"
