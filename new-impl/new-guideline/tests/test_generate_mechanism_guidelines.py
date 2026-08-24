@@ -433,6 +433,28 @@ def test_pending_review_overrides_can_be_included_for_ablation(tmp_path: Path):
     assert overrides[0]["identity_key"] == "example__project::CVE-2099-7801"
 
 
+def test_noise_singletons_are_explicit_review_work_items():
+    module = load_module()
+    clustering = {"noise": ["CVE-2099-9001"]}
+    structured = {
+        "CVE-2099-9001": {
+            "cve_id": "CVE-2099-9001",
+            "vuln_type": "rare state confusion",
+            "abstract_pattern": "A rare state transition bypasses validation.",
+            "root_cause": "State is reused after a stale transition.",
+            "fix_strategy": "Validate the state transition before reuse.",
+        }
+    }
+
+    items = list(module.iter_noise_work_items(clustering, structured))
+
+    assert len(items) == 1
+    assert items[0].cluster_id == 900001
+    assert items[0].source_kind == "noise_singleton"
+    assert items[0].members == ("CVE-2099-9001",)
+    assert items[0].sub_pattern_name == "rare state confusion"
+
+
 def test_sub_pattern_evidence_takes_precedence_over_broad_cluster_summary():
     module = load_module()
     lexicon = module.load_lexicon(LEXICON)

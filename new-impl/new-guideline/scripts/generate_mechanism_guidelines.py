@@ -362,6 +362,37 @@ def iter_work_items(clustering: dict[str, Any]) -> Iterable[WorkItem]:
             )
 
 
+def iter_noise_work_items(
+    clustering: dict[str, Any],
+    structured: dict[str, dict[str, Any]],
+    *,
+    source_kind: str = "noise_singleton",
+) -> Iterable[WorkItem]:
+    """Emit singleton work items for cluster noise CVEs.
+
+    HDBSCAN noise is a clustering boundary, not evidence that a CVE lacks a
+    reusable audit mechanism. Keeping these rows as explicit singleton work
+    items lets guideline-v2 measure and review the coverage gap without
+    changing the default release behavior.
+    """
+
+    for index, cve_id in enumerate(normalize_members(clustering.get("noise") or []), start=1):
+        record = structured.get(cve_id) or {}
+        name = str(record.get("vuln_type") or cve_id).strip()
+        root_cause = str(record.get("root_cause") or "").strip()
+        fix_strategy = str(record.get("fix_strategy") or "").strip()
+        yield WorkItem(
+            cluster_id=900000 + index,
+            cluster_name=f"Noise singleton: {name}",
+            cluster_summary=str(record.get("abstract_pattern") or root_cause or "").strip(),
+            sub_pattern_name=name,
+            sub_pattern_root_cause=root_cause,
+            sub_pattern_fix_strategy=fix_strategy,
+            members=(cve_id,),
+            source_kind=source_kind,
+        )
+
+
 def record_text(record: dict[str, Any]) -> str:
     parts: list[str] = []
     for field in TEXT_FIELDS:
@@ -1050,6 +1081,14 @@ def generate(args: argparse.Namespace) -> dict[str, Any]:
     structured = load_structured(args.structured)
     lexicon = merge_lexicons([args.lexicon, *args.extra_lexicon])
     items = list(iter_work_items(clustering))
+    if args.include_noise_singletons:
+        items.extend(
+            iter_noise_work_items(
+                clustering,
+                structured,
+                source_kind=args.noise_source_kind,
+            )
+        )
     if not items:
         raise ValueError(f"no cluster or sub-pattern work items in {args.clusters}")
     candidates, grouped, mechanisms_by_group = group_items_by_mechanism(
@@ -1092,6 +1131,19 @@ def main() -> None:
     parser.add_argument("--cases-file", type=Path, help="Optional HCVR case JSONL used to emit guideline_overrides.jsonl.")
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--min-score", type=float, default=2.0, help="Minimum lexicon alignment score for active attribution.")
+    parser.add_argument(
+        "--include-noise-singletons",
+        action="store_true",
+        help=(
+            "Also convert clustering noise CVEs into singleton review work items. "
+            "This is guideline-v2 coverage plumbing; defaults off to preserve v1 release behavior."
+        ),
+    )
+    parser.add_argument(
+        "--noise-source-kind",
+        default="noise_singleton",
+        help="source_kind label for work items created from clustering noise.",
+    )
     parser.add_argument(
         "--include-pending-guidelines",
         action="store_true",

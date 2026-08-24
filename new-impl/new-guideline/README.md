@@ -713,6 +713,69 @@ This is not a fresh r8 recall run. A fresh same-identity recall A/B is still
 required if any consumed sidecar text, identity set, source snapshot, slicing
 logic, embedding service, adapter state, or ranking parameter changes.
 
+## New Guideline V2 Coverage Plan
+
+The current full143 coverage audit shows that guideline quality and embedding
+ranking are not the only bottlenecks. Before changing mechanism wording, run a
+coverage audit that separates corpus intake, clustering, release gating, and
+sidecar joins:
+
+```bash
+python new-impl/new-guideline/scripts/audit_guideline_coverage.py \
+  --identities new-impl/new-guideline/results/p3c64-fixed143-paper-eval-20260820/paper_eval_143_identities.jsonl \
+  --cases new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
+  --raw-cves /path/to/raw_cves_combined.jsonl \
+  --structured-cves /path/to/structured_cves_combined.jsonl \
+  --clusters /path/to/refined_clusters_combined.json \
+  --mechanism-candidates new-impl/new-guideline/results/mechanism-guideline-preview-v2-cluster-scope-r8-release-ready-20260823/mechanism_candidates.jsonl \
+  --review-queue new-impl/new-guideline/results/mechanism-guideline-preview-v2-cluster-scope-r8-release-ready-20260823/review_queue.jsonl \
+  --sidecar r5=new-impl/new-guideline/results/mechanism-guideline-preview-v2-cluster-scope-r5-combined-baseline-20260823/guideline_overrides.jsonl \
+  --sidecar r6=new-impl/new-guideline/results/mechanism-guideline-preview-v2-cluster-scope-r6-candidate-20260823/guideline_overrides.jsonl \
+  --sidecar r8=new-impl/new-guideline/results/mechanism-guideline-preview-v2-cluster-scope-r8-release-ready-20260823/guideline_overrides.jsonl \
+  --sidecar source_reviewed=new-impl/new-guideline/results/guideline-v2-r8-source-reviewed-release-candidate-20260824/guideline_overrides.jsonl \
+  --sidecar propagated=new-impl/new-guideline/results/guideline-v2-r8-propagated-boundary-sidecar-ready-only-20260824/guideline_overrides.jsonl \
+  --primary-sidecar r8 \
+  --output-dir new-impl/new-guideline/results/guideline-v2-coverage-audit-full143-YYYYMMDD
+```
+
+The committed 2026-08-24 run is stored in
+`results/guideline-v2-coverage-audit-full143-20260824/`.
+
+The first audit over the frozen 143 identities found this release funnel:
+
+| Stage | Count |
+| --- | ---: |
+| Frozen identities in unified dataset | 143/143 |
+| CVE-like ID or alias available | 136/143 |
+| Present in `raw_cves_combined` / `structured_cves_combined` | 73/143 |
+| Present in `refined_clusters_combined` | 53/143 |
+| Present in r8 mechanism candidates | 53/143 |
+| R8 release-ready sidecar coverage | 28/143 |
+
+The main failure classes were: 63 cases missing from the CVE clustering corpus,
+20 cases present in raw/structured data but assigned to HDBSCAN noise, 25 cases
+clustered but held in review-only release gate, and 7 GHSA-only cases that do
+not connect through the current CVEList-oriented join. The unified dataset's
+own `classification.cwe_ids` field was populated for only 8/143 identities, but
+the raw CVEList rows for matched cases had CWE metadata for most matched CVEs;
+therefore missing CWE propagation is a metadata bug and not the only coverage
+root cause.
+
+Guideline-v2 keeps the r8 release gate intact by default and adds coverage
+plumbing:
+
+- `audit_guideline_coverage.py` emits `summary.json`, `case_coverage.jsonl`,
+  `case_coverage.csv`, and a README so each release can be audited before
+  recall is rerun.
+- `generate_mechanism_guidelines.py --include-noise-singletons` converts
+  clustering noise CVEs into singleton review work items. This does not include
+  them in release-ready guidelines or recall sidecars unless the existing
+  pending-review ablation flags are also used.
+- The next development target is corpus intake repair: seed the guideline
+  construction corpus from the frozen evaluation identities, carry CVE aliases
+  and GHSA advisories, preserve raw/structured CWE fields, then rerun clustering
+  and release gating.
+
 The current objective-level completion audit is
 `results/guideline-v2-r8-objective-audit-20260823/`. It maps the active
 requirements to concrete artifacts and marks the remaining gaps: r8 is a

@@ -1,0 +1,129 @@
+{
+  "category_by_hcvr_type": {
+    "clustered_but_review_only_release_gate": {
+      "authentication_session_token_validation": 4,
+      "authorization_bypass": 4,
+      "business_state_precondition": 7,
+      "concurrent_object_lifecycle": 2,
+      "file_permission_temp_resource": 2,
+      "iris": 5,
+      "toctou_check_use_race": 1
+    },
+    "covered_by_primary_sidecar": {
+      "authentication_session_token_validation": 1,
+      "authorization_bypass": 6,
+      "concurrent_object_lifecycle": 4,
+      "file_permission_temp_resource": 2,
+      "iris": 4,
+      "open_redirect": 2,
+      "ssrf": 4,
+      "template_expression_injection": 2,
+      "toctou_check_use_race": 3
+    },
+    "ghsa_or_non_cve_no_cvelist_join": {
+      "ghsa_7rx3_5wx3_5v76": 1,
+      "m9_wave2": 1,
+      "m9_wave4": 5
+    },
+    "missing_from_cve_clustering_raw_structured": {
+      "authorization_bypass": 2,
+      "business_state_precondition": 3,
+      "concurrent_object_lifecycle": 3,
+      "cve_2026_50279": 1,
+      "file_permission_temp_resource": 3,
+      "iris": 36,
+      "m9_expansion": 3,
+      "m9_wave2": 4,
+      "m9_wave4": 1,
+      "open_redirect": 2,
+      "toctou_check_use_race": 5
+    },
+    "present_in_raw_but_cluster_noise": {
+      "authentication_session_token_validation": 5,
+      "authorization_bypass": 3,
+      "business_state_precondition": 4,
+      "concurrent_object_lifecycle": 3,
+      "file_permission_temp_resource": 2,
+      "iris": 2,
+      "toctou_check_use_race": 1
+    }
+  },
+  "coverage_by_sidecar": {
+    "propagated": 1,
+    "r5": 45,
+    "r6": 45,
+    "r8": 28,
+    "source_reviewed": 1
+  },
+  "coverage_category_counts": {
+    "clustered_but_review_only_release_gate": 25,
+    "covered_by_primary_sidecar": 28,
+    "ghsa_or_non_cve_no_cvelist_join": 7,
+    "missing_from_cve_clustering_raw_structured": 63,
+    "present_in_raw_but_cluster_noise": 20
+  },
+  "coverage_upper_bounds": {
+    "current_primary_sidecar": 28,
+    "if_all_cve_ids_ingested": 136,
+    "if_cve_and_ghsa_supported": 143,
+    "if_noise_singletons_released_from_current_raw_structured": 73,
+    "if_review_queue_released_for_current_candidates": 53
+  },
+  "identity_count": 143,
+  "input_stats": {
+    "cluster_noise_count": 452,
+    "raw_cwe_missing_count": 237,
+    "raw_record_count": 2220,
+    "structured_cwe_missing_count": 1,
+    "structured_record_count": 2219
+  },
+  "inputs": {
+    "cases": "new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl",
+    "clusters": "/tmp/hcvr_guideline_coverage_audit_20260824/refined_clusters_combined.json",
+    "identities": "new-impl/new-guideline/results/p3c64-fixed143-paper-eval-20260820/paper_eval_143_identities.jsonl",
+    "mechanism_candidates": "new-impl/new-guideline/results/mechanism-guideline-preview-v2-cluster-scope-r8-release-ready-20260823/mechanism_candidates.jsonl",
+    "raw_cves": "/tmp/hcvr_guideline_coverage_audit_20260824/raw_cves_combined.jsonl",
+    "review_queue": "new-impl/new-guideline/results/mechanism-guideline-preview-v2-cluster-scope-r8-release-ready-20260823/review_queue.jsonl",
+    "sidecars": {
+      "propagated": "new-impl/new-guideline/results/guideline-v2-r8-propagated-boundary-sidecar-ready-only-20260824/guideline_overrides.jsonl",
+      "r5": "new-impl/new-guideline/results/mechanism-guideline-preview-v2-cluster-scope-r5-combined-baseline-20260823/guideline_overrides.jsonl",
+      "r6": "new-impl/new-guideline/results/mechanism-guideline-preview-v2-cluster-scope-r6-candidate-20260823/guideline_overrides.jsonl",
+      "r8": "new-impl/new-guideline/results/mechanism-guideline-preview-v2-cluster-scope-r8-release-ready-20260823/guideline_overrides.jsonl",
+      "source_reviewed": "new-impl/new-guideline/results/guideline-v2-r8-source-reviewed-release-candidate-20260824/guideline_overrides.jsonl"
+    },
+    "structured_cves": "/tmp/hcvr_guideline_coverage_audit_20260824/structured_cves_combined.jsonl"
+  },
+  "metadata_presence": {
+    "dataset_cwe_present": 8,
+    "raw_cwe_present": 63,
+    "structured_cwe_present": 73
+  },
+  "missing_case_count": 0,
+  "missing_case_sample": [],
+  "missing_primary_by_hcvr_type": {
+    "authentication_session_token_validation": 9,
+    "authorization_bypass": 9,
+    "business_state_precondition": 14,
+    "concurrent_object_lifecycle": 8,
+    "cve_2026_50279": 1,
+    "file_permission_temp_resource": 7,
+    "ghsa_7rx3_5wx3_5v76": 1,
+    "iris": 43,
+    "m9_expansion": 3,
+    "m9_wave2": 5,
+    "m9_wave4": 6,
+    "open_redirect": 2,
+    "toctou_check_use_race": 7
+  },
+  "primary_sidecar": "r8",
+  "schema_version": "hcvr_guideline_coverage_audit.v1",
+  "source_presence": {
+    "has_cve_like_id": 136,
+    "in_cluster_noise": 20,
+    "in_mechanism_candidates": 53,
+    "in_raw": 73,
+    "in_refined_cluster": 53,
+    "in_review_queue": 25,
+    "in_structured": 73
+  }
+}
