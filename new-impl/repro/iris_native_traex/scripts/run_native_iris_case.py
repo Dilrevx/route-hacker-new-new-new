@@ -161,8 +161,16 @@ def main() -> int:
     parser.add_argument("--label-api-batch-size", type=int, default=30)
     parser.add_argument("--label-func-param-batch-size", type=int, default=20)
     parser.add_argument("--timeout-seconds", type=int, default=3600)
+    parser.add_argument(
+        "--llm-timeout-seconds",
+        type=int,
+        default=300,
+        help="Per-request timeout used by IRIS's OpenAI client after transport patching.",
+    )
     parser.add_argument("--output-dir", type=Path, required=True)
     args = parser.parse_args()
+    if args.llm_timeout_seconds < 1:
+        raise SystemExit("--llm-timeout-seconds must be positive")
 
     workspace = args.workspace.resolve()
     materialization = read_json(workspace / "materialization.json")
@@ -198,6 +206,7 @@ def main() -> int:
         {
             "OPENAI_API_KEY": "traex-local-bridge",
             "OPENAI_BASE_URL": args.bridge_url.rstrip("/") + "/v1",
+            "IRIS_LLM_TIMEOUT_SECONDS": str(args.llm_timeout_seconds),
             "IRIS_LLM_MAX_ATTEMPTS": env.get("IRIS_LLM_MAX_ATTEMPTS", "2"),
             "IRIS_TRAEX_RUN_ID": args.run_id,
             "IRIS_TRAEX_CASE_ID": str(case.get("case_id") or slug),
@@ -242,6 +251,7 @@ def main() -> int:
             "iris_model_name": args.llm,
             "transport": "local_traex_openai_bridge",
             "bridge_url": args.bridge_url,
+            "llm_timeout_seconds": args.llm_timeout_seconds,
         },
         "artifact_gate": {"all_required_artifacts_present": all(artifacts.values()), "artifacts": artifacts},
         "label_response_audit": label_audit,

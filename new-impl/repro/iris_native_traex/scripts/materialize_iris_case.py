@@ -88,34 +88,45 @@ def add_traex_model_aliases(gpt_model_path: Path) -> dict[str, str]:
     """Add transport aliases to the copied IRIS GPT adapter, never shared inputs."""
 
     source = gpt_model_path.read_text(encoding="utf-8")
+    timeout_marker = (
+        '        timeout = float(os.getenv("IRIS_LLM_TIMEOUT_SECONDS", "300"))\n'
+    )
     aliases = (
         '    "gpt-traex-flash": "DeepSeek-V4-Flash",\n'
         '    "gpt-traex-pro": "DeepSeek-V4-Pro",\n'
     )
     if '"gpt-traex-flash"' not in source:
-        marker = "}\n_OPENAI_DEFAULT_PARAMS"
+        marker = "\n}\n_OPENAI_DEFAULT_PARAMS"
         if marker not in source:
             raise RuntimeError(f"cannot find GPT model registry marker in {gpt_model_path}")
-        source = source.replace(marker, aliases + "}\n_OPENAI_DEFAULT_PARAMS", 1)
+        prefix, suffix = source.split(marker, 1)
+        if prefix.rstrip().endswith("{"):
+            source = prefix + "\n" + aliases + "}\n_OPENAI_DEFAULT_PARAMS" + suffix
+        else:
+            comma = "" if prefix.rstrip().endswith(",") else ","
+            source = prefix + comma + "\n" + aliases + "}\n_OPENAI_DEFAULT_PARAMS" + suffix
     header_marker = (
         'default_headers={\n'
         '                "X-Iris-Run-Id": os.getenv("IRIS_TRAEX_RUN_ID", ""),\n'
         '                "X-Iris-Case-Id": os.getenv("IRIS_TRAEX_CASE_ID", ""),\n'
         '            }'
     )
-    legacy_client_marker = "self.client = OpenAI(api_key=api_key)"
+    legacy_client_marker = "        self.client = OpenAI(api_key=api_key)"
     legacy_client_replacement = (
-        'self.client = OpenAI(\n'
+        timeout_marker +
+        '        self.client = OpenAI(\n'
         '            api_key=api_key,\n'
+        '            timeout=timeout,\n'
         f'            {header_marker},\n'
         '        )'
     )
     base_url_client_marker = (
-        "self.client = OpenAI(api_key=api_key, base_url=base_url, timeout=timeout) "
+        "        self.client = OpenAI(api_key=api_key, base_url=base_url, timeout=timeout) "
         "if base_url else OpenAI(api_key=api_key, timeout=timeout)"
     )
     base_url_client_replacement = (
-        "self.client = OpenAI(\n"
+        timeout_marker +
+        "        self.client = OpenAI(\n"
         "            api_key=api_key,\n"
         "            base_url=base_url,\n"
         "            timeout=timeout,\n"

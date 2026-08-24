@@ -101,9 +101,12 @@ def main() -> int:
     )
     parser.add_argument("--num-threads", type=int, default=1)
     parser.add_argument("--timeout-seconds", type=int, default=3600)
+    parser.add_argument("--llm-timeout-seconds", type=int, default=300)
     args = parser.parse_args()
     if args.max_workers < 1 or args.max_workers > 8:
         raise SystemExit("--max-workers must be in [1, 8]")
+    if args.llm_timeout_seconds < 1:
+        raise SystemExit("--llm-timeout-seconds must be positive")
     if not safe_name(args.attempt_id) or safe_name(args.attempt_id) != args.attempt_id:
         raise SystemExit("--attempt-id may contain only letters, numbers, '.', '_' and '-'")
 
@@ -154,6 +157,7 @@ def main() -> int:
             args.python, str(args.single_case_runner), "--workspace", str(workspace),
             "--run-id", run_id, "--bridge-url", args.bridge_url, "--llm", args.llm,
             "--num-threads", str(args.num_threads), "--timeout-seconds", str(args.timeout_seconds),
+            "--llm-timeout-seconds", str(args.llm_timeout_seconds),
             "--output-dir", str(case_dir),
         ]
         executed = subprocess.run(run, text=True, capture_output=True, check=False)

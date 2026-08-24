@@ -82,6 +82,7 @@ python3 scripts/run_native_iris_case.py \
   --workspace /mnt/.../iris-native-traex/retrofit \
   --run-id native-traex-retrofit-v1 \
   --bridge-url http://127.0.0.1:18888 \
+  --llm-timeout-seconds 300 \
   --output-dir /mnt/.../iris-native-traex/results/retrofit
 ```
 
@@ -98,7 +99,11 @@ attempt ID for resume; choose a new one when intentionally retrying failed
 cases with an updated environment.
 
 ```bash
-python3 scripts/run_native_iris_batch.py --attempt-id flash-a1 --max-workers 2 --resume ...
+python3 scripts/run_native_iris_batch.py \
+  --attempt-id flash-a1 \
+  --max-workers 2 \
+  --llm-timeout-seconds 300 \
+  --resume ...
 ```
 
 Each batch receipt stores IRIS candidate, labelling, vanilla-path, posthoc-path,
