@@ -115,12 +115,102 @@ def test_official_codeql_baseline_uses_pinned_query_name_only():
 
     assert module["official_codeql_query"]("cwe-022wLLM") == "cwe-022wCodeQL"
     assert module["codeql_cwe_directory"]("cwe-094wLLM") == "CWE-094"
+    workspace = Path("/tmp/example")
+    assert module["iris_codeql_query_version"](
+        workspace,
+        {"codeql_bundle": {"iris_codeql_query_version": "1.8.1"}},
+    ) == "1.8.1"
     try:
         module["official_codeql_query"]("cwe-022wCodeQL")
     except ValueError as exc:
         assert "unsupported native IRIS query" in str(exc)
     else:
         raise AssertionError("baseline query must derive only from a native IRIS query")
+
+
+def test_official_codeql_baseline_falls_back_to_config_query_version(tmp_path):
+    module = runpy.run_path(
+        str(Path(__file__).resolve().parents[1] / "scripts" / "run_official_codeql_baseline.py")
+    )
+    workspace = tmp_path / "workspace"
+    (workspace / "src").mkdir(parents=True)
+    (workspace / "src" / "config.py").write_text('CODEQL_QUERY_VERSION = "1.8.1"\n')
+
+    assert module["iris_codeql_query_version"](workspace, {"actions": []}) == "1.8.1"
+
+
+def test_official_codeql_query_pack_is_copied_to_cli_safe_path(tmp_path):
+    module = runpy.run_path(
+        str(Path(__file__).resolve().parents[1] / "scripts" / "run_official_codeql_baseline.py")
+    )
+    query_root = tmp_path / "workspace::with_colon" / "codeql" / "qlpacks" / "codeql" / "java-queries" / "1.8.1" / "Security" / "CWE" / "CWE-022"
+    query_root.mkdir(parents=True)
+    (query_root / "PathInjection.ql").write_text("import java\n")
+
+    copied = module["create_official_query_pack"](query_root, tmp_path / "run", "1.8.1")
+
+    assert "::" not in str(copied)
+    assert copied.name == "CWE-022"
+    assert (copied / "PathInjection.ql").is_file()
+    assert (tmp_path / "run" / "official_query_pack" / "qlpack.yml").is_file()
+
+
+def test_official_codeql_baseline_resolves_case_wrapper_to_real_binary(tmp_path):
+    module = runpy.run_path(
+        str(Path(__file__).resolve().parents[1] / "scripts" / "run_official_codeql_baseline.py")
+    )
+    real = tmp_path / "real-codeql"
+    real.write_bytes(b"\x7fELF")
+    wrapper = tmp_path / "codeql"
+    wrapper.write_text(
+        '#!/usr/bin/env bash\n'
+        f'SOURCE_CODEQL="{real}"\n'
+        'exec "$SOURCE_CODEQL" "$@"\n'
+    )
+
+    assert module["resolve_codeql_executable"](wrapper) == real
+
+
+def test_official_codeql_baseline_prefixes_unsafe_query_paths(tmp_path):
+    module = runpy.run_path(
+        str(Path(__file__).resolve().parents[1] / "scripts" / "run_official_codeql_baseline.py")
+    )
+
+    assert module["path_argument"](tmp_path / "plain") == str(tmp_path / "plain")
+    assert module["path_argument"](tmp_path / "case::id" / "query") == f"path:{tmp_path / 'case::id' / 'query'}"
+
+
+def test_official_codeql_query_root_prefers_complete_dependency_bundle(tmp_path):
+    module = runpy.run_path(
+        str(Path(__file__).resolve().parents[1] / "scripts" / "run_official_codeql_baseline.py")
+    )
+    workspace = tmp_path / "work" / "case"
+    weak = tmp_path / "work" / "official-codeql-bundles" / "codeql-weak"
+    strong = tmp_path / "work" / "official-codeql-bundles" / "codeql-strong"
+    for root in (weak, strong):
+        query = root / "qlpacks" / "codeql" / "java-queries" / "1.8.1" / "Security" / "CWE" / "CWE-022"
+        query.mkdir(parents=True)
+        (query / "PathInjection.ql").write_text("import java\n")
+        java_queries = root / "qlpacks" / "codeql" / "java-queries" / "1.8.1"
+        java_queries.mkdir(parents=True, exist_ok=True)
+        (java_queries / "qlpack.yml").write_text(
+            "name: codeql/java-queries\n"
+            "dependencies:\n"
+            "  codeql/java-all: ${workspace}\n"
+        )
+    for pack in ("java-all/7.7.1", "controlflow/2.0.16", "dataflow/2.0.16"):
+        pack_dir = strong / "qlpacks" / "codeql" / pack
+        pack_dir.mkdir(parents=True)
+        (pack_dir / "qlpack.yml").write_text("name: codeql/test\n")
+    (strong / "qlpacks" / "codeql" / "java-queries" / "1.8.1" / "qlpack.yml").write_text(
+        "name: codeql/java-queries\n"
+        "dependencies:\n"
+        "  codeql/java-all: 7.7.1\n"
+    )
+
+    chosen = module["official_query_source_root"](workspace, {"actions": []}, "1.8.1", "CWE-022")
+
+    assert "codeql-strong" in str(chosen)
 
 
 def test_batch_rejects_overcommitted_llm_concurrency(tmp_path):
