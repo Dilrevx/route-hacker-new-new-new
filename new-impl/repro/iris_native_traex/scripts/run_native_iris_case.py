@@ -150,7 +150,11 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--workspace", type=Path, required=True)
     parser.add_argument("--run-id", required=True)
-    parser.add_argument("--llm", choices=("gpt-traex-flash", "gpt-traex-pro"), default="gpt-traex-flash")
+    parser.add_argument(
+        "--llm",
+        choices=("gpt-traex-flash", "gpt-traex-pro", "deepseek-v4-flash", "deepseek-v4-pro"),
+        default="gpt-traex-flash",
+    )
     parser.add_argument("--bridge-url", required=True)
     parser.add_argument("--python", default=sys.executable)
     parser.add_argument("--num-threads", type=int, default=1)

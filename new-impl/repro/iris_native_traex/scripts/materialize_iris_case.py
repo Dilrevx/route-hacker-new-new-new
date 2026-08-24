@@ -61,9 +61,27 @@ def find_case(rows: list[dict[str, Any]], case_selector: str) -> dict[str, Any]:
     if len(matches) != 1:
         raise ValueError(f"expected exactly one receipt for {case_selector}, found {len(matches)}")
     row = matches[0]
-    if row.get("status") != "iris_shadow_root_ready":
+    if not is_iris_ready_row(row):
         raise ValueError(f"case is not IRIS-ready: {row.get('status')} blockers={row.get('blockers')}")
     return row
+
+
+def is_iris_ready_row(row: dict[str, Any]) -> bool:
+    if row.get("status") == "iris_shadow_root_ready":
+        return True
+    if row.get("status") in {"native_iris_ready", "current_v2_native_iris_ready"}:
+        return True
+    if row.get("schema_version") == "iris213_full_strict_native_admission.v1":
+        admission = row.get("official_iris_admission") or {}
+        required = (
+            "exact_source_receipt",
+            "fix_info_present",
+            "native_query_supported",
+            "package_names_present",
+            "project_info_present",
+        )
+        return all(admission.get(key) is True for key in required)
+    return False
 
 
 def add_traex_model_aliases(gpt_model_path: Path) -> dict[str, str]:
@@ -79,19 +97,42 @@ def add_traex_model_aliases(gpt_model_path: Path) -> dict[str, str]:
         if marker not in source:
             raise RuntimeError(f"cannot find GPT model registry marker in {gpt_model_path}")
         source = source.replace(marker, aliases + "}\n_OPENAI_DEFAULT_PARAMS", 1)
-    client_marker = "self.client = OpenAI(api_key=api_key)"
-    client_replacement = (
-        'self.client = OpenAI(\n'
-        '            api_key=api_key,\n'
-        '            default_headers={\n'
+    header_marker = (
+        'default_headers={\n'
         '                "X-Iris-Run-Id": os.getenv("IRIS_TRAEX_RUN_ID", ""),\n'
         '                "X-Iris-Case-Id": os.getenv("IRIS_TRAEX_CASE_ID", ""),\n'
-        '            },\n'
+        '            }'
+    )
+    legacy_client_marker = "self.client = OpenAI(api_key=api_key)"
+    legacy_client_replacement = (
+        'self.client = OpenAI(\n'
+        '            api_key=api_key,\n'
+        f'            {header_marker},\n'
         '        )'
     )
-    if client_marker in source:
-        source = source.replace(client_marker, client_replacement, 1)
-    elif "X-Iris-Run-Id" not in source:
+    base_url_client_marker = (
+        "self.client = OpenAI(api_key=api_key, base_url=base_url, timeout=timeout) "
+        "if base_url else OpenAI(api_key=api_key, timeout=timeout)"
+    )
+    base_url_client_replacement = (
+        "self.client = OpenAI(\n"
+        "            api_key=api_key,\n"
+        "            base_url=base_url,\n"
+        "            timeout=timeout,\n"
+        f"            {header_marker},\n"
+        "        ) if base_url else OpenAI(\n"
+        "            api_key=api_key,\n"
+        "            timeout=timeout,\n"
+        f"            {header_marker},\n"
+        "        )"
+    )
+    if "X-Iris-Run-Id" in source:
+        pass
+    elif base_url_client_marker in source:
+        source = source.replace(base_url_client_marker, base_url_client_replacement, 1)
+    elif legacy_client_marker in source:
+        source = source.replace(legacy_client_marker, legacy_client_replacement, 1)
+    else:
         raise RuntimeError(f"cannot add bridge attribution headers to {gpt_model_path}")
     gpt_model_path.write_text(source, encoding="utf-8")
     return {
@@ -162,6 +203,11 @@ def main() -> int:
     db_dir = Path(str(inputs.get("codeql_db") or inputs.get("codeql_db_dir") or ""))
     package_file = Path(str(inputs.get("package_names") or inputs.get("package_names_file") or ""))
     slug = str(case["project_slug"])
+    if not str(source_dir) or not str(db_dir) or not str(package_file):
+        raise SystemExit(
+            "ready receipt must provide input_paths.source, input_paths.codeql_db, "
+            "and input_paths.package_names"
+        )
     actions.extend(
         (
             symlink_exact(source_dir, workspace / "data" / "project-sources" / slug),
@@ -177,7 +223,7 @@ def main() -> int:
         "status": "ready",
         "case": {
             key: case.get(key)
-            for key in ("case_id", "case_index", "project_slug", "cve_id", "cwe_id_normalized", "iris_query")
+            for key in ("case_id", "case_index", "project_slug", "cve_id", "cwe_id", "cwe_id_normalized", "iris_query")
         },
         "workspace": str(workspace),
         "clean_iris_root": str(clean_root),

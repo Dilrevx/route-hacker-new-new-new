@@ -27,6 +27,24 @@ def safe_name(value: str) -> str:
     return "".join(char if char.isalnum() or char in "._-" else "_" for char in value)
 
 
+def is_iris_ready_row(row: dict[str, Any]) -> bool:
+    if row.get("status") == "iris_shadow_root_ready":
+        return True
+    if row.get("status") in {"native_iris_ready", "current_v2_native_iris_ready"}:
+        return True
+    if row.get("schema_version") == "iris213_full_strict_native_admission.v1":
+        admission = row.get("official_iris_admission") or {}
+        required = (
+            "exact_source_receipt",
+            "fix_info_present",
+            "native_query_supported",
+            "package_names_present",
+            "project_info_present",
+        )
+        return all(admission.get(key) is True for key in required)
+    return False
+
+
 def summarize_receipts(path: Path) -> dict[str, Any]:
     rows = read_jsonl(path) if path.is_file() else []
     statuses = collections.Counter(str(row.get("status")) for row in rows)
@@ -76,7 +94,11 @@ def main() -> int:
     parser.add_argument("--limit", type=int)
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--attempt-id", default="attempt-1")
-    parser.add_argument("--llm", choices=("gpt-traex-flash", "gpt-traex-pro"), default="gpt-traex-flash")
+    parser.add_argument(
+        "--llm",
+        choices=("gpt-traex-flash", "gpt-traex-pro", "deepseek-v4-flash", "deepseek-v4-pro"),
+        default="gpt-traex-flash",
+    )
     parser.add_argument("--num-threads", type=int, default=1)
     parser.add_argument("--timeout-seconds", type=int, default=3600)
     args = parser.parse_args()
@@ -96,7 +118,7 @@ def main() -> int:
             for row in read_jsonl(ledger)
             if row.get("status") == "completed_verified" and row.get("case_id")
         }
-    ready = [row for row in read_jsonl(args.receipts) if row.get("status") == "iris_shadow_root_ready"]
+    ready = [row for row in read_jsonl(args.receipts) if is_iris_ready_row(row)]
     selected = [row for row in ready if str(row.get("case_id")) not in completed]
     if args.limit is not None:
         selected = selected[: args.limit]

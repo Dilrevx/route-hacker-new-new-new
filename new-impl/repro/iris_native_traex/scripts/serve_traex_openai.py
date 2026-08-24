@@ -23,6 +23,12 @@ from pathlib import Path
 from typing import Any
 
 
+MODEL_ALIASES = {
+    "gpt-traex-flash": "DeepSeek-V4-Flash",
+    "gpt-traex-pro": "DeepSeek-V4-Pro",
+}
+
+
 def render_prompt(messages: list[dict[str, Any]], require_json_object: bool) -> str:
     """Preserve IRIS's system and user roles in one TraeX prompt."""
 
@@ -98,11 +104,8 @@ class TraexBackend:
         if not isinstance(messages, list) or not messages:
             raise ValueError("messages must be a non-empty list")
         request_model = request.get("model")
-        if request_model and str(request_model).lower() not in {
-            self.model.lower(),
-            "deepseek-v4-flash",
-            "deepseek-v4-pro",
-        }:
+        normalized_request_model = MODEL_ALIASES.get(str(request_model or "").lower(), request_model)
+        if normalized_request_model and str(normalized_request_model).lower() != self.model.lower():
             raise ValueError(f"bridge only serves {self.model}, got {request_model}")
         response_format = request.get("response_format")
         require_json_object = isinstance(response_format, dict) and response_format.get("type") == "json_object"

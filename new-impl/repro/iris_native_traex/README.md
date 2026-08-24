@@ -27,8 +27,25 @@ The scripts expect:
 
 - a clean, pinned IRIS root containing `src/` and metadata CSV files;
 - a CodeQL distribution compatible with that IRIS root;
-- an audited IRIS layout receipt JSONL with `iris_shadow_root_ready` rows;
+- an audited IRIS layout receipt JSONL with either `iris_shadow_root_ready`
+  rows or strict-admission rows that pass the official IRIS metadata checks;
 - each ready receipt's exact source tree, CodeQL DB, and package-name file.
+
+For current unified-v2 evaluation, first convert strict-admission evidence plus
+the current CodeQL denominator manifest into a native-IRIS queue:
+
+```bash
+python3 scripts/prepare_current_v2_iris_queue.py \
+  --current-review /path/hcvr_new_unified_fix_revision_paper_eval_review.v2.jsonl \
+  --codeql-manifest /path/current_143_with_usable_codeql_db_manifest.jsonl \
+  --strict-admission /path/strict-admission.jsonl \
+  --iris213-case-status /path/iris213_case_status.csv \
+  --out-dir /path/current-v2-iris-queue
+```
+
+The queue uses CVE/GHSA plus checkout revision alignment. It writes
+`current_v2_native_iris_ready_queue.jsonl`, which can be passed directly to the
+batch runner.
 
 These inputs remain external to Git. Outputs, source snapshots, DBs, and model
 credentials are never committed.

@@ -6,6 +6,7 @@ def test_scripts_are_present():
     root = Path(__file__).resolve().parents[1] / "scripts"
     assert (root / "serve_traex_openai.py").is_file()
     assert (root / "materialize_iris_case.py").is_file()
+    assert (root / "prepare_current_v2_iris_queue.py").is_file()
     assert (root / "run_native_iris_case.py").is_file()
     assert (root / "run_native_iris_batch.py").is_file()
     assert (root / "summarize_native_iris_metrics.py").is_file()
@@ -29,3 +30,31 @@ def test_batch_summary_counts_verified_statistics(tmp_path):
     assert summary["verified_totals"]["elapsed_seconds"] == 3
     assert summary["verified_totals"]["candidate_apis"] == 5
     assert summary["verified_totals"]["vanilla_paths"] == 2
+
+
+def test_batch_accepts_strict_admission_rows():
+    module = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "run_native_iris_batch.py"))
+    assert module["is_iris_ready_row"](
+        {
+            "schema_version": "iris213_full_strict_native_admission.v1",
+            "official_iris_admission": {
+                "exact_source_receipt": True,
+                "fix_info_present": True,
+                "native_query_supported": True,
+                "package_names_present": True,
+                "project_info_present": True,
+            },
+        }
+    )
+    assert not module["is_iris_ready_row"](
+        {
+            "schema_version": "iris213_full_strict_native_admission.v1",
+            "official_iris_admission": {
+                "exact_source_receipt": True,
+                "fix_info_present": False,
+                "native_query_supported": True,
+                "package_names_present": True,
+                "project_info_present": True,
+            },
+        }
+    )
