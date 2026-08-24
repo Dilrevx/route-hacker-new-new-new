@@ -1,0 +1,147 @@
+{
+  "codeql_missing_detail_counts": {
+    "build_command_discovery_failed": 2,
+    "codeql_db_failed": 1,
+    "iris_materialization_not_selected": 3,
+    "llm_repair_worker_failed": 1,
+    "no_safe_initial_build_command": 6,
+    "no_safe_llm_repair": 89,
+    "repair_attempt_failed": 9,
+    "source_receipt_missing": 9
+  },
+  "comparison_metrics": {
+    "codeql": {
+      "best_effort_recall_method": 0.056338028169014086,
+      "case_hits": 12,
+      "completed_subset_recall_method": 0.1935483870967742,
+      "completed_verified_case_count": 62,
+      "denominator_case_count": 213,
+      "method_overlap_paths": 171,
+      "path_overlap_rate_completed_subset": 0.40046838407494145,
+      "precision": null,
+      "precision_note": "IRIS fix methods are positive-only labels. They support method recall and path-overlap accounting, not false-positive-complete precision.",
+      "reported_paths": 427,
+      "reported_results": 156,
+      "unavailable_or_not_completed_case_count": 151
+    },
+    "posthoc": {
+      "best_effort_recall_method": 0.07511737089201878,
+      "case_hits": 16,
+      "completed_subset_recall_method": 0.25806451612903225,
+      "completed_verified_case_count": 62,
+      "denominator_case_count": 213,
+      "method_overlap_paths": 125,
+      "path_overlap_rate_completed_subset": 0.20128824476650564,
+      "precision": null,
+      "precision_note": "IRIS fix methods are positive-only labels. They support method recall and path-overlap accounting, not false-positive-complete precision.",
+      "reported_paths": 621,
+      "reported_results": 2016,
+      "unavailable_or_not_completed_case_count": 151
+    },
+    "vanilla": {
+      "best_effort_recall_method": 0.07981220657276995,
+      "case_hits": 17,
+      "completed_subset_recall_method": 0.27419354838709675,
+      "completed_verified_case_count": 62,
+      "denominator_case_count": 213,
+      "method_overlap_paths": 447,
+      "path_overlap_rate_completed_subset": 0.07440079893475367,
+      "precision": null,
+      "precision_note": "IRIS fix methods are positive-only labels. They support method recall and path-overlap accounting, not false-positive-complete precision.",
+      "reported_paths": 6008,
+      "reported_results": 2016,
+      "unavailable_or_not_completed_case_count": 151
+    }
+  },
+  "coverage": {
+    "case_status_counts": {
+      "codeql_status": {
+        "completed_verified": 62,
+        "not_completed": 151
+      },
+      "native_status": {
+        "completed_verified": 62,
+        "not_completed": 151
+      }
+    },
+    "codeql_completed_verified_case_count": 62,
+    "codeql_completed_without_native_count": 0,
+    "codeql_completed_without_native_project_slugs": [],
+    "native_completed_missing_codeql_count": 0,
+    "native_completed_missing_codeql_project_slugs": [],
+    "native_completed_verified_case_count": 62,
+    "paired_completed_verified_case_count": 62,
+    "universe_case_count": 213
+  },
+  "db_usable_not_final_detail_counts": {
+    "exact_source_receipt_missing": 1,
+    "exact_source_receipt_missing;package_names_missing": 2,
+    "fix_info_missing": 1,
+    "project_info_missing_or_ambiguous;exact_source_receipt_missing;package_names_missing": 1,
+    "project_info_missing_or_ambiguous;exact_source_receipt_missing;package_names_missing;native_query_unsupported": 3,
+    "project_info_missing_or_ambiguous;fix_info_missing;exact_source_receipt_missing;package_names_missing;native_query_unsupported": 2,
+    "project_info_missing_or_ambiguous;fix_info_missing;package_names_missing;native_query_unsupported": 3,
+    "project_info_missing_or_ambiguous;package_names_missing;native_query_unsupported": 3,
+    "strict native admission passed, but no completed_verified native IRIS summary in final 213 report": 15
+  },
+  "final_bucket_counts": {
+    "codeql_db_not_repaired": 79,
+    "codeql_first_build_not_usable": 18,
+    "db_usable_admission_rejected": 16,
+    "db_usable_admitted_native_not_completed": 15,
+    "historical_codeql_not_usable": 23,
+    "paired_completed": 62
+  },
+  "generated_at": "2026-08-24T00:00:00Z",
+  "headline_counts": {
+    "codeql_db_missing_or_not_repaired": 120,
+    "codeql_db_usable_evidence": 93,
+    "db_usable_not_in_final": 31,
+    "native_completed_verified": 62,
+    "official_codeql_completed_verified": 62,
+    "paired_completed": 62,
+    "universe": 213
+  },
+  "notes": [
+    "Denominator is the full 213-case CWE-Bench-Java / IRIS universe.",
+    "Native IRIS completion and official CodeQL completion count only completed_verified summaries.",
+    "CodeQL DB usable evidence is an operational runnability category, not a vulnerability detection result.",
+    "Precision is unavailable because IRIS fix-method labels are positive-only and do not define complete false positives."
+  ],
+  "repair_waves": {
+    "historical_r3_53": {
+      "codeql_db_repaired": 8,
+      "no_safe_llm_repair": 43,
+      "repair_attempt_failed": 2
+    },
+    "latest_96": {
+      "codeql_db_repaired": 55,
+      "no_safe_llm_repair": 41
+    },
+    "latest_r8_94": {
+      "codeql_db_repaired": 55,
+      "no_safe_llm_repair": 39
+    },
+    "r3_plus_latest96_unique": {
+      "codeql_db_repaired": 63,
+      "no_safe_llm_repair": 84,
+      "repair_attempt_failed": 2
+    }
+  },
+  "schema_version": "iris213_cwebenchjava_status_snapshot.v2",
+  "source_artifacts": {
+    "final_213_comparison_json": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a27-iris213-best-effort-comparison-20260824T060425Z/final-213-best-effort/comparison.213.json",
+    "final_213_comparison_sha256": "084dcece25b2ece1a5f68b2cd6dee3cbe4f4458154406c336afb641a55244984",
+    "r3_ledger": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a26-full213-minus47-v2-repair-20260822T171745Z/dispatch-r3-preflight-source-rebuild/w1_llm_repair_receipts.jsonl",
+    "r3_ledger_sha256": "40ead4e48f8191570537a3aed9f622eea437e319841a52c98ce43b1ce68a999e",
+    "r5_ledger": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a26-full213-minus47-v2-repair-20260822T171745Z/dispatch-discovery113-network429-backoff-r5-inactivity900-20260823T163107Z/dispatch/w1_llm_repair_receipts.jsonl",
+    "r5_ledger_sha256": "4b858c48a882e99c5df5623c18ee242560b1f6a379ccbdfb2e0cda3a8aa6edbe",
+    "r8_ledger": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a26-full213-minus47-v2-repair-20260822T171745Z/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/w1_llm_repair_receipts.jsonl",
+    "r8_ledger_sha256": "97cc1c523a735836b9d045396e5f20b253bc6f739f2483608b7da1681f5620bc",
+    "strict_admission_jsonl": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a26-full213-minus47-v2-repair-20260822T171745Z/native-iris-admission-r8-20260824T/strict-admission.jsonl",
+    "strict_admission_sha256": "34b97d91a5fb5e8325e6251ff2699d1ef4821b0699f91d7baf83f4a5bc7f1f72",
+    "strict_admission_summary_sha256": "819b3e39d077398d9259366979de0c629e7d2c4a9ce66691b9a5d14e22716266",
+    "universe_jsonl": "/mnt/dce94ca0-0dcc-412e-b434-f83bb74b35a7/lhq/repro/qa-iris-v2-45-a1/a22-iris213-current-coverage-matrix-20260822T0145Z/iris213_current_coverage_matrix.jsonl",
+    "universe_sha256": "76d47bc64db4eec2caeba3adbb431a442f3919b373c51b434261099e86f54488"
+  }
+}

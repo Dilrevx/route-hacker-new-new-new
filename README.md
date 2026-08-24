@@ -56,6 +56,23 @@ The Apache project audit is a project-level discovery run, not a one-to-one CVE
 evaluation set. Its candidates require independent source review and, where
 appropriate, runtime verification before they are treated as vulnerabilities.
 
+
+### Native IRIS on CWE-Bench-Java 213
+
+The current native IRIS reproduction snapshot tracks the full 213-case
+CWE-Bench-Java / IRIS universe. It records native IRIS and official CodeQL
+`completed_verified` coverage, the latest 96-case CodeQL DB repair wave, the
+historical r3 repair wave, and a per-case status ledger.
+
+| Snapshot | What it contains | Status | Result files |
+| --- | --- | --- | --- |
+| [`iris213-cwebenchjava-status-20260824`](new-impl/repro/iris_native_traex/results/iris213-cwebenchjava-status-20260824/) | Full 213-case status snapshot for native IRIS and official CodeQL on CWE-Bench-Java. Includes the latest 96-case repair accounting, historical repair waves, final paired comparison metrics, and one row per case. | Paired completed_verified comparison: 62/213; CodeQL DB usable evidence: 93/213; latest 96 repair wave: 55 repaired and 41 no-safe. | [`summary.md`](new-impl/repro/iris_native_traex/results/iris213-cwebenchjava-status-20260824/summary.md), [`iris213_case_status.csv`](new-impl/repro/iris_native_traex/results/iris213-cwebenchjava-status-20260824/iris213_case_status.csv), [`iris213_status_summary.json`](new-impl/repro/iris_native_traex/results/iris213-cwebenchjava-status-20260824/iris213_status_summary.json) |
+
+CodeQL DB construction is tracked as runnability/admission evidence, not as a
+vulnerability detection result. Precision remains unavailable for this snapshot
+because the IRIS fix-method labels are positive-only and do not define a
+complete false-positive set.
+
 ### Backend-B model ablation
 
 Paper-comparable Backend-B rows must use the same Unified V2 paper-eval
