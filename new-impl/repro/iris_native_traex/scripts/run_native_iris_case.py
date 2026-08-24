@@ -146,6 +146,15 @@ def iris_result_statistics(workspace: Path, slug: str, run_id: str, query: str) 
     }
 
 
+def effective_iris_llm_name(requested: str) -> str:
+    """Route direct TraeX model names through IRIS's GPT/OpenAI transport."""
+
+    return {
+        "deepseek-v4-flash": "gpt-traex-flash",
+        "deepseek-v4-pro": "gpt-traex-pro",
+    }.get(requested, requested)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--workspace", type=Path, required=True)
@@ -177,6 +186,7 @@ def main() -> int:
     case = materialization["case"]
     slug = str(case["project_slug"])
     query = str(case["iris_query"])
+    effective_llm = effective_iris_llm_name(args.llm)
     output_dir = args.output_dir.resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
     project_output = workspace / "output" / slug / args.run_id
@@ -192,7 +202,7 @@ def main() -> int:
         "--run-id",
         args.run_id,
         "--llm",
-        args.llm,
+        effective_llm,
         "--num-threads",
         str(args.num_threads),
         "--label-api-batch-size",
@@ -248,7 +258,8 @@ def main() -> int:
         "timed_out": timed_out,
         "elapsed_seconds": elapsed_seconds,
         "llm": {
-            "iris_model_name": args.llm,
+            "requested_model_name": args.llm,
+            "iris_model_name": effective_llm,
             "transport": "local_traex_openai_bridge",
             "bridge_url": args.bridge_url,
             "llm_timeout_seconds": args.llm_timeout_seconds,
