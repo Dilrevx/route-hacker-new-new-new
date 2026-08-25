@@ -5,8 +5,6 @@ text{font-family:Arial,Helvetica,sans-serif;fill:#17202a}.title{font-size:24px;f
 .label{font-size:13px}.num{font-size:12px;font-weight:700}.p3{fill:#2878b5}.qw{fill:#d1495b}.delta{fill:#1f8f72}
 ]]></style>
 <rect width="980" height="520" fill="white"/>
-<text class="title" x="28" y="34">P3C64 improves known-anchor retrieval under the same 143 identities</text>
-<text class="sub" x="28" y="58">Bars show hit counts at each audit budget. Labels above groups are P3C64 minus Qwen3-Embedding-4B.</text>
 <line class="axis" x1="70" y1="448.0" x2="946" y2="448.0"/>
 <text class="tick" x="28" y="452.0">0</text>
 <line class="axis" x1="70" y1="369.5" x2="946" y2="369.5"/>

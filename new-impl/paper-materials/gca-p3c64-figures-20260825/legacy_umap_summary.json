@@ -1,0 +1,35 @@
+{
+  "display_cluster_labels": [
+    "Other clusters",
+    "Noise",
+    "Path containment",
+    "AuthN/AuthZ guard",
+    "XSS rendering",
+    "Deserialization filter",
+    "XXE parser config",
+    "Structured injection",
+    "SSRF host validation",
+    "Dynamic SQL",
+    "Unsafe path construction"
+  ],
+  "display_cwe_labels": [
+    "Other CWE",
+    "N/A",
+    "CWE-79",
+    "CWE-22",
+    "CWE-502",
+    "CWE-89",
+    "CWE-200",
+    "CWE-918",
+    "CWE-611",
+    "CWE-94"
+  ],
+  "noise_points": 172,
+  "points": 1263,
+  "raw_cluster_count": 46,
+  "raw_cwe_count": 168,
+  "source_coords": "/Users/bytedance/workspace/route-hacker-new-new-main-new-guideline/new-impl/paper-materials/gca-p3c64-figures-20260825/legacy_umap_coords_2d.json",
+  "source_remote": "/data/lhq/workspace/route-hacker/output/cve_clustering/v1/coords_2d.json",
+  "umap_2d_knn_same_cwe_label_at_10": 0.6180522565320665,
+  "umap_2d_knn_same_guideline_cluster_at_10": 0.856215360253365
+}

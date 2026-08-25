@@ -6,7 +6,7 @@ GCA produces mechanism-level guidelines that are more actionable than a raw CVE 
 
 ## GCA Figure Caption
 
-GCA separates vulnerability mechanism space from noisy CVE/CWE annotation space. The figure projects 260 CVE root-cause descriptions into one embedding coordinate system and renders the same points twice: first colored by primary CWE label, then colored by GCA mechanism. The CWE-colored view has lower local label consistency, with 10-NN same-label agreement 0.651 and cosine silhouette 0.139. The GCA-colored view has higher local mechanism consistency, with 10-NN same-label agreement 0.985 and cosine silhouette 0.334. This visualization supports the motivation that CWE labels are useful metadata but weak retrieval queries, while GCA mechanisms provide more coherent audit obligations.
+GCA separates vulnerability mechanism space from noisy CVE/CWE annotation space. The figure reuses the historical route-hacker UMAP projection over 1,263 CVE embeddings and renders the same points twice: first colored by CWE label, then colored by guideline cluster. The CWE-colored view has lower local label consistency, with 10-NN same-label agreement 0.618. The guideline-cluster view is more locally coherent, with 10-NN same-label agreement 0.856 across the same coordinates. This visualization supports the motivation that CWE labels are useful metadata but weak retrieval queries, while mechanism-level guidelines provide more coherent audit obligations.
 
 ## P3C64 Figure Caption
 

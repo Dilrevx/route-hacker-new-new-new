@@ -5,8 +5,6 @@ text{font-family:Arial,Helvetica,sans-serif;fill:#17202a}.title{font-size:24px;f
 .box{fill:#f7f9fb;stroke:#d6dbdf;stroke-width:1}.cwe{fill:#d1495b}.gca{fill:#2878b5}.good{fill:#1f8f72}.line{stroke:#b0bec5;stroke-width:1.5;opacity:.72}
 ]]></style>
 <rect width="1120" height="650" fill="white"/>
-<text class="title" x="28" y="36">GCA mechanism space resolves part of CVE/CWE metadata noise</text>
-<text class="sub" x="28" y="60">The 143-case paper set has sparse/incomplete CWE metadata, while GCA produces mechanism-level audit obligations with explicit release headroom.</text>
 <rect class="box" x="28" y="92" width="330" height="500" rx="6"/>
 <text class="h" x="46" y="124">CVE/CWE annotation space</text>
 <text class="label" x="58" y="152">Dataset CWE present</text>

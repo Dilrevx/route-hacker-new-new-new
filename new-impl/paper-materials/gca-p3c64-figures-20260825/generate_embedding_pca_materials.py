@@ -437,8 +437,6 @@ def write_cve_gca_svg(
         ".metric{font-size:13px;font-weight:700}.note{font-size:12px;fill:#5d6d7e}",
         "]]></style>",
         '<rect width="1180" height="720" fill="white"/>',
-        '<text class="title" x="28" y="34">Same embedding projection: CWE labels are noisier than GCA mechanisms</text>',
-        f'<text class="subtitle" x="28" y="58">PCA over {len(points)} CVE root-cause embeddings. Same coordinates; only colors change.</text>',
     ]
     panel_y, panel_w, panel_h = 116, 420, 420
     scatter_panel(
@@ -505,8 +503,6 @@ def write_p3c64_svg(
         ".panel{fill:#fbfcfd;stroke:#ccd6dd;stroke-width:1}.axis{stroke:#e5eaee;stroke-width:1}.legend-title{font-size:13px;font-weight:700}.legend{font-size:12px;fill:#34495e}.note{font-size:12px;fill:#5d6d7e}",
         "]]></style>",
         '<rect width="1180" height="720" fill="white"/>',
-        '<text class="title" x="28" y="34">P3C64 query residual reshapes guideline embedding neighborhoods</text>',
-        f'<text class="subtitle" x="28" y="58">PCA over {len(points)} released guideline texts. Colors are GCA mechanisms.</text>',
     ]
     panel_y, panel_w, panel_h = 116, 420, 420
     scatter_panel(
@@ -568,8 +564,6 @@ def write_p3c64_cve_shift_svg(
         ".panel{fill:#fbfcfd;stroke:#ccd6dd;stroke-width:1}.axis{stroke:#e5eaee;stroke-width:1}.legend-title{font-size:13px;font-weight:700}.legend{font-size:12px;fill:#34495e}.note{font-size:12px;fill:#5d6d7e}",
         "]]></style>",
         '<rect width="1180" height="720" fill="white"/>',
-        '<text class="title" x="28" y="34">P3C64 query residual on CVE root-cause hypotheses</text>',
-        f'<text class="subtitle" x="28" y="58">PCA over {len(points)} CVE root-cause texts. Colors are GCA mechanisms.</text>',
     ]
     panel_y, panel_w, panel_h = 116, 420, 420
     scatter_panel(

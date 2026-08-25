@@ -5,8 +5,6 @@ text{font-family:Arial,Helvetica,sans-serif;fill:#17202a}.title{font-size:24px;f
 .line{stroke:#2878b5;stroke-width:2;fill:none}.dot{fill:#2878b5}.small{font-size:12px}.label{font-size:13px}.metric{font-size:18px;font-weight:700}.box{fill:#f7f9fb;stroke:#d6dbdf}
 ]]></style>
 <rect width="980" height="650" fill="white"/>
-<text class="title" x="28" y="34">Representative rank shifts after P3C64 fine-tuning</text>
-<text class="sub" x="28" y="58">Lower rank is better. Lines show cases that enter Top-200 with P3C64 but not Qwen3-Embedding-4B.</text>
 <line class="guide" x1="160" y1="110.0" x2="620" y2="110.0"/>
 <text class="small" x="106" y="114.0">1</text>
 <line class="guide" x1="160" y1="217.5" x2="620" y2="217.5"/>

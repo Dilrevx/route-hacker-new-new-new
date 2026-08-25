@@ -5,8 +5,6 @@ text{font-family:Arial,Helvetica,sans-serif;fill:#17202a} .title{font-size:24px;
 .axis{stroke:#d6dbdf;stroke-width:1}.bar{fill:#2878b5}.bar2{fill:#d1495b}.bg{fill:#f7f9fb}
 ]]></style>
 <rect width="980" height="298" fill="white"/>
-<text class="title" x="28" y="34">GCA coverage funnel on the 143-case paper set</text>
-<text class="sub" x="28" y="58">The primary release covers 28 cases; most remaining headroom is CVE/GHSA ingestion and release gating, not model scoring.</text>
 <line class="axis" x1="310" y1="78" x2="860" y2="78"/>
 <text class="label" x="28" y="111">Primary released sidecar</text>
 <rect class="bg" x="310" y="92" width="550" height="22" rx="3"/>

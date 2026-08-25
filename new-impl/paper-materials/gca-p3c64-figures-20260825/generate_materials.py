@@ -84,8 +84,6 @@ def bar_svg(
         ".axis{stroke:#d6dbdf;stroke-width:1}.bar{fill:#2878b5}.bar2{fill:#d1495b}.bg{fill:#f7f9fb}",
         "]]></style>",
         f'<rect width="{width}" height="{height}" fill="white"/>',
-        f'<text class="title" x="28" y="34">{xml_escape(title)}</text>',
-        f'<text class="sub" x="28" y="58">{xml_escape(subtitle)}</text>',
         f'<line class="axis" x1="{left}" y1="78" x2="{left + chart_w}" y2="78"/>',
     ]
     y = 92
@@ -134,8 +132,6 @@ def grouped_hit_svg(
         ".label{font-size:13px}.num{font-size:12px;font-weight:700}.p3{fill:#2878b5}.qw{fill:#d1495b}.delta{fill:#1f8f72}",
         "]]></style>",
         f'<rect width="{width}" height="{height}" fill="white"/>',
-        '<text class="title" x="28" y="34">P3C64 improves known-anchor retrieval under the same 143 identities</text>',
-        '<text class="sub" x="28" y="58">Bars show hit counts at each audit budget. Labels above groups are P3C64 minus Qwen3-Embedding-4B.</text>',
     ]
     for t in [0, 30, 60, 90, 120, 143]:
         yy = y(t)
@@ -204,8 +200,6 @@ def gca_space_contrast_svg(
         ".box{fill:#f7f9fb;stroke:#d6dbdf;stroke-width:1}.cwe{fill:#d1495b}.gca{fill:#2878b5}.good{fill:#1f8f72}.line{stroke:#b0bec5;stroke-width:1.5;opacity:.72}",
         "]]></style>",
         f'<rect width="{width}" height="{height}" fill="white"/>',
-        '<text class="title" x="28" y="36">GCA mechanism space resolves part of CVE/CWE metadata noise</text>',
-        '<text class="sub" x="28" y="60">The 143-case paper set has sparse/incomplete CWE metadata, while GCA produces mechanism-level audit obligations with explicit release headroom.</text>',
     ]
 
     # Panel 1: metadata availability.
@@ -318,8 +312,6 @@ def p3c64_by_type_svg(joined: list[dict], path: Path, width: int = 1080, height:
         ".p3{fill:#2878b5}.qw{fill:#d1495b}.bg{fill:#eef2f5}.delta{fill:#1f8f72;font-weight:700}",
         "]]></style>",
         f'<rect width="{width}" height="{height}" fill="white"/>',
-        '<text class="title" x="28" y="34">P3C64 gains concentrate on mechanism-level retrieval families</text>',
-        '<text class="sub" x="28" y="58">Per-type Hit@100 counts on the same 143 identities; rows with at least three cases are shown.</text>',
     ]
     y0 = margin_t
     for i, (typ, n, p3_100, q4_100, p3_200, q4_200) in enumerate(rows):
@@ -378,8 +370,6 @@ def rank_shift_svg(
         ".line{stroke:#2878b5;stroke-width:2;fill:none}.dot{fill:#2878b5}.small{font-size:12px}.label{font-size:13px}.metric{font-size:18px;font-weight:700}.box{fill:#f7f9fb;stroke:#d6dbdf}",
         "]]></style>",
         f'<rect width="{width}" height="{height}" fill="white"/>',
-        '<text class="title" x="28" y="34">Representative rank shifts after P3C64 fine-tuning</text>',
-        '<text class="sub" x="28" y="58">Lower rank is better. Lines show cases that enter Top-200 with P3C64 but not Qwen3-Embedding-4B.</text>',
     ]
     x_q, x_p = 220, 500
     for tick in [1, 10, 100, 1000, 10000]:
