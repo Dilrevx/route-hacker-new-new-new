@@ -86,8 +86,10 @@ python3 scripts/run_native_iris_case.py \
   --output-dir /mnt/.../iris-native-traex/results/retrofit
 ```
 
-The runner succeeds only when IRIS exits zero, all final IRIS artifacts exist,
-and every LLM label response parsed as a JSON list.
+The runner succeeds when native IRIS exits zero and all final IRIS artifacts
+exist. Raw LLM label responses that do not parse cleanly are retained as
+completion warnings because native IRIS may still recover enough structure to
+finish the pipeline.
 
 ## Bounded Batch
 

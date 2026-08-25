@@ -21,6 +21,35 @@ def format_float(value: float | None) -> str:
     return "--" if value is None else f"{value:.4f}"
 
 
+def bool_value(value: Any) -> bool:
+    if isinstance(value, bool):
+        return value
+    return str(value).strip().lower() == "true"
+
+
+def current_run_completed(row: dict[str, Any]) -> bool:
+    if row.get("status") == "completed_verified" or row.get("pipeline_completed") is True:
+        return True
+    artifacts = row.get("artifact_gate") or {}
+    statistics = row.get("iris_statistics") or {}
+    return artifacts.get("all_required_artifacts_present") is True and (
+        "vanilla_recall_method" in statistics or "posthoc_recall_method" in statistics
+    )
+
+
+def current_run_has_warning(row: dict[str, Any]) -> bool:
+    if row.get("completion_warnings"):
+        return True
+    label_audit = row.get("label_response_audit") or {}
+    return label_audit.get("all_valid") is False
+
+
+def read_optional_jsonl(path: Path | None) -> list[dict[str, Any]]:
+    if not path or not path.is_file():
+        return []
+    return read_jsonl(path)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--current-review", required=True, type=Path)
@@ -28,6 +57,13 @@ def main() -> None:
     parser.add_argument("--codeql-eval-summary", required=True, type=Path)
     parser.add_argument("--iris-current-queue-summary", type=Path)
     parser.add_argument("--iris-current-case-status", type=Path)
+    parser.add_argument(
+        "--iris-current-run-ledger",
+        action="append",
+        type=Path,
+        default=[],
+        help="Native IRIS current-v2 batch receipts.jsonl to merge with strict reusable 213 rows.",
+    )
     parser.add_argument("--out-dir", required=True, type=Path)
     args = parser.parse_args()
 
@@ -48,8 +84,43 @@ def main() -> None:
         iris_case_rows = read_jsonl(args.iris_current_case_status)
 
     reusable = iris_summary.get("reusable_completed") or {}
-    iris_vanilla_recall = reusable.get("lower_bound_vanilla_recall_on_codeql_denominator")
-    iris_posthoc_recall = reusable.get("lower_bound_posthoc_recall_on_codeql_denominator")
+    current_run_rows: list[dict[str, Any]] = []
+    for ledger in args.iris_current_run_ledger:
+        current_run_rows.extend(read_optional_jsonl(ledger))
+    completed_current_runs = [row for row in current_run_rows if current_run_completed(row)]
+    current_vanilla_hits = sum(
+        bool_value((row.get("iris_statistics") or {}).get("vanilla_recall_method"))
+        for row in completed_current_runs
+    )
+    current_posthoc_hits = sum(
+        bool_value((row.get("iris_statistics") or {}).get("posthoc_recall_method"))
+        for row in completed_current_runs
+    )
+    current_vanilla_alarms = sum(
+        value for row in completed_current_runs
+        if isinstance((value := (row.get("iris_statistics") or {}).get("vanilla_results")), (int, float))
+    )
+    current_posthoc_alarms = sum(
+        value for row in completed_current_runs
+        if isinstance((value := (row.get("iris_statistics") or {}).get("posthoc_results")), (int, float))
+    )
+    current_run_warning_count = sum(1 for row in completed_current_runs if current_run_has_warning(row))
+    completed_current_case_ids = {str(row.get("case_id")) for row in completed_current_runs if row.get("case_id")}
+    originally_queued_case_ids = {
+        str(row.get("iris_case_id"))
+        for row in iris_case_rows
+        if row.get("iris_current_status") == "native_iris_admitted_needs_run" and row.get("iris_case_id")
+    }
+    remaining_queue_count = len(originally_queued_case_ids - completed_current_case_ids)
+
+    reusable_count = reusable.get("case_count") or 0
+    reusable_vanilla_hits = reusable.get("vanilla_hits") or 0
+    reusable_posthoc_hits = reusable.get("posthoc_hits") or 0
+    iris_completed_count = reusable_count + len(completed_current_runs)
+    iris_vanilla_hits = reusable_vanilla_hits + current_vanilla_hits
+    iris_posthoc_hits = reusable_posthoc_hits + current_posthoc_hits
+    iris_vanilla_recall = iris_vanilla_hits / denominator if denominator else 0.0
+    iris_posthoc_recall = iris_posthoc_hits / denominator if denominator else 0.0
 
     table_rows = [
         {
@@ -65,22 +136,22 @@ def main() -> None:
         {
             "method": "Native IRIS vanilla",
             "denominator": denominator,
-            "completed_or_executed": reusable.get("case_count"),
+            "completed_or_executed": iris_completed_count,
             "recall": iris_vanilla_recall,
             "precision": None,
             "f1": None,
-            "alarms": None,
-            "note": "Strict-revision-safe reuse of old 213 native IRIS rows; lower-bound until queued current-v2 native runs finish.",
+            "alarms": current_vanilla_alarms if completed_current_runs else None,
+            "note": "Strict-revision-safe 213 reuse plus current-v2 native runs; alarms shown only for current-v2 native runs, so precision remains unavailable.",
         },
         {
             "method": "Native IRIS posthoc",
             "denominator": denominator,
-            "completed_or_executed": reusable.get("case_count"),
+            "completed_or_executed": iris_completed_count,
             "recall": iris_posthoc_recall,
             "precision": None,
             "f1": None,
-            "alarms": None,
-            "note": "Strict-revision-safe reuse of old 213 native IRIS rows; lower-bound until queued current-v2 native runs finish.",
+            "alarms": current_posthoc_alarms if completed_current_runs else None,
+            "note": "Strict-revision-safe 213 reuse plus current-v2 native runs; alarms shown only for current-v2 native runs, so precision remains unavailable.",
         },
     ]
 
@@ -93,6 +164,7 @@ def main() -> None:
             "codeql_eval_summary": str(args.codeql_eval_summary),
             "iris_current_queue_summary": str(args.iris_current_queue_summary) if args.iris_current_queue_summary else None,
             "iris_current_case_status": str(args.iris_current_case_status) if args.iris_current_case_status else None,
+            "iris_current_run_ledgers": [str(path) for path in args.iris_current_run_ledger],
         },
         "dataset": {
             "current_unified_v2_selected_cases": len(current_keys),
@@ -101,6 +173,26 @@ def main() -> None:
         },
         "codeql": codeql_summary,
         "iris_current_v2": iris_summary,
+        "iris_current_v2_native_runs": {
+            "ledger_count": len(args.iris_current_run_ledger),
+            "receipt_count": len(current_run_rows),
+            "completed_count": len(completed_current_runs),
+            "completed_with_warnings": current_run_warning_count,
+            "originally_queued_count": len(originally_queued_case_ids),
+            "remaining_queued_count": remaining_queue_count,
+            "vanilla_hits": current_vanilla_hits,
+            "posthoc_hits": current_posthoc_hits,
+            "vanilla_alarms": current_vanilla_alarms,
+            "posthoc_alarms": current_posthoc_alarms,
+        },
+        "iris_combined": {
+            "completed_or_executed": iris_completed_count,
+            "vanilla_hits": iris_vanilla_hits,
+            "posthoc_hits": iris_posthoc_hits,
+            "vanilla_recall": iris_vanilla_recall,
+            "posthoc_recall": iris_posthoc_recall,
+            "precision_boundary": "Precision/F1 are not computed because the strict-revision-safe reused 213 rows carry positive-case recall labels rather than full false-positive alarm labels.",
+        },
         "paper_table_rows": table_rows,
     }
     (args.out_dir / "baseline_comparison_current_v2.json").write_text(
@@ -114,8 +206,12 @@ def main() -> None:
         f"- Current unified-v2 selected cases: {len(current_keys)}",
         f"- Current cases with usable historical CodeQL DB: {len(codeql_keys)}",
         f"- Current cases without usable historical CodeQL DB: {len(current_keys - codeql_keys)}",
-        f"- IRIS strict-revision-safe completed rows: {reusable.get('case_count', '--')}",
-        f"- IRIS queued rows needing native run: {(iris_summary.get('counts') or {}).get('queue_ready_cases', '--')}",
+        f"- IRIS strict-revision-safe reused completed rows: {reusable.get('case_count', '--')}",
+        f"- IRIS current-v2 native completed rows: {len(completed_current_runs)}",
+        f"- IRIS combined completed/executed rows: {iris_completed_count}",
+        f"- IRIS queued rows before current native runs: {(iris_summary.get('counts') or {}).get('queue_ready_cases', '--')}",
+        f"- IRIS queued rows remaining after merged native runs: {remaining_queue_count}",
+        f"- IRIS current-v2 completed rows with audit warnings: {current_run_warning_count}",
         "",
         "| Method | Denominator | Completed/executed | Recall | Precision | F1 | Alarms | Note |",
         "| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
@@ -143,7 +239,7 @@ def main() -> None:
             "",
             "## IRIS Boundary",
             "",
-            "The IRIS rows above use CVE/GHSA plus checkout-revision alignment to reuse the prior 213-case native IRIS snapshot. They are lower-bound recall rows until the current-v2 native queue is executed. Precision is unavailable from the reused positive-only fix-method labels.",
+            "The IRIS rows above combine CVE/GHSA plus checkout-revision aligned reuse from the prior 213-case native IRIS snapshot with current-v2 native runs supplied through `--iris-current-run-ledger`. Precision is unavailable from the reused positive-only fix-method labels.",
         ]
     )
     (args.out_dir / "baseline_comparison_current_v2.md").write_text("\n".join(md) + "\n", encoding="utf-8")

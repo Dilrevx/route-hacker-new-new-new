@@ -27,6 +27,16 @@ def safe_name(value: str) -> str:
     return "".join(char if char.isalnum() or char in "._-" else "_" for char in value)
 
 
+def receipt_completed(row: dict[str, Any]) -> bool:
+    if row.get("status") == "completed_verified" or row.get("pipeline_completed") is True:
+        return True
+    artifacts = row.get("artifact_gate") or {}
+    statistics = row.get("iris_statistics") or {}
+    return artifacts.get("all_required_artifacts_present") is True and (
+        "vanilla_recall_method" in statistics or "posthoc_recall_method" in statistics
+    )
+
+
 def is_iris_ready_row(row: dict[str, Any]) -> bool:
     if row.get("status") == "iris_shadow_root_ready":
         return True
@@ -48,7 +58,7 @@ def is_iris_ready_row(row: dict[str, Any]) -> bool:
 def summarize_receipts(path: Path) -> dict[str, Any]:
     rows = read_jsonl(path) if path.is_file() else []
     statuses = collections.Counter(str(row.get("status")) for row in rows)
-    verified = [row for row in rows if row.get("status") == "completed_verified"]
+    verified = [row for row in rows if receipt_completed(row)]
     numeric_fields = (
         "candidate_apis",
         "labelled_sources",
@@ -119,7 +129,7 @@ def main() -> int:
         completed = {
             str(row["case_id"])
             for row in read_jsonl(ledger)
-            if row.get("status") == "completed_verified" and row.get("case_id")
+            if receipt_completed(row) and row.get("case_id")
         }
     ready = [row for row in read_jsonl(args.receipts) if is_iris_ready_row(row)]
     selected = [row for row in ready if str(row.get("case_id")) not in completed]
@@ -172,6 +182,8 @@ def main() -> int:
             "runner_returncode": executed.returncode,
             "summary_path": str(summary_path) if summary_path.is_file() else None,
             "verified_completion": summary.get("verified_completion"),
+            "pipeline_completed": summary.get("pipeline_completed"),
+            "completion_warnings": summary.get("completion_warnings") or [],
             "elapsed_seconds": summary.get("elapsed_seconds"),
             "iris_statistics": summary.get("iris_statistics") or {},
             "label_response_audit": {

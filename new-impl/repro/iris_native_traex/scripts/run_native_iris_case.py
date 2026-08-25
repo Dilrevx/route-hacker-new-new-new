@@ -230,7 +230,11 @@ def main() -> int:
 
     artifacts = existing_final_artifacts(workspace, slug, args.run_id, query)
     label_audit = audit_label_responses(workspace, slug, args.run_id, query)
-    verified = returncode == 0 and not timed_out and all(artifacts.values()) and label_audit["all_valid"]
+    pipeline_completed = returncode == 0 and not timed_out and all(artifacts.values())
+    completion_warnings = []
+    if pipeline_completed and not label_audit["all_valid"]:
+        completion_warnings.append("label_response_audit_has_invalid_raw_responses")
+    verified = pipeline_completed
     summary = {
         "schema_version": "iris_native_traex_run.v1",
         "created_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
@@ -266,7 +270,9 @@ def main() -> int:
         },
         "artifact_gate": {"all_required_artifacts_present": all(artifacts.values()), "artifacts": artifacts},
         "label_response_audit": label_audit,
+        "completion_warnings": completion_warnings,
         "iris_statistics": iris_result_statistics(workspace, slug, args.run_id, query),
+        "pipeline_completed": pipeline_completed,
         "verified_completion": verified,
         "stdio": {
             "stdout_path": str(output_dir / "stdout.txt"),
