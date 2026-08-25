@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="650" viewBox="0 0 1120 650">
+<style><![CDATA[
+text{font-family:Arial,Helvetica,sans-serif;fill:#17202a}.title{font-size:24px;font-weight:700}
+.sub{font-size:13px;fill:#5d6d7e}.h{font-size:16px;font-weight:700}.label{font-size:13px}.small{font-size:12px;fill:#5d6d7e}
+.box{fill:#f7f9fb;stroke:#d6dbdf;stroke-width:1}.cwe{fill:#d1495b}.gca{fill:#2878b5}.good{fill:#1f8f72}.line{stroke:#b0bec5;stroke-width:1.5;opacity:.72}
+]]></style>
+<rect width="1120" height="650" fill="white"/>
+<text class="title" x="28" y="36">GCA mechanism space resolves part of CVE/CWE metadata noise</text>
+<text class="sub" x="28" y="60">The 143-case paper set has sparse/incomplete CWE metadata, while GCA produces mechanism-level audit obligations with explicit release headroom.</text>
+<rect class="box" x="28" y="92" width="330" height="500" rx="6"/>
+<text class="h" x="46" y="124">CVE/CWE annotation space</text>
+<text class="label" x="58" y="152">Dataset CWE present</text>
+<rect x="58" y="160" width="250" height="18" fill="#eef2f5" rx="3"/>
+<rect x="58" y="160" width="14.0" height="18" fill="#d1495b" rx="3"/>
+<text class="small" x="318" y="174">8/143</text>
+<text class="label" x="58" y="210">Structured CWE joined</text>
+<rect x="58" y="218" width="250" height="18" fill="#eef2f5" rx="3"/>
+<rect x="58" y="218" width="127.6" height="18" fill="#e58f65" rx="3"/>
+<text class="small" x="318" y="232">73/143</text>
+<text class="label" x="58" y="268">CVE IDs ingested upper bound</text>
+<rect x="58" y="276" width="250" height="18" fill="#eef2f5" rx="3"/>
+<rect x="58" y="276" width="237.8" height="18" fill="#1f8f72" rx="3"/>
+<text class="small" x="318" y="290">136/143</text>
+<text class="small" x="46" y="360">Top CWE labels by mechanism fan-out:</text>
+<circle cx="62" cy="390" r="18" class="cwe" opacity=".85"/>
+<text class="label" x="94" y="394">CWE-20 -> 18 GCA mechanisms</text>
+<text class="small" x="94" y="412">mech_path_traversal_missing_canonical_prefix, mech_s</text>
+<circle cx="62" cy="442" r="12" class="cwe" opacity=".85"/>
+<text class="label" x="94" y="446">CWE-862 -> 12 GCA mechanisms</text>
+<text class="small" x="94" y="464">mech_object_owner_scope_missing_authz, mech_request_</text>
+<circle cx="62" cy="494" r="8" class="cwe" opacity=".85"/>
+<text class="label" x="94" y="498">CWE-200 -> 8 GCA mechanisms</text>
+<text class="small" x="94" y="516">mech_path_traversal_missing_canonical_prefix, mech_s</text>
+<circle cx="62" cy="546" r="7" class="cwe" opacity=".85"/>
+<text class="label" x="94" y="550">CWE-918 -> 7 GCA mechanisms</text>
+<text class="small" x="94" y="568">mech_ssrf_webhook_url_fetch, mech_ssrf_redirect_foll</text>
+<rect class="box" x="390" y="92" width="330" height="500" rx="6"/>
+<text class="h" x="408" y="124">GCA mechanism space</text>
+<text class="label" x="420" y="152">Released primary sidecar</text>
+<rect x="420" y="160" width="250" height="18" fill="#eef2f5" rx="3"/>
+<rect x="420" y="160" width="49.0" height="18" fill="#2878b5" rx="3"/>
+<text class="small" x="680" y="174">28/143</text>
+<text class="label" x="420" y="210">With review queue release</text>
+<rect x="420" y="218" width="250" height="18" fill="#eef2f5" rx="3"/>
+<rect x="420" y="218" width="92.7" height="18" fill="#3c9d8f" rx="3"/>
+<text class="small" x="680" y="232">53/143</text>
+<text class="label" x="420" y="268">With raw/noise release</text>
+<rect x="420" y="276" width="250" height="18" fill="#eef2f5" rx="3"/>
+<rect x="420" y="276" width="127.6" height="18" fill="#1f8f72" rx="3"/>
+<text class="small" x="680" y="290">73/143</text>
+<text class="small" x="408" y="360">Reusable mechanisms crossing CWE labels:</text>
+<circle cx="424" cy="390" r="22" class="gca" opacity=".88"/>
+<text class="label" x="456" y="394">ssrf_webhook_url_fetch -> 46 CWE labels</text>
+<text class="small" x="456" y="412">CWE-918(69), CWE-20(42), CWE-670(6)</text>
+<circle cx="424" cy="442" r="13.5" class="gca" opacity=".88"/>
+<text class="label" x="456" y="446">path_traversal_missing_canonical_pr... -> 27 CWE labels</text>
+<text class="small" x="456" y="464">CWE-22(154), CWE-20(43), CWE-59(16)</text>
+<circle cx="424" cy="494" r="13.0" class="gca" opacity=".88"/>
+<text class="label" x="456" y="498">binary_length_unbounded_resource_use -> 26 CWE labels</text>
+<text class="small" x="456" y="516">CWE-770(26), CWE-20(23), CWE-190(7)</text>
+<circle cx="424" cy="546" r="10.5" class="gca" opacity=".88"/>
+<text class="label" x="456" y="550">ssrf_redirect_following_client -> 21 CWE labels</text>
+<text class="small" x="456" y="568">CWE-918(30), CWE-20(24), CWE-601(5)</text>
+<rect class="box" x="752" y="92" width="340" height="500" rx="6"/>
+<text class="h" x="770" y="124">Example: JNDI guideline</text>
+<circle cx="922" cy="302" r="62" fill="#2878b5" opacity=".92"/>
+<text x="868" y="296" fill="white" font-size="14" font-weight="700">attacker-controlled</text>
+<text x="880" y="316" fill="white" font-size="14" font-weight="700">JNDI lookup</text>
+<line class="line" x1="922" y1="302" x2="838" y2="180"/>
+<rect x="808" y="162" width="86" height="28" rx="4" fill="#fdecea" stroke="#f2b8b5"/>
+<text class="small" x="820" y="180">CWE-502</text>
+<line class="line" x1="922" y1="302" x2="992" y2="180"/>
+<rect x="962" y="162" width="86" height="28" rx="4" fill="#fdecea" stroke="#f2b8b5"/>
+<text class="small" x="974" y="180">CWE-20</text>
+<line class="line" x1="922" y1="302" x2="834" y2="238"/>
+<rect x="804" y="220" width="86" height="28" rx="4" fill="#fdecea" stroke="#f2b8b5"/>
+<text class="small" x="816" y="238">CWE-184</text>
+<line class="line" x1="922" y1="302" x2="1032" y2="245"/>
+<rect x="1002" y="227" width="86" height="28" rx="4" fill="#fdecea" stroke="#f2b8b5"/>
+<text class="small" x="1014" y="245">CWE-74</text>
+<line class="line" x1="922" y1="302" x2="830" y2="393"/>
+<rect x="800" y="375" width="86" height="28" rx="4" fill="#fdecea" stroke="#f2b8b5"/>
+<text class="small" x="812" y="393">CWE-918</text>
+<line class="line" x1="922" y1="302" x2="1002" y2="405"/>
+<rect x="972" y="387" width="86" height="28" rx="4" fill="#fdecea" stroke="#f2b8b5"/>
+<text class="small" x="984" y="405">CWE-99</text>
+<line class="line" x1="922" y1="302" x2="907" y2="470"/>
+<rect x="877" y="452" width="86" height="28" rx="4" fill="#fdecea" stroke="#f2b8b5"/>
+<text class="small" x="889" y="470">CWE-470</text>
+<text class="small" x="780" y="540">One mechanism, multiple noisy labels and clusters.</text>
+<text class="small" x="780" y="560">This is the paper-friendly data-quality story.</text>
+</svg>

@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="650" viewBox="0 0 980 650">
+<style><![CDATA[
+text{font-family:Arial,Helvetica,sans-serif;fill:#17202a}.title{font-size:24px;font-weight:700}
+.sub{font-size:13px;fill:#5d6d7e}.axis{stroke:#d6dbdf;stroke-width:1}.guide{stroke:#eef2f5;stroke-width:1}
+.line{stroke:#2878b5;stroke-width:2;fill:none}.dot{fill:#2878b5}.small{font-size:12px}.label{font-size:13px}.metric{font-size:18px;font-weight:700}.box{fill:#f7f9fb;stroke:#d6dbdf}
+]]></style>
+<rect width="980" height="650" fill="white"/>
+<text class="title" x="28" y="34">Representative rank shifts after P3C64 fine-tuning</text>
+<text class="sub" x="28" y="58">Lower rank is better. Lines show cases that enter Top-200 with P3C64 but not Qwen3-Embedding-4B.</text>
+<line class="guide" x1="160" y1="110.0" x2="620" y2="110.0"/>
+<text class="small" x="106" y="114.0">1</text>
+<line class="guide" x1="160" y1="217.5" x2="620" y2="217.5"/>
+<text class="small" x="106" y="221.5">10</text>
+<line class="guide" x1="160" y1="325.0" x2="620" y2="325.0"/>
+<text class="small" x="106" y="329.0">100</text>
+<line class="guide" x1="160" y1="432.5" x2="620" y2="432.5"/>
+<text class="small" x="106" y="436.5">1000</text>
+<line class="guide" x1="160" y1="540.0" x2="620" y2="540.0"/>
+<text class="small" x="106" y="544.0">10000</text>
+<line class="axis" x1="220" y1="100" x2="220" y2="550"/>
+<line class="axis" x1="500" y1="100" x2="500" y2="550"/>
+<text class="label" x="158" y="88">Qwen4B rank</text>
+<text class="label" x="458" y="88">P3C64 rank</text>
+<line x1="220" y1="477.9" x2="500" y2="142.4" stroke="#2878b5" stroke-width="2" opacity="0.85"/>
+<circle cx="220" cy="477.9" r="4" fill="#2878b5"/>
+<circle cx="500" cy="142.4" r="4" fill="#2878b5"/>
+<text class="small" x="518" y="146.4">envoyproxy/gateway CVE-2026-53715 (2647 -> 2)</text>
+<line x1="220" y1="446.9" x2="500" y2="142.4" stroke="#1f8f72" stroke-width="2" opacity="0.85"/>
+<circle cx="220" cy="446.9" r="4" fill="#1f8f72"/>
+<circle cx="500" cy="142.4" r="4" fill="#1f8f72"/>
+<text class="small" x="518" y="146.4">jeecgboot/jeecgboot CVE-2025-14909 (1360 -> 2)</text>
+<line x1="220" y1="404.9" x2="500" y2="161.3" stroke="#2878b5" stroke-width="2" opacity="0.85"/>
+<circle cx="220" cy="404.9" r="4" fill="#2878b5"/>
+<circle cx="500" cy="161.3" r="4" fill="#2878b5"/>
+<text class="small" x="518" y="165.3">getkin/kin-openapi GHSA-R277-6W6Q-XMQW (554 -> 3)</text>
+<line x1="220" y1="383.1" x2="500" y2="161.3" stroke="#1f8f72" stroke-width="2" opacity="0.85"/>
+<circle cx="220" cy="383.1" r="4" fill="#1f8f72"/>
+<circle cx="500" cy="161.3" r="4" fill="#1f8f72"/>
+<text class="small" x="518" y="165.3">cyberjunky/python-garminconnect CVE-2026-54447 (347 -> 3)</text>
+<line x1="220" y1="466.3" x2="500" y2="193.7" stroke="#2878b5" stroke-width="2" opacity="0.85"/>
+<circle cx="220" cy="466.3" r="4" fill="#2878b5"/>
+<circle cx="500" cy="193.7" r="4" fill="#2878b5"/>
+<text class="small" x="518" y="197.7">earendil-works/pi CVE-2026-54327 (2064 -> 6)</text>
+<line x1="220" y1="468.0" x2="500" y2="217.5" stroke="#1f8f72" stroke-width="2" opacity="0.85"/>
+<circle cx="220" cy="468.0" r="4" fill="#1f8f72"/>
+<circle cx="500" cy="217.5" r="4" fill="#1f8f72"/>
+<text class="small" x="518" y="221.5">filamentphp/filament CVE-2026-48505 (2141 -> 10)</text>
+<line x1="220" y1="508.3" x2="500" y2="236.4" stroke="#2878b5" stroke-width="2" opacity="0.85"/>
+<circle cx="220" cy="508.3" r="4" fill="#2878b5"/>
+<circle cx="500" cy="236.4" r="4" fill="#2878b5"/>
+<text class="small" x="518" y="240.4">coder/coder CVE-2026-55435 (5073 -> 15)</text>
+<line x1="220" y1="382.0" x2="500" y2="276.0" stroke="#1f8f72" stroke-width="2" opacity="0.85"/>
+<circle cx="220" cy="382.0" r="4" fill="#1f8f72"/>
+<circle cx="500" cy="276.0" r="4" fill="#1f8f72"/>
+<text class="small" x="518" y="280.0">jandedobbeleer/oh-my-posh GHSA-6XJ8-QV9J-XCJQ (339 -> 35)</text>
+<line x1="220" y1="358.1" x2="500" y2="285.6" stroke="#2878b5" stroke-width="2" opacity="0.85"/>
+<circle cx="220" cy="358.1" r="4" fill="#2878b5"/>
+<circle cx="500" cy="285.6" r="4" fill="#2878b5"/>
+<text class="small" x="518" y="289.6">nesquena/hermes-webui CVE-2026-6830 (203 -> 43)</text>
+<line x1="220" y1="418.8" x2="500" y2="294.5" stroke="#1f8f72" stroke-width="2" opacity="0.85"/>
+<circle cx="220" cy="418.8" r="4" fill="#1f8f72"/>
+<circle cx="500" cy="294.5" r="4" fill="#1f8f72"/>
+<text class="small" x="518" y="298.5">cuba-platform/cuba CVE-2025-32959 (745 -> 52)</text>
+<rect class="box" x="675" y="104" width="270" height="176" rx="6"/>
+<text class="metric" x="695" y="138">95</text>
+<text class="label" x="753" y="138">Improved ranks</text>
+<text class="metric" x="695" y="169">43</text>
+<text class="label" x="753" y="169">Worsened ranks</text>
+<text class="metric" x="695" y="200">5</text>
+<text class="label" x="753" y="200">Unchanged ranks</text>
+<text class="metric" x="695" y="231">22</text>
+<text class="label" x="753" y="231">P3C64-only Top-200</text>
+<text class="metric" x="695" y="262">12</text>
+<text class="label" x="753" y="262">Qwen4B-only Top-200</text>
+<text class="sub" x="675" y="318">Interpretation: this supports improved</text>
+<text class="sub" x="675" y="338">mechanism-conditioned ranking, not a</text>
+<text class="sub" x="675" y="358">standalone proof of semantic geometry.</text>
+</svg>

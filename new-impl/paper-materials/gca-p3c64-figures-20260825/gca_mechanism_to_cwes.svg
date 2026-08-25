@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="468" viewBox="0 0 980 468">
+<style><![CDATA[
+text{font-family:Arial,Helvetica,sans-serif;fill:#17202a} .title{font-size:24px;font-weight:700}
+.sub{font-size:13px;fill:#5d6d7e}.label{font-size:13px}.value{font-size:13px;font-weight:700}
+.axis{stroke:#d6dbdf;stroke-width:1}.bar{fill:#2878b5}.bar2{fill:#d1495b}.bg{fill:#f7f9fb}
+]]></style>
+<rect width="980" height="468" fill="white"/>
+<text class="title" x="28" y="34">One GCA mechanism can cross many CWE labels</text>
+<text class="sub" x="28" y="58">Mechanism-level grouping recovers shared audit obligations split across heterogeneous CVE/CWE annotations.</text>
+<line class="axis" x1="310" y1="78" x2="860" y2="78"/>
+<text class="label" x="28" y="111">mech_ssrf_webhook_url_fetch</text>
+<rect class="bg" x="310" y="92" width="550" height="22" rx="3"/>
+<rect x="310" y="92" width="550.0" height="22" rx="3" fill="#2878b5"/>
+<text class="value" x="868.0" y="108">46 CWE labels</text>
+<text class="label" x="28" y="145">mech_path_traversal_missing_canonical_prefix</text>
+<rect class="bg" x="310" y="126" width="550" height="22" rx="3"/>
+<rect x="310" y="126" width="322.8" height="22" rx="3" fill="#3c9d8f"/>
+<text class="value" x="640.8" y="142">27 CWE labels</text>
+<text class="label" x="28" y="179">mech_binary_length_unbounded_resource_use</text>
+<rect class="bg" x="310" y="160" width="550" height="22" rx="3"/>
+<rect x="310" y="160" width="310.9" height="22" rx="3" fill="#2878b5"/>
+<text class="value" x="628.9" y="176">26 CWE labels</text>
+<text class="label" x="28" y="213">mech_ssrf_redirect_following_client</text>
+<rect class="bg" x="310" y="194" width="550" height="22" rx="3"/>
+<rect x="310" y="194" width="251.1" height="22" rx="3" fill="#3c9d8f"/>
+<text class="value" x="569.1" y="210">21 CWE labels</text>
+<text class="label" x="28" y="247">mech_request_body_resource_mismatch_authz</text>
+<rect class="bg" x="310" y="228" width="550" height="22" rx="3"/>
+<rect x="310" y="228" width="251.1" height="22" rx="3" fill="#2878b5"/>
+<text class="value" x="569.1" y="244">21 CWE labels</text>
+<text class="label" x="28" y="281">mech_sql_dynamic_query_untrusted_fragment</text>
+<rect class="bg" x="310" y="262" width="550" height="22" rx="3"/>
+<rect x="310" y="262" width="227.2" height="22" rx="3" fill="#3c9d8f"/>
+<text class="value" x="545.2" y="278">19 CWE labels</text>
+<text class="label" x="28" y="315">mech_xml_external_entity_resolution</text>
+<rect class="bg" x="310" y="296" width="550" height="22" rx="3"/>
+<rect x="310" y="296" width="191.3" height="22" rx="3" fill="#2878b5"/>
+<text class="value" x="509.3" y="312">16 CWE labels</text>
+<text class="label" x="28" y="349">mech_template_expression_untrusted_eval</text>
+<rect class="bg" x="310" y="330" width="550" height="22" rx="3"/>
+<rect x="310" y="330" width="179.3" height="22" rx="3" fill="#3c9d8f"/>
+<text class="value" x="497.3" y="346">15 CWE labels</text>
+<text class="label" x="28" y="383">mech_html_sanitizer_policy_gap</text>
+<rect class="bg" x="310" y="364" width="550" height="22" rx="3"/>
+<rect x="310" y="364" width="167.4" height="22" rx="3" fill="#2878b5"/>
+<text class="value" x="485.4" y="380">14 CWE labels</text>
+<text class="label" x="28" y="417">mech_authentication_artifact_incomplete_validation</text>
+<rect class="bg" x="310" y="398" width="550" height="22" rx="3"/>
+<rect x="310" y="398" width="155.4" height="22" rx="3" fill="#3c9d8f"/>
+<text class="value" x="473.4" y="414">13 CWE labels</text>
+</svg>

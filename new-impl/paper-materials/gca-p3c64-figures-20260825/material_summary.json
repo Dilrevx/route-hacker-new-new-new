@@ -1,0 +1,670 @@
+{
+  "guideline_case": {
+    "identity": "apache__axis-axis1-java::CVE-2023-51441",
+    "guideline_ids": [
+      "gl_mech_0046"
+    ],
+    "mechanism_ids": [
+      "mech_jndi_untrusted_lookup_target"
+    ],
+    "candidate_groups": 8,
+    "historical_cves": 14,
+    "cwe_counts": {
+      "CWE-502": 7,
+      "CWE-184": 3,
+      "CWE-20": 6,
+      "CWE-74": 3,
+      "CWE-918": 2,
+      "CWE-99": 1,
+      "CWE-470": 1
+    }
+  },
+  "gca": {
+    "coverage_category_counts": {
+      "clustered_but_review_only_release_gate": 25,
+      "covered_by_primary_sidecar": 28,
+      "ghsa_or_non_cve_no_cvelist_join": 7,
+      "missing_from_cve_clustering_raw_structured": 63,
+      "present_in_raw_but_cluster_noise": 20
+    },
+    "coverage_upper_bounds": {
+      "current_primary_sidecar": 28,
+      "if_all_cve_ids_ingested": 136,
+      "if_cve_and_ghsa_supported": 143,
+      "if_noise_singletons_released_from_current_raw_structured": 73,
+      "if_review_queue_released_for_current_candidates": 53
+    },
+    "top_cwe_mechanism_diversity": [
+      {
+        "cwe": "CWE-20",
+        "mechanism_count": 18,
+        "top_mechanisms": [
+          [
+            "mech_path_traversal_missing_canonical_prefix",
+            43
+          ],
+          [
+            "mech_ssrf_webhook_url_fetch",
+            42
+          ],
+          [
+            "mech_ssrf_redirect_following_client",
+            24
+          ],
+          [
+            "mech_binary_length_unbounded_resource_use",
+            23
+          ],
+          [
+            "mech_sql_dynamic_query_untrusted_fragment",
+            22
+          ]
+        ]
+      },
+      {
+        "cwe": "CWE-862",
+        "mechanism_count": 12,
+        "top_mechanisms": [
+          [
+            "mech_object_owner_scope_missing_authz",
+            16
+          ],
+          [
+            "mech_request_body_resource_mismatch_authz",
+            12
+          ],
+          [
+            "mech_ssrf_webhook_url_fetch",
+            5
+          ],
+          [
+            "mech_privileged_server_side_capability_exposed",
+            4
+          ],
+          [
+            "mech_template_expression_untrusted_eval",
+            3
+          ]
+        ]
+      },
+      {
+        "cwe": "CWE-200",
+        "mechanism_count": 8,
+        "top_mechanisms": [
+          [
+            "mech_path_traversal_missing_canonical_prefix",
+            3
+          ],
+          [
+            "mech_ssrf_redirect_following_client",
+            3
+          ],
+          [
+            "mech_temp_file_delete_mkdir_race",
+            2
+          ],
+          [
+            "mech_ssrf_webhook_url_fetch",
+            2
+          ],
+          [
+            "mech_sql_dynamic_query_untrusted_fragment",
+            2
+          ]
+        ]
+      },
+      {
+        "cwe": "CWE-918",
+        "mechanism_count": 7,
+        "top_mechanisms": [
+          [
+            "mech_ssrf_webhook_url_fetch",
+            69
+          ],
+          [
+            "mech_ssrf_redirect_following_client",
+            30
+          ],
+          [
+            "mech_open_redirect_unsafe_uri_scheme",
+            5
+          ],
+          [
+            "mech_request_body_resource_mismatch_authz",
+            4
+          ],
+          [
+            "mech_path_traversal_missing_canonical_prefix",
+            2
+          ]
+        ]
+      },
+      {
+        "cwe": "CWE-79",
+        "mechanism_count": 7,
+        "top_mechanisms": [
+          [
+            "mech_html_sanitizer_policy_gap",
+            44
+          ],
+          [
+            "mech_inline_content_disposition_xss",
+            7
+          ],
+          [
+            "mech_template_expression_untrusted_eval",
+            5
+          ],
+          [
+            "mech_sql_dynamic_query_untrusted_fragment",
+            5
+          ],
+          [
+            "mech_ssrf_webhook_url_fetch",
+            1
+          ]
+        ]
+      },
+      {
+        "cwe": "CWE-863",
+        "mechanism_count": 7,
+        "top_mechanisms": [
+          [
+            "mech_missing_authentication_before_privileged_action",
+            7
+          ],
+          [
+            "mech_object_owner_scope_missing_authz",
+            6
+          ],
+          [
+            "mech_ssrf_webhook_url_fetch",
+            5
+          ],
+          [
+            "mech_request_body_resource_mismatch_authz",
+            4
+          ],
+          [
+            "mech_authentication_artifact_incomplete_validation",
+            3
+          ]
+        ]
+      },
+      {
+        "cwe": "CWE-184",
+        "mechanism_count": 7,
+        "top_mechanisms": [
+          [
+            "mech_deserialization_untrusted_type_graph",
+            5
+          ],
+          [
+            "mech_jndi_untrusted_lookup_target",
+            3
+          ],
+          [
+            "mech_html_sanitizer_policy_gap",
+            3
+          ],
+          [
+            "mech_ssrf_webhook_url_fetch",
+            2
+          ],
+          [
+            "mech_template_expression_untrusted_eval",
+            1
+          ]
+        ]
+      },
+      {
+        "cwe": "CWE-284",
+        "mechanism_count": 7,
+        "top_mechanisms": [
+          [
+            "mech_privileged_server_side_capability_exposed",
+            2
+          ],
+          [
+            "mech_request_body_resource_mismatch_authz",
+            2
+          ],
+          [
+            "mech_archive_symlink_extraction_escape",
+            1
+          ],
+          [
+            "mech_path_traversal_missing_canonical_prefix",
+            1
+          ],
+          [
+            "mech_object_owner_scope_missing_authz",
+            1
+          ]
+        ]
+      },
+      {
+        "cwe": "CWE-22",
+        "mechanism_count": 6,
+        "top_mechanisms": [
+          [
+            "mech_path_traversal_missing_canonical_prefix",
+            154
+          ],
+          [
+            "mech_archive_symlink_extraction_escape",
+            3
+          ],
+          [
+            "mech_temp_file_delete_mkdir_race",
+            2
+          ],
+          [
+            "mech_request_body_resource_mismatch_authz",
+            1
+          ],
+          [
+            "mech_ssrf_redirect_following_client",
+            1
+          ]
+        ]
+      },
+      {
+        "cwe": "CWE-94",
+        "mechanism_count": 6,
+        "top_mechanisms": [
+          [
+            "mech_template_expression_untrusted_eval",
+            13
+          ],
+          [
+            "mech_xml_external_entity_resolution",
+            3
+          ],
+          [
+            "mech_sql_dynamic_query_untrusted_fragment",
+            3
+          ],
+          [
+            "mech_bean_property_reflection_escape",
+            1
+          ],
+          [
+            "mech_deserialization_untrusted_type_graph",
+            1
+          ]
+        ]
+      }
+    ],
+    "top_mechanism_cwe_diversity": [
+      {
+        "mechanism": "mech_ssrf_webhook_url_fetch",
+        "cwe_count": 46,
+        "top_cwes": [
+          [
+            "CWE-918",
+            69
+          ],
+          [
+            "CWE-20",
+            42
+          ],
+          [
+            "CWE-670",
+            6
+          ],
+          [
+            "CWE-306",
+            6
+          ],
+          [
+            "CWE-862",
+            5
+          ]
+        ]
+      },
+      {
+        "mechanism": "mech_path_traversal_missing_canonical_prefix",
+        "cwe_count": 27,
+        "top_cwes": [
+          [
+            "CWE-22",
+            154
+          ],
+          [
+            "CWE-20",
+            43
+          ],
+          [
+            "CWE-59",
+            16
+          ],
+          [
+            "CWE-73",
+            13
+          ],
+          [
+            "CWE-367",
+            7
+          ]
+        ]
+      },
+      {
+        "mechanism": "mech_binary_length_unbounded_resource_use",
+        "cwe_count": 26,
+        "top_cwes": [
+          [
+            "CWE-770",
+            26
+          ],
+          [
+            "CWE-20",
+            23
+          ],
+          [
+            "CWE-190",
+            7
+          ],
+          [
+            "CWE-400",
+            7
+          ],
+          [
+            "CWE-787",
+            4
+          ]
+        ]
+      },
+      {
+        "mechanism": "mech_ssrf_redirect_following_client",
+        "cwe_count": 21,
+        "top_cwes": [
+          [
+            "CWE-918",
+            30
+          ],
+          [
+            "CWE-20",
+            24
+          ],
+          [
+            "CWE-601",
+            5
+          ],
+          [
+            "CWE-200",
+            3
+          ],
+          [
+            "CWE-330",
+            2
+          ]
+        ]
+      },
+      {
+        "mechanism": "mech_request_body_resource_mismatch_authz",
+        "cwe_count": 21,
+        "top_cwes": [
+          [
+            "CWE-862",
+            12
+          ],
+          [
+            "CWE-20",
+            7
+          ],
+          [
+            "CWE-639",
+            5
+          ],
+          [
+            "CWE-918",
+            4
+          ],
+          [
+            "CWE-863",
+            4
+          ]
+        ]
+      },
+      {
+        "mechanism": "mech_sql_dynamic_query_untrusted_fragment",
+        "cwe_count": 19,
+        "top_cwes": [
+          [
+            "CWE-89",
+            46
+          ],
+          [
+            "CWE-20",
+            22
+          ],
+          [
+            "CWE-79",
+            5
+          ],
+          [
+            "CWE-502",
+            3
+          ],
+          [
+            "CWE-94",
+            3
+          ]
+        ]
+      },
+      {
+        "mechanism": "mech_xml_external_entity_resolution",
+        "cwe_count": 16,
+        "top_cwes": [
+          [
+            "CWE-611",
+            62
+          ],
+          [
+            "CWE-20",
+            3
+          ],
+          [
+            "CWE-776",
+            3
+          ],
+          [
+            "CWE-502",
+            3
+          ],
+          [
+            "CWE-94",
+            3
+          ]
+        ]
+      },
+      {
+        "mechanism": "mech_template_expression_untrusted_eval",
+        "cwe_count": 15,
+        "top_cwes": [
+          [
+            "CWE-95",
+            13
+          ],
+          [
+            "CWE-94",
+            13
+          ],
+          [
+            "CWE-74",
+            11
+          ],
+          [
+            "CWE-20",
+            6
+          ],
+          [
+            "CWE-79",
+            5
+          ]
+        ]
+      },
+      {
+        "mechanism": "mech_html_sanitizer_policy_gap",
+        "cwe_count": 14,
+        "top_cwes": [
+          [
+            "CWE-79",
+            44
+          ],
+          [
+            "CWE-116",
+            10
+          ],
+          [
+            "CWE-20",
+            9
+          ],
+          [
+            "CWE-80",
+            3
+          ],
+          [
+            "CWE-184",
+            3
+          ]
+        ]
+      },
+      {
+        "mechanism": "mech_authentication_artifact_incomplete_validation",
+        "cwe_count": 13,
+        "top_cwes": [
+          [
+            "CWE-863",
+            3
+          ],
+          [
+            "CWE-352",
+            2
+          ],
+          [
+            "CWE-287",
+            2
+          ],
+          [
+            "CWE-306",
+            2
+          ],
+          [
+            "CWE-362",
+            1
+          ]
+        ]
+      }
+    ]
+  },
+  "p3c64": {
+    "same_identity_count": 143,
+    "improved_rank_count": 95,
+    "worsened_rank_count": 43,
+    "same_rank_count": 5,
+    "p3c64_only_top200_count": 22,
+    "qwen4b_only_top200_count": 12,
+    "median_p3c64_rank": 95,
+    "median_qwen4b_rank": 166,
+    "by_type_rows": [
+      {
+        "hcvr_type": "iris",
+        "case_count": 47,
+        "p3c64_top100": 27,
+        "qwen4b_top100": 20,
+        "p3c64_top200": 31,
+        "qwen4b_top200": 28
+      },
+      {
+        "hcvr_type": "m9_expansion",
+        "case_count": 3,
+        "p3c64_top100": 3,
+        "qwen4b_top100": 0,
+        "p3c64_top200": 3,
+        "qwen4b_top200": 0
+      },
+      {
+        "hcvr_type": "m9_wave4",
+        "case_count": 6,
+        "p3c64_top100": 3,
+        "qwen4b_top100": 1,
+        "p3c64_top200": 3,
+        "qwen4b_top200": 1
+      },
+      {
+        "hcvr_type": "business_state_precondition",
+        "case_count": 14,
+        "p3c64_top100": 5,
+        "qwen4b_top100": 4,
+        "p3c64_top200": 8,
+        "qwen4b_top200": 6
+      },
+      {
+        "hcvr_type": "ssrf",
+        "case_count": 4,
+        "p3c64_top100": 3,
+        "qwen4b_top100": 2,
+        "p3c64_top200": 4,
+        "qwen4b_top200": 2
+      },
+      {
+        "hcvr_type": "toctou_check_use_race",
+        "case_count": 10,
+        "p3c64_top100": 4,
+        "qwen4b_top100": 2,
+        "p3c64_top200": 4,
+        "qwen4b_top200": 4
+      },
+      {
+        "hcvr_type": "file_permission_temp_resource",
+        "case_count": 9,
+        "p3c64_top100": 5,
+        "qwen4b_top100": 4,
+        "p3c64_top200": 5,
+        "qwen4b_top200": 4
+      },
+      {
+        "hcvr_type": "authentication_session_token_validation",
+        "case_count": 10,
+        "p3c64_top100": 7,
+        "qwen4b_top100": 6,
+        "p3c64_top200": 7,
+        "qwen4b_top200": 7
+      },
+      {
+        "hcvr_type": "concurrent_object_lifecycle",
+        "case_count": 12,
+        "p3c64_top100": 6,
+        "qwen4b_top100": 6,
+        "p3c64_top200": 7,
+        "qwen4b_top200": 7
+      },
+      {
+        "hcvr_type": "m9_wave2",
+        "case_count": 5,
+        "p3c64_top100": 1,
+        "qwen4b_top100": 1,
+        "p3c64_top200": 1,
+        "qwen4b_top200": 1
+      },
+      {
+        "hcvr_type": "open_redirect",
+        "case_count": 4,
+        "p3c64_top100": 4,
+        "qwen4b_top100": 4,
+        "p3c64_top200": 4,
+        "qwen4b_top200": 4
+      },
+      {
+        "hcvr_type": "authorization_bypass",
+        "case_count": 15,
+        "p3c64_top100": 5,
+        "qwen4b_top100": 5,
+        "p3c64_top200": 6,
+        "qwen4b_top200": 8
+      }
+    ]
+  }
+}

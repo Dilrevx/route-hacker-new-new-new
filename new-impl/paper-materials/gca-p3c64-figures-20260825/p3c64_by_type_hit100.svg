@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="600" viewBox="0 0 1080 600">
+<style><![CDATA[
+text{font-family:Arial,Helvetica,sans-serif;fill:#17202a}.title{font-size:24px;font-weight:700}
+.sub{font-size:13px;fill:#5d6d7e}.label{font-size:13px}.small{font-size:12px;fill:#5d6d7e}.axis{stroke:#d6dbdf;stroke-width:1}
+.p3{fill:#2878b5}.qw{fill:#d1495b}.bg{fill:#eef2f5}.delta{fill:#1f8f72;font-weight:700}
+]]></style>
+<rect width="1080" height="600" fill="white"/>
+<text class="title" x="28" y="34">P3C64 gains concentrate on mechanism-level retrieval families</text>
+<text class="sub" x="28" y="58">Per-type Hit@100 counts on the same 143 identities; rows with at least three cases are shown.</text>
+<text class="label" x="28" y="96">iris</text>
+<text class="small" x="240" y="96">n=47</text>
+<rect class="bg" x="330" y="78" width="696" height="14" rx="3"/>
+<rect class="p3" x="330" y="78" width="399.8" height="14" rx="3"/>
+<rect class="qw" x="330" y="96" width="296.2" height="14" rx="3"/>
+<text class="small" x="739.8" y="92">Top100: 27 vs 20</text>
+<text class="delta" x="944" y="106">Top200 +3</text>
+<text class="label" x="28" y="139">m9_expansion</text>
+<text class="small" x="240" y="139">n=3</text>
+<rect class="bg" x="330" y="121" width="696" height="14" rx="3"/>
+<rect class="p3" x="330" y="121" width="44.4" height="14" rx="3"/>
+<rect class="qw" x="330" y="139" width="0.0" height="14" rx="3"/>
+<text class="small" x="384.4" y="135">Top100: 3 vs 0</text>
+<text class="delta" x="944" y="149">Top200 +3</text>
+<text class="label" x="28" y="182">m9_wave4</text>
+<text class="small" x="240" y="182">n=6</text>
+<rect class="bg" x="330" y="164" width="696" height="14" rx="3"/>
+<rect class="p3" x="330" y="164" width="44.4" height="14" rx="3"/>
+<rect class="qw" x="330" y="182" width="14.8" height="14" rx="3"/>
+<text class="small" x="384.4" y="178">Top100: 3 vs 1</text>
+<text class="delta" x="944" y="192">Top200 +2</text>
+<text class="label" x="28" y="225">business_state_precondition</text>
+<text class="small" x="240" y="225">n=14</text>
+<rect class="bg" x="330" y="207" width="696" height="14" rx="3"/>
+<rect class="p3" x="330" y="207" width="74.0" height="14" rx="3"/>
+<rect class="qw" x="330" y="225" width="59.2" height="14" rx="3"/>
+<text class="small" x="414.0" y="221">Top100: 5 vs 4</text>
+<text class="delta" x="944" y="235">Top200 +2</text>
+<text class="label" x="28" y="268">ssrf</text>
+<text class="small" x="240" y="268">n=4</text>
+<rect class="bg" x="330" y="250" width="696" height="14" rx="3"/>
+<rect class="p3" x="330" y="250" width="44.4" height="14" rx="3"/>
+<rect class="qw" x="330" y="268" width="29.6" height="14" rx="3"/>
+<text class="small" x="384.4" y="264">Top100: 3 vs 2</text>
+<text class="delta" x="944" y="278">Top200 +2</text>
+<text class="label" x="28" y="311">toctou_check_use_race</text>
+<text class="small" x="240" y="311">n=10</text>
+<rect class="bg" x="330" y="293" width="696" height="14" rx="3"/>
+<rect class="p3" x="330" y="293" width="59.2" height="14" rx="3"/>
+<rect class="qw" x="330" y="311" width="29.6" height="14" rx="3"/>
+<text class="small" x="399.2" y="307">Top100: 4 vs 2</text>
+<text class="delta" x="944" y="321">Top200 +0</text>
+<text class="label" x="28" y="354">file_permission_temp_resource</text>
+<text class="small" x="240" y="354">n=9</text>
+<rect class="bg" x="330" y="336" width="696" height="14" rx="3"/>
+<rect class="p3" x="330" y="336" width="74.0" height="14" rx="3"/>
+<rect class="qw" x="330" y="354" width="59.2" height="14" rx="3"/>
+<text class="small" x="414.0" y="350">Top100: 5 vs 4</text>
+<text class="delta" x="944" y="364">Top200 +1</text>
+<text class="label" x="28" y="397">authentication_session_token_valida...</text>
+<text class="small" x="240" y="397">n=10</text>
+<rect class="bg" x="330" y="379" width="696" height="14" rx="3"/>
+<rect class="p3" x="330" y="379" width="103.7" height="14" rx="3"/>
+<rect class="qw" x="330" y="397" width="88.9" height="14" rx="3"/>
+<text class="small" x="443.7" y="393">Top100: 7 vs 6</text>
+<text class="delta" x="944" y="407">Top200 +0</text>
+<text class="label" x="28" y="440">concurrent_object_lifecycle</text>
+<text class="small" x="240" y="440">n=12</text>
+<rect class="bg" x="330" y="422" width="696" height="14" rx="3"/>
+<rect class="p3" x="330" y="422" width="88.9" height="14" rx="3"/>
+<rect class="qw" x="330" y="440" width="88.9" height="14" rx="3"/>
+<text class="small" x="428.9" y="436">Top100: 6 vs 6</text>
+<text class="delta" x="944" y="450">Top200 +0</text>
+<text class="label" x="28" y="483">m9_wave2</text>
+<text class="small" x="240" y="483">n=5</text>
+<rect class="bg" x="330" y="465" width="696" height="14" rx="3"/>
+<rect class="p3" x="330" y="465" width="14.8" height="14" rx="3"/>
+<rect class="qw" x="330" y="483" width="14.8" height="14" rx="3"/>
+<text class="small" x="354.8" y="479">Top100: 1 vs 1</text>
+<text class="delta" x="944" y="493">Top200 +0</text>
+<rect class="p3" x="760" y="24" width="14" height="14" rx="2"/><text class="label" x="780" y="36">P3C64 Top100</text>
+<rect class="qw" x="900" y="24" width="14" height="14" rx="2"/><text class="label" x="920" y="36">Qwen4B Top100</text>
+</svg>
