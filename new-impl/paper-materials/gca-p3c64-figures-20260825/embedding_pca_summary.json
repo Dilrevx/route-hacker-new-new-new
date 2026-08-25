@@ -1,0 +1,160 @@
+{
+  "base_cve_hypothesis_knn_same_mechanism_at_10": 0.9846153846153847,
+  "base_cve_hypothesis_pca": {
+    "pc1_explained_variance": 0.16855981945991516,
+    "pc2_explained_variance": 0.09992790967226028
+  },
+  "base_cve_hypothesis_silhouette_cosine": 0.33418533205986023,
+  "base_guideline_knn_same_mechanism_at_10": 0.2518518518518519,
+  "base_guideline_pca": {
+    "pc1_explained_variance": 0.381464421749115,
+    "pc2_explained_variance": 0.2026934176683426
+  },
+  "base_guideline_silhouette_cosine": 0.9987869262695312,
+  "cve_pca": {
+    "pc1_explained_variance": 0.16855981945991516,
+    "pc2_explained_variance": 0.09992790967226028
+  },
+  "cve_points": {
+    "candidate_cve_count": 897,
+    "point_count": 260,
+    "selected_cwes": [
+      [
+        "CWE-20",
+        179
+      ],
+      [
+        "CWE-22",
+        157
+      ],
+      [
+        "CWE-918",
+        106
+      ],
+      [
+        "CWE-611",
+        62
+      ],
+      [
+        "CWE-79",
+        56
+      ],
+      [
+        "CWE-89",
+        46
+      ],
+      [
+        "CWE-770",
+        33
+      ],
+      [
+        "CWE-862",
+        25
+      ],
+      [
+        "CWE-94",
+        19
+      ]
+    ],
+    "selected_mechanisms": [
+      [
+        "mech_path_traversal_missing_canonical_prefix",
+        189
+      ],
+      [
+        "mech_ssrf_webhook_url_fetch",
+        121
+      ],
+      [
+        "mech_xml_external_entity_resolution",
+        72
+      ],
+      [
+        "mech_sql_dynamic_query_untrusted_fragment",
+        66
+      ],
+      [
+        "mech_binary_length_unbounded_resource_use",
+        62
+      ],
+      [
+        "mech_html_sanitizer_policy_gap",
+        53
+      ],
+      [
+        "mech_ssrf_redirect_following_client",
+        49
+      ],
+      [
+        "mech_template_expression_untrusted_eval",
+        48
+      ],
+      [
+        "mech_request_body_resource_mismatch_authz",
+        35
+      ]
+    ]
+  },
+  "cwe_knn_same_label_at_10": 0.6511538461538462,
+  "cwe_silhouette_cosine": 0.1387796700000763,
+  "embedding_base_url": "http://127.0.0.1:8001/v1",
+  "embedding_model": "Qwen/Qwen3-Embedding-0.6B",
+  "gca_mechanism_knn_same_label_at_10": 0.9846153846153847,
+  "gca_mechanism_silhouette_cosine": 0.33418533205986023,
+  "guideline_points": {
+    "point_count": 27,
+    "selected_mechanisms": [
+      [
+        "mech_path_traversal_missing_canonical_prefix",
+        33
+      ],
+      [
+        "mech_ssrf_webhook_url_fetch",
+        28
+      ],
+      [
+        "mech_ssrf_redirect_following_client",
+        23
+      ],
+      [
+        "mech_template_expression_untrusted_eval",
+        16
+      ],
+      [
+        "mech_xml_external_entity_resolution",
+        13
+      ],
+      [
+        "mech_open_redirect_unsafe_uri_scheme",
+        13
+      ],
+      [
+        "mech_temp_file_delete_mkdir_race",
+        9
+      ],
+      [
+        "mech_temp_resource_insecure_permissions",
+        9
+      ],
+      [
+        "mech_sql_dynamic_query_untrusted_fragment",
+        7
+      ]
+    ]
+  },
+  "p3c64_base_model": "/data/lhq/workspace/hcvr-embedding-service/models/Qwen3-Embedding-0.6B",
+  "p3c64_cve_hypothesis_knn_same_mechanism_at_10": 0.981923076923077,
+  "p3c64_cve_hypothesis_pca": {
+    "pc1_explained_variance": 0.2604849636554718,
+    "pc2_explained_variance": 0.12300582230091095
+  },
+  "p3c64_cve_hypothesis_silhouette_cosine": 0.4379682242870331,
+  "p3c64_guideline_knn_same_mechanism_at_10": 0.2518518518518519,
+  "p3c64_guideline_pca": {
+    "pc1_explained_variance": 0.4096057116985321,
+    "pc2_explained_variance": 0.31772539019584656
+  },
+  "p3c64_guideline_silhouette_cosine": 0.9988797307014465,
+  "p3c64_state": "/data/lhq/workspace/p3-hard-competition-query-adapter-v1/selection_run_v1/p3c64_state.pt",
+  "schema_version": "paper_embedding_pca.v1"
+}
