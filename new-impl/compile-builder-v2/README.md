@@ -1,71 +1,49 @@
 # Compile Builder v2
 
-Compile Builder v2 is the extracted CodeQL database build-repair loop from
-GCA. It takes deterministic build failures for exact source snapshots,
-asks a structured-output model to select a constrained repair decision, validates
-that decision locally, and runs the resulting fresh CodeQL database attempt.
+Compile Builder v2 implements GCA's bounded CodeQL database build-repair loop.
+It receives deterministic build failures for pinned source snapshots, asks a
+structured-output model to select a constrained repair action, validates that
+action locally, and performs a fresh database attempt.
 
-The model never supplies executable shell text. It receives a redacted failure
-packet and may only select actions allowed by the packet's local policy, such as
-approved Java or Maven homes, isolated dependency homes, and pre-approved build
-arguments.
+The model never supplies executable shell text. It may select only actions
+allowed by the local policy, such as an approved toolchain, isolated dependency
+home, predeclared build argument, or bounded resource adjustment.
 
 ## Layout
 
 - `scripts/run_codeql_llm_repair_dispatch.py`: concurrent repair controller.
 - `src/gca/runtime/codeql_repair.py`: failure classification, source
-  verification, decision validation, and CodeQL repair execution.
-- `src/gca/runtime/bounded_process.py`: timeout-safe subprocess helper.
-- `scripts/launch_deepseek_claude.sh`: optional local Claude-compatible worker
-  wrapper; it expects the original host's `switch-claude` profile.
+  verification, action validation, and repair execution.
+- `src/gca/runtime/bounded_process.py`: timeout-safe process helper.
 - `tests/`: unit and controller integration tests.
 
-## Inputs
+## Inputs and Outputs
 
-The controller requires three JSONL inputs:
+The controller consumes failed-build receipts, exact-source receipts, and a
+prior deterministic-repair ledger. It rebinds every selected case to those
+receipts and verifies the source revision before execution.
 
-1. Failed CodeQL build receipts.
-2. Exact-source receipts corresponding to those failures.
-3. A deterministic-repair ledger whose eligible rows have status
-   `no_safe_deterministic_repair` or `repair_attempt_failed`.
+Outputs are append-only JSONL receipts plus an aggregate `summary.json`.
+Source trees, CodeQL databases, model credentials, and per-case logs remain
+outside Git.
 
-Each selected case is re-bound to the failed/source receipts before the model is
-called. The source revision and archive evidence are re-verified before an
-attempt runs.
-
-## Run
-
-Use `--dry-run` to validate the receipt bindings without calling a model:
+## Example Shape
 
 ```bash
 python scripts/run_codeql_llm_repair_dispatch.py \
   --failed-receipts /path/to/failed.jsonl \
   --source-receipts /path/to/sources.jsonl \
-  --prior-ledger /path/to/deterministic-repair-ledger.jsonl \
+  --prior-ledger /path/to/repair-ledger.jsonl \
   --output-dir /path/to/output \
-  --expected-eligible-case-count 10 \
   --dry-run
 ```
 
-For an actual repair, supply an executable that accepts the constrained
-structured-output request:
+For an actual repair, provide a configured structured-output model command and
+the locally approved toolchain paths. Use `--help` for the complete policy and
+resource options.
+
+## Testing
 
 ```bash
-python scripts/run_codeql_llm_repair_dispatch.py \
-  --failed-receipts /path/to/failed.jsonl \
-  --source-receipts /path/to/sources.jsonl \
-  --prior-ledger /path/to/deterministic-repair-ledger.jsonl \
-  --output-dir /path/to/output \
-  --claude-command /path/to/claude \
-  --approved-java-home /path/to/jdk-17 \
-  --approved-maven-home /path/to/maven-3.9
-```
-
-Outputs are append-only JSONL receipts plus `summary.json`. Keep run outputs
-outside this repository.
-
-## Test
-
-```bash
-python -m pytest -q
+python -m pytest -q tests
 ```

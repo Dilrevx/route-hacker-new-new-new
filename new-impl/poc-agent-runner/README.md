@@ -1,45 +1,40 @@
 # PoC Agent Runner
 
-This module contains the autonomous PoC-development runner and independent
-verifier runner that were used for the 2026-08-17 PoC ground-truth evaluation.
-
-It is intentionally separate from `runtime-v2-verifier-redesign`:
-
-- `runtime-v2-verifier-redesign` builds and verifies runnable application
-  environments.
-- `poc-agent-runner` launches an AI PoC development session from an audit report,
-  then launches a fresh verifier session against the final PoC artifact.
+This module launches an autonomous PoC-development session from an audit report
+and a fresh independent verification session against the final artifact. It is
+separate from `runtime-v2-verifier-redesign`, which prepares and verifies the
+runnable application environment.
 
 ## Core Files
 
-- `src/gca/poc_agent/runner.py`
-  - `run_poc_agent`
-  - `run_poc_verifier`
-  - prompt builders, token accounting, timeout/process-group handling, and run
-    evidence persistence.
-- `src/cli/commands/poc.py`
-  - Typer commands for `poc run` and `poc verify`.
-- `docs/poc-agent-technical-architecture-plan.md`
-  - Living architecture record for the PoC subsystem.
+- `src/gca/poc_agent/runner.py`: prompt construction, agent execution, timeout
+  and process-group handling, token accounting, and evidence persistence.
+- `src/cli/commands/poc.py`: commands for PoC generation and verification.
+- `tests/`: synthetic runner and verifier tests.
 
-## Expected Flow
+## Flow
 
 ```text
-audit report
-  -> poc run
-  -> PoC artifact + reproduction command
-  -> poc verify
-  -> CONFIRMED / REJECTED / INVALID_POC / BLOCKED / INCONCLUSIVE
+audit evidence
+  -> isolated PoC development session
+  -> PoC artifact and reproduction command
+  -> fresh verification session
+  -> structured verdict and evidence receipt
 ```
 
-The runner records prompts, JSONL event streams, stderr, final messages, token
-usage, wall time, and command metadata. It does not hard-code vulnerability
-semantics or mechanically decide whether a vulnerability exists.
+The runner retains prompts, JSONL events, standard error, final messages, token
+usage, wall time, command metadata, and artifact paths in the external run
+directory. It does not embed case-specific vulnerability rules in the control
+plane.
 
-## Test
+Source checkouts, runtime images, model credentials, PoC artifacts, and
+per-finding outputs remain outside Git. Exploit-ready material covered by
+coordinated disclosure must not be committed.
+
+## Testing
 
 ```bash
-PYTHONPATH=src python3 -m pytest -q tests
+PYTHONPATH=src python -m pytest -q tests
 ```
 
-The tests use a fake Agent CLI executable and do not call a real model.
+Tests use a fake agent executable and do not contact a model provider.
