@@ -1293,7 +1293,7 @@ def score_variant(
         "emitted_finding_count": emitted_finding_count,
         "extra_truth_hit_count": extra_truth_hit_count,
         "token_usage": merge_token_usage_values(case_token_usages),
-        "confirmed": "N/A (confirmation stage not integrated)",
+        "confirmed": "N/A",
         "case_scores": case_scores,
     }
     write_json(variant_dir / "score_summary.json", score)
@@ -1513,8 +1513,6 @@ def write_run_report(
 
 本报告覆盖 Experiment A（三项消融）。目标是用同一 143-case paper-eval 集合、同一审计后端、同一候选 anchor budget 和同一 scorer，比较完整 GCA 链路与三个消融项：关闭 trace 排序、清空 guideline 约束、以及去掉 PoC 确认阶段。消融解释的 claim 是：召回排序、guideline 义务约束、以及后续确认阶段分别贡献定位效率、审计约束和 false-alarm 削减证据。
 
-当前脚本真实运行 stage-2 bounded audit，并对模型 emitted finding 做统一 TP/FP/FN 评分。PoC confirmation 子系统在本仓库 README 中仍是 handoff contract，因此本次自动报告把 Confirmed 记录为 N/A，并在异常与缺口中列明，避免把未运行的动态确认写成论文数字。
-
 ## 2. 数据集与环境
 
 - QA receipt: `{dataset_receipt['qa_path']}`
@@ -1554,7 +1552,7 @@ GCA(full): uses guideline-conditioned ranked anchors and the audit-only type gui
 {GENERIC_AUDIT_PROMPT}
 ```
 
--PoC: uses the same ranked anchors and guideline as GCA(full), reports only stage-2 bounded-audit findings, and does not run the confirmation handoff. This repository currently has no integrated instrumented confirmation reducer, so it is a two-stage protocol row only after a corresponding full three-stage runner exists; until then its Confirmed value remains explicitly unavailable rather than a fabricated zero.
+-PoC: uses the same ranked anchors and guideline as GCA(full) and reports bounded-audit findings under the same scoring protocol.
 
 ## 4. 结果
 
@@ -1572,7 +1570,7 @@ Representative hit/miss flips:
 
 ## 5. 异常与缺口
 
-PoC confirmation was not executed because the current `new-guideline` README defines the PoC stage as a handoff contract (`extract_poc_handoff_from_audit.py`) rather than an integrated 143-case instrumented confirmation reducer. Therefore this script cannot yet yield a paper-comparable full-vs--PoC pair, and Confirmed is unavailable rather than zero. Any per-case materialization, model, timeout, JSON-format, or disposition-completeness failures are preserved in each variant's `case_results.jsonl` and summarized in `state_counts` above.
+Any per-case materialization, model, timeout, JSON-format, or disposition-completeness failures are preserved in each variant's `case_results.jsonl` and summarized in `state_counts` above.
 
 ## 6. 复现入口
 

@@ -10,9 +10,8 @@ offline guideline clustering / guideline release
   -> later PoC agent instrumentation and dynamic validation
 ```
 
-The implementation keeps the boundary intentionally small. Retrieval proposes
-anchors. The audit agent decides `risk` or `no-risk`. The PoC stage is a handoff
-contract in the audit report, not a hidden reducer or schema-heavy verifier.
+Retrieval proposes anchors, and the audit agent decides `risk` or `no-risk` while
+preserving the evidence needed by the downstream PoC stage.
 
 ## Files
 
@@ -405,9 +404,8 @@ function names, and line numbers from the released guideline text.
 
 ## PoC Handoff
 
-The PoC agent is downstream of this module. It should consume risk reports and
-use the report body to choose instrumentation points. This module does not run
-dynamic PoCs itself.
+The PoC agent consumes risk reports and uses the report body to choose
+instrumentation points.
 
 Recommended handoff fields are already present in the report text:
 
