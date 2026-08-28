@@ -1,0 +1,1019 @@
+#!/usr/bin/env python3
+"""Recall repository anchors from generic source slices with real embeddings."""
+
+from __future__ import annotations
+
+import argparse
+import concurrent.futures
+import hashlib
+import json
+import math
+import os
+import re
+import subprocess
+import threading
+import time
+import urllib.error
+import urllib.request
+from pathlib import Path
+from typing import Any, Iterable, Protocol
+
+from run_hcvr_case_anchor_audits import (
+    apply_guideline_overrides,
+    build_guideline,
+    ensure_snapshot,
+    load_guideline_overrides,
+    load_selected_cases,
+    safe_slug,
+    sha256_file,
+    write_jsonl,
+)
+
+
+DEFAULT_SUFFIXES = (
+    ".java",
+    ".c",
+    ".cc",
+    ".cpp",
+    ".cxx",
+    ".h",
+    ".hh",
+    ".hpp",
+    ".hxx",
+    ".go",
+    ".js",
+    ".jsx",
+    ".ts",
+    ".tsx",
+    ".py",
+    ".rb",
+    ".php",
+    ".sh",
+    ".xml",
+    ".yaml",
+    ".yml",
+    ".properties",
+    ".conf",
+    ".cfg",
+)
+EXCLUDED_DIRS = {
+    ".git",
+    ".gradle",
+    ".idea",
+    ".mvn",
+    "__pycache__",
+    "build",
+    "dist",
+    "node_modules",
+    "out",
+    "target",
+    "vendor",
+}
+SYMBOL_RE = re.compile(
+    r"\b(?:class|interface|enum|def|function)\s+([A-Za-z_][A-Za-z0-9_]*)|"
+    r"\b(?:public|private|protected|static|final|async|synchronized|\s)+"
+    r"[A-Za-z0-9_<>\[\], ?]+\s+([A-Za-z_][A-Za-z0-9_]*)\s*\("
+)
+
+
+class Embedder(Protocol):
+    @property
+    def model_id(self) -> str: ...
+
+    def embed_texts(self, texts: list[str]) -> list[list[float]]: ...
+
+    def embed_queries(self, texts: list[str]) -> list[list[float]]: ...
+
+    def embed_codes(self, texts: list[str]) -> list[list[float]]: ...
+
+
+def read_jsonl(path: Path) -> Iterable[dict[str, Any]]:
+    with path.open(encoding="utf-8") as handle:
+        for line in handle:
+            if line.strip():
+                yield json.loads(line)
+
+
+def write_json(path: Path, value: Any) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def parse_identity_list(value: str) -> list[str]:
+    identities = [
+        part.strip()
+        for chunk in value.splitlines()
+        for part in chunk.split(",")
+        if part.strip()
+    ]
+    if not identities:
+        raise ValueError("--identity-list did not contain any identity_key values")
+    duplicates = sorted({identity for identity in identities if identities.count(identity) > 1})
+    if duplicates:
+        raise ValueError(f"--identity-list contains duplicate identity_key values: {duplicates}")
+    return identities
+
+
+def write_inline_identity_file(path: Path, identities: list[str]) -> None:
+    write_jsonl(path, ({"identity_key": identity} for identity in identities))
+
+
+def resolve_identity_selection(
+    *,
+    output: Path,
+    identity_file: Path | None,
+    identity_list: str | None,
+    limit: int,
+    default_limit: int,
+) -> tuple[Path | None, int, int | None]:
+    if identity_file is not None and identity_list:
+        raise ValueError("--identity-file and --identity-list are mutually exclusive")
+    if not identity_list:
+        return identity_file.resolve() if identity_file else None, limit, None
+    identities = parse_identity_list(identity_list)
+    if limit == default_limit:
+        limit = len(identities)
+    elif limit != len(identities):
+        raise ValueError(
+            f"--identity-list contains {len(identities)} identities, "
+            f"but --limit is {limit}; set --limit to the same value or omit it"
+        )
+    inline_identity_file = output / ".inline_identities.jsonl"
+    write_inline_identity_file(inline_identity_file, identities)
+    return inline_identity_file, limit, len(identities)
+
+
+def l2_normalize(vector: Iterable[float]) -> list[float]:
+    values = [float(value) for value in vector]
+    norm = math.sqrt(sum(value * value for value in values))
+    if norm == 0:
+        return values
+    return [value / norm for value in values]
+
+
+def dot(a: list[float], b: list[float]) -> float:
+    if len(a) != len(b):
+        raise ValueError(f"embedding dimension mismatch: {len(a)} != {len(b)}")
+    return float(sum(left * right for left, right in zip(a, b)))
+
+
+class OpenAICompatibleEmbedder:
+    def __init__(
+        self,
+        *,
+        base_url: str,
+        model: str,
+        api_key: str | None,
+        timeout: int,
+        max_retries: int,
+        retry_sleep: float,
+    ) -> None:
+        self._base_url = base_url.rstrip("/")
+        self._model = model
+        self._api_key = api_key
+        self._timeout = timeout
+        self._max_retries = max(1, max_retries)
+        self._retry_sleep = max(0.0, retry_sleep)
+
+    @property
+    def model_id(self) -> str:
+        return self._model
+
+    def embed_texts(self, texts: list[str]) -> list[list[float]]:
+        if not texts:
+            return []
+        payload = json.dumps({"model": self._model, "input": texts}).encode("utf-8")
+        last_error: Exception | None = None
+        for attempt in range(1, self._max_retries + 1):
+            request = urllib.request.Request(
+                f"{self._base_url}/embeddings",
+                data=payload,
+                headers={"Content-Type": "application/json", "Connection": "close"},
+                method="POST",
+            )
+            if self._api_key:
+                request.add_header("Authorization", f"Bearer {self._api_key}")
+            try:
+                with urllib.request.urlopen(request, timeout=self._timeout) as response:
+                    body = response.read().decode("utf-8")
+                break
+            except urllib.error.HTTPError as error:
+                detail = error.read().decode("utf-8", errors="replace")
+                last_error = RuntimeError(f"embedding service HTTP {error.code}: {detail[:1000]}")
+                if error.code < 500 or attempt >= self._max_retries:
+                    raise last_error from error
+            except (TimeoutError, urllib.error.URLError) as error:
+                last_error = error
+                if attempt >= self._max_retries:
+                    raise RuntimeError(f"embedding service request failed after {attempt} attempt(s): {error}") from error
+            time.sleep(self._retry_sleep * attempt)
+        else:
+            raise RuntimeError(f"embedding service request failed: {last_error}")
+        data = json.loads(body)
+        items = sorted(data.get("data") or [], key=lambda item: int(item.get("index", 0)))
+        if len(items) != len(texts):
+            raise RuntimeError(f"embedding service returned {len(items)} vectors for {len(texts)} texts")
+        return [l2_normalize(item["embedding"]) for item in items]
+
+    def embed_queries(self, texts: list[str]) -> list[list[float]]:
+        return self.embed_texts(texts)
+
+    def embed_codes(self, texts: list[str]) -> list[list[float]]:
+        return self.embed_texts(texts)
+
+
+class SentenceTransformersEmbedder:
+    def __init__(self, *, model: str, device: str, max_seq_length: int) -> None:
+        from sentence_transformers import SentenceTransformer
+
+        self._model_id = model
+        self._model = SentenceTransformer(model, device=device)
+        if max_seq_length > 0:
+            self._model.max_seq_length = max_seq_length
+
+    @property
+    def model_id(self) -> str:
+        return self._model_id
+
+    def embed_texts(self, texts: list[str]) -> list[list[float]]:
+        vectors = self._model.encode(
+            texts,
+            normalize_embeddings=True,
+            show_progress_bar=False,
+            convert_to_numpy=False,
+        )
+        return [l2_normalize(vector) for vector in vectors]
+
+    def embed_queries(self, texts: list[str]) -> list[list[float]]:
+        return self.embed_texts(texts)
+
+    def embed_codes(self, texts: list[str]) -> list[list[float]]:
+        return self.embed_texts(texts)
+
+
+class P3C64QueryResidualEmbedder:
+    """Frozen Qwen code bank geometry with the P3C64 query-only residual MLP."""
+
+    def __init__(
+        self,
+        *,
+        model: str,
+        state_path: Path,
+        device: str,
+        max_seq_length: int,
+        hidden_dimension: int,
+        residual_scale: float,
+    ) -> None:
+        import torch
+        import torch.nn.functional as F
+        from sentence_transformers import SentenceTransformer
+
+        self._torch = torch
+        self._F = F
+        self._state_path = state_path.resolve()
+        self._hidden_dimension = hidden_dimension
+        self._residual_scale = float(residual_scale)
+        self._model_id = (
+            f"p3c64-query-residual:{self._state_path}:"
+            f"base={model}:hidden={hidden_dimension}:scale={self._residual_scale}"
+        )
+        self._model = SentenceTransformer(model, device=device)
+        if max_seq_length > 0:
+            self._model.max_seq_length = max_seq_length
+        try:
+            state = torch.load(self._state_path, map_location="cpu", weights_only=True)
+        except TypeError:
+            state = torch.load(self._state_path, map_location="cpu")
+        required = {
+            "query_projection.first.weight",
+            "query_projection.first.bias",
+            "query_projection.output.weight",
+            "query_projection.output.bias",
+        }
+        if set(state) != required:
+            raise ValueError(f"unexpected P3C64 state keys: {sorted(state)}")
+        first_weight = state["query_projection.first.weight"].float()
+        first_bias = state["query_projection.first.bias"].float()
+        output_weight = state["query_projection.output.weight"].float()
+        output_bias = state["query_projection.output.bias"].float()
+        if tuple(first_weight.shape) != (hidden_dimension, 1024):
+            raise ValueError(f"unexpected P3C64 first weight shape: {tuple(first_weight.shape)}")
+        if tuple(first_bias.shape) != (hidden_dimension,):
+            raise ValueError(f"unexpected P3C64 first bias shape: {tuple(first_bias.shape)}")
+        if tuple(output_weight.shape) != (1024, hidden_dimension):
+            raise ValueError(f"unexpected P3C64 output weight shape: {tuple(output_weight.shape)}")
+        if tuple(output_bias.shape) != (1024,):
+            raise ValueError(f"unexpected P3C64 output bias shape: {tuple(output_bias.shape)}")
+        self._state = {
+            "first_weight": first_weight,
+            "first_bias": first_bias,
+            "output_weight": output_weight,
+            "output_bias": output_bias,
+        }
+
+    @property
+    def model_id(self) -> str:
+        return self._model_id
+
+    def embed_texts(self, texts: list[str]) -> list[list[float]]:
+        if not texts:
+            return []
+        vectors = self._model.encode(
+            texts,
+            normalize_embeddings=True,
+            show_progress_bar=False,
+            convert_to_numpy=True,
+        )
+        if len(vectors.shape) != 2 or vectors.shape[1] != 1024:
+            raise ValueError(f"P3C64 base embedding dimension must be 1024, got {vectors.shape}")
+        return [l2_normalize(vector) for vector in vectors]
+
+    def embed_queries(self, texts: list[str]) -> list[list[float]]:
+        base_vectors = self.embed_texts(texts)
+        if not base_vectors:
+            return []
+        torch = self._torch
+        with torch.inference_mode():
+            vectors = torch.as_tensor(base_vectors, dtype=torch.float32)
+            hidden = self._F.gelu(
+                self._F.linear(
+                    vectors,
+                    self._state["first_weight"],
+                    self._state["first_bias"],
+                )
+            )
+            delta = self._F.linear(
+                hidden,
+                self._state["output_weight"],
+                self._state["output_bias"],
+            )
+            adapted = self._F.normalize(
+                vectors + self._residual_scale * delta,
+                p=2,
+                dim=-1,
+            )
+        return [l2_normalize(vector) for vector in adapted.tolist()]
+
+    def embed_codes(self, texts: list[str]) -> list[list[float]]:
+        return self.embed_texts(texts)
+
+
+def make_embedder(args: argparse.Namespace) -> Embedder:
+    if args.embedding_backend == "openai":
+        api_key = os.environ.get(args.embedding_api_key_env) if args.embedding_api_key_env else None
+        return OpenAICompatibleEmbedder(
+            base_url=args.embedding_base_url,
+            model=args.embedding_model,
+            api_key=api_key,
+            timeout=args.embedding_timeout,
+            max_retries=args.embedding_max_retries,
+            retry_sleep=args.embedding_retry_sleep,
+        )
+    if args.embedding_backend == "sentence-transformers":
+        return SentenceTransformersEmbedder(
+            model=args.embedding_model,
+            device=args.embedding_device,
+            max_seq_length=args.max_seq_length,
+        )
+    if args.embedding_backend == "p3c64-query-residual":
+        return P3C64QueryResidualEmbedder(
+            model=args.embedding_model,
+            state_path=args.p3c64_state,
+            device=args.embedding_device,
+            max_seq_length=args.max_seq_length,
+            hidden_dimension=args.p3c64_hidden_dimension,
+            residual_scale=args.p3c64_residual_scale,
+        )
+    raise ValueError(f"unsupported embedding backend: {args.embedding_backend}")
+
+
+def line_overlap(a_start: int, a_end: int, b_start: int, b_end: int) -> bool:
+    return max(a_start, b_start) <= min(a_end, b_end)
+
+
+def anchor_hit(candidate: dict[str, Any], truth_anchors: list[dict[str, Any]]) -> bool:
+    for truth in truth_anchors:
+        if candidate.get("file") != truth.get("file"):
+            continue
+        if line_overlap(
+            int(candidate.get("start_line") or 0),
+            int(candidate.get("end_line") or 0),
+            int(truth.get("start_line") or 0),
+            int(truth.get("end_line") or 0),
+        ):
+            return True
+    return False
+
+
+def should_skip_path(path: Path) -> bool:
+    return any(part in EXCLUDED_DIRS for part in path.parts)
+
+
+def iter_source_files(snapshot: Path, suffixes: set[str], max_file_bytes: int, max_files: int) -> list[Path]:
+    files: list[Path] = []
+    for path in snapshot.rglob("*"):
+        if len(files) >= max_files:
+            break
+        if not path.is_file() or should_skip_path(path.relative_to(snapshot)):
+            continue
+        if path.suffix.lower() not in suffixes:
+            continue
+        try:
+            if path.stat().st_size > max_file_bytes:
+                continue
+        except OSError:
+            continue
+        files.append(path)
+    return sorted(files, key=lambda item: str(item.relative_to(snapshot)))
+
+
+def nearest_symbol(lines: list[str], start_index: int) -> str:
+    lower = max(0, start_index - 40)
+    for index in range(start_index, lower - 1, -1):
+        match = SYMBOL_RE.search(lines[index])
+        if match:
+            return next(group for group in match.groups() if group) or ""
+    return ""
+
+
+def candidate_id(repo_key: str, revision: str, file: str, start_line: int, end_line: int) -> str:
+    digest = hashlib.sha256(f"{repo_key}\0{revision}\0{file}\0{start_line}\0{end_line}".encode("utf-8")).hexdigest()
+    return f"recalled_anchor::{digest[:24]}"
+
+
+def candidate_text(candidate: dict[str, Any], max_chars: int) -> str:
+    text = (
+        f"FILE={candidate['file']}\n"
+        f"LINES={candidate['start_line']}-{candidate['end_line']}\n"
+        f"SYMBOL={candidate.get('symbol') or ''}\n"
+        f"VIEW={candidate.get('span_kind') or 'sliding_window'}\n"
+        f"{candidate.get('text') or ''}"
+    )
+    return text[:max_chars] if max_chars > 0 else text
+
+
+def slice_snapshot(
+    *,
+    case: dict[str, Any],
+    snapshot: Path,
+    suffixes: set[str],
+    window_lines: int,
+    stride_lines: int,
+    max_file_bytes: int,
+    max_files: int,
+    max_candidates: int,
+) -> list[dict[str, Any]]:
+    repo_key = case["repository"]["repo_key"]
+    revision = case["revisions"]["checkout_revision"]
+    candidates: list[dict[str, Any]] = []
+    for path in iter_source_files(snapshot, suffixes, max_file_bytes, max_files):
+        rel = str(path.relative_to(snapshot))
+        try:
+            lines = path.read_text(encoding="utf-8").splitlines()
+        except UnicodeDecodeError:
+            continue
+        if not lines:
+            continue
+        step = max(1, stride_lines)
+        width = max(1, window_lines)
+        for start in range(0, len(lines), step):
+            end = min(len(lines), start + width)
+            if start >= end:
+                continue
+            start_line = start + 1
+            end_line = end
+            candidates.append(
+                {
+                    "anchor_id": candidate_id(repo_key, revision, rel, start_line, end_line),
+                    "file": rel,
+                    "start_line": start_line,
+                    "end_line": end_line,
+                    "symbol": nearest_symbol(lines, start),
+                    "span_kind": "sliding_window",
+                    "text": "\n".join(lines[start:end]),
+                }
+            )
+            if len(candidates) >= max_candidates:
+                return candidates
+            if end == len(lines):
+                break
+    return candidates
+
+
+def batched(values: list[str], size: int) -> Iterable[list[str]]:
+    for start in range(0, len(values), size):
+        yield values[start : start + size]
+
+
+def embed_documents(embedder: Embedder, texts: list[str], batch_size: int) -> list[list[float]]:
+    vectors: list[list[float]] = []
+    for batch in batched(texts, batch_size):
+        vectors.extend(embedder.embed_codes(batch))
+    return vectors
+
+
+def build_guideline_queries(case: dict[str, Any], guideline_mode: str) -> list[dict[str, str]]:
+    primary = build_guideline(case)
+    queries = [{"label": "primary", "text": primary}]
+    if guideline_mode != "baseline-plus-override":
+        return queries
+
+    baseline = case.get("_baseline_guideline")
+    if not isinstance(baseline, str) or not baseline.strip() or baseline.strip() == primary.strip():
+        return queries
+    return [
+        {"label": "baseline", "text": baseline.strip()},
+        {"label": "override", "text": primary},
+    ]
+
+
+def rank_candidates(
+    *,
+    embedder: Embedder,
+    query_items: list[dict[str, str]],
+    candidates: list[dict[str, Any]],
+    batch_size: int,
+    text_max_chars: int,
+    top_k: int,
+) -> tuple[list[dict[str, Any]], dict[str, float]]:
+    timings: dict[str, float] = {}
+    if not candidates:
+        return [], timings
+    if not query_items:
+        raise ValueError("at least one guideline query is required")
+    step_started = time.time()
+    query_vectors = embedder.embed_queries([item["text"] for item in query_items])
+    timings["query_embedding_seconds"] = round(time.time() - step_started, 3)
+    step_started = time.time()
+    texts = [candidate_text(candidate, text_max_chars) for candidate in candidates]
+    timings["candidate_text_seconds"] = round(time.time() - step_started, 3)
+    step_started = time.time()
+    vectors = embed_documents(embedder, texts, batch_size)
+    timings["code_embedding_seconds"] = round(time.time() - step_started, 3)
+    step_started = time.time()
+    scored = []
+    for candidate, vector in zip(candidates, vectors):
+        row = {key: value for key, value in candidate.items() if key != "text"}
+        query_scores = [
+            (index, query_items[index]["label"], dot(query_vector, vector))
+            for index, query_vector in enumerate(query_vectors)
+        ]
+        best_index, best_label, best_score = max(query_scores, key=lambda item: item[2])
+        row["score"] = best_score
+        row["query_label"] = best_label
+        row["query_index"] = best_index
+        if len(query_scores) > 1:
+            row["query_scores"] = {
+                label: score
+                for _, label, score in query_scores
+            }
+        scored.append(row)
+    scored.sort(key=lambda row: (-float(row["score"]), str(row["anchor_id"])))
+    for rank, row in enumerate(scored[:top_k], start=1):
+        row["rank"] = rank
+    timings["score_sort_seconds"] = round(time.time() - step_started, 3)
+    return scored[:top_k], timings
+
+
+def recall_case(
+    *,
+    case: dict[str, Any],
+    embedder: Embedder,
+    repo_cache: Path,
+    snapshot_root: Path,
+    snapshot_lock: threading.Lock | None,
+    clone_timeout: int,
+    suffixes: set[str],
+    window_lines: int,
+    stride_lines: int,
+    max_file_bytes: int,
+    max_files: int,
+    max_candidates: int,
+    batch_size: int,
+    text_max_chars: int,
+    top_k: int,
+    guideline_mode: str,
+) -> dict[str, Any]:
+    started = time.time()
+    timings: dict[str, float] = {}
+    step_started = time.time()
+    if snapshot_lock is None:
+        snapshot = ensure_snapshot(case, repo_cache, snapshot_root, clone_timeout)
+    else:
+        with snapshot_lock:
+            snapshot = ensure_snapshot(case, repo_cache, snapshot_root, clone_timeout)
+    timings["snapshot_seconds"] = round(time.time() - step_started, 3)
+    step_started = time.time()
+    candidates = slice_snapshot(
+        case=case,
+        snapshot=snapshot,
+        suffixes=suffixes,
+        window_lines=window_lines,
+        stride_lines=stride_lines,
+        max_file_bytes=max_file_bytes,
+        max_files=max_files,
+        max_candidates=max_candidates,
+    )
+    timings["slice_seconds"] = round(time.time() - step_started, 3)
+    step_started = time.time()
+    guideline_queries = build_guideline_queries(case, guideline_mode)
+    guideline = guideline_queries[-1]["text"]
+    timings["guideline_seconds"] = round(time.time() - step_started, 3)
+    top, rank_timings = rank_candidates(
+        embedder=embedder,
+        query_items=guideline_queries,
+        candidates=candidates,
+        batch_size=batch_size,
+        text_max_chars=text_max_chars,
+        top_k=top_k,
+    )
+    timings.update(rank_timings)
+    truth_anchors = list(case.get("recall_anchors") or [])
+    for row in top:
+        row["known_anchor_overlap"] = anchor_hit(row, truth_anchors)
+        row["retrieval_source"] = "mechanical_slice_embedding_recall"
+    best_hit_rank = next((int(row["rank"]) for row in top if row.get("known_anchor_overlap")), None)
+    duration_seconds = round(time.time() - started, 3)
+    timings["total_seconds"] = duration_seconds
+    return {
+        "identity_key": case["identity_key"],
+        "case_id": case.get("new_unified_case_id"),
+        "repo_key": case["repository"]["repo_key"],
+        "repo_url": case["repository"]["repo_url"],
+        "checkout_revision": case["revisions"]["checkout_revision"],
+        "hcvr_type": (case.get("classification") or {}).get("primary_hcvr_type"),
+        "cwe_ids": (case.get("classification") or {}).get("cwe_ids") or [],
+        "snapshot": str(snapshot),
+        "guideline": guideline,
+        "guideline_mode": guideline_mode,
+        "guideline_queries": guideline_queries,
+        "candidate_count": len(candidates),
+        "known_anchor_count": len(truth_anchors),
+        "best_known_anchor_rank": best_hit_rank,
+        "hit_at_top_k": best_hit_rank is not None,
+        "duration_seconds": duration_seconds,
+        "timings": timings,
+        "top_anchors": top,
+    }
+
+
+def selected_anchor_row(case_result: dict[str, Any], rank: int) -> dict[str, Any] | None:
+    guideline_by_label = {
+        str(item.get("label")): str(item.get("text"))
+        for item in case_result.get("guideline_queries") or []
+        if item.get("label") and item.get("text")
+    }
+    for anchor in case_result.get("top_anchors") or []:
+        if int(anchor.get("rank") or 0) == rank:
+            query_label = str(anchor.get("query_label") or "")
+            return {
+                "identity_key": case_result["identity_key"],
+                "case_id": case_result.get("case_id"),
+                "repo_url": case_result["repo_url"],
+                "checkout_revision": case_result["checkout_revision"],
+                "hcvr_type": case_result.get("hcvr_type"),
+                "snapshot": case_result.get("snapshot"),
+                "guideline": guideline_by_label.get(query_label) or case_result.get("guideline"),
+                "guideline_query_label": query_label or None,
+                **anchor,
+            }
+    return None
+
+
+def exported_candidate_rows(results: list[dict[str, Any]], limit: int) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    if limit <= 0:
+        return rows
+    for case_result in results:
+        for anchor in (case_result.get("top_anchors") or [])[:limit]:
+            rows.append(
+                {
+                    "identity_key": case_result["identity_key"],
+                    "case_id": case_result.get("case_id"),
+                    "repo_key": case_result.get("repo_key"),
+                    "checkout_revision": case_result.get("checkout_revision"),
+                    "hcvr_type": case_result.get("hcvr_type"),
+                    "guideline_mode": case_result.get("guideline_mode"),
+                    "guideline_query_count": len(case_result.get("guideline_queries") or []),
+                    "candidate_count": case_result.get("candidate_count"),
+                    "known_anchor_count": case_result.get("known_anchor_count"),
+                    **anchor,
+                }
+            )
+    return rows
+
+
+def summarize(results: list[dict[str, Any]], budgets: list[int]) -> dict[str, Any]:
+    completed = [row for row in results if row.get("state", "completed") == "completed"]
+    ranks = [int(row["best_known_anchor_rank"]) for row in completed if row.get("best_known_anchor_rank")]
+    timing_keys = sorted(
+        {
+            key
+            for row in completed
+            for key in (row.get("timings") or {}).keys()
+        }
+    )
+    timing_totals = {
+        key: round(sum(float((row.get("timings") or {}).get(key) or 0.0) for row in completed), 3)
+        for key in timing_keys
+    }
+    summary: dict[str, Any] = {
+        "case_count": len(results),
+        "completed_count": len(completed),
+        "failed_count": len(results) - len(completed),
+        "candidate_count": sum(int(row.get("candidate_count") or 0) for row in completed),
+        "mean_candidates_per_completed_case": (
+            sum(int(row.get("candidate_count") or 0) for row in completed) / len(completed)
+            if completed
+            else 0.0
+        ),
+        "hit_cases": len(ranks),
+        "mrr": sum(1.0 / rank for rank in ranks) / len(results) if results else 0.0,
+        "timing_seconds_total": timing_totals,
+        "timing_seconds_mean": {
+            key: round(value / len(completed), 3) if completed else 0.0
+            for key, value in timing_totals.items()
+        },
+    }
+    for budget in budgets:
+        summary[f"known_anchor_hit_at_{budget}"] = (
+            sum(1 for rank in ranks if rank <= budget) / len(results) if results else 0.0
+        )
+    return summary
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--qa", type=Path, required=True)
+    parser.add_argument("--cases-file", type=Path)
+    parser.add_argument("--identity-file", type=Path)
+    parser.add_argument(
+        "--identity-list",
+        help=(
+            "Comma- or newline-separated identity_key values for small focused runs. "
+            "The script writes them to an output-local identity file so summary.json "
+            "keeps the exact selection auditable."
+        ),
+    )
+    parser.add_argument(
+        "--guideline-file",
+        type=Path,
+        help=(
+            "Optional JSON/JSONL sidecar keyed by identity_key or case_id. "
+            "Rows may contain guideline_text, retrieval_guideline, audit_guideline, "
+            "or guideline. Overrides generated broad track templates without "
+            "modifying the dataset."
+        ),
+    )
+    parser.add_argument(
+        "--guideline-mode",
+        choices=("override", "baseline-plus-override"),
+        default="override",
+        help=(
+            "override ranks with the single released guideline. "
+            "baseline-plus-override ranks each candidate by the max score from "
+            "the original dataset/template guideline and the override guideline."
+        ),
+    )
+    parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--repo-cache", type=Path, required=True)
+    parser.add_argument("--snapshot-root", type=Path, required=True)
+    parser.add_argument("--selection", choices=("added", "all"), default="all")
+    parser.add_argument("--limit", type=int, default=20)
+    parser.add_argument("--skip", type=int, default=0)
+    parser.add_argument("--clone-timeout", type=int, default=600)
+    parser.add_argument("--case-workers", type=int, default=4)
+    parser.add_argument("--top-k", type=int, default=200)
+    parser.add_argument(
+        "--export-top-candidates",
+        type=int,
+        default=0,
+        help=(
+            "Optional debug export. When positive, writes a flat top_candidates.jsonl "
+            "with up to this many retained candidates per case. The value cannot exceed --top-k."
+        ),
+    )
+    parser.add_argument("--audit-anchor-rank", type=int, default=1)
+    parser.add_argument("--window-lines", type=int, default=80)
+    parser.add_argument("--stride-lines", type=int, default=40)
+    parser.add_argument("--include-ext", default=",".join(DEFAULT_SUFFIXES))
+    parser.add_argument("--max-file-bytes", type=int, default=1_000_000)
+    parser.add_argument("--max-files-per-repo", type=int, default=20_000)
+    parser.add_argument("--max-candidates-per-case", type=int, default=50_000)
+    parser.add_argument("--text-max-chars", type=int, default=4000)
+    parser.add_argument(
+        "--embedding-backend",
+        choices=("openai", "sentence-transformers", "p3c64-query-residual"),
+        default="openai",
+    )
+    parser.add_argument("--embedding-base-url", default=os.environ.get("EMBEDDING_BASE_URL", "http://127.0.0.1:8001/v1"))
+    parser.add_argument("--embedding-api-key-env", default="EMBEDDING_API_KEY")
+    parser.add_argument("--embedding-model", default=os.environ.get("EMBEDDING_MODEL", "Qwen/Qwen3-Embedding-0.6B"))
+    parser.add_argument("--embedding-device", default="cpu")
+    parser.add_argument("--embedding-batch-size", type=int, default=64)
+    parser.add_argument("--embedding-timeout", type=int, default=300)
+    parser.add_argument("--embedding-max-retries", type=int, default=3)
+    parser.add_argument("--embedding-retry-sleep", type=float, default=5.0)
+    parser.add_argument("--max-seq-length", type=int, default=512)
+    parser.add_argument(
+        "--p3c64-state",
+        type=Path,
+        default=Path(os.environ.get("P3C64_STATE", "artifacts/p3c64_state.pt")),
+        help="P3C64 query-only residual MLP state; code embeddings remain frozen base embeddings.",
+    )
+    parser.add_argument("--p3c64-hidden-dimension", type=int, default=128)
+    parser.add_argument("--p3c64-residual-scale", type=float, default=0.1)
+    args = parser.parse_args()
+
+    if args.limit < 1 or args.case_workers < 1 or args.top_k < 1 or args.audit_anchor_rank < 1:
+        raise SystemExit("limit, case-workers, top-k, and audit-anchor-rank must be positive")
+    if args.export_top_candidates < 0:
+        raise SystemExit("--export-top-candidates cannot be negative")
+    if args.audit_anchor_rank > args.top_k:
+        raise SystemExit("--audit-anchor-rank cannot exceed --top-k")
+    if args.export_top_candidates > args.top_k:
+        raise SystemExit("--export-top-candidates cannot exceed --top-k because only retained candidates can be exported")
+    if args.embedding_backend == "p3c64-query-residual" and not args.p3c64_state.is_file():
+        raise SystemExit(f"--p3c64-state is unavailable: {args.p3c64_state}")
+
+    output = args.output_dir.resolve()
+    if output.exists():
+        raise FileExistsError(f"refusing existing recall output: {output}")
+    output.mkdir(parents=True)
+    repo_cache = args.repo_cache.resolve()
+    snapshot_root = args.snapshot_root.resolve()
+    repo_cache.mkdir(parents=True, exist_ok=True)
+    snapshot_root.mkdir(parents=True, exist_ok=True)
+    try:
+        identity_file, args.limit, identity_list_count = resolve_identity_selection(
+            output=output,
+            identity_file=args.identity_file,
+            identity_list=args.identity_list,
+            limit=args.limit,
+            default_limit=parser.get_default("limit"),
+        )
+    except ValueError as error:
+        raise SystemExit(str(error)) from error
+    cases = load_selected_cases(
+        args.qa.resolve(),
+        args.limit,
+        args.skip,
+        args.selection,
+        args.cases_file.resolve() if args.cases_file else None,
+        identity_file,
+        None,
+    )
+    guideline_file = args.guideline_file.resolve() if args.guideline_file else None
+    guideline_override_count = 0
+    if args.guideline_mode == "baseline-plus-override":
+        for case in cases:
+            case["_baseline_guideline"] = build_guideline(case)
+    if guideline_file is not None:
+        guideline_override_count = apply_guideline_overrides(
+            cases,
+            load_guideline_overrides(guideline_file),
+        )
+    embedder = make_embedder(args)
+    suffixes = {value.strip().lower() for value in args.include_ext.split(",") if value.strip()}
+    started = time.time()
+    results: list[dict[str, Any]] = []
+    selected: list[dict[str, Any]] = []
+    recall_path = output / "recall_results.jsonl"
+    selected_path = output / "selected_cases.jsonl"
+    recall_path.write_text("", encoding="utf-8")
+    selected_path.write_text("", encoding="utf-8")
+    repo_locks_guard = threading.Lock()
+    repo_locks: dict[str, threading.Lock] = {}
+
+    def repo_lock_for(case: dict[str, Any]) -> threading.Lock:
+        repo_key = str(case["repository"]["repo_key"])
+        with repo_locks_guard:
+            lock = repo_locks.get(repo_key)
+            if lock is None:
+                lock = threading.Lock()
+                repo_locks[repo_key] = lock
+            return lock
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=args.case_workers) as pool:
+        future_to_case = {
+            pool.submit(
+                recall_case,
+                case=case,
+                embedder=embedder,
+                repo_cache=repo_cache,
+                snapshot_root=snapshot_root,
+                snapshot_lock=repo_lock_for(case),
+                clone_timeout=args.clone_timeout,
+                suffixes=suffixes,
+                window_lines=args.window_lines,
+                stride_lines=args.stride_lines,
+                max_file_bytes=args.max_file_bytes,
+                max_files=args.max_files_per_repo,
+                max_candidates=args.max_candidates_per_case,
+                batch_size=args.embedding_batch_size,
+                text_max_chars=args.text_max_chars,
+                top_k=args.top_k,
+                guideline_mode=args.guideline_mode,
+            ): case
+            for case in cases
+        }
+        for future in concurrent.futures.as_completed(future_to_case):
+            case = future_to_case[future]
+            try:
+                row = future.result()
+                row["state"] = "completed"
+            except (
+                subprocess.CalledProcessError,
+                subprocess.TimeoutExpired,
+                OSError,
+                RuntimeError,
+                ValueError,
+            ) as error:
+                row = {
+                    "identity_key": case["identity_key"],
+                    "case_id": case.get("new_unified_case_id"),
+                    "repo_key": case["repository"]["repo_key"],
+                    "repo_url": case["repository"]["repo_url"],
+                    "checkout_revision": case["revisions"]["checkout_revision"],
+                    "state": "failed",
+                    "error": f"{type(error).__name__}: {error}",
+                    "candidate_count": 0,
+                    "known_anchor_count": len(case.get("recall_anchors") or []),
+                    "best_known_anchor_rank": None,
+                    "top_anchors": [],
+                }
+            results.append(row)
+            with recall_path.open("a", encoding="utf-8") as handle:
+                handle.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n")
+            chosen = selected_anchor_row(row, args.audit_anchor_rank)
+            if chosen is not None:
+                selected.append(chosen)
+                with selected_path.open("a", encoding="utf-8") as handle:
+                    handle.write(json.dumps(chosen, ensure_ascii=False, sort_keys=True) + "\n")
+            print(json.dumps({"identity_key": row["identity_key"], "state": row["state"], "best_known_anchor_rank": row.get("best_known_anchor_rank"), "candidate_count": row.get("candidate_count")}, ensure_ascii=False, sort_keys=True), flush=True)
+
+    order = {case["identity_key"]: index for index, case in enumerate(cases)}
+    results.sort(key=lambda row: order.get(row["identity_key"], 10**9))
+    selected.sort(key=lambda row: order.get(row["identity_key"], 10**9))
+    write_jsonl(recall_path, results)
+    write_jsonl(selected_path, selected)
+    top_candidates_path = output / "top_candidates.jsonl"
+    if args.export_top_candidates > 0:
+        write_jsonl(top_candidates_path, exported_candidate_rows(results, args.export_top_candidates))
+    budgets = sorted({1, 3, 5, 10, 20, 30, 50, 100, args.top_k})
+    summary = {
+        "schema_version": "hcvr_guideline_anchor_recall_run.v1",
+        "scope": "mechanical source slicing -> guideline embedding recall; known anchors used only for evaluation",
+        "qa": str(args.qa.resolve()),
+        "cases_file": str(args.cases_file.resolve()) if args.cases_file else None,
+        "identity_file": str(identity_file) if identity_file else None,
+        "identity_list_count": identity_list_count,
+        "guideline_file": str(guideline_file) if guideline_file else None,
+        "guideline_mode": args.guideline_mode,
+        "guideline_override_count": guideline_override_count,
+        "limit": args.limit,
+        "skip": args.skip,
+        "selection": args.selection,
+        "top_k": args.top_k,
+        "audit_anchor_rank": args.audit_anchor_rank,
+        "embedding_backend": args.embedding_backend,
+        "embedding_model": embedder.model_id,
+        "embedding_base_url": args.embedding_base_url if args.embedding_backend == "openai" else None,
+        "p3c64_state": str(args.p3c64_state.resolve()) if args.embedding_backend == "p3c64-query-residual" else None,
+        "p3c64_state_sha256": sha256_file(args.p3c64_state.resolve()) if args.embedding_backend == "p3c64-query-residual" else None,
+        "p3c64_method_boundary": (
+            "query-only identity-initialized residual MLP over frozen base Qwen embeddings; "
+            "code candidate embeddings are not adapted"
+            if args.embedding_backend == "p3c64-query-residual"
+            else None
+        ),
+        "case_workers": args.case_workers,
+        "embedding_batch_size": args.embedding_batch_size,
+        "window_lines": args.window_lines,
+        "stride_lines": args.stride_lines,
+        "elapsed_seconds": round(time.time() - started, 3),
+        "metrics": summarize(results, budgets),
+        "artifacts": {
+            "recall_results": str(recall_path),
+            "selected_cases": str(selected_path),
+            "top_candidates": str(top_candidates_path) if args.export_top_candidates > 0 else None,
+        },
+    }
+    write_json(output / "summary.json", summary)
+    (output / "README.md").write_text(
+        "# Guideline Anchor Recall Run\n\n"
+        "This run mechanically sliced source snapshots, embedded the guideline and candidate anchors, "
+        "ranked anchors by embedding similarity, and used dataset anchors only to compute known-anchor hit metrics.\n\n"
+        f"- Cases: {summary['metrics']['case_count']}\n"
+        f"- Completed: {summary['metrics']['completed_count']}\n"
+        f"- Hit@{args.top_k}: {summary['metrics'].get(f'known_anchor_hit_at_{args.top_k}', 0.0):.4f}\n"
+        f"- Selected audit anchor rank: {args.audit_anchor_rank}\n",
+        encoding="utf-8",
+    )
+    print(json.dumps(summary, ensure_ascii=False, indent=2, sort_keys=True), flush=True)
+    if summary["metrics"]["failed_count"]:
+        raise SystemExit(2)
+
+
+if __name__ == "__main__":
+    main()

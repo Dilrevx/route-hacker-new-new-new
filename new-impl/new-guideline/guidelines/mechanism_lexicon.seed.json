@@ -1,0 +1,183 @@
+{
+  "schema_version": "hcvr_mechanism_lexicon.v1",
+  "release": "seed-20260821",
+  "description": "Seed vulnerability mechanisms used by the offline cluster-assisted guideline generator. This lexicon constrains guideline granularity; it is not used as an online source-code regex scanner.",
+  "mechanisms": [
+    {
+      "mechanism_id": "mech_jndi_untrusted_lookup_target",
+      "name": "attacker-controlled JNDI lookup target",
+      "family": "remote_lookup_or_ssrf",
+      "aliases": ["JNDI lookup", "LDAP lookup", "RMI lookup", "InitialContext.lookup", "naming context lookup"],
+      "keywords": ["jndi", "ldap", "rmi", "initialcontext", "lookup", "naming", "object factory", "remote factory"],
+      "source_shape": "attacker-controlled names, URLs, headers, configuration values, or lookup keys",
+      "sink_shape": "JNDI, LDAP, RMI, naming-context, or remote lookup APIs",
+      "missing_guard": "the lookup scheme, authority, object factory, object type, and network destination are not constrained before lookup",
+      "typical_fix": "bind lookup inputs to trusted constants or allowlists, restrict schemes and destinations, and disable remote object factories"
+    },
+    {
+      "mechanism_id": "mech_ssrf_webhook_url_fetch",
+      "name": "attacker-controlled webhook or callback URL fetch",
+      "family": "ssrf",
+      "aliases": ["webhook SSRF", "callback URL fetch", "user controlled URL fetch", "outbound HTTP client SSRF"],
+      "keywords": ["ssrf", "webhook", "callback", "url", "uri", "http client", "openconnection", "request", "fetch", "metadata service"],
+      "source_shape": "attacker-controlled webhook URLs, callback URLs, endpoint parameters, or request destinations",
+      "sink_shape": "outbound HTTP clients, URL.openConnection, fetch helpers, proxy clients, or webhook dispatchers",
+      "missing_guard": "scheme, host, redirect target, DNS resolution, and private-address ranges are not constrained before the outbound request",
+      "typical_fix": "enforce scheme and host allowlists, block private and metadata addresses after DNS resolution, and validate redirect targets"
+    },
+    {
+      "mechanism_id": "mech_ssrf_redirect_following_client",
+      "name": "SSRF through redirect-following client",
+      "family": "ssrf",
+      "aliases": ["redirect-follow SSRF", "HTTP redirect SSRF", "Location header SSRF"],
+      "keywords": ["ssrf", "redirect", "location", "followredirects", "http client", "url", "host allowlist", "dns"],
+      "source_shape": "attacker-controlled URLs or server-controlled redirect responses",
+      "sink_shape": "HTTP clients that automatically follow redirects or reuse a previously validated URL decision",
+      "missing_guard": "the final redirected scheme, host, port, and resolved address are not revalidated before the sensitive network request",
+      "typical_fix": "disable automatic redirects or revalidate every redirect hop against the same allowlist and address policy"
+    },
+    {
+      "mechanism_id": "mech_open_redirect_unsafe_uri_scheme",
+      "name": "open redirect through unsafe URI scheme validation",
+      "family": "open_redirect",
+      "aliases": ["unsafe redirect URI scheme", "javascript URI redirect", "data URI redirect", "redirect_uri scheme bypass"],
+      "keywords": ["open redirect", "redirect uri", "redirect_uri", "redirect target", "uri scheme", "scheme", "javascript:", "data:", "valid redirect", "allowed redirect", "wildcard pattern", "url validation"],
+      "source_shape": "attacker-controlled redirect targets, callback URLs, return URLs, OAuth redirect_uri values, or browser navigation destinations",
+      "sink_shape": "redirect responses, Location headers, OAuth/OIDC/SAML redirect validation, or browser-followed navigation targets",
+      "missing_guard": "the redirect target is accepted without constraining the final scheme and destination to trusted browser-safe values",
+      "typical_fix": "validate redirect targets with an explicit safe-scheme and destination allowlist after decoding and normalization"
+    },
+    {
+      "mechanism_id": "mech_template_expression_untrusted_eval",
+      "name": "untrusted template or expression evaluation",
+      "family": "code_or_template_injection",
+      "aliases": ["template injection", "expression language injection", "SpEL injection", "OGNL injection", "Velocity macro injection", "FreeMarker template injection"],
+      "keywords": ["template", "expression", "spel", "ognl", "velocity", "freemarker", "thymeleaf", "macro", "evaluate", "render"],
+      "source_shape": "attacker-controlled template text, expression strings, macro content, or rendering parameters",
+      "sink_shape": "template engines, expression evaluators, macro renderers, or scriptable configuration evaluators",
+      "missing_guard": "untrusted expression content is evaluated without sandboxing, escaping, allowlisting, or disabling reflective execution features",
+      "typical_fix": "separate data from templates, sandbox expression evaluation, and disable reflection or method invocation features for untrusted input"
+    },
+    {
+      "mechanism_id": "mech_deserialization_untrusted_type_graph",
+      "name": "untrusted deserialization with attacker-controlled type graph",
+      "family": "deserialization",
+      "aliases": ["unsafe deserialization", "ObjectInputStream.readObject", "pickle load", "marshal load", "serializer type metadata"],
+      "keywords": ["deserialize", "deserialization", "serializer", "objectinputstream", "readobject", "pickle", "marshal", "gadget", "type metadata"],
+      "source_shape": "untrusted serialized bytes, object streams, pickles, marshaled payloads, or type metadata",
+      "sink_shape": "deserializers that instantiate classes, reconstruct object graphs, or invoke callbacks during object creation",
+      "missing_guard": "allowed classes, object types, and construction side effects are not constrained before deserialization",
+      "typical_fix": "use type allowlists, safe codecs, signature checks, or data-only formats instead of general object deserialization"
+    },
+    {
+      "mechanism_id": "mech_xml_external_entity_resolution",
+      "name": "unsafe XML parser external entity or DTD resolution",
+      "family": "xml_external_resource_resolution",
+      "aliases": ["XXE", "XML external entity", "external entity resolution", "DTD processing", "DocumentBuilderFactory external entities"],
+      "keywords": ["xxe", "xml", "dtd", "doctype", "external entity", "external entities", "external general entities", "external parameter entities", "entityresolver", "documentbuilderfactory", "saxparserfactory", "xmlinputfactory", "transformerfactory", "xpath", "xslt", "sax", "dom", "schemafactory", "accessExternalDTD", "accessExternalSchema", "disallow-doctype-decl"],
+      "source_shape": "attacker-controlled or externally supplied XML documents, SOAP messages, XML reports, configuration files, XPath inputs, or XSLT stylesheets",
+      "sink_shape": "XML parser, XPath, transformer, schema, or SOAP/XML utility code that parses or transforms those documents",
+      "missing_guard": "DTD declarations, external general entities, external parameter entities, external schema access, or external stylesheet access are not disabled or constrained on the exact parser/transformer instance",
+      "typical_fix": "disable DOCTYPE and external entity processing, restrict external-access properties, and install a resolver or parser configuration that rejects external resource resolution before parsing"
+    },
+    {
+      "mechanism_id": "mech_path_traversal_missing_canonical_prefix",
+      "name": "path traversal through missing canonical prefix check",
+      "family": "filesystem",
+      "aliases": ["path traversal", "directory traversal", "Zip Slip", "archive entry traversal", "canonical path bypass"],
+      "keywords": ["path traversal", "directory traversal", "zip slip", "archive", "entry", "canonical", "normalize", "prefix", "file", "path"],
+      "source_shape": "attacker-controlled filenames, archive entries, path fragments, or resource names",
+      "sink_shape": "file read, write, delete, extraction, or resource-loading APIs",
+      "missing_guard": "the normalized absolute path is not checked to remain under the intended base directory before the file operation",
+      "typical_fix": "normalize and canonicalize the resolved path, then enforce a base-directory prefix or equivalent containment check"
+    },
+    {
+      "mechanism_id": "mech_object_owner_scope_missing_authz",
+      "name": "missing object-owner or tenant-scope authorization",
+      "family": "authorization",
+      "aliases": ["object ownership authorization", "tenant scope check", "IDOR", "resource scoped authorization"],
+      "keywords": ["authorization", "owner", "ownership", "tenant", "scope", "idor", "principal", "permission", "resource", "access control"],
+      "source_shape": "attacker-selected resource identifiers, object IDs, tenant IDs, or administrative action targets",
+      "sink_shape": "sensitive read, write, mutation, deletion, workflow, or administrative operations on the selected resource",
+      "missing_guard": "the authorization decision is not bound to both the current principal and the exact resource or tenant being affected",
+      "typical_fix": "check ownership or tenant scope before the effect and carry that checked identity into the data access or mutation"
+    },
+    {
+      "mechanism_id": "mech_request_body_resource_mismatch_authz",
+      "name": "request-body resource identifiers bypass path-scoped authorization",
+      "family": "authorization",
+      "aliases": ["path parameter authorization mismatch", "request body resource mismatch", "bulk operation target mismatch", "namespace sync authorization bypass"],
+      "keywords": ["path parameter", "path parameters", "request body", "body", "resource identifier", "resource identifiers", "bulk operation", "sync", "namespace", "appId", "namespaceName", "target namespace", "permission check"],
+      "source_shape": "attacker-controlled resource identifiers, namespace IDs, tenant IDs, object IDs, or bulk-operation targets carried in a request body",
+      "sink_shape": "bulk updates, synchronization operations, mutations, or administrative effects that act on those body-selected resources",
+      "missing_guard": "the body-selected resources are not validated to match the URL path parameters or the resource identity used by the authorization check",
+      "typical_fix": "validate every body-selected target against the path-scoped resource identity before the permission check and before the mutation"
+    },
+    {
+      "mechanism_id": "mech_missing_authentication_before_privileged_action",
+      "name": "missing authentication before privileged action",
+      "family": "authentication",
+      "aliases": ["missing authentication", "unauthenticated privileged action", "missing login check"],
+      "keywords": ["authentication", "authenticated", "unauthenticated", "session", "principal", "login", "credential", "privileged", "admin"],
+      "source_shape": "externally reachable requests, RPC messages, management calls, or background command triggers",
+      "sink_shape": "privileged commands, administrative state changes, credential operations, or protected data access",
+      "missing_guard": "caller identity is not established before the privileged action begins",
+      "typical_fix": "require a validated session, principal, token, or authentication filter before any privileged effect"
+    },
+    {
+      "mechanism_id": "mech_state_precondition_missing_before_effect",
+      "name": "missing business-state precondition before sensitive effect",
+      "family": "business_logic",
+      "aliases": ["business state precondition", "state transition guard", "lifecycle check", "quota check"],
+      "keywords": ["state", "precondition", "lifecycle", "quota", "balance", "transition", "order", "workflow", "business"],
+      "source_shape": "requests or events that select an operation, workflow step, account, resource, or state transition",
+      "sink_shape": "sensitive state changes, billing effects, entitlement changes, resource consumption, or workflow transitions",
+      "missing_guard": "the required lifecycle state, quota, ownership state, or operation ordering is not enforced before the effect",
+      "typical_fix": "validate the required state immediately before the effect and make the check and mutation atomic when needed"
+    },
+    {
+      "mechanism_id": "mech_toctou_mutable_object_reuse",
+      "name": "time-of-check to time-of-use on mutable object",
+      "family": "race_or_lifecycle",
+      "aliases": ["TOCTOU", "check then use race", "double fetch", "stale object reuse"],
+      "keywords": ["toctou", "race", "check", "use", "double fetch", "stale", "mutable", "lock", "atomic", "symlink"],
+      "source_shape": "mutable files, paths, objects, identities, request fields, or shared state that are checked before use",
+      "sink_shape": "sensitive file, state, permission, memory, or resource effects that depend on the earlier check",
+      "missing_guard": "the checked value is not stabilized with a handle, lock, transaction, immutable copy, or atomic operation before the effect",
+      "typical_fix": "bind the check to a stable reference or perform the check and effect under the same atomic operation or synchronization boundary"
+    },
+    {
+      "mechanism_id": "mech_temp_file_delete_mkdir_race",
+      "name": "temporary directory create-delete-mkdir TOCTOU race",
+      "family": "race_or_lifecycle",
+      "aliases": ["temporary directory TOCTOU", "createTempFile delete mkdir race", "file-delete-mkdir temporary directory race"],
+      "keywords": ["createtempfile", "create temp file", "temporary directory", "temp directory", "delete", "mkdir", "mkdirs", "file-delete-mkdir", "files.createtempdirectory", "non-atomic", "toctou", "race"],
+      "source_shape": "temporary file or directory names created in shared writable locations",
+      "sink_shape": "manual temporary directory creation sequences such as createTempFile, delete, then mkdir or mkdirs",
+      "missing_guard": "the temporary path is released between creation and directory creation, allowing another actor to replace or pre-create it before use",
+      "typical_fix": "use an atomic temporary-directory API such as Files.createTempDirectory and avoid delete-then-mkdir sequences"
+    },
+    {
+      "mechanism_id": "mech_privileged_server_side_capability_exposed",
+      "name": "privileged server-side capability exposed to lower privilege context",
+      "family": "authorization",
+      "aliases": ["missing programming rights check", "privileged API exposure", "server-side include capability exposure", "lower privilege script capability"],
+      "keywords": ["programming right", "programming rights", "script right", "script rights", "privileged api", "server-side include", "invokeServletAndReturnAsString", "requestdispatcher", "render template", "velocity", "internal file"],
+      "source_shape": "lower-privilege script, template, macro, plugin, or API callers that can invoke privileged server-side capabilities",
+      "sink_shape": "server-side include, template rendering, servlet dispatch, raw object access, internal file reads, or privileged framework APIs",
+      "missing_guard": "a higher privilege check is not enforced at the API entry point before exposing the server-side capability",
+      "typical_fix": "check the required higher privilege at the exposed API boundary and return no sensitive result when the caller lacks that privilege"
+    },
+    {
+      "mechanism_id": "mech_bean_property_reflection_escape",
+      "name": "bean property reflection escape",
+      "family": "reflection_or_binding",
+      "aliases": ["BeanUtils property injection", "bean introspection", "classloader property escape", "nested property binding"],
+      "keywords": ["beanutils", "bean", "property", "introspection", "introspector", "classloader", "class loader", "reflection", "binding"],
+      "source_shape": "attacker-controlled property names, bean paths, binding keys, or conversion metadata",
+      "sink_shape": "bean introspection, property-copy, nested binding, conversion, or reflective access APIs",
+      "missing_guard": "dangerous meta-properties, nested class-loader paths, or reflective properties are not suppressed before binding",
+      "typical_fix": "denylist dangerous meta-properties, restrict nested binding, and avoid exposing reflective class-loader reachable fields"
+    }
+  ]
+}
