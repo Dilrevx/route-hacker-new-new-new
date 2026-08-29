@@ -2,7 +2,6 @@
 name = "gca"
 version = "0.1.0"
 description = "Automated security analysis tool for discovering routes and analyzing vulnerabilities"
-readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "typer[all]>=0.9.0",
@@ -73,7 +72,7 @@ packages = ["src/gca", "src/gca/runtime", "src/gca/runtime/api", "src/gca/runtim
 "assets/trace_tagger" = "trace_tagger/assets"
 
 [tool.hatch.build.targets.sdist]
-include = ["src/", "assets/", "README.md", "LICENSE"]
+include = ["src/", "assets/"]
 
 [tool.black]
 line-length = 100
