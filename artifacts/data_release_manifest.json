@@ -1,0 +1,59 @@
+{
+  "counts": {
+    "anchors": 5451,
+    "cases": 666,
+    "paper_eval_allowlist": 143
+  },
+  "files": {
+    "new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_anchors.v1.jsonl": {
+      "bytes": 6971826,
+      "sha256": "bd4abf1e30ff37438640bd53931528b0bd7481d8b7041391cd7e05bb78139e95"
+    },
+    "new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl": {
+      "bytes": 14138068,
+      "sha256": "4c4553045d608097b747e8a26a1216f21656f4bb0201bde4e2c7b7b44f5533b0"
+    },
+    "new-impl/hcvr_new_unified_dataset_v2/dataset/summary.v1.json": {
+      "bytes": 3333,
+      "sha256": "5903cc818c88cc94c0fb13e805f22c9e576507afe206ef276917b570d057eabc"
+    },
+    "new-impl/hcvr_new_unified_dataset_v2/receipts/hcvr_new_unified_fix_revision_paper_eval_review.v2.jsonl": {
+      "bytes": 177713,
+      "sha256": "3b3f452cc603b30992b9d2517afecb671207b2673692813197a4add0dd8502d0"
+    },
+    "new-impl/hcvr_new_unified_dataset_v2/receipts/hcvr_new_unified_paper_eval_rebalance_qa.v2.json": {
+      "bytes": 4067,
+      "sha256": "66f08f3c5faf315c57be6d5eb0217453694d7cda4e06a3cfa6e5262bd33ad71f"
+    },
+    "new-impl/new-guideline/guidelines/release-r8/guideline_overrides.jsonl": {
+      "bytes": 204099,
+      "sha256": "a45ead53711756d7c27bbbd692d2b9446cd3ce1bf7417939fdb1e901f8f6abf2"
+    },
+    "new-impl/new-guideline/guidelines/release-r8/index.json": {
+      "bytes": 184497,
+      "sha256": "b78dab2ef3f864427e0c5419042c46cfa24d30974b59ec03e3f4905dc23b3e84"
+    },
+    "new-impl/new-guideline/guidelines/release-r8/mechanism_candidates.jsonl": {
+      "bytes": 655664,
+      "sha256": "6bbc0bd2ee1168405ec81745446796e36ca007446fa424497ae3b8f4f026b64d"
+    },
+    "new-impl/new-guideline/guidelines/release-r8/summary.json": {
+      "bytes": 756,
+      "sha256": "09a48b44ec0644c6ef664a3501304686aa39eac302068ccc80881e040df5b196"
+    }
+  },
+  "sanitization": {
+    "dropped": [
+      "local filesystem paths and execution commands",
+      "local provenance pointers",
+      "embedded source snippets"
+    ],
+    "preserved": [
+      "public vulnerability identifiers",
+      "public repository URLs and checkout revisions",
+      "classification, vulnerability traces, and review-entry anchors",
+      "released guideline text and mechanism assignments"
+    ]
+  },
+  "schema_version": "gca_anonymous_data_release.v1"
+}

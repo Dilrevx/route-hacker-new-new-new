@@ -1,0 +1,90 @@
+{
+  "anchor_location_dedupe_v2_rebalance": {
+    "case": "eclipse__milo::CVE-2022-25897",
+    "reason": "same case same file/start/end duplicate; kept symbol-bearing source anchor",
+    "removed_anchor_id": "anchor::ec95c1eef7dd39d9aa11"
+  },
+  "anchor_supplement_inplace": {
+    "last_updated_at": "2026-08-15T23:55:13+00:00",
+    "source_family": "agentic_anchor_supplement_v1"
+  },
+  "boundary": {
+    "candidate_pools_modified": false,
+    "dataset_a_v1_mutated": false,
+    "new_unified_is_sidecar_not_dataset_a_rewrite": true,
+    "ranks_or_embeddings_generated": false,
+    "training_run": false,
+    "unified_dataset_v1_mutated": false
+  },
+  "counts": {
+    "accepted": 666,
+    "anchor_count": 5451,
+    "appendix_protocol": 19,
+    "failed": 0,
+    "pending": 0,
+    "source_unified_case_count": 702,
+    "track_case_count": 526
+  },
+  "current_output_files": {
+    "new_unified_anchors": {
+      "sha256": "f00b0612d02695cdd5243c6c1d2015288ffeef903db0bb15fff2abaa541a78ec"
+    },
+    "new_unified_cases": {
+      "sha256": "ebe85e59e673c6f76b9b4bae7a6d16f09b5e7d54c4767a2e05642e30902620a0"
+    }
+  },
+  "failure_reason_counts": {},
+  "generated_at": "2026-08-10T18:42:06+00:00",
+  "input_files": {
+    "external_fix_refs": {
+      "sha256": "52f968671d0cf3c05f811b71b3d1a2d3887563ce2867b06bcd0d7a6ca2dde1e4",
+      "status": "present"
+    },
+    "m11_buggy_target_coverage": {
+      "0": {
+        "sha256": "837993a426c334a5395d661e21823d5f7997c25cd611a544efa170551dcf4057",
+        "status": "present"
+      }
+    },
+    "manual_classification": {
+      "sha256": "40e8b307ea425d8bd05d72bff78340b336f3ffbec120159758f8d0f8d565b6f3",
+      "status": "present"
+    },
+    "reviewed_source_evidence": {
+      "sha256": "2dad3c9b27765916a28375b47f68bd15aeff326a33e4ade7f0f634ad2fb064bc",
+      "status": "present"
+    },
+    "unified_cases": {
+      "sha256": "c7adda2104cfe4c1dd09673e3ee26cc21cf379d3e6499b6ede76ee3a670d7cd5"
+    },
+    "unified_source_records": {
+      "sha256": "c0bdc1542a4cacb0975ac15fb1f4ee75a29bd1e4ad9004d027cbc0194e532387"
+    }
+  },
+  "posthoc_dataset_repairs": [
+    {
+      "allowlist_anchor_count": 2394,
+      "allowlist_bad_supplement_anchors": 0,
+      "allowlist_below10": 0,
+      "allowlist_case_count": 143,
+      "allowlist_min_anchor_count": 10,
+      "allowlist_same_location_cases": 0,
+      "allowlist_wrong_runner_source_window": 0,
+      "description": "Corrected auto source-window supplement provenance.runner and removed same-case duplicate anchor locations while preserving at least 10 anchors and at least 10 unique locations per allowlist case.",
+      "repair_id": "runner_and_anchor_location_dedupe_v1_20260814",
+      "scope": "143-case paper-eval allowlist"
+    }
+  ],
+  "release_files": {
+    "anchors": "dataset/new_unified_anchors.v1.jsonl",
+    "cases": "dataset/new_unified_cases.v1.jsonl",
+    "paper_eval_allowlist": "receipts/hcvr_new_unified_fix_revision_paper_eval_review.v2.jsonl"
+  },
+  "schema_version": "hcvr_new_unified_summary.v1",
+  "second_round_reminders": [
+    "fill vulnerability_trace.summary and trace node rationale",
+    "fill failed cases with missing exact checkout revisions",
+    "review uncertain anchor-source decisions, especially ReposVul, m17/m9 review entries, and nssl-why source/sink"
+  ],
+  "status": "new_unified_dataset_built"
+}

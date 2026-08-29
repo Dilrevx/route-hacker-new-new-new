@@ -88,7 +88,7 @@ def arthas(cmd, timeout=25):
 ### Step 1 — Start the container
 
 ```bash
-route-hacker instrument shell <image> --keep
+gca instrument shell <image> --keep
 # Add --port 8080:8080 if the app needs a port mapped
 ```
 

@@ -12,7 +12,11 @@ runtime confirmation.
 - `new-impl/compile-builder-v2/`: build and CodeQL repair utilities
 - `new-impl/runtime-v2-verifier-redesign/`: runtime task orchestration
 - `new-impl/baselines/`: baseline drivers
+- `new-impl/new-guideline/guidelines/release-r8/`: released guideline catalog
+- `new-impl/hcvr_new_unified_dataset_v2/`: anonymized CVE corpus and fixed
+  paper-evaluation allowlist
 - `artifacts/p3c64_state.pt`: query-adapter checkpoint
+- `artifacts/data_release_manifest.json`: data file sizes and SHA-256 digests
 
 Run commands from the repository root. Each script also provides `--help` for
 its complete set of options.
@@ -32,8 +36,9 @@ python new-impl/new-guideline/scripts/generate_mechanism_guidelines.py \
 
 ```bash
 python new-impl/new-guideline/scripts/recall_guideline_anchors.py \
-  --qa /path/to/qa.json \
-  --cases-file /path/to/cases.jsonl \
+  --qa new-impl/hcvr_new_unified_dataset_v2/receipts/hcvr_new_unified_paper_eval_rebalance_qa.v2.json \
+  --cases-file new-impl/hcvr_new_unified_dataset_v2/dataset/new_unified_cases.v1.jsonl \
+  --guideline-file new-impl/new-guideline/guidelines/release-r8/guideline_overrides.jsonl \
   --output-dir /path/to/recall-run \
   --repo-cache /path/to/repo-cache \
   --snapshot-root /path/to/snapshots \
