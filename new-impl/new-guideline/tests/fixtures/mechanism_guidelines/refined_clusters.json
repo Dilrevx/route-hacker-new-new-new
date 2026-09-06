@@ -1,0 +1,23 @@
+{
+  "method": "llm_native",
+  "schema_version": "1.0",
+  "created_at": "2026-08-21T00:00:00+00:00",
+  "clusters": [
+    {
+      "cluster_id": 7,
+      "cluster_name": "outbound lookup and request bugs",
+      "cluster_summary": "A deliberately broad historical cluster that mixes naming lookups and ordinary outbound URL fetches.",
+      "members": [
+        "CVE-2099-1001",
+        "CVE-2099-1002"
+      ],
+      "representative_cve": "CVE-2099-1001",
+      "suspected_outliers": [],
+      "sub_patterns": []
+    }
+  ],
+  "noise": [],
+  "metadata": {
+    "fixture": true
+  }
+}

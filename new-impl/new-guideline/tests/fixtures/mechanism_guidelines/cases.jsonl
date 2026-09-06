@@ -1,0 +1,2 @@
+{"identity_key": "owner__repo::CVE-2099-1001", "new_unified_case_id": "case::jndi", "vulnerability": {"id": "CVE-2099-1001", "aliases": []}}
+{"identity_key": "owner__repo::CVE-2099-1002", "new_unified_case_id": "case::webhook", "vulnerability": {"id": "CVE-2099-1002", "aliases": []}}
