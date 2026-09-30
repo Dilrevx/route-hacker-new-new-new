@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-09-30T09:19:15.452918+00:00",
+  "created_at_utc": "2026-09-30T09:29:38.439257+00:00",
   "scope": "reviewed_public_environment_repair_subset",
   "file_count": 1333,
-  "bytes": 7933051,
+  "bytes": 7933644,
   "files": [
     {
       "path": "README.md",
       "bytes": 4694,
-      "sha256": "b71a19c19f9a1b1f77d826d32c9af93e53c0f0b50acb3b01cdd5069d36737cd3"
+      "sha256": "d3dfc178417a42db6054d2a2212f6e1d8ec5d19857505ac9de711df4c2390057"
     },
     {
       "path": "codeql-compile/FILE_MANIFEST.json",
@@ -23,7 +23,7 @@
     {
       "path": "codeql-compile/README.md",
       "bytes": 3016,
-      "sha256": "7563e23a0f9ae1d2a397d580086cb759ff1722f3c1ea98c777e3490089195fce"
+      "sha256": "be13b517e4ec88863df99448676392b0aba870794b50a73edfb1ce75bb458225"
     },
     {
       "path": "codeql-compile/SOURCE_PROVENANCE.json",
@@ -5227,8 +5227,8 @@
     },
     {
       "path": "preservation-inventory.json",
-      "bytes": 2970,
-      "sha256": "543e69968269177d869ea4a48753b06294d9283ffdf5a436dee4465a126aed53"
+      "bytes": 3563,
+      "sha256": "73b2f10966d46dab0617a253d762f85c542e5e3a8b1e195f3188c75033823cc2"
     },
     {
       "path": "runtime-v2/README.md",
@@ -6670,5 +6670,6 @@
       "bytes": 12025,
       "sha256": "185ed5e3bb7820de31db35371a913cea0ddcca67b7978c41512f7e8362f6e658"
     }
-  ]
+  ],
+  "supersedes_manifest_sha256": "3d9a43aac5917d6e2c6f00604b2c506639ffde7c4337418526ab3fe47b3314b8"
 }

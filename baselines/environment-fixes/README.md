@@ -73,6 +73,6 @@ product names are provenance, not portable defaults or an anonymized submission.
 See [archive manifest](archive-manifest.json) and
 [verification receipt](verification-receipt.json) for the delivered file checks.
 The [preservation inventory](preservation-inventory.json) distinguishes verified
-private recovery copies from the public subset and approximately 30.46 GB of
+private recovery copies from the public subset and approximately 30.31 GB of
 identified dependency files still only on the server, plus unpreserved directory
 contexts. Neither the public archive nor this inventory authorizes their deletion.

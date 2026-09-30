@@ -47,14 +47,25 @@
       "fleet_cases": 137,
       "historical_executor_files": 18,
       "publication": "sanitized recipe/decision/receipt projections with original and publication hashes"
+    },
+    {
+      "family": "akka_exact_build_closure_supplement",
+      "status": "seven_original_archive_hashes_and_independent_local_readback_verified",
+      "files": 7,
+      "bytes": 148029444,
+      "local_publishLocal_modules": 20,
+      "ivy_members_checked_against_historical_manifest": 360,
+      "historical_compile_review": "rejected_unchanged",
+      "publication": "private_only_no_archive_payloads_uploaded",
+      "private_delta_receipt_sha256": "d076afc641b20317dc207480c191bce99717bbf65183974862b606c266b4473a"
     }
   ],
   "not_yet_backed_up_dependencies": {
     "scope": "bounded compile/CodeQL file inventory, not the whole server",
     "status": "remaining_on_source_server_do_not_delete_based_on_this_archive",
-    "file_occurrences": 331,
-    "distinct_file_sha256": 267,
-    "distinct_file_bytes": 30458643949,
+    "file_occurrences": 324,
+    "distinct_file_sha256": 260,
+    "distinct_file_bytes": 30310614505,
     "directory_references_not_recursively_preserved": 528,
     "copy_instructions_requiring_context_resolution": 22,
     "warning": "Offline dependency bundles, source snapshots, custom binaries and container exports may be difficult or impossible to reconstruct. Directory sizes and all dependencies are not exhaustively covered."
@@ -62,5 +73,6 @@
   "image_layers": {
     "status": "not_exported",
     "warning": "Image tags and historical readiness receipts are not backups of the images, and daemon lookup is not a new runtime test."
-  }
+  },
+  "last_followup_at_utc": "2026-09-30T09:29:38.435245+00:00"
 }

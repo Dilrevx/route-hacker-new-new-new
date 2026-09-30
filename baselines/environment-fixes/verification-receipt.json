@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "verified_at_utc": "2026-09-30T09:19:19.527885+00:00",
+  "verified_at_utc": "2026-09-30T09:29:44.239318+00:00",
   "result": {
     "files": 1333,
-    "bytes": 7933051,
+    "bytes": 7933644,
     "legacy_original_bytes": {
       "files": 297,
       "bytes": 210903
@@ -32,11 +32,14 @@
         "rejected": 2
       }
     },
-    "manifest_sha256": "3d9a43aac5917d6e2c6f00604b2c506639ffde7c4337418526ab3fe47b3314b8",
+    "manifest_sha256": "e85e58827bb8bc8c550059ebfbee8eaae5dca6230a590b0638a0ce1a65f4b845",
     "scope": "preservation_integrity_only_no_build_or_runtime_rerun"
   },
   "unit_test_returncode": 0,
-  "previous_method_regression_tests": {"tests": 35, "returncode": 0},
+  "previous_method_regression_tests": {
+    "tests": 35,
+    "returncode": 0
+  },
   "repository_commit_hook": "Hardcoded-credential hook timed out after its built-in 2-second limit; not counted as a successful credential scan. The hook was not disabled.",
   "publication_review": {
     "all_manifest_files_staged_and_checked": true,
@@ -45,9 +48,27 @@
     "whole_archive_whitespace_check": "nonzero: historical original files and patch context retain whitespace; not reformatted to preserve source hashes",
     "credential_scan_limit": "Heuristic patterns and source review, not proof of absence"
   },
-  "unit_test_output": "..................\n----------------------------------------------------------------------\nRan 18 tests in 0.042s\n\nOK",
+  "unit_test_output": "..................\n----------------------------------------------------------------------\nRan 18 tests in 0.045s\n\nOK",
   "new_builds_or_runtime_probes": false,
   "server_files_modified_or_deleted": false,
   "historical_outcomes_are_not_new_reproduction_results": true,
-  "private_backups_are_not_implicitly_public": true
+  "private_backups_are_not_implicitly_public": true,
+  "followup_checks": {
+    "private_dependency_supplement_files": 7,
+    "private_dependency_supplement_bytes": 148029444,
+    "runtime_selective_restore": {
+      "files": 10,
+      "bytes": 7869,
+      "all_selected_original_hashes_match": true,
+      "private_receipt_sha256": "fa59baf2326cf5cc62110f4c1425664c1ad678c49b184c54e0e34fcd475fb578",
+      "scope": "bounded manual selection of content-addressed objects, not a full tool restore, rebuild, or runtime execution"
+    },
+    "anonymous_public_downloads": {
+      "commit": "1bd5c154aa11e3b71896d49547cadf11e3928cf5",
+      "files_checked": 4,
+      "all_selected_bodies_match": true,
+      "scope": "the previous public commit; current followup commit requires separate remote confirmation"
+    },
+    "private_upload_destination": "awaiting_user_choice_no_new_private_repository_created"
+  }
 }

@@ -38,7 +38,7 @@ The existing `compile-builder-v2` module is not asserted byte-identical to the
 historical a26 executor.
 
 Large dependencies remain on the source server: the bounded inventory identified
-267 distinct not-yet-backed-up file hashes totaling **30,458,643,949 bytes**, plus
+260 distinct not-yet-backed-up file hashes totaling **30,310,614,505 bytes**, plus
 528 directory references not recursively preserved. These figures are not an
 exhaustive server inventory. Offline dependency bundles, custom binaries and
 container exports cannot be assumed easy to download or reconstruct later.
