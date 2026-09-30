@@ -16,6 +16,7 @@ query-LoRA experiments are not this model.
 | [helpers](helpers/) | Recovered M5 helper dependency closure, exact P4 generic-view builder, and guideline track definitions |
 | [archive manifest](archive-manifest.json) | Sizes and SHA-256 hashes of the archived files |
 | [verification tools](tools/) | Offline hash, split, ranking, and optional checkpoint checks |
+| [verification receipt](verification-receipt.json) | Source-hash, metric, checkpoint, and public-download checks performed for this archive |
 | [existing fixed143 results](../../new-impl/new-guideline/results/p3c64-fixed143-paper-eval-20260820/) | P3C64 and frozen 4B per-case rank tables, frozen identities, and comparison summaries |
 
 The archived files retain their original bytes, including historical local paths.

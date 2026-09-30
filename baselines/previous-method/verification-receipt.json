@@ -1,0 +1,56 @@
+{
+  "schema_version": "previous_method_preservation_verification_v1",
+  "verified_on": "2026-09-30",
+  "archive_commit": "ec8359f44a1445635b7c8455500400c0a41efb8e",
+  "git_archive": {
+    "files": 80,
+    "bytes": 7131242,
+    "manifest_sha256": "c99bcd3ff0bb59d22714084a829d911da80d11a2787851a1be2b668059466a3a",
+    "p3_original_files_compared_with_server": 68,
+    "p3_source_hash_mismatches": 0,
+    "helper_source_files_hash_verified": 11,
+    "public_p3c64_download_hash_verified": true,
+    "public_manifest_download_hash_verified": true
+  },
+  "checks": {
+    "unit_tests_passed": 35,
+    "frozen_cases": 155,
+    "frozen_pairs": 295,
+    "fitting_cases": 112,
+    "selection_cases": 43,
+    "fitting_selection_project_family_overlap": 0,
+    "selection_variants_recomputed": ["B0", "P3C16", "P3C64"],
+    "external_cases_recomputed": 21,
+    "fixed143_models_recomputed": ["P3C64", "Qwen4B"],
+    "checkpoint_tensor_checks": "Both P3C16 and P3C64 loaded with weights_only=True; expected keys, float32, shapes and finite values verified.",
+    "readme_selection_example": "Loaded exactly 143 matching identities with repository URLs and source revisions; no embeddings or repository downloads run.",
+    "candidate_count_difference": "The historical fixed143 reports differ for quarkusio__quarkus::CVE-2025-49574: 36640 versus 38444 candidates. This difference is retained.",
+    "automatic_commit_hook": "Generic hardcoded-value hook timed out after 2 seconds. Separate archive checks and targeted credential-pattern review were performed; the hook is not counted as passed."
+  },
+  "full_rank_assets": {
+    "release_url": "https://github.com/Dilrevx/route-hacker-new-new-new/releases/tag/previous-method-baseline-20260930",
+    "release_id": 399852954,
+    "hash_manifest": "rank-assets.json",
+    "compressed_bytes": 116245810,
+    "original_bytes": 809085333,
+    "p3c64_candidate_rows": 1094013,
+    "qwen4b_candidate_rows": 1095817,
+    "checked": [
+      "Both original SHA-256 hashes matched the server originals",
+      "Exact 143-case identity and source-revision matches to tracked compact reports",
+      "Every candidate rank is contiguous, candidate IDs are unique per case, scores are finite and non-increasing",
+      "Each first overlapping candidate agrees with the recorded first-hit rank",
+      "Only expected location, score and metadata fields occur; no source-text field",
+      "Gzip decompression reproduces original JSONL SHA-256 hashes",
+      "GitHub asset digests match the local compressed files",
+      "All three release assets were downloaded publicly and their SHA-256 hashes rechecked"
+    ]
+  },
+  "not_claimed": [
+    "Exact historical retraining",
+    "A new model inference or end-to-end audit run",
+    "Independent certification of historical labels",
+    "Public backup of P4 source snippets or private September research"
+  ],
+  "server_files_deleted": 0
+}
