@@ -1,14 +1,19 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-09-30T09:29:38.439257+00:00",
+  "created_at_utc": "2026-09-30T09:47:08.131833+00:00",
   "scope": "reviewed_public_environment_repair_subset",
-  "file_count": 1333,
-  "bytes": 7933644,
+  "file_count": 1334,
+  "bytes": 7940684,
   "files": [
     {
       "path": "README.md",
-      "bytes": 4694,
-      "sha256": "d3dfc178417a42db6054d2a2212f6e1d8ec5d19857505ac9de711df4c2390057"
+      "bytes": 5338,
+      "sha256": "fa0b5179fd28164608a432526cdbbe2e1475014c7ba8afea8e8f464663bf7a52"
+    },
+    {
+      "path": "REPAIR_GUIDE.zh-CN.md",
+      "bytes": 5815,
+      "sha256": "8a7881246cfb4ac0332ef5bbea5651724f011673463e4d32c51830cc3316049f"
     },
     {
       "path": "codeql-compile/FILE_MANIFEST.json",
@@ -5227,8 +5232,8 @@
     },
     {
       "path": "preservation-inventory.json",
-      "bytes": 3563,
-      "sha256": "73b2f10966d46dab0617a253d762f85c542e5e3a8b1e195f3188c75033823cc2"
+      "bytes": 4144,
+      "sha256": "136e4e5c92a269425c7b1ed0782679a8e369eb4bfe42e2b49a128f9078cb2a2a"
     },
     {
       "path": "runtime-v2/README.md",
@@ -6671,5 +6676,5 @@
       "sha256": "185ed5e3bb7820de31db35371a913cea0ddcca67b7978c41512f7e8362f6e658"
     }
   ],
-  "supersedes_manifest_sha256": "3d9a43aac5917d6e2c6f00604b2c506639ffde7c4337418526ab3fe47b3314b8"
+  "supersedes_manifest_sha256": "e85e58827bb8bc8c550059ebfbee8eaae5dca6230a590b0638a0ce1a65f4b845"
 }

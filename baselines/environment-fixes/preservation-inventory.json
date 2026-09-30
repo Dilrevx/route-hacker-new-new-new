@@ -1,6 +1,15 @@
 {
   "schema_version": 1,
   "preserved_on": "2026-09-30",
+  "task_scope": {
+    "kind": "repair_knowledge_preservation",
+    "reader_guide": "REPAIR_GUIDE.zh-CN.md",
+    "sufficient_repair_documentation_can_be_preserved_alone": true,
+    "full_environment_backup_required": false,
+    "new_private_upload_destination_required": false,
+    "remaining_dependency_inventory_is_informational_not_required_uploads": true,
+    "clarification": "Preserve how a fix was made. Existing explanations are sufficient when they describe the problem, actions or commands, and observed outcome; incomplete notes retain links to supporting recipes."
+  },
   "server_originals_modified_or_deleted": false,
   "new_builds_services_or_pocs_executed": false,
   "private_recovery_copies_are_not_github_uploads": true,

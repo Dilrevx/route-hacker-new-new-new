@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "verified_at_utc": "2026-09-30T09:29:44.239318+00:00",
+  "verified_at_utc": "2026-09-30T09:47:45+00:00",
   "result": {
-    "files": 1333,
-    "bytes": 7933644,
+    "files": 1334,
+    "bytes": 7940684,
     "legacy_original_bytes": {
       "files": 297,
       "bytes": 210903
@@ -32,7 +32,7 @@
         "rejected": 2
       }
     },
-    "manifest_sha256": "e85e58827bb8bc8c550059ebfbee8eaae5dca6230a590b0638a0ce1a65f4b845",
+    "manifest_sha256": "c627299db4f09d2fb7a6e155d6882611b21c24119c15c7ffe62b79c04e7f9dae",
     "scope": "preservation_integrity_only_no_build_or_runtime_rerun"
   },
   "unit_test_returncode": 0,
@@ -48,7 +48,15 @@
     "whole_archive_whitespace_check": "nonzero: historical original files and patch context retain whitespace; not reformatted to preserve source hashes",
     "credential_scan_limit": "Heuristic patterns and source review, not proof of absence"
   },
-  "unit_test_output": "..................\n----------------------------------------------------------------------\nRan 18 tests in 0.045s\n\nOK",
+  "unit_test_output": "..................\n----------------------------------------------------------------------\nRan 18 tests in 0.029s\n\nOK",
+  "repair_guide_review": {
+    "path": "REPAIR_GUIDE.zh-CN.md",
+    "relative_links_checked": 15,
+    "broken_links": 0,
+    "examples_checked_against_archived_sources": 4,
+    "independent_read_only_review": "passed",
+    "scope": "repair documentation only; no new runtime or build verification"
+  },
   "new_builds_or_runtime_probes": false,
   "server_files_modified_or_deleted": false,
   "historical_outcomes_are_not_new_reproduction_results": true,
@@ -69,6 +77,6 @@
       "all_selected_bodies_match": true,
       "scope": "the previous public commit; current followup commit requires separate remote confirmation"
     },
-    "private_upload_destination": "awaiting_user_choice_no_new_private_repository_created"
+    "private_upload_destination": "not_required_by_clarified_repair_knowledge_scope_no_new_private_repository_created"
   }
 }

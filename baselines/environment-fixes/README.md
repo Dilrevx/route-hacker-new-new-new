@@ -7,6 +7,14 @@ It complements the [previous-method model archive](../previous-method/README.md)
 It is **not** a newly executed benchmark or a claim that every environment can
 be rebuilt today.
 
+Start with the [Chinese repair guide](REPAIR_GUIDE.zh-CN.md) for concrete examples
+and links to the existing notes. This is a **repair-knowledge archive**, not a
+full environment backup. An existing document that explains the problem, repair
+steps or commands, and observed outcome is sufficient; large dependency bundles,
+images, and raw logs do not have to be uploaded alongside it. Where a note is
+incomplete, retained Dockerfiles, patches, and scripts provide supporting detail.
+No new private upload destination is required for this scope.
+
 ## Keep the repair families separate
 
 | Family | Historical scope | What the evidence means |
@@ -75,4 +83,6 @@ See [archive manifest](archive-manifest.json) and
 The [preservation inventory](preservation-inventory.json) distinguishes verified
 private recovery copies from the public subset and approximately 30.31 GB of
 identified dependency files still only on the server, plus unpreserved directory
-contexts. Neither the public archive nor this inventory authorizes their deletion.
+contexts. These are informational backup boundaries, not outstanding uploads for
+the repair-knowledge task. Neither the public archive nor this inventory
+authorizes their deletion.

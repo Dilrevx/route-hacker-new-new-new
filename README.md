@@ -18,9 +18,12 @@ later 4B query-LoRA research are kept distinct.
 The [environment-fix archive](baselines/environment-fixes/README.md) preserves
 project-specific build and launch recipes, patches, constrained CodeQL repair
 decisions, and verification indexes. Compile success, historical runtime
-readiness, and source-insertion experiments are recorded separately. Large
-dependency contexts and image layers are not implicitly backed up by the small
-recipe archive.
+readiness, and source-insertion experiments are recorded separately. Start with
+the [Chinese repair guide](baselines/environment-fixes/REPAIR_GUIDE.zh-CN.md)
+to find what failed, how it was repaired, and what was checked. A sufficiently
+clear repair note is enough for this knowledge archive; uploading full dependency
+contexts or image layers is not required. Those payloads are not implicitly
+backed up by the small recipe archive.
 
 ## Experiment results index
 
