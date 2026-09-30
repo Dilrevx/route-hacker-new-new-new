@@ -1,0 +1,26 @@
+{
+  "schema_version": "previous_method_full_rank_assets_v1",
+  "files": [
+    {
+      "name": "p3c64-fixed143-full-ranks.jsonl.gz",
+      "bytes": 57672886,
+      "sha256": "6801e3be8222ff2e9a142634365d62d43040f38b456e9399d899094776436dff",
+      "uncompressed_bytes": 403891397,
+      "uncompressed_sha256": "017556c6c69a0726700d831b060aaa862693432dbc7bc2eebfbe0b6f8baf5b82",
+      "cases": 143,
+      "candidates": 1094013,
+      "source_relative_path": "final_merged/recall_results.jsonl"
+    },
+    {
+      "name": "qwen4b-fixed143-full-ranks.jsonl.gz",
+      "bytes": 58572924,
+      "sha256": "effcea35c98565ae62103a137437211f9b38e621dfb40e42b362c00089cdb104",
+      "uncompressed_bytes": 405193936,
+      "uncompressed_sha256": "e2e1ec35fc84dd7b1c54b4ed650782e1b4432d5bfd70a41c57c963d30a6150d7",
+      "cases": 143,
+      "candidates": 1095817,
+      "source_relative_path": "qwen4b_full_recall_merged/recall_results.jsonl"
+    }
+  ],
+  "scope": "Exact historical JSONL bytes in deterministic gzip; positions, scores and ranks, no source text. Local historical paths remain as provenance."
+}

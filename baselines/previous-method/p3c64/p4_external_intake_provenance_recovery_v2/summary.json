@@ -1,0 +1,79 @@
+{
+  "boundary": "source_commit_recovered verifies pre-patch source provenance and anchor mapping only. It does not create or validate a full-repository generic candidate pool, frozen code cache, embedding, score, rank, model fit, or external retrieval result.",
+  "created_at": "2026-07-27T07:58:59+00:00",
+  "historical_isolation_inputs": {
+    "m5_case_count": 209,
+    "m8_case_count": 14,
+    "normalized_project_family_count": 178,
+    "p3_case_count": 155,
+    "recorded_identity_value_count": 467
+  },
+  "inputs": {
+    "candidate_supplement": {
+      "path": "/data/lhq/workspace/route-hacker/output/phase1_guideline_retrieval/dataset_iteration_v2_phase_21_132_sz_boot_ssrf_closure_repair/candidate_pool_supplement.v1.jsonl",
+      "sha256": "2dd573c584fedee77f46ccd0c9c70b3c4e7c0e1ad27de5a0f13a1c70b0a99dd3"
+    },
+    "canonical_cases": {
+      "path": "/data/lhq/workspace/route-hacker/output/phase1_guideline_retrieval/dataset_iteration_v2_phase_21_132_sz_boot_ssrf_closure_repair/cases.v1.jsonl",
+      "sha256": "bad57e39136f37a5e1ffb060426d367a01a8450b7b1d32f87e827b91e576b07a"
+    },
+    "canonical_labels": {
+      "path": "/data/lhq/workspace/route-hacker/output/phase1_guideline_retrieval/dataset_iteration_v2_phase_21_132_sz_boot_ssrf_closure_repair/labels.v1.jsonl",
+      "sha256": "be4be4476b81d6820822fc099ba203888252afe45375d8a9f4e8d54cc89075dd"
+    },
+    "m5_proposal": {
+      "path": "/tmp/m5_strict_project_family_split_proposal_v1_run1/split_manifest.proposal.jsonl",
+      "sha256": "be020704aff52ebdf720cfcc5f27c109d0ffbdad2116aa9139ec19e8d9fcf01b"
+    },
+    "m8_cases": {
+      "path": "/data/lhq/workspace/m8-balanced-release-preflight-v1/scope/selected_cases.v1.jsonl",
+      "sha256": "f1e953f49e6f301d8df850b92772c30f7ad46bd7d62711458277a28de08f3db0"
+    },
+    "p3_cases": {
+      "path": "/data/lhq/workspace/p3-hard-competition-query-adapter-v1/frozen_development_split_v1/p3_development_cases.v1.jsonl",
+      "sha256": "c8219cba104ae93db7d485479afb0d90c468b13637ec26437fba8c1c7fcc5cb1"
+    },
+    "source_ready_cases": {
+      "path": "/data/lhq/workspace/route-hacker/output/phase1_guideline_retrieval/multitrack_merged_source_ready_v36/input_bundle/source_ready_cases.jsonl",
+      "sha256": "f0e42ee8d31221c41994f83d1c87dd488b89981e5a76c80ba6ce8e10c2e2a890"
+    },
+    "v1_audit_ledger": {
+      "path": "/data/lhq/workspace/p3-hard-competition-query-adapter-v1/p4_external_intake_candidate_audit_v1/candidate_audit_ledger.v1.jsonl",
+      "sha256": "17efa7b8c476e65455fa36748caba42de6b9ec9d2b2551e3506fb549ccef02b1"
+    }
+  },
+  "provenance_recovery": {
+    "failure_reason_counts": {
+      "archive_member_missing_or_ambiguous": 17
+    },
+    "recovered_track_case_counts": {
+      "authorization_bypass": 1,
+      "concurrent_object_lifecycle": 2,
+      "file_permission_temp_resource": 1,
+      "template_expression_injection": 2
+    },
+    "status_counts": {
+      "snapshot_only_hold": 17,
+      "source_commit_recovered": 6
+    }
+  },
+  "recovery_policy": {
+    "rechecks_project_family_exclusion_against_m5_p3_m8": true,
+    "rechecks_recorded_identity_exclusion_against_m5_p3_m8": true,
+    "requires_candidate_supplement_reference_consistency": true,
+    "requires_every_core_label_snapshot_sha256_match_archive": true,
+    "requires_existing_matching_pre_patch_archive": true,
+    "requires_nested_pre_and_fix_commit_pair": true,
+    "requires_source_ready_verified_fix_parent_match": true,
+    "unknown_non_anchor_policy": "unknown_not_negative"
+  },
+  "route_hacker_root": "/data/lhq/workspace/route-hacker",
+  "schema_version": "p4_external_intake_provenance_recovery_v2",
+  "status": "completed_no_retrieval",
+  "v1_scope": {
+    "candidate_count": 23,
+    "require_exact_failure_reasons": [
+      "no_pre_patch_or_parent_commit"
+    ]
+  }
+}

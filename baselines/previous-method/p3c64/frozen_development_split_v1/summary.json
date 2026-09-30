@@ -1,0 +1,77 @@
+{
+  "counts": {
+    "case_count_by_split": {
+      "p3_fitting": 112,
+      "p3_selection": 43
+    },
+    "eligible_case_count": 155,
+    "eligible_project_family_count": 142,
+    "fitting_track_case_counts": {
+      "authentication_session_token_validation": 21,
+      "authorization_bypass": 12,
+      "business_state_precondition": 7,
+      "concurrent_object_lifecycle": 1,
+      "file_permission_temp_resource": 9,
+      "open_redirect": 6,
+      "path_archive_traversal": 15,
+      "ssrf": 19,
+      "template_expression_injection": 14,
+      "toctou_check_use_race": 8
+    },
+    "pair_count": 295,
+    "pair_count_by_split": {
+      "p3_fitting": 217,
+      "p3_selection": 78
+    },
+    "selection_track_case_counts": {
+      "authentication_session_token_validation": 9,
+      "authorization_bypass": 6,
+      "business_state_precondition": 2,
+      "concurrent_object_lifecycle": 1,
+      "file_permission_temp_resource": 3,
+      "open_redirect": 4,
+      "path_archive_traversal": 4,
+      "ssrf": 6,
+      "template_expression_injection": 4,
+      "toctou_check_use_race": 4
+    }
+  },
+  "created_at_utc": "2026-07-27T07:22:58.079782Z",
+  "hard_constraints": {
+    "all_runtime_tracks_present_on_both_p3_sides": true,
+    "m7_inner_val_rows_excluded": true,
+    "m8_query_candidate_score_rank_or_result_read": false,
+    "m8_read_only_identity_audit_only": true,
+    "non_anchor_candidates_remain_unlabeled_background": true,
+    "p3_project_families_are_disjoint": true,
+    "source_anchor_semantics_unchanged": true,
+    "training_or_retrieval_performed": false,
+    "uses_only_m7_inner_train_pair_backed_cases": true
+  },
+  "inputs": {
+    "m8_selected_cases": {
+      "path": "/data/lhq/workspace/m8-balanced-release-preflight-v1/scope/selected_cases.v1.jsonl",
+      "sha256": "f1e953f49e6f301d8df850b92772c30f7ad46bd7d62711458277a28de08f3db0"
+    },
+    "proposal": {
+      "path": "/tmp/m5_strict_project_family_split_proposal_v1_run1/split_manifest.proposal.jsonl",
+      "sha256": "be020704aff52ebdf720cfcc5f27c109d0ffbdad2116aa9139ec19e8d9fcf01b"
+    },
+    "training_pairs": {
+      "path": "/tmp/m7_strict_runtime_guideline_training_pairs_v1/training_pairs.jsonl",
+      "sha256": "dcd696c033a35cefc134b04154e0201e4c016430223b65bcccf9d89830e3f6a3"
+    }
+  },
+  "next_gate": "Freeze a finite P3 hard-competition query-adapter method contract before training. Selection may inspect only p3_selection; M7 inner_val and M8 remain unavailable to P3 model selection.",
+  "schema_version": "p3_nested_development_split_v1",
+  "split_rule": {
+    "algorithm": "sha256(seed + NUL + normalized_project_family) modulo modulus",
+    "fitting_bucket_rule": "all buckets other than selection_bucket",
+    "modulus": 4,
+    "seed": "p3-hard-competition-query-adapter-v1-stratified-5",
+    "seed_selection": "Before training/retrieval, use the first seed in the deterministic suffix enumeration that retains all runtime tracks on both sides with 30-55 selection cases. No embedding, ranking, or result data was read during seed selection.",
+    "selection_bucket": 0,
+    "unit": "normalized project family"
+  },
+  "status": "frozen_pre_training_pre_retrieval"
+}

@@ -1,0 +1,17 @@
+{
+  "artifact": "p4_external_case_manifest_v1",
+  "files": {
+    "external_cases.v1.jsonl": {
+      "bytes": 47709,
+      "sha256": "c64edbd86013bc79e11b310412ed39639b176bb9dc19ac10884230741eb5a167"
+    },
+    "source_snapshot_audit.v1.jsonl": {
+      "bytes": 59058,
+      "sha256": "f354b2d74f5fd49e5d02a02dca5dce681af86ed7308caf5016845a85c7d16800"
+    },
+    "summary.json": {
+      "bytes": 1659,
+      "sha256": "95976eef237d77273e4c9c3eebc7fa38531c67afc2154660305b1d58aaaec796"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "artifact": "p4_external_intake_freeze_v1",
+  "files": {
+    "external_intake_ledger.v1.jsonl": {
+      "bytes": 27889,
+      "sha256": "7b35b61bd9009a99fa009c3a1313750416a0b7319aa158b628af0a2cea2ff9a4"
+    },
+    "held_external_cases.v1.jsonl": {
+      "bytes": 749,
+      "sha256": "a179cfb1c6e14fb7dea188f323014feffdeb73777bdf2ba4d8c6e85607963309"
+    },
+    "selected_external_cases.v1.jsonl": {
+      "bytes": 45538,
+      "sha256": "2ece03ccedcff46797f392359789f62a9fb73d9dd7f88648d57dfc65c79eada5"
+    },
+    "summary.json": {
+      "bytes": 3701,
+      "sha256": "73c4fcf741c7fd930d3f7e057f4d2e9039388709c199f964dfccf9328b0eae68"
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "boundary": "This audit recomputes only code-cache identity from the frozen generic candidate pool. It encodes no guideline text, reads no offline labels or source anchors, and performs no ranking, training, checkpoint selection, or external evaluation.",
+  "cache": {
+    "expected_embedding_dimension": 1024,
+    "expected_embedding_dtype": "float32",
+    "expected_normalization": "L2",
+    "max_chars": 4000,
+    "model_path": "/data/lhq/.cache/huggingface/hub/models--Qwen--Qwen3-Embedding-0.6B/snapshots/97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+    "path": "/dev/shm/p4_external_frozen_code_embedding_cache_v1",
+    "storage_class": "runtime_cache_directory",
+    "text_field": "text"
+  },
+  "created_at": "2026-07-27T08:37:03+00:00",
+  "file_set": {
+    "actual_count": 21,
+    "expected_count": 21,
+    "extra": [],
+    "missing": []
+  },
+  "inputs": {
+    "cache_plan": {
+      "path": "/data/lhq/workspace/p3-hard-competition-query-adapter-v1/p4_external_cache_plan_v1/cache_worker_plan.v1.json",
+      "sha256": "03d9ec88865029ea32f5e1d0b54b2a6d0ef3ac77799aad917741ff693e3c5599"
+    },
+    "candidate_pool": {
+      "path": "/data/lhq/workspace/p3-hard-competition-query-adapter-v1/p4_external_generic_candidate_pool_v1/candidate_pool.v1.jsonl",
+      "sha256": "93ffabd5abc82872c37d0a82858624461bed32f9c77af5c8aeb5d9b25747a377"
+    },
+    "pool_summary": {
+      "path": "/data/lhq/workspace/p3-hard-competition-query-adapter-v1/p4_external_generic_candidate_pool_v1/summary.json",
+      "sha256": "1d79d3d8482aade4daf3a5625553e4569f0fda0396dc5997d3d9819143443615"
+    },
+    "selected_repositories": {
+      "path": "/data/lhq/workspace/p3-hard-competition-query-adapter-v1/p4_external_cache_plan_v1/selected_repositories.v1.jsonl",
+      "sha256": "8492302ff3e9efa04ac78b781019bd915012fc237a29a05f982abe3cc135b234"
+    }
+  },
+  "schema_version": "p4_external_code_cache_audit_v1",
+  "scope": {
+    "p4_full_pool_candidate_count": 542991,
+    "selected_candidate_count": 476626,
+    "selected_repository_count": 21
+  },
+  "status": "ready_exact",
+  "status_counts": {
+    "ready": 21
+  }
+}

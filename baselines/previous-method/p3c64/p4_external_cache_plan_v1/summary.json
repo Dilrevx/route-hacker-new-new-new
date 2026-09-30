@@ -1,0 +1,56 @@
+{
+  "boundary": "This is a frozen code-cache plan only. It does not create query embeddings, source-point features, rankings, model updates, or external evaluation results.",
+  "cache_contract": {
+    "candidate_scope": "exactly selected_external_cases.v1.jsonl repository keys",
+    "candidate_text_serialization": "candidate text field truncated to 4000 chars",
+    "code_encoder_training": false,
+    "expected_embedding": "float32 L2-normalized 1024d",
+    "model": "Qwen3-Embedding-0.6B frozen base",
+    "query_encoder_training": false,
+    "worker_assignment": "deterministic LPT by generic candidate count"
+  },
+  "created_at": "2026-07-27T08:26:04+00:00",
+  "inputs": {
+    "candidate_pool": {
+      "path": "/data/lhq/workspace/p3-hard-competition-query-adapter-v1/p4_external_generic_candidate_pool_v1/candidate_pool.v1.jsonl",
+      "sha256": "93ffabd5abc82872c37d0a82858624461bed32f9c77af5c8aeb5d9b25747a377"
+    },
+    "coverage": {
+      "path": "/data/lhq/workspace/p3-hard-competition-query-adapter-v1/p4_external_generic_candidate_pool_v1/case_coverage.v1.jsonl",
+      "sha256": "5238b79554a9a6b7ee83c2718ce82cc9b41c5febf032ea3246d5fe0dfe34eaa8"
+    },
+    "pool_summary": {
+      "path": "/data/lhq/workspace/p3-hard-competition-query-adapter-v1/p4_external_generic_candidate_pool_v1/summary.json",
+      "sha256": "1d79d3d8482aade4daf3a5625553e4569f0fda0396dc5997d3d9819143443615"
+    },
+    "selected_cases": {
+      "path": "/data/lhq/workspace/p3-hard-competition-query-adapter-v1/p4_external_intake_freeze_v1/selected_external_cases.v1.jsonl",
+      "sha256": "2ece03ccedcff46797f392359789f62a9fb73d9dd7f88648d57dfc65c79eada5"
+    }
+  },
+  "schema_version": "p4_external_cache_plan_v1",
+  "scope": {
+    "gpu_indices": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected_candidate_count": 476626,
+    "selected_case_count": 21,
+    "selected_repo_count": 21,
+    "worker_candidate_counts": {
+      "p4-cache-gpu-0": 178111,
+      "p4-cache-gpu-1": 99544,
+      "p4-cache-gpu-2": 99277,
+      "p4-cache-gpu-3": 99694
+    },
+    "worker_repo_counts": {
+      "p4-cache-gpu-0": 1,
+      "p4-cache-gpu-1": 7,
+      "p4-cache-gpu-2": 6,
+      "p4-cache-gpu-3": 7
+    }
+  },
+  "status": "frozen_plan_no_embedding_or_retrieval"
+}

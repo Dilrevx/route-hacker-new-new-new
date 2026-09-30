@@ -1,0 +1,407 @@
+schema_version: "1.0"
+track_set_id: guideline_retrieval_tracks_v1
+notes:
+  - "This is a curation map from existing natural-language guideline clusters to readable benchmark tracks."
+  - "It classifies CVE provenance only; it is not used to filter repository candidate code."
+  - "G1 is frozen and intentionally excluded from this multi-track source-acquisition wave."
+  - "A track is a reporting and dataset-collection family, not a rule-based candidate generator."
+  - "The sub_guidelines below are future query/retriever units. They do not alter the generic function plus sliding-window candidate pool."
+tracks:
+  - track_id: toctou_check_use_race
+    display_name: TOCTOU and check-use race
+    guideline_text: >-
+      Find code that checks a mutable resource or state and later uses or
+      updates the same or derived object without preserving identity,
+      atomicity, or sufficient synchronization. This track is a frozen
+      regression baseline and is not re-ingested in this expansion wave.
+    priority: 10
+    frozen: true
+    existing_baseline: toctou_dataset_a_v1_100_cases
+    guideline_ids: []
+    retrieval_intent: >-
+      Route LLM review to code that observes a mutable resource or state and
+      later acts on the same or derived resource through a non-atomic,
+      identity-unstable, or synchronization-relevant protocol.
+    in_scope:
+      - "filesystem name/path check followed by create, open, delete, chmod, or replacement"
+      - "double-fetch or repeated read of mutable shared input/state"
+      - "check/use protocol over a shared resource when the review question is race-sensitive"
+    out_of_scope:
+      - "general object release/use races without a check-use protocol; use concurrent_object_lifecycle"
+      - "path containment or archive-entry escaping without a temporal check-use relation; use path_archive_traversal"
+    minimum_review_entry: >-
+      A source-derived anchor should touch a check/observation, a later action,
+      or a compact context that lets a reviewer begin reconstructing that
+      protocol. It need not contain every relation endpoint.
+    sub_guidelines:
+      - id: filesystem_check_then_path_action
+        intent: "A mutable filesystem name/path is checked and later acted on through the path."
+      - id: shared_state_check_then_update
+        intent: "A mutable shared state is observed and later updated or consumed based on that observation."
+      - id: repeated_fetch_of_mutable_input
+        intent: "The same externally mutable data is fetched or read more than once across a security-relevant decision."
+  - track_id: authorization_bypass
+    display_name: Authorization bypass
+    guideline_text: >-
+      Find sensitive operations that execute without a correct authorization
+      decision for the current principal and requested object, including
+      missing object-level checks, wrong-principal checks, and permissions
+      that are not propagated to the effect.
+    priority: 20
+    guideline_ids:
+      - gl_0149
+      - gl_0155
+      - gl_0156
+      - gl_0157
+      - gl_0158
+      - gl_0172
+      - gl_0173
+      - gl_0174
+      - gl_0175
+      - gl_0176
+      - gl_0226
+      - gl_0227
+      - gl_0228
+      - gl_0229
+      - gl_0230
+    retrieval_intent: >-
+      Route review to sensitive effects whose authorization is absent, applied
+      to the wrong principal or object, or not preserved from policy decision
+      to effect.
+    in_scope:
+      - "object-level access checks missing before read, update, delete, export, or administration"
+      - "principal, tenant, role, or permission mismatch between policy decision and effect"
+      - "authorization result computed but not propagated to a sensitive effect"
+    out_of_scope:
+      - "credential, session, or token acceptance before identity establishment; use authentication_session_token_validation"
+      - "business workflow preconditions such as balance or order state without an access-control boundary; use business_state_precondition"
+    minimum_review_entry: >-
+      An anchor should touch the sensitive effect, policy decision, resource
+      resolution, or principal propagation point; it is not required to carry
+      the complete request-to-controller chain.
+    sub_guidelines:
+      - id: missing_object_level_authorization
+        intent: "A sensitive object operation lacks an authorization decision for that object."
+      - id: principal_or_tenant_mismatch
+        intent: "The policy is evaluated for a different principal, tenant, or identity than the effect uses."
+      - id: authorization_not_propagated_to_effect
+        intent: "A permission result exists but the sensitive operation does not enforce it."
+  - track_id: authentication_session_token_validation
+    display_name: Authentication, session, and token validation flaws
+    guideline_text: >-
+      Find authentication, session, or token-validation flows that accept an
+      identity or credential without correctly validating its signature,
+      binding, state, lifetime, nonce, issuer, audience, or invalidation
+      requirements before the application trusts it.
+    priority: 30
+    guideline_ids:
+      - gl_0198
+      - gl_0199
+      - gl_0200
+      - gl_0201
+      - gl_0202
+      - gl_0203
+      - gl_0204
+      - gl_0205
+      - gl_0206
+      - gl_0207
+      - gl_0208
+      - gl_0209
+      - gl_0210
+      - gl_0211
+      - gl_0212
+      - gl_0213
+      - gl_0214
+      - gl_0215
+      - gl_0216
+      - gl_0217
+      - gl_0218
+      - gl_0219
+    retrieval_intent: >-
+      Route review to flows that establish or trust identity, session state, or
+      a token without enforcing the validation, binding, lifetime, or
+      invalidation property required by the protocol.
+    in_scope:
+      - "signature, issuer, audience, expiry, nonce, state, or claim validation before trusting a token"
+      - "session creation, rotation, invalidation, fixation, or binding to the authenticated identity"
+      - "password-reset, callback, or one-time credential validation flows"
+    out_of_scope:
+      - "authorization of an already established principal on a requested object; use authorization_bypass"
+      - "server-side requests made from untrusted URL values; use ssrf"
+    minimum_review_entry: >-
+      An anchor should touch credential parsing/validation, session state
+      mutation, callback binding, or the trust decision that consumes identity.
+    sub_guidelines:
+      - id: token_signature_claim_or_lifetime_validation
+        intent: "A token is trusted without the required cryptographic, issuer, audience, claim, or lifetime validation."
+      - id: oauth_callback_nonce_state_binding
+        intent: "A callback or authorization response lacks the required nonce, state, redirect, or user-session binding."
+      - id: session_rotation_invalidation_or_fixation
+        intent: "Session state is created, retained, or invalidated without the required lifecycle protection."
+  - track_id: ssrf
+    display_name: Server-side request forgery
+    guideline_text: >-
+      Find flows where an untrusted URL, host, or network locator can trigger
+      a server-side request without robust destination validation, including
+      parser differences, DNS/IP checks, redirects, and internal-network
+      reachability.
+    priority: 40
+    guideline_ids:
+      - gl_0071
+      - gl_0072
+      - gl_0073
+      - gl_0074
+      - gl_0075
+      - gl_0076
+      - gl_0077
+      - gl_0078
+      - gl_0079
+      - gl_0080
+      - gl_0081
+      - gl_0082
+    retrieval_intent: >-
+      Route review to server-side outbound-request flows where untrusted input
+      can select a destination and destination validation is absent,
+      incomplete, or invalidated by parsing, DNS, redirect, or address-family
+      differences.
+    in_scope:
+      - "user-controlled URL, host, endpoint, callback, webhook, proxy, or fetch target"
+      - "validation/normalization followed by outbound connection or HTTP client use"
+      - "redirect, DNS resolution, IPv4/IPv6, encoded-host, userinfo, scheme, or link-local validation gaps"
+    out_of_scope:
+      - "browser/client navigation without a server-side request; use open_redirect"
+      - "template evaluator or expression execution with no outbound request; use template_expression_injection"
+    minimum_review_entry: >-
+      An anchor should touch target construction, destination validation,
+      resolution/redirect handling, or the outbound request invocation.
+    sub_guidelines:
+      - id: untrusted_locator_to_outbound_request
+        intent: "An untrusted locator directly controls a server-side outbound request."
+      - id: destination_validation_parser_or_address_mismatch
+        intent: "Destination validation and the eventual parser/resolver interpret the target differently."
+      - id: redirect_or_dns_revalidation_gap
+        intent: "A validated initial target can redirect or resolve to an unvalidated destination."
+  - track_id: path_archive_traversal
+    display_name: Path and archive traversal
+    guideline_text: >-
+      Find file or archive extraction paths where an untrusted path component
+      can escape an intended base directory because canonicalization,
+      normalization, containment, symlink, or archive-entry validation is
+      incomplete.
+    priority: 50
+    guideline_ids:
+      - gl_0040
+      - gl_0041
+      - gl_0042
+      - gl_0043
+      - gl_0044
+    retrieval_intent: >-
+      Route review to filesystem or archive-extraction paths where untrusted
+      path material can escape an intended directory or resource boundary
+      because normalization, containment, symlink, or archive-entry handling
+      is incomplete.
+    in_scope:
+      - "archive-entry extraction and Zip Slip-style path escaping"
+      - "untrusted path joined with a base directory without reliable containment validation"
+      - "normalization, prefix, symlink, absolute-path, separator, or encoding bypasses"
+    out_of_scope:
+      - "temporary-file permission or ownership mistakes without boundary escape; use file_permission_temp_resource"
+      - "time-of-check/time-of-use races over paths; use toctou_check_use_race"
+    minimum_review_entry: >-
+      An anchor should touch path/entry construction, canonicalization or
+      containment validation, base-path resolution, or filesystem extraction/use.
+    sub_guidelines:
+      - id: archive_entry_escape
+        intent: "An archive entry can escape its extraction root."
+      - id: untrusted_path_missing_containment
+        intent: "An untrusted path component is used without a robust intended-root containment check."
+      - id: normalization_symlink_or_prefix_bypass
+        intent: "A nominal path check can be bypassed through normalization, symlink, prefix, or encoding differences."
+  - track_id: open_redirect
+    display_name: Open redirect
+    guideline_text: >-
+      Find redirect or navigation flows that use an untrusted destination
+      without enforcing an appropriate origin, scheme, host, path, or
+      allowlist policy after canonicalization.
+    priority: 60
+    guideline_ids:
+      - gl_0019
+      - gl_0020
+      - gl_0021
+      - gl_0022
+      - gl_0023
+      - gl_0024
+      - gl_0025
+      - gl_0026
+      - gl_0027
+    retrieval_intent: >-
+      Route review to redirect or navigation effects whose destination is
+      influenced by untrusted input without the origin, host, scheme, path,
+      canonicalization, or allowlist policy required by the product boundary.
+    in_scope:
+      - "HTTP redirect responses, login return URLs, continuation links, and navigation helpers"
+      - "host/scheme/origin/relative-path checks before redirect or browser navigation"
+      - "canonicalization and allowlist mismatches for redirect targets"
+    out_of_scope:
+      - "server-side fetching of an untrusted URL; use ssrf"
+      - "generic URL construction with no redirect or navigation effect"
+    minimum_review_entry: >-
+      An anchor should touch destination extraction/normalization, allowlist
+      policy, or the redirect/navigation effect.
+    sub_guidelines:
+      - id: untrusted_redirect_destination
+        intent: "A redirect effect uses untrusted destination input without a sufficient policy check."
+      - id: redirect_origin_scheme_host_bypass
+        intent: "The redirect policy is bypassable through origin, scheme, host, encoding, or parser differences."
+  - track_id: business_state_precondition
+    display_name: Business-state and precondition flaws
+    guideline_text: >-
+      Find state-changing business operations that proceed without validating
+      the relevant ownership, balance, authorization, phase, uniqueness, or
+      other precondition on the same logical resource.
+    priority: 70
+    guideline_ids:
+      - gl_0051
+      - gl_0052
+      - gl_0053
+      - gl_0054
+      - gl_0055
+      - gl_0056
+      - gl_0057
+    retrieval_intent: >-
+      Route review to state-changing business effects that fail to verify the
+      ownership, balance, uniqueness, phase, status, idempotency, or other
+      domain precondition required for the same logical resource.
+    in_scope:
+      - "financial transfer, balance, quota, inventory, or limit updates"
+      - "workflow stage, approval, cancellation, confirmation, or state-transition checks"
+      - "duplicate, idempotency, ownership, or uniqueness preconditions for a business effect"
+    out_of_scope:
+      - "technical role or object access-control decisions; use authorization_bypass"
+      - "concurrent use-after-release or shared-memory lifecycle races; use concurrent_object_lifecycle"
+    minimum_review_entry: >-
+      An anchor should touch the state-changing effect, resource lookup, state
+      check, transaction boundary, or invariant-enforcement point.
+    sub_guidelines:
+      - id: missing_balance_quota_or_inventory_precondition
+        intent: "A state-changing operation proceeds without the required balance, quota, inventory, or limit condition."
+      - id: invalid_workflow_state_transition
+        intent: "An operation permits an invalid domain state transition or bypasses a required stage."
+      - id: missing_ownership_uniqueness_or_idempotency_precondition
+        intent: "The effect lacks a required domain ownership, uniqueness, or idempotency condition."
+  - track_id: file_permission_temp_resource
+    display_name: File-permission and temporary-resource security
+    guideline_text: >-
+      Find temporary-file, directory, or sensitive-resource creation and use
+      that does not establish the intended ownership, access mode, creation
+      boundary, or resource lifecycle protection.
+    priority: 80
+    guideline_ids:
+      - gl_0065
+      - gl_0066
+      - gl_0067
+      - gl_0068
+    retrieval_intent: >-
+      Route review to temporary-file, directory, sensitive-resource creation,
+      permission, ownership, or lifecycle code that fails to establish the
+      required access boundary before exposing or using the resource.
+    in_scope:
+      - "temporary file/directory creation, permission mode, ownership, cleanup, and exposure"
+      - "sensitive file creation or extraction with unsafe inherited/default permissions"
+      - "resource lifecycle code that exposes a file-like resource outside its intended boundary"
+    out_of_scope:
+      - "path escaping from an intended directory; use path_archive_traversal"
+      - "a path check followed by later path use under a race window; use toctou_check_use_race"
+    minimum_review_entry: >-
+      An anchor should touch resource creation, permission/ownership setup,
+      exposure, cleanup, or the protected resource use.
+    sub_guidelines:
+      - id: insecure_temp_resource_creation_or_permissions
+        intent: "A temporary resource is created with unsafe name, mode, ownership, or exposure semantics."
+      - id: sensitive_resource_permission_or_ownership_boundary
+        intent: "A sensitive resource is used without establishing the intended permission or ownership boundary."
+  - track_id: concurrent_object_lifecycle
+    display_name: Concurrent object lifecycle
+    guideline_text: >-
+      Find shared-object lifecycle operations where concurrent release,
+      replacement, reference changes, or state mutation can invalidate an
+      object another execution context still reads or uses without adequate
+      synchronization or ownership transfer.
+    priority: 90
+    guideline_ids:
+      - gl_0091
+      - gl_0092
+      - gl_0093
+      - gl_0094
+      - gl_0095
+      - gl_0096
+    retrieval_intent: >-
+      Route review to shared-object lifetime or state protocols where another
+      execution context can release, replace, invalidate, or mutate an object
+      while it remains in use without sufficient synchronization or ownership
+      transfer.
+    in_scope:
+      - "use-after-free, reference replacement, stale pointer/reference, or concurrent close/release protocols"
+      - "shared object state mutation that invalidates a concurrent reader/user"
+      - "ownership transfer, reference counting, lock, atomics, or lifecycle handoff failures"
+    out_of_scope:
+      - "filesystem/path check-use races as the primary protocol; use toctou_check_use_race"
+      - "domain state preconditions without an object lifetime/concurrency question; use business_state_precondition"
+    minimum_review_entry: >-
+      An anchor should touch object acquisition/use, release/replacement,
+      reference-count/ownership transition, or synchronization boundary.
+    sub_guidelines:
+      - id: concurrent_release_or_replacement_during_use
+        intent: "An object can be released or replaced while another context still uses it."
+      - id: stale_reference_or_ownership_transfer
+        intent: "Ownership or reference transfer does not preserve the validity required by a later use."
+      - id: shared_state_mutation_invalidates_reader
+        intent: "Concurrent state mutation invalidates assumptions made by a reader or user of the object."
+  - track_id: template_expression_injection
+    display_name: Template and expression injection
+    guideline_text: >-
+      Find flows where untrusted content reaches a template, expression,
+      macro, wiki-rendering, or evaluator context that can interpret it as
+      code or privileged expression without the necessary isolation,
+      escaping, or authorization boundary.
+    priority: 100
+    guideline_ids:
+      - gl_0097
+      - gl_0098
+      - gl_0099
+      - gl_0100
+      - gl_0101
+      - gl_0103
+      - gl_0124
+      - gl_0129
+      - gl_0131
+      - gl_0139
+      - gl_0140
+      - gl_0141
+      - gl_0142
+      - gl_0143
+      - gl_0144
+      - gl_0145
+      - gl_0146
+    retrieval_intent: >-
+      Route review to flows where untrusted content reaches a template,
+      expression, macro, wiki, render, or evaluator context that can interpret
+      it as code or privileged expression without the required isolation,
+      escaping, or authorization boundary.
+    in_scope:
+      - "server-side template, expression language, macro, wiki, or evaluator invocation"
+      - "dynamic template name/source/context construction from untrusted data"
+      - "sandbox, escaping, privileged context, or expression-evaluation boundary failures"
+    out_of_scope:
+      - "ordinary HTML/text output that is not interpreted by an expression/template evaluator"
+      - "outbound fetches of untrusted URLs; use ssrf"
+    minimum_review_entry: >-
+      An anchor should touch untrusted content construction, template/evaluator
+      configuration, render/evaluate invocation, or sandbox/escaping boundary.
+    sub_guidelines:
+      - id: untrusted_template_or_expression_source
+        intent: "Untrusted content controls source interpreted by a template or expression evaluator."
+      - id: untrusted_data_in_privileged_render_context
+        intent: "Untrusted data reaches a render/evaluation context with unsafe privileges or isolation."
+      - id: evaluator_sandbox_or_escaping_boundary_failure
+        intent: "The expected sandbox or escaping boundary does not hold for an interpreted template/expression."

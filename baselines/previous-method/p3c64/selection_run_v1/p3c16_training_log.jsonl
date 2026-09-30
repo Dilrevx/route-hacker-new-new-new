@@ -1,0 +1,12 @@
+{"batch_count": 14, "epoch": 1, "loss": 0.7659803075449807, "ranking_loss": 0.7657572116170611, "teacher_loss": 0.00044618662139888395}
+{"batch_count": 14, "epoch": 2, "loss": 0.7318608377661023, "ranking_loss": 0.7210486148084913, "teacher_loss": 0.021624444218884622}
+{"batch_count": 14, "epoch": 3, "loss": 0.71479760323252, "ranking_loss": 0.6979465569768634, "teacher_loss": 0.03370208825383868}
+{"batch_count": 14, "epoch": 4, "loss": 0.7100459635257721, "ranking_loss": 0.6950859810624804, "teacher_loss": 0.02991995987083231}
+{"batch_count": 14, "epoch": 5, "loss": 0.7077177720410484, "ranking_loss": 0.6914404715810504, "teacher_loss": 0.03255460624183927}
+{"batch_count": 14, "epoch": 6, "loss": 0.7067696579865047, "ranking_loss": 0.6900326992784228, "teacher_loss": 0.03347391129604408}
+{"batch_count": 14, "epoch": 7, "loss": 0.7057154732091087, "ranking_loss": 0.6892496560301099, "teacher_loss": 0.03293164074420929}
+{"batch_count": 14, "epoch": 8, "loss": 0.7044743342058999, "ranking_loss": 0.687059611082077, "teacher_loss": 0.03482943307608366}
+{"batch_count": 14, "epoch": 9, "loss": 0.703521477324622, "ranking_loss": 0.6870709529944828, "teacher_loss": 0.032901043471481116}
+{"batch_count": 14, "epoch": 10, "loss": 0.7014966990266528, "ranking_loss": 0.6838375202247075, "teacher_loss": 0.03531835387860026}
+{"batch_count": 14, "epoch": 11, "loss": 0.6993002252919334, "ranking_loss": 0.6819325472627368, "teacher_loss": 0.03473536390811205}
+{"batch_count": 14, "epoch": 12, "loss": 0.6966463284833091, "ranking_loss": 0.6779633675302777, "teacher_loss": 0.03736592962273529}

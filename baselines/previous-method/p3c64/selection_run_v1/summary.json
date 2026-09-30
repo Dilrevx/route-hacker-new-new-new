@@ -1,0 +1,798 @@
+{
+  "cache_audit": {
+    "blocked_repo_count": 0,
+    "embedding_cache_dirs": [
+      "/tmp/m5_86_expanded_split_bm25_embedding_v1/cache",
+      "/tmp/m5_95_repaired_pool_embedding_cache_v1/cache"
+    ],
+    "ready": true,
+    "status_counts": {
+      "hit": 154
+    }
+  },
+  "created_at": "2026-07-27T07:33:12+00:00",
+  "evaluation_coverage": {
+    "generic_coverage_excluded_rows": [],
+    "generic_coverage_exclusion_counts": {},
+    "generic_covered_row_count": 43,
+    "policy": "Retrieval metrics include only cases with a non-empty full-repository generic candidate universe and at least one source label mapped to that universe. Excluded cases are recorded as coverage gaps and never relabeled.",
+    "source_row_count": 43
+  },
+  "evaluation_scope": {
+    "case_count": 43,
+    "project_family_count": 41,
+    "repository_count": 43,
+    "track_counts": {
+      "authentication_session_token_validation": 9,
+      "authorization_bypass": 6,
+      "business_state_precondition": 2,
+      "concurrent_object_lifecycle": 1,
+      "file_permission_temp_resource": 3,
+      "open_redirect": 4,
+      "path_archive_traversal": 4,
+      "ssrf": 6,
+      "template_expression_injection": 4,
+      "toctou_check_use_race": 4
+    }
+  },
+  "input_hashes": {
+    "candidate_pools": [
+      "ddf58974d2dc05caac9afac31f4db1373e1bc1c1381cc99b08df67a6a81af92d",
+      "065e01257d8faf855ad0a30600d7ee3fe9d65d9592fe7390005a308b1c9da454"
+    ],
+    "locked_helper": "7111f97c3171233fb11703a7aa0101d5570296ab6987e07fef69dd09df822c7e",
+    "m7_executor": "00b61ec91708227a3f29be40d9ee98ceaaba98d4c705c67ba22b193409a5979c",
+    "p3_cases": "c8219cba104ae93db7d485479afb0d90c468b13637ec26437fba8c1c7fcc5cb1",
+    "p3_pairs": "17698de73b77cdc5b59219c3fc499b494d7676148caaa711a4e812bf44645618",
+    "p3_split_summary": "a7808ea05949f2d4858d582246c654fcb4e138ff3aa304a356d4a853b3d88c09",
+    "run_spec": "7dfea381ef05fc186fe7f4812be08a15c5418e8cd9a010cd5512833affb03194"
+  },
+  "method_boundary": {
+    "candidate_admission": "frozen generic function + sliding_window only",
+    "code_adapter": "none",
+    "code_embeddings": "frozen audited Qwen candidate cache",
+    "competition": "deterministic frozen-B0 top same-repository non-positive candidates; unlabeled competition, never safe-negative truth",
+    "m8_read": false,
+    "m8_used_for_training_or_selection": false,
+    "non_anchor_semantics": "unlabeled_background",
+    "query_adapter": "identity-initialized residual MLP",
+    "runtime_input": "fixed natural-language guideline text only",
+    "training_positive": "source-anchor-overlap generic candidate bag",
+    "uses_bm25": false,
+    "uses_patch_or_trace_input": false,
+    "uses_static_rules": false
+  },
+  "metrics": {
+    "B0": {
+      "MRR": 0.2783242083914705,
+      "R@1": 0.18604651162790697,
+      "R@10": 0.4418604651162791,
+      "R@100": 0.7209302325581395,
+      "R@20": 0.5116279069767442,
+      "R@200": 0.7674418604651163,
+      "R@3": 0.32558139534883723,
+      "R@30": 0.5813953488372093,
+      "R@5": 0.3488372093023256,
+      "R@50": 0.6511627906976745,
+      "R@500": 0.8837209302325582,
+      "case_count": 43,
+      "cases_with_hit": 43,
+      "first_rank": {
+        "max": 9523.0,
+        "min": 1.0,
+        "p25": 2.0,
+        "p50": 13.0,
+        "p75": 187.5,
+        "p90": 742.2000000000018,
+        "p95": 1801.4999999999998,
+        "p99": 8451.579999999996
+      },
+      "normalized_first_rank": {
+        "max": 1.0,
+        "min": 0.0,
+        "p25": 0.0009114979989108215,
+        "p50": 0.031545741324921134,
+        "p75": 0.29797265440829795,
+        "p90": 0.6124535505549225,
+        "p95": 0.6619016143892961,
+        "p99": 0.9018181818181814
+      }
+    },
+    "P3C16": {
+      "MRR": 0.33465543709022194,
+      "R@1": 0.2558139534883721,
+      "R@10": 0.4883720930232558,
+      "R@100": 0.7674418604651163,
+      "R@20": 0.5813953488372093,
+      "R@200": 0.813953488372093,
+      "R@3": 0.3488372093023256,
+      "R@30": 0.6744186046511628,
+      "R@5": 0.3953488372093023,
+      "R@50": 0.6976744186046512,
+      "R@500": 0.8837209302325582,
+      "case_count": 43,
+      "cases_with_hit": 43,
+      "first_rank": {
+        "max": 915.0,
+        "min": 1.0,
+        "p25": 1.5,
+        "p50": 11.0,
+        "p75": 66.0,
+        "p90": 523.8000000000002,
+        "p95": 640.7,
+        "p99": 894.42
+      },
+      "normalized_first_rank": {
+        "max": 0.6883116883116883,
+        "min": 0.0,
+        "p25": 6.429214350006429e-05,
+        "p50": 0.02756892230576441,
+        "p75": 0.16345917933803683,
+        "p90": 0.33078607053007897,
+        "p95": 0.4010102178523231,
+        "p99": 0.634062408180055
+      }
+    },
+    "P3C64": {
+      "MRR": 0.40106874118750346,
+      "R@1": 0.32558139534883723,
+      "R@10": 0.5348837209302325,
+      "R@100": 0.813953488372093,
+      "R@20": 0.6976744186046512,
+      "R@200": 0.8372093023255814,
+      "R@3": 0.4186046511627907,
+      "R@30": 0.7209302325581395,
+      "R@5": 0.4418604651162791,
+      "R@50": 0.7441860465116279,
+      "R@500": 0.9767441860465116,
+      "case_count": 43,
+      "cases_with_hit": 43,
+      "first_rank": {
+        "max": 835.0,
+        "min": 1.0,
+        "p25": 1.0,
+        "p50": 7.0,
+        "p75": 49.5,
+        "p90": 366.0000000000002,
+        "p95": 421.3,
+        "p99": 682.9599999999994
+      },
+      "normalized_first_rank": {
+        "max": 0.5714285714285714,
+        "min": 0.0,
+        "p25": 0.0,
+        "p50": 0.00482315112540193,
+        "p75": 0.12430024258257137,
+        "p90": 0.30356275303643726,
+        "p95": 0.37966695880806306,
+        "p99": 0.5173591707976564
+      }
+    }
+  },
+  "paired_comparisons": {
+    "P3C16": {
+      "at_10": {
+        "k": 10,
+        "left": "B0",
+        "regression_count": 6,
+        "regression_rows": [
+          {
+            "B0_rank": 2,
+            "P3C16_rank": 55,
+            "case_id": "cached_cve::CVE-2022-41918::opensearch-project/security",
+            "repo_key": "opensearch_project__security__f75be3edaf90",
+            "track_id": "authorization_bypass"
+          },
+          {
+            "B0_rank": 2,
+            "P3C16_rank": 530,
+            "case_id": "open_redirect::00f6ef7e47ea4d30",
+            "repo_key": "keycloak__keycloak__04e6244c387a",
+            "track_id": "open_redirect"
+          },
+          {
+            "B0_rank": 2,
+            "P3C16_rank": 12,
+            "case_id": "path_archive_traversal::abff44710cba21cb",
+            "repo_key": "hgzojer__vocabletrainer__89b97f5c2f43",
+            "track_id": "path_archive_traversal"
+          },
+          {
+            "B0_rank": 1,
+            "P3C16_rank": 29,
+            "case_id": "ssrf::16647a2faa085532",
+            "repo_key": "Dragonmonk111__junoclaw__a7886cda7ef6",
+            "track_id": "ssrf"
+          },
+          {
+            "B0_rank": 7,
+            "P3C16_rank": 11,
+            "case_id": "ssrf::c1deb2a1ca7e63f3",
+            "repo_key": "saleor__requests-hardened__b7403f88d3b3",
+            "track_id": "ssrf"
+          },
+          {
+            "B0_rank": 3,
+            "P3C16_rank": 22,
+            "case_id": "template_expression_injection::41bd4d858551918f",
+            "repo_key": "dchester__jsonpath__3640316808b6",
+            "track_id": "template_expression_injection"
+          }
+        ],
+        "rescue_count": 8,
+        "rescue_rows": [
+          {
+            "B0_rank": 189,
+            "P3C16_rank": 1,
+            "case_id": "authentication_session_token_validation::478f90512ed3599d",
+            "repo_key": "xwiki-contrib__oidc__7d7cca1d5b30",
+            "track_id": "authentication_session_token_validation"
+          },
+          {
+            "B0_rank": 40,
+            "P3C16_rank": 1,
+            "case_id": "authentication_session_token_validation::676054b0e6815cc1",
+            "repo_key": "enonic__xp__e31f8239af38",
+            "track_id": "authentication_session_token_validation"
+          },
+          {
+            "B0_rank": 13,
+            "P3C16_rank": 9,
+            "case_id": "cached_cve::CVE-2021-41189::DSpace/DSpace",
+            "repo_key": "DSpace__DSpace__0de9680781ea",
+            "track_id": "authorization_bypass"
+          },
+          {
+            "B0_rank": 23,
+            "P3C16_rank": 4,
+            "case_id": "cached_cve::CVE-2026-48545::gradio-app/gradio",
+            "repo_key": "gradio_app__gradio__2887302069b2",
+            "track_id": "authentication_session_token_validation"
+          },
+          {
+            "B0_rank": 37,
+            "P3C16_rank": 2,
+            "case_id": "file_permission_temp_resource::04a43f888208f26f",
+            "repo_key": "junit-team__junit4__b6cfd1e3d736",
+            "track_id": "file_permission_temp_resource"
+          },
+          {
+            "B0_rank": 209,
+            "P3C16_rank": 5,
+            "case_id": "file_permission_temp_resource::13c5a6a835f616a1",
+            "repo_key": "cyberjunky__python-garminconnect__d8cf8f7a3a9c",
+            "track_id": "file_permission_temp_resource"
+          },
+          {
+            "B0_rank": 73,
+            "P3C16_rank": 1,
+            "case_id": "path_archive_traversal::b7b4b649729f2fab",
+            "repo_key": "joniles__mpxj__1eed5f01ac8e",
+            "track_id": "path_archive_traversal"
+          },
+          {
+            "B0_rank": 11,
+            "P3C16_rank": 1,
+            "case_id": "public_advisory::f6f00e189b0ceb57",
+            "repo_key": "surrealdb__surrealdb__cfd5f99e6303",
+            "track_id": "toctou_check_use_race"
+          }
+        ],
+        "right": "P3C16"
+      },
+      "at_100": {
+        "k": 100,
+        "left": "B0",
+        "regression_count": 2,
+        "regression_rows": [
+          {
+            "B0_rank": 31,
+            "P3C16_rank": 305,
+            "case_id": "business_state_precondition::6fefc90696f03a24",
+            "repo_key": "wevm__mppx__94088246ee18",
+            "track_id": "business_state_precondition"
+          },
+          {
+            "B0_rank": 2,
+            "P3C16_rank": 530,
+            "case_id": "open_redirect::00f6ef7e47ea4d30",
+            "repo_key": "keycloak__keycloak__04e6244c387a",
+            "track_id": "open_redirect"
+          }
+        ],
+        "rescue_count": 4,
+        "rescue_rows": [
+          {
+            "B0_rank": 189,
+            "P3C16_rank": 1,
+            "case_id": "authentication_session_token_validation::478f90512ed3599d",
+            "repo_key": "xwiki-contrib__oidc__7d7cca1d5b30",
+            "track_id": "authentication_session_token_validation"
+          },
+          {
+            "B0_rank": 238,
+            "P3C16_rank": 14,
+            "case_id": "authentication_session_token_validation::9b91c75767a24d5e",
+            "repo_key": "googleapis__google-oauth-java-client__6447917c657a",
+            "track_id": "authentication_session_token_validation"
+          },
+          {
+            "B0_rank": 419,
+            "P3C16_rank": 77,
+            "case_id": "authorization_bypass::f399837b152823d8",
+            "repo_key": "arm32x__command-block-ide__7da8ea77ba34",
+            "track_id": "authorization_bypass"
+          },
+          {
+            "B0_rank": 209,
+            "P3C16_rank": 5,
+            "case_id": "file_permission_temp_resource::13c5a6a835f616a1",
+            "repo_key": "cyberjunky__python-garminconnect__d8cf8f7a3a9c",
+            "track_id": "file_permission_temp_resource"
+          }
+        ],
+        "right": "P3C16"
+      },
+      "at_30": {
+        "k": 30,
+        "left": "B0",
+        "regression_count": 2,
+        "regression_rows": [
+          {
+            "B0_rank": 2,
+            "P3C16_rank": 55,
+            "case_id": "cached_cve::CVE-2022-41918::opensearch-project/security",
+            "repo_key": "opensearch_project__security__f75be3edaf90",
+            "track_id": "authorization_bypass"
+          },
+          {
+            "B0_rank": 2,
+            "P3C16_rank": 530,
+            "case_id": "open_redirect::00f6ef7e47ea4d30",
+            "repo_key": "keycloak__keycloak__04e6244c387a",
+            "track_id": "open_redirect"
+          }
+        ],
+        "rescue_count": 6,
+        "rescue_rows": [
+          {
+            "B0_rank": 189,
+            "P3C16_rank": 1,
+            "case_id": "authentication_session_token_validation::478f90512ed3599d",
+            "repo_key": "xwiki-contrib__oidc__7d7cca1d5b30",
+            "track_id": "authentication_session_token_validation"
+          },
+          {
+            "B0_rank": 40,
+            "P3C16_rank": 1,
+            "case_id": "authentication_session_token_validation::676054b0e6815cc1",
+            "repo_key": "enonic__xp__e31f8239af38",
+            "track_id": "authentication_session_token_validation"
+          },
+          {
+            "B0_rank": 238,
+            "P3C16_rank": 14,
+            "case_id": "authentication_session_token_validation::9b91c75767a24d5e",
+            "repo_key": "googleapis__google-oauth-java-client__6447917c657a",
+            "track_id": "authentication_session_token_validation"
+          },
+          {
+            "B0_rank": 37,
+            "P3C16_rank": 2,
+            "case_id": "file_permission_temp_resource::04a43f888208f26f",
+            "repo_key": "junit-team__junit4__b6cfd1e3d736",
+            "track_id": "file_permission_temp_resource"
+          },
+          {
+            "B0_rank": 209,
+            "P3C16_rank": 5,
+            "case_id": "file_permission_temp_resource::13c5a6a835f616a1",
+            "repo_key": "cyberjunky__python-garminconnect__d8cf8f7a3a9c",
+            "track_id": "file_permission_temp_resource"
+          },
+          {
+            "B0_rank": 73,
+            "P3C16_rank": 1,
+            "case_id": "path_archive_traversal::b7b4b649729f2fab",
+            "repo_key": "joniles__mpxj__1eed5f01ac8e",
+            "track_id": "path_archive_traversal"
+          }
+        ],
+        "right": "P3C16"
+      }
+    },
+    "P3C64": {
+      "at_10": {
+        "k": 10,
+        "left": "B0",
+        "regression_count": 5,
+        "regression_rows": [
+          {
+            "B0_rank": 2,
+            "P3C64_rank": 61,
+            "case_id": "cached_cve::CVE-2022-41918::opensearch-project/security",
+            "repo_key": "opensearch_project__security__f75be3edaf90",
+            "track_id": "authorization_bypass"
+          },
+          {
+            "B0_rank": 2,
+            "P3C64_rank": 20,
+            "case_id": "open_redirect::00f6ef7e47ea4d30",
+            "repo_key": "keycloak__keycloak__04e6244c387a",
+            "track_id": "open_redirect"
+          },
+          {
+            "B0_rank": 2,
+            "P3C64_rank": 20,
+            "case_id": "path_archive_traversal::abff44710cba21cb",
+            "repo_key": "hgzojer__vocabletrainer__89b97f5c2f43",
+            "track_id": "path_archive_traversal"
+          },
+          {
+            "B0_rank": 7,
+            "P3C64_rank": 12,
+            "case_id": "ssrf::c1deb2a1ca7e63f3",
+            "repo_key": "saleor__requests-hardened__b7403f88d3b3",
+            "track_id": "ssrf"
+          },
+          {
+            "B0_rank": 3,
+            "P3C64_rank": 26,
+            "case_id": "template_expression_injection::41bd4d858551918f",
+            "repo_key": "dchester__jsonpath__3640316808b6",
+            "track_id": "template_expression_injection"
+          }
+        ],
+        "rescue_count": 9,
+        "rescue_rows": [
+          {
+            "B0_rank": 189,
+            "P3C64_rank": 1,
+            "case_id": "authentication_session_token_validation::478f90512ed3599d",
+            "repo_key": "xwiki-contrib__oidc__7d7cca1d5b30",
+            "track_id": "authentication_session_token_validation"
+          },
+          {
+            "B0_rank": 40,
+            "P3C64_rank": 1,
+            "case_id": "authentication_session_token_validation::676054b0e6815cc1",
+            "repo_key": "enonic__xp__e31f8239af38",
+            "track_id": "authentication_session_token_validation"
+          },
+          {
+            "B0_rank": 238,
+            "P3C64_rank": 7,
+            "case_id": "authentication_session_token_validation::9b91c75767a24d5e",
+            "repo_key": "googleapis__google-oauth-java-client__6447917c657a",
+            "track_id": "authentication_session_token_validation"
+          },
+          {
+            "B0_rank": 23,
+            "P3C64_rank": 6,
+            "case_id": "cached_cve::CVE-2026-48545::gradio-app/gradio",
+            "repo_key": "gradio_app__gradio__2887302069b2",
+            "track_id": "authentication_session_token_validation"
+          },
+          {
+            "B0_rank": 37,
+            "P3C64_rank": 1,
+            "case_id": "file_permission_temp_resource::04a43f888208f26f",
+            "repo_key": "junit-team__junit4__b6cfd1e3d736",
+            "track_id": "file_permission_temp_resource"
+          },
+          {
+            "B0_rank": 209,
+            "P3C64_rank": 2,
+            "case_id": "file_permission_temp_resource::13c5a6a835f616a1",
+            "repo_key": "cyberjunky__python-garminconnect__d8cf8f7a3a9c",
+            "track_id": "file_permission_temp_resource"
+          },
+          {
+            "B0_rank": 13,
+            "P3C64_rank": 4,
+            "case_id": "open_redirect::e914277372c0f527",
+            "repo_key": "adonisjs__http-server__929ea1abda5b",
+            "track_id": "open_redirect"
+          },
+          {
+            "B0_rank": 73,
+            "P3C64_rank": 1,
+            "case_id": "path_archive_traversal::b7b4b649729f2fab",
+            "repo_key": "joniles__mpxj__1eed5f01ac8e",
+            "track_id": "path_archive_traversal"
+          },
+          {
+            "B0_rank": 11,
+            "P3C64_rank": 1,
+            "case_id": "public_advisory::f6f00e189b0ceb57",
+            "repo_key": "surrealdb__surrealdb__cfd5f99e6303",
+            "track_id": "toctou_check_use_race"
+          }
+        ],
+        "right": "P3C64"
+      },
+      "at_100": {
+        "k": 100,
+        "left": "B0",
+        "regression_count": 1,
+        "regression_rows": [
+          {
+            "B0_rank": 31,
+            "P3C64_rank": 422,
+            "case_id": "business_state_precondition::6fefc90696f03a24",
+            "repo_key": "wevm__mppx__94088246ee18",
+            "track_id": "business_state_precondition"
+          }
+        ],
+        "rescue_count": 5,
+        "rescue_rows": [
+          {
+            "B0_rank": 189,
+            "P3C64_rank": 1,
+            "case_id": "authentication_session_token_validation::478f90512ed3599d",
+            "repo_key": "xwiki-contrib__oidc__7d7cca1d5b30",
+            "track_id": "authentication_session_token_validation"
+          },
+          {
+            "B0_rank": 238,
+            "P3C64_rank": 7,
+            "case_id": "authentication_session_token_validation::9b91c75767a24d5e",
+            "repo_key": "googleapis__google-oauth-java-client__6447917c657a",
+            "track_id": "authentication_session_token_validation"
+          },
+          {
+            "B0_rank": 1811,
+            "P3C64_rank": 56,
+            "case_id": "authorization_bypass::23a7e272fa2aabb8",
+            "repo_key": "Graylog2__graylog2-server__9c64a804c082",
+            "track_id": "authorization_bypass"
+          },
+          {
+            "B0_rank": 419,
+            "P3C64_rank": 54,
+            "case_id": "authorization_bypass::f399837b152823d8",
+            "repo_key": "arm32x__command-block-ide__7da8ea77ba34",
+            "track_id": "authorization_bypass"
+          },
+          {
+            "B0_rank": 209,
+            "P3C64_rank": 2,
+            "case_id": "file_permission_temp_resource::13c5a6a835f616a1",
+            "repo_key": "cyberjunky__python-garminconnect__d8cf8f7a3a9c",
+            "track_id": "file_permission_temp_resource"
+          }
+        ],
+        "right": "P3C64"
+      },
+      "at_30": {
+        "k": 30,
+        "left": "B0",
+        "regression_count": 1,
+        "regression_rows": [
+          {
+            "B0_rank": 2,
+            "P3C64_rank": 61,
+            "case_id": "cached_cve::CVE-2022-41918::opensearch-project/security",
+            "repo_key": "opensearch_project__security__f75be3edaf90",
+            "track_id": "authorization_bypass"
+          }
+        ],
+        "rescue_count": 7,
+        "rescue_rows": [
+          {
+            "B0_rank": 189,
+            "P3C64_rank": 1,
+            "case_id": "authentication_session_token_validation::478f90512ed3599d",
+            "repo_key": "xwiki-contrib__oidc__7d7cca1d5b30",
+            "track_id": "authentication_session_token_validation"
+          },
+          {
+            "B0_rank": 40,
+            "P3C64_rank": 1,
+            "case_id": "authentication_session_token_validation::676054b0e6815cc1",
+            "repo_key": "enonic__xp__e31f8239af38",
+            "track_id": "authentication_session_token_validation"
+          },
+          {
+            "B0_rank": 238,
+            "P3C64_rank": 7,
+            "case_id": "authentication_session_token_validation::9b91c75767a24d5e",
+            "repo_key": "googleapis__google-oauth-java-client__6447917c657a",
+            "track_id": "authentication_session_token_validation"
+          },
+          {
+            "B0_rank": 37,
+            "P3C64_rank": 1,
+            "case_id": "file_permission_temp_resource::04a43f888208f26f",
+            "repo_key": "junit-team__junit4__b6cfd1e3d736",
+            "track_id": "file_permission_temp_resource"
+          },
+          {
+            "B0_rank": 209,
+            "P3C64_rank": 2,
+            "case_id": "file_permission_temp_resource::13c5a6a835f616a1",
+            "repo_key": "cyberjunky__python-garminconnect__d8cf8f7a3a9c",
+            "track_id": "file_permission_temp_resource"
+          },
+          {
+            "B0_rank": 73,
+            "P3C64_rank": 1,
+            "case_id": "path_archive_traversal::b7b4b649729f2fab",
+            "repo_key": "joniles__mpxj__1eed5f01ac8e",
+            "track_id": "path_archive_traversal"
+          },
+          {
+            "B0_rank": 92,
+            "P3C64_rank": 20,
+            "case_id": "public_advisory::7b89eacb95cf6bae",
+            "repo_key": "symfony__symfony__29ff9268d058",
+            "track_id": "open_redirect"
+          }
+        ],
+        "right": "P3C64"
+      }
+    }
+  },
+  "review_budget": {
+    "B0": {
+      "B@25": 2,
+      "B@50": 13,
+      "B@75": 189,
+      "B@90": 823
+    },
+    "P3C16": {
+      "B@25": 1,
+      "B@50": 11,
+      "B@75": 77,
+      "B@90": 530
+    },
+    "P3C64": {
+      "B@25": 1,
+      "B@50": 7,
+      "B@75": 54,
+      "B@90": 377
+    }
+  },
+  "run_id": "p3_hard_competition_query_adapter_v1",
+  "schema_version": "p3_hard_competition_query_adapter_result_v1",
+  "selection": {
+    "admissibility_failures": {
+      "P3C16": [],
+      "P3C64": []
+    },
+    "admissible_learned_variants": [
+      "P3C64",
+      "P3C16"
+    ],
+    "external_refit_authorized": true,
+    "rule": {
+      "all_required": [
+        "R@10 non-decreasing",
+        "MRR non-decreasing",
+        "R@30 non-decreasing",
+        "R@100 non-decreasing",
+        "R@10 rescue_count > regression_count",
+        "normalized first-hit p90 non-increasing"
+      ],
+      "tie_break": [
+        "higher R@10",
+        "higher MRR",
+        "higher R@30",
+        "higher R@100",
+        "lower normalized first-hit p90",
+        "variant id ascending"
+      ]
+    },
+    "selected_variant": "P3C64",
+    "selection_status": "learned_variant_selected",
+    "strict_validation_authorized": false
+  },
+  "split_audit": {
+    "fitting_case_count": 112,
+    "fitting_pair_count": 217,
+    "fitting_project_family_count": 101,
+    "project_family_overlap_count": 0,
+    "selection_case_count": 43,
+    "selection_project_family_count": 41
+  },
+  "status": "completed",
+  "training": {
+    "B0": {
+      "training": false,
+      "variant_id": "B0"
+    },
+    "P3C16": {
+      "epoch_count": 12,
+      "example_count": 213,
+      "final_epoch": {
+        "batch_count": 14,
+        "epoch": 12,
+        "loss": 0.6966463284833091,
+        "ranking_loss": 0.6779633675302777,
+        "teacher_loss": 0.03736592962273529
+      },
+      "training": true,
+      "variant_id": "P3C16"
+    },
+    "P3C64": {
+      "epoch_count": 12,
+      "example_count": 213,
+      "final_epoch": {
+        "batch_count": 14,
+        "epoch": 12,
+        "loss": 0.6821058051926749,
+        "ranking_loss": 0.6636321927819934,
+        "teacher_loss": 0.03694723719464881
+      },
+      "training": true,
+      "variant_id": "P3C64"
+    }
+  },
+  "training_examples": {
+    "P3C16": {
+      "competition_count": 16,
+      "competition_semantics": "Competition is deterministic frozen-B0 ranking pressure only. It is unlabeled background and is never asserted safe, non-vulnerable, or a hard-negative truth label.",
+      "example_count": 213,
+      "frozen_fitting_pair_count": 217,
+      "skipped": {
+        "no_non_positive_competition": 4
+      },
+      "skipped_pair_ids": {
+        "no_non_positive_competition": [
+          "runtime::authentication_session_token_validation::cached_cve::CVE-2026-6729::HKUDS/OpenHarness::CVE-2026-6729::phase21_027_review_entry::096fde504c36",
+          "runtime::ssrf::cached_cve::CVE-2025-55161::Stirling-Tools/Stirling-PDF::CVE-2025-55161::phase21_029_review_entry::532ddf34b1b9",
+          "runtime::ssrf::cached_cve::CVE-2026-31818::Budibase/budibase::CVE-2026-31818::phase21_033_review_entry::44d6f16fffb8",
+          "runtime::ssrf::cached_cve::CVE-2026-31818::Budibase/budibase::CVE-2026-31818::phase21_033_review_entry::e660a3298104"
+        ]
+      },
+      "track_counts": {
+        "authentication_session_token_validation": 40,
+        "authorization_bypass": 29,
+        "business_state_precondition": 8,
+        "concurrent_object_lifecycle": 4,
+        "file_permission_temp_resource": 17,
+        "open_redirect": 9,
+        "path_archive_traversal": 31,
+        "ssrf": 35,
+        "template_expression_injection": 29,
+        "toctou_check_use_race": 11
+      },
+      "unique_guideline_count": 10
+    },
+    "P3C64": {
+      "competition_count": 64,
+      "competition_semantics": "Competition is deterministic frozen-B0 ranking pressure only. It is unlabeled background and is never asserted safe, non-vulnerable, or a hard-negative truth label.",
+      "example_count": 213,
+      "frozen_fitting_pair_count": 217,
+      "skipped": {
+        "no_non_positive_competition": 4
+      },
+      "skipped_pair_ids": {
+        "no_non_positive_competition": [
+          "runtime::authentication_session_token_validation::cached_cve::CVE-2026-6729::HKUDS/OpenHarness::CVE-2026-6729::phase21_027_review_entry::096fde504c36",
+          "runtime::ssrf::cached_cve::CVE-2025-55161::Stirling-Tools/Stirling-PDF::CVE-2025-55161::phase21_029_review_entry::532ddf34b1b9",
+          "runtime::ssrf::cached_cve::CVE-2026-31818::Budibase/budibase::CVE-2026-31818::phase21_033_review_entry::44d6f16fffb8",
+          "runtime::ssrf::cached_cve::CVE-2026-31818::Budibase/budibase::CVE-2026-31818::phase21_033_review_entry::e660a3298104"
+        ]
+      },
+      "track_counts": {
+        "authentication_session_token_validation": 40,
+        "authorization_bypass": 29,
+        "business_state_precondition": 8,
+        "concurrent_object_lifecycle": 4,
+        "file_permission_temp_resource": 17,
+        "open_redirect": 9,
+        "path_archive_traversal": 31,
+        "ssrf": 35,
+        "template_expression_injection": 29,
+        "toctou_check_use_race": 11
+      },
+      "unique_guideline_count": 10
+    }
+  },
+  "zero_step_parity": {
+    "zero_step_case_comparisons": 86,
+    "zero_step_max_score_abs_diff": 0.0,
+    "zero_step_rank_mismatch_count": 0
+  }
+}

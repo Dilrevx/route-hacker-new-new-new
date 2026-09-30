@@ -1,0 +1,17 @@
+{
+  "artifact": "p4_external_intake_provenance_recovery_v2_rerun1",
+  "files": {
+    "provenance_recovery_ledger.v2.jsonl": {
+      "bytes": 96960,
+      "sha256": "13f379395a7f2315cde44109f3fe594e99209da52df62f155f129e96fa4ce728"
+    },
+    "source_commit_recovered_candidates.v2.jsonl": {
+      "bytes": 91963,
+      "sha256": "fb9832a4198e2531602b37bc0f7bc1d4ee5221ee8907aa2ac1429c2d43121961"
+    },
+    "summary.json": {
+      "bytes": 3843,
+      "sha256": "bc87ebb9ac3944ea7fade1c67891f24746f94ee8ae5bcdb7efc708f2b5ad3f1b"
+    }
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "boundary": "The candidate universe is full-repository generic function and sliding_window views. Source anchors are joined only after candidate generation for offline evaluation coverage and never enter runtime query text or candidate admission. Non-anchor candidates remain unknown/unlabeled background, not safe or hard-negative truth.",
+  "created_at": "2026-07-27T08:15:05+00:00",
+  "generation_config": {
+    "anchor_join_order": "after_full_repository_candidate_enumeration",
+    "candidate_generation_order": "repository_key_then_relative_path; no anchor, patch, trace, source-point, API, or guideline-dependent prioritization",
+    "max_file_bytes": 512000,
+    "stride_lines": 40,
+    "window_lines": 80
+  },
+  "indexable_file_policy": {
+    "description": "Generic engineering boundary for source-like repository indexing. It includes source-like function and sliding-window suffixes and excludes dependency/build/cache directories and file-size outliers; it does not filter by guideline, API, source-point, trace, patch, anchor, or vulnerability keywords.",
+    "excluded_directories": [
+      ".git",
+      ".gradle",
+      ".idea",
+      ".mvn",
+      "build",
+      "target",
+      "out",
+      "node_modules",
+      "vendor"
+    ],
+    "function_views": {
+      "languages": [
+        "java",
+        "c",
+        "cpp"
+      ],
+      "suffixes": [
+        ".java",
+        ".c",
+        ".cc",
+        ".cpp",
+        ".cxx",
+        ".h",
+        ".hh",
+        ".hpp",
+        ".hxx"
+      ]
+    },
+    "policy_id": "indexable_file_policy_v3",
+    "sliding_window_views": {
+      "suffixes": [
+        ".java",
+        ".c",
+        ".cc",
+        ".cpp",
+        ".cxx",
+        ".h",
+        ".hh",
+        ".hpp",
+        ".hxx",
+        ".go",
+        ".js",
+        ".jsx",
+        ".ts",
+        ".tsx",
+        ".in",
+        ".init",
+        ".sh",
+        ".bash",
+        ".php",
+        ".py",
+        ".pl",
+        ".rb",
+        ".txt",
+        ".result",
+        ".conf",
+        ".cfg"
+      ]
+    }
+  },
+  "inputs": {
+    "external_cases": {
+      "path": "/data/lhq/workspace/p3-hard-competition-query-adapter-v1/p4_external_case_manifest_v1/external_cases.v1.jsonl",
+      "sha256": "c64edbd86013bc79e11b310412ed39639b176bb9dc19ac10884230741eb5a167"
+    },
+    "generic_view_helper": {
+      "path": "/tmp/m7_outer_shadow_builder_v1/build_toctou_dataset_a.py",
+      "sha256": "aaa018414392db92f6a3328b8e252bf2803ff28899d74cb058dba19b42739d2d"
+    },
+    "track_contract": {
+      "path": "/data/lhq/workspace/route-hacker/assets/guideline_tracks_v1.yaml",
+      "sha256": "9668f55a39bc3a7c7da1802a7ac510fef53d8bd1eff65506dce2916f8c90bd4b"
+    }
+  },
+  "schema_version": "p4_external_generic_candidate_pool_v1",
+  "status": "completed_no_embedding_or_retrieval",
+  "summary": {
+    "candidate_count": 542991,
+    "candidate_count_max": 178111,
+    "candidate_count_min": 455,
+    "candidate_view_types": {
+      "function": 362131,
+      "sliding_window": 180860
+    },
+    "case_count": 22,
+    "covered_case_count": 21,
+    "positive_candidate_count": 159,
+    "repo_count": 22,
+    "uncovered_case_ids": [
+      "file_permission_temp_resource::d1b56d692ab21b7a"
+    ]
+  }
+}

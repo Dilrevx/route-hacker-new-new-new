@@ -1,0 +1,60 @@
+{
+  "boundary": "This is an eligibility audit only. It creates no candidate pool, embedding, retrieval score, ranking, model fit, or external claim. Eligible rows require a separate source/pool/cache readiness gate before any external release can be frozen.",
+  "candidate_audit": {
+    "canonical_case_count": 286,
+    "canonical_label_count": 566,
+    "eligible_external_intake_case_count": 0,
+    "eligible_track_case_counts": {},
+    "failure_reason_counts": {
+      "case_not_source_ready": 62,
+      "no_core_covered_positive_label": 52,
+      "no_pre_patch_or_parent_commit": 281,
+      "no_repository_location": 35,
+      "no_source_contract_or_closure_verified_core_label": 211,
+      "project_family_overlap_with_m5_p3_or_m8": 223,
+      "recorded_identity_overlap_with_m5_p3_or_m8": 211
+    }
+  },
+  "created_at": "2026-07-27T07:49:09+00:00",
+  "eligibility_policy": {
+    "excludes_project_family_overlap_with_m5_p3_m8": true,
+    "excludes_recorded_identity_overlap_with_m5_p3_m8": true,
+    "requires_core_covered_positive_label": true,
+    "requires_pre_patch_or_parent_commit": true,
+    "requires_repository_location": true,
+    "requires_source_contract_or_closure_verified_core_label": true,
+    "requires_source_ready_case": true,
+    "unknown_non_anchor_policy": "unknown_not_negative"
+  },
+  "historical_isolation_inputs": {
+    "m5_case_count": 209,
+    "m8_case_count": 14,
+    "normalized_project_family_count": 178,
+    "p3_case_count": 155,
+    "recorded_identity_value_count": 467
+  },
+  "inputs": {
+    "canonical_cases": {
+      "path": "/data/lhq/workspace/route-hacker/output/phase1_guideline_retrieval/dataset_iteration_v2_phase_21_132_sz_boot_ssrf_closure_repair/cases.v1.jsonl",
+      "sha256": "bad57e39136f37a5e1ffb060426d367a01a8450b7b1d32f87e827b91e576b07a"
+    },
+    "canonical_labels": {
+      "path": "/data/lhq/workspace/route-hacker/output/phase1_guideline_retrieval/dataset_iteration_v2_phase_21_132_sz_boot_ssrf_closure_repair/labels.v1.jsonl",
+      "sha256": "be4be4476b81d6820822fc099ba203888252afe45375d8a9f4e8d54cc89075dd"
+    },
+    "m5_proposal": {
+      "path": "/tmp/m5_strict_project_family_split_proposal_v1_run1/split_manifest.proposal.jsonl",
+      "sha256": "be020704aff52ebdf720cfcc5f27c109d0ffbdad2116aa9139ec19e8d9fcf01b"
+    },
+    "m8_cases": {
+      "path": "/data/lhq/workspace/m8-balanced-release-preflight-v1/scope/selected_cases.v1.jsonl",
+      "sha256": "f1e953f49e6f301d8df850b92772c30f7ad46bd7d62711458277a28de08f3db0"
+    },
+    "p3_cases": {
+      "path": "/data/lhq/workspace/p3-hard-competition-query-adapter-v1/frozen_development_split_v1/p3_development_cases.v1.jsonl",
+      "sha256": "c8219cba104ae93db7d485479afb0d90c468b13637ec26437fba8c1c7fcc5cb1"
+    }
+  },
+  "schema_version": "p4_external_intake_candidate_audit_v1",
+  "status": "completed_no_retrieval"
+}

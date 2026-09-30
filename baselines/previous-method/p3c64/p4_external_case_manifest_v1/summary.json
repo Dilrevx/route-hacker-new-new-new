@@ -1,0 +1,38 @@
+{
+  "boundary": "This manifest freezes only provenance-recovered external case metadata and offline anchor mappings. It does not contain a full-repository candidate pool, embedding, score, rank, model fit, or retrieval result.",
+  "case_count": 22,
+  "created_at": "2026-07-27T08:04:59+00:00",
+  "inputs": {
+    "canonical_cases": {
+      "path": "/data/lhq/workspace/route-hacker/output/phase1_guideline_retrieval/dataset_iteration_v2_phase_21_132_sz_boot_ssrf_closure_repair/cases.v1.jsonl",
+      "sha256": "bad57e39136f37a5e1ffb060426d367a01a8450b7b1d32f87e827b91e576b07a"
+    },
+    "canonical_labels": {
+      "path": "/data/lhq/workspace/route-hacker/output/phase1_guideline_retrieval/dataset_iteration_v2_phase_21_132_sz_boot_ssrf_closure_repair/labels.v1.jsonl",
+      "sha256": "be4be4476b81d6820822fc099ba203888252afe45375d8a9f4e8d54cc89075dd"
+    },
+    "provenance_ledger": {
+      "path": "/data/lhq/workspace/p3-hard-competition-query-adapter-v1/p4_external_intake_provenance_recovery_v2_rerun1/provenance_recovery_ledger.v2.jsonl",
+      "sha256": "13f379395a7f2315cde44109f3fe594e99209da52df62f155f129e96fa4ce728"
+    }
+  },
+  "language_case_counts": {
+    "java": 13,
+    "javascript": 1,
+    "php": 2,
+    "python": 3,
+    "typescript": 2,
+    "typescript_python": 1
+  },
+  "project_family_count": 21,
+  "repo_count": 22,
+  "schema_version": "p4_external_case_manifest_v1",
+  "status": "frozen_case_manifest_no_retrieval",
+  "track_case_counts": {
+    "authorization_bypass": 6,
+    "business_state_precondition": 4,
+    "concurrent_object_lifecycle": 8,
+    "file_permission_temp_resource": 2,
+    "template_expression_injection": 2
+  }
+}

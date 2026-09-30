@@ -1,0 +1,25 @@
+{
+  "artifact": "p4_external_generic_candidate_pool_v1",
+  "files": {
+    "candidate_pool.v1.jsonl": {
+      "bytes": 2109740850,
+      "sha256": "93ffabd5abc82872c37d0a82858624461bed32f9c77af5c8aeb5d9b25747a377"
+    },
+    "case_coverage.v1.jsonl": {
+      "bytes": 21510,
+      "sha256": "5238b79554a9a6b7ee83c2718ce82cc9b41c5febf032ea3246d5fe0dfe34eaa8"
+    },
+    "queries.v1.jsonl": {
+      "bytes": 21910,
+      "sha256": "19042cb845451344e438ad52116d6dc515d4cacabca7a3360acd83fb3a08a914"
+    },
+    "repo_generation_ledger.v1.jsonl": {
+      "bytes": 9824,
+      "sha256": "267d809b32bbbf5dcbfa06e818bc43434b847fd279a708c6a3620aad4496f644"
+    },
+    "summary.json": {
+      "bytes": 3219,
+      "sha256": "1d79d3d8482aade4daf3a5625553e4569f0fda0396dc5997d3d9819143443615"
+    }
+  }
+}

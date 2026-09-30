@@ -1,0 +1,82 @@
+{
+  "boundary": "This freezes external-case admission only. It creates no embeddings, scores, ranks, model updates, or external retrieval claim.",
+  "candidate_pool_policy": {
+    "anchor_role": "post_enumeration_offline_evaluation_mapping_only",
+    "candidate_universe": "full_repository_generic_views",
+    "per_case_policy_exception": "forbidden",
+    "unknown_non_anchor_policy": "unknown_unlabeled_background_not_safe_negative",
+    "view_types": [
+      "function",
+      "sliding_window"
+    ]
+  },
+  "created_at": "2026-07-27T08:16:39+00:00",
+  "historical_isolation": {
+    "included_identity_overlap_count": 0,
+    "included_project_family_overlap_count": 0,
+    "m5_case_count": 209,
+    "m8_case_count": 14,
+    "normalized_project_family_count": 178,
+    "p3_case_count": 155,
+    "recorded_identity_value_count": 467
+  },
+  "inputs": {
+    "candidate_pool": {
+      "path": "/data/lhq/workspace/p3-hard-competition-query-adapter-v1/p4_external_generic_candidate_pool_v1/candidate_pool.v1.jsonl",
+      "sha256": "93ffabd5abc82872c37d0a82858624461bed32f9c77af5c8aeb5d9b25747a377"
+    },
+    "coverage": {
+      "path": "/data/lhq/workspace/p3-hard-competition-query-adapter-v1/p4_external_generic_candidate_pool_v1/case_coverage.v1.jsonl",
+      "sha256": "5238b79554a9a6b7ee83c2718ce82cc9b41c5febf032ea3246d5fe0dfe34eaa8"
+    },
+    "external_cases": {
+      "path": "/data/lhq/workspace/p3-hard-competition-query-adapter-v1/p4_external_case_manifest_v1/external_cases.v1.jsonl",
+      "sha256": "c64edbd86013bc79e11b310412ed39639b176bb9dc19ac10884230741eb5a167"
+    },
+    "m5_proposal": {
+      "path": "/tmp/m5_strict_project_family_split_proposal_v1_run1/split_manifest.proposal.jsonl",
+      "sha256": "be020704aff52ebdf720cfcc5f27c109d0ffbdad2116aa9139ec19e8d9fcf01b"
+    },
+    "m8_cases": {
+      "path": "/data/lhq/workspace/m8-balanced-release-preflight-v1/scope/selected_cases.v1.jsonl",
+      "sha256": "f1e953f49e6f301d8df850b92772c30f7ad46bd7d62711458277a28de08f3db0"
+    },
+    "p3_cases": {
+      "path": "/data/lhq/workspace/p3-hard-competition-query-adapter-v1/frozen_development_split_v1/p3_development_cases.v1.jsonl",
+      "sha256": "c8219cba104ae93db7d485479afb0d90c468b13637ec26437fba8c1c7fcc5cb1"
+    },
+    "pool_summary": {
+      "path": "/data/lhq/workspace/p3-hard-competition-query-adapter-v1/p4_external_generic_candidate_pool_v1/summary.json",
+      "sha256": "1d79d3d8482aade4daf3a5625553e4569f0fda0396dc5997d3d9819143443615"
+    },
+    "provenance_ledger": {
+      "path": "/data/lhq/workspace/p3-hard-competition-query-adapter-v1/p4_external_intake_provenance_recovery_v2_rerun1/provenance_recovery_ledger.v2.jsonl",
+      "sha256": "13f379395a7f2315cde44109f3fe594e99209da52df62f155f129e96fa4ce728"
+    }
+  },
+  "intake": {
+    "held_case_count": 1,
+    "held_cases": [
+      {
+        "case_id": "file_permission_temp_resource::d1b56d692ab21b7a",
+        "cve_id": "CVE-2021-21364",
+        "reasons": [
+          "generic_pool_anchor_coverage_missing",
+          "no_generic_positive_candidates"
+        ]
+      }
+    ],
+    "included_case_count": 21,
+    "included_track_case_counts": {
+      "authorization_bypass": 6,
+      "business_state_precondition": 4,
+      "concurrent_object_lifecycle": 8,
+      "file_permission_temp_resource": 1,
+      "template_expression_injection": 2
+    },
+    "provenance_recovered_candidate_case_count": 22
+  },
+  "next_gate": "A separate cache-readiness audit must validate a frozen embedding cache for exactly selected_external_cases.v1.jsonl before an external B0/P3C64 one-shot spec can be frozen.",
+  "schema_version": "p4_external_intake_freeze_v1",
+  "status": "frozen_intake_no_embedding_or_retrieval"
+}

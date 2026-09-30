@@ -1,0 +1,32 @@
+{
+  "admissibility_failures": {
+    "P3C16": [],
+    "P3C64": []
+  },
+  "admissible_learned_variants": [
+    "P3C64",
+    "P3C16"
+  ],
+  "external_refit_authorized": true,
+  "rule": {
+    "all_required": [
+      "R@10 non-decreasing",
+      "MRR non-decreasing",
+      "R@30 non-decreasing",
+      "R@100 non-decreasing",
+      "R@10 rescue_count > regression_count",
+      "normalized first-hit p90 non-increasing"
+    ],
+    "tie_break": [
+      "higher R@10",
+      "higher MRR",
+      "higher R@30",
+      "higher R@100",
+      "lower normalized first-hit p90",
+      "variant id ascending"
+    ]
+  },
+  "selected_variant": "P3C64",
+  "selection_status": "learned_variant_selected",
+  "strict_validation_authorized": false
+}

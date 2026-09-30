@@ -1,0 +1,9 @@
+{
+  "boundary": "Audit compares recorded case/CVE/GHSA/repository/project-group strings only. It does not claim semantic independence beyond those identities and reads no M8 query, candidate, score, rank, or result artifact.",
+  "direct_recorded_identity_overlap_count": 0,
+  "direct_recorded_identity_overlaps": [],
+  "m8_selected_case_count": 14,
+  "p3_development_case_count": 155,
+  "schema_version": "p3_m8_recorded_identity_isolation_v1",
+  "status": "passed"
+}

@@ -1,0 +1,17 @@
+{
+  "artifact": "p4_external_intake_candidate_audit_v1",
+  "files": {
+    "candidate_audit_ledger.v1.jsonl": {
+      "bytes": 343022,
+      "sha256": "17efa7b8c476e65455fa36748caba42de6b9ec9d2b2551e3506fb549ccef02b1"
+    },
+    "eligible_external_intake_candidates.v1.jsonl": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "summary.json": {
+      "bytes": 2845,
+      "sha256": "9168687fac7a2ce18e7109da0e130944ba960b2eebc9fd473aabe8e017b34ba8"
+    }
+  }
+}

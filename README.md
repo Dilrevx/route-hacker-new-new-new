@@ -4,6 +4,15 @@ Clean new implementation workspace for Route-Hacker experiments.
 
 Current module: `new-impl/codex_security_batch/` contains the Codex Security blind batch runner and its module README.
 
+## Previous method baseline
+
+The [historical P3 baseline](baselines/previous-method/README.md) preserves the
+0.6B query-residual adapter weights, frozen 112/43 development split, original
+training and evaluation records, and recovered helper scripts. It links to the
+existing fixed143 results and pipeline modules, with offline verification and a
+selected-checkpoint inference example. Historical P3, frozen 4B comparisons, and
+later 4B query-LoRA research are kept distinct.
+
 ## Experiment results index
 
 This repository keeps portable experiment snapshots under each module's `results/`

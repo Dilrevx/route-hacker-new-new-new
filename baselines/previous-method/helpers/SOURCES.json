@@ -1,0 +1,139 @@
+{
+  "schema_version": "previous_method_helper_sources_v1",
+  "preservation": "Original file bytes preserved without source edits.",
+  "path_base": "repository root",
+  "sources": [
+    {
+      "source_id": "scripts-history-7d3a78f9",
+      "kind": "historical tar archive",
+      "archive_name": "scripts.tar",
+      "history_label": "7d3a78f9"
+    },
+    {
+      "source_id": "route-hacker-guideline-tracks",
+      "kind": "historical repository file",
+      "repository_relative_path": "assets/guideline_tracks_v1.yaml"
+    },
+    {
+      "source_id": "route-hacker-p4-generic-view-helper",
+      "kind": "historical repository file",
+      "repository_relative_path": "scripts/build_toctou_dataset_a.py",
+      "hash_binding": "Matches the generic_view_helper SHA-256 in the original P4 candidate-pool summary."
+    }
+  ],
+  "files": [
+    {
+      "repository_path": "baselines/previous-method/helpers/scripts/eval_guideline_m5_53_strict_generic_bm25_v1.py",
+      "source_id": "scripts-history-7d3a78f9",
+      "archive_member": "scripts/eval_guideline_m5_53_strict_generic_bm25_v1.py",
+      "bytes": 16393,
+      "sha256": "adb70fde75a2ebb0b8e87ff934d1d0b72899e01c4d1d85ed198d9d0bd10a27bc"
+    },
+    {
+      "repository_path": "baselines/previous-method/helpers/scripts/eval_guideline_m5_54_strict_generic_embedding_v1.py",
+      "source_id": "scripts-history-7d3a78f9",
+      "archive_member": "scripts/eval_guideline_m5_54_strict_generic_embedding_v1.py",
+      "bytes": 17812,
+      "sha256": "2efcfbfbe0be7bace73b6fe3f3b3ae3e8f0a4039b7c334aced9434af2f5a146c"
+    },
+    {
+      "repository_path": "baselines/previous-method/helpers/scripts/eval_guideline_m5_56_strict_generic_fusion_v1.py",
+      "source_id": "scripts-history-7d3a78f9",
+      "archive_member": "scripts/eval_guideline_m5_56_strict_generic_fusion_v1.py",
+      "bytes": 15443,
+      "sha256": "876687c70d60a01feed90d79a947c3d0e8339deb43da0f7ea2a89f5362e63445"
+    },
+    {
+      "repository_path": "baselines/previous-method/helpers/scripts/eval_guideline_m5_63_query_centroid_residual_v1.py",
+      "source_id": "scripts-history-7d3a78f9",
+      "archive_member": "scripts/eval_guideline_m5_63_query_centroid_residual_v1.py",
+      "bytes": 14847,
+      "sha256": "67fd929d4d5ec10fda08f71a18cbd5cbee2dedf2bfd9936aa3e36c90f044cf0a"
+    },
+    {
+      "repository_path": "baselines/previous-method/helpers/scripts/eval_guideline_m5_65_residual_fusion_lane_v1.py",
+      "source_id": "scripts-history-7d3a78f9",
+      "archive_member": "scripts/eval_guideline_m5_65_residual_fusion_lane_v1.py",
+      "bytes": 21601,
+      "sha256": "e6e89fe937f41ecf0b096cc8bde605336b7aa2ad57a90034c02b2c138d0cd6c7"
+    },
+    {
+      "repository_path": "baselines/previous-method/helpers/scripts/eval_guideline_m5_86_expanded_split_bm25_embedding_v1.py",
+      "source_id": "scripts-history-7d3a78f9",
+      "archive_member": "scripts/eval_guideline_m5_86_expanded_split_bm25_embedding_v1.py",
+      "bytes": 14921,
+      "sha256": "12ed9d0d6d78c8b7ba3b1fc94026d230b4cf1290c12046e3408cf17e602b73d7"
+    },
+    {
+      "repository_path": "baselines/previous-method/helpers/scripts/eval_guideline_m5_88_fixed_bridge_learned_router_v1.py",
+      "source_id": "scripts-history-7d3a78f9",
+      "archive_member": "scripts/eval_guideline_m5_88_fixed_bridge_learned_router_v1.py",
+      "bytes": 28359,
+      "sha256": "0932268b8e33614ebd294ac65ec70da5dbe1b3d1bc45f249fc88c474de31c6ee"
+    },
+    {
+      "repository_path": "baselines/previous-method/helpers/scripts/eval_guideline_m5_89_generic_source_lane_audit_v1.py",
+      "source_id": "scripts-history-7d3a78f9",
+      "archive_member": "scripts/eval_guideline_m5_89_generic_source_lane_audit_v1.py",
+      "bytes": 18513,
+      "sha256": "633e2519ed02bf0b0413a7d20d889b1593866e43babec24760ff9fecb6b5e381"
+    },
+    {
+      "repository_path": "baselines/previous-method/helpers/scripts/eval_guideline_m5_94_generic_retrieval_with_shard_v1.py",
+      "source_id": "scripts-history-7d3a78f9",
+      "archive_member": "scripts/eval_guideline_m5_94_generic_retrieval_with_shard_v1.py",
+      "bytes": 21740,
+      "sha256": "7111f97c3171233fb11703a7aa0101d5570296ab6987e07fef69dd09df822c7e"
+    },
+    {
+      "repository_path": "baselines/previous-method/helpers/assets/guideline_tracks_v1.yaml",
+      "source_id": "route-hacker-guideline-tracks",
+      "archive_member": null,
+      "source_repository_path": "assets/guideline_tracks_v1.yaml",
+      "bytes": 20113,
+      "sha256": "9668f55a39bc3a7c7da1802a7ac510fef53d8bd1eff65506dce2916f8c90bd4b"
+    },
+    {
+      "repository_path": "baselines/previous-method/helpers/scripts/build_toctou_dataset_a.py",
+      "source_id": "route-hacker-p4-generic-view-helper",
+      "archive_member": null,
+      "source_repository_path": "scripts/build_toctou_dataset_a.py",
+      "bytes": 33828,
+      "sha256": "aaa018414392db92f6a3328b8e252bf2803ff28899d74cb058dba19b42739d2d"
+    }
+  ],
+  "dependency_audit": {
+    "script_import_closure": "All nine helper modules required by the locked M5.94 helper are present.",
+    "p4_generic_view_helper": "The original P4 generic-view helper is preserved with its recorded hash. Its imports use the Python standard library only; there are no additional local-module dependencies.",
+    "direct_third_party_imports": [
+      "numpy",
+      "sentence_transformers"
+    ],
+    "unrecovered_historical_inputs": [
+      {
+        "name": "run_m7_strict_runtime_residual_biencoder_v1.py",
+        "sha256": "00b61ec91708227a3f29be40d9ee98ceaaba98d4c705c67ba22b193409a5979c",
+        "role": "Original P3 fitting executor dependency; not recovered."
+      },
+      {
+        "name": "m5_83_expanded_inner_split_manifest_v1/candidate_pool.v1.jsonl",
+        "sha256": "ddf58974d2dc05caac9afac31f4db1373e1bc1c1381cc99b08df67a6a81af92d",
+        "role": "Original full candidate pool; original location absent."
+      },
+      {
+        "name": "m5_92_gap_generic_candidate_shard_v1/gap_generic_candidate_shard.v1.jsonl",
+        "sha256": "065e01257d8faf855ad0a30600d7ee3fe9d65d9592fe7390005a308b1c9da454",
+        "role": "Original additive candidate shard; original location absent."
+      },
+      {
+        "name": "m5_86_expanded_split_bm25_embedding_v1/cache",
+        "role": "Original frozen code cache; original location absent."
+      },
+      {
+        "name": "m5_95_repaired_pool_embedding_cache_v1/cache",
+        "role": "Original repaired code cache; original location absent."
+      }
+    ],
+    "boundary": "Helper preservation does not establish end-to-end replay of the historical P3 fitting experiment. Historical defaults reference their original environment; run only after explicitly configuring inputs and outputs."
+  }
+}

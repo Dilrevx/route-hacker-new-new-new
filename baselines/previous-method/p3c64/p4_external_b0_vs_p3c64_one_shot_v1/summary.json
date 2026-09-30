@@ -1,0 +1,683 @@
+{
+  "created_at": "2026-07-27T08:38:44+00:00",
+  "evaluation_scope": {
+    "candidate_count_max": 178111,
+    "candidate_count_min": 455,
+    "candidate_count_total": 476626,
+    "case_count": 21,
+    "project_group_count": 20,
+    "repository_count": 21,
+    "track_counts": {
+      "authorization_bypass": 6,
+      "business_state_precondition": 4,
+      "concurrent_object_lifecycle": 8,
+      "file_permission_temp_resource": 1,
+      "template_expression_injection": 2
+    }
+  },
+  "inputs": {
+    "cache_audit": {
+      "path": "/data/lhq/workspace/p3-hard-competition-query-adapter-v1/p4_external_code_cache_audit_v1/summary.json",
+      "sha256": "0c241535725b2ad661eca22b2e40cd8394210d8f12eb6102daf4bd961cc73446"
+    },
+    "candidate_pool": {
+      "path": "/data/lhq/workspace/p3-hard-competition-query-adapter-v1/p4_external_generic_candidate_pool_v1/candidate_pool.v1.jsonl",
+      "sha256": "93ffabd5abc82872c37d0a82858624461bed32f9c77af5c8aeb5d9b25747a377"
+    },
+    "one_shot_spec": {
+      "path": "/data/lhq/workspace/p3-hard-competition-query-adapter-v1/p4_external_one_shot_spec_v1/one_shot_spec.v1.json",
+      "sha256": "89bf8955b8108b9c3878758da09f5f838fc25f1b673a34a8cc689da72bc85a7c"
+    },
+    "p3_state": {
+      "path": "/data/lhq/workspace/p3-hard-competition-query-adapter-v1/selection_run_v1/p3c64_state.pt",
+      "sha256": "5425766d0dff286fb78f218808b21f8a502b85be170f6a8c911f7db761bc8e16"
+    }
+  },
+  "method_boundary": {
+    "m8_read_or_used": false,
+    "non_anchor_role": "unknown unlabeled background; never safe-negative or hard-negative truth",
+    "one_shot": "The evaluator must refuse an existing non-empty output directory.",
+    "p4_training_or_refit": false,
+    "p4_variant_selection": false,
+    "runtime_candidate_admission": "P4 full-repository generic function + sliding_window only",
+    "runtime_query": "fixed natural-language guideline text only",
+    "source_anchor_role": "offline mapped-positive evaluation only",
+    "uses_bm25": false,
+    "uses_patch_trace_source_point_or_advisory_at_runtime": false,
+    "uses_static_rules": false
+  },
+  "method_state": {
+    "B0": {
+      "description": "Frozen Qwen guideline embedding scored against frozen Qwen code vectors.",
+      "learned_state": null
+    },
+    "P3C64": {
+      "code_projection": false,
+      "description": "The fixed P3C64 query-only identity-initialized residual MLP; frozen code vectors remain unchanged.",
+      "hidden_dimension": 128,
+      "learned_state_path": "/data/lhq/workspace/p3-hard-competition-query-adapter-v1/selection_run_v1/p3c64_state.pt",
+      "learned_state_sha256": "5425766d0dff286fb78f218808b21f8a502b85be170f6a8c911f7db761bc8e16",
+      "query_projection": true,
+      "residual_scale": 0.1,
+      "selection_origin": "P3 non-M8 inner development selection only"
+    }
+  },
+  "metrics": {
+    "B0": {
+      "MRR": 0.007434105008813678,
+      "R@1": 0.0,
+      "R@10": 0.0,
+      "R@100": 0.09523809523809523,
+      "R@20": 0.047619047619047616,
+      "R@200": 0.19047619047619047,
+      "R@3": 0.0,
+      "R@30": 0.047619047619047616,
+      "R@5": 0.0,
+      "R@50": 0.09523809523809523,
+      "R@500": 0.38095238095238093,
+      "case_count": 21,
+      "cases_with_hit": 21,
+      "first_rank": {
+        "max": 41059.0,
+        "min": 11.0,
+        "p25": 281.0,
+        "p50": 887.0,
+        "p75": 4307.0,
+        "p90": 5349.0,
+        "p95": 12127.0,
+        "p99": 35272.60000000002
+      },
+      "normalized_first_rank": {
+        "max": 0.7454873646209387,
+        "min": 0.0026746381371932034,
+        "p25": 0.0760147476086107,
+        "p50": 0.22771012518095887,
+        "p75": 0.2567204301075269,
+        "p90": 0.41226353555120676,
+        "p95": 0.6167400881057269,
+        "p99": 0.7197379093178964
+      }
+    },
+    "P3C64": {
+      "MRR": 0.05681526424729079,
+      "R@1": 0.0,
+      "R@10": 0.14285714285714285,
+      "R@100": 0.47619047619047616,
+      "R@20": 0.19047619047619047,
+      "R@200": 0.5714285714285714,
+      "R@3": 0.09523809523809523,
+      "R@30": 0.23809523809523808,
+      "R@5": 0.09523809523809523,
+      "R@50": 0.2857142857142857,
+      "R@500": 0.7619047619047619,
+      "case_count": 21,
+      "cases_with_hit": 21,
+      "first_rank": {
+        "max": 11239.0,
+        "min": 2.0,
+        "p25": 41.0,
+        "p50": 121.0,
+        "p75": 498.0,
+        "p90": 783.0,
+        "p95": 974.0,
+        "p99": 9186.000000000007
+      },
+      "normalized_first_rank": {
+        "max": 0.2444663059517954,
+        "min": 0.0001444162488910895,
+        "p25": 0.005109426892616878,
+        "p50": 0.026781489542916627,
+        "p75": 0.0502283105022831,
+        "p90": 0.11013215859030837,
+        "p95": 0.1957936905358037,
+        "p99": 0.23473178286859708
+      }
+    }
+  },
+  "output_contract": {
+    "case_rank_ledger": "case_rank_ledger.v1.jsonl",
+    "non_anchor_semantics": "unknown unlabeled background; never safe-negative or hard-negative truth.",
+    "offline_positive_semantics": "Source-derived generic overlap mapping for retrieval hit measurement only; not vulnerability proof."
+  },
+  "paired_comparisons": {
+    "at_10": {
+      "k": 10,
+      "left": "B0",
+      "regression_count": 0,
+      "regression_rows": [],
+      "rescue_count": 3,
+      "rescue_rows": [
+        {
+          "B0_rank": 887,
+          "P3C64_rank": 8,
+          "case_id": "authorization_bypass::644e459270be840e",
+          "cve_id": "CVE-2026-44221",
+          "repo_key": "ArcadeData__arcadedb__a28b5da98fdb",
+          "track_id": "authorization_bypass"
+        },
+        {
+          "B0_rank": 388,
+          "P3C64_rank": 2,
+          "case_id": "concurrent_object_lifecycle::7c9bea1974ee462b",
+          "cve_id": "CVE-2020-1732",
+          "repo_key": "wildfly-security__soteria__f637fa0dc325",
+          "track_id": "concurrent_object_lifecycle"
+        },
+        {
+          "B0_rank": 11,
+          "P3C64_rank": 3,
+          "case_id": "template_expression_injection::147fde3f8ddd29fa",
+          "cve_id": "CVE-2026-11422",
+          "repo_key": "shd101wyy__crossnote__a0e3882f355f",
+          "track_id": "template_expression_injection"
+        }
+      ],
+      "right": "P3C64"
+    },
+    "at_100": {
+      "k": 100,
+      "left": "B0",
+      "regression_count": 0,
+      "regression_rows": [],
+      "rescue_count": 8,
+      "rescue_rows": [
+        {
+          "B0_rank": 887,
+          "P3C64_rank": 8,
+          "case_id": "authorization_bypass::644e459270be840e",
+          "cve_id": "CVE-2026-44221",
+          "repo_key": "ArcadeData__arcadedb__a28b5da98fdb",
+          "track_id": "authorization_bypass"
+        },
+        {
+          "B0_rank": 633,
+          "P3C64_rank": 78,
+          "case_id": "authorization_bypass::b8b95e93670dfc1e",
+          "cve_id": "CVE-2026-52869",
+          "repo_key": "modelcontextprotocol__python-sdk__1abcca2408a6",
+          "track_id": "authorization_bypass"
+        },
+        {
+          "B0_rank": 2788,
+          "P3C64_rank": 70,
+          "case_id": "business_state_precondition::390f8484aab4ff32",
+          "cve_id": "CVE-2026-42303",
+          "repo_key": "ethyca__fides__0e320b20934e",
+          "track_id": "business_state_precondition"
+        },
+        {
+          "B0_rank": 231,
+          "P3C64_rank": 41,
+          "case_id": "concurrent_object_lifecycle::17a630939d0139ae",
+          "cve_id": "CVE-2026-6830",
+          "repo_key": "nesquena__hermes-webui__1fee123ac8fd",
+          "track_id": "concurrent_object_lifecycle"
+        },
+        {
+          "B0_rank": 383,
+          "P3C64_rank": 21,
+          "case_id": "concurrent_object_lifecycle::1b3fa8504ea810b7",
+          "cve_id": "CVE-2026-40155",
+          "repo_key": "auth0__nextjs-auth0__b06d30f26a22",
+          "track_id": "concurrent_object_lifecycle"
+        },
+        {
+          "B0_rank": 1240,
+          "P3C64_rank": 70,
+          "case_id": "concurrent_object_lifecycle::26aea97ea0631974",
+          "cve_id": "CVE-2020-19005",
+          "repo_key": "94fzb__zrlog__a7ab55784cee",
+          "track_id": "concurrent_object_lifecycle"
+        },
+        {
+          "B0_rank": 388,
+          "P3C64_rank": 2,
+          "case_id": "concurrent_object_lifecycle::7c9bea1974ee462b",
+          "cve_id": "CVE-2020-1732",
+          "repo_key": "wildfly-security__soteria__f637fa0dc325",
+          "track_id": "concurrent_object_lifecycle"
+        },
+        {
+          "B0_rank": 281,
+          "P3C64_rank": 51,
+          "case_id": "template_expression_injection::ba6c7f9b64cdf52c",
+          "cve_id": "CVE-2026-33938",
+          "repo_key": "handlebars-lang__handlebars.js__b2a083136b11",
+          "track_id": "template_expression_injection"
+        }
+      ],
+      "right": "P3C64"
+    },
+    "at_30": {
+      "k": 30,
+      "left": "B0",
+      "regression_count": 0,
+      "regression_rows": [],
+      "rescue_count": 4,
+      "rescue_rows": [
+        {
+          "B0_rank": 35,
+          "P3C64_rank": 15,
+          "case_id": "authorization_bypass::1437ce483575491a",
+          "cve_id": "CVE-2026-25999",
+          "repo_key": "Aiven-Open__klaw__c19ad30d4796",
+          "track_id": "authorization_bypass"
+        },
+        {
+          "B0_rank": 887,
+          "P3C64_rank": 8,
+          "case_id": "authorization_bypass::644e459270be840e",
+          "cve_id": "CVE-2026-44221",
+          "repo_key": "ArcadeData__arcadedb__a28b5da98fdb",
+          "track_id": "authorization_bypass"
+        },
+        {
+          "B0_rank": 383,
+          "P3C64_rank": 21,
+          "case_id": "concurrent_object_lifecycle::1b3fa8504ea810b7",
+          "cve_id": "CVE-2026-40155",
+          "repo_key": "auth0__nextjs-auth0__b06d30f26a22",
+          "track_id": "concurrent_object_lifecycle"
+        },
+        {
+          "B0_rank": 388,
+          "P3C64_rank": 2,
+          "case_id": "concurrent_object_lifecycle::7c9bea1974ee462b",
+          "cve_id": "CVE-2020-1732",
+          "repo_key": "wildfly-security__soteria__f637fa0dc325",
+          "track_id": "concurrent_object_lifecycle"
+        }
+      ],
+      "right": "P3C64"
+    }
+  },
+  "review_budget": {
+    "B0": {
+      "B@25": 281,
+      "B@50": 887,
+      "B@75": 4307,
+      "B@90": 5349
+    },
+    "P3C64": {
+      "B@25": 41,
+      "B@50": 121,
+      "B@75": 498,
+      "B@90": 783
+    }
+  },
+  "run_id": "p4_external_b0_vs_p3c64_v1",
+  "runtime": {
+    "adapter_device": "cuda:0",
+    "encoded_unique_guideline_count": 5,
+    "encoder_device": "cuda:0",
+    "model_path": "/data/lhq/.cache/huggingface/hub/models--Qwen--Qwen3-Embedding-0.6B/snapshots/97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+    "p3_state_refit": false,
+    "training_performed": false,
+    "variant_selection_performed": false
+  },
+  "schema_version": "p4_external_b0_p3c64_one_shot_v1",
+  "status": "completed_one_shot_external_evaluation",
+  "stop_rule": "This frozen one-shot external evaluation reports results only. It cannot trigger hyperparameter tuning, query rewriting, case replacement, cache regeneration, or method selection on P4.",
+  "track_metrics": {
+    "authorization_bypass": {
+      "B0": {
+        "MRR": 0.005441392869620822,
+        "R@1": 0.0,
+        "R@10": 0.0,
+        "R@100": 0.16666666666666666,
+        "R@20": 0.0,
+        "R@200": 0.16666666666666666,
+        "R@3": 0.0,
+        "R@30": 0.0,
+        "R@5": 0.0,
+        "R@50": 0.16666666666666666,
+        "R@500": 0.16666666666666666,
+        "case_count": 6,
+        "cases_with_hit": 6,
+        "first_rank": {
+          "max": 12127.0,
+          "min": 35.0,
+          "p25": 696.5,
+          "p50": 913.5,
+          "p75": 3591.25,
+          "p90": 8301.0,
+          "p95": 10214.0,
+          "p99": 11744.400000000001
+        },
+        "normalized_first_rank": {
+          "max": 0.41226353555120676,
+          "min": 0.0026746381371932034,
+          "p25": 0.03271291510045682,
+          "p50": 0.14051988563982543,
+          "p75": 0.22758324640348865,
+          "p90": 0.32368309476608914,
+          "p95": 0.36797331515864795,
+          "p99": 0.40340549147269505
+        }
+      },
+      "P3C64": {
+        "MRR": 0.03494826057752757,
+        "R@1": 0.0,
+        "R@10": 0.16666666666666666,
+        "R@100": 0.5,
+        "R@20": 0.3333333333333333,
+        "R@200": 0.5,
+        "R@3": 0.0,
+        "R@30": 0.3333333333333333,
+        "R@5": 0.0,
+        "R@50": 0.3333333333333333,
+        "R@500": 0.6666666666666666,
+        "case_count": 6,
+        "cases_with_hit": 6,
+        "first_rank": {
+          "max": 974.0,
+          "min": 8.0,
+          "p25": 30.75,
+          "p50": 211.5,
+          "p75": 673.5,
+          "p90": 878.5,
+          "p95": 926.25,
+          "p99": 964.45
+        },
+        "normalized_first_rank": {
+          "max": 0.1957936905358037,
+          "min": 0.0001444162488910895,
+          "p25": 0.002280069371491428,
+          "p50": 0.011173953125770854,
+          "p75": 0.04180413125753364,
+          "p90": 0.1230110005190434,
+          "p95": 0.15940234552742355,
+          "p99": 0.1885154215341277
+        }
+      }
+    },
+    "business_state_precondition": {
+      "B0": {
+        "MRR": 0.0023689625380107797,
+        "R@1": 0.0,
+        "R@10": 0.0,
+        "R@100": 0.0,
+        "R@20": 0.0,
+        "R@200": 0.25,
+        "R@3": 0.0,
+        "R@30": 0.0,
+        "R@5": 0.0,
+        "R@50": 0.0,
+        "R@500": 0.25,
+        "case_count": 4,
+        "cases_with_hit": 4,
+        "first_rank": {
+          "max": 2788.0,
+          "min": 136.0,
+          "p25": 641.5,
+          "p50": 1349.0,
+          "p75": 2113.0,
+          "p90": 2518.0,
+          "p95": 2652.9999999999995,
+          "p99": 2761.0
+        },
+        "normalized_first_rank": {
+          "max": 0.3152355496157701,
+          "min": 0.020239880059970013,
+          "p25": 0.06247929432652842,
+          "p50": 0.11984232390450068,
+          "p75": 0.20115304894915764,
+          "p90": 0.26960254934912514,
+          "p95": 0.29241904948244757,
+          "p99": 0.31067224958910555
+        }
+      },
+      "P3C64": {
+        "MRR": 0.0077385143518145065,
+        "R@1": 0.0,
+        "R@10": 0.0,
+        "R@100": 0.25,
+        "R@20": 0.0,
+        "R@200": 0.5,
+        "R@3": 0.0,
+        "R@30": 0.0,
+        "R@5": 0.0,
+        "R@50": 0.0,
+        "R@500": 1.0,
+        "case_count": 4,
+        "cases_with_hit": 4,
+        "first_rank": {
+          "max": 284.0,
+          "min": 70.0,
+          "p25": 109.0,
+          "p50": 162.0,
+          "p75": 222.5,
+          "p90": 259.40000000000003,
+          "p95": 271.7,
+          "p99": 281.53999999999996
+        },
+        "normalized_first_rank": {
+          "max": 0.03357834948212496,
+          "min": 0.004038630377524144,
+          "p25": 0.014615354745805324,
+          "p50": 0.022461209539074503,
+          "p75": 0.02848070452771871,
+          "p90": 0.03153929150036246,
+          "p95": 0.03255882049124371,
+          "p99": 0.03337444368394871
+        }
+      }
+    },
+    "concurrent_object_lifecycle": {
+      "B0": {
+        "MRR": 0.0024115009841506217,
+        "R@1": 0.0,
+        "R@10": 0.0,
+        "R@100": 0.0,
+        "R@20": 0.0,
+        "R@200": 0.125,
+        "R@3": 0.0,
+        "R@30": 0.0,
+        "R@5": 0.0,
+        "R@50": 0.0,
+        "R@500": 0.5,
+        "case_count": 8,
+        "cases_with_hit": 8,
+        "first_rank": {
+          "max": 41059.0,
+          "min": 117.0,
+          "p25": 345.0,
+          "p50": 814.0,
+          "p75": 4909.5,
+          "p90": 16061.999999999995,
+          "p95": 28560.49999999998,
+          "p99": 38559.29999999999
+        },
+        "normalized_first_rank": {
+          "max": 0.7454873646209387,
+          "min": 0.05705853418593212,
+          "p25": 0.22981787995617958,
+          "p50": 0.24837261711579484,
+          "p75": 0.29016341256366723,
+          "p90": 0.4969908613387434,
+          "p95": 0.6212391129798409,
+          "p99": 0.7206377142927191
+        }
+      },
+      "P3C64": {
+        "MRR": 0.07475399905644985,
+        "R@1": 0.0,
+        "R@10": 0.125,
+        "R@100": 0.5,
+        "R@20": 0.125,
+        "R@200": 0.625,
+        "R@3": 0.125,
+        "R@30": 0.25,
+        "R@5": 0.125,
+        "R@50": 0.375,
+        "R@500": 0.75,
+        "case_count": 8,
+        "cases_with_hit": 8,
+        "first_rank": {
+          "max": 11239.0,
+          "min": 2.0,
+          "p25": 36.0,
+          "p50": 95.5,
+          "p75": 555.25,
+          "p90": 3880.599999999998,
+          "p95": 7559.799999999994,
+          "p99": 10503.159999999996
+        },
+        "normalized_first_rank": {
+          "max": 0.2444663059517954,
+          "min": 0.0006273525721455458,
+          "p25": 0.011358001884444541,
+          "p50": 0.04011709026541448,
+          "p75": 0.06429980842994051,
+          "p90": 0.12087809212509716,
+          "p95": 0.1826721990384462,
+          "p99": 0.23210748456912553
+        }
+      }
+    },
+    "file_permission_temp_resource": {
+      "B0": {
+        "MRR": 0.00023218017181332715,
+        "R@1": 0.0,
+        "R@10": 0.0,
+        "R@100": 0.0,
+        "R@20": 0.0,
+        "R@200": 0.0,
+        "R@3": 0.0,
+        "R@30": 0.0,
+        "R@5": 0.0,
+        "R@50": 0.0,
+        "R@500": 0.0,
+        "case_count": 1,
+        "cases_with_hit": 1,
+        "first_rank": {
+          "max": 4307.0,
+          "min": 4307.0,
+          "p25": 4307.0,
+          "p50": 4307.0,
+          "p75": 4307.0,
+          "p90": 4307.0,
+          "p95": 4307.0,
+          "p99": 4307.0
+        },
+        "normalized_first_rank": {
+          "max": 0.19004325183158266,
+          "min": 0.19004325183158266,
+          "p25": 0.19004325183158266,
+          "p50": 0.19004325183158266,
+          "p75": 0.19004325183158266,
+          "p90": 0.19004325183158266,
+          "p95": 0.19004325183158266,
+          "p99": 0.19004325183158266
+        }
+      },
+      "P3C64": {
+        "MRR": 0.0015037593984962407,
+        "R@1": 0.0,
+        "R@10": 0.0,
+        "R@100": 0.0,
+        "R@20": 0.0,
+        "R@200": 0.0,
+        "R@3": 0.0,
+        "R@30": 0.0,
+        "R@5": 0.0,
+        "R@50": 0.0,
+        "R@500": 0.0,
+        "case_count": 1,
+        "cases_with_hit": 1,
+        "first_rank": {
+          "max": 665.0,
+          "min": 665.0,
+          "p25": 665.0,
+          "p50": 665.0,
+          "p75": 665.0,
+          "p90": 665.0,
+          "p95": 665.0,
+          "p99": 665.0
+        },
+        "normalized_first_rank": {
+          "max": 0.02930532262335599,
+          "min": 0.02930532262335599,
+          "p25": 0.02930532262335599,
+          "p50": 0.02930532262335599,
+          "p75": 0.02930532262335599,
+          "p90": 0.02930532262335599,
+          "p95": 0.02930532262335599,
+          "p99": 0.02930532262335599
+        }
+      }
+    },
+    "template_expression_injection": {
+      "B0": {
+        "MRR": 0.04723390488515044,
+        "R@1": 0.0,
+        "R@10": 0.0,
+        "R@100": 0.5,
+        "R@20": 0.5,
+        "R@200": 0.5,
+        "R@3": 0.0,
+        "R@30": 0.5,
+        "R@5": 0.0,
+        "R@50": 0.5,
+        "R@500": 1.0,
+        "case_count": 2,
+        "cases_with_hit": 2,
+        "first_rank": {
+          "max": 281.0,
+          "min": 11.0,
+          "p25": 78.5,
+          "p50": 146.0,
+          "p75": 213.5,
+          "p90": 254.0,
+          "p95": 267.5,
+          "p99": 278.3
+        },
+        "normalized_first_rank": {
+          "max": 0.6167400881057269,
+          "min": 0.013140604467805518,
+          "p25": 0.16404047537728586,
+          "p50": 0.3149403462867662,
+          "p75": 0.4658402171962466,
+          "p90": 0.5563801397419348,
+          "p95": 0.5865601139238308,
+          "p99": 0.6107040932693477
+        }
+      },
+      "P3C64": {
+        "MRR": 0.1764705882352941,
+        "R@1": 0.0,
+        "R@10": 0.5,
+        "R@100": 1.0,
+        "R@20": 0.5,
+        "R@200": 1.0,
+        "R@3": 0.5,
+        "R@30": 0.5,
+        "R@5": 0.5,
+        "R@50": 0.5,
+        "R@500": 1.0,
+        "case_count": 2,
+        "cases_with_hit": 2,
+        "first_rank": {
+          "max": 51.0,
+          "min": 3.0,
+          "p25": 15.0,
+          "p50": 27.0,
+          "p75": 39.0,
+          "p90": 46.2,
+          "p95": 48.599999999999994,
+          "p99": 50.519999999999996
+        },
+        "normalized_first_rank": {
+          "max": 0.11013215859030837,
+          "min": 0.002628120893561104,
+          "p25": 0.02950413031774792,
+          "p50": 0.05638013974193473,
+          "p75": 0.08325614916612155,
+          "p90": 0.09938175482063365,
+          "p95": 0.104756956705471,
+          "p99": 0.1090571182133409
+        }
+      }
+    }
+  }
+}

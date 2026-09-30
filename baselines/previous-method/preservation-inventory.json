@@ -1,0 +1,75 @@
+{
+  "schema_version": "previous_method_preservation_inventory_v1",
+  "date": "2026-09-30",
+  "server_deletions": false,
+  "git_archive": {
+    "manifest": "archive-manifest.json",
+    "historical_p3_files": 68,
+    "recovered_helper_source_files": 11,
+    "helper_provenance_files": 1,
+    "scope": "Original bytes; historical absolute paths retained. Not an anonymized package."
+  },
+  "large_assets": [
+    {
+      "name": "p3c64-fixed143-full-ranks.jsonl.gz",
+      "preservation": "github_release_asset",
+      "release_tag": "previous-method-baseline-20260930",
+      "hash_manifest": "rank-assets.json",
+      "original_retained_on_server": true
+    },
+    {
+      "name": "qwen4b-fixed143-full-ranks.jsonl.gz",
+      "preservation": "github_release_asset",
+      "release_tag": "previous-method-baseline-20260930",
+      "hash_manifest": "rank-assets.json",
+      "original_retained_on_server": true
+    },
+    {
+      "name": "p4_external_generic_candidate_pool_v1/candidate_pool.v1.jsonl",
+      "bytes": 2109740850,
+      "sha256": "93ffabd5abc82872c37d0a82858624461bed32f9c77af5c8aeb5d9b25747a377",
+      "preservation": "server_original_and_verified_local_recovery_copy",
+      "github_backup": false,
+      "reason_not_public": "Contains third-party source text without bundled license or notice evidence. Public redistribution has not been reviewed.",
+      "rebuild_status": "Original 22 checkout paths are absent. Source versions and provenance remain in the case manifests; exact reconstruction has not been verified."
+    }
+  ],
+  "missing_historical_inputs": [
+    {
+      "name": "run_m7_strict_runtime_residual_biencoder_v1.py",
+      "sha256": "00b61ec91708227a3f29be40d9ee98ceaaba98d4c705c67ba22b193409a5979c",
+      "status": "not_found_in_recovery_search"
+    },
+    {
+      "name": "m5_83_expanded_inner_split_manifest_v1/candidate_pool.v1.jsonl",
+      "sha256": "ddf58974d2dc05caac9afac31f4db1373e1bc1c1381cc99b08df67a6a81af92d",
+      "status": "original_location_absent"
+    },
+    {
+      "name": "m5_92_gap_generic_candidate_shard_v1/gap_generic_candidate_shard.v1.jsonl",
+      "sha256": "065e01257d8faf855ad0a30600d7ee3fe9d65d9592fe7390005a308b1c9da454",
+      "status": "original_location_absent"
+    },
+    {
+      "name": "m5_86_expanded_split_bm25_embedding_v1/cache",
+      "status": "original_location_absent"
+    },
+    {
+      "name": "m5_95_repaired_pool_embedding_cache_v1/cache",
+      "status": "original_location_absent"
+    }
+  ],
+  "separate_research": {
+    "family": "September 4B reconstruction and query-LoRA experiments",
+    "public_republication": "awaiting_scope_decision",
+    "included_as_historical_p3": false,
+    "reason": "Different encoders, candidate inputs, and training procedures. Private research is not implicitly made public by this historical archive."
+  },
+  "left_in_place": [
+    "pretrained model downloads",
+    "recomputable vector caches where exact input provenance survives",
+    "intermediate checkpoints and duplicate snapshots",
+    "runtime logs and unrelated experiments"
+  ],
+  "claim_boundary": "Preservation and result verification, not a newly reproduced training or end-to-end audit run. Large-file manifest presence is not equivalent to a GitHub backup."
+}

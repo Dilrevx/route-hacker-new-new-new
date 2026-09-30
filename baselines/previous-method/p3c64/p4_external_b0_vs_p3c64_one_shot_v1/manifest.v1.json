@@ -1,0 +1,13 @@
+{
+  "artifact": "p4_external_b0_vs_p3c64_one_shot_v1",
+  "files": {
+    "case_rank_ledger.v1.jsonl": {
+      "bytes": 41526,
+      "sha256": "115b9b2571e074a48c074f29005397e56d4fce422493914defd1b5d733ed64a2"
+    },
+    "summary.json": {
+      "bytes": 20573,
+      "sha256": "525622e88f01cda0c38c1fe90a32322807a801bbd09600b53e224abb6a53aca0"
+    }
+  }
+}

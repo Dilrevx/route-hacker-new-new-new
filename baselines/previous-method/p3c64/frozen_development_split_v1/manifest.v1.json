@@ -1,0 +1,21 @@
+{
+  "artifact": "frozen_development_split_v1",
+  "files": {
+    "m8_recorded_identity_isolation.v1.json": {
+      "bytes": 468,
+      "sha256": "99ec29a9591025a72a44712fa6faddcfb0dd7c075478f3c2a4b50bb5846c0aae"
+    },
+    "p3_development_cases.v1.jsonl": {
+      "bytes": 283330,
+      "sha256": "c8219cba104ae93db7d485479afb0d90c468b13637ec26437fba8c1c7fcc5cb1"
+    },
+    "p3_development_pairs.v1.jsonl": {
+      "bytes": 479229,
+      "sha256": "17698de73b77cdc5b59219c3fc499b494d7676148caaa711a4e812bf44645618"
+    },
+    "summary.json": {
+      "bytes": 3173,
+      "sha256": "a7808ea05949f2d4858d582246c654fcb4e138ff3aa304a356d4a853b3d88c09"
+    }
+  }
+}

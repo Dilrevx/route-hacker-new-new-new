@@ -1,0 +1,17 @@
+{
+  "artifact": "p4_external_cache_plan_v1",
+  "files": {
+    "cache_worker_plan.v1.json": {
+      "bytes": 6449,
+      "sha256": "03d9ec88865029ea32f5e1d0b54b2a6d0ef3ac77799aad917741ff693e3c5599"
+    },
+    "selected_repositories.v1.jsonl": {
+      "bytes": 4373,
+      "sha256": "8492302ff3e9efa04ac78b781019bd915012fc237a29a05f982abe3cc135b234"
+    },
+    "summary.json": {
+      "bytes": 2254,
+      "sha256": "d685f470cc2dd8e897f617cf217513026fe61594d2a1fc88c376568494a75ae6"
+    }
+  }
+}

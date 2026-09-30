@@ -1,0 +1,13 @@
+{
+  "artifact": "p4_external_code_cache_audit_v1",
+  "files": {
+    "cache_audit_rows.v1.jsonl": {
+      "bytes": 26072,
+      "sha256": "f98d43e5d99b0f9f8734a49fd8cb3d77c577f9bb49be1f01b2994bfb927d0ca9"
+    },
+    "summary.json": {
+      "bytes": 2109,
+      "sha256": "0c241535725b2ad661eca22b2e40cd8394210d8f12eb6102daf4bd961cc73446"
+    }
+  }
+}

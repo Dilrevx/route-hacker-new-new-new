@@ -1,0 +1,13 @@
+{
+  "artifact": "p4_external_one_shot_spec_v1",
+  "files": {
+    "external_evaluation_rows.v1.jsonl": {
+      "bytes": 28725,
+      "sha256": "e44fc91d4c8ddf308b9843dcc2e9ac5c5bffdd2813959b114303a58b5c4d3580"
+    },
+    "one_shot_spec.v1.json": {
+      "bytes": 5525,
+      "sha256": "89bf8955b8108b9c3878758da09f5f838fc25f1b673a34a8cc689da72bc85a7c"
+    }
+  }
+}
