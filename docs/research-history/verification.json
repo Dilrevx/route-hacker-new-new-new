@@ -1,0 +1,18 @@
+{
+  "checked_on": "2026-10-01",
+  "scope": "Local archive integrity and documentation links only; no model training, build, runtime or vulnerability reproduction.",
+  "original_source_files_verified": 30,
+  "original_source_bytes": 48417,
+  "temporary_directories_registered": 70,
+  "original_notes_indexed": 390,
+  "authored_document_links_verified": 68,
+  "historical_source_links_policy": "Original source documents are byte-preserved; their historical external filesystem references were not rewritten or asserted locally accessible.",
+  "existing_archive_checks": {
+    "previous_method_integrity": "passed",
+    "previous_method_unit_tests": 35,
+    "environment_fixes_integrity": "passed",
+    "environment_fixes_unit_tests": 18
+  },
+  "server_files_deleted": false,
+  "large_assets_copied": false
+}

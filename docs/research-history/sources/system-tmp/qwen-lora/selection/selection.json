@@ -1,0 +1,98 @@
+{
+  "selected_at": "2026-09-20T05:33:17.959032+00:00",
+  "rule": "validation MRR, R@10, lower LR, earlier epoch",
+  "selected": {
+    "epoch": 3,
+    "lr": 5e-05,
+    "checkpoint": "/tmp/patch-context-qwen-lora-20260920.s4beIc/trials/lr-5e-5/adapter-epoch3",
+    "validation": {
+      "rows": 311,
+      "mrr": 0.7243943501010813,
+      "recall_at_1": 0.617363344051447,
+      "recall_at_10": 0.9067524115755627,
+      "independent_scores_and_ranks_checked": true
+    },
+    "adapter_sha256": "c803101a275c5a6d191ac3ba6d63804aeb1d198c02775deb1286858c208134af"
+  },
+  "candidates": [
+    {
+      "epoch": 1,
+      "lr": 1e-05,
+      "checkpoint": "/tmp/patch-context-qwen-lora-20260920.s4beIc/trials/lr-1e-5/adapter-epoch1",
+      "validation": {
+        "rows": 311,
+        "mrr": 0.6636116477849439,
+        "recall_at_1": 0.5562700964630225,
+        "recall_at_10": 0.8456591639871383,
+        "independent_scores_and_ranks_checked": true
+      },
+      "adapter_sha256": "693c36184aa21a06586dd4c9cc2dffa11929154f550dcffe528ba739d9680d59"
+    },
+    {
+      "epoch": 2,
+      "lr": 1e-05,
+      "checkpoint": "/tmp/patch-context-qwen-lora-20260920.s4beIc/trials/lr-1e-5/adapter-epoch2",
+      "validation": {
+        "rows": 311,
+        "mrr": 0.6881687035121379,
+        "recall_at_1": 0.5755627009646302,
+        "recall_at_10": 0.887459807073955,
+        "independent_scores_and_ranks_checked": true
+      },
+      "adapter_sha256": "135516d231f3822985549e084e20e6e5374fcd9bbec8c49c2191524301322db8"
+    },
+    {
+      "epoch": 3,
+      "lr": 1e-05,
+      "checkpoint": "/tmp/patch-context-qwen-lora-20260920.s4beIc/trials/lr-1e-5/adapter-epoch3",
+      "validation": {
+        "rows": 311,
+        "mrr": 0.6895812266747671,
+        "recall_at_1": 0.5755627009646302,
+        "recall_at_10": 0.8906752411575563,
+        "independent_scores_and_ranks_checked": true
+      },
+      "adapter_sha256": "738eb87d6114f56722b0aa9aeeb09bc459c6441a54c153f4ced83a881b9e1f91"
+    },
+    {
+      "epoch": 1,
+      "lr": 5e-05,
+      "checkpoint": "/tmp/patch-context-qwen-lora-20260920.s4beIc/trials/lr-5e-5/adapter-epoch1",
+      "validation": {
+        "rows": 311,
+        "mrr": 0.7145170592375254,
+        "recall_at_1": 0.6141479099678456,
+        "recall_at_10": 0.8971061093247589,
+        "independent_scores_and_ranks_checked": true
+      },
+      "adapter_sha256": "9bcfb111c51c925c7f631d0ea743c540749d9d01ef775e44030ad6b4f86ae406"
+    },
+    {
+      "epoch": 2,
+      "lr": 5e-05,
+      "checkpoint": "/tmp/patch-context-qwen-lora-20260920.s4beIc/trials/lr-5e-5/adapter-epoch2",
+      "validation": {
+        "rows": 311,
+        "mrr": 0.7243084777726801,
+        "recall_at_1": 0.6205787781350482,
+        "recall_at_10": 0.9067524115755627,
+        "independent_scores_and_ranks_checked": true
+      },
+      "adapter_sha256": "b798600cc347e48db43cb928ae0785ded14b974a9f71a488fd49cb2b159f5b01"
+    },
+    {
+      "epoch": 3,
+      "lr": 5e-05,
+      "checkpoint": "/tmp/patch-context-qwen-lora-20260920.s4beIc/trials/lr-5e-5/adapter-epoch3",
+      "validation": {
+        "rows": 311,
+        "mrr": 0.7243943501010813,
+        "recall_at_1": 0.617363344051447,
+        "recall_at_10": 0.9067524115755627,
+        "independent_scores_and_ranks_checked": true
+      },
+      "adapter_sha256": "c803101a275c5a6d191ac3ba6d63804aeb1d198c02775deb1286858c208134af"
+    }
+  ],
+  "test_read_for_selection": false
+}

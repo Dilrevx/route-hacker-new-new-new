@@ -6,6 +6,12 @@ Current module: `new-impl/codex_security_batch/` contains the Codex Security bli
 
 ## Previous method baseline
 
+Start with the [research and environment-repair timeline](docs/research-history/README.md)
+for the chronology, parallel experiment families, source notes, and preservation
+status. Its [temporary-experiment register](docs/research-history/REGISTRY.zh-CN.md)
+covers 70 temporary directories around the earlier guideline work without treating an index
+as a backup of their weights or candidate pools.
+
 The [historical P3 baseline](baselines/previous-method/README.md) preserves the
 0.6B query-residual adapter weights, frozen 112/43 development split, original
 training and evaluation records, and recovered helper scripts. It links to the

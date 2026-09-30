@@ -1,0 +1,145 @@
+{
+  "schema_version": "1.0",
+  "audit_id": "guideline-reranker-training-leakage-audit-v1",
+  "generated_at": "2026-07-23T11:51:32.769279+00:00",
+  "inputs": {
+    "reranker_summary": {
+      "path": ".tmp/guideline-fusion-aware-reranker-v1/devselected_balanced_rrf_cap300_out900_raw_symbol_strict_opeffect_split20260722_train20260722_run2/summary.json",
+      "sha256": "2bb3bb1e0b23a2b15d8d20eb3e0d012834cb6898f47c403a47f853a7574cdde7"
+    },
+    "dev_ledger": {
+      "path": ".tmp/guideline-fusion-aware-reranker-v1/devselected_balanced_rrf_cap300_out900_raw_symbol_strict_opeffect_split20260722_train20260722_run2/dev_rerank_ledger.jsonl",
+      "sha256": "8eebef0173fe1e7258e6a5ca8be3ca2558560008a6530dc8e109288c4151c80c"
+    },
+    "test_ledger": {
+      "path": ".tmp/guideline-fusion-aware-reranker-v1/devselected_balanced_rrf_cap300_out900_raw_symbol_strict_opeffect_split20260722_train20260722_run2/test_rerank_ledger.jsonl",
+      "sha256": "ee531d7d5fc48bafb73c36f9125a6b8f3798b1e5ee774b90c067ca480bb4a09a"
+    },
+    "test_overall_summary": {
+      "path": ".tmp/guideline-fusion-aware-reranker-v1/devselected_balanced_rrf_cap300_out900_raw_symbol_strict_opeffect_split20260722_train20260722_run2/test_overall_summary.json",
+      "sha256": "ba279450bde08430c35743eedb88947ed217911d6c4f5d396be578dd675ecf4e"
+    },
+    "runner": {
+      "path": "scripts/run_guideline_fusion_aware_reranker_smoke.py",
+      "sha256": "6355712b5e72825951158d5e58051a0df1671ffb8a436aa5f5ca213f958fcdf2"
+    }
+  },
+  "summary_audit": {
+    "checks": {
+      "train_dev_test_split_present": true,
+      "project_group_split_unit": true,
+      "positive_injection_train_only": true,
+      "test_anchors_not_injected": true,
+      "train_anchors_injected_declared": true,
+      "non_anchor_not_safe_negative": true,
+      "generic_pool_not_modified": true,
+      "training_cases_match_train_split": true,
+      "first_stage_source_recorded": true,
+      "view_names_recorded": true
+    },
+    "passes": true,
+    "split_counts": {
+      "dev": 38,
+      "test": 45,
+      "train": 86
+    },
+    "first_stage_sources": {
+      "fused": {
+        "path": ".tmp/guideline-fused-toprankings-v1/balanced_rrf_cap300_out900_base_bm25_qwen_opeffect_split20260722/top_rankings.jsonl",
+        "rows_case_filtered": 0,
+        "rows_rank_filtered": 0,
+        "rows_read": 119345,
+        "rows_selected": 119345
+      }
+    },
+    "training_params": {
+      "epochs": 8,
+      "fusion_feature_weight": 1.0,
+      "lr": 0.001,
+      "max_train_positive_per_case": 4,
+      "projection_dim": 128,
+      "view_dropout": 0.25
+    }
+  },
+  "dev_ledger": {
+    "path": ".tmp/guideline-fusion-aware-reranker-v1/devselected_balanced_rrf_cap300_out900_raw_symbol_strict_opeffect_split20260722_train20260722_run2/dev_rerank_ledger.jsonl",
+    "sha256": "8eebef0173fe1e7258e6a5ca8be3ca2558560008a6530dc8e109288c4151c80c",
+    "row_count": 38,
+    "case_count": 38,
+    "split_counts": {
+      "dev": 38
+    },
+    "expected_split": "dev",
+    "unexpected_split_count": 0,
+    "unmatched_case_count": 5,
+    "unmatched_case_ids": [
+      "business_state_precondition::868a0fa80946b928",
+      "business_state_precondition::c3547a87c8384530",
+      "concurrent_object_lifecycle::b4e0e2fcd66f43f2",
+      "file_permission_temp_resource::d68c3b06d055d5b5",
+      "template_expression_injection::3f4b203bde45eb9e"
+    ],
+    "passes": true
+  },
+  "test_ledger": {
+    "path": ".tmp/guideline-fusion-aware-reranker-v1/devselected_balanced_rrf_cap300_out900_raw_symbol_strict_opeffect_split20260722_train20260722_run2/test_rerank_ledger.jsonl",
+    "sha256": "ee531d7d5fc48bafb73c36f9125a6b8f3798b1e5ee774b90c067ca480bb4a09a",
+    "row_count": 45,
+    "case_count": 45,
+    "split_counts": {
+      "test": 45
+    },
+    "expected_split": "test",
+    "unexpected_split_count": 0,
+    "unmatched_case_count": 4,
+    "unmatched_case_ids": [
+      "authorization_bypass::23a7e272fa2aabb8",
+      "authorization_bypass::6714d0c26e3252a0",
+      "concurrent_object_lifecycle::67b4e36c8d7eac30",
+      "open_redirect::33c0365f8fefcb13"
+    ],
+    "passes": true
+  },
+  "first_stage": {
+    "path": ".tmp/guideline-fused-toprankings-v1/balanced_rrf_cap300_out900_base_bm25_qwen_opeffect_split20260722/top_rankings.jsonl",
+    "sha256": "aaedde1620792cf452f749a1db9d31097f2bfca435cb4790f26ba8d823cb6436",
+    "row_count": 119345,
+    "case_count": 169,
+    "split_counts": {
+      "dev": 26864,
+      "test": 32029,
+      "train": 60452
+    },
+    "is_known_anchor_flag_counts": {
+      "False": 117756,
+      "True": 1589
+    },
+    "note": "first-stage rows contain is_known_anchor for evaluation, but the audited runner must not use that flag in scoring features"
+  },
+  "source_static_check": {
+    "path": "scripts/run_guideline_fusion_aware_reranker_smoke.py",
+    "sha256": "6355712b5e72825951158d5e58051a0df1671ffb8a436aa5f5ca213f958fcdf2",
+    "is_known_anchor_line_count": 1,
+    "is_known_anchor_lines": [
+      {
+        "line": 100,
+        "text": "\"is_known_anchor\": bool(row.get(\"is_known_anchor\")),"
+      }
+    ],
+    "forbidden_is_known_anchor_uses": [],
+    "fusion_and_training_functions_present": true,
+    "passes": true
+  },
+  "gaps": [
+    "The current reported balanced_rrf_cap300_out900 operating point has summary evidence and run output, but no complete provenance artifact proving that this packet/hyperparameter was selected before seeing test metrics.",
+    "The existing operating_point_selection_existing_branches artifact uses a dev-only rule, but it audits a later set of branches and does not include the current balanced packet lineage.",
+    "This audit does not prove that upstream first-stage lane construction avoided all test-aware tuning; it only records the first-stage packet path and checks current reranker consumption boundaries."
+  ],
+  "caveats": [
+    "The first-stage top_rankings rows contain is_known_anchor flags for offline evaluation, but the audited runner stores them only in metadata and the static check found no scoring-feature use.",
+    "The runner summary hit_curve is matched-only; paper-facing metrics must use test_overall_summary or another all-case denominator recomputation.",
+    "Train positives are injected only for train cases to provide supervised signal; dev/test packets are limited to first-stage candidates."
+  ],
+  "machine_check_passes": true,
+  "overall_status": "partial_pass_with_lineage_gaps"
+}

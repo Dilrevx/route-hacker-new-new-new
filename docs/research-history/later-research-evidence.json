@@ -1,0 +1,253 @@
+{
+  "assembled_on": "2026-10-01",
+  "scope": "Protocol excerpts for chronology, not republished private datasets or proof of completed runs.",
+  "sources": [
+    {
+      "source_archive_relative_path": "rebuild4b-private/server/workspace/patch-context-hcvr4b-rebuild-20260920/experiment-v1/protocol.json",
+      "source_sha256": "20a48a338e28cba1c0e557ce462182641b5e6e143a59efbe41edfd3196845fad",
+      "source_bytes": 93777,
+      "preservation": "selected_fields_only_full_protocol_not_published",
+      "date_evidence": "created_at field",
+      "fields": {
+        "created_at": "2026-09-20T15:13:47.373850+00:00",
+        "experiment": "HCVR/P3 method-level Qwen3-Embedding-4B reproduction",
+        "original_case_counts": {
+          "fitting": 112,
+          "selection": 43
+        },
+        "original_pair_counts": {
+          "fitting": 217,
+          "selection": 78
+        },
+        "positive_candidate_ids": 815,
+        "all_positive_ids_recovered": true,
+        "model": "/data/lhq/workspace/hcvr-embedding-service/models/Qwen3-Embedding-4B",
+        "dimension": 2560,
+        "code_bank_frozen": true,
+        "training": {
+          "backbone": "frozen Qwen3-Embedding-0.6B",
+          "loss": {
+            "competition_bag": "logmeanexp cosine over deterministic B0 top same-repository non-positive candidates",
+            "competition_semantics": "Unlabeled ranking competitors only; never verified-safe, hard-negative truth, or vulnerability absence evidence.",
+            "margin": 0.05,
+            "positive_bag": "logmeanexp cosine over source-anchor-overlap candidates",
+            "ranking": "softplus(margin - positive_bag + competition_bag)",
+            "teacher_preservation": "MSE of frozen versus adapted scores on positive and competition bags; it preserves ranking geometry locally without pushing before/after or unlabeled code globally apart",
+            "teacher_weight": 0.5
+          },
+          "optimizer": {
+            "batch_size": 16,
+            "epochs": 12,
+            "learning_rate": 0.001,
+            "name": "AdamW",
+            "seed": 20260727,
+            "weight_decay": 0.0
+          },
+          "projection": {
+            "hidden_dimension": 128,
+            "initialization": "first layer xavier_uniform; output layer zeros",
+            "residual_scale": 0.1,
+            "type": "identity-initialized residual MLP"
+          }
+        },
+        "variants": [
+          "B0",
+          "P3C16",
+          "P3C64"
+        ],
+        "exact_original_pool_hash_reproduction": false
+      },
+      "derived_repository_count": 154,
+      "derived_candidate_count": 2230711,
+      "known_source_conflict": "Top-level model identifies 4B and dimension=2560; training.backbone still says 0.6B. Preserve this inconsistency; do not reinterpret this as original P3."
+    },
+    {
+      "source_archive_relative_path": "recent-private/server/workspace/gca-negative-4b-20260926/mixed-v10-audited/protocol.json",
+      "source_sha256": "fbbef10453c089c5e692eddb396056071aa31d48fdb49cd64726886479fa9fe6",
+      "source_bytes": 1540,
+      "preservation": "selected_fields_only_full_protocol_not_published",
+      "date_evidence": "directory label only; not completion time",
+      "fields": {
+        "variants": [
+          "matched_random_weak",
+          "reviewed_mixed_weak"
+        ],
+        "epochs": 3,
+        "negative_budget": 64,
+        "hard_cap": 8,
+        "shared_weight": 0.25,
+        "student_input_unchanged": true,
+        "quality_gate_passed": true,
+        "weak_static_labels_not_runtime_proof": true,
+        "evaluation": "All 155 cases, complete repository pools; 43 previously used development cases",
+        "fully_automatic_labels": false,
+        "parent_protocol_sha256": "98ba19d3361513980bd31234bae1d060c7dc4ba75c55e3ec5e15cec89d516f57"
+      }
+    },
+    {
+      "source_archive_relative_path": "recent-private/server/workspace/gca-expanded-retrain-20260926/protocol.json",
+      "source_sha256": "45e00cd93123c0a2077b319a037e7a499dd3e4692f01d05f635d8244fce47c79",
+      "source_bytes": 2239,
+      "preservation": "selected_fields_only_full_protocol_not_published",
+      "date_evidence": "directory label only; not completion time",
+      "fields": {
+        "variants": [
+          "expanded_random_weak",
+          "expanded_guideline_balanced_weak"
+        ],
+        "epochs": 3,
+        "negative_budget": 64,
+        "weak_weight": 0.25,
+        "admission_scope": "unreviewed_random_weak_only",
+        "new_safe_labels": 0,
+        "new_positive_cases": 0,
+        "distribution": "Round 1: each fitting case once/epoch. Round 2: 11 or 12 draws per guideline/epoch; cycle minority cases, rotate extra quotas.",
+        "training": "Fresh same 4B base for each run; query-only rank-8 LoRA, 112 draws/epoch, batch 8, 42 total optimizer steps, same loss and lr.",
+        "excluded": "No pending exposed candidates, new CVE intake or unadmitted reviewed labels enter training.",
+        "evaluation": "Fixed epoch 3; full unchanged repository pools; 43 previously used development cases, not independent test.",
+        "limitations": "Balanced resampling duplicates scarce positive cases; negative count may be below 64 in tiny repositories. Not an increase in positive diversity.",
+        "source_protocol_sha256": "20a48a338e28cba1c0e557ce462182641b5e6e143a59efbe41edfd3196845fad"
+      }
+    },
+    {
+      "source_archive_relative_path": "recent-private/server/workspace/gca-overfit-20260927/protocol.json",
+      "source_sha256": "17834b534304be63ac8ee71283616788fa511eff42ff3a7f745e8b410d12cad9",
+      "source_bytes": 1172,
+      "preservation": "selected_fields_only_full_protocol_not_published",
+      "date_evidence": "directory label only; not completion time",
+      "fields": {
+        "mode": "training_budget_diagnostic",
+        "parent": "/data/lhq/workspace/gca-expanded-retrain-20260926",
+        "parent_protocol_sha256": "45e00cd93123c0a2077b319a037e7a499dd3e4692f01d05f635d8244fce47c79",
+        "epochs": 60,
+        "updates": 840,
+        "checkpoints": [
+          1,
+          3,
+          10,
+          20,
+          30,
+          45,
+          60
+        ],
+        "development_evaluated_at": [
+          60
+        ],
+        "variant": "expanded_random_weak",
+        "hypothesis": "Does 20x update budget improve fitting recall with all other training choices fixed?",
+        "unchanged": "112 fitting cases, 10 queries, same random pool, loss, regularization, query-only LoRA and frozen code bank.",
+        "selection": "No adaptive stop or checkpoint selection; fitting curves only before fixed final evaluation.",
+        "scope": "Underfitting diagnostic for existing regularized recipe, not an unrestricted capacity ceiling test."
+      }
+    },
+    {
+      "source_archive_relative_path": "recent-private/server/workspace/gca-iteration-v2-20260928/protocol.json",
+      "source_sha256": "653bff8ee3985dddf238afa39bd650d04cf3486ffbf771aab9c97d8bbe8351b0",
+      "source_bytes": 1735,
+      "preservation": "selected_fields_only_full_protocol_not_published",
+      "date_evidence": "directory label only; not completion time",
+      "fields": {
+        "parent": "/data/lhq/workspace/gca-overfit-20260927",
+        "parent_protocol_sha256": "17834b534304be63ac8ee71283616788fa511eff42ff3a7f745e8b410d12cad9",
+        "arms": {
+          "lora_reg001": {
+            "regularization": 0.01,
+            "lr": 2e-05,
+            "parameterization": "query_lora"
+          },
+          "free_query_lr001": {
+            "regularization": 0.1,
+            "lr": 0.001,
+            "parameterization": "free_guideline_vectors"
+          },
+          "free_query_lr003": {
+            "regularization": 0.1,
+            "lr": 0.003,
+            "parameterization": "free_guideline_vectors"
+          }
+        },
+        "epochs": 60,
+        "updates": 840,
+        "matched": "Same fitting cases, frozen candidate vectors, case order, 64 random weak negatives and loss; only named arm settings differ.",
+        "scope": "Free query is a fixed-guideline diagnostic, not a theoretical ceiling or a model for unseen guidelines.",
+        "selection": "All arms and seeds reported; no development-based checkpoint or learning-rate selection.",
+        "negative_review": "27-case failure audit and new-project packages are separate, not automatically admitted labels."
+      }
+    },
+    {
+      "source_archive_relative_path": "recent-private/server/workspace/gca-project-iteration-20260928/protocol.json",
+      "source_sha256": "bd66be8d6fac3824fdd3412dbc19e242dc59033e06b9b8f37d19152abd20f768",
+      "source_bytes": 2383,
+      "preservation": "selected_fields_only_full_protocol_not_published",
+      "date_evidence": "directory label only; not completion time",
+      "fields": {
+        "arms": [
+          "project_repeat_control",
+          "project_random",
+          "project_reviewed"
+        ],
+        "epochs": 60,
+        "updates": 900,
+        "parent": "/data/lhq/workspace/gca-iteration-v2-20260928",
+        "matched": "112 unchanged core cases plus 8 slots/epoch with identical guideline and budget/order. 120 draws, batch 8, 900 updates. Every arm starts from original 4B.",
+        "comparisons": "Random vs repeat-control tests additional project examples at matched class mix/steps. Reviewed vs random replaces one weak candidate where a reviewed negative exists; weights stay .25.",
+        "limits": "Only five new cases and three scoped reviewed pairs; random pools are sampled, not exhaustive. Frozen 43-case development pools and historical labels unchanged. Not independent test evidence.",
+        "selection": "All arms/seeds reported; no development checkpoint selection. No intermediate development evaluation."
+      }
+    },
+    {
+      "source_archive_relative_path": "recent-private/server/workspace/gca-pair-learnability-v1-20260928/protocol.json",
+      "source_sha256": "5c140211f0f3b2105beb5715e515ac51cb7309ca49461f49580f7f665c9d5124",
+      "source_bytes": 4366,
+      "preservation": "selected_fields_only_full_protocol_not_published",
+      "date_evidence": "directory label only; not completion time",
+      "fields": {
+        "parent": "/data/lhq/workspace/gca-project-iteration-20260928",
+        "source_banks": "/data/lhq/workspace/patch-context-hcvr4b-rebuild-20260920/experiment-v1",
+        "model": "/data/lhq/workspace/hcvr-embedding-service/models/Qwen3-Embedding-4B",
+        "conditions": [
+          "single_autogpt",
+          "single_mytube",
+          "single_mako",
+          "joint_pairs",
+          "joint_pooled",
+          "joint_separate"
+        ],
+        "parameterizations": [
+          "free_query",
+          "lora"
+        ],
+        "steps": 128,
+        "primary": "Fixed-budget learnability, interference and two-way same-guideline cross-project diagnostic.",
+        "final_only": [
+          "nontraining_pairs",
+          "historical_full_pool"
+        ],
+        "limitation": "Previously inspected pairs, not independent test; no second path project; not the 20-project expansion.",
+        "labels_changed": false,
+        "code_encoder_frozen": true
+      }
+    },
+    {
+      "source_archive_relative_path": "recent-private/server/workspace/gca-transfer-iteration-v1-20260928/protocol.json",
+      "source_sha256": "bfa95568e3566fe2d1c058811f0851d952cacb6f049fd686ba05eb03b33e3b69",
+      "source_bytes": 1927,
+      "preservation": "selected_fields_only_full_protocol_not_published",
+      "date_evidence": "directory label only; not completion time",
+      "fields": {
+        "arms": [
+          "transfer_repeat",
+          "transfer_random",
+          "transfer_reviewed"
+        ],
+        "epochs": 60,
+        "updates": 960,
+        "parent": "/data/lhq/workspace/gca-guideline-policy-v1-20260928",
+        "prepared_banks": "/data/lhq/workspace/gca-transfer-banks-v2-20260928",
+        "reliable_pair_policy": "auth01_path1",
+        "heldout_scored_after_all_runs_and_weight_replay": true,
+        "limits": "Three new fit and three project-held-out pairs; sampled new pools, not full-repository transfer recall. Old development set remains reused."
+      }
+    }
+  ]
+}

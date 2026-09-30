@@ -1,0 +1,11 @@
+{
+  "completed": true,
+  "time": "2026-09-20T06:30:57.752483+00:00",
+  "validation_rank_vectors_recomputed": 8,
+  "new_test_rank_vectors_recomputed": 4,
+  "previous_test_rank_vectors_recomputed": 2,
+  "selection_independently_reproduced": true,
+  "all_epoch_train_ids_verified": true,
+  "adapter_hash_verified": true,
+  "comparison_sha256": "062ac77e5ec01ff92e24479785215076033f951b33bd42099fc86703aa91ffe1"
+}

@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "tests_run": 20,
+  "value_gradient_grid_cases": 24,
+  "failures": 0,
+  "errors": 0,
+  "torch_version": "2.11.0+cu130",
+  "device": "cpu",
+  "reference": "explicit per-sample, per-direction, per-negative scalar loops"
+}

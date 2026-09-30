@@ -1,0 +1,215 @@
+{
+  "files": [
+    {
+      "path": "sources/early-guideline/guideline-consolidated-eval-v1/devselected_conf40_vs_baselines_split20260722/consolidated_report.md",
+      "source_path": "/data/lhq/workspace/route-hacker/.tmp/guideline-consolidated-eval-v1/devselected_conf40_vs_baselines_split20260722/consolidated_report.md",
+      "bytes": 1962,
+      "sha256": "1cb4cfb2cf28f659cc852b057fc4019a37e8773811244f51dbd81c51d6e043bf",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/early-guideline/guideline-coverage-aware-packet-v1/coverage_packet_section.md",
+      "source_path": "/data/lhq/workspace/route-hacker/.tmp/guideline-coverage-aware-packet-v1/coverage_packet_section.md",
+      "bytes": 3813,
+      "sha256": "58524334e59b53431c6a60c7cf27adfcd25b8b84f095d959c5a7fabb1a506fe7",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/early-guideline/guideline-firststage-hardneg-queryaug-strict-v1/hard4_rand4_strict_queryaug_stress_comparison.md",
+      "source_path": "/data/lhq/workspace/route-hacker/.tmp/guideline-firststage-hardneg-queryaug-strict-v1/hard4_rand4_strict_queryaug_stress_comparison.md",
+      "bytes": 878,
+      "sha256": "255ed2057a69f481416582c89f3b0b5782aac9a47d0128386109b9b9c4525948",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/early-guideline/guideline-fusion-aware-reranker-v1/goal_completion_audit_current.md",
+      "source_path": "/data/lhq/workspace/route-hacker/.tmp/guideline-fusion-aware-reranker-v1/goal_completion_audit_current.md",
+      "bytes": 1856,
+      "sha256": "b88405515929b8f25cd4c7d017ca40fdc84cd40e22e0f55ecb45d0f9c1e4ce3a",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/early-guideline/guideline-fusion-aware-reranker-v1/training_leakage_audit_current/guideline_reranker_training_leakage_audit.json",
+      "source_path": "/data/lhq/workspace/route-hacker/.tmp/guideline-fusion-aware-reranker-v1/training_leakage_audit_current/guideline_reranker_training_leakage_audit.json",
+      "bytes": 6441,
+      "sha256": "2acb8b208489a345e58623561ade5233c3813930ea41a386c27e30dee0a671c7",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/early-guideline/guideline-hard-negative-nview-projection-v1/hard_negative_nview_section.md",
+      "source_path": "/data/lhq/workspace/route-hacker/.tmp/guideline-hard-negative-nview-projection-v1/hard_negative_nview_section.md",
+      "bytes": 4996,
+      "sha256": "ccd8c59d37fd2bc1ed413841e954b3268c0609378a907158c1a69605d72bbf81",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/early-guideline/guideline-lexical-stress-views-v1/strict_gate_section.md",
+      "source_path": "/data/lhq/workspace/route-hacker/.tmp/guideline-lexical-stress-views-v1/strict_gate_section.md",
+      "bytes": 4294,
+      "sha256": "94d1fe8d5f650b57ec8ac4dca0d266b202f97b9277bb29de2a9bce4e8d9f7e9f",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/early-guideline/guideline-method-evidence-v1/method_evidence.md",
+      "source_path": "/data/lhq/workspace/route-hacker/.tmp/guideline-method-evidence-v1/method_evidence.md",
+      "bytes": 4287,
+      "sha256": "ccfd4dd3b6582edbef9b7444a55a9ea09e0ad7fe8d87d857b9b41c7c806c39f5",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/early-guideline/guideline-method-independent-eval-v1/rankquality_multiseed_split20260722/rankquality_multiseed_summary.md",
+      "source_path": "/data/lhq/workspace/route-hacker/.tmp/guideline-method-independent-eval-v1/rankquality_multiseed_split20260722/rankquality_multiseed_summary.md",
+      "bytes": 1270,
+      "sha256": "5363bcf322a8ccc8acecb38f927c4dc98256aeb5591bfad86b93de3ae61975c2",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/early-guideline/guideline-primary-method-lexical-stress-v1/primary_cw05_stress_comparison.md",
+      "source_path": "/data/lhq/workspace/route-hacker/.tmp/guideline-primary-method-lexical-stress-v1/primary_cw05_stress_comparison.md",
+      "bytes": 1216,
+      "sha256": "138c1dfd54f119a844e27d91e7518f5868cd504ab63fa8438a73a65c36282889",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/early-guideline/guideline-soft-listwise-projection-v1/soft_listwise_mass065_stress_comparison.md",
+      "source_path": "/data/lhq/workspace/route-hacker/.tmp/guideline-soft-listwise-projection-v1/soft_listwise_mass065_stress_comparison.md",
+      "bytes": 874,
+      "sha256": "473d0966aa7fb98b9c3fc432239e3583ac5ffae01509863175b1c7125cd85c20",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/early-guideline/guideline-strict-queryaug-consistency-v1/strict_queryaug_stress_comparison.md",
+      "source_path": "/data/lhq/workspace/route-hacker/.tmp/guideline-strict-queryaug-consistency-v1/strict_queryaug_stress_comparison.md",
+      "bytes": 865,
+      "sha256": "5710dbb19ad4958f875dbd5ef2b5620d72879de0b96e46c8259821b634486f6d",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/system-tmp/hcvr/protocol.md",
+      "source_path": "/tmp/patch-context-hcvr-20260920.LNx6Pv/protocol.md",
+      "bytes": 2621,
+      "sha256": "b8401c70e47b3c3d1494c65ec3e48445d4166650dd571a9c61fad9b79d420405",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/system-tmp/hcvr/supervision/function/receipt.json",
+      "source_path": "/tmp/patch-context-hcvr-20260920.LNx6Pv/supervision/function/receipt.json",
+      "bytes": 200,
+      "sha256": "847af9cdeda66ce160102aeb940ceb87f2806eecfceff706b8f542a53b475e63",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/system-tmp/hcvr/supervision/window/receipt.json",
+      "source_path": "/tmp/patch-context-hcvr-20260920.LNx6Pv/supervision/window/receipt.json",
+      "bytes": 199,
+      "sha256": "3a4776871f05083f6e89cb8df0fce8a18c8d008da8f6bf9004e77d6c44e1d87d",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/system-tmp/qwen4b/protocol.md",
+      "source_path": "/tmp/patch-context-qwen4b-20260920.mR47fR/protocol.md",
+      "bytes": 1777,
+      "sha256": "0e33565594d265ebd56b75396e859c70fb0095e243e3d6e57a62cfba604530cb",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/system-tmp/qwen4b/supervision/function/receipt.json",
+      "source_path": "/tmp/patch-context-qwen4b-20260920.mR47fR/supervision/function/receipt.json",
+      "bytes": 199,
+      "sha256": "a1ad89b5fbdefb695d18e5675f88cd1b884ee8de59c944eab88c43e122fd23d2",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/system-tmp/qwen4b/supervision/window/receipt.json",
+      "source_path": "/tmp/patch-context-qwen4b-20260920.mR47fR/supervision/window/receipt.json",
+      "bytes": 199,
+      "sha256": "54800fb11adf7f0c45e246ca6282e5f638e47b539f45077a5851af573a494ca7",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/system-tmp/qwen-lora/protocol.md",
+      "source_path": "/tmp/patch-context-qwen-lora-20260920.s4beIc/protocol.md",
+      "bytes": 3325,
+      "sha256": "def88d6d7a8ca0adef78596235d9899330d855f1d78759ba1df471ea37e183e7",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/system-tmp/qwen-lora/diagnostics.md",
+      "source_path": "/tmp/patch-context-qwen-lora-20260920.s4beIc/diagnostics.md",
+      "bytes": 1338,
+      "sha256": "3de8014d4276d77d956526cb93a2ce722b5b6b3a94596cde6af919bd14289c6e",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/system-tmp/qwen-lora/selection/selection.json",
+      "source_path": "/tmp/patch-context-qwen-lora-20260920.s4beIc/selection/selection.json",
+      "bytes": 3418,
+      "sha256": "c892da63852824b724b70b93312ca9f6f9bead7bf4972cc7bcaed48c8e8498c1",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/system-tmp/qwen-lora/local-verification.json",
+      "source_path": "/tmp/patch-context-qwen-lora-20260920.s4beIc/local-verification.json",
+      "bytes": 410,
+      "sha256": "1a25a6fdd67eb600069fa4811309b063089307b338cb8a6e92a57c78306f953e",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/system-tmp/qwen-lora/supervision/raw8b-v3/receipt.json",
+      "source_path": "/tmp/patch-context-qwen-lora-20260920.s4beIc/supervision/raw8b-v3/receipt.json",
+      "bytes": 200,
+      "sha256": "534fb7dba7eb27ffdfe05b87f4d955be9770116b5ec0706abd928e6be9b3c794",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/system-tmp/qwen-lora/supervision/tuned4b/receipt.json",
+      "source_path": "/tmp/patch-context-qwen-lora-20260920.s4beIc/supervision/tuned4b/receipt.json",
+      "bytes": 199,
+      "sha256": "6b7713380443883f103c364737d085a555d05bdedc4e45866bff886956cb9fa9",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/system-tmp/semantic/experiment-v1/receipt.json",
+      "source_path": "/tmp/patch-context-semantic-20260919.MiFRdK/experiment-v1/receipt.json",
+      "bytes": 402,
+      "sha256": "8d6d28ccb0244a05bc7068aeed33159d269ed2b004cb9853ff008a5deebf8e16",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/system-tmp/semantic/issue-extension-v1/results/receipt.json",
+      "source_path": "/tmp/patch-context-semantic-20260919.MiFRdK/issue-extension-v1/results/receipt.json",
+      "bytes": 293,
+      "sha256": "98d7bc8d28ddd6e7bb9df05dd6c29b273da9645a7a3bc641570ee96019cbef60",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/system-tmp/semantic/issue-quantization-v1/evaluation-v2/receipt.json",
+      "source_path": "/tmp/patch-context-semantic-20260919.MiFRdK/issue-quantization-v1/evaluation-v2/receipt.json",
+      "bytes": 244,
+      "sha256": "d5042ba8798204eb608d7a7e807e76e2c5a63472d43368c0e1911034f7ddc8e3",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/system-tmp/semantic/issue-quantization-v1/proper-query-supervision/receipt.json",
+      "source_path": "/tmp/patch-context-semantic-20260919.MiFRdK/issue-quantization-v1/proper-query-supervision/receipt.json",
+      "bytes": 200,
+      "sha256": "9ea460d113be18b6bb65dabb10ae870f60a4ce205ec62e3b06ea094fa72ff645",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/system-tmp/semantic/issue-quantization-v1/final-audit-supervision/receipt.json",
+      "source_path": "/tmp/patch-context-semantic-20260919.MiFRdK/issue-quantization-v1/final-audit-supervision/receipt.json",
+      "bytes": 200,
+      "sha256": "0f2627b9e19b7250063fbc361d00c4784d8ff93d5ac87950fa2c0017beafe367",
+      "transformation": "none"
+    },
+    {
+      "path": "sources/system-tmp/svuld/triplet-objectives-verification.json",
+      "source_path": "/tmp/svuld-triplet-objectives-check-20260915/triplet-objectives-verification.json",
+      "bytes": 241,
+      "sha256": "5a6cdf991e2a3754e29589f8663c7da6a7ae9b54b22a11af992ea3b0de3318e9",
+      "transformation": "none"
+    }
+  ],
+  "scope": "Original source-note bytes only; experiment results are historical, not revalidated."
+}

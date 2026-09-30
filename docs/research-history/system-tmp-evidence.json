@@ -1,0 +1,254 @@
+{
+  "assembled_on": "2026-10-01",
+  "scope": "Historical source documents and receipts; no experiment rerun. Receipt success is limited to its named stage.",
+  "sources": [
+    {
+      "path": "sources/system-tmp/hcvr/protocol.md",
+      "source_path": "/tmp/patch-context-hcvr-20260920.LNx6Pv/protocol.md",
+      "bytes": 2621,
+      "sha256": "b8401c70e47b3c3d1494c65ec3e48445d4166650dd571a9c61fad9b79d420405",
+      "transformation": "none",
+      "filesystem_mtime_utc_not_event_time": "2026-09-20T03:41:38+00:00",
+      "event_times": {}
+    },
+    {
+      "path": "sources/system-tmp/hcvr/supervision/function/receipt.json",
+      "source_path": "/tmp/patch-context-hcvr-20260920.LNx6Pv/supervision/function/receipt.json",
+      "bytes": 200,
+      "sha256": "847af9cdeda66ce160102aeb940ceb87f2806eecfceff706b8f542a53b475e63",
+      "transformation": "none",
+      "filesystem_mtime_utc_not_event_time": "2026-09-20T03:43:00.300837+00:00",
+      "event_times": {
+        "finished_at": {
+          "original": "2026-09-20T03:43:00.301436+00:00",
+          "Asia/Shanghai": "2026-09-20T11:43:00.301436+08:00"
+        }
+      }
+    },
+    {
+      "path": "sources/system-tmp/hcvr/supervision/window/receipt.json",
+      "source_path": "/tmp/patch-context-hcvr-20260920.LNx6Pv/supervision/window/receipt.json",
+      "bytes": 199,
+      "sha256": "3a4776871f05083f6e89cb8df0fce8a18c8d008da8f6bf9004e77d6c44e1d87d",
+      "transformation": "none",
+      "filesystem_mtime_utc_not_event_time": "2026-09-20T03:43:00.343835+00:00",
+      "event_times": {
+        "finished_at": {
+          "original": "2026-09-20T03:43:00.344222+00:00",
+          "Asia/Shanghai": "2026-09-20T11:43:00.344222+08:00"
+        }
+      }
+    },
+    {
+      "path": "sources/system-tmp/qwen4b/protocol.md",
+      "source_path": "/tmp/patch-context-qwen4b-20260920.mR47fR/protocol.md",
+      "bytes": 1777,
+      "sha256": "0e33565594d265ebd56b75396e859c70fb0095e243e3d6e57a62cfba604530cb",
+      "transformation": "none",
+      "filesystem_mtime_utc_not_event_time": "2026-09-20T03:54:53+00:00",
+      "event_times": {}
+    },
+    {
+      "path": "sources/system-tmp/qwen4b/supervision/function/receipt.json",
+      "source_path": "/tmp/patch-context-qwen4b-20260920.mR47fR/supervision/function/receipt.json",
+      "bytes": 199,
+      "sha256": "a1ad89b5fbdefb695d18e5675f88cd1b884ee8de59c944eab88c43e122fd23d2",
+      "transformation": "none",
+      "filesystem_mtime_utc_not_event_time": "2026-09-20T03:56:47.944355+00:00",
+      "event_times": {
+        "finished_at": {
+          "original": "2026-09-20T03:56:47.945204+00:00",
+          "Asia/Shanghai": "2026-09-20T11:56:47.945204+08:00"
+        }
+      }
+    },
+    {
+      "path": "sources/system-tmp/qwen4b/supervision/window/receipt.json",
+      "source_path": "/tmp/patch-context-qwen4b-20260920.mR47fR/supervision/window/receipt.json",
+      "bytes": 199,
+      "sha256": "54800fb11adf7f0c45e246ca6282e5f638e47b539f45077a5851af573a494ca7",
+      "transformation": "none",
+      "filesystem_mtime_utc_not_event_time": "2026-09-20T03:56:38.984653+00:00",
+      "event_times": {
+        "finished_at": {
+          "original": "2026-09-20T03:56:38.984759+00:00",
+          "Asia/Shanghai": "2026-09-20T11:56:38.984759+08:00"
+        }
+      }
+    },
+    {
+      "path": "sources/system-tmp/qwen-lora/protocol.md",
+      "source_path": "/tmp/patch-context-qwen-lora-20260920.s4beIc/protocol.md",
+      "bytes": 3325,
+      "sha256": "def88d6d7a8ca0adef78596235d9899330d855f1d78759ba1df471ea37e183e7",
+      "transformation": "none",
+      "filesystem_mtime_utc_not_event_time": "2026-09-20T05:10:45+00:00",
+      "event_times": {}
+    },
+    {
+      "path": "sources/system-tmp/qwen-lora/diagnostics.md",
+      "source_path": "/tmp/patch-context-qwen-lora-20260920.s4beIc/diagnostics.md",
+      "bytes": 1338,
+      "sha256": "3de8014d4276d77d956526cb93a2ce722b5b6b3a94596cde6af919bd14289c6e",
+      "transformation": "none",
+      "filesystem_mtime_utc_not_event_time": "2026-09-20T05:21:47+00:00",
+      "event_times": {}
+    },
+    {
+      "path": "sources/system-tmp/qwen-lora/selection/selection.json",
+      "source_path": "/tmp/patch-context-qwen-lora-20260920.s4beIc/selection/selection.json",
+      "bytes": 3418,
+      "sha256": "c892da63852824b724b70b93312ca9f6f9bead7bf4972cc7bcaed48c8e8498c1",
+      "transformation": "none",
+      "filesystem_mtime_utc_not_event_time": "2026-09-20T05:33:17.958180+00:00",
+      "event_times": {
+        "selected_at": {
+          "original": "2026-09-20T05:33:17.959032+00:00",
+          "Asia/Shanghai": "2026-09-20T13:33:17.959032+08:00"
+        }
+      }
+    },
+    {
+      "path": "sources/system-tmp/qwen-lora/local-verification.json",
+      "source_path": "/tmp/patch-context-qwen-lora-20260920.s4beIc/local-verification.json",
+      "bytes": 410,
+      "sha256": "1a25a6fdd67eb600069fa4811309b063089307b338cb8a6e92a57c78306f953e",
+      "transformation": "none",
+      "filesystem_mtime_utc_not_event_time": "2026-09-20T06:30:57.751707+00:00",
+      "event_times": {
+        "time": {
+          "original": "2026-09-20T06:30:57.752483+00:00",
+          "Asia/Shanghai": "2026-09-20T14:30:57.752483+08:00"
+        }
+      }
+    },
+    {
+      "path": "sources/system-tmp/qwen-lora/supervision/raw8b-v3/receipt.json",
+      "source_path": "/tmp/patch-context-qwen-lora-20260920.s4beIc/supervision/raw8b-v3/receipt.json",
+      "bytes": 200,
+      "sha256": "534fb7dba7eb27ffdfe05b87f4d955be9770116b5ec0706abd928e6be9b3c794",
+      "transformation": "none",
+      "filesystem_mtime_utc_not_event_time": "2026-09-20T05:22:57.012611+00:00",
+      "event_times": {
+        "finished_at": {
+          "original": "2026-09-20T05:22:57.013606+00:00",
+          "Asia/Shanghai": "2026-09-20T13:22:57.013606+08:00"
+        }
+      }
+    },
+    {
+      "path": "sources/system-tmp/qwen-lora/supervision/tuned4b/receipt.json",
+      "source_path": "/tmp/patch-context-qwen-lora-20260920.s4beIc/supervision/tuned4b/receipt.json",
+      "bytes": 199,
+      "sha256": "6b7713380443883f103c364737d085a555d05bdedc4e45866bff886956cb9fa9",
+      "transformation": "none",
+      "filesystem_mtime_utc_not_event_time": "2026-09-20T05:34:24.062202+00:00",
+      "event_times": {
+        "finished_at": {
+          "original": "2026-09-20T05:34:24.062900+00:00",
+          "Asia/Shanghai": "2026-09-20T13:34:24.062900+08:00"
+        }
+      }
+    },
+    {
+      "path": "sources/system-tmp/semantic/experiment-v1/receipt.json",
+      "source_path": "/tmp/patch-context-semantic-20260919.MiFRdK/experiment-v1/receipt.json",
+      "bytes": 402,
+      "sha256": "8d6d28ccb0244a05bc7068aeed33159d269ed2b004cb9853ff008a5deebf8e16",
+      "transformation": "none",
+      "filesystem_mtime_utc_not_event_time": "2026-09-19T09:56:16.534156+00:00",
+      "event_times": {
+        "finished_at": {
+          "original": "2026-09-19T09:56:16.535134+00:00",
+          "Asia/Shanghai": "2026-09-19T17:56:16.535134+08:00"
+        }
+      }
+    },
+    {
+      "path": "sources/system-tmp/semantic/issue-extension-v1/results/receipt.json",
+      "source_path": "/tmp/patch-context-semantic-20260919.MiFRdK/issue-extension-v1/results/receipt.json",
+      "bytes": 293,
+      "sha256": "98d7bc8d28ddd6e7bb9df05dd6c29b273da9645a7a3bc641570ee96019cbef60",
+      "transformation": "none",
+      "filesystem_mtime_utc_not_event_time": "2026-09-19T10:27:42.460871+00:00",
+      "event_times": {
+        "finished_at": {
+          "original": "2026-09-19T10:27:42.461444+00:00",
+          "Asia/Shanghai": "2026-09-19T18:27:42.461444+08:00"
+        }
+      }
+    },
+    {
+      "path": "sources/system-tmp/semantic/issue-quantization-v1/evaluation-v2/receipt.json",
+      "source_path": "/tmp/patch-context-semantic-20260919.MiFRdK/issue-quantization-v1/evaluation-v2/receipt.json",
+      "bytes": 244,
+      "sha256": "d5042ba8798204eb608d7a7e807e76e2c5a63472d43368c0e1911034f7ddc8e3",
+      "transformation": "none",
+      "filesystem_mtime_utc_not_event_time": "2026-09-19T10:39:43.404352+00:00",
+      "event_times": {
+        "finished_at": {
+          "original": "2026-09-19T10:39:43.405080+00:00",
+          "Asia/Shanghai": "2026-09-19T18:39:43.405080+08:00"
+        }
+      }
+    },
+    {
+      "path": "sources/system-tmp/semantic/issue-quantization-v1/proper-query-supervision/receipt.json",
+      "source_path": "/tmp/patch-context-semantic-20260919.MiFRdK/issue-quantization-v1/proper-query-supervision/receipt.json",
+      "bytes": 200,
+      "sha256": "9ea460d113be18b6bb65dabb10ae870f60a4ce205ec62e3b06ea094fa72ff645",
+      "transformation": "none",
+      "filesystem_mtime_utc_not_event_time": "2026-09-19T10:45:09.601105+00:00",
+      "event_times": {
+        "finished_at": {
+          "original": "2026-09-19T10:45:09.602361+00:00",
+          "Asia/Shanghai": "2026-09-19T18:45:09.602361+08:00"
+        }
+      }
+    },
+    {
+      "path": "sources/system-tmp/semantic/issue-quantization-v1/final-audit-supervision/receipt.json",
+      "source_path": "/tmp/patch-context-semantic-20260919.MiFRdK/issue-quantization-v1/final-audit-supervision/receipt.json",
+      "bytes": 200,
+      "sha256": "0f2627b9e19b7250063fbc361d00c4784d8ff93d5ac87950fa2c0017beafe367",
+      "transformation": "none",
+      "filesystem_mtime_utc_not_event_time": "2026-09-19T11:00:12.997411+00:00",
+      "event_times": {
+        "finished_at": {
+          "original": "2026-09-19T11:00:12.997898+00:00",
+          "Asia/Shanghai": "2026-09-19T19:00:12.997898+08:00"
+        }
+      }
+    },
+    {
+      "path": "sources/system-tmp/svuld/triplet-objectives-verification.json",
+      "source_path": "/tmp/svuld-triplet-objectives-check-20260915/triplet-objectives-verification.json",
+      "bytes": 241,
+      "sha256": "5a6cdf991e2a3754e29589f8663c7da6a7ae9b54b22a11af992ea3b0de3318e9",
+      "transformation": "none",
+      "filesystem_mtime_utc_not_event_time": "2026-09-15T03:39:23.192310+00:00",
+      "event_times": {}
+    }
+  ],
+  "assets_indexed_only_not_copied": [
+    {
+      "path": "/tmp/svuld-triplet-objectives-check-20260915/triplet_objectives.py",
+      "bytes": 9199,
+      "sha256": "e387c5f550bdafecdd13dca0d2c82e47d413ddfb8da9a8dc4129f3d7943424ab",
+      "preservation": "indexed_only_not_copied"
+    },
+    {
+      "path": "/tmp/svuld-triplet-objectives-check-20260915/verify_triplet_objectives.py",
+      "bytes": 15153,
+      "sha256": "22ccf099fa924225ccb30285290d27b768f736f9e76845c205155410910f8e92",
+      "preservation": "indexed_only_not_copied"
+    },
+    {
+      "path": "/tmp/patch-context-qwen-lora-20260920.s4beIc/trials/lr-5e-5/adapter-epoch3/adapter_model.safetensors",
+      "bytes": 47222896,
+      "sha256": "c803101a275c5a6d191ac3ba6d63804aeb1d198c02775deb1286858c208134af",
+      "selection_source": "sources/system-tmp/qwen-lora/selection/selection.json",
+      "preservation": "indexed_only_not_copied"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "completed": true,
+  "fits": 27,
+  "evaluated_models": 28,
+  "finished_at": "2026-09-19T10:27:42.461444+00:00",
+  "plan_sha256": "9aa9b8dc29bb36b9af113a9838bcbce7e947311fe06b8dbb6950b1b01dd891ba",
+  "comparison_sha256": "4e3cd1b1f3a338cbb1e289ecfd8435b99b2d1083f45cd852f4259845643aa8bb"
+}
