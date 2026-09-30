@@ -1,0 +1,1 @@
+No non-obvious steps were required; revision 93 built cleanly with a standard `mvn package` using Maven 3.5.0 and Java 17. The forced dependency update (`-U`) was likely needed because revision 93 was built shortly after the parent POM bootstrap, so some SNAPSHOTs might not have been cached. Watch out that Maven 3.5.0 may fail with newer XWiki rendering

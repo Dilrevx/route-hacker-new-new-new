@@ -1,0 +1,3 @@
+- **JDK 17 required** – this revision uses Java records and sealed classes, which are only supported in JDK 17. Using an older JDK would cause compilation failures.
+- **Maven proxy configuration** – necessary because the build environment has outbound internet access limited to the proxy at 127.0.0.1:7890; without it, Maven cannot download plugins or upstream dependencies.
+- **Maven 3.9.8** – chosen to match the version

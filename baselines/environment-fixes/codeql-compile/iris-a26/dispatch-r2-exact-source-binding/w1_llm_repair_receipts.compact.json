@@ -1,0 +1,2975 @@
+[
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:DSpace_CVE-2025-53621_dspace-7.6.3",
+    "project_slug": "DSpace_CVE-2025-53621_dspace-7.6.3",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "24357bdd9cf3bd05e4336d0c2d8a0cc7a2932417",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_DSpace_CVE-2025-53621_dspace-7.6.3",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:DSpace_CVE-2025-53621_dspace-7.6.3",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:DSpace_CVE-2025-53621_dspace-7.6.3",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "6d3c42ab807bfef26ebcc9a7b98ebe568a6ee54179c395f3aeae503570c76e3d",
+    "prior_completion_sha256": "3c2ccb0d0a35c90dcd502e0286ae89cc3205103aee568c7b0aa4c616ffc6edd8",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "7f249c8474e1df85f253be4202eafe474db3b6b47a729d05686a942e21ca671f",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:DSpace_CVE-2025-53622_dspace-7.6.3",
+    "project_slug": "DSpace_CVE-2025-53622_dspace-7.6.3",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "4da8ed69f44786dc33a3dd9a62ee719a51a4830e",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_DSpace_CVE-2025-53622_dspace-7.6.3",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:DSpace_CVE-2025-53622_dspace-7.6.3",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:DSpace_CVE-2025-53622_dspace-7.6.3",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "57256dbb222e15793643f99befa0a8728364d568ecb8f0db755a15a631c81c77",
+    "prior_completion_sha256": "ea0a36821dabd6a3533e17f1e648b1d5acf4c455feb0c38f6fca1112862192b8",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "4f6505245b62487cf0a744bac6aa83c4dd4b8efe4a0d031bba3094ad1fd720b6",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:activemq-artemis_CVE-2025-27427_2.39.0",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:OpenDJ_CVE-2025-27497_4.9.2",
+    "project_slug": "OpenDJ_CVE-2025-27497_4.9.2",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "688a9ffc80d3c6c21c9cf1b89b1a6d8ed7d0cc1d",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_OpenDJ_CVE-2025-27497_4.9.2",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:OpenDJ_CVE-2025-27497_4.9.2",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:OpenDJ_CVE-2025-27497_4.9.2",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "7da51754594ced413d17ee277e7f2659829ef6ac55d15cf129ed9b5a0c42ba4a",
+    "prior_completion_sha256": "0c2d5a4a61605213f72acd4df262cb9e534fba6cd457eccc5ab78a3798857232",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "5a5f3b8ccb92806280eb9971f08238fd4ad00b77b34a356364686f695f458472",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:apache__activemq_CVE-2014-3576_5.10.2",
+    "project_slug": "apache__activemq_CVE-2014-3576_5.10.2",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "4ba1a1689f33d81bd2349a2bb8c66f0c95b04d1d",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_apache__activemq_CVE-2014-3576_5.10.2",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:apache__activemq_CVE-2014-3576_5.10.2",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:apache__activemq_CVE-2014-3576_5.10.2",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "1d128ca20a68ae7abc642861a9dda842a8bc3e22e1bc543f1655554b65e042ff",
+    "prior_completion_sha256": "333ac52c9a98ccd2fa61289d8929ece45581da7e14b9a5385ac57b23f0fc4b23",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "b35d9656e00b5579821669bc378243b29887357433f876a4cf51068fe80c530c",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:apache__axis-axis1-java_CVE-2023-51441_1.3.0",
+    "project_slug": "apache__axis-axis1-java_CVE-2023-51441_1.3.0",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "e84c60c1f0764b01577d62c9e6453457d523ee77",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_apache__axis-axis1-java_CVE-2023-51441_1.3.0",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:apache__axis-axis1-java_CVE-2023-51441_1.3.0",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:apache__axis-axis1-java_CVE-2023-51441_1.3.0",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "d60287378be5aec4847ef43f5ed52e8ed507f07b04568659e6ed0849ee415c4e",
+    "prior_completion_sha256": "c37b0ff19fccbdc1be160fd4a4857562503e2d2f87dbeaae17fea75ebd42faed",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "d91538c912aa1fe7e2ed76de74b3e5cffb0e80d03250035d98719442cd1fb9b9",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:allure2_CVE-2025-52888_2.34.0",
+    "project_slug": "allure2_CVE-2025-52888_2.34.0",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "eaa87ff7d93e79074f7a1d785740bd3fed2f89fd",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_allure2_CVE-2025-52888_2.34.0",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:allure2_CVE-2025-52888_2.34.0",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:allure2_CVE-2025-52888_2.34.0",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "94f68b5d0310cbfe60af751da183a2f8fa0be7675f1028ec257cad4eb90f27c8",
+    "prior_completion_sha256": "0cb7a9fdc0901b90c77b9626c92d884c0ba0d7f696df02da61bc2fc41e0a7f2e",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "7573a5b327c9d781acfcd162ece041005387d431ddb612857de86f24c2a57f74",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:cassandra-lucene-index_CVE-2025-26511_cassandra-4.0.16-1.0.0",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:cassandra_CVE-2025-23015_cassandra-5.0-alpha2",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:cloudbees-jenkins-advisor-plugin_CVE-2025-47885_374.v194b_d4f0c8c8",
+    "project_slug": "cloudbees-jenkins-advisor-plugin_CVE-2025-47885_374.v194b_d4f0c8c8",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "4a0914b416ad664bb3b9b07505d0d657b0d32d31",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_cloudbees-jenkins-advisor-plugin_CVE-2025-47885_374.v194b_d4f0c8c8",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:cloudbees-jenkins-advisor-plugin_CVE-2025-47885_374.v194b_d4f0c8c8",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:cloudbees-jenkins-advisor-plugin_CVE-2025-47885_374.v194b_d4f0c8c8",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "17d36d656cdadac94f8c50c5ae59dcc0bf9b4af8027930b5cb80192028f5acbf",
+    "prior_completion_sha256": "39cbd7db35bd8901dc48042e8e622e49879825eb8aa404bf89827e20f27f1133",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "023ad379a43ad202466d0cedf8f256c04f85f8e30a487bb05da771a511b3040d",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:commons-beanutils_CVE-2025-48734_commons-beanutils-1.10.1-RC1",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:camel_CVE-2025-30177_camel-4.10.2",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:commons-fileupload_CVE-2025-48976_commons-fileupload-1.5-RC1",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:console_CVE-2025-2901_v3.7.10",
+    "project_slug": "console_CVE-2025-2901_v3.7.10",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "d9112153b83df2977df41795b0676267fa37a1f0",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_console_CVE-2025-2901_v3.7.10",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:console_CVE-2025-2901_v3.7.10",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:console_CVE-2025-2901_v3.7.10",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "3b509d62d729d47428151571a9b678402ab6eb4ed0b0dfe6b52a0d63ef030ba6",
+    "prior_completion_sha256": "2b92fdc07a3dc250b64a3df27f79aac45f855aa7d3d159cf87e2a38d6914ae2f",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "1ab3907ea7c30bc05595fa9249622652b2505719a933e6353bdf605e25edf060",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:crate__crate_5.5.1_CVE-2023-51982_5.5.1",
+    "project_slug": "crate__crate_5.5.1_CVE-2023-51982_5.5.1",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "74716bfa6440c2130cd19ed30219189565f897bd",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_crate__crate_5.5.1_CVE-2023-51982_5.5.1",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:crate__crate_5.5.1_CVE-2023-51982_5.5.1",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:crate__crate_5.5.1_CVE-2023-51982_5.5.1",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "6e5c807bc35285be33114132300bce7feec3d39d84babe16459d4f49893bab25",
+    "prior_completion_sha256": "df4476fc647ae60dfe8414a0c549d8d300c039fc47d53482f8c69a4772ea07e1",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "47f7013ca03786d08739e26f6f68b8b704c150398cbd039b065185cd074c499e",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:cuba_CVE-2025-32959_7.2.22",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:cxf_CVE-2025-48795_cxf-3.5.10",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:djl_CVE-2025-0851_v0.30.0",
+    "project_slug": "djl_CVE-2025-0851_v0.30.0",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "503289a69c581e2373e12cff78ea2adc03a8d86f",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_djl_CVE-2025-0851_v0.30.0",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:djl_CVE-2025-0851_v0.30.0",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:djl_CVE-2025-0851_v0.30.0",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "943153e406d8d5ba658108de30c62a6193453f197648a67629f12edd1b4c503f",
+    "prior_completion_sha256": "76b3f79674da030dac95d819b6fab920ad8ba07d4074eb3c139ad0ec61f12144",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "319261fa59e364ce18de60de847855498671c1b3c2477174bba6603141ec0327",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:eclipse__hawkbit_CVE-2020-27219_0.3.0M6",
+    "project_slug": "eclipse__hawkbit_CVE-2020-27219_0.3.0M6",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "f3659f01425ad0162f92fa73357f8c507058bcb2",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_eclipse__hawkbit_CVE-2020-27219_0.3.0M6",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:eclipse__hawkbit_CVE-2020-27219_0.3.0M6",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:eclipse__hawkbit_CVE-2020-27219_0.3.0M6",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "8a3d49e9fc8fee4a2ec782116beeeb8fbcd19f8ad95a3f4d8d8e2158dcc45499",
+    "prior_completion_sha256": "25c0fae0a8f7068a2cdc6fdbf0bc377ce4adfdda30d2b97cf4ca2adc3aad1e5e",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "c77615a8a13a326372758018f59da5e0a39f53ea5e5c428b2c6cddb979958e3d",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:emissary_CVE-2025-27508_8.23.0",
+    "project_slug": "emissary_CVE-2025-27508_8.23.0",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "ff9fed1d5910ca1879a290b78045ec991a93cb2e",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_emissary_CVE-2025-27508_8.23.0",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:emissary_CVE-2025-27508_8.23.0",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:emissary_CVE-2025-27508_8.23.0",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "a1ce599e83a3f223a0c53fae863f77152a050ee5fc6de391c9734bcf508e8096",
+    "prior_completion_sha256": "7dc5695427bc0cef4b2125c61df394bc888e7e803b6859f55c6f6eb2cb350af4",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "87b2b397de5b50a739517ddbfc1e98aa148d60b4b5264302a817a684da5ea7d5",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:felix-dev_CVE-2025-25247_org.osgi.compendium-1.4.0",
+    "project_slug": "felix-dev_CVE-2025-25247_org.osgi.compendium-1.4.0",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "c9df37190eddd3a8af4262956436880a3acb8c90",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_felix-dev_CVE-2025-25247_org.osgi.compendium-1.4.0",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:felix-dev_CVE-2025-25247_org.osgi.compendium-1.4.0",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:felix-dev_CVE-2025-25247_org.osgi.compendium-1.4.0",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "4e7e493157e86afe3b038f6f65d09a3bafb1b6959b8cdaaab18b6ab3b5194a37",
+    "prior_completion_sha256": "080f7e22ca7abbcd6abd80742bbc972d0fd353c3f505d04877149ee380aa71a7",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "7606e1d08d119cd03a22da557581cb07cd214f029fff264f925f566d365c3a38",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:graylog2-server_CVE-2025-53106_6.2.3",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:hapifhir__org.hl7.fhir.core_CVE-2023-24057_5.6.91",
+    "project_slug": "hapifhir__org.hl7.fhir.core_CVE-2023-24057_5.6.91",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "7b22d0355b1b12448e50b9cbfe2a8ae63f2ee828",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_hapifhir__org.hl7.fhir.core_CVE-2023-24057_5.6.91",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:hapifhir__org.hl7.fhir.core_CVE-2023-24057_5.6.91",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:hapifhir__org.hl7.fhir.core_CVE-2023-24057_5.6.91",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "53d3ac0d2d82b5b8c9cc44205cabe83df7dedd5711d6b9f0836c45bb431b81c6",
+    "prior_completion_sha256": "4e96bf66b509beee190672659c6a3f298a935a889a375004041d9b37a0137b12",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "ad121fdc899ae74aabe39fb839f45206ca1c1f3996c1f088a123ae3d30af026e",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:hapifhir__org.hl7.fhir.core_CVE-2023-28465_5.6.105",
+    "project_slug": "hapifhir__org.hl7.fhir.core_CVE-2023-28465_5.6.105",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "0b8e2c39841b51def04e29d3b745602517602d5b",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_hapifhir__org.hl7.fhir.core_CVE-2023-28465_5.6.105",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:hapifhir__org.hl7.fhir.core_CVE-2023-28465_5.6.105",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:hapifhir__org.hl7.fhir.core_CVE-2023-28465_5.6.105",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "5926a67fe947303b51551465237d6575f42a27e31993b52c472a25ed198446e0",
+    "prior_completion_sha256": "1b3608143c78cf380617e90d22c12eb873cfeb355a8eb606ede2146719c578fa",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "976b7681b97585975df75c5a3c6bef0d2447b0d0fe4235f5019903676304d6aa",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:incubator-seata_CVE-2025-32897_v2.2.0",
+    "project_slug": "incubator-seata_CVE-2025-32897_v2.2.0",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "c95bd08bf1c139bbac323a0e2190cb6bbca2dba3",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_incubator-seata_CVE-2025-32897_v2.2.0",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:incubator-seata_CVE-2025-32897_v2.2.0",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:incubator-seata_CVE-2025-32897_v2.2.0",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "a1c2207c5f313c995391ccc630d9858b3e8af1ce919e7fa4b44f56743ad5ef50",
+    "prior_completion_sha256": "ba5a3d3c279ab830c62e1dbd932760c4ea42781f172fc73e524e81197f6163f8",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "70778d5029dd415bfd0f9b1f93b1e5eac3fd0396b03eb9bd6040ac852732c2ae",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:inlong_CVE-2025-27522_2.1.0-RC0",
+    "project_slug": "inlong_CVE-2025-27522_2.1.0-RC0",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "b37f944f2308c1c8c34bb4aa088d87153d7a4598",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_inlong_CVE-2025-27522_2.1.0-RC0",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:inlong_CVE-2025-27522_2.1.0-RC0",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:inlong_CVE-2025-27522_2.1.0-RC0",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "b78a503b8e55b2c66439b9ade6374031b0e11dd11445ea274364e6eabc57709b",
+    "prior_completion_sha256": "79cedc4057c195cdb4097a61e15615fdeeef6de822f6731b45dd9f3c2d4af494",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "5ef6e0b91a212eb331c8455550a6a812180ad8e34058ec9c1e3b8d3711ef5840",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:inlong_CVE-2025-27526_2.1.0-RC0",
+    "project_slug": "inlong_CVE-2025-27526_2.1.0-RC0",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "9d36b2338c1b7b3f151582eb447d9b6af2abbfe7",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_inlong_CVE-2025-27526_2.1.0-RC0",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:inlong_CVE-2025-27526_2.1.0-RC0",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:inlong_CVE-2025-27526_2.1.0-RC0",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "3b45a377c3b60144b6c0996be617521af0f72cdb9dac02b0c586acc55487aad6",
+    "prior_completion_sha256": "98948c82c7d25f6f839443431fe41d287dbf78d1a634d16441370776053e1107",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "8683eae1d42d5e821c104c44a5c685f932eb86c31797455dbae68fe0e06d53d8",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:inlong_CVE-2025-27528_2.1.0-RC0",
+    "project_slug": "inlong_CVE-2025-27528_2.1.0-RC0",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "9d36b2338c1b7b3f151582eb447d9b6af2abbfe7",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_inlong_CVE-2025-27528_2.1.0-RC0",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:inlong_CVE-2025-27528_2.1.0-RC0",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:inlong_CVE-2025-27528_2.1.0-RC0",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "76c44e3e4e69726ca129778b5ed4dbba64bdb41419cc01968668f6b85790dedb",
+    "prior_completion_sha256": "80a3ca3be4e67b102e500ea7eabb28f28acbf5ae9117ea238c7af7dfa7391a68",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "b905bd90ce52e50736fef018dcc2c578d3e589d4c076ce6a186296c444fbd530",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:inlong_CVE-2025-27531_2.0.0-RC0",
+    "project_slug": "inlong_CVE-2025-27531_2.0.0-RC0",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "1183e43b442558139169ab981a7d35c60860d859",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_inlong_CVE-2025-27531_2.0.0-RC0",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:inlong_CVE-2025-27531_2.0.0-RC0",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:inlong_CVE-2025-27531_2.0.0-RC0",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "e38595e3816e985981ab4523214b95669fc93afceb71b7dc50e4c8f6dad44d7b",
+    "prior_completion_sha256": "04eacc9423590cbfaf488cfa3842834a649171ca441e61f93917be985966849f",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "cc1b622791379d09f479cfdd871876c7c9c674382c9cd53986c56c7350a12a6d",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:iotdb_CVE-2025-26795_v1.3.3",
+    "project_slug": "iotdb_CVE-2025-26795_v1.3.3",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "946fcbc2d3b3a773e23fff3ccc9b4d5e3247f9f2",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_iotdb_CVE-2025-26795_v1.3.3",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:iotdb_CVE-2025-26795_v1.3.3",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:iotdb_CVE-2025-26795_v1.3.3",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "881a234c1b8a8e0699b4759a397c71eed0a07b7728ebb8638879a11fcc228c0e",
+    "prior_completion_sha256": "2161e744c0f8e4749b2ad415b42dfb4410db30529d16043820a4e534fa3e086c",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "90dd69fb120805f7aaa803b4e4f8bb0a401fb8f4d123cce50c96c07e6778f4b4",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:iotdb_CVE-2025-26864_v1.3.3",
+    "project_slug": "iotdb_CVE-2025-26864_v1.3.3",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "946fcbc2d3b3a773e23fff3ccc9b4d5e3247f9f2",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_iotdb_CVE-2025-26864_v1.3.3",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:iotdb_CVE-2025-26864_v1.3.3",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:iotdb_CVE-2025-26864_v1.3.3",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "9a68a82b9495f304c3a656c26d9108f67ca0aada3e0b9fffcc591d4f044a2005",
+    "prior_completion_sha256": "dc43281c2836c0b93cd48e589891c82159f3a15094927759f8a3701beb669809",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "43f0a905711a04c030bf71c6d7d70764147068b97eafb7ed841b10cb6053a3f2",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:jackrabbit_CVE-2025-53689_jackrabbit-2.23.1-beta",
+    "project_slug": "jackrabbit_CVE-2025-53689_jackrabbit-2.23.1-beta",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "8b60b53546ebca4aa5160c9b764412fd381d5635",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_jackrabbit_CVE-2025-53689_jackrabbit-2.23.1-beta",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:jackrabbit_CVE-2025-53689_jackrabbit-2.23.1-beta",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:jackrabbit_CVE-2025-53689_jackrabbit-2.23.1-beta",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "ac408cbe22af0a04bd8fe74a253cbe5b727835a8188fb36f330e47697b4ebc13",
+    "prior_completion_sha256": "de8b1393bda03bc2132e4a3bcc1ccd6254c52f4065be40046ac05caa8a2b01cf",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "d89d100e74ed86fe36c1c47b4c64d72f51e51e2b5b724d835cabffa937743f85",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:jans_CVE-2025-53003_v1.7.0",
+    "project_slug": "jans_CVE-2025-53003_v1.7.0",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "c8b743763d6177fead693f916d0c14b42612daa9",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_jans_CVE-2025-53003_v1.7.0",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:jans_CVE-2025-53003_v1.7.0",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:jans_CVE-2025-53003_v1.7.0",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "ecf6a3a94ed6fd93779ae86f718c1baf42fe5fb396b83c092de6203ee5cf9ed5",
+    "prior_completion_sha256": "7d80332120c5ffc0fb796d43115bca415d5912158ce44d80b72722b62905f8b4",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "de1093fcf7fb957e50f4bd2e254f4f879a0ba1abc69db1d085c9843836722644",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:jena_CVE-2025-49656_jena-5.4.0",
+    "project_slug": "jena_CVE-2025-49656_jena-5.4.0",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "35350569b4c1fd432d92e7c92af9597c4400debe",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_jena_CVE-2025-49656_jena-5.4.0",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:jena_CVE-2025-49656_jena-5.4.0",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:jena_CVE-2025-49656_jena-5.4.0",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "7dd69a886065eaf7f20b82e5be3da4943966c9ce77108e2b1d334970e84b14ee",
+    "prior_completion_sha256": "aa68481ac9317807c613177e584f8385c58f3d256a5ab7f73e2f7e47dc588fcb",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "fc0a254539e6b3e81894240c698e5fbfc2c3a2244a50a203154b6fc5664ff5f4",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:jenkins_CVE-2025-31720_prototype-1.7",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:jenkins_CVE-2025-31721_prototype-1.7",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:jpawebapi_CVE-2025-32961_v1.1.0",
+    "project_slug": "jpawebapi_CVE-2025-32961_v1.1.0",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "14fa1acacc2401f75a639fe33e71961460b97505",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_jpawebapi_CVE-2025-32961_v1.1.0",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:jpawebapi_CVE-2025-32961_v1.1.0",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:jpawebapi_CVE-2025-32961_v1.1.0",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "7940f7eb89be9e717204ee0a9a3bd129fc0bf9482ffb6fcab7bbf2d82339bb99",
+    "prior_completion_sha256": "76e434a6169737ce632d416b3639f3fcd4793cbfbb3999caa7a63793419f138b",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "645c01e8c0d4d1f9f76b8f866e201d0a32b61dfe2ec31d2361b04cd399f3b351",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:jetty.project_CVE-2025-1948_jetty-12.0.16",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:junit-framework_CVE-2025-53103_r5.13.1",
+    "project_slug": "junit-framework_CVE-2025-53103_r5.13.1",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "deb3e7c6487c370fc69703d19fbe559a9e4a97f7",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_junit-framework_CVE-2025-53103_r5.13.1",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:junit-framework_CVE-2025-53103_r5.13.1",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:junit-framework_CVE-2025-53103_r5.13.1",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "aa497af9208c4afc9d7a1a0347ab3c3607f4be7367d144db3aab44d53f39ad49",
+    "prior_completion_sha256": "7fe1cf01ab6acfc0e1174a105ac44154aee157876102567c684d16d45b7da3a2",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "fa207901b007f86940add368a521f57d5a2af772a76b533e3ac6c9cb44f71505",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:keycloak_CVE-2025-0604_26.1.2",
+    "project_slug": "keycloak_CVE-2025-0604_26.1.2",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "b70303f2932dabd5f462128b1dc8a3d2640799a2",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_keycloak_CVE-2025-0604_26.1.2",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:keycloak_CVE-2025-0604_26.1.2",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:keycloak_CVE-2025-0604_26.1.2",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "66af7a2e450a3a713d78b8102be50e07a74bc05a9ce0ce99317ebdff84494a0a",
+    "prior_completion_sha256": "b5ae57d736db980c1954401676eb3998b7d84323e725b90ae5a627267e1ee7f4",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "74d35551ab4ad54d4aae0a050fe262cd294151cb88b3f608d2a51a2ab462e48f",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:keycloak_CVE-2025-1391_26.1.2",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:keycloak_CVE-2025-3501_26.2.1",
+    "project_slug": "keycloak_CVE-2025-3501_26.2.1",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "a78c951a5aeb820d01d2987397e24b3362c455f0",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_keycloak_CVE-2025-3501_26.2.1",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:keycloak_CVE-2025-3501_26.2.1",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:keycloak_CVE-2025-3501_26.2.1",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "1eb0fe378d35c33a651fb1db7937fe6cbc7fd5fc5265207def2d69ecfb6d03c0",
+    "prior_completion_sha256": "1e913e1099a7ab574d4326726e6b87919c9e2ef063e8d2fba77cce5c63fcfaac",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "1555dd64c2810fa1f739868d2b238e93cea3311809933e72f83102c9ec2ca4be",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:keycloak_CVE-2025-3910_26.2.1",
+    "project_slug": "keycloak_CVE-2025-3910_26.2.1",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:02+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "0ff4cce3180d6441b5dfaa269a33cb3cab15dd5e",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_keycloak_CVE-2025-3910_26.2.1",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:keycloak_CVE-2025-3910_26.2.1",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:keycloak_CVE-2025-3910_26.2.1",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "bc25acc70dc8294dcd67f5f73e7516a60e3595bae15b79fe200adb7d081916bb",
+    "prior_completion_sha256": "8e8d987cd75bf4db7a9ec130ecb6e8ceb083bb5573bb2568c5526566d31bef00",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "42903bea93ed35df285a0d2d35737e9d6d996089d798e5fd2d603f1ae58a7a88",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:keycloak_CVE-2025-7365_26.0.12",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:keycloak__keycloak_CVE-2022-4361_21.1.1",
+    "project_slug": "keycloak__keycloak_CVE-2022-4361_21.1.1",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "0ca0a5fa4459d97c4d769fec15b4ba99c3824314",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_keycloak__keycloak_CVE-2022-4361_21.1.1",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:keycloak__keycloak_CVE-2022-4361_21.1.1",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:keycloak__keycloak_CVE-2022-4361_21.1.1",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "e2e6863122ef0e35ec1db184b2b17383b180d49e598dc6363c1a76abfab49438",
+    "prior_completion_sha256": "755f318bd0ac71ee9075bda4ca7897aedf95ccb6767b25cd1be6f13669abb209",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "e3d5b09e6006ade8fdbdb5cf5150fcf3087243ba2469215dddfcea9e2524dc9c",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:netty-incubator-codec-quic_CVE-2025-29908_netty-incubator-codec-parent-quic-0.0.70.Final",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:netty_CVE-2025-24970_netty-4.1.117.Final",
+    "project_slug": "netty_CVE-2025-24970_netty-4.1.117.Final",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "d1fbda62d3a47835d3fb35db8bd42ecc205a5386",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_netty_CVE-2025-24970_netty-4.1.117.Final",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:netty_CVE-2025-24970_netty-4.1.117.Final",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:netty_CVE-2025-24970_netty-4.1.117.Final",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "58eafa2bfb683b315fc50e5feb4f31633343251283ce9c5b6d57b86c9f0bf593",
+    "prior_completion_sha256": "9abbf6221b162b08713315b0d3ce88cd6c757ed9379e40f7c69e51e03ed3107a",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "ee06d8f1b9fe45ec22e15a9948bf055f0e428df395aa802db76a48b90c16a8ba",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:netty_CVE-2025-25193_netty-4.1.117.Final",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:oic-auth-plugin_CVE-2025-24399_4.452.v2849b_d3945fa_",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:kylin_CVE-2025-30067_kylin-5.0.1",
+    "project_slug": "kylin_CVE-2025-30067_kylin-5.0.1",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "bd86f44d597640d64e4a5789a54c1a3f2aa7786d",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_kylin_CVE-2025-30067_kylin-5.0.1",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:kylin_CVE-2025-30067_kylin-5.0.1",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:kylin_CVE-2025-30067_kylin-5.0.1",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "6b41e9c8b2501628e272afb62e54b640db43b6eeec0ab134d1b0f7a4f03366e1",
+    "prior_completion_sha256": "d524f0baa9fa92ab3fd521ef72a0edad931ab2b5157146ff0fa9b3b7c8120ead",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "4d8b5480c6d35f6f4530c9d793fd299dce5bcfb54a028f41842b868594d714ef",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:para_CVE-2025-48955_v1.50.7",
+    "project_slug": "para_CVE-2025-48955_v1.50.7",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "a48d3dff85e6d36402c2f6eea14f371acfcdbbf7",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_para_CVE-2025-48955_v1.50.7",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:para_CVE-2025-48955_v1.50.7",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:para_CVE-2025-48955_v1.50.7",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "076d06d7c2aa1e4f883dafac26d7e1af694241b852bb826815863805a05769d1",
+    "prior_completion_sha256": "382a18bbf518fbb6eafa24448ee7c9ee1621bccda93a442a5f4d62a5012d8f97",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "f11803225ea1adbbd801d1778f8350e684e6fd14b626976cb60aec7eef6b28e5",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:para_CVE-2025-49009_v1.50.7",
+    "project_slug": "para_CVE-2025-49009_v1.50.7",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "d0ef6f9a749178049bb232de99a4c187c0dc4173",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_para_CVE-2025-49009_v1.50.7",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:para_CVE-2025-49009_v1.50.7",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:para_CVE-2025-49009_v1.50.7",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "1493f8171198cb38b0595b35633cb058adabf2cf28f8888b70e10f512025d528",
+    "prior_completion_sha256": "5b5056cc8241ba89f20f4be2ee4a7f8bb9ea238d40b79412de9903b67d56dfa7",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "9198629fb36ff47db480f82258de6a70a7855ae4f6b0391ff659759fa5d2eed8",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:opencast_CVE-2025-54380_17.5",
+    "project_slug": "opencast_CVE-2025-54380_17.5",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "9bda49b6021f665c78a950c589b1a31198e2df49",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_opencast_CVE-2025-54380_17.5",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:opencast_CVE-2025-54380_17.5",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:opencast_CVE-2025-54380_17.5",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "69501f21610e850fbb7e5bb085b1f51f0c69e2720faf2c878b108076829bf60a",
+    "prior_completion_sha256": "580f76f2ab6b7442017abad7dc67d89439cc0be7b2cb34b6ebdf8cfd9d9e4cb7",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "ba102a8b4ea19230e94c5cf287effd69af501cffdb4821d3f7da47bab9048a64",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:powsybl-core_CVE-2025-47293_v6.7.1",
+    "project_slug": "powsybl-core_CVE-2025-47293_v6.7.1",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "72f79dec6d4292f892fbddd68a19c67935c7d81f",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_powsybl-core_CVE-2025-47293_v6.7.1",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:powsybl-core_CVE-2025-47293_v6.7.1",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:powsybl-core_CVE-2025-47293_v6.7.1",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "474e5ef8318d86db5239969e2555c00849251c0f476e2bf90ebb4f380fac6c43",
+    "prior_completion_sha256": "f4ad14885dc4da832a7a1ff7bd06143db361e0508a4661a9760558c842f67c10",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "013cdf1439858351b6367374ca7a02b77742fa2c7fb161a06ac231cfb0a2b616",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:powsybl-core_CVE-2025-47771_v6.7.1",
+    "project_slug": "powsybl-core_CVE-2025-47771_v6.7.1",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "d8398f689a5ccd505bd62eee2bd6670a29133110",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_powsybl-core_CVE-2025-47771_v6.7.1",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:powsybl-core_CVE-2025-47771_v6.7.1",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:powsybl-core_CVE-2025-47771_v6.7.1",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "12f51fb85684a2ac34030159647cce650e2219f98bdf54a6382e2f49a83ccdc6",
+    "prior_completion_sha256": "51ebbdd37dda7df3aa990ceb2d8af35476ed14dd6c64f3246a289d6512d7b852",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "9c225ecc29b6433c468dbe7effc9a10b984dc69069a630eeeaed465bc28fe8e7",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:powsybl-core_CVE-2025-48058_v6.7.1",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:powsybl-core_CVE-2025-48059_v6.2.4",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:reactor-netty_CVE-2025-22227_v1.2.8",
+    "project_slug": "reactor-netty_CVE-2025-22227_v1.2.8",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "a60f640c99d13af4e685c368a810c47b7f9fc628",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_reactor-netty_CVE-2025-22227_v1.2.8",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:reactor-netty_CVE-2025-22227_v1.2.8",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:reactor-netty_CVE-2025-22227_v1.2.8",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "7ce614860414d9668849b4be3fc8ee41b52a1954c3afa033934f998e257f8295",
+    "prior_completion_sha256": "eb64b75c6e294c392d04ea57dbc9e033a4e8b9334315a036f52cbfb064555bba",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "4cc19e6f9127c26c595602b4a09e621f01c742f180fe55e21316e6a315d55322",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:restapi_CVE-2025-32960_v7.2.6",
+    "project_slug": "restapi_CVE-2025-32960_v7.2.6",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "f0f76a8fa8f087e98ac715430a7f142965c9282a",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_restapi_CVE-2025-32960_v7.2.6",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:restapi_CVE-2025-32960_v7.2.6",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:restapi_CVE-2025-32960_v7.2.6",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "3feaadd089efafe51658973290b13e758dad22a38a0ac482ef8cde68030756e5",
+    "prior_completion_sha256": "ea2e4e15098957f1d88e6773283a6990014b6c6014442babd188df9499139ca0",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "4089d200d49d7ea5e116a4bb14fc701bbc7aba6ee9000205c5e0e0007cf25d73",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:simple-queue-plugin_CVE-2025-31723_simple-queue-1.4.6",
+    "project_slug": "simple-queue-plugin_CVE-2025-31723_simple-queue-1.4.6",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "c5bc23d6ddd16b0a9792dd05e843a14033e975f1",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_simple-queue-plugin_CVE-2025-31723_simple-queue-1.4.6",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:simple-queue-plugin_CVE-2025-31723_simple-queue-1.4.6",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:simple-queue-plugin_CVE-2025-31723_simple-queue-1.4.6",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "10d34f58fd1344a29bcca0fbd2f716fbf1699433bc17676839850d26f41ea46a",
+    "prior_completion_sha256": "c8c9bdff25d3ca875ae2de2da6099361271d36858269216a86e421fce9268079",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "9cc6dcbb60df14bea50653cdbd22c2369402e7a6e2003bafebedfcb9d0d11a81",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:smallrye-fault-tolerance_CVE-2025-2240_6.4.1",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:quarkus_CVE-2025-49574_3.23.4",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:snowflake-jdbc_CVE-2025-24789_v3.21.1",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:snowflake-jdbc_CVE-2025-24790_v3.21.1",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:solon_CVE-2025-1584_v3.0.8",
+    "project_slug": "solon_CVE-2025-1584_v3.0.8",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "87474726f1e496b381ce9d5ebbadabd0e04c2d75",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_solon_CVE-2025-1584_v3.0.8",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:solon_CVE-2025-1584_v3.0.8",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:solon_CVE-2025-1584_v3.0.8",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "9a8cf7de91cd34baa6273f66e3c33ec20df0b6fbb5a2a4fa4b03bd4d3c7ef99c",
+    "prior_completion_sha256": "7da1f5533662b82f46b044373a202670614db0cd850023705ee0bfb0e84c3e94",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "edce4f93cc0d5d1c328b0600590e15c9bd67977ab1a2a72400cfd5171fcc0968",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:solon_CVE-2025-46096_v3.1.2",
+    "project_slug": "solon_CVE-2025-46096_v3.1.2",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "4fdbc8f37e3e752d4b267b486116399597ea56b4",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_solon_CVE-2025-46096_v3.1.2",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:solon_CVE-2025-46096_v3.1.2",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:solon_CVE-2025-46096_v3.1.2",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "0380d10e0af3d634815b21366b049d0d0cb56fd6d7c07b7b7005d7f382c6f265",
+    "prior_completion_sha256": "943410bad75734ce649957a7607fd5366cecd29756b602496a28e2a51e1c42f1",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "8c46d8b39b8b5eb01d981b5b70997427c40bda324b49f6588865c75763af5780",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:spring-cloud__spring-cloud-config_CVE-2020-5405_2.1.6.RELEASE",
+    "project_slug": "spring-cloud__spring-cloud-config_CVE-2020-5405_2.1.6.RELEASE",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "24e7292e5930367396461354d3f9d8ba8b94771c",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_spring-cloud__spring-cloud-config_CVE-2020-5405_2.1.6.RELEASE",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:spring-cloud__spring-cloud-config_CVE-2020-5405_2.1.6.RELEASE",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:spring-cloud__spring-cloud-config_CVE-2020-5405_2.1.6.RELEASE",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "e5f7047259669e80d4166fa7a5202fb59acdb1917505d9ff86f0272b56b13ce1",
+    "prior_completion_sha256": "ca73088f7a730610859057d9bd1498b4ba3f2cee04cdbcf83604e7097063d87f",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "3216b91bbb93e875b1503823fa37e974183c3a9d58ee1fa7bcda5bc8e86504fa",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:snowflake-jdbc_CVE-2025-27496_v3.23.0",
+    "project_slug": "snowflake-jdbc_CVE-2025-27496_v3.23.0",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "f8ab78a9567fcc3d3b245ba5a993110df9e3c6d8",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_snowflake-jdbc_CVE-2025-27496_v3.23.0",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:snowflake-jdbc_CVE-2025-27496_v3.23.0",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:snowflake-jdbc_CVE-2025-27496_v3.23.0",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "74cde85d5a82125a780c13a76c573b6cfdd479c2a2e492a1782614883c09f270",
+    "prior_completion_sha256": "5b609194b80364cd24658667f79fd9bba26219465571234a3ea04e6939d99886",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "02a112255a4e157819bd24a853398849c1736cf521a01411221d89cd89f354ac",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:spring-framework_CVE-2025-22233_v6.2.6",
+    "project_slug": "spring-framework_CVE-2025-22233_v6.2.6",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "f93132b11ef6aa5718d20a05846828659c082fe8",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_spring-framework_CVE-2025-22233_v6.2.6",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:spring-framework_CVE-2025-22233_v6.2.6",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:spring-framework_CVE-2025-22233_v6.2.6",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "577e7ca54377573ab7daa229fdd7e557262ce7a02ef7272557877f1e6ac32f97",
+    "prior_completion_sha256": "3609bc4195bfd00a5f33d4aedbbb13380f86d93c3a0843f314e14df99266688f",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "8df0a1c73addce2bad35d43d4d93e5e9e3f6df58e8b95e0c4fbc35c146fd60a3",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:spring-framework_CVE-2025-41234_v6.2.7",
+    "project_slug": "spring-framework_CVE-2025-41234_v6.2.7",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "e86dc9ad95204e71f93e1338cb7ccf379e3fbd70",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_spring-framework_CVE-2025-41234_v6.2.7",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:spring-framework_CVE-2025-41234_v6.2.7",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:spring-framework_CVE-2025-41234_v6.2.7",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "75d287c03e1eb39931c8cc500446aacc68c7c9f586f57692dc51777f37a777c2",
+    "prior_completion_sha256": "ab743216d6fdd5ef0cf31a54e685028b3075083d2ceb33f4ad79d13145aa7a9b",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "e741db0eea1970e629034be1a0b4425ee6c1754e6764d99631bf831d40fb8f83",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:spring-security_CVE-2025-22223_6.4.3",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:spring-security_CVE-2025-22228_6.3.7",
+    "project_slug": "spring-security_CVE-2025-22228_6.3.7",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "36ea1b11a7dae7904e3c70b5e10fb01152fec5d4",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_spring-security_CVE-2025-22228_6.3.7",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:spring-security_CVE-2025-22228_6.3.7",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:spring-security_CVE-2025-22228_6.3.7",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "258265964e16fb275803ff2f873daaeb09429240e8af14dcee2ca4cf8cc95caf",
+    "prior_completion_sha256": "e9081681eb114c417f686e18c6c0397819bdc99835a3660bf9154c394c25e254",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "c69cf4ddd2ea3b022f713cc05df4431186ef879b1385b2e3a647941bf49109fe",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:syntax-markdown_CVE-2025-46558_syntax-markdown-8.8",
+    "project_slug": "syntax-markdown_CVE-2025-46558_syntax-markdown-8.8",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "6b32e97760b9f8b9c9e751e0ccfb989f57ffc07b",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_syntax-markdown_CVE-2025-46558_syntax-markdown-8.8",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:syntax-markdown_CVE-2025-46558_syntax-markdown-8.8",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:syntax-markdown_CVE-2025-46558_syntax-markdown-8.8",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "5b08895e11493eb3843458b79da85c737d2840cdc252f7c23409788e99797b77",
+    "prior_completion_sha256": "6c70784a0ed8d617d5837829ec5ebd37eecddf1c75cd9d577110294875e1a220",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "960e2afc0bb4e457e12c6e441f345b19df8980b5f1e9d334544c6f522ec4293a",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:studio_CVE-2025-6384_v4.2.2",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:tomcat_CVE-2025-24813_11.0.2",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:tomcat_CVE-2025-48988_11.0.7",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:tomcat_CVE-2025-49125_11.0.7",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:tomcat_CVE-2025-53506_11.0.8",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:tomcat_CVE-2025-52520_11.0.8",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:valtimo-backend-libraries_CVE-2025-48881_12.12.0.RELEASE",
+    "status": "llm_repair_worker_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:webdrivermanager_CVE-2025-4641_webdrivermanager-6.0.1",
+    "project_slug": "webdrivermanager_CVE-2025-4641_webdrivermanager-6.0.1",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "81f1c18de7dec8bacdfe011e8fb9d18492f59257",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_webdrivermanager_CVE-2025-4641_webdrivermanager-6.0.1",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:webdrivermanager_CVE-2025-4641_webdrivermanager-6.0.1",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:webdrivermanager_CVE-2025-4641_webdrivermanager-6.0.1",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "bece284e7f1d88b5994e103a121e3b5e7ea1d949a4431b74d4f2f6f4308c509c",
+    "prior_completion_sha256": "0c94e7b32f3246970b26c83bff64607b4a8ec35301e0ddb6037f3a12c56c1c6e",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "dd287269f376bc2fcf8fd53a468e8daab37819c5c61d76f1c2adbbc4b88242b0",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:xwiki__xwiki-commons_CVE-2023-29201_14.6",
+    "project_slug": "xwiki__xwiki-commons_CVE-2023-29201_14.6",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "5d9632d9471f315052c76d7699a17414524ea093",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_xwiki__xwiki-commons_CVE-2023-29201_14.6",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:xwiki__xwiki-commons_CVE-2023-29201_14.6",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:xwiki__xwiki-commons_CVE-2023-29201_14.6",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "8715a04611dd43bf36cbac4270d4a98547f56f342505024e67004056de2eab74",
+    "prior_completion_sha256": "0ca90d9a30541e9c6ebbf126cc21cf3ef83599c99885edff99e8ac4f48d86efc",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "ab98de681ce0c3fc8061385aaff71b941f363eed258151d9b77d96fbc2373c57",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:xwiki__xwiki-rendering_CVE-2023-32070_14.6",
+    "project_slug": "xwiki__xwiki-rendering_CVE-2023-32070_14.6",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "48b2970c152accd0d9dbc461a2f04bb36686491e",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_xwiki__xwiki-rendering_CVE-2023-32070_14.6",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:xwiki__xwiki-rendering_CVE-2023-32070_14.6",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:xwiki__xwiki-rendering_CVE-2023-32070_14.6",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "2b3bc80b0fe01bab7cc94755868fc6849624cdbd0271f3ed2cfe40d991c2da26",
+    "prior_completion_sha256": "90cbdf2593fc2f369f5ee12883949e184aa3871fb2b9ea111ad32ff1f6553b98",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "a841de5171a2a85214648b8f27e962e6f8534a427f39604141ab1dc8da6060f1",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:zohoqengine-plugin_CVE-2025-30197_1.0.29.vfa_cc23396502",
+    "project_slug": "zohoqengine-plugin_CVE-2025-30197_1.0.29.vfa_cc23396502",
+    "status": "source_revision_verification_failed",
+    "recorded_at": "2026-08-22T17:22:03+00:00",
+    "attempt_number": 1,
+    "reason": "exact_source_verification_failed_before_model_invocation",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "facc233965029a025b136efe0aa43b68cf522298",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "WORKSPACE_ROOT/hcvr/v9-execution/w1-exact-archive-rehydration-all135-v1-20260802T050522Z/rehydration/sources/v8_zohoqengine-plugin_CVE-2025-30197_1.0.29.vfa_cc23396502",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:zohoqengine-plugin_CVE-2025-30197_1.0.29.vfa_cc23396502",
+        "expected_revision_matches_receipt": true,
+        "reason": "source_archive_receipt_did_not_prove_exact_revision",
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": false,
+        "source_receipt_case_id": "v8:zohoqengine-plugin_CVE-2025-30197_1.0.29.vfa_cc23396502",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": false
+      },
+      "verification_mode": null,
+      "verified": false
+    },
+    "failed_receipt_sha256": "ce9eb6207c3912321671e6b6be9e0adcf37b9665a175e67650d99a8708217558",
+    "prior_completion_sha256": "b680f61f9aaf35e0990e37487b24c6ccd4e9a32a447bb66bec1385563faa2916",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "1a60eaf201f18423eaec352b649836d327338f42f297b335896ce3ebdb22d0bf",
+    "historical_snapshot": true
+  }
+]

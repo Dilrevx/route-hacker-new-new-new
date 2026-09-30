@@ -1,0 +1,3 @@
+- **Non-obvious steps:** Setting JDK 11 explicitly in the environment, marking the workspace as a safe git directory (for git-commit-id-plugin), and using `mvn -B -DskipTests compile` instead of a full build.  
+- **Why needed:** The project’s `pom.xml` defines `<target.jdk>11</target.jdk>`, so mismatched Java version would break compilation. The git plugin requires repository access and fails if the directory isn’t marked safe.  
+- **Version-specific constraints:** Only Java 11 is supported; using Java 8 or 17+ will cause build failures. Also, the git history and metadata (tags, commits) must be present for the git-commit

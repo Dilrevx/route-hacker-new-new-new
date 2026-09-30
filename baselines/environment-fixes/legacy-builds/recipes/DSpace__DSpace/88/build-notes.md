@@ -1,0 +1,1 @@
+Proxy settings required to access external Maven dependencies; JDK 8 used with -DskipTests because DSpace 5.10 targets Java 7 but needs a JDK 8 toolchain. Maven 3.5.0 is pinned to avoid incompatibilities with older POMs in this revision. The same base image and proxy configuration must be reused for any rebuild of revision 88.

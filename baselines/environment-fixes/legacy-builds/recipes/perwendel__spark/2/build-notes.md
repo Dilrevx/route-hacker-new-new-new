@@ -1,0 +1,1 @@
+No special bootstrapping or patching was required for revision 2; the standard `mvn package` command sufficed. The build relies on JDK 8 and Maven 3.5.0, which are explicitly set via environment variables. Ensure the HTTP proxy is available, as it is configured for network access. This revision compiles without any version-specific workarounds.

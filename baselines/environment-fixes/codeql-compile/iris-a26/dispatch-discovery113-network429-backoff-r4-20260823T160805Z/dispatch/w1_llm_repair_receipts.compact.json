@@ -1,0 +1,646 @@
+[
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:DSpace__DSpace_CVE-2022-31194_5.10",
+    "project_slug": "DSpace__DSpace_CVE-2022-31194_5.10",
+    "status": "upstream_dependency_rate_limited",
+    "recorded_at": "2026-08-23T16:08:09+00:00",
+    "attempt_number": 1,
+    "build_feedback_replan_count": 0,
+    "reason": "upstream_http_429_dependency_rate_limit_exhausted",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "max_network_rate_limit_retries": 2,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "network_rate_limit_backoff_seconds_base": 60.0,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true,
+      "upstream_http_429_replays_same_validated_command_only": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "eca7968be7d6b9f8f5f302c9fc09f8186ed4809e",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/source-preflight",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:DSpace__DSpace_CVE-2022-31194_5.10",
+        "expected_revision_matches_receipt": true,
+        "reason": null,
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": true,
+        "source_receipt_case_id": "v8:DSpace__DSpace_CVE-2022-31194_5.10",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": true
+      },
+      "verification_mode": "source_snapshot_receipt",
+      "verified": true
+    },
+    "failed_receipt_sha256": "60a99c58d7dd6c1a5dd8083f3008c27fc0ffcdf4bdac18861c131314b9f44966",
+    "prior_completion_sha256": "0adda3d1ce81ad73290c1fe1fde4b821a6ed29d4d2a33fea4238f991df92503c",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "9ef93dd5f878828fdf58eb20cc87e7047e2df2fe79444619ff7ed75764270c2a",
+    "proposal_validation_errors": [],
+    "validated_decision": {
+      "schema_version": "route_hacker_codeql_repair.v1:validated_repair_decision",
+      "actions": [
+        {
+          "kind": "retry_same_command"
+        }
+      ],
+      "normalization": {
+        "dropped_redundant_actions": []
+      },
+      "rationale": "Transient 429 rate limit from Maven Central; retry may succeed after rate-limit window expires.",
+      "decision_sha256": "859bf1506be3e872dddd9de71661630493f4ace678cae35bb00fadc4ec8fd74e"
+    },
+    "repair_attempt": {
+      "schema_version": "route_hacker_codeql_repair.v1:attempt",
+      "case_id": "v8:DSpace__DSpace_CVE-2022-31194_5.10",
+      "project_slug": "DSpace__DSpace_CVE-2022-31194_5.10",
+      "status": "repair_attempt_failed",
+      "recorded_at": "2026-08-23T16:16:51+00:00",
+      "database_valid": false,
+      "executed_command": [
+        "WORKSPACE_ROOT/repro/iris/codeql/codeql",
+        "database",
+        "create",
+        "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/codeql-db",
+        "--language=java",
+        "--source-root=iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/source-000-network-rate-limit-retry-002",
+        "--overwrite",
+        "--command",
+        "mvn -DskipTests -Dmaven.javadoc.skip=true -Dcheckstyle.skip=true -Denforcer.skip=true -Dfindbugs.skip=true -Dlicense.skip=true -Dmaven.source.skip=true -Dpmd.skip=true -Drat.skip=true -Dspotbugs.skip=true -Dspotless.check.skip=true compile"
+      ],
+      "official_query_status": null,
+      "original_command_sha256": "83deef143220fed13dad68714d6e4fb14059cd8357863b1a4ee0586f80356695",
+      "log_sha256": "c92c34c5aab891d77989e87fa6fb54d8bfe24079c192f66144c703b4c2666e24",
+      "applied_repair": {
+        "applied_actions": [
+          {
+            "inherited_java_home": null,
+            "kind": "retry_same_command"
+          }
+        ],
+        "attempt_database_dir": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/codeql-db",
+        "build_command": [
+          "mvn",
+          "-DskipTests",
+          "-Dmaven.javadoc.skip=true",
+          "-Dcheckstyle.skip=true",
+          "-Denforcer.skip=true",
+          "-Dfindbugs.skip=true",
+          "-Dlicense.skip=true",
+          "-Dmaven.source.skip=true",
+          "-Dpmd.skip=true",
+          "-Drat.skip=true",
+          "-Dspotbugs.skip=true",
+          "-Dspotless.check.skip=true",
+          "compile"
+        ],
+        "source_root": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/source-000-network-rate-limit-retry-002",
+        "verified_environment": {
+          "GRADLE_USER_HOME": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/build-home/.gradle",
+          "HOME": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/build-home",
+          "MAVEN_OPTS_user_home": "-Duser.home=iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/build-home",
+          "MAVEN_REPOSITORY": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/build-home/.m2/repository",
+          "MAVEN_USER_HOME": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/build-home/.m2",
+          "rewritten_maven_repo_local_argument": null
+        }
+      },
+      "source_revision_evidence": {
+        "git_checkout": {
+          "expected_revision": "eca7968be7d6b9f8f5f302c9fc09f8186ed4809e",
+          "git_head": null,
+          "reason": "git_revision_probe_failed",
+          "source_dir": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/source-000-network-rate-limit-retry-002",
+          "verified": false
+        },
+        "source_snapshot_receipt": {
+          "archive_sha256_verified": true,
+          "archive_url_matches_revision": true,
+          "case_id_matches_receipt": true,
+          "expected_case_id": "v8:DSpace__DSpace_CVE-2022-31194_5.10",
+          "expected_revision_matches_receipt": true,
+          "reason": null,
+          "source_dir_exists": true,
+          "source_dir_matches_receipt": true,
+          "source_receipt_case_id": "v8:DSpace__DSpace_CVE-2022-31194_5.10",
+          "source_receipt_present": true,
+          "source_receipt_status": "source_materialized_exact_archive_snapshot",
+          "verified": true
+        },
+        "verification_mode": "source_snapshot_receipt",
+        "verified": true
+      },
+      "source_integrity_evidence": {
+        "after_tree_sha256": "2f125a7ac1f67fc49482a898bdedebcb100a44a9bbbfc1c0d9f5dbddad60d0e8",
+        "before_tree_sha256": "2f125a7ac1f67fc49482a898bdedebcb100a44a9bbbfc1c0d9f5dbddad60d0e8",
+        "changed_path_count": 0,
+        "changed_paths": [],
+        "changed_paths_truncated": false,
+        "ignored_directory_names": [
+          ".git",
+          ".gradle",
+          "build",
+          "node_modules",
+          "out",
+          "target"
+        ],
+        "ignored_file_names": [
+          ".flattened-pom.xml",
+          "dependency-reduced-pom.xml"
+        ],
+        "reason": null,
+        "verified": true
+      },
+      "contract": {
+        "exact_declared_source_verified": true,
+        "new_attempt_database_only": true,
+        "non_generated_source_content_unchanged_after_build": true,
+        "official_query_change_forbidden": true,
+        "retrieval_and_target_data_not_consumed": true,
+        "source_edits_forbidden": true,
+        "source_revision_substitution_forbidden": true
+      },
+      "bounded_process": {
+        "returncode": 2,
+        "timed_out": false,
+        "elapsed_seconds": 74.022
+      },
+      "validated_decision": {
+        "schema_version": "route_hacker_codeql_repair.v1:validated_repair_decision",
+        "actions": [
+          {
+            "kind": "retry_same_command"
+          }
+        ],
+        "normalization": {
+          "dropped_redundant_actions": []
+        },
+        "rationale": "Transient 429 rate limit from Maven Central; retry may succeed after rate-limit window expires.",
+        "decision_sha256": "859bf1506be3e872dddd9de71661630493f4ace678cae35bb00fadc4ec8fd74e"
+      }
+    },
+    "repair_attempts": [
+      {
+        "decision_round": 0,
+        "repair_attempt": {
+          "schema_version": "route_hacker_codeql_repair.v1:attempt",
+          "case_id": "v8:DSpace__DSpace_CVE-2022-31194_5.10",
+          "project_slug": "DSpace__DSpace_CVE-2022-31194_5.10",
+          "status": "repair_attempt_failed",
+          "recorded_at": "2026-08-23T16:16:51+00:00",
+          "database_valid": false,
+          "executed_command": [
+            "WORKSPACE_ROOT/repro/iris/codeql/codeql",
+            "database",
+            "create",
+            "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/codeql-db",
+            "--language=java",
+            "--source-root=iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/source-000-network-rate-limit-retry-002",
+            "--overwrite",
+            "--command",
+            "mvn -DskipTests -Dmaven.javadoc.skip=true -Dcheckstyle.skip=true -Denforcer.skip=true -Dfindbugs.skip=true -Dlicense.skip=true -Dmaven.source.skip=true -Dpmd.skip=true -Drat.skip=true -Dspotbugs.skip=true -Dspotless.check.skip=true compile"
+          ],
+          "official_query_status": null,
+          "original_command_sha256": "83deef143220fed13dad68714d6e4fb14059cd8357863b1a4ee0586f80356695",
+          "log_sha256": "c92c34c5aab891d77989e87fa6fb54d8bfe24079c192f66144c703b4c2666e24",
+          "applied_repair": {
+            "applied_actions": [
+              {
+                "inherited_java_home": null,
+                "kind": "retry_same_command"
+              }
+            ],
+            "attempt_database_dir": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/codeql-db",
+            "build_command": [
+              "mvn",
+              "-DskipTests",
+              "-Dmaven.javadoc.skip=true",
+              "-Dcheckstyle.skip=true",
+              "-Denforcer.skip=true",
+              "-Dfindbugs.skip=true",
+              "-Dlicense.skip=true",
+              "-Dmaven.source.skip=true",
+              "-Dpmd.skip=true",
+              "-Drat.skip=true",
+              "-Dspotbugs.skip=true",
+              "-Dspotless.check.skip=true",
+              "compile"
+            ],
+            "source_root": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/source-000-network-rate-limit-retry-002",
+            "verified_environment": {
+              "GRADLE_USER_HOME": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/build-home/.gradle",
+              "HOME": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/build-home",
+              "MAVEN_OPTS_user_home": "-Duser.home=iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/build-home",
+              "MAVEN_REPOSITORY": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/build-home/.m2/repository",
+              "MAVEN_USER_HOME": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/build-home/.m2",
+              "rewritten_maven_repo_local_argument": null
+            }
+          },
+          "source_revision_evidence": {
+            "git_checkout": {
+              "expected_revision": "eca7968be7d6b9f8f5f302c9fc09f8186ed4809e",
+              "git_head": null,
+              "reason": "git_revision_probe_failed",
+              "source_dir": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/source-000-network-rate-limit-retry-002",
+              "verified": false
+            },
+            "source_snapshot_receipt": {
+              "archive_sha256_verified": true,
+              "archive_url_matches_revision": true,
+              "case_id_matches_receipt": true,
+              "expected_case_id": "v8:DSpace__DSpace_CVE-2022-31194_5.10",
+              "expected_revision_matches_receipt": true,
+              "reason": null,
+              "source_dir_exists": true,
+              "source_dir_matches_receipt": true,
+              "source_receipt_case_id": "v8:DSpace__DSpace_CVE-2022-31194_5.10",
+              "source_receipt_present": true,
+              "source_receipt_status": "source_materialized_exact_archive_snapshot",
+              "verified": true
+            },
+            "verification_mode": "source_snapshot_receipt",
+            "verified": true
+          },
+          "source_integrity_evidence": {
+            "after_tree_sha256": "2f125a7ac1f67fc49482a898bdedebcb100a44a9bbbfc1c0d9f5dbddad60d0e8",
+            "before_tree_sha256": "2f125a7ac1f67fc49482a898bdedebcb100a44a9bbbfc1c0d9f5dbddad60d0e8",
+            "changed_path_count": 0,
+            "changed_paths": [],
+            "changed_paths_truncated": false,
+            "ignored_directory_names": [
+              ".git",
+              ".gradle",
+              "build",
+              "node_modules",
+              "out",
+              "target"
+            ],
+            "ignored_file_names": [
+              ".flattened-pom.xml",
+              "dependency-reduced-pom.xml"
+            ],
+            "reason": null,
+            "verified": true
+          },
+          "contract": {
+            "exact_declared_source_verified": true,
+            "new_attempt_database_only": true,
+            "non_generated_source_content_unchanged_after_build": true,
+            "official_query_change_forbidden": true,
+            "retrieval_and_target_data_not_consumed": true,
+            "source_edits_forbidden": true,
+            "source_revision_substitution_forbidden": true
+          },
+          "bounded_process": {
+            "returncode": 2,
+            "timed_out": false,
+            "elapsed_seconds": 74.022
+          },
+          "validated_decision": {
+            "schema_version": "route_hacker_codeql_repair.v1:validated_repair_decision",
+            "actions": [
+              {
+                "kind": "retry_same_command"
+              }
+            ],
+            "normalization": {
+              "dropped_redundant_actions": []
+            },
+            "rationale": "Transient 429 rate limit from Maven Central; retry may succeed after rate-limit window expires.",
+            "decision_sha256": "859bf1506be3e872dddd9de71661630493f4ace678cae35bb00fadc4ec8fd74e"
+          }
+        }
+      }
+    ],
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:DSpace__DSpace_CVE-2022-31192_5.10",
+    "project_slug": "DSpace__DSpace_CVE-2022-31192_5.10",
+    "status": "upstream_dependency_rate_limited",
+    "recorded_at": "2026-08-23T16:08:09+00:00",
+    "attempt_number": 1,
+    "build_feedback_replan_count": 0,
+    "reason": "upstream_http_429_dependency_rate_limit_exhausted",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "max_network_rate_limit_retries": 2,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "network_rate_limit_backoff_seconds_base": 60.0,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true,
+      "upstream_http_429_replays_same_validated_command_only": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "eca7968be7d6b9f8f5f302c9fc09f8186ed4809e",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/source-preflight",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:DSpace__DSpace_CVE-2022-31192_5.10",
+        "expected_revision_matches_receipt": true,
+        "reason": null,
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": true,
+        "source_receipt_case_id": "v8:DSpace__DSpace_CVE-2022-31192_5.10",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": true
+      },
+      "verification_mode": "source_snapshot_receipt",
+      "verified": true
+    },
+    "failed_receipt_sha256": "43b2a79c8dbd71ea5a09858c6266165b15fbf5d7c99ca36578e8b0bf49ac2696",
+    "prior_completion_sha256": "048f30f5a6f864a524a88851f7abb6a68cfe5c611e25bdded6b6291c787cef47",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "fbb091e2603054e00bcdf95d0e636eb7159661c16f12ea785bbef52cac1b51ed",
+    "proposal_validation_errors": [],
+    "validated_decision": {
+      "schema_version": "route_hacker_codeql_repair.v1:validated_repair_decision",
+      "actions": [
+        {
+          "kind": "retry_same_command"
+        }
+      ],
+      "normalization": {
+        "dropped_redundant_actions": []
+      },
+      "rationale": "The failure is a transient 429 Too Many Requests from Maven repositories during POM parent resolution. No build configuration changes are needed; a retry may succeed once rate limiting clears.",
+      "decision_sha256": "3236bd5bf58c56d6b42e0bd61663e33e2506498f4f7b6fb6610fd439580c570a"
+    },
+    "repair_attempt": {
+      "schema_version": "route_hacker_codeql_repair.v1:attempt",
+      "case_id": "v8:DSpace__DSpace_CVE-2022-31192_5.10",
+      "project_slug": "DSpace__DSpace_CVE-2022-31192_5.10",
+      "status": "repair_attempt_failed",
+      "recorded_at": "2026-08-23T16:16:54+00:00",
+      "database_valid": false,
+      "executed_command": [
+        "WORKSPACE_ROOT/repro/iris/codeql/codeql",
+        "database",
+        "create",
+        "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/codeql-db",
+        "--language=java",
+        "--source-root=iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/source-000-network-rate-limit-retry-002",
+        "--overwrite",
+        "--command",
+        "mvn -DskipTests -Dmaven.javadoc.skip=true compile"
+      ],
+      "official_query_status": null,
+      "original_command_sha256": "c99e0641d9de105a1093e171c2e127cd3c2c7123ff180cfc38b1454018e32baf",
+      "log_sha256": "bc88001595593fae782f51322270a9cff9c77f6c77b12e61a0c5f7a33aafbfdd",
+      "applied_repair": {
+        "applied_actions": [
+          {
+            "inherited_java_home": null,
+            "kind": "retry_same_command"
+          }
+        ],
+        "attempt_database_dir": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/codeql-db",
+        "build_command": [
+          "mvn",
+          "-DskipTests",
+          "-Dmaven.javadoc.skip=true",
+          "compile"
+        ],
+        "source_root": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/source-000-network-rate-limit-retry-002",
+        "verified_environment": {
+          "GRADLE_USER_HOME": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/build-home/.gradle",
+          "HOME": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/build-home",
+          "MAVEN_OPTS_user_home": "-Duser.home=iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/build-home",
+          "MAVEN_REPOSITORY": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/build-home/.m2/repository",
+          "MAVEN_USER_HOME": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/build-home/.m2",
+          "rewritten_maven_repo_local_argument": null
+        }
+      },
+      "source_revision_evidence": {
+        "git_checkout": {
+          "expected_revision": "eca7968be7d6b9f8f5f302c9fc09f8186ed4809e",
+          "git_head": null,
+          "reason": "git_revision_probe_failed",
+          "source_dir": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/source-000-network-rate-limit-retry-002",
+          "verified": false
+        },
+        "source_snapshot_receipt": {
+          "archive_sha256_verified": true,
+          "archive_url_matches_revision": true,
+          "case_id_matches_receipt": true,
+          "expected_case_id": "v8:DSpace__DSpace_CVE-2022-31192_5.10",
+          "expected_revision_matches_receipt": true,
+          "reason": null,
+          "source_dir_exists": true,
+          "source_dir_matches_receipt": true,
+          "source_receipt_case_id": "v8:DSpace__DSpace_CVE-2022-31192_5.10",
+          "source_receipt_present": true,
+          "source_receipt_status": "source_materialized_exact_archive_snapshot",
+          "verified": true
+        },
+        "verification_mode": "source_snapshot_receipt",
+        "verified": true
+      },
+      "source_integrity_evidence": {
+        "after_tree_sha256": "2f125a7ac1f67fc49482a898bdedebcb100a44a9bbbfc1c0d9f5dbddad60d0e8",
+        "before_tree_sha256": "2f125a7ac1f67fc49482a898bdedebcb100a44a9bbbfc1c0d9f5dbddad60d0e8",
+        "changed_path_count": 0,
+        "changed_paths": [],
+        "changed_paths_truncated": false,
+        "ignored_directory_names": [
+          ".git",
+          ".gradle",
+          "build",
+          "node_modules",
+          "out",
+          "target"
+        ],
+        "ignored_file_names": [
+          ".flattened-pom.xml",
+          "dependency-reduced-pom.xml"
+        ],
+        "reason": null,
+        "verified": true
+      },
+      "contract": {
+        "exact_declared_source_verified": true,
+        "new_attempt_database_only": true,
+        "non_generated_source_content_unchanged_after_build": true,
+        "official_query_change_forbidden": true,
+        "retrieval_and_target_data_not_consumed": true,
+        "source_edits_forbidden": true,
+        "source_revision_substitution_forbidden": true
+      },
+      "bounded_process": {
+        "returncode": 2,
+        "timed_out": false,
+        "elapsed_seconds": 70.02
+      },
+      "validated_decision": {
+        "schema_version": "route_hacker_codeql_repair.v1:validated_repair_decision",
+        "actions": [
+          {
+            "kind": "retry_same_command"
+          }
+        ],
+        "normalization": {
+          "dropped_redundant_actions": []
+        },
+        "rationale": "The failure is a transient 429 Too Many Requests from Maven repositories during POM parent resolution. No build configuration changes are needed; a retry may succeed once rate limiting clears.",
+        "decision_sha256": "3236bd5bf58c56d6b42e0bd61663e33e2506498f4f7b6fb6610fd439580c570a"
+      }
+    },
+    "repair_attempts": [
+      {
+        "decision_round": 0,
+        "repair_attempt": {
+          "schema_version": "route_hacker_codeql_repair.v1:attempt",
+          "case_id": "v8:DSpace__DSpace_CVE-2022-31192_5.10",
+          "project_slug": "DSpace__DSpace_CVE-2022-31192_5.10",
+          "status": "repair_attempt_failed",
+          "recorded_at": "2026-08-23T16:16:54+00:00",
+          "database_valid": false,
+          "executed_command": [
+            "WORKSPACE_ROOT/repro/iris/codeql/codeql",
+            "database",
+            "create",
+            "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/codeql-db",
+            "--language=java",
+            "--source-root=iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/source-000-network-rate-limit-retry-002",
+            "--overwrite",
+            "--command",
+            "mvn -DskipTests -Dmaven.javadoc.skip=true compile"
+          ],
+          "official_query_status": null,
+          "original_command_sha256": "c99e0641d9de105a1093e171c2e127cd3c2c7123ff180cfc38b1454018e32baf",
+          "log_sha256": "bc88001595593fae782f51322270a9cff9c77f6c77b12e61a0c5f7a33aafbfdd",
+          "applied_repair": {
+            "applied_actions": [
+              {
+                "inherited_java_home": null,
+                "kind": "retry_same_command"
+              }
+            ],
+            "attempt_database_dir": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/codeql-db",
+            "build_command": [
+              "mvn",
+              "-DskipTests",
+              "-Dmaven.javadoc.skip=true",
+              "compile"
+            ],
+            "source_root": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/source-000-network-rate-limit-retry-002",
+            "verified_environment": {
+              "GRADLE_USER_HOME": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/build-home/.gradle",
+              "HOME": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/build-home",
+              "MAVEN_OPTS_user_home": "-Duser.home=iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/build-home",
+              "MAVEN_REPOSITORY": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/build-home/.m2/repository",
+              "MAVEN_USER_HOME": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/build-home/.m2",
+              "rewritten_maven_repo_local_argument": null
+            }
+          },
+          "source_revision_evidence": {
+            "git_checkout": {
+              "expected_revision": "eca7968be7d6b9f8f5f302c9fc09f8186ed4809e",
+              "git_head": null,
+              "reason": "git_revision_probe_failed",
+              "source_dir": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/source-000-network-rate-limit-retry-002",
+              "verified": false
+            },
+            "source_snapshot_receipt": {
+              "archive_sha256_verified": true,
+              "archive_url_matches_revision": true,
+              "case_id_matches_receipt": true,
+              "expected_case_id": "v8:DSpace__DSpace_CVE-2022-31192_5.10",
+              "expected_revision_matches_receipt": true,
+              "reason": null,
+              "source_dir_exists": true,
+              "source_dir_matches_receipt": true,
+              "source_receipt_case_id": "v8:DSpace__DSpace_CVE-2022-31192_5.10",
+              "source_receipt_present": true,
+              "source_receipt_status": "source_materialized_exact_archive_snapshot",
+              "verified": true
+            },
+            "verification_mode": "source_snapshot_receipt",
+            "verified": true
+          },
+          "source_integrity_evidence": {
+            "after_tree_sha256": "2f125a7ac1f67fc49482a898bdedebcb100a44a9bbbfc1c0d9f5dbddad60d0e8",
+            "before_tree_sha256": "2f125a7ac1f67fc49482a898bdedebcb100a44a9bbbfc1c0d9f5dbddad60d0e8",
+            "changed_path_count": 0,
+            "changed_paths": [],
+            "changed_paths_truncated": false,
+            "ignored_directory_names": [
+              ".git",
+              ".gradle",
+              "build",
+              "node_modules",
+              "out",
+              "target"
+            ],
+            "ignored_file_names": [
+              ".flattened-pom.xml",
+              "dependency-reduced-pom.xml"
+            ],
+            "reason": null,
+            "verified": true
+          },
+          "contract": {
+            "exact_declared_source_verified": true,
+            "new_attempt_database_only": true,
+            "non_generated_source_content_unchanged_after_build": true,
+            "official_query_change_forbidden": true,
+            "retrieval_and_target_data_not_consumed": true,
+            "source_edits_forbidden": true,
+            "source_revision_substitution_forbidden": true
+          },
+          "bounded_process": {
+            "returncode": 2,
+            "timed_out": false,
+            "elapsed_seconds": 70.02
+          },
+          "validated_decision": {
+            "schema_version": "route_hacker_codeql_repair.v1:validated_repair_decision",
+            "actions": [
+              {
+                "kind": "retry_same_command"
+              }
+            ],
+            "normalization": {
+              "dropped_redundant_actions": []
+            },
+            "rationale": "The failure is a transient 429 Too Many Requests from Maven repositories during POM parent resolution. No build configuration changes are needed; a retry may succeed once rate limiting clears.",
+            "decision_sha256": "3236bd5bf58c56d6b42e0bd61663e33e2506498f4f7b6fb6610fd439580c570a"
+          }
+        }
+      }
+    ],
+    "historical_snapshot": true
+  }
+]

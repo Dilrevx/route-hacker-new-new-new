@@ -13,6 +13,15 @@ existing fixed143 results and pipeline modules, with offline verification and a
 selected-checkpoint inference example. Historical P3, frozen 4B comparisons, and
 later 4B query-LoRA research are kept distinct.
 
+### Historical environment repairs
+
+The [environment-fix archive](baselines/environment-fixes/README.md) preserves
+project-specific build and launch recipes, patches, constrained CodeQL repair
+decisions, and verification indexes. Compile success, historical runtime
+readiness, and source-insertion experiments are recorded separately. Large
+dependency contexts and image layers are not implicitly backed up by the small
+recipe archive.
+
 ## Experiment results index
 
 This repository keeps portable experiment snapshots under each module's `results/`

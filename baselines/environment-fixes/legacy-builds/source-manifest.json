@@ -1,0 +1,1812 @@
+{
+  "schema_version": 1,
+  "preserved_on": "2026-09-30",
+  "source_bundle": "dockerfiles-backup-20260704-150750.tar.gz",
+  "source_bundle_sha256": "5163e9c4c8b18f73d8d4180343f8580d8c220a7abb0ffd05b12ff9dac240fa02",
+  "files_are_original_bytes": true,
+  "files": [
+    {
+      "path": "recipes/1panel-dev__cordyscrm/c87682afa8df79853299f75489c9d333f7bc5fce/Dockerfile",
+      "bytes": 1269,
+      "sha256": "3704b6c4b40cfd93d89e7f7672a4970afb30278ba4086fb0e29db6f44f39d4ba",
+      "source_member": "./1panel-dev__cordyscrm/c87682afa8df79853299f75489c9d333f7bc5fce/Dockerfile"
+    },
+    {
+      "path": "recipes/1panel-dev__cordyscrm/c87682afa8df79853299f75489c9d333f7bc5fce/build-notes.md",
+      "bytes": 445,
+      "sha256": "a93c7ba6598080f856fc955e6073198c1c1b0d385c025158b89da2e6471e2288",
+      "source_member": "./1panel-dev__cordyscrm/c87682afa8df79853299f75489c9d333f7bc5fce/build-notes.md"
+    },
+    {
+      "path": "recipes/94fzb__zrlog/a7ab557/Dockerfile",
+      "bytes": 553,
+      "sha256": "442a2c9ece8e1fdd0082e3d0ea5d93ee5aa96caaffb8b9b31420f20d3cf710ba",
+      "source_member": "./94fzb__zrlog/a7ab557/Dockerfile"
+    },
+    {
+      "path": "recipes/DSpace__DSpace/0de9680/Dockerfile",
+      "bytes": 323,
+      "sha256": "fe8e88f1059523385dbd156df85fbb113dd9d71058e886ec468464098a84524d",
+      "source_member": "./DSpace__DSpace/0de9680/Dockerfile"
+    },
+    {
+      "path": "recipes/DSpace__DSpace/35/Dockerfile",
+      "bytes": 348,
+      "sha256": "60eaf210a9cb6e084ea6e32aef3fa85be2de23de37316484a198aa53428f1932",
+      "source_member": "./DSpace__DSpace/35/Dockerfile"
+    },
+    {
+      "path": "recipes/DSpace__DSpace/37/Dockerfile",
+      "bytes": 644,
+      "sha256": "59343642945bf3d6a6bd1dc8207600513e790e910b99774b3b01210329334b3c",
+      "source_member": "./DSpace__DSpace/37/Dockerfile"
+    },
+    {
+      "path": "recipes/DSpace__DSpace/88/Dockerfile",
+      "bytes": 644,
+      "sha256": "59343642945bf3d6a6bd1dc8207600513e790e910b99774b3b01210329334b3c",
+      "source_member": "./DSpace__DSpace/88/Dockerfile"
+    },
+    {
+      "path": "recipes/DSpace__DSpace/88/build-notes.md",
+      "bytes": 329,
+      "sha256": "37f3c6f0257b9ecdbc31e60253b44503bf583ede6546f8a172c325cef9e3ecfd",
+      "source_member": "./DSpace__DSpace/88/build-notes.md"
+    },
+    {
+      "path": "recipes/Graylog2__graylog2-server/31bc13d/Dockerfile",
+      "bytes": 498,
+      "sha256": "cfe9ed372fc8bf8b0aa0a2d38b2f159ad681c9e81e2c205dbc52ac0db4c1ae72",
+      "source_member": "./Graylog2__graylog2-server/31bc13d/Dockerfile"
+    },
+    {
+      "path": "recipes/Graylog2__graylog2-server/47/Dockerfile",
+      "bytes": 485,
+      "sha256": "0c4f87c1b0f6d234fba52cf5e0399cb3f9ea79851c72e118e2c62927251f5744",
+      "source_member": "./Graylog2__graylog2-server/47/Dockerfile"
+    },
+    {
+      "path": "recipes/Graylog2__graylog2-server/47/build-notes.md",
+      "bytes": 473,
+      "sha256": "0057cf9ecb1fca3f47c00e17dc5986f6146a376616c0f42d72555be39e0d6d3d",
+      "source_member": "./Graylog2__graylog2-server/47/build-notes.md"
+    },
+    {
+      "path": "recipes/Karlatemp__UnsafeAccessor/4ef8300/Dockerfile",
+      "bytes": 889,
+      "sha256": "c36a9a6209f856c0aadbf74fd486fb403012b6f5e98045e0fb597ebc687a9896",
+      "source_member": "./Karlatemp__UnsafeAccessor/4ef8300/Dockerfile"
+    },
+    {
+      "path": "recipes/Karlatemp__UnsafeAccessor/971c479/Dockerfile",
+      "bytes": 926,
+      "sha256": "877e848b6d0e3d090e4bbcd65793a38d20c335f3979b0d33a20b3b653a1b4cce",
+      "source_member": "./Karlatemp__UnsafeAccessor/971c479/Dockerfile"
+    },
+    {
+      "path": "recipes/OpenRefine__OpenRefine/b4b1006/Dockerfile",
+      "bytes": 371,
+      "sha256": "9ddd674ae52576e7d037118227dcd300d33a1d826b8124de4f81cf288ca1f073",
+      "source_member": "./OpenRefine__OpenRefine/b4b1006/Dockerfile"
+    },
+    {
+      "path": "recipes/PacoVK__tapir/c36360b/Dockerfile",
+      "bytes": 813,
+      "sha256": "b2924d45b35d440bcf93283dd86f5a9dc4598674a316112f516f52ae9a079516",
+      "source_member": "./PacoVK__tapir/c36360b/Dockerfile"
+    },
+    {
+      "path": "recipes/Ree6-Applications__Ree6/0f75bac/Dockerfile",
+      "bytes": 561,
+      "sha256": "1aa313c9d9c8f1be4f3b088e378f0737c102cfb06003b546c8e9618585662665",
+      "source_member": "./Ree6-Applications__Ree6/0f75bac/Dockerfile"
+    },
+    {
+      "path": "recipes/Ree6-Applications__Ree6/459b5bc/Dockerfile",
+      "bytes": 705,
+      "sha256": "05f664be2911b8791789c6825154f9080ef07ee3bae998f08055656f8a2f18ef",
+      "source_member": "./Ree6-Applications__Ree6/459b5bc/Dockerfile"
+    },
+    {
+      "path": "recipes/Zimbra__zm-mailbox/1df440e/Dockerfile",
+      "bytes": 816,
+      "sha256": "f83fd9f36edddc4c7a6fdc637991e25be9eeb8ca39322c3e001d134ec8d80c60",
+      "source_member": "./Zimbra__zm-mailbox/1df440e/Dockerfile"
+    },
+    {
+      "path": "recipes/Zimbra__zm-mailbox/9e80c50/Dockerfile",
+      "bytes": 906,
+      "sha256": "087353e62b1a6a6109aa8511ad9d6782ddd4b53391e1ae70ebdf5dbe987a6c93",
+      "source_member": "./Zimbra__zm-mailbox/9e80c50/Dockerfile"
+    },
+    {
+      "path": "recipes/aiven-open__bigquery-connector-for-apache-kafka/20ea3921c6fe72d605a033c1943b20f49eaba981/Dockerfile",
+      "bytes": 358,
+      "sha256": "3628fbf06fc6e9018eec17b2082315bca3f92676e6615b29c66c6ea28f379594",
+      "source_member": "./aiven-open__bigquery-connector-for-apache-kafka/20ea3921c6fe72d605a033c1943b20f49eaba981/Dockerfile"
+    },
+    {
+      "path": "recipes/aiven-open__bigquery-connector-for-apache-kafka/9905079/Dockerfile",
+      "bytes": 497,
+      "sha256": "75628426d8045933645ddf203736029ad6b6c701bc0a5f5903d01e651622bfb8",
+      "source_member": "./aiven-open__bigquery-connector-for-apache-kafka/9905079/Dockerfile"
+    },
+    {
+      "path": "recipes/aiven-open__bigquery-connector-for-apache-kafka/9905079/build-notes.md",
+      "bytes": 100,
+      "sha256": "4e786b6f3b8e7e0d0d96604373ddc48466d5d4a429beb85218ad732caee348a3",
+      "source_member": "./aiven-open__bigquery-connector-for-apache-kafka/9905079/build-notes.md"
+    },
+    {
+      "path": "recipes/alibaba__nacos/80/Dockerfile",
+      "bytes": 572,
+      "sha256": "87e2bb50d9a5b8ac5e529cd7ecd7ccd92d4ff82691accd425b4c8dc2fb609fa7",
+      "source_member": "./alibaba__nacos/80/Dockerfile"
+    },
+    {
+      "path": "recipes/alibaba__one-java-agent/26/Dockerfile",
+      "bytes": 354,
+      "sha256": "fac8c336b34a58723e9bda3c7ae70c428c1fac01e2d45da4038aa9f96174b9a3",
+      "source_member": "./alibaba__one-java-agent/26/Dockerfile"
+    },
+    {
+      "path": "recipes/aosp-mirror__platform_frameworks_base/03da463/Dockerfile",
+      "bytes": 1512,
+      "sha256": "a5053a4875158838729a87c7d5afd340728dda884d5b0bb2a357d18c8aa5f3d8",
+      "source_member": "./aosp-mirror__platform_frameworks_base/03da463/Dockerfile"
+    },
+    {
+      "path": "recipes/aosp-mirror__platform_frameworks_base/0c17049/Dockerfile",
+      "bytes": 1412,
+      "sha256": "84d3845ca7923645a180c7509d9b5417de2e7c8c6a7c9bcff971ec9009bb6da0",
+      "source_member": "./aosp-mirror__platform_frameworks_base/0c17049/Dockerfile"
+    },
+    {
+      "path": "recipes/aosp-mirror__platform_frameworks_base/c4ce178/Dockerfile",
+      "bytes": 1412,
+      "sha256": "84d3845ca7923645a180c7509d9b5417de2e7c8c6a7c9bcff971ec9009bb6da0",
+      "source_member": "./aosp-mirror__platform_frameworks_base/c4ce178/Dockerfile"
+    },
+    {
+      "path": "recipes/aosp-mirror__platform_frameworks_base/e237a83/Dockerfile",
+      "bytes": 1512,
+      "sha256": "a5053a4875158838729a87c7d5afd340728dda884d5b0bb2a357d18c8aa5f3d8",
+      "source_member": "./aosp-mirror__platform_frameworks_base/e237a83/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__activemq/00921f2/Dockerfile",
+      "bytes": 596,
+      "sha256": "b1582d98da2529dfb34a2745cccdda50556d7d9cb47ceb13389711b4e2625b57",
+      "source_member": "./apache__activemq/00921f2/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__activemq/101/Dockerfile",
+      "bytes": 848,
+      "sha256": "0c1505cb3a454e51015936d7ee3af60296b1c9d659a49d865eff39a3bb763a9c",
+      "source_member": "./apache__activemq/101/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__activemq/104/Dockerfile",
+      "bytes": 868,
+      "sha256": "980c40c055ab670450509e8608160dc69ef07b8e393c70897d1184e419ec27c7",
+      "source_member": "./apache__activemq/104/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__activemq/63/Dockerfile",
+      "bytes": 2169,
+      "sha256": "a0a8ab40a933ed903bc33dce43067471c30367c12fe37fb7d0cc8477ac213169",
+      "source_member": "./apache__activemq/63/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__activemq/Dockerfile",
+      "bytes": 932,
+      "sha256": "1905c0bb857439f07e9f401e9540396b1ee97ab84d4a43cecb4dc0d740a5229c",
+      "source_member": "./apache__activemq/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__axis-axis1-java/124/Dockerfile",
+      "bytes": 384,
+      "sha256": "e5530351596a267f4761922d9845b3c7c7629f45dd08505cf486bc67a0bf31ac",
+      "source_member": "./apache__axis-axis1-java/124/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__commons-io/19/Dockerfile",
+      "bytes": 322,
+      "sha256": "5061b734fdaa4c0a0c4f67c6564868f9de65ec4706a8fe93bfb1e95a6874b806",
+      "source_member": "./apache__commons-io/19/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__commons-io/19/build-notes.md",
+      "bytes": 242,
+      "sha256": "60083011b9f31c9a38cc10c064b32094431b1c55cb8a8be824a112252f861cc4",
+      "source_member": "./apache__commons-io/19/build-notes.md"
+    },
+    {
+      "path": "recipes/apache__commons-text/111/Dockerfile",
+      "bytes": 249,
+      "sha256": "c923732cb8f747c703f568b98eb273b0ecf9f455a5cef1aecf72fd28e28cf12b",
+      "source_member": "./apache__commons-text/111/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__cxf/76/Dockerfile",
+      "bytes": 347,
+      "sha256": "6d1a2c44d5f19c90739b84f4bb353b972700991c67fe46a799681ecdd3c26656",
+      "source_member": "./apache__cxf/76/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__cxf/76/build-notes.md",
+      "bytes": 361,
+      "sha256": "498aff4d9320daf41593b0e2dbffd00cfe1adc7a4ebe2937cdd605f7c84641e8",
+      "source_member": "./apache__cxf/76/build-notes.md"
+    },
+    {
+      "path": "recipes/apache__cxf/86/Dockerfile",
+      "bytes": 366,
+      "sha256": "2a99af11333994f2b2b565b24f51bb026e7dcf60da5d92e72a4f507ebd901ecd",
+      "source_member": "./apache__cxf/86/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__cxf/86/build-notes.md",
+      "bytes": 126,
+      "sha256": "8630f301551a889a40aa525048127559b978bfdfa039e8da248b7abded0267d2",
+      "source_member": "./apache__cxf/86/build-notes.md"
+    },
+    {
+      "path": "recipes/apache__dolphinscheduler/119/Dockerfile",
+      "bytes": 422,
+      "sha256": "e7a564a5338092326fe1c6650d645494eb04934ea655b47a69fd1fb922069b64",
+      "source_member": "./apache__dolphinscheduler/119/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__dolphinscheduler/120/Dockerfile",
+      "bytes": 301,
+      "sha256": "011b42e023591ab5cca751a193d4e20205cdd8d50c2c985a05aab9ab687ee3de",
+      "source_member": "./apache__dolphinscheduler/120/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__dolphinscheduler/120/build-notes.md",
+      "bytes": 95,
+      "sha256": "156e9ef53ee57e9883644ccb713b9db9f6ccbb22218b9f1db987c088a7eeef8f",
+      "source_member": "./apache__dolphinscheduler/120/build-notes.md"
+    },
+    {
+      "path": "recipes/apache__dolphinscheduler/39/Dockerfile",
+      "bytes": 395,
+      "sha256": "82d4c260cad4bc43673e6ddc2f98928ed7bed5ce8bf6ee23c3a6937eaef277be",
+      "source_member": "./apache__dolphinscheduler/39/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__dolphinscheduler/40/Dockerfile",
+      "bytes": 416,
+      "sha256": "0ebb96c1015da0f8b5102c75b27e952ae6890a8545d070d55f75d32d97753e3c",
+      "source_member": "./apache__dolphinscheduler/40/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__dubbo/107/Dockerfile",
+      "bytes": 344,
+      "sha256": "fd2620a10effbbfdc22e4bfb39680ef6182c3110af2bbc03b4793b8a97e107a9",
+      "source_member": "./apache__dubbo/107/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__dubbo/108/Dockerfile",
+      "bytes": 344,
+      "sha256": "fd2620a10effbbfdc22e4bfb39680ef6182c3110af2bbc03b4793b8a97e107a9",
+      "source_member": "./apache__dubbo/108/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__flink/17/Dockerfile",
+      "bytes": 1001,
+      "sha256": "af7977a085c2444eaa1d39598a0780253a55539c9213950edf9c9ea8835136e8",
+      "source_member": "./apache__flink/17/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__flink/17/build-notes.md",
+      "bytes": 414,
+      "sha256": "2b7ef8a28e3f3166f180aff9588b3b8d2685c6ebf35f3450c70508280a2d4d8f",
+      "source_member": "./apache__flink/17/build-notes.md"
+    },
+    {
+      "path": "recipes/apache__incubator-seata/20cd9625d23f99b71fefc83b8db96c14092a9950/Dockerfile",
+      "bytes": 401,
+      "sha256": "b34e993bf66bdd1ebdcd3bfd5ef04305545d4becdad8f9980a812de6257aa904",
+      "source_member": "./apache__incubator-seata/20cd9625d23f99b71fefc83b8db96c14092a9950/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__incubator-seata/20cd9625d23f99b71fefc83b8db96c14092a9950/build-notes.md",
+      "bytes": 10,
+      "sha256": "acbdda488f705911e91e020e5e7c6c1189f9c92b90ab8d418791fcb0b1b8c4d7",
+      "source_member": "./apache__incubator-seata/20cd9625d23f99b71fefc83b8db96c14092a9950/build-notes.md"
+    },
+    {
+      "path": "recipes/apache__inlong/6b4b1a7/Dockerfile",
+      "bytes": 655,
+      "sha256": "d8174e46e3e09412b47afcd2900c2287240a02930e08a6a75131372b780618b3",
+      "source_member": "./apache__inlong/6b4b1a7/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__iotdb/a92e210/Dockerfile",
+      "bytes": 319,
+      "sha256": "82c94e8a6df239cc02fe59592a0b88c6702edfb7c602e39d81dde530f24e1ccd",
+      "source_member": "./apache__iotdb/a92e210/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__iotdb-web-workbench/ea0774b/Dockerfile",
+      "bytes": 342,
+      "sha256": "f74838621758951447e064f6132f0de7200b397db7cffaf317c6d785a7c883bb",
+      "source_member": "./apache__iotdb-web-workbench/ea0774b/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__james-project/21/Dockerfile",
+      "bytes": 447,
+      "sha256": "961721d37e1bd796d988c631233a7d0367af7bcac27835073c15125e0dd83adf",
+      "source_member": "./apache__james-project/21/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__james-project/21/build-notes.md",
+      "bytes": 634,
+      "sha256": "a12e3946398cee11191eca26005a2ccf0f098f5cf032bc6e18d9ffd7b713da78",
+      "source_member": "./apache__james-project/21/build-notes.md"
+    },
+    {
+      "path": "recipes/apache__jspwiki/10/Dockerfile",
+      "bytes": 346,
+      "sha256": "ad54853f1979be928bfaa5cc562c4dac8f92d443c1f8ff1c6333f24940678e8b",
+      "source_member": "./apache__jspwiki/10/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__jspwiki/71/Dockerfile",
+      "bytes": 346,
+      "sha256": "ad54853f1979be928bfaa5cc562c4dac8f92d443c1f8ff1c6333f24940678e8b",
+      "source_member": "./apache__jspwiki/71/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__jspwiki/72/Dockerfile",
+      "bytes": 346,
+      "sha256": "ad54853f1979be928bfaa5cc562c4dac8f92d443c1f8ff1c6333f24940678e8b",
+      "source_member": "./apache__jspwiki/72/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__jspwiki/73/Dockerfile",
+      "bytes": 346,
+      "sha256": "ad54853f1979be928bfaa5cc562c4dac8f92d443c1f8ff1c6333f24940678e8b",
+      "source_member": "./apache__jspwiki/73/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__jspwiki/73/build-notes.md",
+      "bytes": 60,
+      "sha256": "74547d43f531bdd9890ed9046837f3a0da7b195a35dd16532813e39f153d8a0b",
+      "source_member": "./apache__jspwiki/73/build-notes.md"
+    },
+    {
+      "path": "recipes/apache__jspwiki/74/Dockerfile",
+      "bytes": 346,
+      "sha256": "ad54853f1979be928bfaa5cc562c4dac8f92d443c1f8ff1c6333f24940678e8b",
+      "source_member": "./apache__jspwiki/74/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__jspwiki/95/Dockerfile",
+      "bytes": 346,
+      "sha256": "ad54853f1979be928bfaa5cc562c4dac8f92d443c1f8ff1c6333f24940678e8b",
+      "source_member": "./apache__jspwiki/95/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__karaf/20/Dockerfile",
+      "bytes": 761,
+      "sha256": "f37306ca76011708ecf06d1a27027382ebf174ac9221c2ed5d027d7b0d74e9b1",
+      "source_member": "./apache__karaf/20/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__karaf/20/build-notes.md",
+      "bytes": 409,
+      "sha256": "9a2b07f0f00b92b6c6e9e49223b0c03b584c49a7e3ed982fbb514fcb983354a7",
+      "source_member": "./apache__karaf/20/build-notes.md"
+    },
+    {
+      "path": "recipes/apache__mina-sshd/48/Dockerfile",
+      "bytes": 348,
+      "sha256": "76d4d33228e66c835745ab16bf2a03a5448c27a974b1cef95681a674b1d23f1e",
+      "source_member": "./apache__mina-sshd/48/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__myfaces/27/Dockerfile",
+      "bytes": 271,
+      "sha256": "af3af0003d708c333ff71b553fd1c9a325d1ee1d29be727a69a71f3e13328bf4",
+      "source_member": "./apache__myfaces/27/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__nifi/115/Dockerfile",
+      "bytes": 1132,
+      "sha256": "467cdcdc6ba123c42b4df2e46a256ba9508d3a4b0898252ba1d5602baeb2e87a",
+      "source_member": "./apache__nifi/115/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__nifi/67/Dockerfile",
+      "bytes": 750,
+      "sha256": "8dcd4fe526ac90c551a36a6d900e34d795ce205335283d6cf7f5d5e4becbaac7",
+      "source_member": "./apache__nifi/67/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__openmeetings/1fb71af/Dockerfile",
+      "bytes": 328,
+      "sha256": "5b28ec1b1d6521e0f3b2c2425223c583de8854464d904b872a9d28c11cc01f21",
+      "source_member": "./apache__openmeetings/1fb71af/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__rocketmq/116/Dockerfile",
+      "bytes": 860,
+      "sha256": "c8005044bf3c6389ac27e1c4ffcfa22891fd17104526f00a62d2e173e4cf1265",
+      "source_member": "./apache__rocketmq/116/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__rocketmq/15/Dockerfile",
+      "bytes": 624,
+      "sha256": "dc96760a0a2b7eedbf5e8106717bfb75d37fcb64316c733e260fb3f0f27b1fc3",
+      "source_member": "./apache__rocketmq/15/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__shiro/49/Dockerfile",
+      "bytes": 435,
+      "sha256": "0eecbf0c2d1138194b1ef3bff88b162f92d052e7f8aa99251c9821836204619f",
+      "source_member": "./apache__shiro/49/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__shiro/54/Dockerfile",
+      "bytes": 346,
+      "sha256": "3b1dd2f87d6a6fa6bd59db3139a433dccfd95c0346519d252b6788f20053d96c",
+      "source_member": "./apache__shiro/54/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__sling-org-apache-sling-servlets-resolver/55/Dockerfile",
+      "bytes": 379,
+      "sha256": "4fc3f40d2ae96f21ad4d1439bacd2bd4f8dd0823a06d3bf5f51273c2980a1127",
+      "source_member": "./apache__sling-org-apache-sling-servlets-resolver/55/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__sling-org-apache-sling-xss/87/Dockerfile",
+      "bytes": 417,
+      "sha256": "318f5ce39f4f7bf580fbd7bce0bd6f9b4f05474eb91f0226552e8acde8601e74",
+      "source_member": "./apache__sling-org-apache-sling-xss/87/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__struts/103/Dockerfile",
+      "bytes": 633,
+      "sha256": "1c6d29acc2855916311ffbf81b9ede1796603e7edeff5bcd5adc5f1f0d313a1d",
+      "source_member": "./apache__struts/103/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__struts/103/build-notes.md",
+      "bytes": 399,
+      "sha256": "57a974bb6aa0032020b7c93d62dba628606135dd8cc0e0ab70c1715cd91fa901",
+      "source_member": "./apache__struts/103/build-notes.md"
+    },
+    {
+      "path": "recipes/apache__tapestry-5/12/Dockerfile",
+      "bytes": 645,
+      "sha256": "e90f4a7d14ca7435e9daf1a3a30e80afed59e5430d9158e058e96de8ec7cff67",
+      "source_member": "./apache__tapestry-5/12/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__tika/8/Dockerfile",
+      "bytes": 268,
+      "sha256": "f82174b224e2419ea50bc5721b7cf3d0a816c5dffb12058247b3097c3be6a448",
+      "source_member": "./apache__tika/8/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__uima-uimaj/42/Dockerfile",
+      "bytes": 1309,
+      "sha256": "958f1f22561ea302b4aa5af017d551a7c96859b4ebee1f637dc40d4ea3cce1f2",
+      "source_member": "./apache__uima-uimaj/42/Dockerfile"
+    },
+    {
+      "path": "recipes/apache__uima-uimaj/42/build-notes.md",
+      "bytes": 526,
+      "sha256": "f6e089415258ad9c142fe5a5c30b2e20ad0f36fc796c89ed07269570b335819b",
+      "source_member": "./apache__uima-uimaj/42/build-notes.md"
+    },
+    {
+      "path": "recipes/appsmithorg__appsmith/6f9ee6226bac13fb4b836940b557913fff78b633/Dockerfile",
+      "bytes": 397,
+      "sha256": "2703144fdf8f9eab73a42489adbc32c0cb019e4ce5cc81a61b2fffc99952de29",
+      "source_member": "./appsmithorg__appsmith/6f9ee6226bac13fb4b836940b557913fff78b633/Dockerfile"
+    },
+    {
+      "path": "recipes/appsmithorg__appsmith/6f9ee6226bac13fb4b836940b557913fff78b633/build-notes.md",
+      "bytes": 275,
+      "sha256": "c7ca9caeede428f892cfb9530729a2c5e65a673ecef71ae9c9a4b5734f9de90b",
+      "source_member": "./appsmithorg__appsmith/6f9ee6226bac13fb4b836940b557913fff78b633/build-notes.md"
+    },
+    {
+      "path": "recipes/appsmithorg__appsmith/9864994/Dockerfile",
+      "bytes": 368,
+      "sha256": "26cb1ac7e026651451df28cd34947a40a4873caabd2d459e35f3888572c44a65",
+      "source_member": "./appsmithorg__appsmith/9864994/Dockerfile"
+    },
+    {
+      "path": "recipes/bcgit__bc-java/656bae0dbd9b1521f840521ff786e78749fe3057/Dockerfile",
+      "bytes": 478,
+      "sha256": "a2e071ec5ab6724805df303dabdecf1e93d2b977b27f185a18bb85dd1bee6e84",
+      "source_member": "./bcgit__bc-java/656bae0dbd9b1521f840521ff786e78749fe3057/Dockerfile"
+    },
+    {
+      "path": "recipes/bcgit__bc-java/656bae0dbd9b1521f840521ff786e78749fe3057/build-notes.md",
+      "bytes": 73,
+      "sha256": "fc532478f29ce8e394d59a04e6b1882bd1c69a26ae61386d7561897f2c55c817",
+      "source_member": "./bcgit__bc-java/656bae0dbd9b1521f840521ff786e78749fe3057/build-notes.md"
+    },
+    {
+      "path": "recipes/bcgit__bc-java/b42574345414e4b7c8051b16fa1fafe01c29871f/Dockerfile",
+      "bytes": 1354,
+      "sha256": "23480613d261f805987cf07e3fa66601fb2222e4853f408b23daa31969ef9166",
+      "source_member": "./bcgit__bc-java/b42574345414e4b7c8051b16fa1fafe01c29871f/Dockerfile"
+    },
+    {
+      "path": "recipes/bcgit__bc-java/b42574345414e4b7c8051b16fa1fafe01c29871f/build-notes.md",
+      "bytes": 282,
+      "sha256": "91de924983668e2224f39ba75cb4da5bc5f0bd56fa9de39aa4a08a81c3d1f006",
+      "source_member": "./bcgit__bc-java/b42574345414e4b7c8051b16fa1fafe01c29871f/build-notes.md"
+    },
+    {
+      "path": "recipes/bcgit__bc-java/d20cdb8430e09224114fec0179a71859929fcbde/Dockerfile",
+      "bytes": 1417,
+      "sha256": "17a016d15df7b49811cdf896060436746b83fef4ad143457f08d2af74639a37c",
+      "source_member": "./bcgit__bc-java/d20cdb8430e09224114fec0179a71859929fcbde/Dockerfile"
+    },
+    {
+      "path": "recipes/bcgit__bc-java/dc7530939ffb6cdb57636f3609d98e23b94e71c1/Dockerfile",
+      "bytes": 442,
+      "sha256": "0ffc53436fe3f68b4e0542354b8452ce1423ca3021556eb164f726424eda148e",
+      "source_member": "./bcgit__bc-java/dc7530939ffb6cdb57636f3609d98e23b94e71c1/Dockerfile"
+    },
+    {
+      "path": "recipes/bitcoinj__bitcoinj/2bc5653c41d260d840692bc554690d4d79208f9c/Dockerfile",
+      "bytes": 475,
+      "sha256": "5976292c4553d909198c6c0845ee75da7479f9d3a7327197b4151df37f0cf90d",
+      "source_member": "./bitcoinj__bitcoinj/2bc5653c41d260d840692bc554690d4d79208f9c/Dockerfile"
+    },
+    {
+      "path": "recipes/codecentric__spring-boot-admin/113/Dockerfile",
+      "bytes": 287,
+      "sha256": "002ddaa8253903442b77ba001abcf54f13747b43aae6d91324b637ab8468cb8d",
+      "source_member": "./codecentric__spring-boot-admin/113/Dockerfile"
+    },
+    {
+      "path": "recipes/codehaus-plexus__plexus-archiver/30/Dockerfile",
+      "bytes": 656,
+      "sha256": "ef58b6b3239cc504f9fa995593400b38cb184135c5ad66bb49241502fdf823b7",
+      "source_member": "./codehaus-plexus__plexus-archiver/30/Dockerfile"
+    },
+    {
+      "path": "recipes/codehaus-plexus__plexus-archiver/30/build-notes.md",
+      "bytes": 368,
+      "sha256": "2ea6114e87ee38178660e7695f1725dd355862bac21c88ca700c40dcceb6bf66",
+      "source_member": "./codehaus-plexus__plexus-archiver/30/build-notes.md"
+    },
+    {
+      "path": "recipes/codehaus-plexus__plexus-archiver/50/Dockerfile",
+      "bytes": 656,
+      "sha256": "ef58b6b3239cc504f9fa995593400b38cb184135c5ad66bb49241502fdf823b7",
+      "source_member": "./codehaus-plexus__plexus-archiver/50/Dockerfile"
+    },
+    {
+      "path": "recipes/codehaus-plexus__plexus-utils/51/Dockerfile",
+      "bytes": 285,
+      "sha256": "2d5357a71db7248051f3d15d2fedf14ff02cb4dc64b3ee96c669f3cba82d38d1",
+      "source_member": "./codehaus-plexus__plexus-utils/51/Dockerfile"
+    },
+    {
+      "path": "recipes/codehaus-plexus__plexus-utils/64/Dockerfile",
+      "bytes": 285,
+      "sha256": "2d5357a71db7248051f3d15d2fedf14ff02cb4dc64b3ee96c669f3cba82d38d1",
+      "source_member": "./codehaus-plexus__plexus-utils/64/Dockerfile"
+    },
+    {
+      "path": "recipes/codehaus-plexus__plexus-utils/6d780b3378829318ba5c2d29547e0012d5b29642/Dockerfile",
+      "bytes": 543,
+      "sha256": "557ffbe6c84543a33a596e769786e24ad4db6772d2458c7c640f9538da07e64a",
+      "source_member": "./codehaus-plexus__plexus-utils/6d780b3378829318ba5c2d29547e0012d5b29642/Dockerfile"
+    },
+    {
+      "path": "recipes/crate__crate/126/Dockerfile",
+      "bytes": 842,
+      "sha256": "5b2543c19144fb08b81cce5b983ebda0ef55ad4a4906c0ea72718be383410934",
+      "source_member": "./crate__crate/126/Dockerfile"
+    },
+    {
+      "path": "recipes/dataease__dataease/2cb2b3e/Dockerfile",
+      "bytes": 2703,
+      "sha256": "abe9c3deab6aaa57ab2102d8d8c366c4205f5a9cf8ca201e0e5d11e0e25570da",
+      "source_member": "./dataease__dataease/2cb2b3e/Dockerfile"
+    },
+    {
+      "path": "recipes/dataease__dataease/72f428e/Dockerfile",
+      "bytes": 2629,
+      "sha256": "24bd09714add97d2c717685183a2a8b388af25c0efa601e7115d3fbed0966927",
+      "source_member": "./dataease__dataease/72f428e/Dockerfile"
+    },
+    {
+      "path": "recipes/diffplug__goomph/38/Dockerfile",
+      "bytes": 641,
+      "sha256": "1bf93080e6e6d5a236159fe09214e96aeccdb0e12eaf4f96ffc03374934a5d41",
+      "source_member": "./diffplug__goomph/38/Dockerfile"
+    },
+    {
+      "path": "recipes/dromara__hutool/7/Dockerfile",
+      "bytes": 353,
+      "sha256": "dc9e9c11c221ea6c6734353107351948990c20a853c880c4c3f450145d6ae89a",
+      "source_member": "./dromara__hutool/7/Dockerfile"
+    },
+    {
+      "path": "recipes/dromara__hutool/7/build-notes.md",
+      "bytes": 183,
+      "sha256": "5a8c66e01e54a743d52425e6317d02baf0ac34cd8e026397ff98d2ca1cd31bde",
+      "source_member": "./dromara__hutool/7/build-notes.md"
+    },
+    {
+      "path": "recipes/eclipse-ee4j__glassfish/44/Dockerfile",
+      "bytes": 407,
+      "sha256": "ba2755e001cb7126a43f0d66ad691b8333df5d354c95f1cf776345ba908b9e10",
+      "source_member": "./eclipse-ee4j__glassfish/44/Dockerfile"
+    },
+    {
+      "path": "recipes/eclipse__hawkbit/79/Dockerfile",
+      "bytes": 834,
+      "sha256": "61a4258390183de520c3dbaa18d3c7fc385c2bafcad1f66382d2fe3bc3409c4f",
+      "source_member": "./eclipse__hawkbit/79/Dockerfile"
+    },
+    {
+      "path": "recipes/elunez__eladmin/d6a16e9afc0a3b96a56f1a24ed167e1beec6ce2f/Dockerfile",
+      "bytes": 502,
+      "sha256": "4b5c9eb2e09bdf89d9a9910dd6913a6d1e09b8626a3a8f8828bb3bb0c9ea55a4",
+      "source_member": "./elunez__eladmin/d6a16e9afc0a3b96a56f1a24ed167e1beec6ce2f/Dockerfile"
+    },
+    {
+      "path": "recipes/elunez__eladmin/d6a16e9afc0a3b96a56f1a24ed167e1beec6ce2f/build-notes.md",
+      "bytes": 65,
+      "sha256": "bd5976550807be1beda3e4ec3f64a79528612783daca4c02a0a34dc0f30691be",
+      "source_member": "./elunez__eladmin/d6a16e9afc0a3b96a56f1a24ed167e1beec6ce2f/build-notes.md"
+    },
+    {
+      "path": "recipes/esapi__esapi-java-legacy/23/Dockerfile",
+      "bytes": 253,
+      "sha256": "83508c4f7faacff5be061d902837463fa98154d8368d90e0d8d62c2d3f8794c6",
+      "source_member": "./esapi__esapi-java-legacy/23/Dockerfile"
+    },
+    {
+      "path": "recipes/esapi__esapi-java-legacy/23/build-notes.md",
+      "bytes": 182,
+      "sha256": "4ae11e9a034046f428e5f1b287a349fe02f915718ed46a7355476a0f5f9fc4a1",
+      "source_member": "./esapi__esapi-java-legacy/23/build-notes.md"
+    },
+    {
+      "path": "recipes/esapi__esapi-java-legacy/82/Dockerfile",
+      "bytes": 253,
+      "sha256": "83508c4f7faacff5be061d902837463fa98154d8368d90e0d8d62c2d3f8794c6",
+      "source_member": "./esapi__esapi-java-legacy/82/Dockerfile"
+    },
+    {
+      "path": "recipes/fabric8io__kubernetes-client/110/Dockerfile",
+      "bytes": 359,
+      "sha256": "bf03d9c45e726555af6f43f7d1625483926d30cb95d1fa114d2f4aa8988c2819",
+      "source_member": "./fabric8io__kubernetes-client/110/Dockerfile"
+    },
+    {
+      "path": "recipes/factionsecurity__faction/0025beb/Dockerfile",
+      "bytes": 605,
+      "sha256": "82fd45d41a0d2103f19234b2bd4e0f63729eebc63c58cbf8a16cd66da0220835",
+      "source_member": "./factionsecurity__faction/0025beb/Dockerfile"
+    },
+    {
+      "path": "recipes/factionsecurity__faction/0a6848d/Dockerfile",
+      "bytes": 605,
+      "sha256": "82fd45d41a0d2103f19234b2bd4e0f63729eebc63c58cbf8a16cd66da0220835",
+      "source_member": "./factionsecurity__faction/0a6848d/Dockerfile"
+    },
+    {
+      "path": "recipes/ff4j__ff4j/112/Dockerfile",
+      "bytes": 392,
+      "sha256": "ee0dc442ee01f351acc9bc9c310cdf834ec7938c69a395d276917e19ed9b4f53",
+      "source_member": "./ff4j__ff4j/112/Dockerfile"
+    },
+    {
+      "path": "recipes/folio-org__spring-module-core/122/Dockerfile",
+      "bytes": 292,
+      "sha256": "a25ebed7090a5c835ee5d6ef6cb800fc6526b6d9e5dcb440969e45f717977f42",
+      "source_member": "./folio-org__spring-module-core/122/Dockerfile"
+    },
+    {
+      "path": "recipes/googleapis__google-oauth-java-client/13433cd/Dockerfile",
+      "bytes": 343,
+      "sha256": "ee2393e677e2b1c114ed9f4327bff00dde57a8f48c5cc30c359fa78e69beeafe",
+      "source_member": "./googleapis__google-oauth-java-client/13433cd/Dockerfile"
+    },
+    {
+      "path": "recipes/googleapis__google-oauth-java-client/6447917/Dockerfile",
+      "bytes": 343,
+      "sha256": "ee2393e677e2b1c114ed9f4327bff00dde57a8f48c5cc30c359fa78e69beeafe",
+      "source_member": "./googleapis__google-oauth-java-client/6447917/Dockerfile"
+    },
+    {
+      "path": "recipes/halo-dev__halo/24f8d7b57127e2607ec05adb7c912b3decddeb99/Dockerfile",
+      "bytes": 226,
+      "sha256": "cba3f37e21efad9eb2ddae76f96f7f5b1d43ae2b80ffaa22799b3c8c9d1e2485",
+      "source_member": "./halo-dev__halo/24f8d7b57127e2607ec05adb7c912b3decddeb99/Dockerfile"
+    },
+    {
+      "path": "recipes/hapifhir__org.hl7.fhir.core/45/Dockerfile",
+      "bytes": 426,
+      "sha256": "4a134b5330a7e6069a1e0748e00e5a687339e3d873452f88650a453fdd547bd1",
+      "source_member": "./hapifhir__org.hl7.fhir.core/45/Dockerfile"
+    },
+    {
+      "path": "recipes/hapifhir__org.hl7.fhir.core/46/Dockerfile",
+      "bytes": 656,
+      "sha256": "6945a50c87779c18469c33b44931237d9b2dd0d4f4d0c8fce2037be291ec8311",
+      "source_member": "./hapifhir__org.hl7.fhir.core/46/Dockerfile"
+    },
+    {
+      "path": "recipes/hibernate__hibernate-validator/75/Dockerfile",
+      "bytes": 708,
+      "sha256": "d99f6b15e5b9c3eddb16ae6c0fd6f22ba6dad2ee3e505b1756ad03ce0b06c5f9",
+      "source_member": "./hibernate__hibernate-validator/75/Dockerfile"
+    },
+    {
+      "path": "recipes/hl7__fhir-ig-publisher/3560de2f486d688a3ddcf4aa54d8bdacea380c3d/Dockerfile",
+      "bytes": 962,
+      "sha256": "dfa7df5d799b26f4b83919bcb084f6799bed5b1cdba765d7f6e5882b60c4c384",
+      "source_member": "./hl7__fhir-ig-publisher/3560de2f486d688a3ddcf4aa54d8bdacea380c3d/Dockerfile"
+    },
+    {
+      "path": "recipes/jcthiele__openxrechnungtoolbox/6c50e8979924b09f336c976cbad3a9ebfe25ebf9/Dockerfile",
+      "bytes": 530,
+      "sha256": "399a521114e8258a7dd338f253ee84b531f1bd7fb0cf22f327e436988092f4a1",
+      "source_member": "./jcthiele__openxrechnungtoolbox/6c50e8979924b09f336c976cbad3a9ebfe25ebf9/Dockerfile"
+    },
+    {
+      "path": "recipes/jcthiele__openxrechnungtoolbox/b334354/Dockerfile",
+      "bytes": 545,
+      "sha256": "4a130c43b55549798c23c61f638e3909c5db50743c9f2a0d91a2f66ffefdd8c5",
+      "source_member": "./jcthiele__openxrechnungtoolbox/b334354/Dockerfile"
+    },
+    {
+      "path": "recipes/jcthiele__openxrechnungtoolbox/b334354/build-notes.md",
+      "bytes": 462,
+      "sha256": "8de96f7cd1e1dc8ef571fce1f398b4aef94f79331779b798065103b35e114227",
+      "source_member": "./jcthiele__openxrechnungtoolbox/b334354/build-notes.md"
+    },
+    {
+      "path": "recipes/jeecgboot__jeecgboot/121/Dockerfile",
+      "bytes": 351,
+      "sha256": "e3d7b13a0923aea1b5530f7a8fbba5e9b9e473016dcf07a202896e4878dbf1c2",
+      "source_member": "./jeecgboot__jeecgboot/121/Dockerfile"
+    },
+    {
+      "path": "recipes/jenkinsci__docker-commons-plugin/59/Dockerfile",
+      "bytes": 385,
+      "sha256": "5c1e5fb329b22bf8d6d84e284d983772afc57671dc702d11022494cb72010781",
+      "source_member": "./jenkinsci__docker-commons-plugin/59/Dockerfile"
+    },
+    {
+      "path": "recipes/jenkinsci__git-client-plugin/65/Dockerfile",
+      "bytes": 338,
+      "sha256": "f82b3edbc7e52500ed002a705f68a50bca9d7297dd0a26e6e839337b8767b5d5",
+      "source_member": "./jenkinsci__git-client-plugin/65/Dockerfile"
+    },
+    {
+      "path": "recipes/jenkinsci__jenkins/0530a66/Dockerfile",
+      "bytes": 2023,
+      "sha256": "4a6a754cec3d7303d8424c2e5bd35df2cc10cc89c9b925130b14700b1128c241",
+      "source_member": "./jenkinsci__jenkins/0530a66/Dockerfile"
+    },
+    {
+      "path": "recipes/jenkinsci__jenkins/0de3e9b/Dockerfile",
+      "bytes": 957,
+      "sha256": "57e0941b643d9eca80e809b3520c7bd69842677be3164731759d552c88fd1f93",
+      "source_member": "./jenkinsci__jenkins/0de3e9b/Dockerfile"
+    },
+    {
+      "path": "recipes/jenkinsci__jenkins/0f92cd0/Dockerfile",
+      "bytes": 4353,
+      "sha256": "d4cfd33d271cad4bbe544d79fe54377168063f4712608e4095ee557d2406b5cd",
+      "source_member": "./jenkinsci__jenkins/0f92cd0/Dockerfile"
+    },
+    {
+      "path": "recipes/jenkinsci__jenkins/13905d8/Dockerfile",
+      "bytes": 1055,
+      "sha256": "195e123848d4d66b08e225c2a2d63878737d6d415e49c025ee892f3b391c5548",
+      "source_member": "./jenkinsci__jenkins/13905d8/Dockerfile"
+    },
+    {
+      "path": "recipes/jenkinsci__jenkins/36342d7/Dockerfile",
+      "bytes": 957,
+      "sha256": "1d0cf6b7cd456ed1d8dba2cdd288b359bda480839c23ea9159b3c93d2d2cbf90",
+      "source_member": "./jenkinsci__jenkins/36342d7/Dockerfile"
+    },
+    {
+      "path": "recipes/jenkinsci__jenkins/4ed5c85/Dockerfile",
+      "bytes": 1055,
+      "sha256": "195e123848d4d66b08e225c2a2d63878737d6d415e49c025ee892f3b391c5548",
+      "source_member": "./jenkinsci__jenkins/4ed5c85/Dockerfile"
+    },
+    {
+      "path": "recipes/jenkinsci__jenkins/5548b52/Dockerfile",
+      "bytes": 959,
+      "sha256": "d20f19e39551df0351bf9a28f1d3d4920cd1663bfc777d348960d1729a360d8a",
+      "source_member": "./jenkinsci__jenkins/5548b52/Dockerfile"
+    },
+    {
+      "path": "recipes/jenkinsci__jenkins/5d57c85/Dockerfile",
+      "bytes": 960,
+      "sha256": "7a044ca6838c4b4a888681eb866be6c3ddb45b952e073604e137e23c6f387c9e",
+      "source_member": "./jenkinsci__jenkins/5d57c85/Dockerfile"
+    },
+    {
+      "path": "recipes/jenkinsci__jenkins/788b7d7/Dockerfile",
+      "bytes": 958,
+      "sha256": "07f9b8d717384efa50fa8e9c8a43e02b46248680bf82662c3e3dbcc71095e1be",
+      "source_member": "./jenkinsci__jenkins/788b7d7/Dockerfile"
+    },
+    {
+      "path": "recipes/jenkinsci__jenkins/8ac74c3/Dockerfile",
+      "bytes": 957,
+      "sha256": "b510f3cb6a9b87a0351d78ad1e1b765a736777a7cc3fcdb85e6cb86c9341705a",
+      "source_member": "./jenkinsci__jenkins/8ac74c3/Dockerfile"
+    },
+    {
+      "path": "recipes/jenkinsci__jenkins/97a61a9/Dockerfile",
+      "bytes": 1055,
+      "sha256": "195e123848d4d66b08e225c2a2d63878737d6d415e49c025ee892f3b391c5548",
+      "source_member": "./jenkinsci__jenkins/97a61a9/Dockerfile"
+    },
+    {
+      "path": "recipes/jenkinsci__jenkins/ac8e17b/Dockerfile",
+      "bytes": 1034,
+      "sha256": "b2b12c03794e250287b6820c686133d1fc4c75b1b5483eaa429385782fa553cf",
+      "source_member": "./jenkinsci__jenkins/ac8e17b/Dockerfile"
+    },
+    {
+      "path": "recipes/jenkinsci__jenkins/ad38d84/Dockerfile",
+      "bytes": 959,
+      "sha256": "d20f19e39551df0351bf9a28f1d3d4920cd1663bfc777d348960d1729a360d8a",
+      "source_member": "./jenkinsci__jenkins/ad38d84/Dockerfile"
+    },
+    {
+      "path": "recipes/jenkinsci__jenkins/b6b2a36/Dockerfile",
+      "bytes": 958,
+      "sha256": "07f9b8d717384efa50fa8e9c8a43e02b46248680bf82662c3e3dbcc71095e1be",
+      "source_member": "./jenkinsci__jenkins/b6b2a36/Dockerfile"
+    },
+    {
+      "path": "recipes/jenkinsci__perfecto-plugin/66/Dockerfile",
+      "bytes": 804,
+      "sha256": "6d2b1cc0349af9092671edb21d6d705266250b21800f303dd2385d83162646a2",
+      "source_member": "./jenkinsci__perfecto-plugin/66/Dockerfile"
+    },
+    {
+      "path": "recipes/jenkinsci__script-security-plugin/68/Dockerfile",
+      "bytes": 283,
+      "sha256": "69bdce84b6e811ee753741f303c82ff843dc29962e53568b19760783ac721010",
+      "source_member": "./jenkinsci__script-security-plugin/68/Dockerfile"
+    },
+    {
+      "path": "recipes/jenkinsci__script-security-plugin/68/build-notes.md",
+      "bytes": 324,
+      "sha256": "6b90a4dbe9cead304665ae2965cde692a459460120ed9c5079e7fa30c2b8e5a3",
+      "source_member": "./jenkinsci__script-security-plugin/68/build-notes.md"
+    },
+    {
+      "path": "recipes/jenkinsci__workflow-cps-global-lib-plugin/61/Dockerfile",
+      "bytes": 297,
+      "sha256": "051ad0104f44c638c27cc5387a975782b6a64721b25328da893171ef72dd63f0",
+      "source_member": "./jenkinsci__workflow-cps-global-lib-plugin/61/Dockerfile"
+    },
+    {
+      "path": "recipes/jenkinsci__workflow-cps-plugin/60/Dockerfile",
+      "bytes": 825,
+      "sha256": "054b5e6f7e4c9f3854818b49be4e0d18464b6e3b4cf1675a9acfd8c763c842a2",
+      "source_member": "./jenkinsci__workflow-cps-plugin/60/Dockerfile"
+    },
+    {
+      "path": "recipes/jenkinsci__workflow-cps-plugin/60/build-notes.md",
+      "bytes": 319,
+      "sha256": "fb71d041218b57ad2d81f6db2d056408eeee3a615d96a446bac79e38334f9de9",
+      "source_member": "./jenkinsci__workflow-cps-plugin/60/build-notes.md"
+    },
+    {
+      "path": "recipes/jenkinsci__workflow-multibranch-plugin/62/Dockerfile",
+      "bytes": 363,
+      "sha256": "0bd0a52dacf7103245a4be2a9776d64759bc5ca7e40dfb06c29fab9d39cdef8d",
+      "source_member": "./jenkinsci__workflow-multibranch-plugin/62/Dockerfile"
+    },
+    {
+      "path": "recipes/jeremylong__dependencycheck/29/Dockerfile",
+      "bytes": 672,
+      "sha256": "04fd3a3f970857ff146055e5069fde2deb921da35766865791d682a5489781b3",
+      "source_member": "./jeremylong__dependencycheck/29/Dockerfile"
+    },
+    {
+      "path": "recipes/jeremylong__dependencycheck/29/build-notes.md",
+      "bytes": 557,
+      "sha256": "2ddc26817feccfeba9e360b8cfcfcf954c1e58b3cae7bfb868631b4ff3821f88",
+      "source_member": "./jeremylong__dependencycheck/29/build-notes.md"
+    },
+    {
+      "path": "recipes/jlangch__venice/34/Dockerfile",
+      "bytes": 567,
+      "sha256": "954324e69e8fa73d55b0822ec9edf70100434def38177d05979fc59f8a7cdf62",
+      "source_member": "./jlangch__venice/34/Dockerfile"
+    },
+    {
+      "path": "recipes/jlangch__venice/34/build-notes.md",
+      "bytes": 474,
+      "sha256": "aadfc36069185d5bb0f3d2a80622efcac40c439d143929964a551cc31ff5deac",
+      "source_member": "./jlangch__venice/34/build-notes.md"
+    },
+    {
+      "path": "recipes/jmrozanec__cron-utils/102/Dockerfile",
+      "bytes": 352,
+      "sha256": "ed5ecb445d46d9c6d980a4f47ff1d55ab526aff98bf4a1607faa5dc5b0adb651",
+      "source_member": "./jmrozanec__cron-utils/102/Dockerfile"
+    },
+    {
+      "path": "recipes/joniles__mpxj/16/Dockerfile",
+      "bytes": 550,
+      "sha256": "73c9cc1c06b36c1cd9d6dab3aa7a1752df23cab019c97729deaf1493205f24cd",
+      "source_member": "./joniles__mpxj/16/Dockerfile"
+    },
+    {
+      "path": "recipes/jstachio__jstachio/98/Dockerfile",
+      "bytes": 295,
+      "sha256": "13bdbc77b3d46ea35e9c1fc58cc64721bb6ccaeb7ca5d1c9464a73f1a8bfe6fd",
+      "source_member": "./jstachio__jstachio/98/Dockerfile"
+    },
+    {
+      "path": "recipes/keycloak__keycloak/008b73d/Dockerfile",
+      "bytes": 1059,
+      "sha256": "94e37b5ba3a77617a93a6941a7ce102fdce20eb6bd322ccd4c6155b70521a9c7",
+      "source_member": "./keycloak__keycloak/008b73d/Dockerfile"
+    },
+    {
+      "path": "recipes/keycloak__keycloak/0b73685/Dockerfile",
+      "bytes": 552,
+      "sha256": "380da60b4649f3d5b2dfa49f9846ab3bd28f445483b6105dadda70dbf7a782ef",
+      "source_member": "./keycloak__keycloak/0b73685/Dockerfile"
+    },
+    {
+      "path": "recipes/keycloak__keycloak/4235422/Dockerfile",
+      "bytes": 552,
+      "sha256": "380da60b4649f3d5b2dfa49f9846ab3bd28f445483b6105dadda70dbf7a782ef",
+      "source_member": "./keycloak__keycloak/4235422/Dockerfile"
+    },
+    {
+      "path": "recipes/keycloak__keycloak/43/Dockerfile",
+      "bytes": 390,
+      "sha256": "294a3409c1ab0295bafc9bd54cfb53b32529294d97576edd444c325a4adf5519",
+      "source_member": "./keycloak__keycloak/43/Dockerfile"
+    },
+    {
+      "path": "recipes/keycloak__keycloak/43/build-notes.md",
+      "bytes": 213,
+      "sha256": "e37b12706441e4a918a046debc2d2b6670159aa5675750c0849a2e392b4e5eae",
+      "source_member": "./keycloak__keycloak/43/build-notes.md"
+    },
+    {
+      "path": "recipes/keycloak__keycloak/44000ca/Dockerfile",
+      "bytes": 878,
+      "sha256": "8d1b3cb0ae9fbd832a7c1afdae7880a520424d9d32ef57a1910c81d2b4db319f",
+      "source_member": "./keycloak__keycloak/44000ca/Dockerfile"
+    },
+    {
+      "path": "recipes/keycloak__keycloak/750f5fd/Dockerfile",
+      "bytes": 689,
+      "sha256": "75fcab1dc4e4ab4363d917fdac64486c5f30beb6a41038615ceb171510ab426d",
+      "source_member": "./keycloak__keycloak/750f5fd/Dockerfile"
+    },
+    {
+      "path": "recipes/keycloak__keycloak/754c070cf8ca187dcc71f0f72ff3130ff2195328/Dockerfile",
+      "bytes": 2352,
+      "sha256": "42107ddaf63f3e0705816306868790254370a9c099d8b13119275a55ffc9e7ed",
+      "source_member": "./keycloak__keycloak/754c070cf8ca187dcc71f0f72ff3130ff2195328/Dockerfile"
+    },
+    {
+      "path": "recipes/keycloak__keycloak/76d83f4/Dockerfile",
+      "bytes": 553,
+      "sha256": "7f48ebe7195b676c54f3550eed87cdbe075da93922419abf93689dffaeeb440c",
+      "source_member": "./keycloak__keycloak/76d83f4/Dockerfile"
+    },
+    {
+      "path": "recipes/keycloak__keycloak/8435660/Dockerfile",
+      "bytes": 878,
+      "sha256": "8d1b3cb0ae9fbd832a7c1afdae7880a520424d9d32ef57a1910c81d2b4db319f",
+      "source_member": "./keycloak__keycloak/8435660/Dockerfile"
+    },
+    {
+      "path": "recipes/keycloak__keycloak/85/Dockerfile",
+      "bytes": 354,
+      "sha256": "875f7487b2cc6ca592a9df12aa3544a2dd65504a71c9fac059050ff0b37bb7bc",
+      "source_member": "./keycloak__keycloak/85/Dockerfile"
+    },
+    {
+      "path": "recipes/keycloak__keycloak/85/build-notes.md",
+      "bytes": 291,
+      "sha256": "a3fff93c5d32dd614c1e2a0d5c586d1e422a7e6bb854a8636d7d597d3953a291",
+      "source_member": "./keycloak__keycloak/85/build-notes.md"
+    },
+    {
+      "path": "recipes/keycloak__keycloak/89/Dockerfile",
+      "bytes": 3728,
+      "sha256": "9282f1020417ab8c27d22309876aee13be798f776a03acc19a880a953feb93bb",
+      "source_member": "./keycloak__keycloak/89/Dockerfile"
+    },
+    {
+      "path": "recipes/keycloak__keycloak/90/Dockerfile",
+      "bytes": 2877,
+      "sha256": "610f5fa022bcf3cdd07a0b1796248eab4f39c8996e739eb8fbfc4efb99783056",
+      "source_member": "./keycloak__keycloak/90/Dockerfile"
+    },
+    {
+      "path": "recipes/keycloak__keycloak/90/build-notes.md",
+      "bytes": 572,
+      "sha256": "19a88644fd990181ef2a0fe11eaf88b5c30da3dd2bbe65de5430631f59c99ff2",
+      "source_member": "./keycloak__keycloak/90/build-notes.md"
+    },
+    {
+      "path": "recipes/keycloak__keycloak/9356843/Dockerfile",
+      "bytes": 877,
+      "sha256": "47bdf71862b4f7e34e6eba4deae09a10c578a3fd6045882027044c0560659db9",
+      "source_member": "./keycloak__keycloak/9356843/Dockerfile"
+    },
+    {
+      "path": "recipes/keycloak__keycloak/96/Dockerfile",
+      "bytes": 361,
+      "sha256": "36df6ce166fb5d1505b5ce648c989e3c6541137aeec547d331c422d66ee9d85c",
+      "source_member": "./keycloak__keycloak/96/Dockerfile"
+    },
+    {
+      "path": "recipes/keycloak__keycloak/9c2525e/Dockerfile",
+      "bytes": 1055,
+      "sha256": "112c6ea9bd4a2d22b131f6d354f28e6609a17bd53015f115201355c5c1cf4e0c",
+      "source_member": "./keycloak__keycloak/9c2525e/Dockerfile"
+    },
+    {
+      "path": "recipes/keycloak__keycloak/a10c8119d4452b866b90a9019b2cc159919276ca/Dockerfile",
+      "bytes": 1968,
+      "sha256": "fd60462fbb9467e7a92cb04718763f1d38f7abd5d2580fdd10a6cda5bf501118",
+      "source_member": "./keycloak__keycloak/a10c8119d4452b866b90a9019b2cc159919276ca/Dockerfile"
+    },
+    {
+      "path": "recipes/keycloak__keycloak/a34094100716b7c69ae38eaed6678ab4344d0a1d/Dockerfile",
+      "bytes": 2462,
+      "sha256": "f1c9801198d66ec1be5571912c2d83c01f484bd8445f044d9e395c951085987f",
+      "source_member": "./keycloak__keycloak/a34094100716b7c69ae38eaed6678ab4344d0a1d/Dockerfile"
+    },
+    {
+      "path": "recipes/keycloak__keycloak/ac79fd0/Dockerfile",
+      "bytes": 1056,
+      "sha256": "9682f05c47cddcf723d2b00aeef5a7940281e3e07b265fedba6b2ba319a06e78",
+      "source_member": "./keycloak__keycloak/ac79fd0/Dockerfile"
+    },
+    {
+      "path": "recipes/keycloak__keycloak/b5f70d8/Dockerfile",
+      "bytes": 1053,
+      "sha256": "2d5f05c2095fb03e87e123ff763f463550dbf53aedd637972ceacd9047278193",
+      "source_member": "./keycloak__keycloak/b5f70d8/Dockerfile"
+    },
+    {
+      "path": "recipes/keycloak__keycloak/d9d0bfb/Dockerfile",
+      "bytes": 878,
+      "sha256": "8d1b3cb0ae9fbd832a7c1afdae7880a520424d9d32ef57a1910c81d2b4db319f",
+      "source_member": "./keycloak__keycloak/d9d0bfb/Dockerfile"
+    },
+    {
+      "path": "recipes/keycloak__keycloak/ec81091/Dockerfile",
+      "bytes": 1185,
+      "sha256": "d26e45ac4934fe1b08284ebc1f388e245ce7d909649224deec0861de1e6383b6",
+      "source_member": "./keycloak__keycloak/ec81091/Dockerfile"
+    },
+    {
+      "path": "recipes/kubernetes-client__java/18/Dockerfile",
+      "bytes": 734,
+      "sha256": "28503c579f9eef25fc2f62e71759cd431cfec0233b38da9c6776adf274c3579b",
+      "source_member": "./kubernetes-client__java/18/Dockerfile"
+    },
+    {
+      "path": "recipes/line__armeria/039db50/Dockerfile",
+      "bytes": 749,
+      "sha256": "94311e46d6ba09565c0f6d5fdc27671b47be7eaaa0255b83c21dc5ca1bfc8f48",
+      "source_member": "./line__armeria/039db50/Dockerfile"
+    },
+    {
+      "path": "recipes/metersphere__metersphere/a23f75d/Dockerfile",
+      "bytes": 1580,
+      "sha256": "653423cf00ab426e286515283aec81a3ceeb60c7774f15ee8cba6c05565b4598",
+      "source_member": "./metersphere__metersphere/a23f75d/Dockerfile"
+    },
+    {
+      "path": "recipes/micronaut-projects__micronaut-security/c3eeb19/Dockerfile",
+      "bytes": 862,
+      "sha256": "2b8ee9e94fda62db3fad7d05d2f202696aac7e9040657b516663e130bb89f897",
+      "source_member": "./micronaut-projects__micronaut-security/c3eeb19/Dockerfile"
+    },
+    {
+      "path": "recipes/msgpack__msgpack-java/befe3b9/Dockerfile",
+      "bytes": 279,
+      "sha256": "cb6762763f9e3202e4dbeca559a52cc4a5101f19ee1824fcd019c3c16791d632",
+      "source_member": "./msgpack__msgpack-java/befe3b9/Dockerfile"
+    },
+    {
+      "path": "recipes/msgpack__msgpack-java/daa2ea6b2f11f500e22c70a22f689f7a9debdeae/Dockerfile",
+      "bytes": 279,
+      "sha256": "cb6762763f9e3202e4dbeca559a52cc4a5101f19ee1824fcd019c3c16791d632",
+      "source_member": "./msgpack__msgpack-java/daa2ea6b2f11f500e22c70a22f689f7a9debdeae/Dockerfile"
+    },
+    {
+      "path": "recipes/nahsra__antisamy/69/Dockerfile",
+      "bytes": 273,
+      "sha256": "93a76466ce9fdc5e0ae9074cff9618e891b09d11e4e9123c258644da2d7a5705",
+      "source_member": "./nahsra__antisamy/69/Dockerfile"
+    },
+    {
+      "path": "recipes/nahsra__antisamy/70/Dockerfile",
+      "bytes": 620,
+      "sha256": "3f5c3e16b883166b8c2e57dbf7a543d9db100720ef4b09b729c5453323628089",
+      "source_member": "./nahsra__antisamy/70/Dockerfile"
+    },
+    {
+      "path": "recipes/nahsra__antisamy/70/build-notes.md",
+      "bytes": 430,
+      "sha256": "351214d87875587974058fc4df1b0863d214bbe52e5ef9452502f08ceaaecd64",
+      "source_member": "./nahsra__antisamy/70/build-notes.md"
+    },
+    {
+      "path": "recipes/nahsra__antisamy/81/Dockerfile",
+      "bytes": 348,
+      "sha256": "5d57abb2492eb75d1db3bbde209712b04a15901dd609a7a153e1aaf4e41b9c07",
+      "source_member": "./nahsra__antisamy/81/Dockerfile"
+    },
+    {
+      "path": "recipes/nahsra__antisamy/83/Dockerfile",
+      "bytes": 846,
+      "sha256": "0e0c41362f7def23f3422397ff8a11731856862f28a759a1b4369582780c4889",
+      "source_member": "./nahsra__antisamy/83/Dockerfile"
+    },
+    {
+      "path": "recipes/nahsra__antisamy/83/build-notes.md",
+      "bytes": 350,
+      "sha256": "07728db81b7f53987275c1a2306c49f25889d7b29d5a4a1ce4878d319af141d2",
+      "source_member": "./nahsra__antisamy/83/build-notes.md"
+    },
+    {
+      "path": "recipes/netty__netty/58f75f665aa81a8cbcf6ffa74820042a285c5e61/Dockerfile",
+      "bytes": 1055,
+      "sha256": "4a394d66ff6a2b991ca3db87416e41bc6d2a28ad21effeadfae1ffff25cae684",
+      "source_member": "./netty__netty/58f75f665aa81a8cbcf6ffa74820042a285c5e61/Dockerfile"
+    },
+    {
+      "path": "recipes/nimble-platform__common/12197a7/Dockerfile",
+      "bytes": 602,
+      "sha256": "6e934b54ad3bf3835602b0a36cad135d940daf43aeb02c28242d26b5c7bbef91",
+      "source_member": "./nimble-platform__common/12197a7/Dockerfile"
+    },
+    {
+      "path": "recipes/nimble-platform__common/ad119be/Dockerfile",
+      "bytes": 328,
+      "sha256": "ba73f79c987db997b4a0c57e24c1b8e68c29dd199f52976931f2be1a455f9239",
+      "source_member": "./nimble-platform__common/ad119be/Dockerfile"
+    },
+    {
+      "path": "recipes/noaa-pmel__las/3e6aa69/Dockerfile",
+      "bytes": 726,
+      "sha256": "5333fd6e73e51200c644e91d6f39307034ced7a0cd6925e1dd6ee51f91c221d2",
+      "source_member": "./noaa-pmel__las/3e6aa69/Dockerfile"
+    },
+    {
+      "path": "recipes/noaa-pmel__las/de5f9237bfd4ac5085bcc49a6e30bbc9507ddb29/Dockerfile",
+      "bytes": 726,
+      "sha256": "5333fd6e73e51200c644e91d6f39307034ced7a0cd6925e1dd6ee51f91c221d2",
+      "source_member": "./noaa-pmel__las/de5f9237bfd4ac5085bcc49a6e30bbc9507ddb29/Dockerfile"
+    },
+    {
+      "path": "recipes/ongres__scram/e0b0cf99f05406a0d26682c72fcb5728e95124b3/Dockerfile",
+      "bytes": 358,
+      "sha256": "2cf21e847eaedf0dbf40f419fabfb1e9c1699e5671a4c58e45fd4b9006161179",
+      "source_member": "./ongres__scram/e0b0cf99f05406a0d26682c72fcb5728e95124b3/Dockerfile"
+    },
+    {
+      "path": "recipes/ongres__scram/fa443aa/Dockerfile",
+      "bytes": 358,
+      "sha256": "2cf21e847eaedf0dbf40f419fabfb1e9c1699e5671a4c58e45fd4b9006161179",
+      "source_member": "./ongres__scram/fa443aa/Dockerfile"
+    },
+    {
+      "path": "recipes/openhab__openhab-addons/4c4cb66/Dockerfile",
+      "bytes": 368,
+      "sha256": "2e4cc1f579694700d3e1f25cce16e259f1fa764091cd404a5ce0c6b9ba5db9ec",
+      "source_member": "./openhab__openhab-addons/4c4cb66/Dockerfile"
+    },
+    {
+      "path": "recipes/openhab__openhab-addons/c23710a/Dockerfile",
+      "bytes": 411,
+      "sha256": "2a3b12816218b6161c441ff9ad327992f43b89858fc1c4042c4bedf31a922771",
+      "source_member": "./openhab__openhab-addons/c23710a/Dockerfile"
+    },
+    {
+      "path": "recipes/orbeon__orbeon-forms/9610d39/Dockerfile",
+      "bytes": 1029,
+      "sha256": "3ab6601b6dba03e0de9e0fd91f3bf7522a91ef52e310397d443091f257c7b1e3",
+      "source_member": "./orbeon__orbeon-forms/9610d39/Dockerfile"
+    },
+    {
+      "path": "recipes/orbeon__orbeon-forms/aba6681/Dockerfile",
+      "bytes": 1142,
+      "sha256": "35c29bd832df4c7eeb014caf5a8c47bc276fd5fdc47e91365df86caa4a97218e",
+      "source_member": "./orbeon__orbeon-forms/aba6681/Dockerfile"
+    },
+    {
+      "path": "recipes/owasp__json-sanitizer/78/Dockerfile",
+      "bytes": 325,
+      "sha256": "bb6ad751cf5154adbc20a6f2d52a2298120137343183ff7562c3cc10daf491cd",
+      "source_member": "./owasp__json-sanitizer/78/Dockerfile"
+    },
+    {
+      "path": "recipes/payara__payara/36/Dockerfile",
+      "bytes": 3956,
+      "sha256": "2eae0d7a827ab852e959fc5c5a08e51a096efa2a4afb57b2add1f77ee1a0b9eb",
+      "source_member": "./payara__payara/36/Dockerfile"
+    },
+    {
+      "path": "recipes/pebbletemplates__pebble/b3451c8f305a1a248fbcc2363fd307d0baaee329/Dockerfile",
+      "bytes": 2768,
+      "sha256": "c4f1ae970848c21037d8d8829da808652c2171ecbc4df6576cdcefe530024b1e",
+      "source_member": "./pebbletemplates__pebble/b3451c8f305a1a248fbcc2363fd307d0baaee329/Dockerfile"
+    },
+    {
+      "path": "recipes/perwendel__spark/2/Dockerfile",
+      "bytes": 347,
+      "sha256": "c4c476411a0c6ec6a7cb42ac7359cf7ad42730e5f9a2c83220781e7b22018d80",
+      "source_member": "./perwendel__spark/2/Dockerfile"
+    },
+    {
+      "path": "recipes/perwendel__spark/2/build-notes.md",
+      "bytes": 347,
+      "sha256": "0712aa6fd99466b4fed9c47b890b15d47f661f43eec67f632114e0bbe3dc679f",
+      "source_member": "./perwendel__spark/2/build-notes.md"
+    },
+    {
+      "path": "recipes/perwendel__spark/3/Dockerfile",
+      "bytes": 347,
+      "sha256": "dad64bd0a25941c5232f627500b62672bf9976ea4e1ffcdc90a8b93d4b6eb402",
+      "source_member": "./perwendel__spark/3/Dockerfile"
+    },
+    {
+      "path": "recipes/pf4j__pf4j/20c2f80089d1ea779e22c2de5f109a0bce4e1b14/Dockerfile",
+      "bytes": 368,
+      "sha256": "cc2b5c267106250c396f259c9adbd64d7a1ac675f7bfbe41f22be8de85575495",
+      "source_member": "./pf4j__pf4j/20c2f80089d1ea779e22c2de5f109a0bce4e1b14/Dockerfile"
+    },
+    {
+      "path": "recipes/plantuml__plantuml/6826315db092d2e432aeab1a0894e08017c6e4bd/Dockerfile",
+      "bytes": 613,
+      "sha256": "5301bdc391dfc89d40963318575dfd04f54fdeb5e78a4de1929d8c3fd6ec05d0",
+      "source_member": "./plantuml__plantuml/6826315db092d2e432aeab1a0894e08017c6e4bd/Dockerfile"
+    },
+    {
+      "path": "recipes/plantuml__plantuml/6eb5892/Dockerfile",
+      "bytes": 613,
+      "sha256": "5301bdc391dfc89d40963318575dfd04f54fdeb5e78a4de1929d8c3fd6ec05d0",
+      "source_member": "./plantuml__plantuml/6eb5892/Dockerfile"
+    },
+    {
+      "path": "recipes/rhuss__jolokia/84/Dockerfile",
+      "bytes": 345,
+      "sha256": "068b789d7736452843f5c190a2e20bd013515f5dcb69912c0475cc9a2042174c",
+      "source_member": "./rhuss__jolokia/84/Dockerfile"
+    },
+    {
+      "path": "recipes/robo-code__robocode/836c846/Dockerfile",
+      "bytes": 335,
+      "sha256": "4b1d0eff46c261f58fbf84c5f9c1ae6fcf9856065e95eff47cdbb21401914fef",
+      "source_member": "./robo-code__robocode/836c846/Dockerfile"
+    },
+    {
+      "path": "recipes/robo-code__robocode/e9d00b6/Dockerfile",
+      "bytes": 335,
+      "sha256": "4b1d0eff46c261f58fbf84c5f9c1ae6fcf9856065e95eff47cdbb21401914fef",
+      "source_member": "./robo-code__robocode/e9d00b6/Dockerfile"
+    },
+    {
+      "path": "recipes/seam2__jboss-seam/090aa62/Dockerfile",
+      "bytes": 365,
+      "sha256": "20029620a03a945863acc83c2693c378f53482a5932cb65b01577b94b612c363",
+      "source_member": "./seam2__jboss-seam/090aa62/Dockerfile"
+    },
+    {
+      "path": "recipes/seam2__jboss-seam/b1d1454/Dockerfile",
+      "bytes": 365,
+      "sha256": "20029620a03a945863acc83c2693c378f53482a5932cb65b01577b94b612c363",
+      "source_member": "./seam2__jboss-seam/b1d1454/Dockerfile"
+    },
+    {
+      "path": "recipes/smallrye__smallrye-config/4e7ea86/Dockerfile",
+      "bytes": 840,
+      "sha256": "9e8b9768ff922efa5f8999a55ae0afc926c2e7776efc4ea15769bbbb07adc1fe",
+      "source_member": "./smallrye__smallrye-config/4e7ea86/Dockerfile"
+    },
+    {
+      "path": "recipes/smallrye__smallrye-config/fb0def6/Dockerfile",
+      "bytes": 840,
+      "sha256": "9e8b9768ff922efa5f8999a55ae0afc926c2e7776efc4ea15769bbbb07adc1fe",
+      "source_member": "./smallrye__smallrye-config/fb0def6/Dockerfile"
+    },
+    {
+      "path": "recipes/smallrye__smallrye-config/fb0def6f/Dockerfile",
+      "bytes": 296,
+      "sha256": "a292d79a9869dd0af04d3d66e42782e8b478256d8d909d4fe6423005a3d6523a",
+      "source_member": "./smallrye__smallrye-config/fb0def6f/Dockerfile"
+    },
+    {
+      "path": "recipes/spring-attic__spring-security-oauth/100/Dockerfile",
+      "bytes": 342,
+      "sha256": "7cde015492b8f781900d06c289ada7dcfeede3a3e23e3344ee2ed0e035b293f1",
+      "source_member": "./spring-attic__spring-security-oauth/100/Dockerfile"
+    },
+    {
+      "path": "recipes/spring-cloud__spring-cloud-config/13/Dockerfile",
+      "bytes": 364,
+      "sha256": "7f62c9cd7279f799af4afac908bdddcda6f7188ee33077f743a494d68e7ea1c6",
+      "source_member": "./spring-cloud__spring-cloud-config/13/Dockerfile"
+    },
+    {
+      "path": "recipes/spring-cloud__spring-cloud-config/13/build-notes.md",
+      "bytes": 20,
+      "sha256": "4047f3fa90326a607214b035f08e8c0632317e8d2e4d0359fd772fca0d9f118c",
+      "source_member": "./spring-cloud__spring-cloud-config/13/build-notes.md"
+    },
+    {
+      "path": "recipes/spring-cloud__spring-cloud-config/14/Dockerfile",
+      "bytes": 471,
+      "sha256": "c9ee79190c8cd42d3760d641c0ae14ecc52aa57bfd7e6e0b51438e3269974b88",
+      "source_member": "./spring-cloud__spring-cloud-config/14/Dockerfile"
+    },
+    {
+      "path": "recipes/spring-projects__spring-framework/105/Dockerfile",
+      "bytes": 566,
+      "sha256": "f55539658e8287f885c500ddc69740147659dd6e21c04b03895fe52c7632d4a7",
+      "source_member": "./spring-projects__spring-framework/105/Dockerfile"
+    },
+    {
+      "path": "recipes/spring-projects__spring-security/109/Dockerfile",
+      "bytes": 593,
+      "sha256": "5bdc11f6ca6f25a13bd97c4b7d5f1f46888c60e2cd2a85fbab76112285e45091",
+      "source_member": "./spring-projects__spring-security/109/Dockerfile"
+    },
+    {
+      "path": "recipes/square__retrofit/9/Dockerfile",
+      "bytes": 347,
+      "sha256": "7f20b9542f1ad09f8de95af439b16299580b5f87ac38d004209ad4026cbec984",
+      "source_member": "./square__retrofit/9/Dockerfile"
+    },
+    {
+      "path": "recipes/square__retrofit/9/build-notes.md",
+      "bytes": 394,
+      "sha256": "b6ce123770d4174f3e2dacb0ca8e41306bf6f1fec20a6d581a89313fe76ef9c1",
+      "source_member": "./square__retrofit/9/build-notes.md"
+    },
+    {
+      "path": "recipes/srikanth-lingala__zip4j/25/Dockerfile",
+      "bytes": 354,
+      "sha256": "afa57972f4d903282fdf3165282d29a0545a11d037fa388c04c2f4428b4a3cf2",
+      "source_member": "./srikanth-lingala__zip4j/25/Dockerfile"
+    },
+    {
+      "path": "recipes/srikanth-lingala__zip4j/25/build-notes.md",
+      "bytes": 286,
+      "sha256": "54b2ece0020a45770f9831cf66aa5fb63db870a36faea8a1b7e0805851e34817",
+      "source_member": "./srikanth-lingala__zip4j/25/build-notes.md"
+    },
+    {
+      "path": "recipes/stirling-tools__stirling-pdf/e15128633718cb5f9262986b3770ca592af60cda/Dockerfile",
+      "bytes": 272,
+      "sha256": "72dbb7bde9c290b13bc4c81d6a441fb4f3a4e9d596e62a7e76e29af7b2509f2f",
+      "source_member": "./stirling-tools__stirling-pdf/e15128633718cb5f9262986b3770ca592af60cda/Dockerfile"
+    },
+    {
+      "path": "recipes/thingsboard__thingsboard/b2ae6f92d12206ea185a2e882945a6b69234bf03/Dockerfile",
+      "bytes": 768,
+      "sha256": "7c4ce7b2d83240c8edc77095affc49644f6e571398b3fe17ce094a3f3056f2f0",
+      "source_member": "./thingsboard__thingsboard/b2ae6f92d12206ea185a2e882945a6b69234bf03/Dockerfile"
+    },
+    {
+      "path": "recipes/thingsboard__thingsboard/b2ae6f92d12206ea185a2e882945a6b69234bf03/build-notes.md",
+      "bytes": 619,
+      "sha256": "93fc9529cb8188224477944114613986bcb4064f8a039796430a66a415633ac1",
+      "source_member": "./thingsboard__thingsboard/b2ae6f92d12206ea185a2e882945a6b69234bf03/build-notes.md"
+    },
+    {
+      "path": "recipes/uberfire__uberfire/21ec50e/Dockerfile",
+      "bytes": 1971,
+      "sha256": "e6b658fbd90ec328a2183bf49daf7b77d00aa433d1ea47570a928b7ccb376547",
+      "source_member": "./uberfire__uberfire/21ec50e/Dockerfile"
+    },
+    {
+      "path": "recipes/undertow-io__undertow/28/Dockerfile",
+      "bytes": 582,
+      "sha256": "a93bc75b5402ac7dab30b4662edf9e5c155616ac38a0021deb7b2d9a5b4daec8",
+      "source_member": "./undertow-io__undertow/28/Dockerfile"
+    },
+    {
+      "path": "recipes/vert-x3__vertx-stomp/0de4bc5/Dockerfile",
+      "bytes": 327,
+      "sha256": "ec913a8154ae1b0d8bd1a12e17218b1d6e5e7164f9001feaa722763c82b6e273",
+      "source_member": "./vert-x3__vertx-stomp/0de4bc5/Dockerfile"
+    },
+    {
+      "path": "recipes/vert-x3__vertx-stomp/5cc8222/Dockerfile",
+      "bytes": 327,
+      "sha256": "ec913a8154ae1b0d8bd1a12e17218b1d6e5e7164f9001feaa722763c82b6e273",
+      "source_member": "./vert-x3__vertx-stomp/5cc8222/Dockerfile"
+    },
+    {
+      "path": "recipes/vert-x3__vertx-web/22/Dockerfile",
+      "bytes": 349,
+      "sha256": "64d26c551eb04a4a8c3c42573a2eb68121469180fc68cafa66dfc9d9f625e8bc",
+      "source_member": "./vert-x3__vertx-web/22/Dockerfile"
+    },
+    {
+      "path": "recipes/vert-x3__vertx-web/5/Dockerfile",
+      "bytes": 349,
+      "sha256": "64d26c551eb04a4a8c3c42573a2eb68121469180fc68cafa66dfc9d9f625e8bc",
+      "source_member": "./vert-x3__vertx-web/5/Dockerfile"
+    },
+    {
+      "path": "recipes/webbukkit__dynmap/641f142/Dockerfile",
+      "bytes": 811,
+      "sha256": "cb9d366ddeb8cfbdb246ca3e96e2fc8cee9b46fb367f08cbfe7a95e2cf638cf8",
+      "source_member": "./webbukkit__dynmap/641f142/Dockerfile"
+    },
+    {
+      "path": "recipes/whitesource__curekit/32/Dockerfile",
+      "bytes": 351,
+      "sha256": "cbf57512258901fd8a89a08b5c56b9a03464eaed1044fcfb82c5652988805713",
+      "source_member": "./whitesource__curekit/32/Dockerfile"
+    },
+    {
+      "path": "recipes/wildfirechat__im-server/2f9c4e028c01c64913cab32e7248bcca183a5230/Dockerfile",
+      "bytes": 556,
+      "sha256": "5fb872a5b97afcb6991cc2445893ab1cbc7091100da6cb3b55fe3c9e22a946cd",
+      "source_member": "./wildfirechat__im-server/2f9c4e028c01c64913cab32e7248bcca183a5230/Dockerfile"
+    },
+    {
+      "path": "recipes/wildfly-security__wildfly-elytron/5ac5e6bbcba58883b3cebb2ddbcec4de140c5ceb/Dockerfile",
+      "bytes": 686,
+      "sha256": "bcc092cbf0f331a3bf54bd846fa51f3da4100c3a90c7a722df953e7fce995cc1",
+      "source_member": "./wildfly-security__wildfly-elytron/5ac5e6bbcba58883b3cebb2ddbcec4de140c5ceb/Dockerfile"
+    },
+    {
+      "path": "recipes/wildfly__wildfly/4/Dockerfile",
+      "bytes": 347,
+      "sha256": "7354fd90811d5523bc72df54643e800a2ec1398dc540c12d36a3eaa4d0570bb7",
+      "source_member": "./wildfly__wildfly/4/Dockerfile"
+    },
+    {
+      "path": "recipes/x-stream__xstream/56/Dockerfile",
+      "bytes": 342,
+      "sha256": "abee1c497dce4dcd39429fa49317b7a611185a0c2ca25740c61e1d6585dca13a",
+      "source_member": "./x-stream__xstream/56/Dockerfile"
+    },
+    {
+      "path": "recipes/x-stream__xstream/57/Dockerfile",
+      "bytes": 268,
+      "sha256": "ac6a27d9ebc4e66e473364bae7460e8d749bdd91a1203e903d613278228b2268",
+      "source_member": "./x-stream__xstream/57/Dockerfile"
+    },
+    {
+      "path": "recipes/x-stream__xstream/58/Dockerfile",
+      "bytes": 270,
+      "sha256": "c04021c8ddd0bae8ca00b489b26193285e0422ee2dfc24fd8bc2e14569f7938b",
+      "source_member": "./x-stream__xstream/58/Dockerfile"
+    },
+    {
+      "path": "recipes/xerial__sqlite-jdbc/114/Dockerfile",
+      "bytes": 596,
+      "sha256": "1e83bc719cc6113a751064b1bc66482d6441ac82c3a88b21623cb5c8ed965b25",
+      "source_member": "./xerial__sqlite-jdbc/114/Dockerfile"
+    },
+    {
+      "path": "recipes/xuxueli__xxl-job/77/Dockerfile",
+      "bytes": 353,
+      "sha256": "2dd4a9f8d2def8aa22ad1e0339834853f14100a7e9546b8d1d42c2885d5913ec",
+      "source_member": "./xuxueli__xxl-job/77/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki-contrib__oidc/0247af1/Dockerfile",
+      "bytes": 1952,
+      "sha256": "761787885d50bc1cc0dab20850c72e1e3c212014bf26b1420cf87b7cbb417849",
+      "source_member": "./xwiki-contrib__oidc/0247af1/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki-contrib__oidc/7d7cca1/Dockerfile",
+      "bytes": 1952,
+      "sha256": "761787885d50bc1cc0dab20850c72e1e3c212014bf26b1420cf87b7cbb417849",
+      "source_member": "./xwiki-contrib__oidc/7d7cca1/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-commons/24/Dockerfile",
+      "bytes": 581,
+      "sha256": "34eff8246c1fe3a4369f153dd5100c2be3572ba74d4e2f182d948eeb3079b725",
+      "source_member": "./xwiki__xwiki-commons/24/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-commons/24/build-notes.md",
+      "bytes": 530,
+      "sha256": "76e8dc97d6954e45c94e59386c0f8f91ab758ea46ff409d8c2211bec1b633272",
+      "source_member": "./xwiki__xwiki-commons/24/build-notes.md"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-commons/91/Dockerfile",
+      "bytes": 800,
+      "sha256": "37ed8deb1f7f3ff4fb849581e9e40045f97eb0f554c5ad040b4aac3906da5839",
+      "source_member": "./xwiki__xwiki-commons/91/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-commons/92/Dockerfile",
+      "bytes": 480,
+      "sha256": "a738087941d01736c73e82b2755fae4ae2bcb8bc8ce873879166ad39646b1325",
+      "source_member": "./xwiki__xwiki-commons/92/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-commons/92/build-notes.md",
+      "bytes": 449,
+      "sha256": "35e2c027e09ffd6a13784a24c43ad36becb1945da9771fa9f3eb460d554c3b9a",
+      "source_member": "./xwiki__xwiki-commons/92/build-notes.md"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-commons/94/Dockerfile",
+      "bytes": 611,
+      "sha256": "c9d82c49175363748fbbe2ed2e372961caa827c30d7c56359196486b24254f43",
+      "source_member": "./xwiki__xwiki-commons/94/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-commons/97/Dockerfile",
+      "bytes": 582,
+      "sha256": "3fb5974435b1d8119747d07ff4ad9a10803ed1f1a5d6cde8ff46a977130eaf69",
+      "source_member": "./xwiki__xwiki-commons/97/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-platform/05dc331/Dockerfile",
+      "bytes": 348,
+      "sha256": "aa079b88f0b60cbfbf27bce652578d4c41418855c3021386db8d75f7d6ec667d",
+      "source_member": "./xwiki__xwiki-platform/05dc331/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-platform/11a9170/Dockerfile",
+      "bytes": 716,
+      "sha256": "d50d46583213b6289173fe0a4cf1bf864310685250064ab1596ba060d985cccf",
+      "source_member": "./xwiki__xwiki-platform/11a9170/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-platform/171e7c7/Dockerfile",
+      "bytes": 1880,
+      "sha256": "cb69f271637505efcb2c87379c89514c5c1aa1d61896d68e44806a0cbcdb6cdf",
+      "source_member": "./xwiki__xwiki-platform/171e7c7/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-platform/1977051/Dockerfile",
+      "bytes": 716,
+      "sha256": "d50d46583213b6289173fe0a4cf1bf864310685250064ab1596ba060d985cccf",
+      "source_member": "./xwiki__xwiki-platform/1977051/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-platform/1a30c1c/Dockerfile",
+      "bytes": 551,
+      "sha256": "ac006a2c302965a95eec4b786302806972b14523fcddfd984a55f547c7ada390",
+      "source_member": "./xwiki__xwiki-platform/1a30c1c/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-platform/2a9ce88/Dockerfile",
+      "bytes": 799,
+      "sha256": "5c8439862d8093f7056589bc7ade71337be2dee80476ebb3aa22131ca54bbf81",
+      "source_member": "./xwiki__xwiki-platform/2a9ce88/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-platform/39ddb2e/Dockerfile",
+      "bytes": 5387,
+      "sha256": "6e00732336e3ac3b483642a7e7f1b1da77d0f669457400027d8b6aff02c03fb7",
+      "source_member": "./xwiki__xwiki-platform/39ddb2e/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-platform/3d4dbb4/Dockerfile",
+      "bytes": 905,
+      "sha256": "1d05654bc47ba82c4ee5c51b20459370c2687869078994f6eec4003599474724",
+      "source_member": "./xwiki__xwiki-platform/3d4dbb4/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-platform/459e968/Dockerfile",
+      "bytes": 998,
+      "sha256": "2573795e4c5af43ea757b9c9eb04a8419800f5e6c05425703fb16fe181072f53",
+      "source_member": "./xwiki__xwiki-platform/459e968/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-platform/480186f/Dockerfile",
+      "bytes": 1010,
+      "sha256": "4dd46363ea137c75a01619a5ed93b3581fd07f542798574ca06c454512878edd",
+      "source_member": "./xwiki__xwiki-platform/480186f/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-platform/505f38b/Dockerfile",
+      "bytes": 1799,
+      "sha256": "7137bffb33018291f55d355119593facc42b87ca399666b2cd6e3ae7568c9bbd",
+      "source_member": "./xwiki__xwiki-platform/505f38b/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-platform/5dad14d/Dockerfile",
+      "bytes": 1820,
+      "sha256": "bb5f593a23fbbd20fdcb6f641cb56451bf782d3b79ebc314f0b84399d8604003",
+      "source_member": "./xwiki__xwiki-platform/5dad14d/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-platform/5f206f4/Dockerfile",
+      "bytes": 990,
+      "sha256": "0a88eea470d54198c3646d6cc5ec716d81882cfccac58c2b4b54352553a7e3a9",
+      "source_member": "./xwiki__xwiki-platform/5f206f4/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-platform/67021db9b8ed26c2236a653269302a86bf01ef40/Dockerfile",
+      "bytes": 5550,
+      "sha256": "dab91e39203b10993d5d583e0fe1678f6d34d787230c166d8c46d3927c9ade0d",
+      "source_member": "./xwiki__xwiki-platform/67021db9b8ed26c2236a653269302a86bf01ef40/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-platform/70c64c2/Dockerfile",
+      "bytes": 879,
+      "sha256": "729c55b6b9478d18907123892ab2b92fb33a3c1209ffcc053d61776866d29915",
+      "source_member": "./xwiki__xwiki-platform/70c64c2/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-platform/7525c13/Dockerfile",
+      "bytes": 799,
+      "sha256": "5c8439862d8093f7056589bc7ade71337be2dee80476ebb3aa22131ca54bbf81",
+      "source_member": "./xwiki__xwiki-platform/7525c13/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-platform/82aa670/Dockerfile",
+      "bytes": 1792,
+      "sha256": "4bc0d44907bee852948c2f9b516ca502e578168ed0b81760ea8ef13e3326485e",
+      "source_member": "./xwiki__xwiki-platform/82aa670/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-platform/8910b88/Dockerfile",
+      "bytes": 348,
+      "sha256": "aa079b88f0b60cbfbf27bce652578d4c41418855c3021386db8d75f7d6ec667d",
+      "source_member": "./xwiki__xwiki-platform/8910b88/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-platform/93b8ec7/Dockerfile",
+      "bytes": 990,
+      "sha256": "0a88eea470d54198c3646d6cc5ec716d81882cfccac58c2b4b54352553a7e3a9",
+      "source_member": "./xwiki__xwiki-platform/93b8ec7/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-platform/ba915dc/Dockerfile",
+      "bytes": 348,
+      "sha256": "aa079b88f0b60cbfbf27bce652578d4c41418855c3021386db8d75f7d6ec667d",
+      "source_member": "./xwiki__xwiki-platform/ba915dc/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-platform/d4752ef/Dockerfile",
+      "bytes": 660,
+      "sha256": "ee4b312aab546a035cfb60ca806a630053344037f9b8bed9ecb49052904b28db",
+      "source_member": "./xwiki__xwiki-platform/d4752ef/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-platform/d772021/Dockerfile",
+      "bytes": 551,
+      "sha256": "ac006a2c302965a95eec4b786302806972b14523fcddfd984a55f547c7ada390",
+      "source_member": "./xwiki__xwiki-platform/d772021/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-platform/d87d7bf/Dockerfile",
+      "bytes": 348,
+      "sha256": "aa079b88f0b60cbfbf27bce652578d4c41418855c3021386db8d75f7d6ec667d",
+      "source_member": "./xwiki__xwiki-platform/d87d7bf/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-platform/edc5257/Dockerfile",
+      "bytes": 716,
+      "sha256": "2588a8804cff1067cc607cd2c0fb569328a9a01a5a110f9b1c218fa8a5f7281c",
+      "source_member": "./xwiki__xwiki-platform/edc5257/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-platform/f16ca4e/Dockerfile",
+      "bytes": 1037,
+      "sha256": "3b5e000ca93b367702a171890b5eff4e90f52236e76aebef46e3b2fd60c15e31",
+      "source_member": "./xwiki__xwiki-platform/f16ca4e/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-platform/fcdcfed/Dockerfile",
+      "bytes": 369,
+      "sha256": "4641709fdd78ad2f9441f1dfa7d2bfc2f5e07934eeb4d7a98cb656e16bce3492",
+      "source_member": "./xwiki__xwiki-platform/fcdcfed/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-rendering/93/Dockerfile",
+      "bytes": 354,
+      "sha256": "5fb70633457d7c82aab88f0b04b8ff080b4e7b5de3299995ccb2158d7ca5d7ef",
+      "source_member": "./xwiki__xwiki-rendering/93/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-rendering/93/build-notes.md",
+      "bytes": 356,
+      "sha256": "ffdee4931c75969d023c899a49d8b9cc2036589d7efa3384f92ad7196cb934c0",
+      "source_member": "./xwiki__xwiki-rendering/93/build-notes.md"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-rendering/99/Dockerfile",
+      "bytes": 354,
+      "sha256": "5fb70633457d7c82aab88f0b04b8ff080b4e7b5de3299995ccb2158d7ca5d7ef",
+      "source_member": "./xwiki__xwiki-rendering/99/Dockerfile"
+    },
+    {
+      "path": "recipes/xwiki__xwiki-rendering/99/build-notes.md",
+      "bytes": 40,
+      "sha256": "b767f892ff4afcf850b07bb86091c06b82975d35149b2794e69979d221831d9c",
+      "source_member": "./xwiki__xwiki-rendering/99/build-notes.md"
+    },
+    {
+      "path": "recipes/yamcs__yamcs/52/Dockerfile",
+      "bytes": 269,
+      "sha256": "5e9d56e0c0e4ab50ac96718b8e59a2521256312127f1e0355da676d0340a08e0",
+      "source_member": "./yamcs__yamcs/52/Dockerfile"
+    },
+    {
+      "path": "recipes/yamcs__yamcs/52/build-notes.md",
+      "bytes": 265,
+      "sha256": "2c5b72f366d7a92a815ae32f4f0a6e9c85923ebe2c180e9daf8de1f03d01fa77",
+      "source_member": "./yamcs__yamcs/52/build-notes.md"
+    },
+    {
+      "path": "recipes/yamcs__yamcs/53/Dockerfile",
+      "bytes": 269,
+      "sha256": "5e9d56e0c0e4ab50ac96718b8e59a2521256312127f1e0355da676d0340a08e0",
+      "source_member": "./yamcs__yamcs/53/Dockerfile"
+    },
+    {
+      "path": "recipes/ycf1998__money-pos/11f276bd20a41f089298d804e43cb1c39d041e59/Dockerfile",
+      "bytes": 368,
+      "sha256": "a20274b94997e551cadb11a4b11d13919189f12ab6193d1b9a07fa102f2de233",
+      "source_member": "./ycf1998__money-pos/11f276bd20a41f089298d804e43cb1c39d041e59/Dockerfile"
+    },
+    {
+      "path": "recipes/ycf1998__money-pos/11f276bd20a41f089298d804e43cb1c39d041e59/build-notes.md",
+      "bytes": 463,
+      "sha256": "465d86c557da19c5e9a824e9151327e07cd3697fd6371e5bd49e8bb7d3374e99",
+      "source_member": "./ycf1998__money-pos/11f276bd20a41f089298d804e43cb1c39d041e59/build-notes.md"
+    },
+    {
+      "path": "recipes/zeroturnaround__zt-zip/31/Dockerfile",
+      "bytes": 359,
+      "sha256": "c7bf55def9ccfd89cbfbc7fe810a881f7e7e4329739c386b757c498d3cc20cd5",
+      "source_member": "./zeroturnaround__zt-zip/31/Dockerfile"
+    }
+  ],
+  "summary": {
+    "catalog_records": 317,
+    "recipe_files": 297,
+    "dockerfiles": 254,
+    "build_notes": 43,
+    "recipe_folders_with_literal_catalog_match": 240,
+    "catalog_build_status": {
+      "failed": 125,
+      "success": 191,
+      "timeout": 1
+    },
+    "catalog_is_verified": {
+      "0": 212,
+      "1": 105
+    },
+    "catalog_can_build": {
+      "0": 50,
+      "1": 93,
+      "None": 174
+    }
+  }
+}

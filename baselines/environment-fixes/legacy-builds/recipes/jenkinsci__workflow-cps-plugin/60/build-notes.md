@@ -1,0 +1,1 @@
+The repository was pre-fetched from an intermediate cache, so no cloning or checkout was needed. This revision built cleanly with standard Maven commands using Java 17 and Maven 3.9.8; no parent POM bootstrapping or version patching was required. Ensure the proxy and Aliyun mirror settings are correctly configured in

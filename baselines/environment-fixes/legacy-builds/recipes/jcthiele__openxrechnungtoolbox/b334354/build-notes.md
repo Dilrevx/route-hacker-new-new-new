@@ -1,0 +1,3 @@
+- Using an empty Maven settings file (`/tmp/empty-settings.xml`) prevents any global or user-level Maven settings from affecting the build, which avoids potential repository or proxy misconfigurations.
+- The `-P linux_64bit` profile is activated to select platform-specific dependencies or native libraries (e.g., for PDF generation or signature processing required by OpenXRechnung), as this revision explicitly expects a 64-bit Linux environment.
+- This build

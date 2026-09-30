@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "snapshot_date": "2026-09-30",
+  "source_git_head": "7aa5b7aba78aa5a012874edb885ded0bd2f6cbf4",
+  "source_selected_paths_git_status": "",
+  "historical_bundle_not_proven_generated_by_this_head": true,
+  "files": [
+    {
+      "path": "scripts/build_repo_docker.py",
+      "bytes": 89895,
+      "sha256": "cc8f682e4c4538adc5a71ebc82830eafd7dd4c258365993f03008f7d60cd54f5"
+    },
+    {
+      "path": "Dockerfile.runtime",
+      "bytes": 2797,
+      "sha256": "922d8cead81450f71cd042c55410513c63b6c1209105b58159a87c13a9d78bbd"
+    }
+  ],
+  "image_lookup_scope": "default Docker daemon; no images started or exported",
+  "images": [
+    {
+      "requested_tag": "route-hacker-base:tools-78932d2e-iris",
+      "lookup_returncode": 1,
+      "saved_image_tar": false
+    },
+    {
+      "requested_tag": "route-hacker-base:tools-78932d2e",
+      "lookup_returncode": 1,
+      "saved_image_tar": false
+    },
+    {
+      "requested_tag": "route-hacker-temp/halo-gradle-cache",
+      "lookup_returncode": 1,
+      "saved_image_tar": false
+    },
+    {
+      "requested_tag": "route-hacker-base:tools-50757a05",
+      "lookup_returncode": 1,
+      "saved_image_tar": false
+    },
+    {
+      "requested_tag": "route-hacker-cache/jenkinsci__docker-commons-plugin:59-m2cache",
+      "lookup_returncode": 1,
+      "saved_image_tar": false
+    },
+    {
+      "requested_tag": "route-hacker-base:tools-134326bb",
+      "lookup_returncode": 1,
+      "saved_image_tar": false
+    }
+  ]
+}

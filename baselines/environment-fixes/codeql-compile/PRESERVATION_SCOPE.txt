@@ -1,0 +1,25 @@
+Compile and CodeQL environment repair — historical text artifacts
+
+These are reviewed, sanitized historical text artifacts, archived without re-execution.
+The 137 fleet cases retain their original recipe/review statuses and declared
+limitations. A successful compilation, CodeQL database, and functioning runtime
+are different validation levels; no new build, container or exploit was run while
+preserving these artifacts. Failed/superseded CodeQL attempts are retained.
+
+Dockerfiles, small scripts, patches and selected generated helper source are real
+historical build inputs. Host-specific source paths were relocated to case-relative
+or neutral workspace placeholders. Check the per-case historical receipt for source
+revision/archive hashes, toolchain, command and claim boundaries.
+
+Large source, dependency, toolchain and image archives are NOT bundled here.
+Dependency metadata marks exact hashes/recipe references where known. Directory
+payloads and alternate build contexts remain incomplete. These offline bundles may
+contain local-only dependencies and must not be assumed freely redownloadable.
+
+The private preservation contains original receipts, logs and settings. Raw model
+prompts/responses, environment secrets and full private logs are not public inputs.
+Review licenses, resource paths and dependency acquisition before reuse or redistribution.
+
+The exact a26 historical execution package is preserved privately (18 files,
+440,071 bytes), not included in these text candidates. A separately published
+compile-builder module must not be assumed byte-identical to that executor.

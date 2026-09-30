@@ -1,0 +1,3686 @@
+{
+  "schema": "publication-candidates-v1",
+  "release_status": "reviewed_archival_subset",
+  "files": [
+    {
+      "path": "PRESERVATION_SCOPE.txt",
+      "sha256": "bfcb57cc44f1ab6178502df078bf7356cba59c8316de1056e7628540e43bc02c",
+      "bytes": 1600
+    },
+    {
+      "path": "SOURCE_PROVENANCE.json",
+      "sha256": "cf5c3dccce4b5a1d94f6f0bcb8e3aecd1b2a9a3fb4d2422a39c60059d42662e1",
+      "bytes": 580180
+    },
+    {
+      "path": "dependency-provenance.json",
+      "sha256": "99c9d91f8956749f11c9140a053bbcef216940acb194fc130797ab2860fe5be1",
+      "bytes": 212338
+    },
+    {
+      "path": "docker-copy-mapping.json",
+      "sha256": "ce00d3860a4d02ce82f8318778869cd3644be79d8ba808464556f51b6f7cce7a",
+      "bytes": 276989
+    },
+    {
+      "path": "fleet-138-v1/v8_DSpace_CVE-2025-53621_dspace-7.6.3/Dockerfile",
+      "sha256": "1cb000ac455bad9d2cf541a9c9889d2d99cd4a6ba57a230aceaef334cdbedf23",
+      "bytes": 1811
+    },
+    {
+      "path": "fleet-138-v1/v8_DSpace_CVE-2025-53621_dspace-7.6.3/historical-receipt.json",
+      "sha256": "442e458149509255ce18ab5804d58469f7197b52f82d319e6230e5003f681617",
+      "bytes": 5171
+    },
+    {
+      "path": "fleet-138-v1/v8_DSpace__DSpace_CVE-2022-31192_5.10/Dockerfile",
+      "sha256": "cab496c2b9a6861cf2c2d68c714b6975217a7bcd68ebe1683f10c3f283dd9f11",
+      "bytes": 2022
+    },
+    {
+      "path": "fleet-138-v1/v8_DSpace__DSpace_CVE-2022-31192_5.10/historical-receipt.json",
+      "sha256": "8148f8bf17daaae1da1ee51b2fca1ae759ccc02fac9149cb9233a8e2a2ac86a1",
+      "bytes": 5696
+    },
+    {
+      "path": "fleet-138-v1/v8_DSpace__DSpace_CVE-2022-31194_5.10/Dockerfile",
+      "sha256": "cc26db1bbce8445ad9642d1990db84b283a10154d09159fa9242fbaf208e9544",
+      "bytes": 1957
+    },
+    {
+      "path": "fleet-138-v1/v8_DSpace__DSpace_CVE-2022-31194_5.10/historical-receipt.json",
+      "sha256": "f38b0e3c125ab24693d582ce165fc4db783db28806fc9f476eee715d5ff14172",
+      "bytes": 4516
+    },
+    {
+      "path": "fleet-138-v1/v8_DSpace__DSpace_CVE-2022-31195_5.10/Dockerfile",
+      "sha256": "545a4ab801fb8b2a2716c257d26e12e34bd2bda61c926c5781a08050e86add85",
+      "bytes": 1760
+    },
+    {
+      "path": "fleet-138-v1/v8_DSpace__DSpace_CVE-2022-31195_5.10/historical-receipt.json",
+      "sha256": "446d9ca0b29529fadb008229e545a37694c8c5379cf601f0a41778e03315a5d3",
+      "bytes": 4142
+    },
+    {
+      "path": "fleet-138-v1/v8_OpenDJ_CVE-2025-27497_4.9.2/Dockerfile",
+      "sha256": "b13ee1aab8aa267351b1c0d75e92a53c32dea85b77a1f609353bca932b479920",
+      "bytes": 2439
+    },
+    {
+      "path": "fleet-138-v1/v8_OpenDJ_CVE-2025-27497_4.9.2/context/Dockerfile",
+      "sha256": "b13ee1aab8aa267351b1c0d75e92a53c32dea85b77a1f609353bca932b479920",
+      "bytes": 2439
+    },
+    {
+      "path": "fleet-138-v1/v8_OpenDJ_CVE-2025-27497_4.9.2/historical-receipt.json",
+      "sha256": "665bd90ad59582e6be33fd781854a8d018aca557437bba942c21010eec16eac6",
+      "bytes": 4387
+    },
+    {
+      "path": "fleet-138-v1/v8_OpenDJ_CVE-2025-27497_4.9.2/toolchain-context/Dockerfile",
+      "sha256": "be472e12cac54ab4cda22732aaaec6c2ae539686f1e0612870ad92b4ea3ec504",
+      "bytes": 484
+    },
+    {
+      "path": "fleet-138-v1/v8_activemq-artemis_CVE-2025-27427_2.39.0/Dockerfile",
+      "sha256": "e7f89105f4ed936958a69b4799faee193eab6bc893fc94051c139f06441f3885",
+      "bytes": 1577
+    },
+    {
+      "path": "fleet-138-v1/v8_activemq-artemis_CVE-2025-27427_2.39.0/historical-receipt.json",
+      "sha256": "50cf37f23310d35375035ecd9ded914219f590508acf2bb037bc3b7a8335cde2",
+      "bytes": 4684
+    },
+    {
+      "path": "fleet-138-v1/v8_akka-management_CVE-2025-46548_v1.6.0-M1/Dockerfile",
+      "sha256": "fb494b08d5248838e17196b845760959c4ddf50a0f3f6fddc687ade301b345e9",
+      "bytes": 7294
+    },
+    {
+      "path": "fleet-138-v1/v8_akka-management_CVE-2025-46548_v1.6.0-M1/Dockerfile.exact-attempt-10",
+      "sha256": "10b96615beaa5a5802a928b93c0a91a0fd2cce60c7cfb8d9b84429877d994ad2",
+      "bytes": 5512
+    },
+    {
+      "path": "fleet-138-v1/v8_akka-management_CVE-2025-46548_v1.6.0-M1/Dockerfile.exact-attempt-11",
+      "sha256": "32105116b1ab4c48e7bcb74e04ec36269fa142a0c80607dcebd6bc20f7774bbe",
+      "bytes": 5681
+    },
+    {
+      "path": "fleet-138-v1/v8_akka-management_CVE-2025-46548_v1.6.0-M1/Dockerfile.exact-attempt-9",
+      "sha256": "284539dae5d3b2d9b180376798e1e369398137b22017624b1215e95ec58a4e65",
+      "bytes": 5420
+    },
+    {
+      "path": "fleet-138-v1/v8_akka-management_CVE-2025-46548_v1.6.0-M1/Dockerfile.exact-final-candidate",
+      "sha256": "0f4a9386a1c5ea4ad05d85734f5f36ad53d2680cd172b791de6292f469daf440",
+      "bytes": 7041
+    },
+    {
+      "path": "fleet-138-v1/v8_akka-management_CVE-2025-46548_v1.6.0-M1/generate_exact_bundle.py",
+      "sha256": "8c844a5a6fe7b2968f6016c27df605c80ed802525d26a7578e1a8216b8397168",
+      "bytes": 10351
+    },
+    {
+      "path": "fleet-138-v1/v8_akka-management_CVE-2025-46548_v1.6.0-M1/historical-receipt.json",
+      "sha256": "5da0e46c12ecd306fe9917eef6465357de9343a1d83da519cd1101eef7e091d0",
+      "bytes": 10251
+    },
+    {
+      "path": "fleet-138-v1/v8_alibaba__nacos_CVE-2021-44667_2.0.3/.dockerignore",
+      "sha256": "02a3ba4f2a145dac7871983cca1c7ced13d82a0562eac2805c6fb546e8cdea81",
+      "bytes": 113
+    },
+    {
+      "path": "fleet-138-v1/v8_alibaba__nacos_CVE-2021-44667_2.0.3/Dockerfile",
+      "sha256": "3143c9a0cfc78b1421792c972653d353373ca03273575dc5bbfa83a65c534643",
+      "bytes": 2233
+    },
+    {
+      "path": "fleet-138-v1/v8_alibaba__nacos_CVE-2021-44667_2.0.3/historical-receipt.json",
+      "sha256": "59c1d96e226c797b104f9535cf7dd6ecc07f9dfdb9cf99d5ab0c48df0bd0c665",
+      "bytes": 5078
+    },
+    {
+      "path": "fleet-138-v1/v8_allure2_CVE-2025-52888_2.34.0/Dockerfile",
+      "sha256": "7112fef745ad97cfb1ae9395a5ce311b8c0d640d57d0245457f487da6cc4f39e",
+      "bytes": 2309
+    },
+    {
+      "path": "fleet-138-v1/v8_allure2_CVE-2025-52888_2.34.0/historical-receipt.json",
+      "sha256": "a8826872c8384041c087ebfe99e79018d650631c9dc0b5415f8e3e79f5f0b21b",
+      "bytes": 4323
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__activemq_CVE-2014-3576_5.10.2/Dockerfile",
+      "sha256": "ad2484870ffae6fb90a6a3f3d7f79e08460a8685e7d91b0ae5bda0e590e874ce",
+      "bytes": 1636
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__activemq_CVE-2014-3576_5.10.2/historical-receipt.json",
+      "sha256": "151163ea74fe6f9f9720ddf730598fa2b5d487aa0a8eee993505e2d25716422c",
+      "bytes": 7066
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__activemq_CVE-2019-0222_5.15.8/Dockerfile",
+      "sha256": "fd161715828e184c22348e4539cc5b1edc59ad32644d99eade9a144b83d84981",
+      "bytes": 1636
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__activemq_CVE-2019-0222_5.15.8/historical-receipt.json",
+      "sha256": "c9e709ba133c5348fa542a7f9ff1055353abbaba0e6b098d3607724795a80a62",
+      "bytes": 5639
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__activemq_CVE-2020-11998_5.15.12/Dockerfile",
+      "sha256": "2aa33663ebe07f25b94709749a640db387092fa63f13bbae67703f59a6f444f8",
+      "bytes": 1857
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__activemq_CVE-2020-11998_5.15.12/historical-receipt.json",
+      "sha256": "ad8b64c58c694cf4bdd840c7c457152595d88f5c7d7dd5261cc7dc670e778f43",
+      "bytes": 7118
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__axis-axis1-java_CVE-2023-51441_1.3.0/Dockerfile",
+      "sha256": "284ce1b58bf24353fe2cc222e9e84a29aea7cf2c0a59c0a897bd6ff3e972e83b",
+      "bytes": 1568
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__axis-axis1-java_CVE-2023-51441_1.3.0/historical-receipt.json",
+      "sha256": "e01e1bbd95fd05cbbb0b520a3a9ead2574a91f66d285a6659e5a59841d3ebadd",
+      "bytes": 4791
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__camel_CVE-2018-8041_2.20.3/Dockerfile",
+      "sha256": "2498380bf0c666b595b76bdd93cd0468dd36bb9c9b1a4062889fa0e7fb653764",
+      "bytes": 1972
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__camel_CVE-2018-8041_2.20.3/context/Dockerfile",
+      "sha256": "2498380bf0c666b595b76bdd93cd0468dd36bb9c9b1a4062889fa0e7fb653764",
+      "bytes": 1972
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__camel_CVE-2018-8041_2.20.3/context/Dockerfile.compile-test",
+      "sha256": "186ee7667dbd9c26a62cb18dc9dff2dc2b291e659351beebd8ece8f302828028",
+      "bytes": 1050
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__camel_CVE-2018-8041_2.20.3/context/Dockerfile.install-test",
+      "sha256": "675c5c2e7df223f794b5a41ce67b9b19fc03184d34e6394e07c05671b9ddf7ad",
+      "bytes": 1243
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__camel_CVE-2018-8041_2.20.3/context/Dockerfile.test",
+      "sha256": "2df0e1f480a298672466c41c60f17bf8c7828a2b99cba10f5e26ff1a6d35e702",
+      "bytes": 1003
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__camel_CVE-2018-8041_2.20.3/historical-receipt.json",
+      "sha256": "058a53fd212819caedd4db8410a91be6a3404c42b4aab2784284397638ba8880",
+      "bytes": 5307
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__camel_CVE-2019-0194_2.21.4/Dockerfile",
+      "sha256": "9495e5fa5cf0f9795f66885f3ce1eaa8b74d43e5025c19acc1e8e9946d06096d",
+      "bytes": 1534
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__camel_CVE-2019-0194_2.21.4/historical-receipt.json",
+      "sha256": "a706b52da7b14669c67e7575c0a0f77a9bf3b2704b8d301fdd2098b7f802ac5b",
+      "bytes": 5932
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__dolphinscheduler_CVE-2023-49109_3.2.0/Dockerfile",
+      "sha256": "c09dd4787f499c4d5a42545f6503e0626eff1bcf4f2fed9022cc7410cc3369ff",
+      "bytes": 2222
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__dolphinscheduler_CVE-2023-49109_3.2.0/historical-receipt.json",
+      "sha256": "85a3cbc3ea6b79204f9663a997ccd4a5bd5ddadd11fd4f2b97026e54b02e631c",
+      "bytes": 5384
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__dolphinscheduler_CVE-2023-51770_3.2.0/Dockerfile",
+      "sha256": "37abc63757f1ce762a3ff867a4171c68f9a93c789f0b7aca6f485f2b78e8dc87",
+      "bytes": 2972
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__dolphinscheduler_CVE-2023-51770_3.2.0/Dockerfile.attempt1",
+      "sha256": "6fca943e10316fa9459b348d0a6890d50695ae28d6f8d04672de57a934244610",
+      "bytes": 1891
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__dolphinscheduler_CVE-2023-51770_3.2.0/historical-receipt.json",
+      "sha256": "fbec4e23d397a986df429f060dc4f3824cc86e26a3f1785d9771a5f91351d33f",
+      "bytes": 5845
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__flink_CVE-2020-17519_1.11.2/Dockerfile",
+      "sha256": "a127212d9a8aeb17cbf077ff0b44dd8dfe5fadd631e7e7fa8979c298fb6dd599",
+      "bytes": 1965
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__flink_CVE-2020-17519_1.11.2/historical-receipt.json",
+      "sha256": "bb9291becccf6fa877813f0abda89912ec5979ded809db9ac4b4c9dc73681e72",
+      "bytes": 4393
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__jspwiki_CVE-2019-0225_2.11.0.M2/.dockerignore",
+      "sha256": "cb45f8bbd082e274bc03aaa3c030ef331def17c132450a44ffbc308bdcdec240",
+      "bytes": 93
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__jspwiki_CVE-2019-0225_2.11.0.M2/Dockerfile",
+      "sha256": "1e3b33766d99a43b99fff2c36fd35202c72b9a4d920d1d95159c9cf27fa3f7ad",
+      "bytes": 2763
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__jspwiki_CVE-2019-0225_2.11.0.M2/Dockerfile.probe",
+      "sha256": "705ab4fb3a17bd443b7eba448e035f88d60f0f64ed13eb377717587c7fe4c896",
+      "bytes": 1566
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__jspwiki_CVE-2019-0225_2.11.0.M2/historical-receipt.json",
+      "sha256": "626b7c601ba0738f3920662e9c7759b8321f5bac7bf30c7c972b16520a1d8e9a",
+      "bytes": 6901
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__jspwiki_CVE-2019-10089_2.11.0.M4/Dockerfile",
+      "sha256": "8d62ea1ae35a086f1943ae79cf13b6c07d05c8fd91b3ac2b18fddaca148e51f7",
+      "bytes": 1907
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__jspwiki_CVE-2019-10089_2.11.0.M4/historical-receipt.json",
+      "sha256": "e58cadd08be86df71f750af1b77211e9726d7d615f02b36ae3ff51287e2b6631",
+      "bytes": 5862
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__jspwiki_CVE-2022-46907_2.11.3/.dockerignore",
+      "sha256": "ed4eef90141d06e683efd440b8a9c484eebe69f1707294a5c925620d04b38ce6",
+      "bytes": 48
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__jspwiki_CVE-2022-46907_2.11.3/Dockerfile",
+      "sha256": "a7c4520dbb70218a23fc749b578e59a9de5eeeba34fb466ab5a5ab06c2544684",
+      "bytes": 1426
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__jspwiki_CVE-2022-46907_2.11.3/context/.dockerignore",
+      "sha256": "ed4eef90141d06e683efd440b8a9c484eebe69f1707294a5c925620d04b38ce6",
+      "bytes": 48
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__jspwiki_CVE-2022-46907_2.11.3/context/Dockerfile",
+      "sha256": "a7c4520dbb70218a23fc749b578e59a9de5eeeba34fb466ab5a5ab06c2544684",
+      "bytes": 1426
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__jspwiki_CVE-2022-46907_2.11.3/historical-receipt.json",
+      "sha256": "51d7eb3d9f6118e3cfad3c31961cc870185294e99c6ea55d8189fed56a9708a5",
+      "bytes": 5091
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__kafka_CVE-2025-27818_3.9.0/Dockerfile",
+      "sha256": "c52d95abe076216c3fe8e078d2dac4a6e987401229e869ad6b31800c39ab7dfd",
+      "bytes": 3852
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__kafka_CVE-2025-27818_3.9.0/Dockerfile.online",
+      "sha256": "b9c0a6179a8e70f6f35d4492fcdddad5ba9ced4025312cc51213a830c9df0fe3",
+      "bytes": 710
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__kafka_CVE-2025-27818_3.9.0/historical-receipt.json",
+      "sha256": "62486fa945f6c54dc2b622bef1bcd9601ff5352dee28dae2c88f8f3c0d22132e",
+      "bytes": 4827
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__kylin_CVE-2024-48944_5.0.0/Dockerfile",
+      "sha256": "27dbb031a6374ddcd209915486ff04d21cb62b4804f469dd29f57e5059d74563",
+      "bytes": 2900
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__kylin_CVE-2024-48944_5.0.0/historical-receipt.json",
+      "sha256": "365f3f18af46e82957bec42c55e6839de7956e642e5b5d0681759bc23d86cc05",
+      "bytes": 7000
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__mina-sshd_CVE-2023-35887_2.9.2/Dockerfile",
+      "sha256": "41e6b2f102f250556bfd1e8c0e08040b587b9fe6b52276647b605495709b9bf3",
+      "bytes": 1825
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__mina-sshd_CVE-2023-35887_2.9.2/historical-receipt.json",
+      "sha256": "41e84fe07d1bed37b4022f4cbf7772efba40cb5ded1bffd658d2e9855e98b9e6",
+      "bytes": 4276
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__nifi_CVE-2022-33140_1.16.2/Dockerfile",
+      "sha256": "d468095791d72c078409bfe3706efe1b37daa7237be96b8a1d1fecf029f006c9",
+      "bytes": 3485
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__nifi_CVE-2022-33140_1.16.2/historical-receipt.json",
+      "sha256": "3d137fca9713cecf4bf335eac87458cede7f259e994c2f0f69f560e059896546",
+      "bytes": 5260
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__shiro_CVE-2023-46749_1.12.0/Dockerfile",
+      "sha256": "e1391f3daf70116b59d2b13e7afb3affe8b8629bf7afa9d0da8ed30c09222127",
+      "bytes": 4207
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__shiro_CVE-2023-46749_1.12.0/Dockerfile.attempt1",
+      "sha256": "194e7f89aad387e67086eff799cf6b7c9ab9388f5a112bc1c3d80ee2b9e14fb9",
+      "bytes": 3018
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__shiro_CVE-2023-46749_1.12.0/historical-receipt.json",
+      "sha256": "449b6902c1fbb5a3def6078b3e6ec3be241bf54090733a69468fe452aa0433db",
+      "bytes": 5785
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__uima-uimaj_CVE-2022-32287_3.3.0/.dockerignore",
+      "sha256": "5da07093b7ceb421956683a611f9cb9f53a3520ab5609bcf83711f2dfcc384a1",
+      "bytes": 88
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__uima-uimaj_CVE-2022-32287_3.3.0/Dockerfile",
+      "sha256": "0af304ebf6334b3cc3f3193d99ad24659b2ab7c9b1b9d98bf1ca6f4e337cad62",
+      "bytes": 2814
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__uima-uimaj_CVE-2022-32287_3.3.0/Dockerfile.worker-round-1",
+      "sha256": "ece1ca63177e1a3dc782407bbd84bc9c4b678571095ec8a1f146b80d9148ead0",
+      "bytes": 2151
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__uima-uimaj_CVE-2022-32287_3.3.0/attempt-1.Dockerfile",
+      "sha256": "40d9efd41f12a604c684928a3069715c0062952bdbefc009c21bd48bc9202b2b",
+      "bytes": 576
+    },
+    {
+      "path": "fleet-138-v1/v8_apache__uima-uimaj_CVE-2022-32287_3.3.0/historical-receipt.json",
+      "sha256": "effba9cb63ae54192257735ee70876a8d903b5b249c2bf8cc5cb6a150f03f80c",
+      "bytes": 8308
+    },
+    {
+      "path": "fleet-138-v1/v8_asf__cxf_CVE-2016-6812_3.0.11/Dockerfile",
+      "sha256": "441ecd39ab46e203d28e4230f7fc73e18ad23f63aac55c922eed238ab7439761",
+      "bytes": 2944
+    },
+    {
+      "path": "fleet-138-v1/v8_asf__cxf_CVE-2016-6812_3.0.11/historical-receipt.json",
+      "sha256": "54164a7887834f375de73806b151ad4d21edc3c29b9ea62df8c72b2346d3aeb1",
+      "bytes": 3843
+    },
+    {
+      "path": "fleet-138-v1/v8_asf__cxf_CVE-2019-17573_3.2.11/.dockerignore",
+      "sha256": "d70b6fe67311f0016e9390194e03c3f710d24bfa443b8df1768729c3214d1d23",
+      "bytes": 94
+    },
+    {
+      "path": "fleet-138-v1/v8_asf__cxf_CVE-2019-17573_3.2.11/Dockerfile",
+      "sha256": "1effc2aa8f92187398a273d00bc56ff7e6e6e45b959f22673c17d1b8ef70d255",
+      "bytes": 2458
+    },
+    {
+      "path": "fleet-138-v1/v8_asf__cxf_CVE-2019-17573_3.2.11/historical-receipt.json",
+      "sha256": "63345ce73123d6ddd4681702fb1752d6d0f7a128cccacb2656c734bbb4af5121",
+      "bytes": 5000
+    },
+    {
+      "path": "fleet-138-v1/v8_asf__nifi_CVE-2023-34468_1.21.0/.dockerignore",
+      "sha256": "3c145accd3db026330416fcaa8d77fc963d5f8bea90b9efb3f3188533fd20a3a",
+      "bytes": 112
+    },
+    {
+      "path": "fleet-138-v1/v8_asf__nifi_CVE-2023-34468_1.21.0/Dockerfile",
+      "sha256": "ab78d532743a4248b47179429a96714053a0906780c00ad5fcc02c295a2b999e",
+      "bytes": 3451
+    },
+    {
+      "path": "fleet-138-v1/v8_asf__nifi_CVE-2023-34468_1.21.0/historical-receipt.json",
+      "sha256": "c46f9c1c30d40137e47b9fd33f447a056a4f136523ac0c83b0dfd3903dbab6db",
+      "bytes": 6714
+    },
+    {
+      "path": "fleet-138-v1/v8_asf__nifi_CVE-2023-36542_1.22.0/Dockerfile",
+      "sha256": "88fe5bbb3cfad8315c89f40c70f86fcf4f31a877945b4783699bbecfd65fb32f",
+      "bytes": 4178
+    },
+    {
+      "path": "fleet-138-v1/v8_asf__nifi_CVE-2023-36542_1.22.0/historical-receipt.json",
+      "sha256": "fb5306eb5b8429c92a890fc7b7a126f9bba99581cae6f7306a6fe0bd515b34e6",
+      "bytes": 6566
+    },
+    {
+      "path": "fleet-138-v1/v8_asf__tapestry-5_CVE-2019-0207_5.4.4/.dockerignore",
+      "sha256": "c5a93ae2e7bfea21ae7775911d3c7920cf031fea288acade06d80b780b6e1ca1",
+      "bytes": 111
+    },
+    {
+      "path": "fleet-138-v1/v8_asf__tapestry-5_CVE-2019-0207_5.4.4/Dockerfile",
+      "sha256": "6189ff81a105105a57a3e72c119158eab882bb81badc464f48a035f344c6fc65",
+      "bytes": 3947
+    },
+    {
+      "path": "fleet-138-v1/v8_asf__tapestry-5_CVE-2019-0207_5.4.4/Dockerfile.bootstrap",
+      "sha256": "3930295708a00772da658c7af78b604d9885ded5654ea8cbaef72e79970432d6",
+      "bytes": 1195
+    },
+    {
+      "path": "fleet-138-v1/v8_asf__tapestry-5_CVE-2019-0207_5.4.4/historical-receipt.json",
+      "sha256": "4b46bf97595a1dbaab487934146a74e41241bbe44080bb80592936e13227babb",
+      "bytes": 4586
+    },
+    {
+      "path": "fleet-138-v1/v8_aws__aws-sdk-java_CVE-2022-31159_1.12.260/.dockerignore",
+      "sha256": "3b0e0a81a3a35eac337ff7c9f5ac91bbc06837d900a872fe5083048e3c21a288",
+      "bytes": 77
+    },
+    {
+      "path": "fleet-138-v1/v8_aws__aws-sdk-java_CVE-2022-31159_1.12.260/Dockerfile",
+      "sha256": "9b80d8f1071936f717bd5ba5040daa2e6919de5fa3fa031a22008d4c31bb169f",
+      "bytes": 2116
+    },
+    {
+      "path": "fleet-138-v1/v8_aws__aws-sdk-java_CVE-2022-31159_1.12.260/historical-receipt.json",
+      "sha256": "0f31e94071d2a7b649d617c82feaca2b3ef1c3942cdd8231b6dceb1580cfe272",
+      "bytes": 6179
+    },
+    {
+      "path": "fleet-138-v1/v8_camel_CVE-2025-30177_camel-4.10.2/Dockerfile",
+      "sha256": "970edb8f5f85f39c86f6e35f46a8a7ae96daca59692bd21bb28906efb57cd755",
+      "bytes": 3916
+    },
+    {
+      "path": "fleet-138-v1/v8_camel_CVE-2025-30177_camel-4.10.2/Dockerfile.attempt1",
+      "sha256": "63b04428d8cd22324eb3cc7cbc1448b56d02b96eafb6348c010b2f903574a021",
+      "bytes": 1243
+    },
+    {
+      "path": "fleet-138-v1/v8_camel_CVE-2025-30177_camel-4.10.2/Dockerfile.attempt2",
+      "sha256": "047d3ee4d1766c2a5f651622865f7d6c30e910124fefd7f5b34f71f5b8f94c39",
+      "bytes": 1263
+    },
+    {
+      "path": "fleet-138-v1/v8_camel_CVE-2025-30177_camel-4.10.2/Dockerfile.attempt3",
+      "sha256": "9cf77bf77f4fc0a124591eacabe175ac2aa7ccc74f4908595378991f5e607c0d",
+      "bytes": 1252
+    },
+    {
+      "path": "fleet-138-v1/v8_camel_CVE-2025-30177_camel-4.10.2/Dockerfile.attempt4",
+      "sha256": "4d2dc19b5f7466149dca06c16d38eb8d740076c5d5db2217bbba7673661d529f",
+      "bytes": 1208
+    },
+    {
+      "path": "fleet-138-v1/v8_camel_CVE-2025-30177_camel-4.10.2/Dockerfile.cache-export",
+      "sha256": "5e3ba752d1e8dab3a6e7d37b929cf2524326e6a82dbcba9a8a8bf25d3f2b808c",
+      "bytes": 204
+    },
+    {
+      "path": "fleet-138-v1/v8_camel_CVE-2025-30177_camel-4.10.2/historical-receipt.json",
+      "sha256": "fcabf5b00243f0097f870f782568e980d641de7d0076f20dcb7fa44fdf823c0f",
+      "bytes": 8126
+    },
+    {
+      "path": "fleet-138-v1/v8_cassandra-lucene-index_CVE-2025-26511_cassandra-4.0.16-1.0.0/Dockerfile",
+      "sha256": "75f8a3e5ff608a223a9c3ec2c02737995c5098d611be11919d2dc3ec147571d4",
+      "bytes": 3637
+    },
+    {
+      "path": "fleet-138-v1/v8_cassandra-lucene-index_CVE-2025-26511_cassandra-4.0.16-1.0.0/historical-receipt.json",
+      "sha256": "f599a734541dc9451f498568e9c19adcadbb7783e7e4a5d3ce23975e5a531af7",
+      "bytes": 4912
+    },
+    {
+      "path": "fleet-138-v1/v8_cassandra_CVE-2025-23015_cassandra-5.0-alpha2/Dockerfile",
+      "sha256": "82012427b2e2649550b307d9c435624c37bb6e8673488c6b7fd97be72eb47e34",
+      "bytes": 3198
+    },
+    {
+      "path": "fleet-138-v1/v8_cassandra_CVE-2025-23015_cassandra-5.0-alpha2/historical-receipt.json",
+      "sha256": "2a0ffcc11fbbffa7eff40a012b14a23938ef6e6736c7d9170c050fd32654a998",
+      "bytes": 5951
+    },
+    {
+      "path": "fleet-138-v1/v8_cloudbees-jenkins-advisor-plugin_CVE-2025-47885_374.v194b_d4f0c8c8/Dockerfile",
+      "sha256": "a81de6b0635050ecdd30851e98a2c1dc072b32eb7cbacc3f7a978faf47a28f80",
+      "bytes": 2793
+    },
+    {
+      "path": "fleet-138-v1/v8_cloudbees-jenkins-advisor-plugin_CVE-2025-47885_374.v194b_d4f0c8c8/historical-receipt.json",
+      "sha256": "6d62510bf2642b76ceeb47598397693ba5070c30434eb8f8cf6a4939745ce527",
+      "bytes": 5516
+    },
+    {
+      "path": "fleet-138-v1/v8_codecentric__spring-boot-admin_CVE-2022-46166_2.6.9/Dockerfile",
+      "sha256": "a7d0e9344091d50a0f9ce6360c001187549247848029cab5b92ad45657cec827",
+      "bytes": 2917
+    },
+    {
+      "path": "fleet-138-v1/v8_codecentric__spring-boot-admin_CVE-2022-46166_2.6.9/historical-receipt.json",
+      "sha256": "9d5d7e6df0d560c5f0d5be2405a989dfa154ee1a66e2114a47bf14fc62b89655",
+      "bytes": 6248
+    },
+    {
+      "path": "fleet-138-v1/v8_codecentric__spring-boot-admin_CVE-2022-46166_2.6.9/source-tree.diff",
+      "sha256": "1d4e56059eb70b5cdb36fac48ff16dadbce3bc93381e7a5fcbd35cb032f69307",
+      "bytes": 1828
+    },
+    {
+      "path": "fleet-138-v1/v8_commons-beanutils_CVE-2025-48734_commons-beanutils-1.10.1-RC1/.dockerignore",
+      "sha256": "9c32c768b64260257c90f5e95b8a688fc8031c8afa383b19612c873b5c3d0c95",
+      "bytes": 63
+    },
+    {
+      "path": "fleet-138-v1/v8_commons-beanutils_CVE-2025-48734_commons-beanutils-1.10.1-RC1/Dockerfile",
+      "sha256": "a48df71a5777fa9f65616cbe6c1676fb4aa5a8abe50285610ae53d7bcf5afba4",
+      "bytes": 1299
+    },
+    {
+      "path": "fleet-138-v1/v8_commons-beanutils_CVE-2025-48734_commons-beanutils-1.10.1-RC1/historical-receipt.json",
+      "sha256": "0f9d452adc30da3e65dcd1d75b32122013031f4c2b487c9ff83ab5e610c4a0e7",
+      "bytes": 6416
+    },
+    {
+      "path": "fleet-138-v1/v8_conductor_CVE-2025-26074_v3.21.12/Dockerfile",
+      "sha256": "595f057b47a194285997ce00e359a0e5bb7642fcdf14590312187c7979b6c03a",
+      "bytes": 6574
+    },
+    {
+      "path": "fleet-138-v1/v8_conductor_CVE-2025-26074_v3.21.12/historical-receipt.json",
+      "sha256": "0c8a2b9fcff1225e2196964568ca0636c2f5f8d48e4abd322fcb4194b2864c38",
+      "bytes": 5223
+    },
+    {
+      "path": "fleet-138-v1/v8_console_CVE-2025-2901_v3.7.10/Dockerfile",
+      "sha256": "d20b8c700618e2ea7f8311104c6d4a54b41266203287adbd501998a9a75bf80e",
+      "bytes": 3559
+    },
+    {
+      "path": "fleet-138-v1/v8_console_CVE-2025-2901_v3.7.10/Dockerfile.attempt1",
+      "sha256": "0fc76623d02d549a83b3d71e422ec84519ae82d45e6ef73b23f4877235a8a7a8",
+      "bytes": 2514
+    },
+    {
+      "path": "fleet-138-v1/v8_console_CVE-2025-2901_v3.7.10/Dockerfile.attempt2",
+      "sha256": "d8130e21fdf16f9e39d8d51f99aa415800997bd7b598072f0da3c8db0de12ca7",
+      "bytes": 2445
+    },
+    {
+      "path": "fleet-138-v1/v8_console_CVE-2025-2901_v3.7.10/Dockerfile.attempt3",
+      "sha256": "c908a08c6667efb74b06891ecfa09be68c2c6a0ca320da0abe74142e4459449d",
+      "bytes": 2264
+    },
+    {
+      "path": "fleet-138-v1/v8_console_CVE-2025-2901_v3.7.10/Dockerfile.attempt4",
+      "sha256": "88bc4f3234332741f28001162ad38f71489dd569c8b74996db09fd6f5a2f6965",
+      "bytes": 2273
+    },
+    {
+      "path": "fleet-138-v1/v8_console_CVE-2025-2901_v3.7.10/Dockerfile.attempt5",
+      "sha256": "b6d229343721345a0d29ef53206b6d01882eabb8e94e77a48c947ca707509595",
+      "bytes": 2343
+    },
+    {
+      "path": "fleet-138-v1/v8_console_CVE-2025-2901_v3.7.10/Dockerfile.attempt6",
+      "sha256": "783ce989bd5a560cbb04232f076bdcebeba95e52bdac277a3f38af08a10ccc58",
+      "bytes": 2507
+    },
+    {
+      "path": "fleet-138-v1/v8_console_CVE-2025-2901_v3.7.10/historical-receipt.json",
+      "sha256": "895dd1204999ba4408ea6c2ec9e8062a8ec38cc623f5d9bbf958b31073615eb7",
+      "bytes": 4620
+    },
+    {
+      "path": "fleet-138-v1/v8_crate__crate_5.5.1_CVE-2023-51982_5.5.1/Dockerfile",
+      "sha256": "ec70c0806960a071a9f7319f19e86a7daa012fbc7245c8cc6f74f8884da2ef0f",
+      "bytes": 4192
+    },
+    {
+      "path": "fleet-138-v1/v8_crate__crate_5.5.1_CVE-2023-51982_5.5.1/historical-receipt.json",
+      "sha256": "834f59f3518ae2a6730cfc5c058e3b2fff8e07b0c2ac58d9a3ba2f86e05e3896",
+      "bytes": 5948
+    },
+    {
+      "path": "fleet-138-v1/v8_cuba_CVE-2025-32959_7.2.22/Dockerfile",
+      "sha256": "b1ead6806726538df8ffde01fc9ecf343471addadd7bd3c4f7ce710c01e5b39d",
+      "bytes": 3235
+    },
+    {
+      "path": "fleet-138-v1/v8_cuba_CVE-2025-32959_7.2.22/Dockerfile.attempt1",
+      "sha256": "0eb60cd3f459d09ef14ff691040292b07c51e3c293886619b0416e80d14e0025",
+      "bytes": 1140
+    },
+    {
+      "path": "fleet-138-v1/v8_cuba_CVE-2025-32959_7.2.22/Dockerfile.attempt2",
+      "sha256": "c37ba2ad88856ba7421f309a876dfde31343ee25b17f1a3db84366644b059d99",
+      "bytes": 1759
+    },
+    {
+      "path": "fleet-138-v1/v8_cuba_CVE-2025-32959_7.2.22/historical-receipt.json",
+      "sha256": "8e9864268cdf42217f37d3ef998daf9b8b3c4e78b309118d01180ce7103c0af0",
+      "bytes": 4837
+    },
+    {
+      "path": "fleet-138-v1/v8_cxf_CVE-2025-23184_cxf-3.5.9/Dockerfile",
+      "sha256": "fdc3a629b754225f082701a8e0ab0ac66a4d1201400cf9866a1d87893a6b6dc8",
+      "bytes": 4112
+    },
+    {
+      "path": "fleet-138-v1/v8_cxf_CVE-2025-23184_cxf-3.5.9/Dockerfile.bootstrap",
+      "sha256": "fbd3fe95f1ca044e55558b0f6322e2e457f8f4ed521e1b099551bd968d73d476",
+      "bytes": 2315
+    },
+    {
+      "path": "fleet-138-v1/v8_cxf_CVE-2025-23184_cxf-3.5.9/historical-receipt.json",
+      "sha256": "d45b7eebc31370d52b99f640f67133f330365ce4b3bd71261400ababe98f5324",
+      "bytes": 8898
+    },
+    {
+      "path": "fleet-138-v1/v8_cxf_CVE-2025-48795_cxf-3.5.10/.dockerignore",
+      "sha256": "7f05ac285369f6d92bf165d0af30f24612c08d2229ae18a562a7666ee1423b11",
+      "bytes": 131
+    },
+    {
+      "path": "fleet-138-v1/v8_cxf_CVE-2025-48795_cxf-3.5.10/Dockerfile",
+      "sha256": "3d0b74693dba49e5e9620fc422c1443877e94b5b2287b4f4d2edbbe047b5d892",
+      "bytes": 2296
+    },
+    {
+      "path": "fleet-138-v1/v8_cxf_CVE-2025-48795_cxf-3.5.10/attempts/Dockerfile.probe",
+      "sha256": "6aeb515408eaf2f108ac95e8ae1747cc5e12bbd0e41ed654eb190a1312b8f6d3",
+      "bytes": 640
+    },
+    {
+      "path": "fleet-138-v1/v8_cxf_CVE-2025-48795_cxf-3.5.10/historical-receipt.json",
+      "sha256": "edb3be5193cf1ae81f0e4ed4cbbb179ab3d03c3e6d4998c79da1dca133ab795e",
+      "bytes": 6124
+    },
+    {
+      "path": "fleet-138-v1/v8_djl_CVE-2025-0851_v0.30.0/Dockerfile",
+      "sha256": "75b16b77ebf32c25979956dcecc10daf10a6b43f781b1cd42f51fb7d358ffe20",
+      "bytes": 3060
+    },
+    {
+      "path": "fleet-138-v1/v8_djl_CVE-2025-0851_v0.30.0/Dockerfile.bootstrap",
+      "sha256": "34dcf252480ba48e8812d2a28af4bd846b162d146f5f4f95d73a12636ba3b9ec",
+      "bytes": 1487
+    },
+    {
+      "path": "fleet-138-v1/v8_djl_CVE-2025-0851_v0.30.0/historical-receipt.json",
+      "sha256": "083fc99195cacc6b746f5eea08063e5454cff286703c82f49914506984190a9b",
+      "bytes": 8830
+    },
+    {
+      "path": "fleet-138-v1/v8_druid_CVE-2025-27888_druid-31.0.1-rc2/Dockerfile",
+      "sha256": "e07fab8cd79a386abed08756774dc551aca60748540b2ca2cd328e0420df84f2",
+      "bytes": 2019
+    },
+    {
+      "path": "fleet-138-v1/v8_druid_CVE-2025-27888_druid-31.0.1-rc2/historical-receipt.json",
+      "sha256": "d7f7efa263d90f19cc402d583be098efa8c14a2242f1863aa6b47050e287e96d",
+      "bytes": 6581
+    },
+    {
+      "path": "fleet-138-v1/v8_druid_CVE-2025-27888_druid-31.0.1-rc2/run-build.sh",
+      "sha256": "4fe5601fe7b8a2b23153112c0b1e841893eaf15270e1e6536b91bef7e6553a20",
+      "bytes": 606
+    },
+    {
+      "path": "fleet-138-v1/v8_eclipse-ee4j__glassfish_CVE-2022-2712_6.2.5/Dockerfile",
+      "sha256": "4429bbf186d9b3e95da374f66542053cb6bdf0c3969f306062a2e1757103ed7b",
+      "bytes": 4552
+    },
+    {
+      "path": "fleet-138-v1/v8_eclipse-ee4j__glassfish_CVE-2022-2712_6.2.5/historical-receipt.json",
+      "sha256": "be5b02f95505e468724ccb87c5ba628c80abe1cf3b6285717a19d802b766672f",
+      "bytes": 5409
+    },
+    {
+      "path": "fleet-138-v1/v8_eclipse-ee4j__glassfish_CVE-2022-2712_6.2.5/run-final-build.sh",
+      "sha256": "bf1e3a36f3db83d6916a443f377d35a00d86b196201ad20e4bf1ea8b532570b0",
+      "bytes": 1266
+    },
+    {
+      "path": "fleet-138-v1/v8_eclipse-ee4j__glassfish_CVE-2022-2712_6.2.5/run-offline-replay.sh",
+      "sha256": "adbbc91c723150031accd86c851f867dc6f19591816f0f0cac05c9a3c856d8f9",
+      "bytes": 739
+    },
+    {
+      "path": "fleet-138-v1/v8_eclipse__hawkbit_CVE-2020-27219_0.3.0M6/.dockerignore",
+      "sha256": "5315e98fe8febddf820e8fba9148a9b1ae87a0727dafcb9e37e6d25ee64bd794",
+      "bytes": 246
+    },
+    {
+      "path": "fleet-138-v1/v8_eclipse__hawkbit_CVE-2020-27219_0.3.0M6/Dockerfile",
+      "sha256": "e8019579723868db012b351820c5651db8dcd1a89052bacf3b08399052161321",
+      "bytes": 2074
+    },
+    {
+      "path": "fleet-138-v1/v8_eclipse__hawkbit_CVE-2020-27219_0.3.0M6/Dockerfile.probe",
+      "sha256": "163118f19afe616eb1a38d0fcd6b932cc15fe186585a489beaaf393d1a78f2dd",
+      "bytes": 711
+    },
+    {
+      "path": "fleet-138-v1/v8_eclipse__hawkbit_CVE-2020-27219_0.3.0M6/historical-receipt.json",
+      "sha256": "6cdd9a4da265a91fb1d9603d8aaec6da6f620f4554eb196aea76a19b4dd00069",
+      "bytes": 5800
+    },
+    {
+      "path": "fleet-138-v1/v8_emissary_CVE-2025-27508_8.23.0/Dockerfile",
+      "sha256": "f3c95e87b650f119f32eedee07b596ee0b1cacece1ad206fd9a5e75f661ad6c9",
+      "bytes": 6671
+    },
+    {
+      "path": "fleet-138-v1/v8_emissary_CVE-2025-27508_8.23.0/attempts/attempt-1/Dockerfile",
+      "sha256": "51cf552217bf7961e2225a9e02e52487983c0074886acc6c8673cfed8c2202e7",
+      "bytes": 1308
+    },
+    {
+      "path": "fleet-138-v1/v8_emissary_CVE-2025-27508_8.23.0/attempts/attempt-2/Dockerfile",
+      "sha256": "aeeb3c117860fbe98086cd8d182e575d4e22b21fa6326897b967f15a5eb28649",
+      "bytes": 1579
+    },
+    {
+      "path": "fleet-138-v1/v8_emissary_CVE-2025-27508_8.23.0/attempts/attempt-3/Dockerfile",
+      "sha256": "b0ed21947a14ea1ac5461a7513cbe7ad49422b4bfc54e3dc7d1d1baca06e1e66",
+      "bytes": 1650
+    },
+    {
+      "path": "fleet-138-v1/v8_emissary_CVE-2025-27508_8.23.0/attempts/attempt-4/Dockerfile",
+      "sha256": "1f0810b2a4bb219c0c248a3e59a4967e7b180d25c59176ec3acb5cf6159553cb",
+      "bytes": 6637
+    },
+    {
+      "path": "fleet-138-v1/v8_emissary_CVE-2025-27508_8.23.0/attempts/attempt-5/Dockerfile",
+      "sha256": "8a94d95a5fce4d15a0f2c7f6fdcd4df9aeae87354092260655a905ce45e0b011",
+      "bytes": 6635
+    },
+    {
+      "path": "fleet-138-v1/v8_emissary_CVE-2025-27508_8.23.0/attempts/attempt-6/Dockerfile",
+      "sha256": "f3c95e87b650f119f32eedee07b596ee0b1cacece1ad206fd9a5e75f661ad6c9",
+      "bytes": 6671
+    },
+    {
+      "path": "fleet-138-v1/v8_emissary_CVE-2025-27508_8.23.0/historical-receipt.json",
+      "sha256": "4a1f4c21d5a50d61be8ce0e5c735968527ae391cb8f39a456ed19b9055a95ea1",
+      "bytes": 6088
+    },
+    {
+      "path": "fleet-138-v1/v8_emissary_CVE-2025-27508_8.23.0/reviewer-source-tree.diff",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "fleet-138-v1/v8_fabric8io__kubernetes-client_CVE-2021-4178_5.0.2/.dockerignore",
+      "sha256": "e59a86ecfbd60efef700ecae243205f7710306ac154d7342d529c240a46c92b7",
+      "bytes": 115
+    },
+    {
+      "path": "fleet-138-v1/v8_fabric8io__kubernetes-client_CVE-2021-4178_5.0.2/Dockerfile",
+      "sha256": "5a214534ad440e6e864b3982c6abe7142fd3f93d76e02fa741c06b40d828d50c",
+      "bytes": 2249
+    },
+    {
+      "path": "fleet-138-v1/v8_fabric8io__kubernetes-client_CVE-2021-4178_5.0.2/Dockerfile.attempt1",
+      "sha256": "039aa569d9a3beeb6c79b9f3d222910c57885e6cca8bb610daa59f6640b09303",
+      "bytes": 910
+    },
+    {
+      "path": "fleet-138-v1/v8_fabric8io__kubernetes-client_CVE-2021-4178_5.0.2/Dockerfile.attempt2",
+      "sha256": "ce11c67497acf85e4e2f3820cd826288dc2cdff471e0833f66a8c0e79cb34bf9",
+      "bytes": 934
+    },
+    {
+      "path": "fleet-138-v1/v8_fabric8io__kubernetes-client_CVE-2021-4178_5.0.2/Dockerfile.attempt3",
+      "sha256": "9614faeced8f4c4121f05b6b540e9307bb5d8e5c9d9b215661b4b32a0eef709a",
+      "bytes": 698
+    },
+    {
+      "path": "fleet-138-v1/v8_fabric8io__kubernetes-client_CVE-2021-4178_5.0.2/historical-receipt.json",
+      "sha256": "7318a6c746ceb08eb9dfe4ec3420df0235fb0aacd9114afec3ae6b2581a4ad4c",
+      "bytes": 4685
+    },
+    {
+      "path": "fleet-138-v1/v8_felix-dev_CVE-2025-25247_org.osgi.compendium-1.4.0/.dockerignore",
+      "sha256": "3b0e0a81a3a35eac337ff7c9f5ac91bbc06837d900a872fe5083048e3c21a288",
+      "bytes": 77
+    },
+    {
+      "path": "fleet-138-v1/v8_felix-dev_CVE-2025-25247_org.osgi.compendium-1.4.0/Dockerfile",
+      "sha256": "306d16bf04b48ab13eb7aba1efbfc64e75cc6cffcdcff246a382d04bd0c46c82",
+      "bytes": 2034
+    },
+    {
+      "path": "fleet-138-v1/v8_felix-dev_CVE-2025-25247_org.osgi.compendium-1.4.0/historical-receipt.json",
+      "sha256": "ec70325d049d7402299aeb6a5ca4100c4563496a3d02431b934e6faf76a85e4b",
+      "bytes": 4408
+    },
+    {
+      "path": "fleet-138-v1/v8_geoserver_CVE-2025-27505_2.26.2/.dockerignore",
+      "sha256": "5aef7136d119df003dd17fe9d76d8ed93df7fac7f36427efc2ef32d7209c0119",
+      "bytes": 117
+    },
+    {
+      "path": "fleet-138-v1/v8_geoserver_CVE-2025-27505_2.26.2/Dockerfile",
+      "sha256": "6cd5ab90f35286c2d962e39ff8b7e25506a3826c23a1ca67075c91d7f984c974",
+      "bytes": 3335
+    },
+    {
+      "path": "fleet-138-v1/v8_geoserver_CVE-2025-27505_2.26.2/historical-receipt.json",
+      "sha256": "6daa216eaff9f7cef5a00c8f3db22f3899b94832881d35547c10baed4211f5d8",
+      "bytes": 7668
+    },
+    {
+      "path": "fleet-138-v1/v8_geoserver_CVE-2025-30145_2.26.2/Dockerfile",
+      "sha256": "d3f15a38a7752431bd03323dd019e8afd079bf1d929fee86d12525bdd228137a",
+      "bytes": 2604
+    },
+    {
+      "path": "fleet-138-v1/v8_geoserver_CVE-2025-30145_2.26.2/historical-receipt.json",
+      "sha256": "680192400f4c6dbf452b2d73a21912a3304cafd230b6bdd448e4c5edca2fb926",
+      "bytes": 5089
+    },
+    {
+      "path": "fleet-138-v1/v8_geoserver_CVE-2025-30145_2.26.2/run-build.sh",
+      "sha256": "eac7124b03c6e608ba94dc7987567f7c14c7a843d4da670e3ad709cd07a0d62b",
+      "bytes": 459
+    },
+    {
+      "path": "fleet-138-v1/v8_hapifhir__org.hl7.fhir.core_CVE-2023-24057_5.6.91/.dockerignore",
+      "sha256": "61d8b62ff8d8db9d681d525527d05114ac33e9c808658bc635ad45dbd34afcf6",
+      "bytes": 175
+    },
+    {
+      "path": "fleet-138-v1/v8_hapifhir__org.hl7.fhir.core_CVE-2023-24057_5.6.91/Dockerfile",
+      "sha256": "923a77b6ed5326265d7f0e04ef3579f130cf77de46ea41412cb5f4c4098c640b",
+      "bytes": 3589
+    },
+    {
+      "path": "fleet-138-v1/v8_hapifhir__org.hl7.fhir.core_CVE-2023-24057_5.6.91/historical-receipt.json",
+      "sha256": "d109ee81fdc88034302456c6e05a53b1118ae134f1a83da675617eca71cd2379",
+      "bytes": 6247
+    },
+    {
+      "path": "fleet-138-v1/v8_hapifhir__org.hl7.fhir.core_CVE-2023-24057_5.6.91/shims/git",
+      "sha256": "e002b72c1396e4ef054c5c10d94ed9b935b2d2c72b5e94bf220c24c4e4e2d4f1",
+      "bytes": 480
+    },
+    {
+      "path": "fleet-138-v1/v8_hapifhir__org.hl7.fhir.core_CVE-2023-28465_5.6.105/Dockerfile",
+      "sha256": "4935f1328765b4f0453ecb4571d2e82d35479c985900fd08e270445e6ff2ec77",
+      "bytes": 5019
+    },
+    {
+      "path": "fleet-138-v1/v8_hapifhir__org.hl7.fhir.core_CVE-2023-28465_5.6.105/historical-receipt.json",
+      "sha256": "7ba665592171d5354a2aa66c068653954f2f93e42224754f956f44427356af4d",
+      "bytes": 7973
+    },
+    {
+      "path": "fleet-138-v1/v8_incubator-seata_CVE-2025-32897_v2.2.0/.dockerignore",
+      "sha256": "385f72b2241081083188ceb42ab2a69d8358e7624f8f6f66ea4e69d17d1f01f7",
+      "bytes": 78
+    },
+    {
+      "path": "fleet-138-v1/v8_incubator-seata_CVE-2025-32897_v2.2.0/Dockerfile",
+      "sha256": "72b485f0bbd9dbd49f907f4a2c102eaa362964f06196e20420b67efecf13ed40",
+      "bytes": 2784
+    },
+    {
+      "path": "fleet-138-v1/v8_incubator-seata_CVE-2025-32897_v2.2.0/Dockerfile.attempt1",
+      "sha256": "20b9b18d0aa7150e48c5958fab30ae5950c7937c23ac72c0a8bf918cd91cb9e1",
+      "bytes": 529
+    },
+    {
+      "path": "fleet-138-v1/v8_incubator-seata_CVE-2025-32897_v2.2.0/Dockerfile.attempt2",
+      "sha256": "4f501a49e21a1c4816e000b54b71e4cea639f1cbbce1723c770cec18e71a7f92",
+      "bytes": 1019
+    },
+    {
+      "path": "fleet-138-v1/v8_incubator-seata_CVE-2025-32897_v2.2.0/historical-receipt.json",
+      "sha256": "8567d3f2c7b6ab5fc6f5272937ba62a072e94640529fd2d22493f49d1fe2add2",
+      "bytes": 6530
+    },
+    {
+      "path": "fleet-138-v1/v8_inlong_CVE-2025-27522_2.1.0-RC0/Dockerfile",
+      "sha256": "dcce0e4cfa0d847ad8ac786d24403603353ba2813f40f0d5bfb1446e54b97bc2",
+      "bytes": 2228
+    },
+    {
+      "path": "fleet-138-v1/v8_inlong_CVE-2025-27522_2.1.0-RC0/Dockerfile.attempt-1",
+      "sha256": "ecb105e1336e796b33525997a033b44044299caa4ad44f243755ad2f96c3de62",
+      "bytes": 1833
+    },
+    {
+      "path": "fleet-138-v1/v8_inlong_CVE-2025-27522_2.1.0-RC0/context/Dockerfile",
+      "sha256": "dcce0e4cfa0d847ad8ac786d24403603353ba2813f40f0d5bfb1446e54b97bc2",
+      "bytes": 2228
+    },
+    {
+      "path": "fleet-138-v1/v8_inlong_CVE-2025-27522_2.1.0-RC0/historical-receipt.json",
+      "sha256": "0ddd2b2b31016928c3858ecb429f0d2a4114a3b26825e7752223083571355220",
+      "bytes": 7503
+    },
+    {
+      "path": "fleet-138-v1/v8_inlong_CVE-2025-27526_2.1.0-RC0/Dockerfile",
+      "sha256": "e183a783b9a43a2858cd7e7114116d06ce65a0980ca889c86e0b5b3226695835",
+      "bytes": 2387
+    },
+    {
+      "path": "fleet-138-v1/v8_inlong_CVE-2025-27526_2.1.0-RC0/context/Dockerfile",
+      "sha256": "e183a783b9a43a2858cd7e7114116d06ce65a0980ca889c86e0b5b3226695835",
+      "bytes": 2387
+    },
+    {
+      "path": "fleet-138-v1/v8_inlong_CVE-2025-27526_2.1.0-RC0/historical-receipt.json",
+      "sha256": "e3a8df4d6ea67d67bebb0fc429e62fdf4eaba621005765c83ef2bc0a76411589",
+      "bytes": 6335
+    },
+    {
+      "path": "fleet-138-v1/v8_inlong_CVE-2025-27526_2.1.0-RC0/source-tree.diff",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "fleet-138-v1/v8_inlong_CVE-2025-27528_2.1.0-RC0/Dockerfile",
+      "sha256": "d7753088ad608b409cf1e05766875e6b6e3da26bd0b119e645ff7f3a31685b9a",
+      "bytes": 2342
+    },
+    {
+      "path": "fleet-138-v1/v8_inlong_CVE-2025-27528_2.1.0-RC0/context/Dockerfile",
+      "sha256": "d7753088ad608b409cf1e05766875e6b6e3da26bd0b119e645ff7f3a31685b9a",
+      "bytes": 2342
+    },
+    {
+      "path": "fleet-138-v1/v8_inlong_CVE-2025-27528_2.1.0-RC0/historical-receipt.json",
+      "sha256": "a1008c8b5922a849293f10923169175bdadb4a6d33614f059c64492e18073ad4",
+      "bytes": 5850
+    },
+    {
+      "path": "fleet-138-v1/v8_inlong_CVE-2025-27528_2.1.0-RC0/reviewer-source.diff",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "fleet-138-v1/v8_inlong_CVE-2025-27531_2.0.0-RC0/Dockerfile",
+      "sha256": "998914910dd417591cd8ca5d43806c9455057945cb96b3f78675d4623048fb57",
+      "bytes": 3548
+    },
+    {
+      "path": "fleet-138-v1/v8_inlong_CVE-2025-27531_2.0.0-RC0/bootstrap-context/Dockerfile",
+      "sha256": "1e1892c8af2637d72f772a0ee5bc886c5aff7dfc7163ff5639523548e398f1af",
+      "bytes": 1059
+    },
+    {
+      "path": "fleet-138-v1/v8_inlong_CVE-2025-27531_2.0.0-RC0/context/Dockerfile",
+      "sha256": "998914910dd417591cd8ca5d43806c9455057945cb96b3f78675d4623048fb57",
+      "bytes": 3548
+    },
+    {
+      "path": "fleet-138-v1/v8_inlong_CVE-2025-27531_2.0.0-RC0/historical-receipt.json",
+      "sha256": "2d300d84ac8781a11996693b0811787e47abff057fa4bd5220b640bce474b140",
+      "bytes": 8144
+    },
+    {
+      "path": "fleet-138-v1/v8_iotdb_CVE-2025-26795_v1.3.3/.dockerignore",
+      "sha256": "346e70a11196832f45a185ccadd4c6df4d7b8c7c0cf7eeec30efad626f825b29",
+      "bytes": 50
+    },
+    {
+      "path": "fleet-138-v1/v8_iotdb_CVE-2025-26795_v1.3.3/Dockerfile",
+      "sha256": "d831139a56f82d0263dd5a269699920ed667bce58c4626952a58ce300360c4ff",
+      "bytes": 2238
+    },
+    {
+      "path": "fleet-138-v1/v8_iotdb_CVE-2025-26795_v1.3.3/Dockerfile.seed",
+      "sha256": "e8e9cd4e70569d4d8d73e1b4156cf7c8d947f81548ad033757a25e0a6ef8faaf",
+      "bytes": 2122
+    },
+    {
+      "path": "fleet-138-v1/v8_iotdb_CVE-2025-26795_v1.3.3/Dockerfile.seed.attempt-01",
+      "sha256": "077e76f20fd6ba5d2c74c42e02ced640d7a4f3f05dbd241721c33b28e5acae1b",
+      "bytes": 1426
+    },
+    {
+      "path": "fleet-138-v1/v8_iotdb_CVE-2025-26795_v1.3.3/historical-receipt.json",
+      "sha256": "4ef1558abbc130f505933a59e7d2622ce7e7f01e9a553e25d08b7090a01fa966",
+      "bytes": 5391
+    },
+    {
+      "path": "fleet-138-v1/v8_iotdb_CVE-2025-26864_v1.3.3/.dockerignore",
+      "sha256": "346e70a11196832f45a185ccadd4c6df4d7b8c7c0cf7eeec30efad626f825b29",
+      "bytes": 50
+    },
+    {
+      "path": "fleet-138-v1/v8_iotdb_CVE-2025-26864_v1.3.3/Dockerfile",
+      "sha256": "e1ee0ce9199262179f0555a21ccf1fc5ef8c1d1f955419fa39b2bbf5530b0b07",
+      "bytes": 2238
+    },
+    {
+      "path": "fleet-138-v1/v8_iotdb_CVE-2025-26864_v1.3.3/historical-receipt.json",
+      "sha256": "b31611b8ab7262172da3631419feb0b2a05b3675ec38086aa9a4626c0b89abb7",
+      "bytes": 5448
+    },
+    {
+      "path": "fleet-138-v1/v8_jackrabbit_CVE-2025-53689_jackrabbit-2.23.1-beta/Dockerfile",
+      "sha256": "e4d3c490390390820faed09f725c209159e5ff8f7e29703cfd58519ad14442cb",
+      "bytes": 3143
+    },
+    {
+      "path": "fleet-138-v1/v8_jackrabbit_CVE-2025-53689_jackrabbit-2.23.1-beta/Dockerfile.bootstrap",
+      "sha256": "fbc51e590cf42544ea91f6dfaf0422b39dd3fa489619115b6b1233d4d2930eba",
+      "bytes": 1211
+    },
+    {
+      "path": "fleet-138-v1/v8_jackrabbit_CVE-2025-53689_jackrabbit-2.23.1-beta/historical-receipt.json",
+      "sha256": "5c88f114007f6da55228c9736f98019fd70e246020e7065a87e1ed96200132e9",
+      "bytes": 6160
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkins_CVE-2025-31720_prototype-1.7/Dockerfile",
+      "sha256": "1bb0d0eb871f0a87ca80474878f93a51ba6c727e562a177a3c26a135a5869c38",
+      "bytes": 4639
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkins_CVE-2025-31720_prototype-1.7/historical-receipt.json",
+      "sha256": "ff3c768da9d5a35c76c5e3178c30eae227e99ca053a404599a3c711a27a890f7",
+      "bytes": 5127
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkins_CVE-2025-31720_prototype-1.7/run-build.sh",
+      "sha256": "2fcd23fa6dee919202699bef622e7f2d6f8c5602b58dd79d99736cff2872b768",
+      "bytes": 517
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkins_CVE-2025-31721_prototype-1.7/Dockerfile",
+      "sha256": "f113a9cdf776c114fbd7f2f0e5b82705d863441654f44ad3a9d0bae482cc78a6",
+      "bytes": 3470
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkins_CVE-2025-31721_prototype-1.7/Dockerfile.attempt1",
+      "sha256": "628125a33f26af3b2f9389e2e1af0b263b1a16a660ee3122d4e757db1ece3946",
+      "bytes": 1972
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkins_CVE-2025-31721_prototype-1.7/Dockerfile.attempt2",
+      "sha256": "990f884a5a03b52a7d0bb54a8cfb5975afb8f5dfdf4077b388c6e2946a61c236",
+      "bytes": 2046
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkins_CVE-2025-31721_prototype-1.7/Dockerfile.attempt3",
+      "sha256": "c77ea64daccf2cd1b9ec7f545abede409fbddf360dfa0122615fd4e9a0935d12",
+      "bytes": 2522
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkins_CVE-2025-31721_prototype-1.7/historical-receipt.json",
+      "sha256": "7a8b53880221dd36da59fd8c7b1b371e790fb0cef211da703c8e16a448bec955",
+      "bytes": 5252
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkinsci__git-client-plugin_CVE-2019-10392_2.8.4/.dockerignore",
+      "sha256": "3b0e0a81a3a35eac337ff7c9f5ac91bbc06837d900a872fe5083048e3c21a288",
+      "bytes": 77
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkinsci__git-client-plugin_CVE-2019-10392_2.8.4/Dockerfile",
+      "sha256": "c5c520455da3f31a0f6abb48b4cbb863b33e8a1d3e7adb6dd892857a17a9f5d3",
+      "bytes": 2227
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkinsci__git-client-plugin_CVE-2019-10392_2.8.4/attempts/bootstrap.sh",
+      "sha256": "756a63378cfeb5ba1f77c49f79994a8de20ca21a74ddba0228a968867ffc3d5b",
+      "bytes": 567
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkinsci__git-client-plugin_CVE-2019-10392_2.8.4/attempts/compile-skip-enforcer.sh",
+      "sha256": "b7a6b9147a03f14a1670f8745f76d8feb31c6db5bbd45cc0cddad98f1d62f70a",
+      "bytes": 596
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkinsci__git-client-plugin_CVE-2019-10392_2.8.4/attempts/offline-replay.sh",
+      "sha256": "6a994933ffc32e31843a544d7e0cc3713e3cb92c2bb18a5e001c7fe27acc38f2",
+      "bytes": 750
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkinsci__git-client-plugin_CVE-2019-10392_2.8.4/historical-receipt.json",
+      "sha256": "b0123813b46e6bc062606b81704da4a7919ac9fc08492f0c3bece30e1e83fe0d",
+      "bytes": 6225
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkinsci__script-security-plugin_CVE-2023-24422_1228.vd93135a_2fb_25/.dockerignore",
+      "sha256": "29f3fd792e183dcf5ab612918565780ac2b566231e1f24f48523500c4aeea99a",
+      "bytes": 80
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkinsci__script-security-plugin_CVE-2023-24422_1228.vd93135a_2fb_25/Dockerfile",
+      "sha256": "b5b2536806ba45885f16324b16cda0cc22becf939d2ad886c65d6bbe9c68d6fc",
+      "bytes": 2760
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkinsci__script-security-plugin_CVE-2023-24422_1228.vd93135a_2fb_25/historical-receipt.json",
+      "sha256": "38901c0a73912fe7e00a5059e2dc0e2524f072412d12f6b633646f6dd4e8b4d6",
+      "bytes": 8658
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkinsci__script-security-plugin_CVE-2023-24422_1228.vd93135a_2fb_25/run-final-build.sh",
+      "sha256": "abf411e7875a272d4885786446d689efeee536d28971435f13b05aaca4571cd1",
+      "bytes": 710
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkinsci__workflow-cps-global-lib-plugin_CVE-2022-25174_544.vff04fa68714d/.dockerignore",
+      "sha256": "47c2c100b81ac523dc34527f9e1a0d4070d77623a11815ebf2f456d49f2e71e6",
+      "bytes": 36
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkinsci__workflow-cps-global-lib-plugin_CVE-2022-25174_544.vff04fa68714d/Dockerfile",
+      "sha256": "d37ca24b9a59e7189aeceb4420a6dbbb9b617bbef9f854ff3bfb58fd6a9511af",
+      "bytes": 1248
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkinsci__workflow-cps-global-lib-plugin_CVE-2022-25174_544.vff04fa68714d/historical-receipt.json",
+      "sha256": "bdfee6c79ef4203f6d511fcbe075c648e36ae81c9911ab8db60df3b2e383d0e2",
+      "bytes": 5045
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkinsci__workflow-cps-plugin_CVE-2022-25173_2646.v6ed3b5b01ff1/.dockerignore",
+      "sha256": "c9b02dcb4f44cd150a433037a2c91644d614e71624af220aa2209b0556daef7a",
+      "bytes": 107
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkinsci__workflow-cps-plugin_CVE-2022-25173_2646.v6ed3b5b01ff1/Dockerfile",
+      "sha256": "9960f903daf825c386198366a6537a06978cceacf05a1d0c2cbfe1c1f9dc88ce",
+      "bytes": 5796
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkinsci__workflow-cps-plugin_CVE-2022-25173_2646.v6ed3b5b01ff1/generated-support/src/org/acegisecurity/AccessDeniedException.java",
+      "sha256": "784b5c343e8edcdf65985df6208fcdf287100be85f1d8c3f454b15a5ae585f78",
+      "bytes": 245
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkinsci__workflow-cps-plugin_CVE-2022-25173_2646.v6ed3b5b01ff1/generated-support/src/org/acegisecurity/Authentication.java",
+      "sha256": "c05173e25012e846ba1e20961645b4fcca9cc238ce15016606cad44e5f9dfcd4",
+      "bytes": 116
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkinsci__workflow-cps-plugin_CVE-2022-25173_2646.v6ed3b5b01ff1/generated-support/src/org/acegisecurity/context/SecurityContext.java",
+      "sha256": "3d3ffa92a1ff8bba12eccec00e53d60bdafee9242959cef5e3d1c12e29231675",
+      "bytes": 233
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkinsci__workflow-cps-plugin_CVE-2022-25173_2646.v6ed3b5b01ff1/generated-support/src/org/acegisecurity/userdetails/UsernameNotFoundException.java",
+      "sha256": "ecf3068beee830d4201daf23af98f885eb5d3e4fdd1827e4b862cf440815f983",
+      "bytes": 269
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkinsci__workflow-cps-plugin_CVE-2022-25173_2646.v6ed3b5b01ff1/historical-receipt.json",
+      "sha256": "103c825ba95b83595663b8d2205646c2e6b4deefbf4a150abbc5073b6bbeecc6",
+      "bytes": 7841
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkinsci__workflow-multibranch-plugin_CVE-2022-25175_706.vd43c65dec013/Dockerfile",
+      "sha256": "aa52afd714761aac62bd3f92ec06871abf997598f2df3ac24f2abeb09fd16fd3",
+      "bytes": 2057
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkinsci__workflow-multibranch-plugin_CVE-2022-25175_706.vd43c65dec013/compile-replay.sh",
+      "sha256": "cb4e833dea8151bcba8fa9af611e4cbd3eee24532ac8a7dbcd761d4a25bbc5d8",
+      "bytes": 3096
+    },
+    {
+      "path": "fleet-138-v1/v8_jenkinsci__workflow-multibranch-plugin_CVE-2022-25175_706.vd43c65dec013/historical-receipt.json",
+      "sha256": "719f5136f2231aa731fca14c318aca4fe0aefff0c9b592eec755057de1e9d291",
+      "bytes": 5677
+    },
+    {
+      "path": "fleet-138-v1/v8_jeremylong__DependencyCheck_CVE-2018-12036_3.1.2/Dockerfile",
+      "sha256": "d25ed0f7566fa3899f8f983e0cfb12e6a344b891886c5693b1bd37651de2c679",
+      "bytes": 1992
+    },
+    {
+      "path": "fleet-138-v1/v8_jeremylong__DependencyCheck_CVE-2018-12036_3.1.2/attempts/Dockerfile.attempt1",
+      "sha256": "cf197b465f6d5cab258769201c6e0bd2706685803d765db9920016c150093505",
+      "bytes": 320
+    },
+    {
+      "path": "fleet-138-v1/v8_jeremylong__DependencyCheck_CVE-2018-12036_3.1.2/historical-receipt.json",
+      "sha256": "2a8377c620a9fa7f1964150c932edd564114e427c83e048d0f2a6a297e2eb246",
+      "bytes": 4640
+    },
+    {
+      "path": "fleet-138-v1/v8_jetty.project_CVE-2025-1948_jetty-12.0.16/.dockerignore",
+      "sha256": "759fe067169265e60697a68c404a741fd942d1e7037f4cf16b7310f35658f442",
+      "bytes": 117
+    },
+    {
+      "path": "fleet-138-v1/v8_jetty.project_CVE-2025-1948_jetty-12.0.16/Dockerfile",
+      "sha256": "44abeb89925fa27b36c7438d6c696442cbc715883772c31c35d8ed0a946c1380",
+      "bytes": 3476
+    },
+    {
+      "path": "fleet-138-v1/v8_jetty.project_CVE-2025-1948_jetty-12.0.16/historical-receipt.json",
+      "sha256": "8142a805f0c7dcbfffb3dd23240b830386c97e9e76b807f3a3f74b164760f010",
+      "bytes": 6487
+    },
+    {
+      "path": "fleet-138-v1/v8_jetty.project_CVE-2025-1948_jetty-12.0.16/launch-bootstrap-02.sh",
+      "sha256": "5682aae5d7d63dca2bcb1d8670a400a41f6c0e29f5d1a0c9415d5ef4be008dc3",
+      "bytes": 255
+    },
+    {
+      "path": "fleet-138-v1/v8_jetty.project_CVE-2025-1948_jetty-12.0.16/launch-bootstrap.sh",
+      "sha256": "a7a4404966ed5a0dc32545fb8f0b1b51b22ae71813bdb752c87e25b5e0dc913c",
+      "bytes": 251
+    },
+    {
+      "path": "fleet-138-v1/v8_jetty.project_CVE-2025-1948_jetty-12.0.16/run-bootstrap.sh",
+      "sha256": "f7210d639e2a4c48f4449231750d7672386c50a1e5a3285f47bcc0e998dd9c90",
+      "bytes": 733
+    },
+    {
+      "path": "fleet-138-v1/v8_jetty.project_CVE-2025-1948_jetty-12.0.16/run-closure-repair.sh",
+      "sha256": "29d3e2d79cbab3ccc9a8acc2bc39d89b6f3eaf40416fed60aafd586f4f95f025",
+      "bytes": 828
+    },
+    {
+      "path": "fleet-138-v1/v8_jetty.project_CVE-2025-1948_jetty-12.0.16/run-final-build.sh",
+      "sha256": "a24aa97acc04445e30b6664601a14ba2b95d726eed50fa34362af2667fbe063c",
+      "bytes": 414
+    },
+    {
+      "path": "fleet-138-v1/v8_jpawebapi_CVE-2025-32961_v1.1.0/.dockerignore",
+      "sha256": "f334ca75c555e3d42d646c2fcada521d537431ddb14c80e7823b79f166e444a9",
+      "bytes": 75
+    },
+    {
+      "path": "fleet-138-v1/v8_jpawebapi_CVE-2025-32961_v1.1.0/Dockerfile",
+      "sha256": "994b9817a1fc151429bfbb18b8a7e89ed3db7acce68e25d7b18518eea07d0e43",
+      "bytes": 2743
+    },
+    {
+      "path": "fleet-138-v1/v8_jpawebapi_CVE-2025-32961_v1.1.0/historical-receipt.json",
+      "sha256": "501019c6cbad5b7d2d2fc7cef319af4ea7686833319373ab4c54bcd8f0880bb6",
+      "bytes": 4728
+    },
+    {
+      "path": "fleet-138-v1/v8_jstachio__jstachio_CVE-2023-33962_1.0.0/Dockerfile",
+      "sha256": "3378e3f4cacf7109e4141ded099fc15f7e70eade6879d2f46508dd5ca9d2eb57",
+      "bytes": 1868
+    },
+    {
+      "path": "fleet-138-v1/v8_jstachio__jstachio_CVE-2023-33962_1.0.0/historical-receipt.json",
+      "sha256": "5082c260987eff45dad1fbbfe5df87c4d732d7e9cd30c4cfda7a9fa025faeb20",
+      "bytes": 6427
+    },
+    {
+      "path": "fleet-138-v1/v8_jte_CVE-2025-23026_3.1.15/.dockerignore",
+      "sha256": "9efd1d07d42814621db73155c0df78b53f601d05b8d0e108f6550bd26ef159c0",
+      "bytes": 47
+    },
+    {
+      "path": "fleet-138-v1/v8_jte_CVE-2025-23026_3.1.15/Dockerfile",
+      "sha256": "c5bf6eb3547db73b3e2b5c7558fa8f64c0c3b61f0d147c1d96ab078dca2d4d10",
+      "bytes": 3583
+    },
+    {
+      "path": "fleet-138-v1/v8_jte_CVE-2025-23026_3.1.15/historical-receipt.json",
+      "sha256": "d8d7339812b9d60f999603c4bbfb1d1e419c43004324b213de063e928c77fd64",
+      "bytes": 7863
+    },
+    {
+      "path": "fleet-138-v1/v8_junit-framework_CVE-2025-53103_r5.13.1/.dockerignore",
+      "sha256": "1bfa664966e66b6761818546df7e1d573c87229502756f537fb49dc546f23b00",
+      "bytes": 131
+    },
+    {
+      "path": "fleet-138-v1/v8_junit-framework_CVE-2025-53103_r5.13.1/Dockerfile",
+      "sha256": "17bdbf733c544e90482bbf4f7aad793a827b297954ff1a7e41cd3102906a0d84",
+      "bytes": 2873
+    },
+    {
+      "path": "fleet-138-v1/v8_junit-framework_CVE-2025-53103_r5.13.1/context/Dockerfile.copy",
+      "sha256": "3d938eb9efb58206bde3fbb0437939d7a5b80f8236d4ae185dc4e58fb243ea70",
+      "bytes": 2256
+    },
+    {
+      "path": "fleet-138-v1/v8_junit-framework_CVE-2025-53103_r5.13.1/historical-receipt.json",
+      "sha256": "151195505425b395ccf0e1fcdcafd2aeeb173a63c5670afc62f592630a72397a",
+      "bytes": 4938
+    },
+    {
+      "path": "fleet-138-v1/v8_keycloak_CVE-2025-0604_26.1.2/Dockerfile",
+      "sha256": "bbd64565c64d9d0794dedf14fdbf1b439e6e57d9a9add804482aef041a1fb409",
+      "bytes": 3691
+    },
+    {
+      "path": "fleet-138-v1/v8_keycloak_CVE-2025-0604_26.1.2/historical-receipt.json",
+      "sha256": "d47d5b55f18cccc3140568ba68f590a091f743d1b3423226506e0688667b16d0",
+      "bytes": 6095
+    },
+    {
+      "path": "fleet-138-v1/v8_keycloak_CVE-2025-1391_26.1.2/Dockerfile",
+      "sha256": "652b396139e8d082767ce84a4470f4e7116428d8d5d623a2b58f4274048f423d",
+      "bytes": 3773
+    },
+    {
+      "path": "fleet-138-v1/v8_keycloak_CVE-2025-1391_26.1.2/historical-receipt.json",
+      "sha256": "e6ad609751cc91762cbfe13c05c33895f58119cc51db88ef867554b21b4ad411",
+      "bytes": 8000
+    },
+    {
+      "path": "fleet-138-v1/v8_keycloak_CVE-2025-3501_26.2.1/Dockerfile",
+      "sha256": "c598504bbe410bb6e2a0973d49839b9baed1d8f96932cd1f4de2b51613660560",
+      "bytes": 1750
+    },
+    {
+      "path": "fleet-138-v1/v8_keycloak_CVE-2025-3501_26.2.1/historical-receipt.json",
+      "sha256": "9d21149a8e49ab3d01e671dfd4d34e4bb02d7820de8dc4ceb0feac17a82ba9f2",
+      "bytes": 6000
+    },
+    {
+      "path": "fleet-138-v1/v8_keycloak_CVE-2025-3910_26.2.1/Dockerfile",
+      "sha256": "f766b25f65f1591dff258713e0db0797747d40d6d643188bb2f5467bf9b5b90f",
+      "bytes": 2954
+    },
+    {
+      "path": "fleet-138-v1/v8_keycloak_CVE-2025-3910_26.2.1/historical-receipt.json",
+      "sha256": "61ec788a454e3cd64f7678fa69613de14ca28771fc44f214c2763ad7c78d6175",
+      "bytes": 4397
+    },
+    {
+      "path": "fleet-138-v1/v8_keycloak_CVE-2025-7365_26.0.12/Dockerfile",
+      "sha256": "019c0c55fbbebfc7748a9b9de393c3a020b4acef60fd511ff27d612c772b8128",
+      "bytes": 2475
+    },
+    {
+      "path": "fleet-138-v1/v8_keycloak_CVE-2025-7365_26.0.12/historical-receipt.json",
+      "sha256": "deee7a94662617ec71fb8b0ce294b7797ceb0523d31a6553b232f3aad96821d2",
+      "bytes": 4256
+    },
+    {
+      "path": "fleet-138-v1/v8_keycloak_CVE-2025-7784_26.2.5/Dockerfile",
+      "sha256": "5f355709b52faa1463417262cb4a0f05a321884fa6c3cbe4e0a9161e2e5eefa6",
+      "bytes": 2304
+    },
+    {
+      "path": "fleet-138-v1/v8_keycloak_CVE-2025-7784_26.2.5/artifacts/upstream-iris-Dockerfile",
+      "sha256": "0a6355cf2a4f481798a5e12debe0ecf7ad6a20ed6d72d927ec9832874c889075",
+      "bytes": 2151
+    },
+    {
+      "path": "fleet-138-v1/v8_keycloak_CVE-2025-7784_26.2.5/historical-receipt.json",
+      "sha256": "8b2d88625c34e57ff6c54b94c91dab6002ee31f99fe3117f61e964e7b4b91577",
+      "bytes": 5401
+    },
+    {
+      "path": "fleet-138-v1/v8_keycloak__keycloak_CVE-2014-3656_1.0.5.Final/.dockerignore",
+      "sha256": "1bdec47afe2af1ee409cce9fa0995eb3aa2c19e0588fdfa10bfcc0bf5984ef6e",
+      "bytes": 187
+    },
+    {
+      "path": "fleet-138-v1/v8_keycloak__keycloak_CVE-2014-3656_1.0.5.Final/Dockerfile",
+      "sha256": "d740bf91dd1b1bf656ea6017cab5a5214583f7391c86d9fc1e5c5edf18015da0",
+      "bytes": 2936
+    },
+    {
+      "path": "fleet-138-v1/v8_keycloak__keycloak_CVE-2014-3656_1.0.5.Final/Dockerfile.cache-fill",
+      "sha256": "17432f428a81c7ff063cab461db93a5b581caae2c7960c96c6f26c416fc87804",
+      "bytes": 901
+    },
+    {
+      "path": "fleet-138-v1/v8_keycloak__keycloak_CVE-2014-3656_1.0.5.Final/historical-receipt.json",
+      "sha256": "fabd0cf65894c815366bbd3d4a350eca75c1375592c1760e865ac8df7f1afdaa",
+      "bytes": 5894
+    },
+    {
+      "path": "fleet-138-v1/v8_keycloak__keycloak_CVE-2022-1274_20.0.4/.dockerignore",
+      "sha256": "c4b1931d2717ed72bbfe3271368c525593c38851c4d7499921e8a04148d91bb6",
+      "bytes": 29
+    },
+    {
+      "path": "fleet-138-v1/v8_keycloak__keycloak_CVE-2022-1274_20.0.4/Dockerfile",
+      "sha256": "9731b8503787126634afa3c47b600bfedaaaaa42c188b913e74f55fce31399a7",
+      "bytes": 2944
+    },
+    {
+      "path": "fleet-138-v1/v8_keycloak__keycloak_CVE-2022-1274_20.0.4/historical-receipt.json",
+      "sha256": "4326b27172683f3bc19f1735f6518f4f0cbbd0f49c0f10c93fb00db5fd412e1d",
+      "bytes": 5074
+    },
+    {
+      "path": "fleet-138-v1/v8_keycloak__keycloak_CVE-2022-4137_20.0.4/Dockerfile",
+      "sha256": "87a8e25bcb187c26dc3cdee10af36193769681fbd1c60e6d4181d8316850ddd5",
+      "bytes": 4040
+    },
+    {
+      "path": "fleet-138-v1/v8_keycloak__keycloak_CVE-2022-4137_20.0.4/historical-receipt.json",
+      "sha256": "1f733ce12bbfc780857deb8e5662dd711b880c725ea9160502a0130a62fda7c8",
+      "bytes": 6247
+    },
+    {
+      "path": "fleet-138-v1/v8_keycloak__keycloak_CVE-2022-4361_21.1.1/Dockerfile",
+      "sha256": "715e936293d34352f0834d38b068514c6ec2e78f3e16b94db79857e234ae8f38",
+      "bytes": 1523
+    },
+    {
+      "path": "fleet-138-v1/v8_keycloak__keycloak_CVE-2022-4361_21.1.1/historical-receipt.json",
+      "sha256": "b477f2ed490a6ff87371277ccf4c10ce512a50fdd1bc616295826c629dbbf5c9",
+      "bytes": 4174
+    },
+    {
+      "path": "fleet-138-v1/v8_kylin_CVE-2025-30067_kylin-5.0.1/Dockerfile",
+      "sha256": "455e53b36bc9ff87806ba5688a7fb80ee0660efeced4d7af5cdadefac1513e43",
+      "bytes": 2498
+    },
+    {
+      "path": "fleet-138-v1/v8_kylin_CVE-2025-30067_kylin-5.0.1/historical-receipt.json",
+      "sha256": "215a4c76210fd52dec80254039017708fa61a9f8ff20eb5c346524190cc939aa",
+      "bytes": 7510
+    },
+    {
+      "path": "fleet-138-v1/v8_local-s3_CVE-2025-27136_1.20/Dockerfile",
+      "sha256": "4d4c9c0209b623a225146c35ff6597ef5e5db7c8f7dc7fbce60bfdf1b60eaa29",
+      "bytes": 2426
+    },
+    {
+      "path": "fleet-138-v1/v8_local-s3_CVE-2025-27136_1.20/historical-receipt.json",
+      "sha256": "12879a2a827f04ae2b87546c004c87138e349b34a1fffc6ba9d4ba49fe67a783",
+      "bytes": 5627
+    },
+    {
+      "path": "fleet-138-v1/v8_mapfish__mapfish-print_CVE-2020-15231_3.22.0/Dockerfile",
+      "sha256": "4093351db257bbaac1ff34bcb015ff36e67836230656219b4440935cc69b64c9",
+      "bytes": 5026
+    },
+    {
+      "path": "fleet-138-v1/v8_mapfish__mapfish-print_CVE-2020-15231_3.22.0/attempts/Dockerfile.attempt1",
+      "sha256": "bd3bd9747a0bffec0d874640d8ca6eb2758d06157d86f5c07aea22aac0f0f18e",
+      "bytes": 791
+    },
+    {
+      "path": "fleet-138-v1/v8_mapfish__mapfish-print_CVE-2020-15231_3.22.0/attempts/Dockerfile.attempt3",
+      "sha256": "9ac358e9fe824d65c3cb632fb1d93905bf5715e63df84a6dc3306168faf9e42a",
+      "bytes": 1418
+    },
+    {
+      "path": "fleet-138-v1/v8_mapfish__mapfish-print_CVE-2020-15231_3.22.0/attempts/Dockerfile.attempt4",
+      "sha256": "415ab52de3cbb6d1fab854f1351e94548e676e616f4fba7e8c6d6e5e757f3390",
+      "bytes": 1489
+    },
+    {
+      "path": "fleet-138-v1/v8_mapfish__mapfish-print_CVE-2020-15231_3.22.0/attempts/Dockerfile.attempt5",
+      "sha256": "cd852154b20ad73e3cafe5ecd761f9d051eeb1b5d9a053c06a72ac3df62eaf8f",
+      "bytes": 1503
+    },
+    {
+      "path": "fleet-138-v1/v8_mapfish__mapfish-print_CVE-2020-15231_3.22.0/attempts/Dockerfile.attempt6",
+      "sha256": "8efe455b1d959c5b81e23a8ac1403b13cd2c9406941d91c0337f09ad9cb32c3f",
+      "bytes": 1489
+    },
+    {
+      "path": "fleet-138-v1/v8_mapfish__mapfish-print_CVE-2020-15231_3.22.0/attempts/Dockerfile.attempt7",
+      "sha256": "ca1db586094cd0b0ae0fa739a72d5ff46c01b48bae5af00348b4c40aea91b4a5",
+      "bytes": 1760
+    },
+    {
+      "path": "fleet-138-v1/v8_mapfish__mapfish-print_CVE-2020-15231_3.22.0/attempts/Dockerfile.attempt8",
+      "sha256": "333ee8c31aab3d17bf390c5067e2800f4a0722e76d5b6a62c801b195cb454e96",
+      "bytes": 1941
+    },
+    {
+      "path": "fleet-138-v1/v8_mapfish__mapfish-print_CVE-2020-15231_3.22.0/attempts/Dockerfile.attempt9",
+      "sha256": "210443798a3c303eb78cc80c1e6721ada7cae78389c32b61905aed22de1e85e8",
+      "bytes": 2166
+    },
+    {
+      "path": "fleet-138-v1/v8_mapfish__mapfish-print_CVE-2020-15231_3.22.0/historical-receipt.json",
+      "sha256": "8615f7c8658d610c293cf8a59090b6378535223ad8fb5efb46019fa3fbac032d",
+      "bytes": 6016
+    },
+    {
+      "path": "fleet-138-v1/v8_netty-incubator-codec-quic_CVE-2025-29908_netty-incubator-codec-parent-quic-0.0.70.Final/Dockerfile",
+      "sha256": "c44f5b2c216e6d275bd2019967cc991211389d1e6545a2f3be38ffe102854dd5",
+      "bytes": 1304
+    },
+    {
+      "path": "fleet-138-v1/v8_netty-incubator-codec-quic_CVE-2025-29908_netty-incubator-codec-parent-quic-0.0.70.Final/historical-receipt.json",
+      "sha256": "0b7e89a2a57e03fb39cc5ec264635e745f4fc8133632df157f54aa530fe252c6",
+      "bytes": 4982
+    },
+    {
+      "path": "fleet-138-v1/v8_netty_CVE-2025-24970_netty-4.1.117.Final/.dockerignore",
+      "sha256": "45c261fd1ae6043f31299a12cb9b9edda31024af9f3f382afcf5ce3513aebde4",
+      "bytes": 116
+    },
+    {
+      "path": "fleet-138-v1/v8_netty_CVE-2025-24970_netty-4.1.117.Final/Dockerfile",
+      "sha256": "07626b1cfa115ec812b4e9af0a9fe962c951c95647607bf8ba377a4e87d84d10",
+      "bytes": 5192
+    },
+    {
+      "path": "fleet-138-v1/v8_netty_CVE-2025-24970_netty-4.1.117.Final/historical-receipt.json",
+      "sha256": "896f2eca390619c2e7c5c6f0cd0522109c795b2e92a6e10321cc5c5da2d322f7",
+      "bytes": 6318
+    },
+    {
+      "path": "fleet-138-v1/v8_netty_CVE-2025-25193_netty-4.1.117.Final/Dockerfile",
+      "sha256": "5348aa96398a6af54e041f1e432a52080ac717397a0e953d474b1025ad00eccf",
+      "bytes": 2832
+    },
+    {
+      "path": "fleet-138-v1/v8_netty_CVE-2025-25193_netty-4.1.117.Final/historical-receipt.json",
+      "sha256": "435153aaf8a87286b86a6df2a5da81dcbd1691a142fa9f36fb209b929beb5da9",
+      "bytes": 5289
+    },
+    {
+      "path": "fleet-138-v1/v8_oic-auth-plugin_CVE-2025-24399_4.452.v2849b_d3945fa_/Dockerfile",
+      "sha256": "93597d70c9dcd6c832a72d81066ae538c6b7d8050c0a252426054248c4c0bdb6",
+      "bytes": 1899
+    },
+    {
+      "path": "fleet-138-v1/v8_oic-auth-plugin_CVE-2025-24399_4.452.v2849b_d3945fa_/compile-replay.sh",
+      "sha256": "c10c77e1ef42746301b620260586f178a929b17f856440ff8140c6ec96770b43",
+      "bytes": 2618
+    },
+    {
+      "path": "fleet-138-v1/v8_oic-auth-plugin_CVE-2025-24399_4.452.v2849b_d3945fa_/historical-receipt.json",
+      "sha256": "f0fea26e26ee1858d6b11ff0162a5330c8939c5bcf5a129987ab80fba19e1b59",
+      "bytes": 6710
+    },
+    {
+      "path": "fleet-138-v1/v8_opencast_CVE-2025-54380_17.5/Dockerfile",
+      "sha256": "cfb6f664541722edf30db0aab97a13d6b89a15682816d63cfa7d9d509abe0937",
+      "bytes": 5964
+    },
+    {
+      "path": "fleet-138-v1/v8_opencast_CVE-2025-54380_17.5/historical-receipt.json",
+      "sha256": "5e334040ccc3ac9d39b707763f68464d47ab66fe2c6cceb06c6c2071dc0108ca",
+      "bytes": 6763
+    },
+    {
+      "path": "fleet-138-v1/v8_para_CVE-2025-48955_v1.50.7/.dockerignore",
+      "sha256": "317874b61ec3674a52b5544c1a09000d7bcdd35b3320948618f58f87d70f59c3",
+      "bytes": 46
+    },
+    {
+      "path": "fleet-138-v1/v8_para_CVE-2025-48955_v1.50.7/Dockerfile",
+      "sha256": "58cfbdf5838ec063a7a81ca3c72b4e46d3271622343e7de344144e7ccb9324a6",
+      "bytes": 5264
+    },
+    {
+      "path": "fleet-138-v1/v8_para_CVE-2025-48955_v1.50.7/attempts/probe-pinned.Dockerfile",
+      "sha256": "bd3c3e8ed1c10f7de933e87e9f092d6059375e08cdb996baf569e68fcf9f16ae",
+      "bytes": 987
+    },
+    {
+      "path": "fleet-138-v1/v8_para_CVE-2025-48955_v1.50.7/attempts/probe-skip-checkstyle.Dockerfile",
+      "sha256": "37d952d764e3f1e4772587d97e080c438a558d23e017b7a4297877d7a966518c",
+      "bytes": 1035
+    },
+    {
+      "path": "fleet-138-v1/v8_para_CVE-2025-48955_v1.50.7/attempts/probe.Dockerfile",
+      "sha256": "5348e60e655547f7efd39b722f414f52f003e214240f2789bedbb93bc617ce87",
+      "bytes": 944
+    },
+    {
+      "path": "fleet-138-v1/v8_para_CVE-2025-48955_v1.50.7/historical-receipt.json",
+      "sha256": "1235f440f6d3e70f3ebca3b69b62f8941ca74154667e8adb2b43324eb98955fe",
+      "bytes": 5511
+    },
+    {
+      "path": "fleet-138-v1/v8_para_CVE-2025-49009_v1.50.7/Dockerfile",
+      "sha256": "87547da0d4d392bfb48fe211e813aa2fa0633c267c4adca9bb4e851be6adfa6f",
+      "bytes": 2143
+    },
+    {
+      "path": "fleet-138-v1/v8_para_CVE-2025-49009_v1.50.7/historical-receipt.json",
+      "sha256": "1c953c806782c64c1ef074f22907a2d36a3cc8278e911509e0b22699a4e412b1",
+      "bytes": 3983
+    },
+    {
+      "path": "fleet-138-v1/v8_payara__Payara_CVE-2022-37422_5.2022.2/Dockerfile",
+      "sha256": "a24e65543093371005f400d200f8e81dba22528b7d0246dc6efca33534e1fa93",
+      "bytes": 4132
+    },
+    {
+      "path": "fleet-138-v1/v8_payara__Payara_CVE-2022-37422_5.2022.2/historical-receipt.json",
+      "sha256": "866bb274431a8f465c7c63cb10fe9fe43d382c25116d5071af0bb0e58858e064",
+      "bytes": 4616
+    },
+    {
+      "path": "fleet-138-v1/v8_payara__Payara_CVE-2022-37422_5.2022.2/run-build.sh",
+      "sha256": "9115e4e6814aed461c19151f59cfe8a8accc064e3ae229cbb7fb7870c0b62082",
+      "bytes": 786
+    },
+    {
+      "path": "fleet-138-v1/v8_powsybl-core_CVE-2025-48058_v6.7.1/Dockerfile",
+      "sha256": "050be061c373f1a48a4100aad19906ff97eced7362bae918a2d794f718a15758",
+      "bytes": 4328
+    },
+    {
+      "path": "fleet-138-v1/v8_powsybl-core_CVE-2025-48058_v6.7.1/historical-receipt.json",
+      "sha256": "28f970aee9352fb09364179c9b619da46dadbd2a30c8beaf0c979523a309347e",
+      "bytes": 6551
+    },
+    {
+      "path": "fleet-138-v1/v8_powsybl-core_CVE-2025-48059_v6.2.4/Dockerfile",
+      "sha256": "e2400726e99daa50d1f648e6a7f25906464b4f47964174fcc6ba180fe96d98be",
+      "bytes": 2510
+    },
+    {
+      "path": "fleet-138-v1/v8_powsybl-core_CVE-2025-48059_v6.2.4/historical-receipt.json",
+      "sha256": "2885ac26c3466daf8423078e5b7e390b070f2ada1ff5cb8244fc2e823752dae6",
+      "bytes": 4345
+    },
+    {
+      "path": "fleet-138-v1/v8_quarkus_CVE-2025-49574_3.23.4/.dockerignore",
+      "sha256": "f3d773dac392c8870efa1b4d05280d84719f9cb6434cfc4cb70aa0dabdeedd8e",
+      "bytes": 112
+    },
+    {
+      "path": "fleet-138-v1/v8_quarkus_CVE-2025-49574_3.23.4/Dockerfile",
+      "sha256": "f3b75d1e2da534962983de721bac80a1a0b4801f51fcc8b55e2e593724d9a922",
+      "bytes": 5869
+    },
+    {
+      "path": "fleet-138-v1/v8_quarkus_CVE-2025-49574_3.23.4/historical-receipt.json",
+      "sha256": "06440a023cf6ced9b895c875773b0a5807e808dbe42ab2e891af1c693aa68bfd",
+      "bytes": 7384
+    },
+    {
+      "path": "fleet-138-v1/v8_restapi_CVE-2025-32960_v7.2.6/Dockerfile",
+      "sha256": "6ad309bb5b1300ee2ea8c44c41b733f9ea22d61425a0253a9907b01edb233a05",
+      "bytes": 5221
+    },
+    {
+      "path": "fleet-138-v1/v8_restapi_CVE-2025-32960_v7.2.6/Dockerfile.worker-round-4",
+      "sha256": "52ca143251337137d5191b3301620330650cb0e4b17790f030aed301e0f15637",
+      "bytes": 5101
+    },
+    {
+      "path": "fleet-138-v1/v8_restapi_CVE-2025-32960_v7.2.6/historical-receipt.json",
+      "sha256": "5f6c498e48cbb9cb48c2b1f382effd88d9d34c80d12d7ba7d4e30a4dbb1a694d",
+      "bytes": 5343
+    },
+    {
+      "path": "fleet-138-v1/v8_s3proxy_CVE-2025-24961_s3proxy-2.5.0/Dockerfile",
+      "sha256": "cc117e75b955e0b34d7d36e6aca8d9f27e677a85eca7e6aacb86e3f3f4580604",
+      "bytes": 2797
+    },
+    {
+      "path": "fleet-138-v1/v8_s3proxy_CVE-2025-24961_s3proxy-2.5.0/attempts/compile-run.sh",
+      "sha256": "efde30bc3d513e03d5f8c982eb036c9dec6b1975e06b8c60f7e36fcf8e5e8447",
+      "bytes": 817
+    },
+    {
+      "path": "fleet-138-v1/v8_s3proxy_CVE-2025-24961_s3proxy-2.5.0/attempts/fast-compile-run.sh",
+      "sha256": "f1379977e1c8aa38c2f8108c288bc4e87f7ec2c780ceb885ec83bdf43c30d338",
+      "bytes": 863
+    },
+    {
+      "path": "fleet-138-v1/v8_s3proxy_CVE-2025-24961_s3proxy-2.5.0/historical-receipt.json",
+      "sha256": "dba14f1bc98af3e506661e74180a43f51dc31f69e1aeb12d393e957e01104873",
+      "bytes": 6722
+    },
+    {
+      "path": "fleet-138-v1/v8_simple-queue-plugin_CVE-2025-31723_simple-queue-1.4.6/.dockerignore",
+      "sha256": "c6bd6e739de9d67d1d7970c0d03801ef040edb43f0c5c56b8eed473017c8c9f3",
+      "bytes": 75
+    },
+    {
+      "path": "fleet-138-v1/v8_simple-queue-plugin_CVE-2025-31723_simple-queue-1.4.6/Dockerfile",
+      "sha256": "149d4321ecc3ed9ed73767cef39cba7935654a15ce0d6284b3e2ddd6f6b220b1",
+      "bytes": 8003
+    },
+    {
+      "path": "fleet-138-v1/v8_simple-queue-plugin_CVE-2025-31723_simple-queue-1.4.6/historical-receipt.json",
+      "sha256": "0be119ad9031a67190eeb5e6d68b3e938d4b4662b26d36fe52ebcad883dbfbed",
+      "bytes": 6059
+    },
+    {
+      "path": "fleet-138-v1/v8_smallrye-fault-tolerance_CVE-2025-2240_6.4.1/Dockerfile",
+      "sha256": "d2d591696113041bd7d74c1734979aac0460c2bc73f73b461d9b05e62c5642bb",
+      "bytes": 1007
+    },
+    {
+      "path": "fleet-138-v1/v8_smallrye-fault-tolerance_CVE-2025-2240_6.4.1/Dockerfile.probe1",
+      "sha256": "199d55f71e1277be9c3e4b5ce638038c945f6077cef8ff263210372c66785077",
+      "bytes": 1007
+    },
+    {
+      "path": "fleet-138-v1/v8_smallrye-fault-tolerance_CVE-2025-2240_6.4.1/Dockerfile.probe2",
+      "sha256": "049a7cd9264a71e6e72ae3b93d52d6f02ceef4b93095103e44cb9bf408eeed45",
+      "bytes": 1007
+    },
+    {
+      "path": "fleet-138-v1/v8_smallrye-fault-tolerance_CVE-2025-2240_6.4.1/Dockerfile.probe3",
+      "sha256": "d2d591696113041bd7d74c1734979aac0460c2bc73f73b461d9b05e62c5642bb",
+      "bytes": 1007
+    },
+    {
+      "path": "fleet-138-v1/v8_smallrye-fault-tolerance_CVE-2025-2240_6.4.1/historical-receipt.json",
+      "sha256": "7955056ddf454578ef2f6da36060f676533c503bccaf452736192beabf7f7b8d",
+      "bytes": 4576
+    },
+    {
+      "path": "fleet-138-v1/v8_snowflake-jdbc_CVE-2025-24789_v3.21.1/Dockerfile",
+      "sha256": "7d30b14ecdcfbc2807532973761035029d45890257c62553ab8b41d7f31daa4f",
+      "bytes": 2591
+    },
+    {
+      "path": "fleet-138-v1/v8_snowflake-jdbc_CVE-2025-24789_v3.21.1/historical-receipt.json",
+      "sha256": "a8ca507059f1b1fccebb6b082c01868f8e482f32427ac1ef2651cf4377033b06",
+      "bytes": 5534
+    },
+    {
+      "path": "fleet-138-v1/v8_snowflake-jdbc_CVE-2025-24790_v3.21.1/Dockerfile",
+      "sha256": "0d6764993ddfa5e9b9f43d66f436de8c1801f39c0d6855ea1cfd4490e2e4e7ec",
+      "bytes": 5906
+    },
+    {
+      "path": "fleet-138-v1/v8_snowflake-jdbc_CVE-2025-24790_v3.21.1/historical-receipt.json",
+      "sha256": "4c42631b9f86f7f75b076080927a6fc306e06207c01968c426c2d066bcf8b7bf",
+      "bytes": 5143
+    },
+    {
+      "path": "fleet-138-v1/v8_snowflake-jdbc_CVE-2025-27496_v3.23.0/Dockerfile",
+      "sha256": "bdd13dba9fad6374ef66a03073e8ad8b5899a3a8e6fbd26a8ee007d3ca78e3a1",
+      "bytes": 6254
+    },
+    {
+      "path": "fleet-138-v1/v8_snowflake-jdbc_CVE-2025-27496_v3.23.0/historical-receipt.json",
+      "sha256": "07e6a4928bb9f1781d08163a1314888479af7d3c0175c21636a52252c713b871",
+      "bytes": 3839
+    },
+    {
+      "path": "fleet-138-v1/v8_solon_CVE-2025-1584_v3.0.8/.dockerignore",
+      "sha256": "1adbac8c3e6f11864b9fd320b0600d70a1f6349d9244ab07813e43e4becc69ed",
+      "bytes": 117
+    },
+    {
+      "path": "fleet-138-v1/v8_solon_CVE-2025-1584_v3.0.8/Dockerfile",
+      "sha256": "32f2e60df43cbb6c3b0200c0be3b109fbb7743a78c0b331b5b469f63c2b841f5",
+      "bytes": 2396
+    },
+    {
+      "path": "fleet-138-v1/v8_solon_CVE-2025-1584_v3.0.8/context/Dockerfile.offline",
+      "sha256": "563db7c5a5e6c0be7d86bf16a2812bb3479ba4f609492bf75564316bc1bfcdef",
+      "bytes": 2209
+    },
+    {
+      "path": "fleet-138-v1/v8_solon_CVE-2025-1584_v3.0.8/context/Dockerfile.probe",
+      "sha256": "5b5beac6c4d6687216025a8e215e1a2a664c4b50f48d43681779f4953f58c9f0",
+      "bytes": 1047
+    },
+    {
+      "path": "fleet-138-v1/v8_solon_CVE-2025-1584_v3.0.8/context/Dockerfile.warm",
+      "sha256": "98de9cd07619ed2f86b6b5005304e218b08afd7ba8e5c59f172aaef52b1e3aaa",
+      "bytes": 1596
+    },
+    {
+      "path": "fleet-138-v1/v8_solon_CVE-2025-1584_v3.0.8/historical-receipt.json",
+      "sha256": "42708faf9625d543a709112d02190c91b571a4ebd667818a1470df2a0637ac71",
+      "bytes": 3870
+    },
+    {
+      "path": "fleet-138-v1/v8_solon_CVE-2025-46096_v3.1.2/Dockerfile",
+      "sha256": "ecbf08de5fcc0d174df4f6c54336e1f47141ff8b8fdde00bc89c4bae72d8aa31",
+      "bytes": 2321
+    },
+    {
+      "path": "fleet-138-v1/v8_solon_CVE-2025-46096_v3.1.2/context/Dockerfile",
+      "sha256": "ecbf08de5fcc0d174df4f6c54336e1f47141ff8b8fdde00bc89c4bae72d8aa31",
+      "bytes": 2321
+    },
+    {
+      "path": "fleet-138-v1/v8_solon_CVE-2025-46096_v3.1.2/historical-receipt.json",
+      "sha256": "d85a5f485db0192b29aaef79b6555024a99c9e19c866868ea9562e95f4296a8d",
+      "bytes": 5580
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-cloud__spring-cloud-config_CVE-2020-5405_2.1.6.RELEASE/Dockerfile",
+      "sha256": "81c86188f5bae0977ac91c1044df70bf69981c4ab5ce2f3f57733321cc2d27c1",
+      "bytes": 2877
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-cloud__spring-cloud-config_CVE-2020-5405_2.1.6.RELEASE/historical-receipt.json",
+      "sha256": "fb949102dc919b8a13a534ad4156b37aa1a153315af5078938326462cb6bbead",
+      "bytes": 4616
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-framework_CVE-2025-22233_v6.2.6/.dockerignore",
+      "sha256": "d69c423db75a4b10742c03bfa3f12eeaa551e46a853a420d5bd55fec84b49a8d",
+      "bytes": 87
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-framework_CVE-2025-22233_v6.2.6/Dockerfile",
+      "sha256": "3645f057c5f1e7205e20be5179650e61f0d7b771abf2a8ae567b19cfbb4e0c09",
+      "bytes": 3436
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-framework_CVE-2025-22233_v6.2.6/historical-receipt.json",
+      "sha256": "efe5e8272bc136bda206aa100003c576279e2e8830d1e5272a79f351d95a66c9",
+      "bytes": 7047
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-framework_CVE-2025-41234_v6.2.7/.dockerignore",
+      "sha256": "6f9cd6c7616f18229802f32f98bffbca80d7a4a8cda1024cd36cb4c56792980a",
+      "bytes": 197
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-framework_CVE-2025-41234_v6.2.7/Dockerfile",
+      "sha256": "2d009e08af4f96bbb5c1517655f73da5d4324b73b638fe4f1a0507e54e0b3d39",
+      "bytes": 5415
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-framework_CVE-2025-41234_v6.2.7/Dockerfile.worker-round-1",
+      "sha256": "259e14c357afc8fb178d010b27641f2ddbed6e03123a7727f88dd8dd8d11aae9",
+      "bytes": 4576
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-framework_CVE-2025-41234_v6.2.7/context/compile.sh",
+      "sha256": "2d440e36baa951dae823a01d358295312a1d9fb49cbc52d8cdc591230b8ea443",
+      "bytes": 1667
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-framework_CVE-2025-41234_v6.2.7/context/gradle-init-repositories.gradle",
+      "sha256": "db2c15bbd057682a61e354c9c3d6766d03f6e9a38cbf1bdad68272fec5d7fd68",
+      "bytes": 786
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-framework_CVE-2025-41234_v6.2.7/context/pristine-replay.sh",
+      "sha256": "3c608df6fae7c8eb74c863aec0a258233a3226221e973a7b39e8ab817054b1c6",
+      "bytes": 1993
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-framework_CVE-2025-41234_v6.2.7/context/settings-plugin-management.gradle",
+      "sha256": "bdab5e023fe26507767090eebc7f703fecba4ad4fdf5f7dcbbabb435683c321f",
+      "bytes": 253
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-framework_CVE-2025-41234_v6.2.7/gradle-init-repositories.gradle",
+      "sha256": "534f7570952e2fd9b67aef7e6b0360a23d3da777101e5a60b540229c259cc70a",
+      "bytes": 460
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-framework_CVE-2025-41234_v6.2.7/historical-receipt.json",
+      "sha256": "065e406c03d5ba2ea648c29abcd2d4c68e57d1b934e2110f56f86abd3a7424b0",
+      "bytes": 5786
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-framework_CVE-2025-41234_v6.2.7/settings-plugin-management.gradle",
+      "sha256": "bdab5e023fe26507767090eebc7f703fecba4ad4fdf5f7dcbbabb435683c321f",
+      "bytes": 253
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-projects__spring-framework_CVE-2022-22965_5.2.19.RELEASE/.dockerignore",
+      "sha256": "9efd286f10d394b2770a16f43e3d4a2365f03d89c87be35c188a8333bb3a29ba",
+      "bytes": 148
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-projects__spring-framework_CVE-2022-22965_5.2.19.RELEASE/Dockerfile",
+      "sha256": "b1377f4c1088efea90981ce5a7610affa6fa690d3b286df9e3d30a201fd60599",
+      "bytes": 4571
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-projects__spring-framework_CVE-2022-22965_5.2.19.RELEASE/Dockerfile.worker-round-1",
+      "sha256": "f3bcf36206bd12cb7aaa1edd5c44a9015c825550b843e59d3b1f421462575a75",
+      "bytes": 3373
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-projects__spring-framework_CVE-2022-22965_5.2.19.RELEASE/context/Dockerfile.probe1",
+      "sha256": "52cdb6982c9359d083dd95d4b677589e7fa23a087ddc6f97246cc982f18a87a7",
+      "bytes": 495
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-projects__spring-framework_CVE-2022-22965_5.2.19.RELEASE/context/Dockerfile.probe2",
+      "sha256": "3b3ada702ae439ef68ebb812bdc78cbcdd9e1edb52f905fbed725ec4ba1321b7",
+      "bytes": 2638
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-projects__spring-framework_CVE-2022-22965_5.2.19.RELEASE/context/gradle-init-repositories.gradle",
+      "sha256": "2f913bebd72c60dc7c3f20095d72eaa2f18d17c0c912c0b6bf5cdb4288e513cf",
+      "bytes": 641
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-projects__spring-framework_CVE-2022-22965_5.2.19.RELEASE/gradle-init-repositories.gradle",
+      "sha256": "2f913bebd72c60dc7c3f20095d72eaa2f18d17c0c912c0b6bf5cdb4288e513cf",
+      "bytes": 641
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-projects__spring-framework_CVE-2022-22965_5.2.19.RELEASE/historical-receipt.json",
+      "sha256": "197a63d3eeeea8fdbef6fa2ecddd5e3bffc8fea75167d93744138edf65cd3106",
+      "bytes": 9488
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-security_CVE-2025-22223_6.4.3/.dockerignore",
+      "sha256": "618c44e097b148eafe19b26a8511d8f09b40a96e8941f60e3834728b67626c0a",
+      "bytes": 99
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-security_CVE-2025-22223_6.4.3/Dockerfile",
+      "sha256": "8183514bd88991b5eb6306e44dd5605e191fc54ad259978afa5b6d1b19384eed",
+      "bytes": 4657
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-security_CVE-2025-22223_6.4.3/compile.sh",
+      "sha256": "4381854fae9536c8237302ab5dce2318da79a62f244bb0fc0ac1d2293b540fb8",
+      "bytes": 1684
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-security_CVE-2025-22223_6.4.3/docker-context/.dockerignore",
+      "sha256": "618c44e097b148eafe19b26a8511d8f09b40a96e8941f60e3834728b67626c0a",
+      "bytes": 99
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-security_CVE-2025-22223_6.4.3/docker-context/Dockerfile",
+      "sha256": "8183514bd88991b5eb6306e44dd5605e191fc54ad259978afa5b6d1b19384eed",
+      "bytes": 4657
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-security_CVE-2025-22223_6.4.3/docker-context/compile.sh",
+      "sha256": "4381854fae9536c8237302ab5dce2318da79a62f244bb0fc0ac1d2293b540fb8",
+      "bytes": 1684
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-security_CVE-2025-22223_6.4.3/historical-receipt.json",
+      "sha256": "932a5499a1236405f44057f252060baaf8ea45b053799f41879dbee49a8efe7b",
+      "bytes": 7109
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-security_CVE-2025-22228_6.3.7/.dockerignore",
+      "sha256": "9dc2a6f7810c1d14b72155d5bee51909869495381a773dba18e0a6a7a63b4799",
+      "bytes": 66
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-security_CVE-2025-22228_6.3.7/Dockerfile",
+      "sha256": "4795b33d9a300956ab97aeecee24a4b04ab356914ac3429ccaac5e62854d0f8d",
+      "bytes": 1947
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-security_CVE-2025-22228_6.3.7/Dockerfile.worker-round-1",
+      "sha256": "73c6b23b2290de045e9bcdbd201141402c1f91f4a6bdc34dfa2121f4fb7bb5ea",
+      "bytes": 1447
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-security_CVE-2025-22228_6.3.7/build-case.sh",
+      "sha256": "bcb1b324916929061cc26c860d2a26c7cedeb9070bcf206540606a8213ce14a3",
+      "bytes": 4178
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-security_CVE-2025-22228_6.3.7/build-case.worker-round-1.sh",
+      "sha256": "a5a87861fec92fe2a8dec7950a427f5f19e8c82f1c0c92d3de69daef60e67448",
+      "bytes": 4058
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-security_CVE-2025-22228_6.3.7/context/.dockerignore",
+      "sha256": "9dc2a6f7810c1d14b72155d5bee51909869495381a773dba18e0a6a7a63b4799",
+      "bytes": 66
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-security_CVE-2025-22228_6.3.7/context/Dockerfile",
+      "sha256": "4795b33d9a300956ab97aeecee24a4b04ab356914ac3429ccaac5e62854d0f8d",
+      "bytes": 1947
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-security_CVE-2025-22228_6.3.7/context/build-case.sh",
+      "sha256": "bcb1b324916929061cc26c860d2a26c7cedeb9070bcf206540606a8213ce14a3",
+      "bytes": 4178
+    },
+    {
+      "path": "fleet-138-v1/v8_spring-security_CVE-2025-22228_6.3.7/historical-receipt.json",
+      "sha256": "c58e896e8514e8d14e13f72cfe35596fefdc0aefaae350bff833b9621df6b397",
+      "bytes": 6734
+    },
+    {
+      "path": "fleet-138-v1/v8_studio_CVE-2025-6384_v4.2.2/.dockerignore",
+      "sha256": "a8aca691ee46aa5c397ae89d50aab919a844e810cf477d1a8796c4ff3d223a7f",
+      "bytes": 124
+    },
+    {
+      "path": "fleet-138-v1/v8_studio_CVE-2025-6384_v4.2.2/Dockerfile",
+      "sha256": "fbf2705fb12b706fe3bb01a1abcec4e2f6202b37d0d5b46bd640102af9516796",
+      "bytes": 3334
+    },
+    {
+      "path": "fleet-138-v1/v8_studio_CVE-2025-6384_v4.2.2/Dockerfile.worker-round-1.Dockerfile",
+      "sha256": "0704825411376220d29edb0fd74c2ef311d1713e81dba4bc55cddb42c5a7d829",
+      "bytes": 2547
+    },
+    {
+      "path": "fleet-138-v1/v8_studio_CVE-2025-6384_v4.2.2/compile.sh",
+      "sha256": "1bce90ae2f180c984834ceda5fb9f3e597b452a88f016643e244637c91f2554b",
+      "bytes": 568
+    },
+    {
+      "path": "fleet-138-v1/v8_studio_CVE-2025-6384_v4.2.2/context/Dockerfile.probe",
+      "sha256": "c95fd54178e575a6463b63f91c6cc7c36ec763e05ca746dbd3b8d12c9a74b5bd",
+      "bytes": 825
+    },
+    {
+      "path": "fleet-138-v1/v8_studio_CVE-2025-6384_v4.2.2/historical-receipt.json",
+      "sha256": "1dc37dd0c959925291f41d9499fd4faaf9ca5a5b24d356b8cbafdb122b7b94b2",
+      "bytes": 4471
+    },
+    {
+      "path": "fleet-138-v1/v8_syntax-markdown_CVE-2025-46558_syntax-markdown-8.8/Dockerfile",
+      "sha256": "d5026627cbc216349cf1403e93e00e13acc7dd570a49734f0450d257dc594be5",
+      "bytes": 4940
+    },
+    {
+      "path": "fleet-138-v1/v8_syntax-markdown_CVE-2025-46558_syntax-markdown-8.8/Dockerfile.worker-round-1",
+      "sha256": "0d15b1f05223c524ff52e74ab33dcce81eb4c44cd7a8010681bbfca382e839b3",
+      "bytes": 3938
+    },
+    {
+      "path": "fleet-138-v1/v8_syntax-markdown_CVE-2025-46558_syntax-markdown-8.8/historical-receipt.json",
+      "sha256": "ad6a9f9c44659303a677e8471b42b00b7a6eaf7c2bbcf2ce4999db203afc952e",
+      "bytes": 6396
+    },
+    {
+      "path": "fleet-138-v1/v8_templating-engine-plugin_CVE-2025-31722_2.5.3/.dockerignore",
+      "sha256": "313623236eb6c4361f16753ea9d71b34abe36cd46f9c5bac817d1373d6cf5c49",
+      "bytes": 184
+    },
+    {
+      "path": "fleet-138-v1/v8_templating-engine-plugin_CVE-2025-31722_2.5.3/Dockerfile",
+      "sha256": "840c10c3654b12ebf67a1d53b605774e0bc29a61f725dde493a99e401210cdf5",
+      "bytes": 6142
+    },
+    {
+      "path": "fleet-138-v1/v8_templating-engine-plugin_CVE-2025-31722_2.5.3/historical-receipt.json",
+      "sha256": "cc0f8e1e6d01c732a1e73482dcd8ecc5b1abb66119396888efb3621cb5057d22",
+      "bytes": 7809
+    },
+    {
+      "path": "fleet-138-v1/v8_templating-engine-plugin_CVE-2025-31722_2.5.3/route-hacker.settings.gradle",
+      "sha256": "47f0260e6df3089d4a407b4b61e4dd5818ab715eb70877e5ca77f98a1af62944",
+      "bytes": 700
+    },
+    {
+      "path": "fleet-138-v1/v8_testng-team__testng_CVE-2022-4065_7.5/.dockerignore",
+      "sha256": "360d714a4aae589eda147b84e7fb1354c6099553a94edcbee9882c555e9c4f90",
+      "bytes": 96
+    },
+    {
+      "path": "fleet-138-v1/v8_testng-team__testng_CVE-2022-4065_7.5/Dockerfile",
+      "sha256": "d7b7a8b74e9be93654d9cfd5bf2421130b5251368c7c0c47262217154841c30a",
+      "bytes": 3090
+    },
+    {
+      "path": "fleet-138-v1/v8_testng-team__testng_CVE-2022-4065_7.5/Dockerfile.worker-round-1",
+      "sha256": "41261542d1ac6818d923e14afc824915f7d52a5d1d7519401a278ab47f343fe8",
+      "bytes": 1991
+    },
+    {
+      "path": "fleet-138-v1/v8_testng-team__testng_CVE-2022-4065_7.5/historical-receipt.json",
+      "sha256": "adc4822197d2927205ce216ae3e6b2bb34f8f515b319af253a76110fa1ba2b14",
+      "bytes": 5737
+    },
+    {
+      "path": "fleet-138-v1/v8_testng-team__testng_CVE-2022-4065_7.5/mirror-init.gradle",
+      "sha256": "a07ba01312bc179a7fb51647665745a70d88adb85cf60e4b8fc9b466fd80ccc3",
+      "bytes": 1105
+    },
+    {
+      "path": "fleet-138-v1/v8_tomcat_CVE-2025-24813_11.0.2/.dockerignore",
+      "sha256": "3a5e16c785045d3ba3c466473a44b9f64f037f22689133799085c5fda9a050cf",
+      "bytes": 158
+    },
+    {
+      "path": "fleet-138-v1/v8_tomcat_CVE-2025-24813_11.0.2/Dockerfile",
+      "sha256": "6d60c287fd1ef60f8c9c0aabeefc1a505eeae15e5d7ba764038eb738575f29c4",
+      "bytes": 3746
+    },
+    {
+      "path": "fleet-138-v1/v8_tomcat_CVE-2025-24813_11.0.2/Dockerfile.worker-round-1",
+      "sha256": "8d0cd8d2961a6eb07ad388387827ddd7262942f3e9358fbf09352fee3bd5e359",
+      "bytes": 3529
+    },
+    {
+      "path": "fleet-138-v1/v8_tomcat_CVE-2025-24813_11.0.2/historical-receipt.json",
+      "sha256": "b829c11ff4b31f725508b873d7d9bec41c602ba068dcd9a37e715c97ba6a87be",
+      "bytes": 9238
+    },
+    {
+      "path": "fleet-138-v1/v8_tomcat_CVE-2025-48988_11.0.7/Dockerfile",
+      "sha256": "1ce6ffcd2607ca7ee3f5c7dfda4a279eeefba1e3d4a91436eea4fc3822b11dd0",
+      "bytes": 4759
+    },
+    {
+      "path": "fleet-138-v1/v8_tomcat_CVE-2025-48988_11.0.7/historical-receipt.json",
+      "sha256": "277a15cb9ac4f0ba3ab53c21797cce70fa29159817bb4b7384ccdf81a155ff78",
+      "bytes": 6495
+    },
+    {
+      "path": "fleet-138-v1/v8_tomcat_CVE-2025-49125_11.0.7/.dockerignore",
+      "sha256": "e1ace5d616ee0c2a127eec2ee61b08cba438e9d8c22ee1ad6f843c18c77d4fb4",
+      "bytes": 162
+    },
+    {
+      "path": "fleet-138-v1/v8_tomcat_CVE-2025-49125_11.0.7/Dockerfile",
+      "sha256": "32c3f700da90e4e7bfb3c407b7f4df96468ee405d6bfab5b6e2cb6eb9cfbc197",
+      "bytes": 4865
+    },
+    {
+      "path": "fleet-138-v1/v8_tomcat_CVE-2025-49125_11.0.7/historical-receipt.json",
+      "sha256": "7b5f7dfad5505020ce6edccfb0a1abc559124d8d240ad9b6d87c5fa4b4c8acad",
+      "bytes": 9757
+    },
+    {
+      "path": "fleet-138-v1/v8_tomcat_CVE-2025-53506_11.0.8/.dockerignore",
+      "sha256": "e1ace5d616ee0c2a127eec2ee61b08cba438e9d8c22ee1ad6f843c18c77d4fb4",
+      "bytes": 162
+    },
+    {
+      "path": "fleet-138-v1/v8_tomcat_CVE-2025-53506_11.0.8/Dockerfile",
+      "sha256": "1c761f7007ca915b20f31d67fdb42bb9923b6490d3dc06f89e1e08488927d89b",
+      "bytes": 5736
+    },
+    {
+      "path": "fleet-138-v1/v8_tomcat_CVE-2025-53506_11.0.8/historical-receipt.json",
+      "sha256": "75928668250936dd3da3cc2a36e5ba09108a066307846bad850deeaedc9d4f5b",
+      "bytes": 10744
+    },
+    {
+      "path": "fleet-138-v1/v8_valtimo-backend-libraries_CVE-2025-48881_12.12.0.RELEASE/.dockerignore",
+      "sha256": "47c2c100b81ac523dc34527f9e1a0d4070d77623a11815ebf2f456d49f2e71e6",
+      "bytes": 36
+    },
+    {
+      "path": "fleet-138-v1/v8_valtimo-backend-libraries_CVE-2025-48881_12.12.0.RELEASE/Dockerfile",
+      "sha256": "3894875c5ca5aa96f012f888765043cfd19d3fdec02bf1e8f646db6ebad1b852",
+      "bytes": 4991
+    },
+    {
+      "path": "fleet-138-v1/v8_valtimo-backend-libraries_CVE-2025-48881_12.12.0.RELEASE/Dockerfile.bootstrap",
+      "sha256": "eeb365c30f98774f86c2169688bc8d9b2bfb62749856c32fec2d148702ad9158",
+      "bytes": 1785
+    },
+    {
+      "path": "fleet-138-v1/v8_valtimo-backend-libraries_CVE-2025-48881_12.12.0.RELEASE/context/gradle-mirror-init.gradle",
+      "sha256": "cdd99cf6da9f0d844f419ea39b73f4d04f4579ab6830cd5851967a01fcafa027",
+      "bytes": 799
+    },
+    {
+      "path": "fleet-138-v1/v8_valtimo-backend-libraries_CVE-2025-48881_12.12.0.RELEASE/historical-receipt.json",
+      "sha256": "641d8132efd2ab9e1c3b145fe0e158f9a09809f24b3ec82f4b40a1a869c7cbc7",
+      "bytes": 8041
+    },
+    {
+      "path": "fleet-138-v1/v8_vert-x3__vertx-web_CVE-2019-17640_3.9.3/.dockerignore",
+      "sha256": "eba193865541e7555a057b8aee59e09602acd450fd23796830b1eebc2192ee2e",
+      "bytes": 107
+    },
+    {
+      "path": "fleet-138-v1/v8_vert-x3__vertx-web_CVE-2019-17640_3.9.3/Dockerfile",
+      "sha256": "d59194d78ab723f4ef3ee4867ea8262a817bca071931807eed9e5ec5920bc61e",
+      "bytes": 3457
+    },
+    {
+      "path": "fleet-138-v1/v8_vert-x3__vertx-web_CVE-2019-17640_3.9.3/historical-receipt.json",
+      "sha256": "d18a688bc4751dcbad98bff110160c15488e029d2ad19b614d7a0bdf3f97c725",
+      "bytes": 6322
+    },
+    {
+      "path": "fleet-138-v1/v8_webdrivermanager_CVE-2025-4641_webdrivermanager-6.0.1/.dockerignore",
+      "sha256": "9135dba6edd0a2169ca2e3ef4d68c26fd7ac838a0569a0971f8506892e55c8ef",
+      "bytes": 173
+    },
+    {
+      "path": "fleet-138-v1/v8_webdrivermanager_CVE-2025-4641_webdrivermanager-6.0.1/Dockerfile",
+      "sha256": "100a23752a68c82d1be729ad05961b4a8d72aa9ad917ea04da4b5cf5f6e14412",
+      "bytes": 5427
+    },
+    {
+      "path": "fleet-138-v1/v8_webdrivermanager_CVE-2025-4641_webdrivermanager-6.0.1/codeql-build-command.sh",
+      "sha256": "9437cb0682597ad9062fdbc45a454a76d38335295861b9845b3eaafccaaa2d87",
+      "bytes": 280
+    },
+    {
+      "path": "fleet-138-v1/v8_webdrivermanager_CVE-2025-4641_webdrivermanager-6.0.1/historical-receipt.json",
+      "sha256": "6cade8246a26d880954fb779c6b9278e245c0767253af5f427cac2095c2ab93d",
+      "bytes": 8836
+    },
+    {
+      "path": "fleet-138-v1/v8_wildfly-core_CVE-2025-23367_27.0.0.Beta7/Dockerfile",
+      "sha256": "4d25a8936ed3a28971c61ff77ded8dd71972aa8ffab2c1eb96e1ebf2ad4d9b5a",
+      "bytes": 5254
+    },
+    {
+      "path": "fleet-138-v1/v8_wildfly-core_CVE-2025-23367_27.0.0.Beta7/build-context/Dockerfile",
+      "sha256": "4d25a8936ed3a28971c61ff77ded8dd71972aa8ffab2c1eb96e1ebf2ad4d9b5a",
+      "bytes": 5254
+    },
+    {
+      "path": "fleet-138-v1/v8_wildfly-core_CVE-2025-23367_27.0.0.Beta7/historical-receipt.json",
+      "sha256": "55f87d58d44d785a147758bfaab963d68b23b902eb547ccafa7bb6a66cb1cdac",
+      "bytes": 6643
+    },
+    {
+      "path": "fleet-138-v1/v8_wildfly__wildfly_CVE-2018-1047_11.0.0.Final/Dockerfile",
+      "sha256": "bccb27017b051acd6672da91be466eb7e0f664716f8ca1e6ce5c5dd0502f18fe",
+      "bytes": 2523
+    },
+    {
+      "path": "fleet-138-v1/v8_wildfly__wildfly_CVE-2018-1047_11.0.0.Final/historical-receipt.json",
+      "sha256": "d79297237737d8853ead76ee6782394dd2f43fb5e3b760f1cd2425d281a5bdc2",
+      "bytes": 5387
+    },
+    {
+      "path": "fleet-138-v1/v8_x-stream__xstream_CVE-2020-26217_1.4.14-java7/.dockerignore",
+      "sha256": "72bedc41e01695e8fc51a6715408abdcbb5f0c104c7031ea5e159f9487d87090",
+      "bytes": 192
+    },
+    {
+      "path": "fleet-138-v1/v8_x-stream__xstream_CVE-2020-26217_1.4.14-java7/Dockerfile",
+      "sha256": "202a2bf5e90322ea24fee30abdaa216b6904d40ece73807ab2c9a9e4e758ed28",
+      "bytes": 3279
+    },
+    {
+      "path": "fleet-138-v1/v8_x-stream__xstream_CVE-2020-26217_1.4.14-java7/historical-receipt.json",
+      "sha256": "667f1dcbd5e0db712f672ea359856e3208c2e127dc187b3e8c936b065631b777",
+      "bytes": 5837
+    },
+    {
+      "path": "fleet-138-v1/v8_xwiki__xwiki-commons_CVE-2022-24897_12.6.6/.dockerignore",
+      "sha256": "6f01d21e7d5e3156a84925cdeeed1319013f24eedbd6de11ed5d2db76eb0d752",
+      "bytes": 94
+    },
+    {
+      "path": "fleet-138-v1/v8_xwiki__xwiki-commons_CVE-2022-24897_12.6.6/Dockerfile",
+      "sha256": "06eca53d27da064e7daec81abe4cf3feb3759dce6492aa120bf800682101783d",
+      "bytes": 4743
+    },
+    {
+      "path": "fleet-138-v1/v8_xwiki__xwiki-commons_CVE-2022-24897_12.6.6/historical-receipt.json",
+      "sha256": "ee45c285278789ae42940bf5b77e46f69c23bac637d2b5c95428333ec881cb82",
+      "bytes": 8313
+    },
+    {
+      "path": "fleet-138-v1/v8_xwiki__xwiki-commons_CVE-2023-29201_14.6/Dockerfile",
+      "sha256": "173bc26f87745b9218419a6f8318dcdcb101ec0c5dd82b71aa94a33a7feaf1e2",
+      "bytes": 5263
+    },
+    {
+      "path": "fleet-138-v1/v8_xwiki__xwiki-commons_CVE-2023-29201_14.6/historical-receipt.json",
+      "sha256": "dc8170b35ef51ee7822aaee23bb51178bb5c7b5cf59333a37e2f8113405d9c89",
+      "bytes": 4716
+    },
+    {
+      "path": "fleet-138-v1/v8_xwiki__xwiki-commons_CVE-2023-29528_14.9-rc-1/Dockerfile",
+      "sha256": "80ae55a9d9322906559128635aa75248798a38ba222425ad648636e93e8e4938",
+      "bytes": 2008
+    },
+    {
+      "path": "fleet-138-v1/v8_xwiki__xwiki-commons_CVE-2023-29528_14.9-rc-1/historical-receipt.json",
+      "sha256": "b25e326877570150f02c2c1998e22346ee9778295d405935a72aa7aa3b3da796",
+      "bytes": 5940
+    },
+    {
+      "path": "fleet-138-v1/v8_xwiki__xwiki-commons_CVE-2023-29528_14.9-rc-1/route-hacker-build.sh",
+      "sha256": "69a50e7585461977cf8e0cb2fa5bf58f25daa85e2e03526ef2758be4c1179177",
+      "bytes": 1094
+    },
+    {
+      "path": "fleet-138-v1/v8_xwiki__xwiki-commons_CVE-2023-31126_14.10.3/Dockerfile",
+      "sha256": "9317e3521a9d0b1f314b3537ac7676a0910c54197dec2cebf8f813fd223573aa",
+      "bytes": 5724
+    },
+    {
+      "path": "fleet-138-v1/v8_xwiki__xwiki-commons_CVE-2023-31126_14.10.3/historical-receipt.json",
+      "sha256": "c7222d1c6b5bd6a81c2941e7d39fe9bf9070baebf7ce49f116f0332d0f8c62cf",
+      "bytes": 5222
+    },
+    {
+      "path": "fleet-138-v1/v8_xwiki__xwiki-commons_CVE-2023-36471_14.10.5/.dockerignore",
+      "sha256": "c4b1931d2717ed72bbfe3271368c525593c38851c4d7499921e8a04148d91bb6",
+      "bytes": 29
+    },
+    {
+      "path": "fleet-138-v1/v8_xwiki__xwiki-commons_CVE-2023-36471_14.10.5/Dockerfile",
+      "sha256": "a2d937c95ab97581ace1c235b3d0d2820cfb38e9f773d720e2abcc0e13b30aed",
+      "bytes": 3330
+    },
+    {
+      "path": "fleet-138-v1/v8_xwiki__xwiki-commons_CVE-2023-36471_14.10.5/historical-receipt.json",
+      "sha256": "1610ee8325ce427d0848b070c7a14ecc8c561980fee06d2b4b27701fb77bbe3d",
+      "bytes": 5067
+    },
+    {
+      "path": "fleet-138-v1/v8_xwiki__xwiki-rendering_CVE-2023-32070_14.6/.dockerignore",
+      "sha256": "c4b1931d2717ed72bbfe3271368c525593c38851c4d7499921e8a04148d91bb6",
+      "bytes": 29
+    },
+    {
+      "path": "fleet-138-v1/v8_xwiki__xwiki-rendering_CVE-2023-32070_14.6/Dockerfile",
+      "sha256": "745159940520001154cb3d3f14c1b8cfb93f2094489435650673d4d76a4b461b",
+      "bytes": 2782
+    },
+    {
+      "path": "fleet-138-v1/v8_xwiki__xwiki-rendering_CVE-2023-32070_14.6/historical-receipt.json",
+      "sha256": "62b6c1a2e939576f958e650673c2efc9b64b795900a4df6ed8b1188db4a184e2",
+      "bytes": 4711
+    },
+    {
+      "path": "fleet-138-v1/v8_zohoqengine-plugin_CVE-2025-30197_1.0.29.vfa_cc23396502/.dockerignore",
+      "sha256": "047783c75d52fd658c491124f0f6e0517fd768cc79132a28e73d91b309f2bb58",
+      "bytes": 99
+    },
+    {
+      "path": "fleet-138-v1/v8_zohoqengine-plugin_CVE-2025-30197_1.0.29.vfa_cc23396502/Dockerfile",
+      "sha256": "b2116d6ed22e2aced23d38e7bb2b97027dc8ec7cdb4f83abc3536d9964648796",
+      "bytes": 1431
+    },
+    {
+      "path": "fleet-138-v1/v8_zohoqengine-plugin_CVE-2025-30197_1.0.29.vfa_cc23396502/attempts/compile-replay.before-jar-extract.sh",
+      "sha256": "98fdabcf6b11de2b05aa4ddcd111e9f471c8b56bfa75b201d3a37d4601180a04",
+      "bytes": 2073
+    },
+    {
+      "path": "fleet-138-v1/v8_zohoqengine-plugin_CVE-2025-30197_1.0.29.vfa_cc23396502/attempts/probe-maven-jdk17-disable-extension.Dockerfile",
+      "sha256": "604235bc879aa7d9dc2c46fb94b0264df887133062e56d779bd3173c2d1a577a",
+      "bytes": 525
+    },
+    {
+      "path": "fleet-138-v1/v8_zohoqengine-plugin_CVE-2025-30197_1.0.29.vfa_cc23396502/attempts/probe-maven-jdk17-seeded-v2.Dockerfile",
+      "sha256": "1559532332c70512167cdca0f6c51ac25a1aee14116bed817b1584e54eea6e4d",
+      "bytes": 346
+    },
+    {
+      "path": "fleet-138-v1/v8_zohoqengine-plugin_CVE-2025-30197_1.0.29.vfa_cc23396502/attempts/probe-maven-jdk17-seeded.Dockerfile",
+      "sha256": "ff8ccf364076b792bd4caac99786ef4b6f0650c345bf62bff16b205957412d1f",
+      "bytes": 356
+    },
+    {
+      "path": "fleet-138-v1/v8_zohoqengine-plugin_CVE-2025-30197_1.0.29.vfa_cc23396502/attempts/probe-maven-jdk17-settings.Dockerfile",
+      "sha256": "7cf4299a392c34287841a10aff34770c355cdf266b41b048a28a900be0aa7a0f",
+      "bytes": 348
+    },
+    {
+      "path": "fleet-138-v1/v8_zohoqengine-plugin_CVE-2025-30197_1.0.29.vfa_cc23396502/attempts/probe-maven-jdk17.Dockerfile",
+      "sha256": "27be7d584ef1498aa195be7e8e29798066407e75a185e2441e152d717a626d64",
+      "bytes": 237
+    },
+    {
+      "path": "fleet-138-v1/v8_zohoqengine-plugin_CVE-2025-30197_1.0.29.vfa_cc23396502/compile-replay.sh",
+      "sha256": "abce81f5efb9f792611043a0f40318c5da44e43aba824eeaefd84e7283533931",
+      "bytes": 2060
+    },
+    {
+      "path": "fleet-138-v1/v8_zohoqengine-plugin_CVE-2025-30197_1.0.29.vfa_cc23396502/historical-receipt.json",
+      "sha256": "9c9a079f12d53d03a2161f7347cab9f92c4c04963559b858505a7b94c69251ba",
+      "bytes": 5427
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/validated-decision.json",
+      "sha256": "6096b44d5568fe14093fb8eb211f1d1a320c735d04ca4d69498546572561bef1",
+      "bytes": 641
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/validated-decision.json",
+      "sha256": "39fd8a98dc6b436cc3faf58ba863022c53cc6aef79fc9f1e32f5becbc6eecfdf",
+      "bytes": 581
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31195_5.10/attempt-001/validated-decision.json",
+      "sha256": "408f04272c636096192c9be186e5fa0369e7997ea2f098387935277b4e94409c",
+      "bytes": 665
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_activemq-artemis_CVE-2025-27427_2.39.0/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "994afedefeec7dcd8b22b1b6091576fa5882a3408e771bbd5eef6ef2ba0c3773",
+      "bytes": 937
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_activemq-artemis_CVE-2025-27427_2.39.0/attempt-001/validated-decision.json",
+      "sha256": "508480bf773d78b9ec4b08af778a76562be4cccf4ffb5c94bb5e69145b7e1d4c",
+      "bytes": 636
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_apache__activemq_CVE-2019-0222_5.15.8/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "5d3b141c38cad1659ffc12c555dfa51ce4b0a88448c83520d67f2f284c56b771",
+      "bytes": 912
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_apache__activemq_CVE-2019-0222_5.15.8/attempt-001/validated-decision-feedback-002.json",
+      "sha256": "fc651c260839308e97c4a4b3d21284cb117e9238618c55282b5c036f3c6413a7",
+      "bytes": 808
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_apache__activemq_CVE-2019-0222_5.15.8/attempt-001/validated-decision.json",
+      "sha256": "aedb41f4f515bdfb0b777492f96f1c48168310ad5f17df0524acdaba6d681fe5",
+      "bytes": 561
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_apache__activemq_CVE-2020-11998_5.15.12/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "99b69c90a50711e70cf7d931f145daf65448a08d7602c654a178827363956067",
+      "bytes": 1253
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_apache__activemq_CVE-2020-11998_5.15.12/attempt-001/validated-decision-feedback-002.json",
+      "sha256": "6bc830c25ba4a7f789bfb30ace63ca7481971ca35da180e92b34bd52b9bd1572",
+      "bytes": 993
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_apache__activemq_CVE-2020-11998_5.15.12/attempt-001/validated-decision.json",
+      "sha256": "5e26f0c38ac4a123b679e05864d0666b741f450dc84090d7e547fa4522de7de5",
+      "bytes": 738
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_apache__jspwiki_CVE-2019-0225_2.11.0.M2/attempt-001/validated-decision.json",
+      "sha256": "039f1290bf2ef68c87fe6107fa86242ea730abe44a6b3c325da7ef6a0689addc",
+      "bytes": 684
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_apache__jspwiki_CVE-2019-10076_2.11.0.M3/attempt-001/validated-decision.json",
+      "sha256": "8c7ecfeb3c9cb50a948ed958ebf8f146dc7b99f5a184a555f9f9d4622b37b8c0",
+      "bytes": 723
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_apache__jspwiki_CVE-2019-10077_2.11.0.M3/attempt-001/validated-decision.json",
+      "sha256": "7a9ff7ead2652fc3e3b1901884158386eef1648e93bb094a70938201ccb690a4",
+      "bytes": 706
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_apache__jspwiki_CVE-2019-10078_2.11.0.M3/attempt-001/validated-decision.json",
+      "sha256": "84acbe6418fd4e190c87f32a144b9c74d0eabc20b6de6e3550979b7a0248300e",
+      "bytes": 676
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_apache__jspwiki_CVE-2019-10089_2.11.0.M4/attempt-001/validated-decision.json",
+      "sha256": "5c6ff4ca7b0452e3883cf312056302ac4261e16ee59e1a8a89f2318200330271",
+      "bytes": 669
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_apache__jspwiki_CVE-2022-46907_2.11.3/attempt-001/validated-decision.json",
+      "sha256": "1494b89d251db8606d010dacdca1e451c4db12cc1faa84bdf89d43a4a72bb8dc",
+      "bytes": 724
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_apache__kafka_CVE-2025-27818_3.9.0/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "98706be4204497bc720a47d667766b0be7e042bc28bfdb2748ed786ada3d1959",
+      "bytes": 710
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_apache__kafka_CVE-2025-27818_3.9.0/attempt-001/validated-decision.json",
+      "sha256": "c0c48da7c284fbd5f45127b086cc30bf8e2cdcc5aa12e6773334a39d3ced5b97",
+      "bytes": 559
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_apache__mina-sshd_CVE-2023-35887_2.9.2/attempt-001/validated-decision.json",
+      "sha256": "5be982cdcb285ef2ddb0f2db98cde6fe780a7039289c8c656c61107b398363da",
+      "bytes": 894
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_apache__myfaces_CVE-2011-4367_2.0.11/attempt-001/validated-decision.json",
+      "sha256": "a75f3f2bda4ea9b737326d08a83b3652aa6343f3ad54736d963a410b4ba923b0",
+      "bytes": 557
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_apache__sling-org-apache-sling-xss_CVE-2016-5394_1.0.8/attempt-001/validated-decision.json",
+      "sha256": "3ab5c629e38c62139179cb49720108a62f8c10dabd571f16a2169cbf9b00e5c8",
+      "bytes": 702
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_apache__tika_CVE-2018-11762_1.18/attempt-001/validated-decision.json",
+      "sha256": "e100576054a6c9386f076af4d18f97cd95eff1fca77602e6f8c7e2ed1377cd4a",
+      "bytes": 534
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_asf__cxf_CVE-2016-6812_3.0.11/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "4469719c9a1ade57d2a53d887ddedfce640cda86df740f233d4fead4cf5cce79",
+      "bytes": 1046
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_asf__cxf_CVE-2016-6812_3.0.11/attempt-001/validated-decision-feedback-002.json",
+      "sha256": "282058786e584a6608cd0a3f0e9039219ee6b1f6a561e6459dc29fcbdca6ac51",
+      "bytes": 932
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_asf__cxf_CVE-2016-6812_3.0.11/attempt-001/validated-decision.json",
+      "sha256": "5003f1304d4aa33b6c162952b6ccb85cedd13d79a930b63b15a99ba425ef8ee5",
+      "bytes": 570
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_asf__karaf_CVE-2022-22932_4.3.5/attempt-001/validated-decision.json",
+      "sha256": "757f527ad5a8d03ee81fc705aa7147838b820d46440297a0b26ed227cfe91601",
+      "bytes": 517
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_camel_CVE-2025-30177_camel-4.10.2/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "b8f2d72faee12f26715069f6b99b1f761221fc4245980e3caed091cff0428c43",
+      "bytes": 942
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_camel_CVE-2025-30177_camel-4.10.2/attempt-001/validated-decision-feedback-002.json",
+      "sha256": "046f8e237addc3aaedd6f008a058a08dc04279a531328ea6b2acdcad5734a92c",
+      "bytes": 968
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_camel_CVE-2025-30177_camel-4.10.2/attempt-001/validated-decision.json",
+      "sha256": "dfc084bd285fb3257d3cfe1a55fde4641895e8e6477edf93082ef110ba7a7309",
+      "bytes": 617
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_cassandra-lucene-index_CVE-2025-26511_cassandra-4.0.16-1.0.0/attempt-001/validated-decision.json",
+      "sha256": "778296d314910813bf4d4cb1f004a405d98a4edd67563bc61fedf8c21445039f",
+      "bytes": 693
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_codehaus-plexus__plexus-utils_CVE-2017-1000487_3.0.15/attempt-001/validated-decision.json",
+      "sha256": "e6ee3d53246e03b68b34ee1867844696a022928efed6882832b912470f342339",
+      "bytes": 529
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_codehaus-plexus__plexus-utils_CVE-2022-4244_3.0.23/attempt-001/validated-decision.json",
+      "sha256": "e3007d711b25e239aaaa8602b60a7a923a9dd3f9f1eaa7925a2a8a8aa09807f2",
+      "bytes": 613
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_commons-fileupload_CVE-2025-48976_commons-fileupload-1.5-RC1/attempt-001/validated-decision.json",
+      "sha256": "ef52f0e2019e9fe2d8e3029a0d5adabbcc0760c48594c539c73d3801b0176aa5",
+      "bytes": 751
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_conductor_CVE-2025-26074_v3.21.12/attempt-001/validated-decision.json",
+      "sha256": "f257807e83ea47f50d2060282d49b64c4b62ac801b1a121f16608453c3fe998e",
+      "bytes": 775
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_cuba_CVE-2025-32959_7.2.22/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "fde206682fb23ea29909480273236317daae84194f1ea820e23d652188cc66a2",
+      "bytes": 620
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_cuba_CVE-2025-32959_7.2.22/attempt-001/validated-decision.json",
+      "sha256": "965aa26925b6f279e56fe372a572dc5d65774845d6dbec112a8ea943f0eb094b",
+      "bytes": 578
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_dromara__hutool_CVE-2018-17297_4.1.11/attempt-001/validated-decision.json",
+      "sha256": "44d3d2b133136aec885bd7534543699104023aa48c9d8c8a28ae445de5eeb2ce",
+      "bytes": 513
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_fabric8io__kubernetes-client_CVE-2021-4178_5.0.2/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "a9a5c5edb5bb7d9041f5ad644e7f4cfa09891c113ac330f233bc1eab2f303121",
+      "bytes": 944
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_fabric8io__kubernetes-client_CVE-2021-4178_5.0.2/attempt-001/validated-decision-feedback-002.json",
+      "sha256": "555156cf6526ef58ac5a0a3941aef4330e3161c8a73c450c5a8b823443289816",
+      "bytes": 617
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_fabric8io__kubernetes-client_CVE-2021-4178_5.0.2/attempt-001/validated-decision.json",
+      "sha256": "3fb80b760f51aeb2d94cb315f86c9c8ee2aa51cc8f0d9c9e4dc8368c4a920ca5",
+      "bytes": 683
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_graylog2-server_CVE-2025-53106_6.2.3/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "f8a70744e3ec7deca2f5a5f495a31c5d72a11740d6548ed8416ad55e5def6f5d",
+      "bytes": 875
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_graylog2-server_CVE-2025-53106_6.2.3/attempt-001/validated-decision-feedback-002.json",
+      "sha256": "95dc1cb1e65eb3423890e1a48bd8da9e55d1fec0ea9b281e12fd3343b7cd70cc",
+      "bytes": 514
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_graylog2-server_CVE-2025-53106_6.2.3/attempt-001/validated-decision.json",
+      "sha256": "97f92d693667fad2f6d100c6e75293a81b95c264f5fea8bc40f5c50748902c56",
+      "bytes": 581
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_jenkins_CVE-2025-31720_prototype-1.7/attempt-001/validated-decision.json",
+      "sha256": "51c67c15eaf7e5ec1d6419e4dac750621ac901bcdb80eda51b588a01b53f61d7",
+      "bytes": 689
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_jenkins_CVE-2025-31721_prototype-1.7/attempt-001/validated-decision.json",
+      "sha256": "35f3e879b8ff1b8e2e382971332588b0e82ffadd9841c13d4b0a712a4b555999",
+      "bytes": 664
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_jetty.project_CVE-2025-1948_jetty-12.0.16/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "962adb3e074634aa18c9ae641024053d776b665e7cda8ea9e665686a5e21803a",
+      "bytes": 767
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_jetty.project_CVE-2025-1948_jetty-12.0.16/attempt-001/validated-decision.json",
+      "sha256": "a69d46bb443363084a4189d4523db67ab4fc3c73a6ab0d149aa41747f9fa7123",
+      "bytes": 627
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_jte_CVE-2025-23026_3.1.15/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "b4c62f094fdc29cb54ac632e27e618f2abcedf3970811c44cc2f8c6b9264bbfa",
+      "bytes": 793
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_jte_CVE-2025-23026_3.1.15/attempt-001/validated-decision.json",
+      "sha256": "f797f7dd678cb300516eec42ba5df175268799e7012a89b6f948c18e4198da33",
+      "bytes": 590
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_keycloak_CVE-2025-1391_26.1.2/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "6cbdbfd6ffe816acf8d65d60fabd322cac072a6360bbe300fea348663d762728",
+      "bytes": 1079
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_keycloak_CVE-2025-1391_26.1.2/attempt-001/validated-decision-feedback-002.json",
+      "sha256": "1c71b2d1ed8325989e010d1338f2c4b091cdd0f44b854c6ce35425cc37a6e45e",
+      "bytes": 1552
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_keycloak_CVE-2025-1391_26.1.2/attempt-001/validated-decision-feedback-003.json",
+      "sha256": "530aa2bea805ffa5a3882ad8e9ec90bbd4f48fb75ca93a5ddf5038055f3bf720",
+      "bytes": 836
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_keycloak_CVE-2025-1391_26.1.2/attempt-001/validated-decision.json",
+      "sha256": "003b3dee26902987c9321ee84a833f1f9d5d390e790c0514fbb0594f1e664242",
+      "bytes": 608
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_keycloak_CVE-2025-7365_26.0.12/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "9664812a557906a29b396da89f80fc22c082285c0271b27eb3430734b64636ed",
+      "bytes": 1035
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_keycloak_CVE-2025-7365_26.0.12/attempt-001/validated-decision-feedback-002.json",
+      "sha256": "05c3e14ac936e4b0af67bb5b8b0d6ce0640ed94c7441ef915a396ed44f3fc16d",
+      "bytes": 963
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_keycloak_CVE-2025-7365_26.0.12/attempt-001/validated-decision.json",
+      "sha256": "9004a0fbdef5369c588776d2c0f987f634cb7b0120b346b3655dcd9a4ad4fcb8",
+      "bytes": 605
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_keycloak__keycloak_CVE-2014-3656_1.0.5.Final/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "904e7b788ffa3dbe09f8c24bf313ccea331189320b7b8d587458e2d1401ddb52",
+      "bytes": 789
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_keycloak__keycloak_CVE-2014-3656_1.0.5.Final/attempt-001/validated-decision.json",
+      "sha256": "f544c022f0bdce92173376bc2181adbd986d3f1a36c24d340d0f5a9bb98234cd",
+      "bytes": 651
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_local-s3_CVE-2025-27136_1.20/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "7313aff53fa04d3a530cd3b9cca96a7459ea78522bcee8d5c33f040dbc0c5b75",
+      "bytes": 1041
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_local-s3_CVE-2025-27136_1.20/attempt-001/validated-decision.json",
+      "sha256": "8c52c9fe56836e6888f091dfa7442af52ce55a99a5874b2c3a5679d952b8c255",
+      "bytes": 647
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_netty-incubator-codec-quic_CVE-2025-29908_netty-incubator-codec-parent-quic-0.0.70.Final/attempt-001/validated-decision.json",
+      "sha256": "3f80a4f3496e47203bb0a3e0dc63aa0c5a4ca017ee258dd0dbeea786d878a873",
+      "bytes": 754
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_netty_CVE-2025-25193_netty-4.1.117.Final/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "8162e8b0b56cdfacf1014ae28c739e59127e71347822b2c8201db47c1d5dfb4b",
+      "bytes": 975
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_netty_CVE-2025-25193_netty-4.1.117.Final/attempt-001/validated-decision.json",
+      "sha256": "f7fce6db4558586231787637cea262ee29ac1387f324a67f85ac628f08a6f0d8",
+      "bytes": 765
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_oic-auth-plugin_CVE-2025-24399_4.452.v2849b_d3945fa_/attempt-001/validated-decision.json",
+      "sha256": "26c52bbfc7de333f042bdc31f58ff015c226e386fe4e9827f19eddbbae273081",
+      "bytes": 559
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_powsybl-core_CVE-2025-48058_v6.7.1/attempt-001/validated-decision.json",
+      "sha256": "f7b6629ae20c371e1ddc509b36b4d8b3601cd8e43178da8fa4e8bbae103d1499",
+      "bytes": 629
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_powsybl-core_CVE-2025-48059_v6.2.4/attempt-001/validated-decision.json",
+      "sha256": "9f2f0d0fdf597600b3c896342f1d73cea3e51c272527e9376799184271953815",
+      "bytes": 594
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_quarkus_CVE-2025-49574_3.23.4/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "082c0aa0d68da7693200a2a63ceaab11962ddb26fe988bf5fad9a6602aff9409",
+      "bytes": 698
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_quarkus_CVE-2025-49574_3.23.4/attempt-001/validated-decision.json",
+      "sha256": "90a8de629e8638cf9685901c08b81dfbbd9068952dd713ec5d7eede6b430738f",
+      "bytes": 568
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_rhuss__jolokia_CVE-2018-1000129_1.4.0/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "18b1313f3b74657a1d6f418389eb290db75cb953d68390e69078336cdd859cc8",
+      "bytes": 771
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_rhuss__jolokia_CVE-2018-1000129_1.4.0/attempt-001/validated-decision.json",
+      "sha256": "f32680ed21ce144ccd6394641afd8cf044a329fc55544a2f07de140c500c15a0",
+      "bytes": 707
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_spring-cloud__spring-cloud-gateway_CVE-2022-22947_3.0.6/attempt-001/validated-decision.json",
+      "sha256": "54486cabbaa199e539f9b3d09121ce2a906898c2a4333f3af024d1fac7143652",
+      "bytes": 587
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_spring-security_CVE-2025-22223_6.4.3/attempt-001/validated-decision.json",
+      "sha256": "bddb1683e009347fa7def4894d8ad24b1a7624d7bcb9c797075d1d2c485a2b4a",
+      "bytes": 727
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_square__retrofit_CVE-2018-1000850_2.4.0/attempt-001/validated-decision.json",
+      "sha256": "0d39a0b754282a72b392bb0f6c8d561009b2603b1ebc58e008778d69b515128c",
+      "bytes": 694
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_studio_CVE-2025-6384_v4.2.2/attempt-001/validated-decision.json",
+      "sha256": "d59414962fb5c38309246a772074abc6f1f1f22bcb5ac6f9288b6c4ca485bebf",
+      "bytes": 656
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_templating-engine-plugin_CVE-2025-31722_2.5.3/attempt-001/validated-decision.json",
+      "sha256": "5c078d311d39fc44f5df1bd00efbfa5e640a5817ada0222bc09a933832d46be7",
+      "bytes": 751
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_undertow-io__undertow_CVE-2014-7816_1.0.16.Final/attempt-001/validated-decision.json",
+      "sha256": "5a253b39bbf45a6eb05c8a0ab87ee6b078646032ed1b4f21ade3def50db1810d",
+      "bytes": 645
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_valtimo-backend-libraries_CVE-2025-48881_12.12.0.RELEASE/attempt-001/validated-decision.json",
+      "sha256": "c5384bf54b7f0ce3f129235b65250967a6d2bc1c9679d28779dda4cffcf7205d",
+      "bytes": 627
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_vert-x3__vertx-web_CVE-2018-12542_3.5.3.CR1/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "2a2951140533ff1e3fb769add6933f3b5f79eb1a70235bae4d6fd746bf77198c",
+      "bytes": 803
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_vert-x3__vertx-web_CVE-2018-12542_3.5.3.CR1/attempt-001/validated-decision.json",
+      "sha256": "5f8e8348807fc6939a5d9a4135ad788d325a8c4fa1ee29f0613ab31eaf0e11c9",
+      "bytes": 716
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/cases/v8_zeroturnaround__zt-zip_CVE-2018-1002201_1.12/attempt-001/validated-decision.json",
+      "sha256": "ab928c67a8d832327746c23ae58706b05755180fa6dee63ece9ec48376ea5f60",
+      "bytes": 687
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-explicit-mirror-r8-20260824T022500Z/dispatch/w1_llm_repair_receipts.compact.json",
+      "sha256": "dd9e276f8ebac6e98f5a9beb60f9fdedd078d6282c12f71278f0a5974e63d4ac",
+      "bytes": 1324847
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/validated-decision.json",
+      "sha256": "aedeb25343cf292fe7b08b67886eaefee50bc58a5a645facdefcaec032590d99",
+      "bytes": 638
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/validated-decision.json",
+      "sha256": "77213facb2e752e428c354f0b61b26d29808617d622f9aadf49847c82e7e75ef",
+      "bytes": 550
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31195_5.10/attempt-001/validated-decision.json",
+      "sha256": "2a8b5f4a0326b37127b745ebbd2425f5a54699bfd32d2ef6e62eb7de50d6b0cf",
+      "bytes": 637
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_ESAPI__esapi-java-legacy_CVE-2022-23457_2.2.3.1/attempt-001/validated-decision.json",
+      "sha256": "21a08b7f8d79aa88d4def1dc6dcd3ee625c348341cc6b5d805040499991c6f73",
+      "bytes": 762
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_ESAPI__esapi-java-legacy_CVE-2022-24891_2.2.3.1/attempt-001/validated-decision.json",
+      "sha256": "a9636f44f69dac020ba843bcfff31ece637bdcd05afec91cf873426102aadb7a",
+      "bytes": 687
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_OWASP__json-sanitizer_CVE-2020-13973_1.2.0/attempt-001/validated-decision.json",
+      "sha256": "709494bc888c3fd33a71de3f9ea67e5cabddf9c40f4230a245e7e33f9e29e43d",
+      "bytes": 647
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_SpringSource__spring-security-oauth_CVE-2018-1260_2.3.2.RELEASE/attempt-001/validated-decision.json",
+      "sha256": "fa8fd5d4a05318844aec8f39254e51132eb1a2103677afceda4198d78aa2f345",
+      "bytes": 578
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_activemq-artemis_CVE-2025-27427_2.39.0/attempt-001/validated-decision.json",
+      "sha256": "22a4f55ba23881adbd0c7900a54d82b3e566b1d16ac2f154e513b63e59400356",
+      "bytes": 613
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_alibaba__nacos_CVE-2021-44667_2.0.3/attempt-001/validated-decision.json",
+      "sha256": "cc20ae68fcc779c2ccd0b5bfd0e471c17b0c518db26f5a5ee25e207fdf0fc9e1",
+      "bytes": 701
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_alibaba__one-java-agent_CVE-2022-25842_0.0.1/attempt-001/validated-decision.json",
+      "sha256": "f4453ec7d5a3622c58c82bc8b5ba7dabdeadfb17cb6dc8c6860eafa5c820fe94",
+      "bytes": 742
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_apache__activemq_CVE-2019-0222_5.15.8/attempt-001/validated-decision.json",
+      "sha256": "874f177ec5f75313e5bf9bfe5e3db15db91bf681c59e0999ff49f6d11c919b74",
+      "bytes": 605
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_apache__activemq_CVE-2020-11998_5.15.12/attempt-001/validated-decision.json",
+      "sha256": "a94294d17360654e92e70b4fa439519a37d1a7a16185af04ffb60d3f74880cd3",
+      "bytes": 726
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_apache__dolphinscheduler_CVE-2022-26884_2.0.5/attempt-001/validated-decision.json",
+      "sha256": "4261658395fd2a8d78f4a650222a52623f50ebd60dd3b4ca6241e19b8f1dc135",
+      "bytes": 679
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_apache__dolphinscheduler_CVE-2022-34662_2.0.9/attempt-001/validated-decision.json",
+      "sha256": "e702434aad1cfeabaf347c3af93da3613be0569818237e3504ad4f5baaae0d67",
+      "bytes": 574
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_apache__dubbo_CVE-2021-30180_2.7.9/attempt-001/validated-decision.json",
+      "sha256": "a01d08c6f715f89a75341de3b9eca69965243e90ac12ebc6bcee6faeae456aab",
+      "bytes": 647
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_apache__incubator-dubbo_CVE-2021-30181_2.6.8/attempt-001/validated-decision.json",
+      "sha256": "e18570d51bfd463f4138144fcb314bbf8fcdea8c02f65cacfee125d197b3bf68",
+      "bytes": 622
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_apache__jspwiki_CVE-2019-0225_2.11.0.M2/attempt-001/validated-decision.json",
+      "sha256": "be41ba0a998cf76b826b0bdc6598c092cc0f6c42c59e8fbca9340bab333ae421",
+      "bytes": 673
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_apache__jspwiki_CVE-2019-10076_2.11.0.M3/attempt-001/validated-decision.json",
+      "sha256": "4c08c9e2ec37856c3136d50509991a3797ecfabda4ff327a2c82c5cba0d8eb64",
+      "bytes": 668
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/w1_llm_repair_receipts.compact.json",
+      "sha256": "c940e5d684446f0e6ce376bdffbb5e57b7cdd47734c96bf2b7cd91197c335d2d",
+      "bytes": 57361
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-global429-cooldown-r6-20260823T172312Z/dispatch/w1_llm_repair_receipts.compact.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "bytes": 3
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-global429-cooldown-r7-20260823T172614Z/dispatch/w1_llm_repair_receipts.compact.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "bytes": 3
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-isolated-cache-repair-r2-20260823T2040Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "8a0082f37568d648749e9beaeaca917160e789dcd44cfa1c902ff25ce4c0beb0",
+      "bytes": 512
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-isolated-cache-repair-r2-20260823T2040Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/validated-decision.json",
+      "sha256": "3b2f5f241f9f777908440d61fc291993fea92cf14e23e5aa32dbba6cd636ea95",
+      "bytes": 495
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-isolated-cache-repair-r2-20260823T2040Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "6a8d38da632e73ecf00bab98ee102e7286db4fd73cc75955b55ddbb4a979da2d",
+      "bytes": 613
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-isolated-cache-repair-r2-20260823T2040Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/validated-decision.json",
+      "sha256": "1278947e8f5c8b9607c74af898ed37beaf155979778c59d42e171320f5c4d303",
+      "bytes": 508
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-isolated-cache-repair-r2-20260823T2040Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31195_5.10/attempt-001/validated-decision.json",
+      "sha256": "12e2179a269d4f823313ef283f8522b395829b8da399c813313bf88e5e0105f4",
+      "bytes": 589
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-isolated-cache-repair-r2-20260823T2040Z/dispatch/cases/v8_ESAPI__esapi-java-legacy_CVE-2022-23457_2.2.3.1/attempt-001/validated-decision.json",
+      "sha256": "1c033b8655e4e2955c239fa8505d61f5db4051400cdc2a5fe472f10c58eb144c",
+      "bytes": 538
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-isolated-cache-repair-r2-20260823T2040Z/dispatch/cases/v8_ESAPI__esapi-java-legacy_CVE-2022-24891_2.2.3.1/attempt-001/validated-decision.json",
+      "sha256": "767b611aec8b003f3fd2c5e702104ccf4babc4edda83b66f09a940c06b7179a9",
+      "bytes": 535
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-isolated-cache-repair-r2-20260823T2040Z/dispatch/cases/v8_OWASP__json-sanitizer_CVE-2020-13973_1.2.0/attempt-001/validated-decision.json",
+      "sha256": "a9ffe304a2658ae95bb2182cea980232e4b7057fa2ebd7fc88950302c14725fc",
+      "bytes": 552
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-isolated-cache-repair-r2-20260823T2040Z/dispatch/cases/v8_SpringSource__spring-security-oauth_CVE-2018-1260_2.3.2.RELEASE/attempt-001/validated-decision.json",
+      "sha256": "b310101c0104b1ddda79de2d72868099b7dc4e956394c474b67f4a56a5686b7b",
+      "bytes": 521
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-isolated-cache-repair-r2-20260823T2040Z/dispatch/cases/v8_activemq-artemis_CVE-2025-27427_2.39.0/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "715327b11e4006ec55716e4385026dcbdff5efa671c7b0280ded1dde00b3d80f",
+      "bytes": 590
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-isolated-cache-repair-r2-20260823T2040Z/dispatch/cases/v8_activemq-artemis_CVE-2025-27427_2.39.0/attempt-001/validated-decision.json",
+      "sha256": "4fe337799a7a29e707cee2228abf3e2dff2aa1f9e955790f6b414e3d7b83d493",
+      "bytes": 411
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-isolated-cache-repair-r2-20260823T2040Z/dispatch/cases/v8_alibaba__nacos_CVE-2021-44667_2.0.3/attempt-001/validated-decision.json",
+      "sha256": "1cb04731c6618bd6242a69ef0eed9adf2cb6bc3c43df91442c1fde003f742834",
+      "bytes": 560
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-isolated-cache-repair-r2-20260823T2040Z/dispatch/cases/v8_alibaba__one-java-agent_CVE-2022-25842_0.0.1/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "6d9571a2392b959322b0e31ccf2074e0dd9fefba7d78d8827866a2a6b61d7546",
+      "bytes": 537
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-isolated-cache-repair-r2-20260823T2040Z/dispatch/cases/v8_alibaba__one-java-agent_CVE-2022-25842_0.0.1/attempt-001/validated-decision.json",
+      "sha256": "3f019761c89c15d2414602993a0bb5758054f51669e6a1b86de1a83535439590",
+      "bytes": 526
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-isolated-cache-repair-r2-20260823T2040Z/dispatch/cases/v8_apache__activemq_CVE-2019-0222_5.15.8/attempt-001/validated-decision.json",
+      "sha256": "f0e460c629dafac46caa756b71eadcc1a9add7472516ff1d08dfe2b15fada608",
+      "bytes": 496
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-isolated-cache-repair-r2-20260823T2040Z/dispatch/cases/v8_apache__activemq_CVE-2020-11998_5.15.12/attempt-001/validated-decision.json",
+      "sha256": "37a04162f5720e840db45d65717b53dec41763e4b73d0ff57706958a40225b6c",
+      "bytes": 540
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-isolated-cache-repair-r2-20260823T2040Z/dispatch/cases/v8_apache__dolphinscheduler_CVE-2022-26884_2.0.5/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "33b00f888656db1ba06fe7bbff038b802d2900b2431d04a9eb42c8e1724e0d6f",
+      "bytes": 572
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-isolated-cache-repair-r2-20260823T2040Z/dispatch/cases/v8_apache__dolphinscheduler_CVE-2022-26884_2.0.5/attempt-001/validated-decision.json",
+      "sha256": "db977126b5273ff918a8245f50800f09d6263cc39fc94ddc571bdc3168f9110c",
+      "bytes": 506
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-isolated-cache-repair-r2-20260823T2040Z/dispatch/cases/v8_apache__dolphinscheduler_CVE-2022-34662_2.0.9/attempt-001/validated-decision.json",
+      "sha256": "49c39a6476e46d349775a22fd82583420fa841ada101e69f1d8ea535664a2d20",
+      "bytes": 577
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-isolated-cache-repair-r2-20260823T2040Z/dispatch/cases/v8_apache__dubbo_CVE-2021-30180_2.7.9/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "fa2c0b9f56f2e8180df780239e27cae2e6f5a9b35a21f23b7f921aa26389ecdc",
+      "bytes": 640
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-isolated-cache-repair-r2-20260823T2040Z/dispatch/cases/v8_apache__dubbo_CVE-2021-30180_2.7.9/attempt-001/validated-decision.json",
+      "sha256": "a8bae7f5da3801f6210af41e9a0002e34b73e0058bce68f2158c2bed1bbf87ed",
+      "bytes": 451
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-isolated-cache-repair-r2-20260823T2040Z/dispatch/cases/v8_apache__incubator-dubbo_CVE-2021-30181_2.6.8/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "c2c7305b504f4625dc3c0ec3e792962c6bccab1199542746d0f688db499ee3cf",
+      "bytes": 610
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-isolated-cache-repair-r2-20260823T2040Z/dispatch/cases/v8_apache__incubator-dubbo_CVE-2021-30181_2.6.8/attempt-001/validated-decision.json",
+      "sha256": "cc9e4ced26130d2caf08c1f9b497dd3ce1eafb1c007865ed04b07084420cd00f",
+      "bytes": 545
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-isolated-cache-repair-r2-20260823T2040Z/dispatch/w1_llm_repair_receipts.compact.json",
+      "sha256": "86d85c89be4f49743fb365aa7ce84778885bee70ad696dede1c89d275942176d",
+      "bytes": 98283
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r3-20260823T155544Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "688e6bad3ca236a0b951924ec1e94f50bf6e190aac689909fed2ca72d7c9d71a",
+      "bytes": 568
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r3-20260823T155544Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/validated-decision.json",
+      "sha256": "a82b0a7349edc35a34cb8132820fa3923f2ab9680891ddbac04bdaf39a645b9f",
+      "bytes": 669
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r3-20260823T155544Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/validated-decision.json",
+      "sha256": "f1095af7248bcf5d67f3073e5b90de6a1b6ab9f405fe373b069cd31a52fdabd9",
+      "bytes": 596
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r3-20260823T155544Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31195_5.10/attempt-001/validated-decision.json",
+      "sha256": "e482df71a10164a50cc7a474566f61eb041322531aa7d1c34504f2dbb6fa33d1",
+      "bytes": 569
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r3-20260823T155544Z/dispatch/cases/v8_ESAPI__esapi-java-legacy_CVE-2022-23457_2.2.3.1/attempt-001/validated-decision.json",
+      "sha256": "c051766efe05057c8b5ba87112c1b52ce6452429a14948e5bb14920670f50f7a",
+      "bytes": 613
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r3-20260823T155544Z/dispatch/w1_llm_repair_receipts.compact.json",
+      "sha256": "fab2c276f41d010583935f64ccc72d47309ce09af3abff0ab49a76bdb79dbff4",
+      "bytes": 13575
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/validated-decision.json",
+      "sha256": "8ecbdb33867797749b256ceba69d7df7b862a6b9377de168cf10766e00523095",
+      "bytes": 511
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/validated-decision.json",
+      "sha256": "b5a9c5bfea2686bb988f010f3aa8737a7ca7cc3176c9910742dc3ff48e59d2ff",
+      "bytes": 414
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31195_5.10/attempt-001/validated-decision.json",
+      "sha256": "7ff3a4b58e5e8abf4ddf44738d0446c12b62b7912e21f12cb68417c767a9f7db",
+      "bytes": 595
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r4-20260823T160805Z/dispatch/w1_llm_repair_receipts.compact.json",
+      "sha256": "ae302b523a3d137be5cf799bb15dd2c348ff5fa8dad3b76c442a8b2c2651c025",
+      "bytes": 33214
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r5-inactivity900-20260823T163107Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31195_5.10/attempt-001/validated-decision.json",
+      "sha256": "73eb2bf7f9cd6aef8e80b358e2653a89f2e251ff6d324690f4191a9351f4d015",
+      "bytes": 723
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r5-inactivity900-20260823T163107Z/dispatch/cases/v8_ESAPI__esapi-java-legacy_CVE-2022-23457_2.2.3.1/attempt-001/validated-decision.json",
+      "sha256": "a038de00ff8b610296f037ad3350e95d79dce94a9e50aade5b45538899e15df4",
+      "bytes": 645
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r5-inactivity900-20260823T163107Z/dispatch/cases/v8_ESAPI__esapi-java-legacy_CVE-2022-24891_2.2.3.1/attempt-001/validated-decision.json",
+      "sha256": "9c2edd243f60a0f2e47e5fee56b1d0a13b6b6981691161f52d42e0459d12f3ba",
+      "bytes": 503
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r5-inactivity900-20260823T163107Z/dispatch/cases/v8_OWASP__json-sanitizer_CVE-2020-13973_1.2.0/attempt-001/validated-decision.json",
+      "sha256": "00139b7a21eb511001acd33743de9ba0f00a82765ae982b4ce5297248790cc07",
+      "bytes": 600
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r5-inactivity900-20260823T163107Z/dispatch/cases/v8_SpringSource__spring-security-oauth_CVE-2018-1260_2.3.2.RELEASE/attempt-001/validated-decision.json",
+      "sha256": "4242ca5431825db657626223e2aa679e656982f4e2b4981ca3bf18ba486051d1",
+      "bytes": 732
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r5-inactivity900-20260823T163107Z/dispatch/cases/v8_activemq-artemis_CVE-2025-27427_2.39.0/attempt-001/validated-decision.json",
+      "sha256": "22f18b914f579676ce3742295c5bdace183400e0154c3b8073f266986fb1f8b4",
+      "bytes": 497
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r5-inactivity900-20260823T163107Z/dispatch/cases/v8_alibaba__nacos_CVE-2021-44667_2.0.3/attempt-001/validated-decision.json",
+      "sha256": "b3f2eda962792e4aef6150f74e4644da115c8aa9ae104ec33b966822bc8cace2",
+      "bytes": 591
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r5-inactivity900-20260823T163107Z/dispatch/cases/v8_alibaba__one-java-agent_CVE-2022-25842_0.0.1/attempt-001/validated-decision.json",
+      "sha256": "066288ee5c31da79c5aae41282123ca86ba1b937542e6941d57f79c2e293349c",
+      "bytes": 444
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r5-inactivity900-20260823T163107Z/dispatch/cases/v8_apache__activemq_CVE-2019-0222_5.15.8/attempt-001/validated-decision.json",
+      "sha256": "85ab02924b2614aae3553d37e58e72b1f261ca83c6906f8105d40f9d84164b63",
+      "bytes": 435
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r5-inactivity900-20260823T163107Z/dispatch/cases/v8_apache__activemq_CVE-2020-11998_5.15.12/attempt-001/validated-decision.json",
+      "sha256": "d5a2ebe11cb951d569fa25a88d9358c3481d2ca862a8d0f020ec4e9169c84b12",
+      "bytes": 512
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r5-inactivity900-20260823T163107Z/dispatch/cases/v8_apache__dolphinscheduler_CVE-2022-26884_2.0.5/attempt-001/validated-decision.json",
+      "sha256": "691f5c7ea166cce6ec836029cb4073cddd503c76bd25a91604bc016bc701e9b8",
+      "bytes": 500
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r5-inactivity900-20260823T163107Z/dispatch/cases/v8_apache__dolphinscheduler_CVE-2022-34662_2.0.9/attempt-001/validated-decision.json",
+      "sha256": "6dc9791d53be847147f768a8b0589ca5fa78f24f9ca6c9703e507e7363e2b2e1",
+      "bytes": 535
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r5-inactivity900-20260823T163107Z/dispatch/cases/v8_apache__dubbo_CVE-2021-30180_2.7.9/attempt-001/validated-decision.json",
+      "sha256": "28b6bd3d4b83cc76c37f8199496c444f2acb2be736a50267d514f7d4ebda8fd8",
+      "bytes": 543
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r5-inactivity900-20260823T163107Z/dispatch/cases/v8_apache__incubator-dubbo_CVE-2021-30181_2.6.8/attempt-001/validated-decision.json",
+      "sha256": "78a4a994e6700b8399dd3648e65fdbcd69d67d6eed245ba660021db103f9ae6a",
+      "bytes": 475
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r5-inactivity900-20260823T163107Z/dispatch/cases/v8_apache__jspwiki_CVE-2019-0225_2.11.0.M2/attempt-001/validated-decision.json",
+      "sha256": "ca5c29f9df5551c49a51206142523465247503adac0777ae9c48dff9871d31d0",
+      "bytes": 502
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r5-inactivity900-20260823T163107Z/dispatch/cases/v8_apache__jspwiki_CVE-2019-10076_2.11.0.M3/attempt-001/validated-decision.json",
+      "sha256": "1443406d96b07433a84b9b9e7160e4aacb3d7fbfeaa67f229f5c13af200c44e4",
+      "bytes": 624
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r5-inactivity900-20260823T163107Z/dispatch/cases/v8_apache__jspwiki_CVE-2019-10077_2.11.0.M3/attempt-001/validated-decision.json",
+      "sha256": "2d403d59f9d1770b68a3790c36d57bc1be30ad49f192121e791d08b1877c2e94",
+      "bytes": 510
+    },
+    {
+      "path": "iris-a26/dispatch-discovery113-network429-backoff-r5-inactivity900-20260823T163107Z/dispatch/w1_llm_repair_receipts.compact.json",
+      "sha256": "5c63be994eea81f9be1fa49c442e8952087c1db18faaf88a9d7b59d9151b3a31",
+      "bytes": 253449
+    },
+    {
+      "path": "iris-a26/dispatch-r2-exact-source-binding/w1_llm_repair_receipts.compact.json",
+      "sha256": "7b028625f9aad040e180c09c101fda23a36a6e15c77b8dd4ab022746eb5a6352",
+      "bytes": 142168
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_DSpace_CVE-2025-53621_dspace-7.6.3/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "9364ac8d51db9dea3dfeb0b0be54f457638e9f382629642844dbab5b0dae76f8",
+      "bytes": 1022
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_DSpace_CVE-2025-53621_dspace-7.6.3/attempt-001/validated-decision.json",
+      "sha256": "3662ad57c86a880db02ef7e713043e62b06576856079d58e5212ce5c8644b936",
+      "bytes": 663
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_DSpace_CVE-2025-53622_dspace-7.6.3/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "99fafbe54fdfd5faba9d1b80e2682035203c1b82e6df6e64a001da8c3c089540",
+      "bytes": 910
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_DSpace_CVE-2025-53622_dspace-7.6.3/attempt-001/validated-decision.json",
+      "sha256": "06bcf3a17f4d7ec8b090ff4cda794bf3f5309795f844677b52f0ffdd114cff77",
+      "bytes": 539
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_OpenDJ_CVE-2025-27497_4.9.2/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "50ba0cd5ada45caf3dde207a7be375de6fb30bc1ac875c4f0b47341700e4a78c",
+      "bytes": 740
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_OpenDJ_CVE-2025-27497_4.9.2/attempt-001/validated-decision.json",
+      "sha256": "3fabf5f82539f4b05fdbe910f4f47b524abac47e0b992d6d5bc150efd8de0c29",
+      "bytes": 682
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_allure2_CVE-2025-52888_2.34.0/attempt-001/validated-decision.json",
+      "sha256": "8266d33f4cafa03d86a0e0a04ee0ea97732efd438c154257719140e98197818e",
+      "bytes": 575
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_apache__activemq_CVE-2014-3576_5.10.2/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "f7d6adaa82958f8c4e80c9c5af76da8eceea7f37435d66a109a545fa99694539",
+      "bytes": 759
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_apache__activemq_CVE-2014-3576_5.10.2/attempt-001/validated-decision.json",
+      "sha256": "7a1b943914b048106cc77ba5d108cb8329cd6cfc9fc3b8a8f66e9949feecbb97",
+      "bytes": 709
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_apache__axis-axis1-java_CVE-2023-51441_1.3.0/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "9ba7ba30d9ec2ef6f192f9de5521a17d7b4fbc424781b0fb9bf3c4f0f7606ac5",
+      "bytes": 687
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_apache__axis-axis1-java_CVE-2023-51441_1.3.0/attempt-001/validated-decision.json",
+      "sha256": "003aaf9b2fe0d754554f98ebedfdacbe075532fdef8db5e6e39ea63a5f4d4d81",
+      "bytes": 691
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_cloudbees-jenkins-advisor-plugin_CVE-2025-47885_374.v194b_d4f0c8c8/attempt-001/validated-decision.json",
+      "sha256": "174f426555840e162d44e216eda2a325eabaf1268fcdbf2040e4bc3824c624c1",
+      "bytes": 648
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_console_CVE-2025-2901_v3.7.10/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "645cf85f14d251d64fff251806e818297ad4d1d444ef08ae1e8b638ae352f85d",
+      "bytes": 945
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_console_CVE-2025-2901_v3.7.10/attempt-001/validated-decision-feedback-002.json",
+      "sha256": "4439d6cd1a601f806649e7110481a6b25f527d3306a7469192ed683bbd5e695f",
+      "bytes": 1220
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_console_CVE-2025-2901_v3.7.10/attempt-001/validated-decision-feedback-003.json",
+      "sha256": "4743701d483a58dfc58fb5d5f80fdace8a9d008133d4b5ef63d93af4f7f30a35",
+      "bytes": 1570
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_console_CVE-2025-2901_v3.7.10/attempt-001/validated-decision.json",
+      "sha256": "b08676603292b0bd553a7998eea8d832b55b537a19af0049478f2f12a4a9bd03",
+      "bytes": 558
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_crate__crate_5.5.1_CVE-2023-51982_5.5.1/attempt-001/validated-decision.json",
+      "sha256": "b2a664cc89933795be941076ec46611166e498eb56a920dca3938a73b5fae844",
+      "bytes": 771
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_djl_CVE-2025-0851_v0.30.0/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "8b6dd509998acffec17b6967ff408ed0b6964ad9a9ca6606fbfe292d29e41312",
+      "bytes": 747
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_djl_CVE-2025-0851_v0.30.0/attempt-001/validated-decision.json",
+      "sha256": "80a0d82b98ae518c427bd3e46922e7adfa4f1c12cd83bd76e7c5cd645b420559",
+      "bytes": 566
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_eclipse__hawkbit_CVE-2020-27219_0.3.0M6/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "49fbbfcb3ced086e17b1be0f6f3f484a9b4810688eaeb4c71470af59daf8f5c2",
+      "bytes": 1025
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_eclipse__hawkbit_CVE-2020-27219_0.3.0M6/attempt-001/validated-decision-feedback-002.json",
+      "sha256": "367c671aa44a4728350bea9054d367e46b34bb45884c564f4d49cf994138219b",
+      "bytes": 538
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_eclipse__hawkbit_CVE-2020-27219_0.3.0M6/attempt-001/validated-decision.json",
+      "sha256": "607bbda4cae3907cfd660ae38afd9e07e2a6165f22bc49f2c23f0f06ef66ac7e",
+      "bytes": 640
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_emissary_CVE-2025-27508_8.23.0/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "40bc2032b1a36666f03bfd51ee0f80a204f8132f4c08945d4faff02cd1e8f12f",
+      "bytes": 806
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_emissary_CVE-2025-27508_8.23.0/attempt-001/validated-decision.json",
+      "sha256": "58f6b09c820c6e41ea1a3d2c3cd48ba1e7e354433da60919b28623d164b8f76f",
+      "bytes": 613
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_felix-dev_CVE-2025-25247_org.osgi.compendium-1.4.0/attempt-001/validated-decision.json",
+      "sha256": "75002424303e096201cff13584218d735580bf449a847c7989fa279c7145921e",
+      "bytes": 518
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_hapifhir__org.hl7.fhir.core_CVE-2023-24057_5.6.91/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "30b5476d42277f0b00ad4b0644ed8b20d4355d2c8590ce1a5bc3b380013cfde3",
+      "bytes": 989
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_hapifhir__org.hl7.fhir.core_CVE-2023-24057_5.6.91/attempt-001/validated-decision-feedback-002.json",
+      "sha256": "150311b2d42b05b2958cd42520e11ac1bbc033eec4f89ff262285498debc463a",
+      "bytes": 1401
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_hapifhir__org.hl7.fhir.core_CVE-2023-24057_5.6.91/attempt-001/validated-decision.json",
+      "sha256": "d83d8a97f237d68a300569866408b9f09ce3ab341326ce9445d56bc5ba38ad51",
+      "bytes": 604
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_hapifhir__org.hl7.fhir.core_CVE-2023-28465_5.6.105/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "474c1699ef02d0c9e1cd9eb60244da073c859f59e498b2250aca8dda35353150",
+      "bytes": 836
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_hapifhir__org.hl7.fhir.core_CVE-2023-28465_5.6.105/attempt-001/validated-decision-feedback-002.json",
+      "sha256": "31e1dabd06ae0b85c561d5a7bc9f645f8893edee7080f66b8c399e0c25c2d301",
+      "bytes": 1283
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_hapifhir__org.hl7.fhir.core_CVE-2023-28465_5.6.105/attempt-001/validated-decision.json",
+      "sha256": "6aa26749597a48119e0a75bcfd11628251251288d4e2769ce45f5c8046b146c9",
+      "bytes": 523
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_incubator-seata_CVE-2025-32897_v2.2.0/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "20d54cd7b483cc2ead8e32e76feb9e80b868855aeebd1ac213e0ae9147568d56",
+      "bytes": 573
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_incubator-seata_CVE-2025-32897_v2.2.0/attempt-001/validated-decision.json",
+      "sha256": "f607a737890609dec5d167d3c338c94dd9ca22601525f20e95a7ea181f95c404",
+      "bytes": 631
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_inlong_CVE-2025-27522_2.1.0-RC0/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "14938d3e32a77962ab2d99e08191a812908ba799a22e40976b1ea7db75b477eb",
+      "bytes": 896
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_inlong_CVE-2025-27522_2.1.0-RC0/attempt-001/validated-decision-feedback-002.json",
+      "sha256": "08cb3046ddf5cdad1433ef5303fa4bfda235b43095fba3bc9baab8ea82d85bb8",
+      "bytes": 1147
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_inlong_CVE-2025-27522_2.1.0-RC0/attempt-001/validated-decision-feedback-003.json",
+      "sha256": "d5e7f35c0fa379fb6a5851e239621493291c4e5e3bde3a563c205fefe7b6816d",
+      "bytes": 820
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_inlong_CVE-2025-27522_2.1.0-RC0/attempt-001/validated-decision.json",
+      "sha256": "9c70b3e0c1d95dd107d6a85a6e06f35a55c0c655e3e2583600a33353c5c313fd",
+      "bytes": 566
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_inlong_CVE-2025-27526_2.1.0-RC0/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "0652d71b7ecc46bb907969f443d8adf9153364a45a34bb7472c9f5679c7c60a8",
+      "bytes": 968
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_inlong_CVE-2025-27526_2.1.0-RC0/attempt-001/validated-decision-feedback-002.json",
+      "sha256": "bfe71284acddec211dc22c91ff56c973c44caf6abe0c39dc739c37decee033fb",
+      "bytes": 1238
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_inlong_CVE-2025-27526_2.1.0-RC0/attempt-001/validated-decision-feedback-003.json",
+      "sha256": "fbc04f2c9a238f5627935b3a3ba4107096ec7153df2b0f7d8cfabb44cf6bf17d",
+      "bytes": 1646
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_inlong_CVE-2025-27526_2.1.0-RC0/attempt-001/validated-decision.json",
+      "sha256": "d4192775dfea8c0938ff990f29debf4c007a392b7c06b62995f5e56e539e27fc",
+      "bytes": 592
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_inlong_CVE-2025-27528_2.1.0-RC0/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "4da6bfd416096eb77883e58e598304f52a7ca1d12b71f7eceb0e6c3b75aba1ea",
+      "bytes": 983
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_inlong_CVE-2025-27528_2.1.0-RC0/attempt-001/validated-decision-feedback-002.json",
+      "sha256": "1c9fdc2f5a8fae97dbeabb56a6a3faca16230fee6b8d5d5d819188f977ce3e05",
+      "bytes": 1215
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_inlong_CVE-2025-27528_2.1.0-RC0/attempt-001/validated-decision-feedback-003.json",
+      "sha256": "2cfb42c12a5639f3fc733317de1d0a7af70ed9f368ca13a1f8a175da0178e256",
+      "bytes": 1645
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_inlong_CVE-2025-27528_2.1.0-RC0/attempt-001/validated-decision.json",
+      "sha256": "70f6f886355c21ab7461059040366e694b9dfb708ecb80a154f655966d4deac6",
+      "bytes": 543
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_inlong_CVE-2025-27531_2.0.0-RC0/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "2b70898f831eb8c11724d1a1cd893e9246a2f25e5cbaf58048175b0e88020211",
+      "bytes": 1002
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_inlong_CVE-2025-27531_2.0.0-RC0/attempt-001/validated-decision.json",
+      "sha256": "055c6eeaea11c4abba144410c7f11e61cd0ae8651ef020e39a79940ccbfc2b31",
+      "bytes": 595
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_iotdb_CVE-2025-26795_v1.3.3/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "0c64f2c0b14634d76b934d2568a7dbec162b80fcad9234492a760a38552de43e",
+      "bytes": 715
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_iotdb_CVE-2025-26795_v1.3.3/attempt-001/validated-decision.json",
+      "sha256": "2e9728b6290f73cdd1dd296d57854040c62fb2a5040138ecba61682af28c4592",
+      "bytes": 710
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_iotdb_CVE-2025-26864_v1.3.3/attempt-001/validated-decision.json",
+      "sha256": "ad10b11638fc3ce9bce0c9ebcb0caeab31b16094c679e2a0dd612f0f54745396",
+      "bytes": 643
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_jackrabbit_CVE-2025-53689_jackrabbit-2.23.1-beta/attempt-001/validated-decision.json",
+      "sha256": "285456a1a9e230f5f456ec9ed322b3367d498d9faac86f902d6c19dd34a041e3",
+      "bytes": 744
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_jans_CVE-2025-53003_v1.7.0/attempt-001/validated-decision.json",
+      "sha256": "617033077465c2041c2ccd3a8c9bba4ee2f46360c32f665009916b84273e4a0b",
+      "bytes": 663
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_jena_CVE-2025-49656_jena-5.4.0/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "67299b101d3636ccfba1fd1379ef2299003a421de81c39e457ecb44c82890a6f",
+      "bytes": 918
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_jena_CVE-2025-49656_jena-5.4.0/attempt-001/validated-decision-feedback-002.json",
+      "sha256": "bb1d931ea03a65567d8021ee6dd9d5c3cf1f2c7bd09143edec70e7fcd26a947c",
+      "bytes": 762
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_jena_CVE-2025-49656_jena-5.4.0/attempt-001/validated-decision.json",
+      "sha256": "241e5222f5f345f24cdb552316f5af6f8d84f5a51d411296ab8badb4c2f4408b",
+      "bytes": 580
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_jpawebapi_CVE-2025-32961_v1.1.0/attempt-001/validated-decision.json",
+      "sha256": "dff1c6871b5e9d7bdac1dcf77bc1cecbafdf08b5bf2082fc71d89a7512173dd4",
+      "bytes": 607
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_junit-framework_CVE-2025-53103_r5.13.1/attempt-001/validated-decision.json",
+      "sha256": "0c665da5cc0722a75c311acce1d8034d888eb95944a4a71613cd40be76a0c978",
+      "bytes": 584
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_keycloak_CVE-2025-0604_26.1.2/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "e79d5aa792a172c1c2c355391a24ec8f353fe7d66567b3016c33aec6fad72fd2",
+      "bytes": 828
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_keycloak_CVE-2025-0604_26.1.2/attempt-001/validated-decision.json",
+      "sha256": "0485a7c51b5d708cff185cdcce965bf721bb14d93259e91e7ea3b0f9d4eb62b7",
+      "bytes": 737
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_keycloak_CVE-2025-3501_26.2.1/attempt-001/validated-decision.json",
+      "sha256": "db834edfc37b364ac3fb9f4734ce80f6a03345a5bdc4e23cf73345339a763a27",
+      "bytes": 619
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_keycloak_CVE-2025-3910_26.2.1/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "ec970c977eec234853eeee3ae5b074036e68d22869002988a00728e623a8cab6",
+      "bytes": 681
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_keycloak_CVE-2025-3910_26.2.1/attempt-001/validated-decision.json",
+      "sha256": "24fe78ee53dd102794bded67abca6d515778cc074fbcd2896c9595b00949ce80",
+      "bytes": 769
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_keycloak__keycloak_CVE-2022-4361_21.1.1/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "249fdff2a6a2ee7eb9487b76509df4a5a5432d5954d0a13b4cd5ae29761752df",
+      "bytes": 908
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_keycloak__keycloak_CVE-2022-4361_21.1.1/attempt-001/validated-decision.json",
+      "sha256": "506e46208d05f05f8ea12fcb87b03629f4d3c697068e5c5f1e6a08e1db736898",
+      "bytes": 606
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_kylin_CVE-2025-30067_kylin-5.0.1/attempt-001/validated-decision.json",
+      "sha256": "ad71ebc7d7352c5de32077f557c34881af860cf1bc2b2302b84ad37faa46befe",
+      "bytes": 720
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_netty_CVE-2025-24970_netty-4.1.117.Final/attempt-001/validated-decision.json",
+      "sha256": "2d27f2e8a2672e93728bf3d7dd106c3906d2c0c9bd444da958505803599a012f",
+      "bytes": 611
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_opencast_CVE-2025-54380_17.5/attempt-001/validated-decision.json",
+      "sha256": "3cf3b99f6a69e662985426ed203698084cb7d331af2136383c4999e492598f62",
+      "bytes": 607
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_para_CVE-2025-48955_v1.50.7/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "8b64b98637ad0dc705a95644778f92dcf995557718d58d733a9e4e7c39cec9d4",
+      "bytes": 1206
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_para_CVE-2025-48955_v1.50.7/attempt-001/validated-decision-feedback-002.json",
+      "sha256": "68e78792a5e4e06b3fc666ed0d1224253a9ed3b3fe129e8503a3b1000d102f1e",
+      "bytes": 653
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_para_CVE-2025-48955_v1.50.7/attempt-001/validated-decision.json",
+      "sha256": "17497fcc213dfe7dca7ad6f3a306c3a55b426a93d69f32b4a0e1b0d575b21c5e",
+      "bytes": 638
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_para_CVE-2025-49009_v1.50.7/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "ece0a6d28e69e767f8f30b1b5369aced50a21490bfb5cfed3959eafe913d9f17",
+      "bytes": 1031
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_para_CVE-2025-49009_v1.50.7/attempt-001/validated-decision-feedback-002.json",
+      "sha256": "c9de9e12664c3dd21d5251aae6d5cefe7f3bd25c3789d9cec81a8f2d8a3a49b5",
+      "bytes": 658
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_para_CVE-2025-49009_v1.50.7/attempt-001/validated-decision.json",
+      "sha256": "5d99ee128e3a5682e5a1c661583c19312ad2455680bfe6544505949604e00e2f",
+      "bytes": 552
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_powsybl-core_CVE-2025-47293_v6.7.1/attempt-001/validated-decision.json",
+      "sha256": "8b518c07d5a9d4b7d16a790675011ecc315add7bf5e01299185c7cf288f0f145",
+      "bytes": 746
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_powsybl-core_CVE-2025-47771_v6.7.1/attempt-001/validated-decision.json",
+      "sha256": "24599d67a93e461a249344a2c7e3e87bfcbff527e0890179f9a4c10039ed66d5",
+      "bytes": 727
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_reactor-netty_CVE-2025-22227_v1.2.8/attempt-001/validated-decision.json",
+      "sha256": "a14f8a678919a4085d4c31756ef34553cf2984592d6dea53fcaa64b9474685cd",
+      "bytes": 646
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_restapi_CVE-2025-32960_v7.2.6/attempt-001/validated-decision.json",
+      "sha256": "7c16972abd9e44046f7fd0bd66d9154263220688a7a8c7c29d059f5f044b2efc",
+      "bytes": 531
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_simple-queue-plugin_CVE-2025-31723_simple-queue-1.4.6/attempt-001/validated-decision.json",
+      "sha256": "feb6990bcf1adaca960df73c06f4ff8804d82ce56b20c8817b2ab283597a9dd2",
+      "bytes": 648
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_snowflake-jdbc_CVE-2025-27496_v3.23.0/attempt-001/validated-decision.json",
+      "sha256": "1cc118f0bb436bf84cbd977723f5aaea7f2d801481658f7e326c3dd034cc62c1",
+      "bytes": 778
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_solon_CVE-2025-1584_v3.0.8/attempt-001/validated-decision.json",
+      "sha256": "7f7787821002d976f212fb710f6a05434aed5383baadbdb152ff1177fc7b1bc9",
+      "bytes": 577
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_solon_CVE-2025-46096_v3.1.2/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "b1567e2ad42fa77545fda0dc215e4da211bb26e4a2d86d1c3ae2339b481703a4",
+      "bytes": 649
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_solon_CVE-2025-46096_v3.1.2/attempt-001/validated-decision.json",
+      "sha256": "12de7dd66dcf7ebee79938dae1945fd5b0043c2d616a217e70f5ee1fc298cc46",
+      "bytes": 594
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_spring-cloud__spring-cloud-config_CVE-2020-5405_2.1.6.RELEASE/attempt-001/validated-decision.json",
+      "sha256": "61788c70611d04eb217670d83f5cfcad927b651523d1ec782549d705e0802a92",
+      "bytes": 652
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_spring-framework_CVE-2025-22233_v6.2.6/attempt-001/validated-decision.json",
+      "sha256": "03c9e198a43f0c06bb30f018c49719634e97ad14e5bc8635b179a31e7be38742",
+      "bytes": 505
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_spring-framework_CVE-2025-41234_v6.2.7/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "2003a53b986699cb766c7c15282c4b2945c02bea9d1215ea4a643027568ddf60",
+      "bytes": 824
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_spring-framework_CVE-2025-41234_v6.2.7/attempt-001/validated-decision.json",
+      "sha256": "c640c2b06441a568d1cd61c91c115681eb30ff8e7f411a405f65c9dc5675aa27",
+      "bytes": 603
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_spring-security_CVE-2025-22228_6.3.7/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "1028376b2a54f9eaacb1b00b543318ac83a96d5957df981491190047eb94d14d",
+      "bytes": 659
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_spring-security_CVE-2025-22228_6.3.7/attempt-001/validated-decision.json",
+      "sha256": "00e435f989f7afccf75b1e7ad297d7f1c14c301bc6c8eb656f3577c941f92fb9",
+      "bytes": 589
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_syntax-markdown_CVE-2025-46558_syntax-markdown-8.8/attempt-001/validated-decision.json",
+      "sha256": "354e38b9f276e1a23240512ecb5c880f8b8b756fa9c37ee66f6b37549174d7a6",
+      "bytes": 725
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_webdrivermanager_CVE-2025-4641_webdrivermanager-6.0.1/attempt-001/validated-decision.json",
+      "sha256": "23996c15638b61d8524bd24b3f4752752f5cc7bdb30616ae477c82ee6be34a14",
+      "bytes": 572
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_xwiki__xwiki-commons_CVE-2023-29201_14.6/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "37b2537d4c63aa27b8632bb5b2ce7dfb95d179b2cf66341a5cfe5dc8d2f9465d",
+      "bytes": 693
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_xwiki__xwiki-commons_CVE-2023-29201_14.6/attempt-001/validated-decision.json",
+      "sha256": "4fff2673c4d0503d7ab927424f648bfd3504a79d64faeb4a562871a222c26f16",
+      "bytes": 940
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_xwiki__xwiki-rendering_CVE-2023-32070_14.6/attempt-001/validated-decision-feedback-001.json",
+      "sha256": "e66597c5f2af540e1528bbe8fcd95a5ea742b4b5076a6ac02c47f024b2103bf3",
+      "bytes": 813
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_xwiki__xwiki-rendering_CVE-2023-32070_14.6/attempt-001/validated-decision.json",
+      "sha256": "32a97600d6dee0ef3ec5a89f38a14513f2b00345e3ef6c9c336a1cc12d961a4e",
+      "bytes": 473
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/cases/v8_zohoqengine-plugin_CVE-2025-30197_1.0.29.vfa_cc23396502/attempt-001/validated-decision.json",
+      "sha256": "f3647a9d0317af502d6f86cbb2dccc8ea0f2f8c73739cbf81fa07916cda5151a",
+      "bytes": 765
+    },
+    {
+      "path": "iris-a26/dispatch-r3-preflight-source-rebuild/w1_llm_repair_receipts.compact.json",
+      "sha256": "015217d49e9f00ba0f84a88fb32685b52f3f399a126d09bf616d43751564bad8",
+      "bytes": 705841
+    },
+    {
+      "path": "iris-a26/dispatch/w1_llm_repair_receipts.compact.json",
+      "sha256": "47061c1d8ca4b38e0fb33a65801b69ec22bc97e8daa79e4d631036dfc04481dd",
+      "bytes": 33143
+    }
+  ]
+}

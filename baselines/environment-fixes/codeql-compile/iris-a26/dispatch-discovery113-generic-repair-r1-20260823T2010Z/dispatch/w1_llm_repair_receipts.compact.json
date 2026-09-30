@@ -1,0 +1,1172 @@
+[
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:DSpace__DSpace_CVE-2022-31194_5.10",
+    "project_slug": "DSpace__DSpace_CVE-2022-31194_5.10",
+    "status": "no_safe_llm_repair",
+    "recorded_at": "2026-08-23T15:26:30+00:00",
+    "attempt_number": 1,
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "eca7968be7d6b9f8f5f302c9fc09f8186ed4809e",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/source-preflight",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:DSpace__DSpace_CVE-2022-31194_5.10",
+        "expected_revision_matches_receipt": true,
+        "reason": null,
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": true,
+        "source_receipt_case_id": "v8:DSpace__DSpace_CVE-2022-31194_5.10",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": true
+      },
+      "verification_mode": "source_snapshot_receipt",
+      "verified": true
+    },
+    "failed_receipt_sha256": "60a99c58d7dd6c1a5dd8083f3008c27fc0ffcdf4bdac18861c131314b9f44966",
+    "prior_completion_sha256": "0adda3d1ce81ad73290c1fe1fde4b821a6ed29d4d2a33fea4238f991df92503c",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "9ef93dd5f878828fdf58eb20cc87e7047e2df2fe79444619ff7ed75764270c2a",
+    "proposal_validation_errors": [],
+    "validated_decision": {
+      "schema_version": "route_hacker_codeql_repair.v1:validated_repair_decision",
+      "actions": [
+        {
+          "kind": "no_safe_action"
+        }
+      ],
+      "normalization": {
+        "dropped_redundant_actions": []
+      },
+      "rationale": "Failure is AccessDeniedException on WORKSPACE_ROOT/.m2/repository — a filesystem permission issue in the local Maven cache. No allowed action (Java home, Maven home, build args, heap, clean) can resolve a directory permission denial.",
+      "decision_sha256": "d52cdebfa62e74427273ea8120ddc17ca9b9cbe630c92cfc37e7232bdd0ef438"
+    },
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:DSpace__DSpace_CVE-2022-31192_5.10",
+    "project_slug": "DSpace__DSpace_CVE-2022-31192_5.10",
+    "status": "no_safe_llm_repair",
+    "recorded_at": "2026-08-23T15:26:30+00:00",
+    "attempt_number": 1,
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "eca7968be7d6b9f8f5f302c9fc09f8186ed4809e",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/source-preflight",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:DSpace__DSpace_CVE-2022-31192_5.10",
+        "expected_revision_matches_receipt": true,
+        "reason": null,
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": true,
+        "source_receipt_case_id": "v8:DSpace__DSpace_CVE-2022-31192_5.10",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": true
+      },
+      "verification_mode": "source_snapshot_receipt",
+      "verified": true
+    },
+    "failed_receipt_sha256": "43b2a79c8dbd71ea5a09858c6266165b15fbf5d7c99ca36578e8b0bf49ac2696",
+    "prior_completion_sha256": "048f30f5a6f864a524a88851f7abb6a68cfe5c611e25bdded6b6291c787cef47",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "fbb091e2603054e00bcdf95d0e636eb7159661c16f12ea785bbef52cac1b51ed",
+    "proposal_validation_errors": [],
+    "validated_decision": {
+      "schema_version": "route_hacker_codeql_repair.v1:validated_repair_decision",
+      "actions": [
+        {
+          "kind": "no_safe_action"
+        }
+      ],
+      "normalization": {
+        "dropped_redundant_actions": []
+      },
+      "rationale": "Build failed with java.nio.file.AccessDeniedException on WORKSPACE_ROOT/.m2/repository/org/apache/maven/plugins/maven-enforcer-plugin/1.2 — a filesystem permission error on the local Maven cache. No allowed action (Java/Maven home, build args, heap, clean) can resolve a permission denial on the .m2 repository directory.",
+      "decision_sha256": "3085fbe447657a89b2a8ba41a0767987411ad5bd16629a6e286ee274e006594e"
+    },
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:DSpace__DSpace_CVE-2022-31195_5.10",
+    "project_slug": "DSpace__DSpace_CVE-2022-31195_5.10",
+    "status": "no_safe_llm_repair",
+    "recorded_at": "2026-08-23T15:27:10+00:00",
+    "attempt_number": 1,
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "eca7968be7d6b9f8f5f302c9fc09f8186ed4809e",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31195_5.10/attempt-001/source-preflight",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:DSpace__DSpace_CVE-2022-31195_5.10",
+        "expected_revision_matches_receipt": true,
+        "reason": null,
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": true,
+        "source_receipt_case_id": "v8:DSpace__DSpace_CVE-2022-31195_5.10",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": true
+      },
+      "verification_mode": "source_snapshot_receipt",
+      "verified": true
+    },
+    "failed_receipt_sha256": "086aa96f71a7c15d08fa6b589b33421e7e80cd160316a70f9d93bdcff2571ffa",
+    "prior_completion_sha256": "45a12973b8700c21ea36b18d23755cd2441730a042f355834a167f9bc938c8fd",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "f7692591805edfd6f4c15b81ce54760814f14735581a106683a818b3bed8bde0",
+    "proposal_validation_errors": [],
+    "validated_decision": {
+      "schema_version": "route_hacker_codeql_repair.v1:validated_repair_decision",
+      "actions": [
+        {
+          "kind": "no_safe_action"
+        }
+      ],
+      "normalization": {
+        "dropped_redundant_actions": []
+      },
+      "rationale": "Failure is a java.nio.file.AccessDeniedException on WORKSPACE_ROOT/.m2/repository/org/apache/maven/plugins/maven-enforcer-plugin/1.2. This is a filesystem permission issue, not a toolchain version, build argument, or heap problem. None of the allowed actions can resolve a read-only or inaccessible Maven local repository.",
+      "decision_sha256": "8d6b8e76f7c63c01b3cf34aab68b26e1762fe00d453f81b4807f510c15b5ed05"
+    },
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:ESAPI__esapi-java-legacy_CVE-2022-23457_2.2.3.1",
+    "project_slug": "ESAPI__esapi-java-legacy_CVE-2022-23457_2.2.3.1",
+    "status": "no_safe_llm_repair",
+    "recorded_at": "2026-08-23T15:27:15+00:00",
+    "attempt_number": 1,
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "2e8694c6beb3bdbb2645b882eba72ce41bc63242",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_ESAPI__esapi-java-legacy_CVE-2022-23457_2.2.3.1/attempt-001/source-preflight",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:ESAPI__esapi-java-legacy_CVE-2022-23457_2.2.3.1",
+        "expected_revision_matches_receipt": true,
+        "reason": null,
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": true,
+        "source_receipt_case_id": "v8:ESAPI__esapi-java-legacy_CVE-2022-23457_2.2.3.1",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": true
+      },
+      "verification_mode": "source_snapshot_receipt",
+      "verified": true
+    },
+    "failed_receipt_sha256": "56151d88697efc992e6e285605d534e9f101665e3cf220f00e76de38a7b0f117",
+    "prior_completion_sha256": "01e1d14849bfa2dc8ad4f1e0263d9976eeb031ede8a9188a825f96542a637cb3",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "3362a2476eb9ae16b07dc8f6ad48f2c1f579e02c6612107f27e15eabd317f6a2",
+    "proposal_validation_errors": [],
+    "validated_decision": {
+      "schema_version": "route_hacker_codeql_repair.v1:validated_repair_decision",
+      "actions": [
+        {
+          "kind": "no_safe_action"
+        }
+      ],
+      "normalization": {
+        "dropped_redundant_actions": []
+      },
+      "rationale": "AccessDeniedException on WORKSPACE_ROOT/.m2/repository during Maven plugin POM resolution is a filesystem permission issue on the local repository cache. No approved action (Java home, Maven home, build args, clean, or heap) can repair directory permissions or ownership. The enforcer plugin is already skipped via -Denforcer.skip=true but Maven still needs to resolve its descriptor from the local cache, which fails before the skip takes effect.",
+      "decision_sha256": "1901828674accc0526cb7064b97bbb74bee3404f52975dbffd5580e59fe20835"
+    },
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:ESAPI__esapi-java-legacy_CVE-2022-24891_2.2.3.1",
+    "project_slug": "ESAPI__esapi-java-legacy_CVE-2022-24891_2.2.3.1",
+    "status": "no_safe_llm_repair",
+    "recorded_at": "2026-08-23T15:27:50+00:00",
+    "attempt_number": 1,
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "2e8694c6beb3bdbb2645b882eba72ce41bc63242",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_ESAPI__esapi-java-legacy_CVE-2022-24891_2.2.3.1/attempt-001/source-preflight",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:ESAPI__esapi-java-legacy_CVE-2022-24891_2.2.3.1",
+        "expected_revision_matches_receipt": true,
+        "reason": null,
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": true,
+        "source_receipt_case_id": "v8:ESAPI__esapi-java-legacy_CVE-2022-24891_2.2.3.1",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": true
+      },
+      "verification_mode": "source_snapshot_receipt",
+      "verified": true
+    },
+    "failed_receipt_sha256": "4e68def8e0b9215c3d0fafb3cd27c92f5ae07c3f59a3ce57f2c14dff0f963458",
+    "prior_completion_sha256": "ca4e55bbd0a38a6c4a80935e8ef2966a22cecc3e3126a813387224adc6aa21f6",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "bed726f49f174d68daa7023047ed021f6ff797fa47d159f1d258ee82f3b95056",
+    "proposal_validation_errors": [],
+    "validated_decision": {
+      "schema_version": "route_hacker_codeql_repair.v1:validated_repair_decision",
+      "actions": [
+        {
+          "kind": "no_safe_action"
+        }
+      ],
+      "normalization": {
+        "dropped_redundant_actions": []
+      },
+      "rationale": "AccessDeniedException on WORKSPACE_ROOT/.m2/repository/org/apache/maven/plugins/maven-enforcer-plugin/3.0.0-M3 is a filesystem permissions issue outside the scope of allowed actions. No listed action (Java home, Maven home, build args, heap, clean) can resolve a directory ownership/permission problem on the local Maven cache. retry_same_command would hit the same error.",
+      "decision_sha256": "5499407c70fac5bf759b9b2e61c34ba072758695c9abec0e4d200eb6b8d75061"
+    },
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:OWASP__json-sanitizer_CVE-2020-13973_1.2.0",
+    "project_slug": "OWASP__json-sanitizer_CVE-2020-13973_1.2.0",
+    "status": "no_safe_llm_repair",
+    "recorded_at": "2026-08-23T15:27:57+00:00",
+    "attempt_number": 1,
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "bb41f80ad575cb90ea6535976d7c17accb4b4c87",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_OWASP__json-sanitizer_CVE-2020-13973_1.2.0/attempt-001/source-preflight",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:OWASP__json-sanitizer_CVE-2020-13973_1.2.0",
+        "expected_revision_matches_receipt": true,
+        "reason": null,
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": true,
+        "source_receipt_case_id": "v8:OWASP__json-sanitizer_CVE-2020-13973_1.2.0",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": true
+      },
+      "verification_mode": "source_snapshot_receipt",
+      "verified": true
+    },
+    "failed_receipt_sha256": "372dea73139860f8523e23abe4759bdc44de2a06208bd8365a78f34bce35c08a",
+    "prior_completion_sha256": "ddb6c89d6697c54fe8ad612846c0c7201d7be02ff2f8b980f3b8635f9503f126",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "6355016893f6e6225aee7104d5645dd1f27b1457bb6a57db6122161e427e76ad",
+    "proposal_validation_errors": [],
+    "validated_decision": {
+      "schema_version": "route_hacker_codeql_repair.v1:validated_repair_decision",
+      "actions": [
+        {
+          "kind": "no_safe_action"
+        }
+      ],
+      "normalization": {
+        "dropped_redundant_actions": []
+      },
+      "rationale": "Root cause is java.nio.file.AccessDeniedException on WORKSPACE_ROOT/.m2/repository/org/sonatype/plugins. This is a filesystem permission issue in the Maven local repository cache. None of the allowed actions (Java/Maven version, build args, heap, clean) can repair directory permissions. retry_same_command would hit the same error.",
+      "decision_sha256": "29667477879750683a600870994fa42847bcc221a4cce03f0a31e57db6420e54"
+    },
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:SpringSource__spring-security-oauth_CVE-2018-1260_2.3.2.RELEASE",
+    "project_slug": "SpringSource__spring-security-oauth_CVE-2018-1260_2.3.2.RELEASE",
+    "status": "no_safe_llm_repair",
+    "recorded_at": "2026-08-23T15:28:32+00:00",
+    "attempt_number": 1,
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "97e39dde7e88aae802be98de084a382886ca4255",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_SpringSource__spring-security-oauth_CVE-2018-1260_2.3.2.RELEASE/attempt-001/source-preflight",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:SpringSource__spring-security-oauth_CVE-2018-1260_2.3.2.RELEASE",
+        "expected_revision_matches_receipt": true,
+        "reason": null,
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": true,
+        "source_receipt_case_id": "v8:SpringSource__spring-security-oauth_CVE-2018-1260_2.3.2.RELEASE",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": true
+      },
+      "verification_mode": "source_snapshot_receipt",
+      "verified": true
+    },
+    "failed_receipt_sha256": "893ab509493e4212578d62c66a7a077b3c87cc0e929eae0232eb818163b70cda",
+    "prior_completion_sha256": "78fe89ae031a9aa6324c1b7ab6da87702ac53d60cb9fb9b38fec182518ac4062",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "5ac63d5573f053981fdaf00d25f0f45060795c34e149538f95f6941ec77fc956",
+    "proposal_validation_errors": [],
+    "validated_decision": {
+      "schema_version": "route_hacker_codeql_repair.v1:validated_repair_decision",
+      "actions": [
+        {
+          "kind": "no_safe_action"
+        }
+      ],
+      "normalization": {
+        "dropped_redundant_actions": []
+      },
+      "rationale": "Root cause is java.nio.file.AccessDeniedException on WORKSPACE_ROOT/.m2/repository/org/springframework — a filesystem permission error on the local Maven cache. No allowed action (Java home, Maven home, build args, heap, clean) can repair directory permissions.",
+      "decision_sha256": "3ea92123a60de83aaa1c5853218d9f3ce138801955ac3f2c2aa81e410e532bec"
+    },
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:activemq-artemis_CVE-2025-27427_2.39.0",
+    "project_slug": "activemq-artemis_CVE-2025-27427_2.39.0",
+    "status": "no_safe_llm_repair",
+    "recorded_at": "2026-08-23T15:28:42+00:00",
+    "attempt_number": 1,
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "c5bfb32ed2b71c0510d9df373c8e6a7f75ea89f4",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_activemq-artemis_CVE-2025-27427_2.39.0/attempt-001/source-preflight",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:activemq-artemis_CVE-2025-27427_2.39.0",
+        "expected_revision_matches_receipt": true,
+        "reason": null,
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": true,
+        "source_receipt_case_id": "v8:activemq-artemis_CVE-2025-27427_2.39.0",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": true
+      },
+      "verification_mode": "source_snapshot_receipt",
+      "verified": true
+    },
+    "failed_receipt_sha256": "179ccbf0da24cb15b893a2290ed8d6f5cc375faa89d7dfe93a42f3ec124884a0",
+    "prior_completion_sha256": "e5931f5d982806ff5f45c4c59b28800dcf5d46b48dff9a83c05bbc3883f0cd5e",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "7d1e3716445c1cd9ccb089561e47c3100fbc7565e69faaf1eada57fa7de226b8",
+    "proposal_validation_errors": [],
+    "validated_decision": {
+      "schema_version": "route_hacker_codeql_repair.v1:validated_repair_decision",
+      "actions": [
+        {
+          "kind": "no_safe_action"
+        }
+      ],
+      "normalization": {
+        "dropped_redundant_actions": []
+      },
+      "rationale": "Root cause is java.nio.file.AccessDeniedException on WORKSPACE_ROOT/.m2/repository/org/apache/felix — a filesystem permissions error. None of the allowed actions (toolchain homes, build args, Maven heap, clean) can resolve a directory permission denial; retry_same_command would fail identically.",
+      "decision_sha256": "2584aee3bd0074d0e44b96126e72de8d6c51ed8b786ea7c0234a5a45f916ab0b"
+    },
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:alibaba__nacos_CVE-2021-44667_2.0.3",
+    "project_slug": "alibaba__nacos_CVE-2021-44667_2.0.3",
+    "status": "no_safe_llm_repair",
+    "recorded_at": "2026-08-23T15:29:05+00:00",
+    "attempt_number": 1,
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "5a4d433970be9b8402f57e65bffa497027f21e30",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_alibaba__nacos_CVE-2021-44667_2.0.3/attempt-001/source-preflight",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:alibaba__nacos_CVE-2021-44667_2.0.3",
+        "expected_revision_matches_receipt": true,
+        "reason": null,
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": true,
+        "source_receipt_case_id": "v8:alibaba__nacos_CVE-2021-44667_2.0.3",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": true
+      },
+      "verification_mode": "source_snapshot_receipt",
+      "verified": true
+    },
+    "failed_receipt_sha256": "21fa34ba3c216010ef58da643797ea9154e232220a19ebc9e1a099e73bdbfd41",
+    "prior_completion_sha256": "e5d7aa04550207367c17aeb840b8a9c76b4a6f71b6cd7a4f30298170b0963ac4",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "0f0f4f05c639a807ffc85e2b9cfb1bcf30c5ec65eaa3495eccb313ad597166b7",
+    "proposal_validation_errors": [],
+    "validated_decision": {
+      "schema_version": "route_hacker_codeql_repair.v1:validated_repair_decision",
+      "actions": [
+        {
+          "kind": "no_safe_action"
+        }
+      ],
+      "normalization": {
+        "dropped_redundant_actions": []
+      },
+      "rationale": "The root cause is java.nio.file.AccessDeniedException on WORKSPACE_ROOT/.m2/repository/org/springframework — a filesystem permission error in the local Maven cache. None of the approved actions (Java home, Maven home, build args, heap, clean prepend) can resolve a directory permission denial. This requires an out-of-band fix (chown/chmod on the repository path) which is prohibited.",
+      "decision_sha256": "2b87da289ea25893f185638df8bc01fc69d14364d3e8ce4607ee3eaea1fa7749"
+    },
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:alibaba__one-java-agent_CVE-2022-25842_0.0.1",
+    "project_slug": "alibaba__one-java-agent_CVE-2022-25842_0.0.1",
+    "status": "no_safe_llm_repair",
+    "recorded_at": "2026-08-23T15:29:16+00:00",
+    "attempt_number": 1,
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "b911af2bb779917c84a016350700745dc31c642a",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_alibaba__one-java-agent_CVE-2022-25842_0.0.1/attempt-001/source-preflight",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:alibaba__one-java-agent_CVE-2022-25842_0.0.1",
+        "expected_revision_matches_receipt": true,
+        "reason": null,
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": true,
+        "source_receipt_case_id": "v8:alibaba__one-java-agent_CVE-2022-25842_0.0.1",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": true
+      },
+      "verification_mode": "source_snapshot_receipt",
+      "verified": true
+    },
+    "failed_receipt_sha256": "d24fe5f53a1480fa731c3eaddbe7ac4228e5c395256778822d63d3876e7ab97e",
+    "prior_completion_sha256": "c5999099ed8afccc51a9bbfe7fba442c6d5fa1fdc14fb9152a8b509fbc697aa3",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "fcac6ef8d76eff0a65ba504fd88391d6e9373c2d7e23adede0e96441627fa65b",
+    "proposal_validation_errors": [],
+    "validated_decision": {
+      "schema_version": "route_hacker_codeql_repair.v1:validated_repair_decision",
+      "actions": [
+        {
+          "kind": "no_safe_action"
+        }
+      ],
+      "normalization": {
+        "dropped_redundant_actions": []
+      },
+      "rationale": "The failure is a java.nio.file.AccessDeniedException in WORKSPACE_ROOT/.m2/repository when Maven tries to create a tracking file for maven-enforcer-plugin. This is a filesystem permission issue on the local Maven cache, not a build configuration problem. None of the approved actions (set Java/Maven home, append/remove build args, set heap, prepend clean) can resolve a permission-denied error on the .m2 repository directory.",
+      "decision_sha256": "5478f775dc32b29626972599ce2bcbbf3533591ab0ba0d222d9ddabcf1f60820"
+    },
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:apache__activemq_CVE-2019-0222_5.15.8",
+    "project_slug": "apache__activemq_CVE-2019-0222_5.15.8",
+    "status": "no_safe_llm_repair",
+    "recorded_at": "2026-08-23T15:29:40+00:00",
+    "attempt_number": 1,
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "bcad7e1f6a6dd078d87787a03b56560e995ef773",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_apache__activemq_CVE-2019-0222_5.15.8/attempt-001/source-preflight",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:apache__activemq_CVE-2019-0222_5.15.8",
+        "expected_revision_matches_receipt": true,
+        "reason": null,
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": true,
+        "source_receipt_case_id": "v8:apache__activemq_CVE-2019-0222_5.15.8",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": true
+      },
+      "verification_mode": "source_snapshot_receipt",
+      "verified": true
+    },
+    "failed_receipt_sha256": "374b64a7e2d6c74819faba0eb6bd4e364fab61675f7741f3afc89a139124e517",
+    "prior_completion_sha256": "6f806dd4abf4ab374ef7f164fc433f3b3477b81ea32e77fab1acf52498c6d280",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "ce7592a30c488aefdb183b9bbafcc0f6071cec921e38522a049cff27e9b2f867",
+    "proposal_validation_errors": [],
+    "validated_decision": {
+      "schema_version": "route_hacker_codeql_repair.v1:validated_repair_decision",
+      "actions": [
+        {
+          "kind": "no_safe_action"
+        }
+      ],
+      "normalization": {
+        "dropped_redundant_actions": []
+      },
+      "rationale": "Root cause is java.nio.file.AccessDeniedException on WORKSPACE_ROOT/.m2/repository/org/apache/felix — a filesystem permission error. None of the allowed actions (Java home, Maven home, build args, memory, clean) can repair directory permissions or ownership on the local Maven repository.",
+      "decision_sha256": "db2194b0fcaba3675c4f141409bbff134cb49aaac7cc51c4a7cd1d86e7a91033"
+    },
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:apache__activemq_CVE-2020-11998_5.15.12",
+    "project_slug": "apache__activemq_CVE-2020-11998_5.15.12",
+    "status": "no_safe_llm_repair",
+    "recorded_at": "2026-08-23T15:29:51+00:00",
+    "attempt_number": 1,
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "cebbd7fdea0633e6a0cbbef427f9b753949fa531",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_apache__activemq_CVE-2020-11998_5.15.12/attempt-001/source-preflight",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:apache__activemq_CVE-2020-11998_5.15.12",
+        "expected_revision_matches_receipt": true,
+        "reason": null,
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": true,
+        "source_receipt_case_id": "v8:apache__activemq_CVE-2020-11998_5.15.12",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": true
+      },
+      "verification_mode": "source_snapshot_receipt",
+      "verified": true
+    },
+    "failed_receipt_sha256": "c0510e780575a3e3439a11e15ae53c3e3e4ac625adc58a9fdcff260ea62e67fd",
+    "prior_completion_sha256": "aafbb9b2b27471e57313fc69c0e2a1bdd8fb17c833d77dcbd8079366eeea4fa0",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "dba95f70f0bb9f918277edda9193eaf484139ec9398fee95b9423b6ea4700d3a",
+    "proposal_validation_errors": [],
+    "validated_decision": {
+      "schema_version": "route_hacker_codeql_repair.v1:validated_repair_decision",
+      "actions": [
+        {
+          "kind": "no_safe_action"
+        }
+      ],
+      "normalization": {
+        "dropped_redundant_actions": []
+      },
+      "rationale": "The root cause is java.nio.file.AccessDeniedException on WORKSPACE_ROOT/.m2/repository/org/apache/felix — a filesystem permission issue preventing Maven from creating directories in the local repository. None of the allowed actions (toolchain switches, build args, Maven heap, clean) can resolve a disk permission/ownership problem. This requires filesystem-level remediation outside the permitted action set.",
+      "decision_sha256": "5d2a1bc6a2d2b78ca32022327109743786252761f76b3c8420556044f2e0cf53"
+    },
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:apache__dolphinscheduler_CVE-2022-26884_2.0.5",
+    "project_slug": "apache__dolphinscheduler_CVE-2022-26884_2.0.5",
+    "status": "no_safe_llm_repair",
+    "recorded_at": "2026-08-23T15:30:01+00:00",
+    "attempt_number": 1,
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "f31328276c12821c21d1ce07e824bc74146c19b2",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_apache__dolphinscheduler_CVE-2022-26884_2.0.5/attempt-001/source-preflight",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:apache__dolphinscheduler_CVE-2022-26884_2.0.5",
+        "expected_revision_matches_receipt": true,
+        "reason": null,
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": true,
+        "source_receipt_case_id": "v8:apache__dolphinscheduler_CVE-2022-26884_2.0.5",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": true
+      },
+      "verification_mode": "source_snapshot_receipt",
+      "verified": true
+    },
+    "failed_receipt_sha256": "1bdf22f5aed20ae2e9c2e7721fe8c68f091385d2a62583a0ed716375aea02489",
+    "prior_completion_sha256": "b5be24cc591be59a6e7045e720552cf35f56837869190000cc8f2e2eb967ca74",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "753d4ec96eaeb024d302239bfdb17d7ddf17f455b7387ba2681bd92a370eac59",
+    "proposal_validation_errors": [],
+    "validated_decision": {
+      "schema_version": "route_hacker_codeql_repair.v1:validated_repair_decision",
+      "actions": [
+        {
+          "kind": "no_safe_action"
+        }
+      ],
+      "normalization": {
+        "dropped_redundant_actions": []
+      },
+      "rationale": "The failure is a java.nio.file.AccessDeniedException on WORKSPACE_ROOT/.m2/repository/org/apache/apache/21 — Maven cannot write to its local repository cache. This is a filesystem permission issue, not a build configuration or toolchain problem. No allowed action (toolchain selection, build args, Maven heap, clean) can resolve a local-repo access-denied error.",
+      "decision_sha256": "77971d23cdd2e7ef438fc8163a1fee3f410df23bd5d976386346403ea8f25b73"
+    },
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:apache__dolphinscheduler_CVE-2022-34662_2.0.9",
+    "project_slug": "apache__dolphinscheduler_CVE-2022-34662_2.0.9",
+    "status": "no_safe_llm_repair",
+    "recorded_at": "2026-08-23T15:30:13+00:00",
+    "attempt_number": 1,
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "23302054559410093573fb169336bafeb02db97f",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_apache__dolphinscheduler_CVE-2022-34662_2.0.9/attempt-001/source-preflight",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:apache__dolphinscheduler_CVE-2022-34662_2.0.9",
+        "expected_revision_matches_receipt": true,
+        "reason": null,
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": true,
+        "source_receipt_case_id": "v8:apache__dolphinscheduler_CVE-2022-34662_2.0.9",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": true
+      },
+      "verification_mode": "source_snapshot_receipt",
+      "verified": true
+    },
+    "failed_receipt_sha256": "543905b304b8f7775864a7b341957d8113198f67c3eb69fecea70fddb9fbd20b",
+    "prior_completion_sha256": "235003835b036c54207bfd2f162e61e2416a771afe5f5395b147e01a9ea52f41",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "c3331e133a610e26b962b5714d6bb55c38bf1e357ae3384cd5baff5b35a0a637",
+    "proposal_validation_errors": [],
+    "validated_decision": {
+      "schema_version": "route_hacker_codeql_repair.v1:validated_repair_decision",
+      "actions": [
+        {
+          "kind": "no_safe_action"
+        }
+      ],
+      "normalization": {
+        "dropped_redundant_actions": []
+      },
+      "rationale": "AccessDeniedException on WORKSPACE_ROOT/.m2/repository/org/apache/apache/21 — local Maven cache permission denied. None of the allowed actions (Java home, Maven home, build args, heap) can resolve a filesystem permission issue on the local Maven repository.",
+      "decision_sha256": "265489c03a2e49945e66be79df39dff3c407548fe462073e835532afb8997e1b"
+    },
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:apache__dubbo_CVE-2021-30180_2.7.9",
+    "project_slug": "apache__dubbo_CVE-2021-30180_2.7.9",
+    "status": "no_safe_llm_repair",
+    "recorded_at": "2026-08-23T15:30:18+00:00",
+    "attempt_number": 1,
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "f0483b80a32e813a4393879744e30d0084c3eafd",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_apache__dubbo_CVE-2021-30180_2.7.9/attempt-001/source-preflight",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:apache__dubbo_CVE-2021-30180_2.7.9",
+        "expected_revision_matches_receipt": true,
+        "reason": null,
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": true,
+        "source_receipt_case_id": "v8:apache__dubbo_CVE-2021-30180_2.7.9",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": true
+      },
+      "verification_mode": "source_snapshot_receipt",
+      "verified": true
+    },
+    "failed_receipt_sha256": "0450e472715ae16c0341ad123c9a90b86d6a18d9e95789cb17239353e5dd6617",
+    "prior_completion_sha256": "f70164c78ae2fb77ac7f95c8cc31c319562262e012075a9a7033df5b595c7e7d",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "0d36c35ba25b1927526b1ef50a5a7d2b48f3e90d252d4c7817eef89bc1dfa34f",
+    "proposal_validation_errors": [],
+    "validated_decision": {
+      "schema_version": "route_hacker_codeql_repair.v1:validated_repair_decision",
+      "actions": [
+        {
+          "kind": "no_safe_action"
+        }
+      ],
+      "normalization": {
+        "dropped_redundant_actions": []
+      },
+      "rationale": "The root cause is a filesystem permission error (AccessDeniedException on WORKSPACE_ROOT/.m2/repository/org/apache/apache/23). None of the allowed actions (Java/Maven home changes, build arg adjustments, heap settings) can resolve a directory ownership or permission issue. A retry without fixing permissions would fail identically.",
+      "decision_sha256": "ed42146615a41d29b7fc0573aacafc5ce28246c0363d42181db081fc9ca0f5dc"
+    },
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:apache__incubator-dubbo_CVE-2021-30181_2.6.8",
+    "project_slug": "apache__incubator-dubbo_CVE-2021-30181_2.6.8",
+    "status": "no_safe_llm_repair",
+    "recorded_at": "2026-08-23T15:30:30+00:00",
+    "attempt_number": 1,
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "5a6a069986f3627f2d50720c50024df31a3dc38a",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_apache__incubator-dubbo_CVE-2021-30181_2.6.8/attempt-001/source-preflight",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:apache__incubator-dubbo_CVE-2021-30181_2.6.8",
+        "expected_revision_matches_receipt": true,
+        "reason": null,
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": true,
+        "source_receipt_case_id": "v8:apache__incubator-dubbo_CVE-2021-30181_2.6.8",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": true
+      },
+      "verification_mode": "source_snapshot_receipt",
+      "verified": true
+    },
+    "failed_receipt_sha256": "5fcf79c9e6e35bfbf4292020cf7223c4b9e2e9025ab8e03d7437491eeeac3ab3",
+    "prior_completion_sha256": "08f556b123db3baf07762fe501cf6e1bf6d67f935dfb6f0a1154be365ab5aaa0",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "f413d0e5e7df671cbe9e7ba47c89db4d61fa8fc73ed7fd1d8c7f301ce02516cc",
+    "proposal_validation_errors": [],
+    "validated_decision": {
+      "schema_version": "route_hacker_codeql_repair.v1:validated_repair_decision",
+      "actions": [
+        {
+          "kind": "no_safe_action"
+        }
+      ],
+      "normalization": {
+        "dropped_redundant_actions": []
+      },
+      "rationale": "The root cause is java.nio.file.AccessDeniedException on WORKSPACE_ROOT/.m2/repository/org/springframework — a local Maven cache permission issue. None of the allowed actions (Java home, Maven home, Ant home, build args, heap size, clean) can resolve a filesystem permission problem on the .m2 repository.",
+      "decision_sha256": "1cd5102109d6dac106f7381ba2b96697ba5ddd1581be4c1a249c2e8375f3c7cf"
+    },
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:apache__jspwiki_CVE-2019-0225_2.11.0.M2",
+    "project_slug": "apache__jspwiki_CVE-2019-0225_2.11.0.M2",
+    "status": "no_safe_llm_repair",
+    "recorded_at": "2026-08-23T15:30:36+00:00",
+    "attempt_number": 1,
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "d48bcef107a14dd07ecd830ab817b8df796082a4",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_apache__jspwiki_CVE-2019-0225_2.11.0.M2/attempt-001/source-preflight",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:apache__jspwiki_CVE-2019-0225_2.11.0.M2",
+        "expected_revision_matches_receipt": true,
+        "reason": null,
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": true,
+        "source_receipt_case_id": "v8:apache__jspwiki_CVE-2019-0225_2.11.0.M2",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": true
+      },
+      "verification_mode": "source_snapshot_receipt",
+      "verified": true
+    },
+    "failed_receipt_sha256": "e6df946cb6d14a2f8a40e1e898c2752b5b56272422d982e189abb35d4b91bfad",
+    "prior_completion_sha256": "dcc873ba2f9e594c5e356e3d595a51f6c3d4ee36893ba682b24b0f3358deef34",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "b5a9b549792ab1883ef11a0e4e61bfd99517c2b3f07b9544ee842d0b1be2e63b",
+    "proposal_validation_errors": [],
+    "validated_decision": {
+      "schema_version": "route_hacker_codeql_repair.v1:validated_repair_decision",
+      "actions": [
+        {
+          "kind": "no_safe_action"
+        }
+      ],
+      "normalization": {
+        "dropped_redundant_actions": []
+      },
+      "rationale": "Root cause is AccessDeniedException on WORKSPACE_ROOT/.m2/repository/org/apache/apache/21 — a local Maven repository filesystem permission issue. None of the approved actions (which are limited to JDK/Maven home selection, build arg tuning, heap size, and mvn clean prepend) can repair a broken .m2 cache. retry_same_command would reproduce the same error.",
+      "decision_sha256": "46fe50ec0318d6a24c24aa8ae396f77957bf1b9c858a64253c69668d9594bf37"
+    },
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:apache__jspwiki_CVE-2019-10076_2.11.0.M3",
+    "project_slug": "apache__jspwiki_CVE-2019-10076_2.11.0.M3",
+    "status": "no_safe_llm_repair",
+    "recorded_at": "2026-08-23T15:30:49+00:00",
+    "attempt_number": 1,
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "2ea7973c1c7fdf2771a9743dbc8ecb27c9bb162d",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "iris-a26/dispatch-discovery113-generic-repair-r1-20260823T2010Z/dispatch/cases/v8_apache__jspwiki_CVE-2019-10076_2.11.0.M3/attempt-001/source-preflight",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:apache__jspwiki_CVE-2019-10076_2.11.0.M3",
+        "expected_revision_matches_receipt": true,
+        "reason": null,
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": true,
+        "source_receipt_case_id": "v8:apache__jspwiki_CVE-2019-10076_2.11.0.M3",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": true
+      },
+      "verification_mode": "source_snapshot_receipt",
+      "verified": true
+    },
+    "failed_receipt_sha256": "205f26401354fe93dd981df482ef5c08eec15a30b9f1e41a69d4cf45a5b646ca",
+    "prior_completion_sha256": "2e6f96e8814872b07b4a3ea0825d8538ef3e5ae3b88108c2119aabc19c07461f",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "c9c6531428b8bd5e9f13eed8545c48b94e841c5076188a5476f02737da539759",
+    "proposal_validation_errors": [],
+    "validated_decision": {
+      "schema_version": "route_hacker_codeql_repair.v1:validated_repair_decision",
+      "actions": [
+        {
+          "kind": "no_safe_action"
+        }
+      ],
+      "normalization": {
+        "dropped_redundant_actions": []
+      },
+      "rationale": "Root cause is java.nio.file.AccessDeniedException on WORKSPACE_ROOT/.m2/repository/org/apache/apache/21 — a filesystem permission error in the local Maven repository. None of the approved actions (Java/Maven/Ant home switches, build-arg adjustments, heap settings, or maven clean) can resolve a directory creation permission failure on the filesystem.",
+      "decision_sha256": "46cce5636d5ad3ccfc39e4a637a6b122d47aa5cf21c62b6901281c8ccbd586a7"
+    },
+    "historical_snapshot": true
+  }
+]

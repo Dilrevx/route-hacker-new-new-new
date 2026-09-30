@@ -1,0 +1,56 @@
+diff --git a/Dockerfile b/Dockerfile
+index bef57e5..10c2028 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -1,6 +1,4 @@
+-# syntax=docker/dockerfile:1.7
+-
+-ARG GO_VERSION=1.26.4
++ARG GO_VERSION=1.24
+ 
+ FROM golang:${GO_VERSION}-alpine AS build
+ WORKDIR /src
+@@ -13,16 +11,10 @@ RUN go mod download
+ COPY . .
+ 
+ ARG VERSION=dev
+-RUN CGO_ENABLED=0 go build -trimpath \
+-        -ldflags "-s -w -X main.versionStr=${VERSION}" \
+-        -o /out/nebula-mgmt ./cmd/nebula-mgmt
++RUN CGO_ENABLED=0 go build -trimpath         -ldflags "-s -w -X main.versionStr=${VERSION}"         -o /out/nebula-mgmt ./cmd/nebula-mgmt
+ 
+ FROM alpine:3.20
+-RUN apk add --no-cache ca-certificates tzdata wget && \
+-    addgroup -S -g 10001 nebula && \
+-    adduser  -S -u 10001 -G nebula nebula && \
+-    mkdir -p /var/lib/nebula-mgmt /etc/nebula-mgmt && \
+-    chown -R nebula:nebula /var/lib/nebula-mgmt /etc/nebula-mgmt
++RUN apk add --no-cache ca-certificates tzdata wget &&     addgroup -S -g 10001 nebula &&     adduser  -S -u 10001 -G nebula nebula &&     mkdir -p /var/lib/nebula-mgmt /etc/nebula-mgmt &&     chown -R nebula:nebula /var/lib/nebula-mgmt /etc/nebula-mgmt
+ 
+ COPY --from=build /out/nebula-mgmt /usr/local/bin/nebula-mgmt
+ 
+@@ -32,11 +24,7 @@ WORKDIR /var/lib/nebula-mgmt
+ EXPOSE 8080
+ VOLUME ["/var/lib/nebula-mgmt", "/etc/nebula-mgmt"]
+ 
+-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+-  CMD wget -qO- http://127.0.0.1:8080/healthz >/dev/null || exit 1
++HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3   CMD wget -qO- http://127.0.0.1:8080/healthz >/dev/null || exit 1
+ 
+ ENTRYPOINT ["/usr/local/bin/nebula-mgmt"]
+-# Containers bind 0.0.0.0 and terminate TLS at the ingress/reverse proxy, so the
+-# app layer serves plaintext to the container network by design. --insecure-http
+-# opts past the loopback-only guard (#179); put TLS in front at your ingress.
+ CMD ["serve", "--config", "/etc/nebula-mgmt/server.yml", "--insecure-http"]
+diff --git a/go.mod b/go.mod
+index f14b6b8..97879fc 100644
+--- a/go.mod
++++ b/go.mod
+@@ -1,6 +1,6 @@
+ module github.com/forgekeep/nebula-mesh
+ 
+-go 1.26.4
++go 1.24.4
+ 
+ require (
+ 	github.com/boombuler/barcode v1.0.1-0.20190219062509-6c824513bacc

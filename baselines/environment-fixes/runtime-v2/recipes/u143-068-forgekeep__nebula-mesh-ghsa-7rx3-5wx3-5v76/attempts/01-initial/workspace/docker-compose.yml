@@ -1,0 +1,6 @@
+services:
+  nebula-mgmt:
+    image: nebula-mesh-u143-068:latest
+    ports:
+      - 127.0.0.1:18080:8080
+    restart: unless-stopped

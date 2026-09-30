@@ -1,0 +1,1 @@
+Revision 25 builds cleanly with Java 8 and Maven 3.5.0 using a standard `mvn clean package` command. No non-obvious steps such as parent POM bootstrapping or version patching are required for this revision. The only constraint is that Java 8 is strictly needed, as the project does not

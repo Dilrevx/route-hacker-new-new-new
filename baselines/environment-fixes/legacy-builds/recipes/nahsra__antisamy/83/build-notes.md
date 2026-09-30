@@ -1,0 +1,1 @@
+The build uses explicit HTTP/HTTPS proxy settings and an Aliyun Maven mirror to bypass network restrictions and accelerate dependency downloads. This revision (83) requires Java 17 and Maven 3.9.8, which are explicitly set to avoid compatibility issues with older versions. Watch out for any proxy or mirror changes if the build environment differs.

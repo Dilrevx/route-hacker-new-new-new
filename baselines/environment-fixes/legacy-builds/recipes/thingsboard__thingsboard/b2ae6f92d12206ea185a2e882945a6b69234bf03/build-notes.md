@@ -1,0 +1,3 @@
+- Setting `JAVA_HOME` to JDK 17 is required because this revision’s `pom.xml` specifies `maven.compiler.source=17`; the base image’s default JDK is 11.  
+- The Maven settings override removes a proxy configuration inherited from the base image (which causes timeouts in this environment) and adds an Aliyun mirror to speed up dependency downloads.  
+- The build explicitly excludes `ui-ngx` and `msa/web-ui` modules because they require Node.js and frontend tooling not available in this environment; note that any future revision that changes the UI module dependencies might require adjusting the exclusion list.

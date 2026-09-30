@@ -18,6 +18,7 @@ query-LoRA experiments are not this model.
 | [verification tools](tools/) | Offline hash, split, ranking, and optional checkpoint checks |
 | [verification receipt](verification-receipt.json) | Source-hash, metric, checkpoint, and public-download checks performed for this archive |
 | [existing fixed143 results](../../new-impl/new-guideline/results/p3c64-fixed143-paper-eval-20260820/) | P3C64 and frozen 4B per-case rank tables, frozen identities, and comparison summaries |
+| [environment repairs](../environment-fixes/README.md) | Historical project build/launch recipes, patches, and verification indexes; separate evidence levels and dependency requirements |
 
 The archived files retain their original bytes, including historical local paths.
 Those paths are provenance, not portable defaults or instructions to overwrite a

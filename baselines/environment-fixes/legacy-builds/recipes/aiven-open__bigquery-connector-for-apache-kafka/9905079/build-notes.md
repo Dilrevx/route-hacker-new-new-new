@@ -1,0 +1,1 @@
+- The Dockerfile creates a custom Maven settings file pointing to Aliyun’s Central mirror (`https

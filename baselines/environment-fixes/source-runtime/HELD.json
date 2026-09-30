@@ -1,0 +1,479 @@
+{
+  "schema": "source-runtime-held-inputs.v1",
+  "not_included": 95,
+  "files": [
+    {
+      "sha256": "a0e94cf02bc4ce83eafee1e7123845611d3b24daa2ef737bd63b0af89380c895",
+      "reason": "Held for manual sensitive-literal review; contents remain private."
+    },
+    {
+      "sha256": "f7a60521757b5781138170ca6f6859d11fa1b823decafe51bb4c999053e237f8",
+      "reason": "Held for manual sensitive-literal review; contents remain private."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/com/fasterxml/jackson/annotation/JsonInclude.java",
+      "sha256": "7208363d5da14fb02e1517e44505dccc55503c9a5d98f9c6027082d3ea5a7a09",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/com/fasterxml/jackson/annotation/JsonProperty.java",
+      "sha256": "fc9bf2713b92c2852443faf6eb71daeb70dd18cc79131f93809709c8417271eb",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/com/google/common/annotations/VisibleForTesting.java",
+      "sha256": "d1b9af32c4e2a0661113dbb942b2c69dfe3ff3478478469dc568346710b31c41",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/com/google/common/base/Preconditions.java",
+      "sha256": "54381bd9e11fbe38cc21aaceb93ca04633613606d3f0a012b83cafc998190630",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/com/google/common/collect/Maps.java",
+      "sha256": "e7249739450fa631f2d0ae046d2017507487e4da28845dab698c1cac8a36f7fe",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/com/sun/jersey/spi/container/ResourceFilters.java",
+      "sha256": "e9a029090adcab301b185f89058a247a1a73aee084eff364405fe52b2d20039e",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/javax/annotation/Nonnull.java",
+      "sha256": "a2d70deac0b772f8de79d5baa97bcc00dabecdd9dea298094a72c4cefd25b7d3",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/javax/annotation/Nullable.java",
+      "sha256": "978690982d2babadeb33d74410c3066c1b81b26d9c6a00c17e1689c8911a5ed0",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/javax/inject/Inject.java",
+      "sha256": "9ba219f7f85edeb08ff70369df4372951ea6eedcc4a823188853451fbff8695c",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/javax/ws/rs/core/Context.java",
+      "sha256": "3377eaf1469d6a24616337ad91abb6d351a2d62cbe138beaed641c244d395e99",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/javax/ws/rs/core/MediaType.java",
+      "sha256": "3bc573a62caa7e18cd0f24881d3f499bef251695944c9c46a10482110ad22b81",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/javax/ws/rs/core/Response.java",
+      "sha256": "7c364c8dc445dd4b635d16048b12e3a6b86db6779635001dcbdc28e88b527a46",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/javax/ws/rs/GET.java",
+      "sha256": "d2937c4a8346539b4b04a050cdb380e73378e75e58d02af68df07e79eb70cabf",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/javax/ws/rs/Path.java",
+      "sha256": "2f99e4672284c03c51426293597aa34ca2949bc47a7309ff3167ce643876d035",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/javax/ws/rs/Produces.java",
+      "sha256": "3c81f6981cabbc71f9661044fc17f9c17d050d6a64ad35fcdadad3327d0c42cd",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/org/apache/druid/client/DruidServerConfig.java",
+      "sha256": "9db38d3712fd127a5cc56a2b269e7a9076ce260db1f73a49a9a13d48ad00b5b7",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/org/apache/druid/common/guava/GuavaUtils.java",
+      "sha256": "3164a47da0956eed75a92bf6c0326ebb5c059b440c0a73963088b00c3f177e1c",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/org/apache/druid/error/DruidException.java",
+      "sha256": "d6c7bb83188485d20bc71f2324bbcb953fa53a0f43c1c1b5fdf1b76490414174",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/org/apache/druid/guice/ExtensionsLoader.java",
+      "sha256": "c513ae6a08349368c47e4570127ec8ef10319eaa36f2a36cc99155d8a9840843",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/org/apache/druid/initialization/DruidModule.java",
+      "sha256": "5a4150f5251a750d99488dc2ccd11c411d8fce27a943a71772f159ce0da60793",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/org/apache/druid/java/util/common/logger/Logger.java",
+      "sha256": "f25fa69ba665b36a7fdc9c640eda1c36d838c23ef915aa7d717c00797f6a49a9",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/org/apache/druid/java/util/common/StringUtils.java",
+      "sha256": "ee348ab8a2f8fc77b31c9b761f8c3c387257e9f6812cf4d3e0c0c9c2be0bac39",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/org/apache/druid/server/DruidStatusProbeRunner.java",
+      "sha256": "6ae31c072d16ebb86f009b89f6d62c69a4afff97477904b3d83021f3d18f1a8c",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/org/apache/druid/server/http/security/ConfigResourceFilter.java",
+      "sha256": "4be12ff01268aec298f38a8978fc7f2d40dd8b8241c7b19b65e6ad7fda94c4d8",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/org/apache/druid/server/http/security/StateResourceFilter.java",
+      "sha256": "1008196d21fda1589aa639e7a040b87418aa02e322af4bc185d00cfa51b731d5",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/org/apache/druid/server/ServiceAnnouncementState.java",
+      "sha256": "cdb86b16b5b3b715be82e8ee8d7bddce5a5e9647b54627628fb44f9c799094c1",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/org/apache/druid/server/StatusResource.java",
+      "sha256": "3f3a43ee975d13fa734d058c82cffe758fc6e4edcd4dc327083a3f7294fef34e",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/org/apache/druid/timeline/DataSegment.java",
+      "sha256": "afb5be045590aba20029d3b34b26d2f5288dc196ce871a1606c2b250edd79ff5",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/org/apache/druid/timeline/SegmentId.java",
+      "sha256": "57d92ba91e9e4abb976b37211b68820f68c990f554f303b89b59dc2325afda21",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/mini-src/org/apache/druid/utils/RuntimeInfo.java",
+      "sha256": "00a1413c2de2900fff25e7c140b7f849de9c8ddbb840379688e7774d902e6940",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_flink__CVE-2021-44228__source_inserted/mini-src/org/apache/flink/client/cli/CliFrontend.java",
+      "sha256": "44e5074a090bdde295e348d6876f9f70dc8be622d1d25b815808cc605e15a6bc",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_flink__CVE-2021-44228__source_inserted/runner-src/org/apache/flink/client/cli/FlinkCliFrontendProbeRunner.java",
+      "sha256": "ce95c573e0873739ad5849d6734974777bc893cc668e3195b0656949a835a1ca",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_hive__CVE-2021-44228__source_inserted/mini-src/org/apache/hive/beeline/hs2connection/HiveParserProbeRunner.java",
+      "sha256": "29a5431527be7fc7eac171e95280277e495510270c7461d80d3be2a776960f23",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_ignite__CVE-2021-44228__source_inserted/mini-src/IgniteCommandLineProbeRunner.java",
+      "sha256": "7452701fb05a2d5fc2337097b727f485595de3454bea0b322bac3a4c590be3db",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_ignite__CVE-2021-44228__source_inserted/mini-src/org/apache/ignite/IgniteCheckedException.java",
+      "sha256": "04f9e59e5f4bed2d3dcc297cd76e2e5905cfc5f17493ef24cc31997fd914339d",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_ignite__CVE-2021-44228__source_inserted/mini-src/org/apache/ignite/IgniteState.java",
+      "sha256": "13a5564e527bd158947c6e6b266a77372afb93e5173c0ab7106772fd2e101906",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_ignite__CVE-2021-44228__source_inserted/mini-src/org/apache/ignite/IgniteSystemProperties.java",
+      "sha256": "4be169d7a222ff13f9841502fb8e2d4cc5a7537e770d74a40285ac79b48b43d8",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_ignite__CVE-2021-44228__source_inserted/mini-src/org/apache/ignite/IgnitionListener.java",
+      "sha256": "f8acdb8bdc1024ba581f4b10ea9a6a6063109d8c06906a3382b53e2687b71a60",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_ignite__CVE-2021-44228__source_inserted/mini-src/org/apache/ignite/internal/IgniteVersionUtils.java",
+      "sha256": "b6da994eb1a385c40b93d5d01b18f2473d22ff2d933f9951494ff99f48c0c5fb",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_ignite__CVE-2021-44228__source_inserted/mini-src/org/apache/ignite/internal/processors/cache/GridCacheMapEntry.java",
+      "sha256": "7025c30e6462f688ed638ef1d46346402ec4711a4d908438c5a9f28207262e42",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_ignite__CVE-2021-44228__source_inserted/mini-src/org/apache/ignite/internal/processors/cache/persistence/freelist/PagesList.java",
+      "sha256": "8fcc120d85ff4855d3fbb7daf9bea55b808311f82e3abfb067f985f11fb64ded",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_ignite__CVE-2021-44228__source_inserted/mini-src/org/apache/ignite/internal/processors/cache/persistence/GridCacheDatabaseSharedManager.java",
+      "sha256": "32d513bffd8da426a50f67f956e13da9b5b83c3751df4b6a8b9cb83007c34577",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_ignite__CVE-2021-44228__source_inserted/mini-src/org/apache/ignite/internal/processors/cache/persistence/GridCacheOffheapManager.java",
+      "sha256": "c32aaabf97e0e555fc660360067f3f744975aa2bd816a1c98359d87305c1cb71",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_ignite__CVE-2021-44228__source_inserted/mini-src/org/apache/ignite/internal/processors/cache/query/continuous/CacheContinuousQueryEventBuffer.java",
+      "sha256": "31b5f20770923bc7f1613b3ceddb90a00ff482ce28d084cf2de04e0748a3c1ad",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_ignite__CVE-2021-44228__source_inserted/mini-src/org/apache/ignite/internal/processors/cache/query/continuous/CacheContinuousQueryHandler.java",
+      "sha256": "74d7e37a5f02f48adef53ff2a30869a8c743124fc74afd5718985933df86981d",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_ignite__CVE-2021-44228__source_inserted/mini-src/org/apache/ignite/internal/util/GridConfigurationFinder.java",
+      "sha256": "c15f01e94fe135d242be7a12422413a1f51df4368a64942d430aa88a575b0c3e",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_ignite__CVE-2021-44228__source_inserted/mini-src/org/apache/ignite/internal/util/lang/GridTuple3.java",
+      "sha256": "1f7966eeaa79b931d971e848b1bef8ea8f206237b549411409fc4bf11efed408",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_ignite__CVE-2021-44228__source_inserted/mini-src/org/apache/ignite/internal/util/OffheapReadWriteLock.java",
+      "sha256": "fbc2583a695820ae8810aa44c20fa8826165931d57167e82775da0886f4f61c7",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_ignite__CVE-2021-44228__source_inserted/mini-src/org/apache/ignite/internal/util/typedef/G.java",
+      "sha256": "b160697f24c1175a6e6e58d7aab32039503cddf5e44512622112997b23efaf2a",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_ignite__CVE-2021-44228__source_inserted/mini-src/org/apache/ignite/internal/util/typedef/internal/U.java",
+      "sha256": "4984b07b9d26cfed50783e619089ef302b3db9d0e3572755cd947d8732b40b37",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_ignite__CVE-2021-44228__source_inserted/mini-src/org/apache/ignite/internal/util/typedef/X.java",
+      "sha256": "78548ece7f20b23d23455f4f4dc92aefe0fc5d430930821a5583fe94406e8fb4",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_ignite__CVE-2021-44228__source_inserted/mini-src/org/apache/ignite/spi/communication/tcp/internal/TcpCommunicationConfiguration.java",
+      "sha256": "3ab7e0428085e229032d4e665f472ce343f5ec05e4b4b16364a622dc2709af01",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_ignite__CVE-2021-44228__source_inserted/mini-src/org/apache/ignite/spi/deployment/local/LocalDeploymentSpi.java",
+      "sha256": "ca9f5d6a0b30a4a8a7998483c19f94b79497269d9d541a5ce72d0861eb3f2150",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_ignite__CVE-2021-44228__source_inserted/mini-src/org/apache/ignite/startup/cmdline/AboutDialog.java",
+      "sha256": "5768a5599818ed0dc03d169b635881df46bf2a289d8a07a1e724e180084ca19e",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_ignite__CVE-2021-44228__source_inserted/mini-src/org/apache/ignite/startup/cmdline/CommandLineStartup.java",
+      "sha256": "66e6d618dd0e244c4ae1f01a60d49ab0238d239d286f70d69a60072b57ad1180",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_ignite__CVE-2021-44228__source_inserted/mini-src/org/apache/ignite/SystemProperty.java",
+      "sha256": "64692c2e3c302d2aaee410fa4af39a19ae2f569c67489901ee23e5a0ab255da2",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_ignite__CVE-2021-44228__source_inserted/mini-src/org/jetbrains/annotations/Nullable.java",
+      "sha256": "5e3ec8ba234c0d7d66daa6758ee130c7fd9dfa270436e9078801a4c4cba94e1d",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_nifi_stateless__CVE-2021-42550__source_inserted/source/nifi-stateless/nifi-stateless-resources/src/main/resources/bin/nifi-stateless.sh",
+      "sha256": "4da84a709e0d4a475553dc3495dfd50a70c9b7414a20cf3e1efe8e4853d07d42",
+      "reason": "Complete upstream Apache NiFi launch script: header retained privately, but referenced NOTICE/license packaging was not recovered; excluded from the public candidate."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_pulsar__CVE-2021-44228__source_inserted/PulsarCmdConsumeProbeRunner.java",
+      "sha256": "5ec94e791c6e8e98eb2d84138cb53a899c84f915b30208d5594d198fe4b3a591",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_skywalking__CVE-2021-44228__source_inserted/mini-src/com/linecorp/armeria/common/HttpRequest.java",
+      "sha256": "051cf1cb1dd6e4fcf13abc4eb8803993e51d05082739ccc1df421b26639fa46e",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_skywalking__CVE-2021-44228__source_inserted/mini-src/com/linecorp/armeria/common/HttpResponse.java",
+      "sha256": "83acae1a033b93431e95f0d33f77bf1c4b0cba0a618d5b485282c1d4be0c6341",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_skywalking__CVE-2021-44228__source_inserted/mini-src/com/linecorp/armeria/server/annotation/Blocking.java",
+      "sha256": "5d01dddf4085f922a157101d86644d80eef2293eb37c57cbadcb0ed6aee7dd4e",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_skywalking__CVE-2021-44228__source_inserted/mini-src/com/linecorp/armeria/server/annotation/Post.java",
+      "sha256": "396b16c0a677456d984a1a71f708ea99e2abbb939499effa4a053fd3fd6a5242",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_skywalking__CVE-2021-44228__source_inserted/mini-src/com/linecorp/armeria/server/graphql/GraphqlService.java",
+      "sha256": "99dac547a668f6a498ac40e1b392d0bfe3b0534064dc7e77c3ec6227ea6e4998",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_skywalking__CVE-2021-44228__source_inserted/mini-src/com/linecorp/armeria/server/ServiceRequestContext.java",
+      "sha256": "ae7dc665fe28ebe7f3534f72538ed3ec7319252346ac33ab3a750673c9cff0d1",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_skywalking__CVE-2021-44228__source_inserted/mini-src/graphql/analysis/MaxQueryComplexityInstrumentation.java",
+      "sha256": "1a1dfd996e626a952cb6318ceaf87f6dcdb0beabdc1066661558bfb539e483d3",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_skywalking__CVE-2021-44228__source_inserted/mini-src/graphql/execution/instrumentation/Instrumentation.java",
+      "sha256": "dcda65d918ecd806c2bfabb9f0ea1cdca04f581f7526745ebabcde7117ba1b16",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_skywalking__CVE-2021-44228__source_inserted/mini-src/graphql/schema/GraphQLSchema.java",
+      "sha256": "0993d52ecb2ae927b78f205d9a5da092911b28d88a81fa5f3a06a6d7aaabc641",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_skywalking__CVE-2021-44228__source_inserted/mini-src/org/apache/skywalking/oap/query/graphql/GraphQLQueryConfig.java",
+      "sha256": "008bdaaa0e5a3313f79667b205b88c999ace7a1e2d3faa0c1cfa2025b6dc41f3",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_skywalking__CVE-2021-44228__source_inserted/mini-src/org/apache/skywalking/oap/query/graphql/GraphQLQueryHandler.java",
+      "sha256": "65c09070564dea9354c645b53edc6820bbe386c3475e05d6ac30952c526a96e3",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_skywalking__CVE-2021-44228__source_inserted/mini-src/org/apache/skywalking/oap/server/library/module/ModuleManager.java",
+      "sha256": "6d348160707a25d5ff8d16f8db0f1bd7b26f4228b03fdd39c7c0a4ae99f5ca41",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_skywalking__CVE-2021-44228__source_inserted/mini-src/org/apache/skywalking/oap/server/telemetry/api/CounterMetrics.java",
+      "sha256": "d90f95b3b3e8554a5c1a12a2c9feb4e4b129612a3f6e69e7f5285229e724c891",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_skywalking__CVE-2021-44228__source_inserted/mini-src/org/apache/skywalking/oap/server/telemetry/api/HistogramMetrics.java",
+      "sha256": "456b144a39565d94014cd17d60160ae73e847050edfa0647c37fbb8bf3e18f43",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_skywalking__CVE-2021-44228__source_inserted/mini-src/org/apache/skywalking/oap/server/telemetry/api/MetricsCreator.java",
+      "sha256": "82a022bb910fad39d7cbc8ba1ac293c96e76589a4fbfa611f665e2e0d9e54941",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_skywalking__CVE-2021-44228__source_inserted/mini-src/org/apache/skywalking/oap/server/telemetry/api/MetricsTag.java",
+      "sha256": "5cdc8f7d0ec83c4463d272b41634de66772d664847622f5a0989e457b6adc122",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_skywalking__CVE-2021-44228__source_inserted/mini-src/org/apache/skywalking/oap/server/telemetry/TelemetryModule.java",
+      "sha256": "b8f73f9a9702e410da1fd3e26239bda42ef22a697dd16b01f348f5eeb6b7b079",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_skywalking__CVE-2021-44228__source_inserted/mini-src/org/reactivestreams/Publisher.java",
+      "sha256": "287420dc27a2c7642c3bb0c1d494de2b0708b6c120cb5d033f02a173b823ef13",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_skywalking__CVE-2021-44228__source_inserted/mini-src/org/reactivestreams/Subscriber.java",
+      "sha256": "d5e1c1456de87362d80672370838e9eb2c670fd4dc2ca5d8d8bf86f5b41bbf8c",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_skywalking__CVE-2021-44228__source_inserted/mini-src/org/reactivestreams/Subscription.java",
+      "sha256": "3f79558dee2a116e809f2b2ba2053508503f51f6e3c5edcb8c3115fcfee4c018",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_skywalking__CVE-2021-44228__source_inserted/mini-src/SkyWalkingGraphQLProbeRunner.java",
+      "sha256": "0294e3f671ad60efa420e874e166dc18e9f0ace0c123084a0631668676b092fc",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_spark__CVE-2021-44228__source_inserted/runner-src/org/apache/spark/deploy/SparkSubmitSourceRunner.java",
+      "sha256": "efec511db3679dfdf9bd8c062820f6316a3ab6999910aa2f7d09df8eae51ff8c",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_zeppelin__CVE-2021-44228__source_inserted/mini-src/jakarta/inject/Inject.java",
+      "sha256": "ad7aaa3b5e5fb891d2d26cc1d441153855449561a92cc49aeb53ce09097d2795",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_zeppelin__CVE-2021-44228__source_inserted/mini-src/jakarta/inject/Singleton.java",
+      "sha256": "3f602724a9f0ee07261396778d445056ea90db5396a518f5a6e8a6b839b63be6",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_zeppelin__CVE-2021-44228__source_inserted/mini-src/jakarta/ws/rs/BadRequestException.java",
+      "sha256": "4d6e50c2ae44de8cb748bc57241aa1e393779a5a5eafe07ebda5c606eea004b5",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_zeppelin__CVE-2021-44228__source_inserted/mini-src/jakarta/ws/rs/GET.java",
+      "sha256": "4e7ce58b7873dd8fb5fec8481827f3cd12b70c011d45488dbea80ff6f28e9d8d",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_zeppelin__CVE-2021-44228__source_inserted/mini-src/jakarta/ws/rs/Path.java",
+      "sha256": "54663100416c092d6aa994957fa09bbec1d5746238166a9c2f2ee0db9d429a74",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_zeppelin__CVE-2021-44228__source_inserted/mini-src/jakarta/ws/rs/POST.java",
+      "sha256": "4357e71e8644c485ec8e8841b65bccf7c47763d0a9106696a3a7c6e84f63a542",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_zeppelin__CVE-2021-44228__source_inserted/mini-src/jakarta/ws/rs/QueryParam.java",
+      "sha256": "6fcb7a7006c1a70672e6119e16ee485d86b3f58ac2ac4a1953cc92d76afc62ae",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_zeppelin__CVE-2021-44228__source_inserted/mini-src/org/apache/zeppelin/annotation/ZeppelinApi.java",
+      "sha256": "b41ad65d7dcc2938148376b0b3808c7b5860fc7a5367a8bbc7f8e34fde51dbd5",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_zeppelin__CVE-2021-44228__source_inserted/mini-src/org/apache/zeppelin/rest/AdminRestApi.java",
+      "sha256": "0ce98cf7e346b1fea87c6ceafb7e06ef45788cb24106f82f6d622cc97a7360d7",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_zeppelin__CVE-2021-44228__source_inserted/mini-src/org/apache/zeppelin/rest/message/LoggerRequest.java",
+      "sha256": "98b830582fc2ce3393130ae1c9c8d6d0f29c1ccedea545ea77779671ad2b7578",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_zeppelin__CVE-2021-44228__source_inserted/mini-src/org/apache/zeppelin/rest/ZeppelinAdminProbeRunner.java",
+      "sha256": "3ce493649612dca7ad0e06716b6080bf66b05b56621ee083247e8fd33481a79b",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    },
+    {
+      "source_provenance": "source-runtime-verify/apache_zeppelin__CVE-2021-44228__source_inserted/mini-src/org/apache/zeppelin/service/AdminService.java",
+      "sha256": "0a834d335b3fcefb62be543d074bbfebcbf91ee3ceea5ca6a8f999d2bce1c40a",
+      "reason": "Complete Java runner/API-shim source: authorship and license provenance not established; kept private rather than assumed original."
+    }
+  ]
+}

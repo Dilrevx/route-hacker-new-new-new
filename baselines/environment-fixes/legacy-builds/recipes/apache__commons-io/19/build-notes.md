@@ -1,0 +1,1 @@
+The build required setting HTTP/HTTPS proxy variables to fetch Maven dependencies from a restricted network, as this revision (19) relies on external artifacts not cached locally. Using Java 8 is mandatory because commons-io at this revision

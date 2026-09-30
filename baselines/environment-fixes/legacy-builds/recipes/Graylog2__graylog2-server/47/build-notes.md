@@ -1,0 +1,3 @@
+- Skipping the enforcer plugin (`-Denforcer.skip=true`) was required because this revision pins `maven-enforcer-plugin` version 3.0.0, which is incompatible with Maven 3.9.x and causes a build failure.  
+- The workaround is needed only for this specific dependency combination; using a newer enforcer plugin version (3.5.0+) or a different Maven version would avoid the issue.  
+- Watch out: if updating to a newer Graylog2 revision, the enforcer plugin version may change

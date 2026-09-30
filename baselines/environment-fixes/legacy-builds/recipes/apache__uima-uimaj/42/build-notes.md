@@ -1,0 +1,3 @@
+- Excluded Eclipse plugin modules and docbook aggregators from the build because this revision (r42) introduced dependencies on Eclipse platform features (e.g., `uimaj-eclipse-feature-tools`) that require an Eclipse SDK and PDE, which are not available in this clean build environment.  
+- A pre-cached Maven repository was restored and a proxy was configured because many of UIMA's dependencies (especially for older components) are no longer available from Maven Central or require network access behind a firewall.  
+- The

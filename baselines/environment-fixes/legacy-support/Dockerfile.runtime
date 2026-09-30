@@ -1,0 +1,51 @@
+FROM route-hacker-repo/keycloak__keycloak:a10c8119d4452b866b90a9019b2cc159919276ca
+
+ENV JAVA_HOME=/usr/lib/jvm/temurin-8-jdk-amd64
+ENV PATH=$JAVA_HOME/bin:$PATH
+ENV SERVER_PORT=8080
+ENV PORT=8080
+ENV https_proxy=http://127.0.0.1:2905
+ENV http_proxy=http://127.0.0.1:2905
+ENV HTTPS_PROXY=http://127.0.0.1:2905
+ENV HTTP_PROXY=http://127.0.0.1:2905
+
+RUN echo 'Acquire::http::Proxy "http://127.0.0.1:2905";' > /etc/apt/apt.conf.d/99proxy \
+    && echo 'Acquire::https::Proxy "http://127.0.0.1:2905";' >> /etc/apt/apt.conf.d/99proxy \
+    && echo 'Acquire::https::Verify-Peer "false";' >> /etc/apt/apt.conf.d/99proxy \
+    && echo 'Acquire::https::Verify-Host "false";' >> /etc/apt/apt.conf.d/99proxy
+
+RUN mkdir -p /root/.m2 && cat > /root/.m2/settings.xml <<'XML'
+<settings>
+  <proxies><proxy><id>main</id><active>true</active><protocol>http</protocol>
+    <host>127.0.0.1</host><port>2905</port></proxy></proxies>
+</settings>
+XML
+
+RUN mkdir -p /root/.gradle && printf 'systemProp.http.proxyHost=127.0.0.1\nsystemProp.http.proxyPort=2905\nsystemProp.https.proxyHost=127.0.0.1\nsystemProp.https.proxyPort=2905\n' > /root/.gradle/gradle.properties
+
+RUN git config --global http.proxy http://127.0.0.1:2905 && git config --global https.proxy http://127.0.0.1:2905
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tomcat9 curl && \
+    mkdir -p /usr/share/tomcat9/conf && \
+    cp -a /etc/tomcat9/* /usr/share/tomcat9/conf/ && \
+    cp -a /usr/share/tomcat9/etc/* /usr/share/tomcat9/conf/ || true && \
+    sed -i 's/port="8080"/port="8080"/g' /usr/share/tomcat9/conf/server.xml && \
+    service tomcat9 stop || true
+
+COPY output/intermediates/benchmark-repos/keycloak__keycloak/pom.xml /tmp/repo/pom.xml
+COPY output/intermediates/benchmark-repos/keycloak__keycloak/testsuite /tmp/repo/testsuite
+
+RUN export http_proxy=http://127.0.0.1:2905 && export https_proxy=http://127.0.0.1:2905 && \
+    mvn -f /tmp/repo/testsuite/integration-arquillian/test-apps/photoz/pom.xml -pl photoz-html5-client -am -DskipTests package
+
+RUN mkdir -p /var/lib/tomcat9/webapps && \
+    cp /tmp/repo/testsuite/integration-arquillian/test-apps/photoz/photoz-html5-client/target/photoz-html5-client.war /var/lib/tomcat9/webapps/ROOT.war && \
+    echo /tmp/repo/testsuite/integration-arquillian/test-apps/photoz/photoz-html5-client/target/photoz-html5-client.war > /var/lib/tomcat9/webapps/.runtime-main-artifact
+
+EXPOSE 8080
+
+RUN printf '#!/bin/sh\ncurl -sf http://localhost:8080/\n' > /healthcheck.sh && chmod +x /healthcheck.sh
+HEALTHCHECK --interval=5s --timeout=3s --retries=12 --start-period=10s CMD /healthcheck.sh
+
+CMD ["sh", "-c", "CATALINA_HOME=/usr/share/tomcat9 CATALINA_BASE=/var/lib/tomcat9 /usr/share/tomcat9/bin/catalina.sh run"]

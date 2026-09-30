@@ -1,0 +1,1 @@
+The build required explicitly setting `JAVA_HOME` to Temurin JDK 17 because the base image defaulted to a different JDK, and this revision of Appsmith relies on JDK 17 features. The default Maven settings.xml (which forwarded requests to an unreachable proxy) was deleted to

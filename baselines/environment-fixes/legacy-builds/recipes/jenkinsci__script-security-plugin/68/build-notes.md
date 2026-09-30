@@ -1,0 +1,3 @@
+- Java 8 is required because this revision predates Jenkins plugin support for newer JDKs.
+- Tests are skipped (`-DskipTests`) as they may fail without a full Jenkins test harness environment.
+- No additional bootstrapping or version patching is needed; the POM and sources at revision 68 build cleanly with standard Maven.

@@ -1,0 +1,1 @@
+No patching or bootstrapping was required for this revision; the project builds cleanly with a plain `mvn package`. The critical constraint is that JDK 8 is mandatory—later JDKs introduce API incompatibilities. Maven 3.5.0 is used; newer versions may cause plugin resolution issues. The proxy configuration via `settings.xml` is essential for the build environment.

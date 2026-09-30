@@ -1,0 +1,1 @@
+Required multiple JDK versions (8, 11, 17, 21) to support multi-release JAR compilation, but only primary `compileJava` is invoked since no JDK 25 is available. The `compileJava25Java` task is explicitly skipped to avoid a missing toolchain error. The build uses Gradle with daemon

@@ -1,0 +1,1 @@
+- Skipping tests (-DskipTests) and spotless checks (-Dspotless.skip=true) is necessary because

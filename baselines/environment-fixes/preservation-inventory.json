@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "preserved_on": "2026-09-30",
+  "server_originals_modified_or_deleted": false,
+  "new_builds_services_or_pocs_executed": false,
+  "private_recovery_copies_are_not_github_uploads": true,
+  "private_recovery_groups": [
+    {
+      "family": "legacy_catalog",
+      "status": "consistent_sqlite_snapshot_and_original_bundle_locally_hash_verified",
+      "catalog_rows": 317,
+      "catalog_snapshot_sha256": "50be076b17adcbbb61445b6d021f68f8a79849eeb9271aed7210223604c72579",
+      "recipe_bundle_sha256": "5163e9c4c8b18f73d8d4180343f8580d8c220a7abb0ffd05b12ff9dac240fa02"
+    },
+    {
+      "family": "legacy_xwiki_build_assets",
+      "status": "private_compressed_members_independently_reread_and_hash_verified",
+      "files": 5111,
+      "uncompressed_bytes": 28750814,
+      "archive_bytes": 10540128,
+      "archive_sha256": "bc48cf28ea8cd1af06e000f66062ac893a62e9c4d3fe15218c882f5baeffe840",
+      "publication": "private_only; build helper and bootstrap source tree retained without blanket redistribution"
+    },
+    {
+      "family": "runtime_v2",
+      "status": "private_content_addressed_archive_every_object_and_mapping_verified",
+      "logical_file_entries": 59634,
+      "unique_objects": 42367,
+      "unique_uncompressed_bytes": 396854831,
+      "archive_bytes": 92330295,
+      "archive_sha256": "f3ccaf76ee42e10777e80c3d2750d1a28247c9cc7831ffb7a0c6b037dc7d0b17",
+      "publication": "reviewed repair subset and safe receipt projection only; exact raw evidence remains private"
+    },
+    {
+      "family": "source_runtime",
+      "status": "584_original_files_independently_rehashed",
+      "files": 584,
+      "bytes": 19429929,
+      "cases": 22,
+      "publication": "41 original files; other raw evidence and held inputs stay private"
+    },
+    {
+      "family": "compile_codeql",
+      "status": "all_compact_files_and_both_supplements_independently_rehashed",
+      "files": 5629,
+      "bytes": 700365740,
+      "fleet_cases": 137,
+      "historical_executor_files": 18,
+      "publication": "sanitized recipe/decision/receipt projections with original and publication hashes"
+    }
+  ],
+  "not_yet_backed_up_dependencies": {
+    "scope": "bounded compile/CodeQL file inventory, not the whole server",
+    "status": "remaining_on_source_server_do_not_delete_based_on_this_archive",
+    "file_occurrences": 331,
+    "distinct_file_sha256": 267,
+    "distinct_file_bytes": 30458643949,
+    "directory_references_not_recursively_preserved": 528,
+    "copy_instructions_requiring_context_resolution": 22,
+    "warning": "Offline dependency bundles, source snapshots, custom binaries and container exports may be difficult or impossible to reconstruct. Directory sizes and all dependencies are not exhaustively covered."
+  },
+  "image_layers": {
+    "status": "not_exported",
+    "warning": "Image tags and historical readiness receipts are not backups of the images, and daemon lookup is not a new runtime test."
+  }
+}

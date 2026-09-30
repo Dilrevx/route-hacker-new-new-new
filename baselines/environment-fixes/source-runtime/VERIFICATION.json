@@ -1,0 +1,159 @@
+{
+  "schema": "source-runtime-export-verification.v1",
+  "files_verified": 41,
+  "bytes_verified": 142479,
+  "hash_or_size_mismatches": [],
+  "unexpected_files": [],
+  "missing_files": [],
+  "case_count": 22,
+  "withheld_count": 95,
+  "safety_findings_in_exported_inputs": [],
+  "syntax_checks": [
+    {
+      "path": "files/ljl-v1-core/source-insertion/samples/apache_storm__CVE-2021-44228__source_inserted/verify_source_storm.py",
+      "kind": "python_ast_only",
+      "ok": true,
+      "interpretation": "Source parsing only; not executed."
+    },
+    {
+      "path": "files/source-runtime-verify/apache_archiva__CVE-2021-44228__source_inserted/evidence/build-archiva-jetty.command",
+      "kind": "bash_parse_only",
+      "ok": false,
+      "interpretation": "Historical command/version-output receipt, not a script."
+    },
+    {
+      "path": "files/source-runtime-verify/apache_archiva__CVE-2021-44228__source_inserted/run_archiva_source_runtime_probe.py",
+      "kind": "python_ast_only",
+      "ok": true,
+      "interpretation": "Source parsing only; not executed."
+    },
+    {
+      "path": "files/source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/evidence/runtime-probe-v1/run_probe.py",
+      "kind": "python_ast_only",
+      "ok": true,
+      "interpretation": "Source parsing only; not executed."
+    },
+    {
+      "path": "files/source-runtime-verify/apache_iotdb__CVE-2021-42550__source_inserted/run_iotdb_source_runtime_probe.py",
+      "kind": "python_ast_only",
+      "ok": true,
+      "interpretation": "Source parsing only; not executed."
+    },
+    {
+      "path": "files/source-runtime-verify/apache_jmeter__CVE-2021-44228__source_inserted/run_jmeter_source_runtime_probe.py",
+      "kind": "python_ast_only",
+      "ok": true,
+      "interpretation": "Source parsing only; not executed."
+    },
+    {
+      "path": "files/source-runtime-verify/apache_jmeter__CVE-2021-44228__source_inserted/summarize_jmeter_source_runtime.py",
+      "kind": "python_ast_only",
+      "ok": true,
+      "interpretation": "Source parsing only; not executed."
+    },
+    {
+      "path": "files/source-runtime-verify/apache_knox__CVE-2021-44228__source_inserted/scripts/assemble-knox-runtime.sh",
+      "kind": "bash_parse_only",
+      "ok": true,
+      "interpretation": "Shell parse only; not executed."
+    },
+    {
+      "path": "files/source-runtime-verify/apache_knox__CVE-2021-44228__source_inserted/scripts/run-knox-probes.sh",
+      "kind": "bash_parse_only",
+      "ok": true,
+      "interpretation": "Shell parse only; not executed."
+    },
+    {
+      "path": "files/source-runtime-verify/apache_kyuubi__CVE-2021-44228__source_inserted/evidence/build-maven399.command",
+      "kind": "bash_parse_only",
+      "ok": false,
+      "interpretation": "Historical command/version-output receipt, not a script."
+    },
+    {
+      "path": "files/source-runtime-verify/apache_kyuubi__CVE-2021-44228__source_inserted/evidence/build.command",
+      "kind": "bash_parse_only",
+      "ok": true,
+      "interpretation": "Historical command/version-output receipt, not a script."
+    },
+    {
+      "path": "files/source-runtime-verify/apache_pulsar__CVE-2021-44228__source_inserted/evidence/runtime-probe-v2/run_probe.py",
+      "kind": "python_ast_only",
+      "ok": true,
+      "interpretation": "Source parsing only; not executed."
+    },
+    {
+      "path": "files/source-runtime-verify/apache_solr__CVE-2021-44228__source_inserted/evidence/build-ivy-bootstrap.command",
+      "kind": "bash_parse_only",
+      "ok": false,
+      "interpretation": "Historical command/version-output receipt, not a script."
+    },
+    {
+      "path": "files/source-runtime-verify/apache_solr__CVE-2021-44228__source_inserted/evidence/build-server-timeout.command",
+      "kind": "bash_parse_only",
+      "ok": false,
+      "interpretation": "Historical command/version-output receipt, not a script."
+    },
+    {
+      "path": "files/source-runtime-verify/apache_solr__CVE-2021-44228__source_inserted/evidence/build-server.command",
+      "kind": "bash_parse_only",
+      "ok": false,
+      "interpretation": "Historical command/version-output receipt, not a script."
+    },
+    {
+      "path": "files/source-runtime-verify/apache_solr__CVE-2021-44228__source_inserted/verify_source_solr.py",
+      "kind": "python_ast_only",
+      "ok": true,
+      "interpretation": "Source parsing only; not executed."
+    },
+    {
+      "path": "files/source-runtime-verify/apache_storm__CVE-2021-44228__source_inserted/evidence/build-storm-modules.command",
+      "kind": "bash_parse_only",
+      "ok": false,
+      "interpretation": "Historical command/version-output receipt, not a script."
+    },
+    {
+      "path": "files/source-runtime-verify/apache_storm__CVE-2021-44228__source_inserted/verify_source_storm.py",
+      "kind": "python_ast_only",
+      "ok": true,
+      "interpretation": "Source parsing only; not executed."
+    },
+    {
+      "path": "files/source-runtime-verify/apache_zeppelin__CVE-2021-44228__source_inserted/evidence/runtime-probe-v1/run_probe.py",
+      "kind": "python_ast_only",
+      "ok": true,
+      "interpretation": "Source parsing only; not executed."
+    },
+    {
+      "path": "files/source-runtime-verify/promote_nifi_stateless_sample.py",
+      "kind": "python_ast_only",
+      "ok": true,
+      "interpretation": "Source parsing only; not executed."
+    },
+    {
+      "path": "files/source-runtime-verify/run_nifi_stateless_source_runtime_probe.py",
+      "kind": "python_ast_only",
+      "ok": true,
+      "interpretation": "Source parsing only; not executed."
+    },
+    {
+      "path": "files/source-runtime-verify/run_pulsar_source_runtime_probe.py",
+      "kind": "python_ast_only",
+      "ok": true,
+      "interpretation": "Source parsing only; not executed."
+    },
+    {
+      "path": "files/source-runtime-verify/superset-cve2020-14343/fixtures/build_fixture.py",
+      "kind": "python_ast_only",
+      "ok": true,
+      "interpretation": "Source parsing only; not executed."
+    },
+    {
+      "path": "files/local-supplied/assemble-knox-runtime.sh",
+      "kind": "bash_parse_only",
+      "ok": true,
+      "interpretation": "Shell parse only; not executed."
+    }
+  ],
+  "builds_or_probes_executed": false,
+  "security_review_scope": "Bounded source scans and manual review of historical semantics; no guarantee of safety on execution."
+}

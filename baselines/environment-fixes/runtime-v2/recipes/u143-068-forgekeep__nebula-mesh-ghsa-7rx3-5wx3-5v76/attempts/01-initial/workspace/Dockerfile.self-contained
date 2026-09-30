@@ -1,0 +1,15 @@
+FROM nebula-mesh-u143-068-base:latest AS base
+
+# Switch to root for setup
+USER root
+
+# Create data directory with proper permissions
+RUN mkdir -p /var/lib/nebula-mgmt && chown -R nebula:nebula /var/lib/nebula-mgmt
+
+# Add entrypoint script that generates master key on first run
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+USER nebula:nebula
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["serve", "--config", "/etc/nebula-mgmt/server.yml", "--insecure-http"]

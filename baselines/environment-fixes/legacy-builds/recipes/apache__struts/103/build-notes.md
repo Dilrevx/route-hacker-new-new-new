@@ -1,0 +1,3 @@
+- Uses JDK 8 (temurin-8) to maintain source/target 1.7 compatibility required by this older Struts revision.  
+- Replaces `wget` with a timeout wrapper to prevent hangs during slow documentation downloads, a workaround needed because doc retrieval can stall indefinitely.  
+- The proxy environment variables are set; ensure the build environment can reach external Maven repositories via the proxy.

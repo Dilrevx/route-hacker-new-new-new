@@ -1,0 +1,1 @@
+To build revision 43, it was necessary to explicitly set `-Dkeycloak.admin-ui.version=20.0.1` during Maven execution. This is because this revision depends on a newer version of the admin UI component that is not

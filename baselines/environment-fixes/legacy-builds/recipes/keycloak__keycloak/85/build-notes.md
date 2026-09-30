@@ -1,0 +1,1 @@
+This build required using JDK 8 and Maven 3.5.0 because revision 85 of keycloak was incompatible with newer versions. The proxy environment variables were also necessary to route dependencies through an internal proxy. If using a later revision, check for updated Maven or JDK requirements.

@@ -1,0 +1,265 @@
+[
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:DSpace__DSpace_CVE-2022-31194_5.10",
+    "project_slug": "DSpace__DSpace_CVE-2022-31194_5.10",
+    "status": "no_safe_llm_repair",
+    "recorded_at": "2026-08-23T15:55:48+00:00",
+    "attempt_number": 1,
+    "reason": "repeated_validated_decision_after_build_failure",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "max_network_rate_limit_retries": 2,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "network_rate_limit_backoff_seconds_base": 60.0,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true,
+      "upstream_http_429_replays_same_validated_command_only": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "eca7968be7d6b9f8f5f302c9fc09f8186ed4809e",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "iris-a26/dispatch-discovery113-network429-backoff-r3-20260823T155544Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31194_5.10/attempt-001/source-preflight",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:DSpace__DSpace_CVE-2022-31194_5.10",
+        "expected_revision_matches_receipt": true,
+        "reason": null,
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": true,
+        "source_receipt_case_id": "v8:DSpace__DSpace_CVE-2022-31194_5.10",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": true
+      },
+      "verification_mode": "source_snapshot_receipt",
+      "verified": true
+    },
+    "failed_receipt_sha256": "60a99c58d7dd6c1a5dd8083f3008c27fc0ffcdf4bdac18861c131314b9f44966",
+    "prior_completion_sha256": "0adda3d1ce81ad73290c1fe1fde4b821a6ed29d4d2a33fea4238f991df92503c",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "9ef93dd5f878828fdf58eb20cc87e7047e2df2fe79444619ff7ed75764270c2a",
+    "proposal_validation_errors": [],
+    "validated_decision": {
+      "schema_version": "route_hacker_codeql_repair.v1:validated_repair_decision",
+      "actions": [
+        {
+          "kind": "retry_same_command"
+        }
+      ],
+      "normalization": {
+        "dropped_redundant_actions": []
+      },
+      "rationale": "The failure is a transient HTTP 429 (Too Many Requests) from the Sonatype repository while resolving org.sonatype.oss:oss-parent:pom:9. This is a temporary rate-limit issue, not a build configuration problem. Retrying the same command after backoff is the appropriate response.",
+      "decision_sha256": "b4f9a51a6b7a1ac5ed2432111befa6d1a85e2f3f3798ab4bc2f98cd2f1c0be60"
+    },
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:DSpace__DSpace_CVE-2022-31192_5.10",
+    "project_slug": "DSpace__DSpace_CVE-2022-31192_5.10",
+    "status": "no_safe_llm_repair",
+    "recorded_at": "2026-08-23T15:55:48+00:00",
+    "attempt_number": 1,
+    "build_feedback_replan_count": 1,
+    "reason": "feedback_no_safe_action_after_build_failure",
+    "contract": {
+      "exact_declared_source_reverified_before_execution": true,
+      "fresh_redacted_build_log_used_for_replan": true,
+      "max_build_feedback_replan_attempts": 3,
+      "max_network_rate_limit_retries": 2,
+      "model_actions_validated_locally": true,
+      "model_tools_disabled": true,
+      "network_rate_limit_backoff_seconds_base": 60.0,
+      "new_attempt_database_only": true,
+      "official_query_change_forbidden": true,
+      "repeated_validated_build_decision_not_reexecuted": true,
+      "retrieval_and_target_data_not_consumed": true,
+      "source_edits_forbidden": true,
+      "source_revision_substitution_forbidden": true,
+      "upstream_http_429_replays_same_validated_command_only": true
+    },
+    "source_revision_evidence": {
+      "git_checkout": {
+        "expected_revision": "eca7968be7d6b9f8f5f302c9fc09f8186ed4809e",
+        "git_head": null,
+        "reason": "git_revision_probe_failed",
+        "source_dir": "iris-a26/dispatch-discovery113-network429-backoff-r3-20260823T155544Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/source-preflight",
+        "verified": false
+      },
+      "source_snapshot_receipt": {
+        "archive_sha256_verified": true,
+        "archive_url_matches_revision": true,
+        "case_id_matches_receipt": true,
+        "expected_case_id": "v8:DSpace__DSpace_CVE-2022-31192_5.10",
+        "expected_revision_matches_receipt": true,
+        "reason": null,
+        "source_dir_exists": true,
+        "source_dir_matches_receipt": true,
+        "source_receipt_case_id": "v8:DSpace__DSpace_CVE-2022-31192_5.10",
+        "source_receipt_present": true,
+        "source_receipt_status": "source_materialized_exact_archive_snapshot",
+        "verified": true
+      },
+      "verification_mode": "source_snapshot_receipt",
+      "verified": true
+    },
+    "failed_receipt_sha256": "43b2a79c8dbd71ea5a09858c6266165b15fbf5d7c99ca36578e8b0bf49ac2696",
+    "prior_completion_sha256": "048f30f5a6f864a524a88851f7abb6a68cfe5c611e25bdded6b6291c787cef47",
+    "prior_completion_status": "no_safe_deterministic_repair",
+    "source_receipt_sha256": "fbb091e2603054e00bcdf95d0e636eb7159661c16f12ea785bbef52cac1b51ed",
+    "proposal_validation_errors": [],
+    "validated_decision": {
+      "schema_version": "route_hacker_codeql_repair.v1:validated_repair_decision",
+      "actions": [
+        {
+          "kind": "no_safe_action"
+        }
+      ],
+      "normalization": {
+        "dropped_redundant_actions": []
+      },
+      "rationale": "Same HTTP 429 rate-limit from Maven Central on org.sonatype.oss:oss-parent:pom:9 persists across multiple retries. No schema action can address an external network rate-limit; retry_same_command has already been attempted and the window has not cleared.",
+      "decision_sha256": "c3db2e92168b0aaa232ec463687222a29c98f503f378f698f74726d6c13e1149"
+    },
+    "repair_attempts": [
+      {
+        "decision_round": 0,
+        "repair_attempt": {
+          "schema_version": "route_hacker_codeql_repair.v1:attempt",
+          "case_id": "v8:DSpace__DSpace_CVE-2022-31192_5.10",
+          "project_slug": "DSpace__DSpace_CVE-2022-31192_5.10",
+          "status": "repair_attempt_failed",
+          "recorded_at": "2026-08-23T16:04:34+00:00",
+          "database_valid": false,
+          "executed_command": [
+            "WORKSPACE_ROOT/repro/iris/codeql/codeql",
+            "database",
+            "create",
+            "iris-a26/dispatch-discovery113-network429-backoff-r3-20260823T155544Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/codeql-db",
+            "--language=java",
+            "--source-root=iris-a26/dispatch-discovery113-network429-backoff-r3-20260823T155544Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/source-000-network-rate-limit-retry-002",
+            "--overwrite",
+            "--command",
+            "mvn -DskipTests -Dmaven.javadoc.skip=true compile"
+          ],
+          "official_query_status": null,
+          "original_command_sha256": "dedd382860c00bb73f6cf56f37a1d8257a2baa7b8eb67b8f63fdfd23e0b7343b",
+          "log_sha256": "2fc0f3c8fe05aea2dd512336d1a8ed1de0c7f082dc686f1a5db5cf4ff6731567",
+          "applied_repair": {
+            "applied_actions": [
+              {
+                "inherited_java_home": null,
+                "kind": "retry_same_command"
+              }
+            ],
+            "attempt_database_dir": "iris-a26/dispatch-discovery113-network429-backoff-r3-20260823T155544Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/codeql-db",
+            "build_command": [
+              "mvn",
+              "-DskipTests",
+              "-Dmaven.javadoc.skip=true",
+              "compile"
+            ],
+            "source_root": "iris-a26/dispatch-discovery113-network429-backoff-r3-20260823T155544Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/source-000-network-rate-limit-retry-002",
+            "verified_environment": {
+              "GRADLE_USER_HOME": "iris-a26/dispatch-discovery113-network429-backoff-r3-20260823T155544Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/build-home/.gradle",
+              "HOME": "iris-a26/dispatch-discovery113-network429-backoff-r3-20260823T155544Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/build-home",
+              "MAVEN_OPTS_user_home": "-Duser.home=iris-a26/dispatch-discovery113-network429-backoff-r3-20260823T155544Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/build-home",
+              "MAVEN_REPOSITORY": "iris-a26/dispatch-discovery113-network429-backoff-r3-20260823T155544Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/build-home/.m2/repository",
+              "MAVEN_USER_HOME": "iris-a26/dispatch-discovery113-network429-backoff-r3-20260823T155544Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/codeql-attempt/network-rate-limit-retry-002/build-home/.m2",
+              "rewritten_maven_repo_local_argument": null
+            }
+          },
+          "source_revision_evidence": {
+            "git_checkout": {
+              "expected_revision": "eca7968be7d6b9f8f5f302c9fc09f8186ed4809e",
+              "git_head": null,
+              "reason": "git_revision_probe_failed",
+              "source_dir": "iris-a26/dispatch-discovery113-network429-backoff-r3-20260823T155544Z/dispatch/cases/v8_DSpace__DSpace_CVE-2022-31192_5.10/attempt-001/source-000-network-rate-limit-retry-002",
+              "verified": false
+            },
+            "source_snapshot_receipt": {
+              "archive_sha256_verified": true,
+              "archive_url_matches_revision": true,
+              "case_id_matches_receipt": true,
+              "expected_case_id": "v8:DSpace__DSpace_CVE-2022-31192_5.10",
+              "expected_revision_matches_receipt": true,
+              "reason": null,
+              "source_dir_exists": true,
+              "source_dir_matches_receipt": true,
+              "source_receipt_case_id": "v8:DSpace__DSpace_CVE-2022-31192_5.10",
+              "source_receipt_present": true,
+              "source_receipt_status": "source_materialized_exact_archive_snapshot",
+              "verified": true
+            },
+            "verification_mode": "source_snapshot_receipt",
+            "verified": true
+          },
+          "source_integrity_evidence": {
+            "after_tree_sha256": "2f125a7ac1f67fc49482a898bdedebcb100a44a9bbbfc1c0d9f5dbddad60d0e8",
+            "before_tree_sha256": "2f125a7ac1f67fc49482a898bdedebcb100a44a9bbbfc1c0d9f5dbddad60d0e8",
+            "changed_path_count": 0,
+            "changed_paths": [],
+            "changed_paths_truncated": false,
+            "ignored_directory_names": [
+              ".git",
+              ".gradle",
+              "build",
+              "node_modules",
+              "out",
+              "target"
+            ],
+            "ignored_file_names": [
+              ".flattened-pom.xml",
+              "dependency-reduced-pom.xml"
+            ],
+            "reason": null,
+            "verified": true
+          },
+          "contract": {
+            "exact_declared_source_verified": true,
+            "new_attempt_database_only": true,
+            "non_generated_source_content_unchanged_after_build": true,
+            "official_query_change_forbidden": true,
+            "retrieval_and_target_data_not_consumed": true,
+            "source_edits_forbidden": true,
+            "source_revision_substitution_forbidden": true
+          },
+          "bounded_process": {
+            "returncode": 2,
+            "timed_out": false,
+            "elapsed_seconds": 80.023
+          },
+          "validated_decision": {
+            "schema_version": "route_hacker_codeql_repair.v1:validated_repair_decision",
+            "actions": [
+              {
+                "kind": "retry_same_command"
+              }
+            ],
+            "normalization": {
+              "dropped_redundant_actions": []
+            },
+            "rationale": "Build failed with HTTP 429 Too Many Requests from Maven Central while resolving org.sonatype.oss:oss-parent:pom:9. This is a transient network rate-limit error, not a build configuration or toolchain issue. The existing command (mvn -DskipTests -Dmaven.javadoc.skip=true compile) is correct; retrying it may succeed once the rate-limit window passes.",
+            "decision_sha256": "dcfac3b4a307cda7fa8dfe36882c919d39e6a2206986d844be5c59eadfac1d0a"
+          }
+        }
+      }
+    ],
+    "historical_snapshot": true
+  }
+]

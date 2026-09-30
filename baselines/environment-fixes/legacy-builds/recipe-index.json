@@ -1,0 +1,4307 @@
+{
+  "schema_version": 1,
+  "source_bundle_sha256": "5163e9c4c8b18f73d8d4180343f8580d8c220a7abb0ffd05b12ff9dac240fa02",
+  "recipes": [
+    {
+      "recipe": "recipes/1panel-dev__cordyscrm/c87682afa8df79853299f75489c9d333f7bc5fce/Dockerfile",
+      "repo_slug": "1panel-dev__cordyscrm",
+      "historical_identifier": "c87682afa8df79853299f75489c9d333f7bc5fce",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        263
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-50757a05"
+      ],
+      "build_context_instructions": [
+        "1panel-dev__cordyscrm /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/94fzb__zrlog/a7ab557/Dockerfile",
+      "repo_slug": "94fzb__zrlog",
+      "historical_identifier": "a7ab557",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        1
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/94fzb__zrlog /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/DSpace__DSpace/0de9680/Dockerfile",
+      "repo_slug": "DSpace__DSpace",
+      "historical_identifier": "0de9680",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        12
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/DSpace__DSpace /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/DSpace__DSpace/35/Dockerfile",
+      "repo_slug": "DSpace__DSpace",
+      "historical_identifier": "35",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        159
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/DSpace__DSpace /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/DSpace__DSpace/37/Dockerfile",
+      "repo_slug": "DSpace__DSpace",
+      "historical_identifier": "37",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        156
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/DSpace__DSpace /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/DSpace__DSpace/88/Dockerfile",
+      "repo_slug": "DSpace__DSpace",
+      "historical_identifier": "88",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        157
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/DSpace__DSpace /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/Graylog2__graylog2-server/31bc13d/Dockerfile",
+      "repo_slug": "Graylog2__graylog2-server",
+      "historical_identifier": "31bc13d",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        238
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/Graylog2__graylog2-server /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/Graylog2__graylog2-server/47/Dockerfile",
+      "repo_slug": "Graylog2__graylog2-server",
+      "historical_identifier": "47",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        128
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/Graylog2__graylog2-server /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/Karlatemp__UnsafeAccessor/4ef8300/Dockerfile",
+      "repo_slug": "Karlatemp__UnsafeAccessor",
+      "historical_identifier": "4ef8300",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        80
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/Karlatemp__UnsafeAccessor /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/Karlatemp__UnsafeAccessor/971c479/Dockerfile",
+      "repo_slug": "Karlatemp__UnsafeAccessor",
+      "historical_identifier": "971c479",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        239
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/Karlatemp__UnsafeAccessor /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/OpenRefine__OpenRefine/b4b1006/Dockerfile",
+      "repo_slug": "OpenRefine__OpenRefine",
+      "historical_identifier": "b4b1006",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        2
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/OpenRefine__OpenRefine /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/PacoVK__tapir/c36360b/Dockerfile",
+      "repo_slug": "PacoVK__tapir",
+      "historical_identifier": "c36360b",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        237
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/PacoVK__tapir /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/Ree6-Applications__Ree6/0f75bac/Dockerfile",
+      "repo_slug": "Ree6-Applications__Ree6",
+      "historical_identifier": "0f75bac",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        10
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/Ree6-Applications__Ree6 /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/Ree6-Applications__Ree6/459b5bc/Dockerfile",
+      "repo_slug": "Ree6-Applications__Ree6",
+      "historical_identifier": "459b5bc",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        235
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/Ree6-Applications__Ree6 /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/Zimbra__zm-mailbox/1df440e/Dockerfile",
+      "repo_slug": "Zimbra__zm-mailbox",
+      "historical_identifier": "1df440e",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        122
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/Zimbra__zm-mailbox /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/Zimbra__zm-mailbox/9e80c50/Dockerfile",
+      "repo_slug": "Zimbra__zm-mailbox",
+      "historical_identifier": "9e80c50",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        236
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/Zimbra__zm-mailbox /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/aiven-open__bigquery-connector-for-apache-kafka/20ea3921c6fe72d605a033c1943b20f49eaba981/Dockerfile",
+      "repo_slug": "aiven-open__bigquery-connector-for-apache-kafka",
+      "historical_identifier": "20ea3921c6fe72d605a033c1943b20f49eaba981",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "aiven-open__bigquery-connector-for-apache-kafka /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/aiven-open__bigquery-connector-for-apache-kafka/9905079/Dockerfile",
+      "repo_slug": "aiven-open__bigquery-connector-for-apache-kafka",
+      "historical_identifier": "9905079",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        322
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "aiven-open__bigquery-connector-for-apache-kafka /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/alibaba__nacos/80/Dockerfile",
+      "repo_slug": "alibaba__nacos",
+      "historical_identifier": "80",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        25
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/alibaba__nacos /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/alibaba__one-java-agent/26/Dockerfile",
+      "repo_slug": "alibaba__one-java-agent",
+      "historical_identifier": "26",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        26
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/alibaba__one-java-agent /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/aosp-mirror__platform_frameworks_base/03da463/Dockerfile",
+      "repo_slug": "aosp-mirror__platform_frameworks_base",
+      "historical_identifier": "03da463",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        27
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/aosp-mirror__platform_frameworks_base /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/aosp-mirror__platform_frameworks_base/0c17049/Dockerfile",
+      "repo_slug": "aosp-mirror__platform_frameworks_base",
+      "historical_identifier": "0c17049",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        231
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/aosp-mirror__platform_frameworks_base /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/aosp-mirror__platform_frameworks_base/c4ce178/Dockerfile",
+      "repo_slug": "aosp-mirror__platform_frameworks_base",
+      "historical_identifier": "c4ce178",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        232
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/aosp-mirror__platform_frameworks_base /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/aosp-mirror__platform_frameworks_base/e237a83/Dockerfile",
+      "repo_slug": "aosp-mirror__platform_frameworks_base",
+      "historical_identifier": "e237a83",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        234
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/aosp-mirror__platform_frameworks_base /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__activemq/00921f2/Dockerfile",
+      "repo_slug": "apache__activemq",
+      "historical_identifier": "00921f2",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        28
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/apache__activemq /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__activemq/101/Dockerfile",
+      "repo_slug": "apache__activemq",
+      "historical_identifier": "101",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        138
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/apache__activemq /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__activemq/104/Dockerfile",
+      "repo_slug": "apache__activemq",
+      "historical_identifier": "104",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        136
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/apache__activemq /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__activemq/63/Dockerfile",
+      "repo_slug": "apache__activemq",
+      "historical_identifier": "63",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        21
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/apache__activemq /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__activemq/Dockerfile",
+      "repo_slug": "apache__activemq",
+      "historical_identifier": null,
+      "identifier_kind": "unspecified",
+      "catalog_id_candidates": [],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-134326bb"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/apache__activemq /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__axis-axis1-java/124/Dockerfile",
+      "repo_slug": "apache__axis-axis1-java",
+      "historical_identifier": "124",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        30
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__axis-axis1-java /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__commons-io/19/Dockerfile",
+      "repo_slug": "apache__commons-io",
+      "historical_identifier": "19",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        166
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__commons-io /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__commons-text/111/Dockerfile",
+      "repo_slug": "apache__commons-text",
+      "historical_identifier": "111",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        31
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__commons-text /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__cxf/76/Dockerfile",
+      "repo_slug": "apache__cxf",
+      "historical_identifier": "76",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        130
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__cxf /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__cxf/86/Dockerfile",
+      "repo_slug": "apache__cxf",
+      "historical_identifier": "86",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        133
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__cxf /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__dolphinscheduler/119/Dockerfile",
+      "repo_slug": "apache__dolphinscheduler",
+      "historical_identifier": "119",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        32
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__dolphinscheduler /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__dolphinscheduler/120/Dockerfile",
+      "repo_slug": "apache__dolphinscheduler",
+      "historical_identifier": "120",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        129
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__dolphinscheduler /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__dolphinscheduler/39/Dockerfile",
+      "repo_slug": "apache__dolphinscheduler",
+      "historical_identifier": "39",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        155
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__dolphinscheduler /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__dolphinscheduler/40/Dockerfile",
+      "repo_slug": "apache__dolphinscheduler",
+      "historical_identifier": "40",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        126
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__dolphinscheduler /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__dubbo/107/Dockerfile",
+      "repo_slug": "apache__dubbo",
+      "historical_identifier": "107",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        24
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__dubbo /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__dubbo/108/Dockerfile",
+      "repo_slug": "apache__dubbo",
+      "historical_identifier": "108",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        134
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__dubbo /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__flink/17/Dockerfile",
+      "repo_slug": "apache__flink",
+      "historical_identifier": "17",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        33
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__flink /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__incubator-seata/20cd9625d23f99b71fefc83b8db96c14092a9950/Dockerfile",
+      "repo_slug": "apache__incubator-seata",
+      "historical_identifier": "20cd9625d23f99b71fefc83b8db96c14092a9950",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        279
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "apache__incubator-seata /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__inlong/6b4b1a7/Dockerfile",
+      "repo_slug": "apache__inlong",
+      "historical_identifier": "6b4b1a7",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        175
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/apache__inlong /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__iotdb/a92e210/Dockerfile",
+      "repo_slug": "apache__iotdb",
+      "historical_identifier": "a92e210",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        209
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/apache__iotdb /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__iotdb-web-workbench/ea0774b/Dockerfile",
+      "repo_slug": "apache__iotdb-web-workbench",
+      "historical_identifier": "ea0774b",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        233
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/apache__iotdb-web-workbench /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__james-project/21/Dockerfile",
+      "repo_slug": "apache__james-project",
+      "historical_identifier": "21",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        160
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/apache__james-project /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__jspwiki/10/Dockerfile",
+      "repo_slug": "apache__jspwiki",
+      "historical_identifier": "10",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        35
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__jspwiki /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__jspwiki/71/Dockerfile",
+      "repo_slug": "apache__jspwiki",
+      "historical_identifier": "71",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        147
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__jspwiki /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__jspwiki/72/Dockerfile",
+      "repo_slug": "apache__jspwiki",
+      "historical_identifier": "72",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        145
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__jspwiki /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__jspwiki/73/Dockerfile",
+      "repo_slug": "apache__jspwiki",
+      "historical_identifier": "73",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        148
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__jspwiki /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__jspwiki/74/Dockerfile",
+      "repo_slug": "apache__jspwiki",
+      "historical_identifier": "74",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        146
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__jspwiki /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__jspwiki/95/Dockerfile",
+      "repo_slug": "apache__jspwiki",
+      "historical_identifier": "95",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        144
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__jspwiki /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__karaf/20/Dockerfile",
+      "repo_slug": "apache__karaf",
+      "historical_identifier": "20",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        38
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__karaf /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__mina-sshd/48/Dockerfile",
+      "repo_slug": "apache__mina-sshd",
+      "historical_identifier": "48",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        36
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__mina-sshd /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__myfaces/27/Dockerfile",
+      "repo_slug": "apache__myfaces",
+      "historical_identifier": "27",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        37
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__myfaces /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__nifi/115/Dockerfile",
+      "repo_slug": "apache__nifi",
+      "historical_identifier": "115",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        42
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "assets/route_hacker/build-context/_m2_cache /root/.m2/repository",
+        "output/intermediates/iris-repos/apache__nifi /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__nifi/67/Dockerfile",
+      "repo_slug": "apache__nifi",
+      "historical_identifier": "67",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        123
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__nifi /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__openmeetings/1fb71af/Dockerfile",
+      "repo_slug": "apache__openmeetings",
+      "historical_identifier": "1fb71af",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        39
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/apache__openmeetings /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__rocketmq/116/Dockerfile",
+      "repo_slug": "apache__rocketmq",
+      "historical_identifier": "116",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        40
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__rocketmq /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__rocketmq/15/Dockerfile",
+      "repo_slug": "apache__rocketmq",
+      "historical_identifier": "15",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        163
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__rocketmq /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__shiro/49/Dockerfile",
+      "repo_slug": "apache__shiro",
+      "historical_identifier": "49",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        153
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__shiro /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__shiro/54/Dockerfile",
+      "repo_slug": "apache__shiro",
+      "historical_identifier": "54",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        15
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__shiro /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__sling-org-apache-sling-servlets-resolver/55/Dockerfile",
+      "repo_slug": "apache__sling-org-apache-sling-servlets-resolver",
+      "historical_identifier": "55",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        41
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__sling-org-apache-sling-servlets-resolver /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__sling-org-apache-sling-xss/87/Dockerfile",
+      "repo_slug": "apache__sling-org-apache-sling-xss",
+      "historical_identifier": "87",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        43
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__sling-org-apache-sling-xss /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__struts/103/Dockerfile",
+      "repo_slug": "apache__struts",
+      "historical_identifier": "103",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        44
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__struts /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__tapestry-5/12/Dockerfile",
+      "repo_slug": "apache__tapestry-5",
+      "historical_identifier": "12",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        45
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__tapestry-5 /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__tika/8/Dockerfile",
+      "repo_slug": "apache__tika",
+      "historical_identifier": "8",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        46
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/apache__tika /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/apache__uima-uimaj/42/Dockerfile",
+      "repo_slug": "apache__uima-uimaj",
+      "historical_identifier": "42",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        48
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "docker-support/m2-repo.tar.gz /tmp/m2-repo.tar.gz",
+        "output/intermediates/iris-repos/apache__uima-uimaj /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/appsmithorg__appsmith/6f9ee6226bac13fb4b836940b557913fff78b633/Dockerfile",
+      "repo_slug": "appsmithorg__appsmith",
+      "historical_identifier": "6f9ee6226bac13fb4b836940b557913fff78b633",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "appsmithorg__appsmith /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/appsmithorg__appsmith/9864994/Dockerfile",
+      "repo_slug": "appsmithorg__appsmith",
+      "historical_identifier": "9864994",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "appsmithorg__appsmith /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/bcgit__bc-java/656bae0dbd9b1521f840521ff786e78749fe3057/Dockerfile",
+      "repo_slug": "bcgit__bc-java",
+      "historical_identifier": "656bae0dbd9b1521f840521ff786e78749fe3057",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        257
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/pipeline-repos/bcgit__bc-java /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/bcgit__bc-java/b42574345414e4b7c8051b16fa1fafe01c29871f/Dockerfile",
+      "repo_slug": "bcgit__bc-java",
+      "historical_identifier": "b42574345414e4b7c8051b16fa1fafe01c29871f",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        264
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-50757a05"
+      ],
+      "build_context_instructions": [
+        "bcgit__bc-java /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/bcgit__bc-java/d20cdb8430e09224114fec0179a71859929fcbde/Dockerfile",
+      "repo_slug": "bcgit__bc-java",
+      "historical_identifier": "d20cdb8430e09224114fec0179a71859929fcbde",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        265
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-50757a05"
+      ],
+      "build_context_instructions": [
+        "bcgit__bc-java /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/bcgit__bc-java/dc7530939ffb6cdb57636f3609d98e23b94e71c1/Dockerfile",
+      "repo_slug": "bcgit__bc-java",
+      "historical_identifier": "dc7530939ffb6cdb57636f3609d98e23b94e71c1",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        267
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "bcgit__bc-java /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/bitcoinj__bitcoinj/2bc5653c41d260d840692bc554690d4d79208f9c/Dockerfile",
+      "repo_slug": "bitcoinj__bitcoinj",
+      "historical_identifier": "2bc5653c41d260d840692bc554690d4d79208f9c",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        266
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "bitcoinj__bitcoinj /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/codecentric__spring-boot-admin/113/Dockerfile",
+      "repo_slug": "codecentric__spring-boot-admin",
+      "historical_identifier": "113",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        18
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/codecentric__spring-boot-admin /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/codehaus-plexus__plexus-archiver/30/Dockerfile",
+      "repo_slug": "codehaus-plexus__plexus-archiver",
+      "historical_identifier": "30",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        47
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/codehaus-plexus__plexus-archiver /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/codehaus-plexus__plexus-archiver/50/Dockerfile",
+      "repo_slug": "codehaus-plexus__plexus-archiver",
+      "historical_identifier": "50",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        164
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/codehaus-plexus__plexus-archiver /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/codehaus-plexus__plexus-utils/51/Dockerfile",
+      "repo_slug": "codehaus-plexus__plexus-utils",
+      "historical_identifier": "51",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        49
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/codehaus-plexus__plexus-utils /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/codehaus-plexus__plexus-utils/64/Dockerfile",
+      "repo_slug": "codehaus-plexus__plexus-utils",
+      "historical_identifier": "64",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        161
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/codehaus-plexus__plexus-utils /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/codehaus-plexus__plexus-utils/6d780b3378829318ba5c2d29547e0012d5b29642/Dockerfile",
+      "repo_slug": "codehaus-plexus__plexus-utils",
+      "historical_identifier": "6d780b3378829318ba5c2d29547e0012d5b29642",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        277
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "codehaus-plexus__plexus-utils /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/crate__crate/126/Dockerfile",
+      "repo_slug": "crate__crate",
+      "historical_identifier": "126",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        50
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/crate__crate /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/dataease__dataease/2cb2b3e/Dockerfile",
+      "repo_slug": "dataease__dataease",
+      "historical_identifier": "2cb2b3e",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        51
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/dataease__dataease /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/dataease__dataease/72f428e/Dockerfile",
+      "repo_slug": "dataease__dataease",
+      "historical_identifier": "72f428e",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        228
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/dataease__dataease /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/diffplug__goomph/38/Dockerfile",
+      "repo_slug": "diffplug__goomph",
+      "historical_identifier": "38",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        52
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/diffplug__goomph /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/dromara__hutool/7/Dockerfile",
+      "repo_slug": "dromara__hutool",
+      "historical_identifier": "7",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        53
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/dromara__hutool /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/eclipse-ee4j__glassfish/44/Dockerfile",
+      "repo_slug": "eclipse-ee4j__glassfish",
+      "historical_identifier": "44",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        55
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/eclipse-ee4j__glassfish /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/eclipse__hawkbit/79/Dockerfile",
+      "repo_slug": "eclipse__hawkbit",
+      "historical_identifier": "79",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        54
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/eclipse__hawkbit /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/elunez__eladmin/d6a16e9afc0a3b96a56f1a24ed167e1beec6ce2f/Dockerfile",
+      "repo_slug": "elunez__eladmin",
+      "historical_identifier": "d6a16e9afc0a3b96a56f1a24ed167e1beec6ce2f",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        276
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "elunez__eladmin /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/esapi__esapi-java-legacy/23/Dockerfile",
+      "repo_slug": "esapi__esapi-java-legacy",
+      "historical_identifier": "23",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        56
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/esapi__esapi-java-legacy /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/esapi__esapi-java-legacy/82/Dockerfile",
+      "repo_slug": "esapi__esapi-java-legacy",
+      "historical_identifier": "82",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        165
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/esapi__esapi-java-legacy /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/fabric8io__kubernetes-client/110/Dockerfile",
+      "repo_slug": "fabric8io__kubernetes-client",
+      "historical_identifier": "110",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        57
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/fabric8io__kubernetes-client /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/factionsecurity__faction/0025beb/Dockerfile",
+      "repo_slug": "factionsecurity__faction",
+      "historical_identifier": "0025beb",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        59
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/factionsecurity__faction /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/factionsecurity__faction/0a6848d/Dockerfile",
+      "repo_slug": "factionsecurity__faction",
+      "historical_identifier": "0a6848d",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        230
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/factionsecurity__faction /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/ff4j__ff4j/112/Dockerfile",
+      "repo_slug": "ff4j__ff4j",
+      "historical_identifier": "112",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        58
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/ff4j__ff4j /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/folio-org__spring-module-core/122/Dockerfile",
+      "repo_slug": "folio-org__spring-module-core",
+      "historical_identifier": "122",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        60
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/folio-org__spring-module-core /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/googleapis__google-oauth-java-client/13433cd/Dockerfile",
+      "repo_slug": "googleapis__google-oauth-java-client",
+      "historical_identifier": "13433cd",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        62
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/googleapis__google-oauth-java-client /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/googleapis__google-oauth-java-client/6447917/Dockerfile",
+      "repo_slug": "googleapis__google-oauth-java-client",
+      "historical_identifier": "6447917",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        229
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/googleapis__google-oauth-java-client /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/halo-dev__halo/24f8d7b57127e2607ec05adb7c912b3decddeb99/Dockerfile",
+      "repo_slug": "halo-dev__halo",
+      "historical_identifier": "24f8d7b57127e2607ec05adb7c912b3decddeb99",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        269
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-temp/halo-gradle-cache"
+      ],
+      "build_context_instructions": [
+        "halo-dev__halo /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/hapifhir__org.hl7.fhir.core/45/Dockerfile",
+      "repo_slug": "hapifhir__org.hl7.fhir.core",
+      "historical_identifier": "45",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        63
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/hapifhir__org.hl7.fhir.core /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/hapifhir__org.hl7.fhir.core/46/Dockerfile",
+      "repo_slug": "hapifhir__org.hl7.fhir.core",
+      "historical_identifier": "46",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        132
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/hapifhir__org.hl7.fhir.core /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/hibernate__hibernate-validator/75/Dockerfile",
+      "repo_slug": "hibernate__hibernate-validator",
+      "historical_identifier": "75",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        64
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/hibernate__hibernate-validator /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/hl7__fhir-ig-publisher/3560de2f486d688a3ddcf4aa54d8bdacea380c3d/Dockerfile",
+      "repo_slug": "hl7__fhir-ig-publisher",
+      "historical_identifier": "3560de2f486d688a3ddcf4aa54d8bdacea380c3d",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        271
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "hl7__fhir-ig-publisher /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jcthiele__openxrechnungtoolbox/6c50e8979924b09f336c976cbad3a9ebfe25ebf9/Dockerfile",
+      "repo_slug": "jcthiele__openxrechnungtoolbox",
+      "historical_identifier": "6c50e8979924b09f336c976cbad3a9ebfe25ebf9",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "jcthiele__openxrechnungtoolbox /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jcthiele__openxrechnungtoolbox/b334354/Dockerfile",
+      "repo_slug": "jcthiele__openxrechnungtoolbox",
+      "historical_identifier": "b334354",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "jcthiele__openxrechnungtoolbox /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jeecgboot__jeecgboot/121/Dockerfile",
+      "repo_slug": "jeecgboot__jeecgboot",
+      "historical_identifier": "121",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        68
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/jeecgboot__jeecgboot /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jenkinsci__docker-commons-plugin/59/Dockerfile",
+      "repo_slug": "jenkinsci__docker-commons-plugin",
+      "historical_identifier": "59",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        66
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-cache/jenkinsci__docker-commons-plugin:59-m2cache"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/jenkinsci__docker-commons-plugin /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jenkinsci__git-client-plugin/65/Dockerfile",
+      "repo_slug": "jenkinsci__git-client-plugin",
+      "historical_identifier": "65",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        67
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/jenkinsci__git-client-plugin /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jenkinsci__jenkins/0530a66/Dockerfile",
+      "repo_slug": "jenkinsci__jenkins",
+      "historical_identifier": "0530a66",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        71
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/jenkinsci__jenkins /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jenkinsci__jenkins/0de3e9b/Dockerfile",
+      "repo_slug": "jenkinsci__jenkins",
+      "historical_identifier": "0de3e9b",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        227
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/jenkinsci__jenkins /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jenkinsci__jenkins/0f92cd0/Dockerfile",
+      "repo_slug": "jenkinsci__jenkins",
+      "historical_identifier": "0f92cd0",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        218
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/jenkinsci__jenkins /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jenkinsci__jenkins/13905d8/Dockerfile",
+      "repo_slug": "jenkinsci__jenkins",
+      "historical_identifier": "13905d8",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        216
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/jenkinsci__jenkins /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jenkinsci__jenkins/36342d7/Dockerfile",
+      "repo_slug": "jenkinsci__jenkins",
+      "historical_identifier": "36342d7",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        226
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/jenkinsci__jenkins /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jenkinsci__jenkins/4ed5c85/Dockerfile",
+      "repo_slug": "jenkinsci__jenkins",
+      "historical_identifier": "4ed5c85",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        217
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/jenkinsci__jenkins /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jenkinsci__jenkins/5548b52/Dockerfile",
+      "repo_slug": "jenkinsci__jenkins",
+      "historical_identifier": "5548b52",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        222
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/jenkinsci__jenkins /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jenkinsci__jenkins/5d57c85/Dockerfile",
+      "repo_slug": "jenkinsci__jenkins",
+      "historical_identifier": "5d57c85",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        221
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/jenkinsci__jenkins /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jenkinsci__jenkins/788b7d7/Dockerfile",
+      "repo_slug": "jenkinsci__jenkins",
+      "historical_identifier": "788b7d7",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        223
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/jenkinsci__jenkins /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jenkinsci__jenkins/8ac74c3/Dockerfile",
+      "repo_slug": "jenkinsci__jenkins",
+      "historical_identifier": "8ac74c3",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        220
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/jenkinsci__jenkins /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jenkinsci__jenkins/97a61a9/Dockerfile",
+      "repo_slug": "jenkinsci__jenkins",
+      "historical_identifier": "97a61a9",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        215
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/jenkinsci__jenkins /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jenkinsci__jenkins/ac8e17b/Dockerfile",
+      "repo_slug": "jenkinsci__jenkins",
+      "historical_identifier": "ac8e17b",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        219
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/jenkinsci__jenkins /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jenkinsci__jenkins/ad38d84/Dockerfile",
+      "repo_slug": "jenkinsci__jenkins",
+      "historical_identifier": "ad38d84",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        225
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/jenkinsci__jenkins /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jenkinsci__jenkins/b6b2a36/Dockerfile",
+      "repo_slug": "jenkinsci__jenkins",
+      "historical_identifier": "b6b2a36",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        224
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/jenkinsci__jenkins /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jenkinsci__perfecto-plugin/66/Dockerfile",
+      "repo_slug": "jenkinsci__perfecto-plugin",
+      "historical_identifier": "66",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        69
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/jenkinsci__perfecto-plugin /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jenkinsci__script-security-plugin/68/Dockerfile",
+      "repo_slug": "jenkinsci__script-security-plugin",
+      "historical_identifier": "68",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        70
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/jenkinsci__script-security-plugin /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jenkinsci__workflow-cps-global-lib-plugin/61/Dockerfile",
+      "repo_slug": "jenkinsci__workflow-cps-global-lib-plugin",
+      "historical_identifier": "61",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        72
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/jenkinsci__workflow-cps-global-lib-plugin /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jenkinsci__workflow-cps-plugin/60/Dockerfile",
+      "repo_slug": "jenkinsci__workflow-cps-plugin",
+      "historical_identifier": "60",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        73
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/jenkinsci__workflow-cps-plugin /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jenkinsci__workflow-multibranch-plugin/62/Dockerfile",
+      "repo_slug": "jenkinsci__workflow-multibranch-plugin",
+      "historical_identifier": "62",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        74
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/jenkinsci__workflow-multibranch-plugin /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jeremylong__dependencycheck/29/Dockerfile",
+      "repo_slug": "jeremylong__dependencycheck",
+      "historical_identifier": "29",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        79
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/jeremylong__dependencycheck /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jlangch__venice/34/Dockerfile",
+      "repo_slug": "jlangch__venice",
+      "historical_identifier": "34",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        75
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/jlangch__venice /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jmrozanec__cron-utils/102/Dockerfile",
+      "repo_slug": "jmrozanec__cron-utils",
+      "historical_identifier": "102",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        76
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/jmrozanec__cron-utils /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/joniles__mpxj/16/Dockerfile",
+      "repo_slug": "joniles__mpxj",
+      "historical_identifier": "16",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        77
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/joniles__mpxj /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/jstachio__jstachio/98/Dockerfile",
+      "repo_slug": "jstachio__jstachio",
+      "historical_identifier": "98",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        78
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/jstachio__jstachio /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/keycloak__keycloak/008b73d/Dockerfile",
+      "repo_slug": "keycloak__keycloak",
+      "historical_identifier": "008b73d",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        83
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/keycloak__keycloak /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/keycloak__keycloak/0b73685/Dockerfile",
+      "repo_slug": "keycloak__keycloak",
+      "historical_identifier": "0b73685",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        214
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/keycloak__keycloak /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/keycloak__keycloak/4235422/Dockerfile",
+      "repo_slug": "keycloak__keycloak",
+      "historical_identifier": "4235422",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        213
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/keycloak__keycloak /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/keycloak__keycloak/43/Dockerfile",
+      "repo_slug": "keycloak__keycloak",
+      "historical_identifier": "43",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        131
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/keycloak__keycloak /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/keycloak__keycloak/44000ca/Dockerfile",
+      "repo_slug": "keycloak__keycloak",
+      "historical_identifier": "44000ca",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        206
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/keycloak__keycloak /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/keycloak__keycloak/750f5fd/Dockerfile",
+      "repo_slug": "keycloak__keycloak",
+      "historical_identifier": "750f5fd",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        208
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/keycloak__keycloak /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/keycloak__keycloak/754c070cf8ca187dcc71f0f72ff3130ff2195328/Dockerfile",
+      "repo_slug": "keycloak__keycloak",
+      "historical_identifier": "754c070cf8ca187dcc71f0f72ff3130ff2195328",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "keycloak__keycloak /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/keycloak__keycloak/76d83f4/Dockerfile",
+      "repo_slug": "keycloak__keycloak",
+      "historical_identifier": "76d83f4",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        212
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/keycloak__keycloak /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/keycloak__keycloak/8435660/Dockerfile",
+      "repo_slug": "keycloak__keycloak",
+      "historical_identifier": "8435660",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        205
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/keycloak__keycloak /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/keycloak__keycloak/85/Dockerfile",
+      "repo_slug": "keycloak__keycloak",
+      "historical_identifier": "85",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        143
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/keycloak__keycloak /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/keycloak__keycloak/89/Dockerfile",
+      "repo_slug": "keycloak__keycloak",
+      "historical_identifier": "89",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        124
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "assets/route_hacker/build-context/m2-repo /root/.m2/repository",
+        "output/intermediates/benchmark-repos/keycloak__keycloak /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/keycloak__keycloak/90/Dockerfile",
+      "repo_slug": "keycloak__keycloak",
+      "historical_identifier": "90",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        125
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/keycloak__keycloak /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/keycloak__keycloak/9356843/Dockerfile",
+      "repo_slug": "keycloak__keycloak",
+      "historical_identifier": "9356843",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        207
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/keycloak__keycloak /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/keycloak__keycloak/96/Dockerfile",
+      "repo_slug": "keycloak__keycloak",
+      "historical_identifier": "96",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        127
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/keycloak__keycloak /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/keycloak__keycloak/9c2525e/Dockerfile",
+      "repo_slug": "keycloak__keycloak",
+      "historical_identifier": "9c2525e",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        174
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/keycloak__keycloak /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/keycloak__keycloak/a10c8119d4452b866b90a9019b2cc159919276ca/Dockerfile",
+      "repo_slug": "keycloak__keycloak",
+      "historical_identifier": "a10c8119d4452b866b90a9019b2cc159919276ca",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        261
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "m2-cache-keycloak /root/.m2/repository",
+        "keycloak__keycloak /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/keycloak__keycloak/a34094100716b7c69ae38eaed6678ab4344d0a1d/Dockerfile",
+      "repo_slug": "keycloak__keycloak",
+      "historical_identifier": "a34094100716b7c69ae38eaed6678ab4344d0a1d",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "keycloak__keycloak /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/keycloak__keycloak/ac79fd0/Dockerfile",
+      "repo_slug": "keycloak__keycloak",
+      "historical_identifier": "ac79fd0",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        203
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/keycloak__keycloak /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/keycloak__keycloak/b5f70d8/Dockerfile",
+      "repo_slug": "keycloak__keycloak",
+      "historical_identifier": "b5f70d8",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        173
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/keycloak__keycloak /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/keycloak__keycloak/d9d0bfb/Dockerfile",
+      "repo_slug": "keycloak__keycloak",
+      "historical_identifier": "d9d0bfb",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        204
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/keycloak__keycloak /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/keycloak__keycloak/ec81091/Dockerfile",
+      "repo_slug": "keycloak__keycloak",
+      "historical_identifier": "ec81091",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        211
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/keycloak__keycloak /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/kubernetes-client__java/18/Dockerfile",
+      "repo_slug": "kubernetes-client__java",
+      "historical_identifier": "18",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        81
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/kubernetes-client__java /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/line__armeria/039db50/Dockerfile",
+      "repo_slug": "line__armeria",
+      "historical_identifier": "039db50",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        82
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/line__armeria /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/metersphere__metersphere/a23f75d/Dockerfile",
+      "repo_slug": "metersphere__metersphere",
+      "historical_identifier": "a23f75d",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        85
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/metersphere__metersphere /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/micronaut-projects__micronaut-security/c3eeb19/Dockerfile",
+      "repo_slug": "micronaut-projects__micronaut-security",
+      "historical_identifier": "c3eeb19",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        210
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/micronaut-projects__micronaut-security /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/msgpack__msgpack-java/befe3b9/Dockerfile",
+      "repo_slug": "msgpack__msgpack-java",
+      "historical_identifier": "befe3b9",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "msgpack__msgpack-java /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/msgpack__msgpack-java/daa2ea6b2f11f500e22c70a22f689f7a9debdeae/Dockerfile",
+      "repo_slug": "msgpack__msgpack-java",
+      "historical_identifier": "daa2ea6b2f11f500e22c70a22f689f7a9debdeae",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        321
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "msgpack__msgpack-java /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/nahsra__antisamy/69/Dockerfile",
+      "repo_slug": "nahsra__antisamy",
+      "historical_identifier": "69",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        87
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/nahsra__antisamy /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/nahsra__antisamy/70/Dockerfile",
+      "repo_slug": "nahsra__antisamy",
+      "historical_identifier": "70",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        154
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/nahsra__antisamy /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/nahsra__antisamy/81/Dockerfile",
+      "repo_slug": "nahsra__antisamy",
+      "historical_identifier": "81",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        150
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/nahsra__antisamy /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/nahsra__antisamy/83/Dockerfile",
+      "repo_slug": "nahsra__antisamy",
+      "historical_identifier": "83",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        151
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/nahsra__antisamy /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/netty__netty/58f75f665aa81a8cbcf6ffa74820042a285c5e61/Dockerfile",
+      "repo_slug": "netty__netty",
+      "historical_identifier": "58f75f665aa81a8cbcf6ffa74820042a285c5e61",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        262
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "netty__netty /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/nimble-platform__common/12197a7/Dockerfile",
+      "repo_slug": "nimble-platform__common",
+      "historical_identifier": "12197a7",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        86
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/nimble-platform__common /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/nimble-platform__common/ad119be/Dockerfile",
+      "repo_slug": "nimble-platform__common",
+      "historical_identifier": "ad119be",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        202
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/nimble-platform__common /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/noaa-pmel__las/3e6aa69/Dockerfile",
+      "repo_slug": "noaa-pmel__las",
+      "historical_identifier": "3e6aa69",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "noaa-pmel__las /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/noaa-pmel__las/de5f9237bfd4ac5085bcc49a6e30bbc9507ddb29/Dockerfile",
+      "repo_slug": "noaa-pmel__las",
+      "historical_identifier": "de5f9237bfd4ac5085bcc49a6e30bbc9507ddb29",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "noaa-pmel__las /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/ongres__scram/e0b0cf99f05406a0d26682c72fcb5728e95124b3/Dockerfile",
+      "repo_slug": "ongres__scram",
+      "historical_identifier": "e0b0cf99f05406a0d26682c72fcb5728e95124b3",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "ongres__scram /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/ongres__scram/fa443aa/Dockerfile",
+      "repo_slug": "ongres__scram",
+      "historical_identifier": "fa443aa",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "ongres__scram /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/openhab__openhab-addons/4c4cb66/Dockerfile",
+      "repo_slug": "openhab__openhab-addons",
+      "historical_identifier": "4c4cb66",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        88
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/openhab__openhab-addons /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/openhab__openhab-addons/c23710a/Dockerfile",
+      "repo_slug": "openhab__openhab-addons",
+      "historical_identifier": "c23710a",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        201
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/openhab__openhab-addons /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/orbeon__orbeon-forms/9610d39/Dockerfile",
+      "repo_slug": "orbeon__orbeon-forms",
+      "historical_identifier": "9610d39",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        92
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/orbeon__orbeon-forms /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/orbeon__orbeon-forms/aba6681/Dockerfile",
+      "repo_slug": "orbeon__orbeon-forms",
+      "historical_identifier": "aba6681",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        200
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/orbeon__orbeon-forms /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/owasp__json-sanitizer/78/Dockerfile",
+      "repo_slug": "owasp__json-sanitizer",
+      "historical_identifier": "78",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        91
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/owasp__json-sanitizer /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/payara__payara/36/Dockerfile",
+      "repo_slug": "payara__payara",
+      "historical_identifier": "36",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        95
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/payara__payara /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/pebbletemplates__pebble/b3451c8f305a1a248fbcc2363fd307d0baaee329/Dockerfile",
+      "repo_slug": "pebbletemplates__pebble",
+      "historical_identifier": "b3451c8f305a1a248fbcc2363fd307d0baaee329",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        259
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "pebbletemplates__pebble /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/perwendel__spark/2/Dockerfile",
+      "repo_slug": "perwendel__spark",
+      "historical_identifier": "2",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        94
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/perwendel__spark /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/perwendel__spark/3/Dockerfile",
+      "repo_slug": "perwendel__spark",
+      "historical_identifier": "3",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        168
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/perwendel__spark /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/pf4j__pf4j/20c2f80089d1ea779e22c2de5f109a0bce4e1b14/Dockerfile",
+      "repo_slug": "pf4j__pf4j",
+      "historical_identifier": "20c2f80089d1ea779e22c2de5f109a0bce4e1b14",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        278
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "pf4j__pf4j /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/plantuml__plantuml/6826315db092d2e432aeab1a0894e08017c6e4bd/Dockerfile",
+      "repo_slug": "plantuml__plantuml",
+      "historical_identifier": "6826315db092d2e432aeab1a0894e08017c6e4bd",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        323
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "plantuml__plantuml /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/plantuml__plantuml/6eb5892/Dockerfile",
+      "repo_slug": "plantuml__plantuml",
+      "historical_identifier": "6eb5892",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "plantuml__plantuml /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/rhuss__jolokia/84/Dockerfile",
+      "repo_slug": "rhuss__jolokia",
+      "historical_identifier": "84",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        96
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/rhuss__jolokia /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/robo-code__robocode/836c846/Dockerfile",
+      "repo_slug": "robo-code__robocode",
+      "historical_identifier": "836c846",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        17
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/robo-code__robocode /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/robo-code__robocode/e9d00b6/Dockerfile",
+      "repo_slug": "robo-code__robocode",
+      "historical_identifier": "e9d00b6",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        199
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/robo-code__robocode /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/seam2__jboss-seam/090aa62/Dockerfile",
+      "repo_slug": "seam2__jboss-seam",
+      "historical_identifier": "090aa62",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        97
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/seam2__jboss-seam /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/seam2__jboss-seam/b1d1454/Dockerfile",
+      "repo_slug": "seam2__jboss-seam",
+      "historical_identifier": "b1d1454",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        198
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/seam2__jboss-seam /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/smallrye__smallrye-config/4e7ea86/Dockerfile",
+      "repo_slug": "smallrye__smallrye-config",
+      "historical_identifier": "4e7ea86",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        98
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/smallrye__smallrye-config /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/smallrye__smallrye-config/fb0def6/Dockerfile",
+      "repo_slug": "smallrye__smallrye-config",
+      "historical_identifier": "fb0def6",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        197
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/smallrye__smallrye-config /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/smallrye__smallrye-config/fb0def6f/Dockerfile",
+      "repo_slug": "smallrye__smallrye-config",
+      "historical_identifier": "fb0def6f",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        169
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/smallrye__smallrye-config /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/spring-attic__spring-security-oauth/100/Dockerfile",
+      "repo_slug": "spring-attic__spring-security-oauth",
+      "historical_identifier": "100",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        101
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/spring-attic__spring-security-oauth /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/spring-cloud__spring-cloud-config/13/Dockerfile",
+      "repo_slug": "spring-cloud__spring-cloud-config",
+      "historical_identifier": "13",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        100
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/spring-cloud__spring-cloud-config /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/spring-cloud__spring-cloud-config/14/Dockerfile",
+      "repo_slug": "spring-cloud__spring-cloud-config",
+      "historical_identifier": "14",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        158
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "docker-support/m2-cache/spring-cloud__spring-cloud-config /root/.m2/repository",
+        "output/intermediates/iris-repos/spring-cloud__spring-cloud-config /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/spring-projects__spring-framework/105/Dockerfile",
+      "repo_slug": "spring-projects__spring-framework",
+      "historical_identifier": "105",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        102
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/spring-projects__spring-framework /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/spring-projects__spring-security/109/Dockerfile",
+      "repo_slug": "spring-projects__spring-security",
+      "historical_identifier": "109",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        103
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/spring-projects__spring-security /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/square__retrofit/9/Dockerfile",
+      "repo_slug": "square__retrofit",
+      "historical_identifier": "9",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        105
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/square__retrofit /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/srikanth-lingala__zip4j/25/Dockerfile",
+      "repo_slug": "srikanth-lingala__zip4j",
+      "historical_identifier": "25",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        104
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/srikanth-lingala__zip4j /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/stirling-tools__stirling-pdf/e15128633718cb5f9262986b3770ca592af60cda/Dockerfile",
+      "repo_slug": "stirling-tools__stirling-pdf",
+      "historical_identifier": "e15128633718cb5f9262986b3770ca592af60cda",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        273
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "stirling-tools__stirling-pdf /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/thingsboard__thingsboard/b2ae6f92d12206ea185a2e882945a6b69234bf03/Dockerfile",
+      "repo_slug": "thingsboard__thingsboard",
+      "historical_identifier": "b2ae6f92d12206ea185a2e882945a6b69234bf03",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        274
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "thingsboard__thingsboard /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/uberfire__uberfire/21ec50e/Dockerfile",
+      "repo_slug": "uberfire__uberfire",
+      "historical_identifier": "21ec50e",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        111
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/uberfire__uberfire /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/undertow-io__undertow/28/Dockerfile",
+      "repo_slug": "undertow-io__undertow",
+      "historical_identifier": "28",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        106
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/undertow-io__undertow /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/vert-x3__vertx-stomp/0de4bc5/Dockerfile",
+      "repo_slug": "vert-x3__vertx-stomp",
+      "historical_identifier": "0de4bc5",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        107
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/vert-x3__vertx-stomp /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/vert-x3__vertx-stomp/5cc8222/Dockerfile",
+      "repo_slug": "vert-x3__vertx-stomp",
+      "historical_identifier": "5cc8222",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        16
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/vert-x3__vertx-stomp /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/vert-x3__vertx-web/22/Dockerfile",
+      "repo_slug": "vert-x3__vertx-web",
+      "historical_identifier": "22",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        108
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/vert-x3__vertx-web /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/vert-x3__vertx-web/5/Dockerfile",
+      "repo_slug": "vert-x3__vertx-web",
+      "historical_identifier": "5",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        167
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/vert-x3__vertx-web /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/webbukkit__dynmap/641f142/Dockerfile",
+      "repo_slug": "webbukkit__dynmap",
+      "historical_identifier": "641f142",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        109
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/webbukkit__dynmap /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/whitesource__curekit/32/Dockerfile",
+      "repo_slug": "whitesource__curekit",
+      "historical_identifier": "32",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        110
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/whitesource__curekit /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/wildfirechat__im-server/2f9c4e028c01c64913cab32e7248bcca183a5230/Dockerfile",
+      "repo_slug": "wildfirechat__im-server",
+      "historical_identifier": "2f9c4e028c01c64913cab32e7248bcca183a5230",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        272
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "wildfirechat__im-server /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/wildfly-security__wildfly-elytron/5ac5e6bbcba58883b3cebb2ddbcec4de140c5ceb/Dockerfile",
+      "repo_slug": "wildfly-security__wildfly-elytron",
+      "historical_identifier": "5ac5e6bbcba58883b3cebb2ddbcec4de140c5ceb",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        260
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "wildfly-security__wildfly-elytron /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/wildfly__wildfly/4/Dockerfile",
+      "repo_slug": "wildfly__wildfly",
+      "historical_identifier": "4",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        112
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/wildfly__wildfly /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/x-stream__xstream/56/Dockerfile",
+      "repo_slug": "x-stream__xstream",
+      "historical_identifier": "56",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        113
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/x-stream__xstream /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/x-stream__xstream/57/Dockerfile",
+      "repo_slug": "x-stream__xstream",
+      "historical_identifier": "57",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        152
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/x-stream__xstream /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/x-stream__xstream/58/Dockerfile",
+      "repo_slug": "x-stream__xstream",
+      "historical_identifier": "58",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        162
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/x-stream__xstream /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xerial__sqlite-jdbc/114/Dockerfile",
+      "repo_slug": "xerial__sqlite-jdbc",
+      "historical_identifier": "114",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        114
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/xerial__sqlite-jdbc /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xuxueli__xxl-job/77/Dockerfile",
+      "repo_slug": "xuxueli__xxl-job",
+      "historical_identifier": "77",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        117
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/xuxueli__xxl-job /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki-contrib__oidc/0247af1/Dockerfile",
+      "repo_slug": "xwiki-contrib__oidc",
+      "historical_identifier": "0247af1",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        115
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/xwiki-contrib__oidc /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki-contrib__oidc/7d7cca1/Dockerfile",
+      "repo_slug": "xwiki-contrib__oidc",
+      "historical_identifier": "7d7cca1",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        172
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/xwiki-contrib__oidc /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-commons/24/Dockerfile",
+      "repo_slug": "xwiki__xwiki-commons",
+      "historical_identifier": "24",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        116
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/xwiki__xwiki-commons /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-commons/91/Dockerfile",
+      "repo_slug": "xwiki__xwiki-commons",
+      "historical_identifier": "91",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        142
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/xwiki__xwiki-commons /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-commons/92/Dockerfile",
+      "repo_slug": "xwiki__xwiki-commons",
+      "historical_identifier": "92",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        141
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/xwiki__xwiki-commons /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-commons/94/Dockerfile",
+      "repo_slug": "xwiki__xwiki-commons",
+      "historical_identifier": "94",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        139
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/xwiki__xwiki-commons /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-commons/97/Dockerfile",
+      "repo_slug": "xwiki__xwiki-commons",
+      "historical_identifier": "97",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        137
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/xwiki__xwiki-commons /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-platform/05dc331/Dockerfile",
+      "repo_slug": "xwiki__xwiki-platform",
+      "historical_identifier": "05dc331",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        121
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/xwiki__xwiki-platform /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-platform/11a9170/Dockerfile",
+      "repo_slug": "xwiki__xwiki-platform",
+      "historical_identifier": "11a9170",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        188
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/xwiki__xwiki-platform /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-platform/171e7c7/Dockerfile",
+      "repo_slug": "xwiki__xwiki-platform",
+      "historical_identifier": "171e7c7",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        179
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/xwiki__xwiki-platform /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-platform/1977051/Dockerfile",
+      "repo_slug": "xwiki__xwiki-platform",
+      "historical_identifier": "1977051",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        189
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/xwiki__xwiki-platform /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-platform/1a30c1c/Dockerfile",
+      "repo_slug": "xwiki__xwiki-platform",
+      "historical_identifier": "1a30c1c",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        193
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/xwiki__xwiki-platform /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-platform/2a9ce88/Dockerfile",
+      "repo_slug": "xwiki__xwiki-platform",
+      "historical_identifier": "2a9ce88",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        183
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/xwiki__xwiki-platform /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-platform/39ddb2e/Dockerfile",
+      "repo_slug": "xwiki__xwiki-platform",
+      "historical_identifier": "39ddb2e",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        171
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/xwiki__xwiki-platform /workspace/repo",
+        "xwiki-commons-bootstrap /workspace/xwiki-commons-bootstrap"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-platform/3d4dbb4/Dockerfile",
+      "repo_slug": "xwiki__xwiki-platform",
+      "historical_identifier": "3d4dbb4",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        181
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/xwiki__xwiki-platform /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-platform/459e968/Dockerfile",
+      "repo_slug": "xwiki__xwiki-platform",
+      "historical_identifier": "459e968",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        23
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/xwiki__xwiki-platform /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-platform/480186f/Dockerfile",
+      "repo_slug": "xwiki__xwiki-platform",
+      "historical_identifier": "480186f",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        185
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/xwiki__xwiki-platform /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-platform/505f38b/Dockerfile",
+      "repo_slug": "xwiki__xwiki-platform",
+      "historical_identifier": "505f38b",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        178
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/xwiki__xwiki-platform /workspace/repo",
+        "xwiki-commons-bootstrap /workspace/xwiki-commons"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-platform/5dad14d/Dockerfile",
+      "repo_slug": "xwiki__xwiki-platform",
+      "historical_identifier": "5dad14d",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        177
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/xwiki__xwiki-platform /workspace/repo",
+        "xwiki-commons-bootstrap /workspace/xwiki-commons-bootstrap"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-platform/5f206f4/Dockerfile",
+      "repo_slug": "xwiki__xwiki-platform",
+      "historical_identifier": "5f206f4",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        187
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/xwiki__xwiki-platform /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-platform/67021db9b8ed26c2236a653269302a86bf01ef40/Dockerfile",
+      "repo_slug": "xwiki__xwiki-platform",
+      "historical_identifier": "67021db9b8ed26c2236a653269302a86bf01ef40",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        275
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "assets/route_hacker/build-context/xwiki__xwiki-platform/xwiki-commons-bootstrap /workspace/xwiki-commons-bootstrap",
+        "xwiki__xwiki-platform /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-platform/70c64c2/Dockerfile",
+      "repo_slug": "xwiki__xwiki-platform",
+      "historical_identifier": "70c64c2",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        170
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/xwiki__xwiki-platform /workspace/repo",
+        "docker-bootstrap-xwiki-platform.sh /tmp/docker-bootstrap-xwiki-platform.sh"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-platform/7525c13/Dockerfile",
+      "repo_slug": "xwiki__xwiki-platform",
+      "historical_identifier": "7525c13",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        184
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/xwiki__xwiki-platform /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-platform/82aa670/Dockerfile",
+      "repo_slug": "xwiki__xwiki-platform",
+      "historical_identifier": "82aa670",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        176
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/xwiki__xwiki-platform /workspace/repo",
+        "xwiki-commons-bootstrap /workspace/xwiki-commons-bootstrap"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-platform/8910b88/Dockerfile",
+      "repo_slug": "xwiki__xwiki-platform",
+      "historical_identifier": "8910b88",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        194
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/xwiki__xwiki-platform /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-platform/93b8ec7/Dockerfile",
+      "repo_slug": "xwiki__xwiki-platform",
+      "historical_identifier": "93b8ec7",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        186
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/xwiki__xwiki-platform /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-platform/ba915dc/Dockerfile",
+      "repo_slug": "xwiki__xwiki-platform",
+      "historical_identifier": "ba915dc",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        195
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/xwiki__xwiki-platform /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-platform/d4752ef/Dockerfile",
+      "repo_slug": "xwiki__xwiki-platform",
+      "historical_identifier": "d4752ef",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        180
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/xwiki__xwiki-platform /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-platform/d772021/Dockerfile",
+      "repo_slug": "xwiki__xwiki-platform",
+      "historical_identifier": "d772021",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        192
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/xwiki__xwiki-platform /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-platform/d87d7bf/Dockerfile",
+      "repo_slug": "xwiki__xwiki-platform",
+      "historical_identifier": "d87d7bf",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        196
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/xwiki__xwiki-platform /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-platform/edc5257/Dockerfile",
+      "repo_slug": "xwiki__xwiki-platform",
+      "historical_identifier": "edc5257",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        190
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/xwiki__xwiki-platform /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-platform/f16ca4e/Dockerfile",
+      "repo_slug": "xwiki__xwiki-platform",
+      "historical_identifier": "f16ca4e",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        182
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/xwiki__xwiki-platform /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-platform/fcdcfed/Dockerfile",
+      "repo_slug": "xwiki__xwiki-platform",
+      "historical_identifier": "fcdcfed",
+      "identifier_kind": "abbreviated_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        191
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/benchmark-repos/xwiki__xwiki-platform /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-rendering/93/Dockerfile",
+      "repo_slug": "xwiki__xwiki-rendering",
+      "historical_identifier": "93",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        118
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/xwiki__xwiki-rendering /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/xwiki__xwiki-rendering/99/Dockerfile",
+      "repo_slug": "xwiki__xwiki-rendering",
+      "historical_identifier": "99",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        140
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/xwiki__xwiki-rendering /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/yamcs__yamcs/52/Dockerfile",
+      "repo_slug": "yamcs__yamcs",
+      "historical_identifier": "52",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        119
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/yamcs__yamcs /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/yamcs__yamcs/53/Dockerfile",
+      "repo_slug": "yamcs__yamcs",
+      "historical_identifier": "53",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        149
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/yamcs__yamcs /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/ycf1998__money-pos/11f276bd20a41f089298d804e43cb1c39d041e59/Dockerfile",
+      "repo_slug": "ycf1998__money-pos",
+      "historical_identifier": "11f276bd20a41f089298d804e43cb1c39d041e59",
+      "identifier_kind": "full_hex_revision_not_freshly_checked_out",
+      "catalog_id_candidates": [
+        270
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e"
+      ],
+      "build_context_instructions": [
+        "ycf1998__money-pos /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    },
+    {
+      "recipe": "recipes/zeroturnaround__zt-zip/31/Dockerfile",
+      "repo_slug": "zeroturnaround__zt-zip",
+      "historical_identifier": "31",
+      "identifier_kind": "numeric_token_not_resolved_to_commit",
+      "catalog_id_candidates": [
+        120
+      ],
+      "catalog_join": "casefolded_repo_and_literal_revision_only_not_execution_proof",
+      "from_images": [
+        "route-hacker-base:tools-78932d2e-iris"
+      ],
+      "build_context_instructions": [
+        "output/intermediates/iris-repos/zeroturnaround__zt-zip /workspace/repo"
+      ],
+      "status": "historical_recipe_not_rebuilt_during_preservation"
+    }
+  ]
+}

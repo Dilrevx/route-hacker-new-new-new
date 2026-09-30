@@ -1,0 +1,758 @@
+[
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:DSpace_CVE-2025-53621_dspace-7.6.3",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "6d3c42ab807bfef26ebcc9a7b98ebe568a6ee54179c395f3aeae503570c76e3d",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:DSpace_CVE-2025-53622_dspace-7.6.3",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "57256dbb222e15793643f99befa0a8728364d568ecb8f0db755a15a631c81c77",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:OpenDJ_CVE-2025-27497_4.9.2",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "7da51754594ced413d17ee277e7f2659829ef6ac55d15cf129ed9b5a0c42ba4a",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:activemq-artemis_CVE-2025-27427_2.39.0",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "a3ad5985e2b59357be0103559f888e3737c1edc2559a9bd80ee3560c9bce0184",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:allure2_CVE-2025-52888_2.34.0",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "94f68b5d0310cbfe60af751da183a2f8fa0be7675f1028ec257cad4eb90f27c8",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:apache__activemq_CVE-2014-3576_5.10.2",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "1d128ca20a68ae7abc642861a9dda842a8bc3e22e1bc543f1655554b65e042ff",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:apache__axis-axis1-java_CVE-2023-51441_1.3.0",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "d60287378be5aec4847ef43f5ed52e8ed507f07b04568659e6ed0849ee415c4e",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:camel_CVE-2025-30177_camel-4.10.2",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "169b107fff8f1d2d20df0e58386babedecee330eecc8c879bd14d7c2ddbe343c",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:cassandra-lucene-index_CVE-2025-26511_cassandra-4.0.16-1.0.0",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "d2f74337ea95ab2f3af366e09da68fa0124f53bcbd6cc70082dbc273e06b9d18",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:cassandra_CVE-2025-23015_cassandra-5.0-alpha2",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "e1fd2bc62561be1ac5ccfb2fdd5558f6fcd46331b2ae9ae68421ccb82298be5d",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:cloudbees-jenkins-advisor-plugin_CVE-2025-47885_374.v194b_d4f0c8c8",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "17d36d656cdadac94f8c50c5ae59dcc0bf9b4af8027930b5cb80192028f5acbf",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:commons-beanutils_CVE-2025-48734_commons-beanutils-1.10.1-RC1",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "fa07a70579d13dc67d1a4a6b0c0a8092d0d4f2c1a219be585bc19a5df0c027e1",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:commons-fileupload_CVE-2025-48976_commons-fileupload-1.5-RC1",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "852e3a4f16951c7ff92e183510fba51626f842a5a694229db29d3759270befbd",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:console_CVE-2025-2901_v3.7.10",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "3b509d62d729d47428151571a9b678402ab6eb4ed0b0dfe6b52a0d63ef030ba6",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:crate__crate_5.5.1_CVE-2023-51982_5.5.1",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "6e5c807bc35285be33114132300bce7feec3d39d84babe16459d4f49893bab25",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:cuba_CVE-2025-32959_7.2.22",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "7feb90e9d305cca8b57c1cc3e01382e428cffaf00d72d7740ad6ce0cc7dce19d",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:cxf_CVE-2025-48795_cxf-3.5.10",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "4403f671d19e1b37b61b75a2686073e06360c7c044422d4e5bbac76e45113311",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:djl_CVE-2025-0851_v0.30.0",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "943153e406d8d5ba658108de30c62a6193453f197648a67629f12edd1b4c503f",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:eclipse__hawkbit_CVE-2020-27219_0.3.0M6",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "8a3d49e9fc8fee4a2ec782116beeeb8fbcd19f8ad95a3f4d8d8e2158dcc45499",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:emissary_CVE-2025-27508_8.23.0",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "a1ce599e83a3f223a0c53fae863f77152a050ee5fc6de391c9734bcf508e8096",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:felix-dev_CVE-2025-25247_org.osgi.compendium-1.4.0",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "4e7e493157e86afe3b038f6f65d09a3bafb1b6959b8cdaaab18b6ab3b5194a37",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:graylog2-server_CVE-2025-53106_6.2.3",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "741e7c8f00517c616abe949609df41642325343ec75a88c12aa1839404474cb2",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:hapifhir__org.hl7.fhir.core_CVE-2023-24057_5.6.91",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "53d3ac0d2d82b5b8c9cc44205cabe83df7dedd5711d6b9f0836c45bb431b81c6",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:hapifhir__org.hl7.fhir.core_CVE-2023-28465_5.6.105",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "5926a67fe947303b51551465237d6575f42a27e31993b52c472a25ed198446e0",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:incubator-seata_CVE-2025-32897_v2.2.0",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "a1c2207c5f313c995391ccc630d9858b3e8af1ce919e7fa4b44f56743ad5ef50",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:inlong_CVE-2025-27522_2.1.0-RC0",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "b78a503b8e55b2c66439b9ade6374031b0e11dd11445ea274364e6eabc57709b",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:inlong_CVE-2025-27526_2.1.0-RC0",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "3b45a377c3b60144b6c0996be617521af0f72cdb9dac02b0c586acc55487aad6",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:inlong_CVE-2025-27528_2.1.0-RC0",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "76c44e3e4e69726ca129778b5ed4dbba64bdb41419cc01968668f6b85790dedb",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:inlong_CVE-2025-27531_2.0.0-RC0",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "e38595e3816e985981ab4523214b95669fc93afceb71b7dc50e4c8f6dad44d7b",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:iotdb_CVE-2025-26795_v1.3.3",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "881a234c1b8a8e0699b4759a397c71eed0a07b7728ebb8638879a11fcc228c0e",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:iotdb_CVE-2025-26864_v1.3.3",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "9a68a82b9495f304c3a656c26d9108f67ca0aada3e0b9fffcc591d4f044a2005",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:jackrabbit_CVE-2025-53689_jackrabbit-2.23.1-beta",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "ac408cbe22af0a04bd8fe74a253cbe5b727835a8188fb36f330e47697b4ebc13",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:jans_CVE-2025-53003_v1.7.0",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "ecf6a3a94ed6fd93779ae86f718c1baf42fe5fb396b83c092de6203ee5cf9ed5",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:jena_CVE-2025-49656_jena-5.4.0",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "7dd69a886065eaf7f20b82e5be3da4943966c9ce77108e2b1d334970e84b14ee",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:jenkins_CVE-2025-31720_prototype-1.7",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "e016002555cb101a47a52f7259e5edbc5e66310422f38142379c34d0edd6fa74",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:jenkins_CVE-2025-31721_prototype-1.7",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "d00e0b994d8c4d7861cc9b1593678fc8635aed229dda9f28f43d95074c5f31ee",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:jetty.project_CVE-2025-1948_jetty-12.0.16",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "a8c79b1e0b4dd9f6455f89179eb5e0fe3d0ad00abf9e9c362304830418063063",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:jpawebapi_CVE-2025-32961_v1.1.0",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "7940f7eb89be9e717204ee0a9a3bd129fc0bf9482ffb6fcab7bbf2d82339bb99",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:junit-framework_CVE-2025-53103_r5.13.1",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "aa497af9208c4afc9d7a1a0347ab3c3607f4be7367d144db3aab44d53f39ad49",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:keycloak_CVE-2025-0604_26.1.2",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "66af7a2e450a3a713d78b8102be50e07a74bc05a9ce0ce99317ebdff84494a0a",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:keycloak_CVE-2025-1391_26.1.2",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "873b0eef4df152207ddd9ff87d6623c12e43249a20cb6efec54a5f9ee32f5c64",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:keycloak_CVE-2025-3501_26.2.1",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "1eb0fe378d35c33a651fb1db7937fe6cbc7fd5fc5265207def2d69ecfb6d03c0",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:keycloak_CVE-2025-3910_26.2.1",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "bc25acc70dc8294dcd67f5f73e7516a60e3595bae15b79fe200adb7d081916bb",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:keycloak_CVE-2025-7365_26.0.12",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "78c27810b6340ed6a0d26fd75fb0804cf7e93487750c5162eb40c9a52507739f",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:keycloak__keycloak_CVE-2022-4361_21.1.1",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "e2e6863122ef0e35ec1db184b2b17383b180d49e598dc6363c1a76abfab49438",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:kylin_CVE-2025-30067_kylin-5.0.1",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "6b41e9c8b2501628e272afb62e54b640db43b6eeec0ab134d1b0f7a4f03366e1",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:netty-incubator-codec-quic_CVE-2025-29908_netty-incubator-codec-parent-quic-0.0.70.Final",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "b723e05bf748b3cd11fe10af7ab3eaaa9adb873f2ba7859c6e4b3b45535a3962",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:netty_CVE-2025-24970_netty-4.1.117.Final",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "58eafa2bfb683b315fc50e5feb4f31633343251283ce9c5b6d57b86c9f0bf593",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:netty_CVE-2025-25193_netty-4.1.117.Final",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "1f082b172be2bd361d213fe0a53c35d14ce55a0be78dbfc14c9b14ef37412b6d",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:oic-auth-plugin_CVE-2025-24399_4.452.v2849b_d3945fa_",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "bc516d14e6cf3b9f0555bcd8df647f20e7d8d9abdd75e813b4422c319cb36c24",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:opencast_CVE-2025-54380_17.5",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "69501f21610e850fbb7e5bb085b1f51f0c69e2720faf2c878b108076829bf60a",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:para_CVE-2025-48955_v1.50.7",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "076d06d7c2aa1e4f883dafac26d7e1af694241b852bb826815863805a05769d1",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:para_CVE-2025-49009_v1.50.7",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "1493f8171198cb38b0595b35633cb058adabf2cf28f8888b70e10f512025d528",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:powsybl-core_CVE-2025-47293_v6.7.1",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "474e5ef8318d86db5239969e2555c00849251c0f476e2bf90ebb4f380fac6c43",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:powsybl-core_CVE-2025-47771_v6.7.1",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "12f51fb85684a2ac34030159647cce650e2219f98bdf54a6382e2f49a83ccdc6",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:powsybl-core_CVE-2025-48058_v6.7.1",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "8e03a07908388b9d30ac567f46d767845ebc851e2b1b2a9ff227b5e0663e88d8",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:powsybl-core_CVE-2025-48059_v6.2.4",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "ce9cb41a939f09c08681af4a1a8a9a1abeedaabd28e044f2f3dd8fa7e014790b",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:quarkus_CVE-2025-49574_3.23.4",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "f8a38b1621046a53772b7231cdbf37f91fd9003d91e684dab6d10f63765a1a3a",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:reactor-netty_CVE-2025-22227_v1.2.8",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "7ce614860414d9668849b4be3fc8ee41b52a1954c3afa033934f998e257f8295",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:restapi_CVE-2025-32960_v7.2.6",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "3feaadd089efafe51658973290b13e758dad22a38a0ac482ef8cde68030756e5",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:simple-queue-plugin_CVE-2025-31723_simple-queue-1.4.6",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "10d34f58fd1344a29bcca0fbd2f716fbf1699433bc17676839850d26f41ea46a",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:smallrye-fault-tolerance_CVE-2025-2240_6.4.1",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "e9d29d01019d85895c9b408fa99a343b38a453b094f32b70f8eafd3e0d1c4c5c",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:snowflake-jdbc_CVE-2025-24789_v3.21.1",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "950563b9ff420bb00794c7d1293d941869f4654b6990319c41cc0a1c663a7242",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:snowflake-jdbc_CVE-2025-24790_v3.21.1",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "8566b96137fd4aef9138630356c4c8ddfad64b614788a874bf09cb91f6d0f5b3",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:snowflake-jdbc_CVE-2025-27496_v3.23.0",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "74cde85d5a82125a780c13a76c573b6cfdd479c2a2e492a1782614883c09f270",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:solon_CVE-2025-1584_v3.0.8",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "9a8cf7de91cd34baa6273f66e3c33ec20df0b6fbb5a2a4fa4b03bd4d3c7ef99c",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:solon_CVE-2025-46096_v3.1.2",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "0380d10e0af3d634815b21366b049d0d0cb56fd6d7c07b7b7005d7f382c6f265",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:spring-cloud__spring-cloud-config_CVE-2020-5405_2.1.6.RELEASE",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "e5f7047259669e80d4166fa7a5202fb59acdb1917505d9ff86f0272b56b13ce1",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:spring-framework_CVE-2025-22233_v6.2.6",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "577e7ca54377573ab7daa229fdd7e557262ce7a02ef7272557877f1e6ac32f97",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:spring-framework_CVE-2025-41234_v6.2.7",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "75d287c03e1eb39931c8cc500446aacc68c7c9f586f57692dc51777f37a777c2",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:spring-security_CVE-2025-22223_6.4.3",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "32d254d7da36a759b257174740d51449b91db1fcf26c6d914227c930f6c4a619",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:spring-security_CVE-2025-22228_6.3.7",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "258265964e16fb275803ff2f873daaeb09429240e8af14dcee2ca4cf8cc95caf",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:studio_CVE-2025-6384_v4.2.2",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "104924f2c4c4b57d925c0b49204cb426ed777e9d3890591e8d79d0cb85746fa7",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:syntax-markdown_CVE-2025-46558_syntax-markdown-8.8",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "5b08895e11493eb3843458b79da85c737d2840cdc252f7c23409788e99797b77",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:tomcat_CVE-2025-24813_11.0.2",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "e93e31465e76d059831284d1b1529662909f0592d6513e36c3790e6c76e5ddca",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:tomcat_CVE-2025-48988_11.0.7",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "f41187d8e89e132036919e5905506a5a0b4204677005934ebabf354b95b1f553",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:tomcat_CVE-2025-49125_11.0.7",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "f4fafc389ca5cc34af3a757134f2d67f9f25ed323240dee6ab4db6a03b167166",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:tomcat_CVE-2025-52520_11.0.8",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "c8dcf71ac3f8b45b7b1a075ba8319c34f6c5ef7c2216a40a79a40ada48d47614",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:tomcat_CVE-2025-53506_11.0.8",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "4a3898ca27c0547fd6673ec1105a95c696ad3f16ce8ea4cd4743af7009bd06be",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:valtimo-backend-libraries_CVE-2025-48881_12.12.0.RELEASE",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "417035ce1bf87f180a7d1cc6e5ea56beb54c8adbb5c834442fca092dd3e9b090",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:webdrivermanager_CVE-2025-4641_webdrivermanager-6.0.1",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "bece284e7f1d88b5994e103a121e3b5e7ea1d949a4431b74d4f2f6f4308c509c",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:xwiki__xwiki-commons_CVE-2023-29201_14.6",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "8715a04611dd43bf36cbac4270d4a98547f56f342505024e67004056de2eab74",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:xwiki__xwiki-rendering_CVE-2023-32070_14.6",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "2b3bc80b0fe01bab7cc94755868fc6849624cdbd0271f3ed2cfe40d991c2da26",
+    "historical_snapshot": true
+  },
+  {
+    "schema_version": "route_hacker_codeql_llm_repair_dispatch.v1:case_completion",
+    "case_id": "v8:zohoqengine-plugin_CVE-2025-30197_1.0.29.vfa_cc23396502",
+    "status": "source_receipt_missing",
+    "recorded_at": "2026-08-22T17:17:46+00:00",
+    "attempt_number": 1,
+    "failed_receipt_sha256": "ce9eb6207c3912321671e6b6be9e0adcf37b9665a175e67650d99a8708217558",
+    "historical_snapshot": true
+  }
+]

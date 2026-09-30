@@ -1,0 +1,1 @@
+This revision built cleanly with Java 17 and Maven 3.9.8 using a standard `mvn package` without any custom patches or bootstrap steps. No non-obvious modifications were required; the build relies on Maven’s automatic dependency resolution and the upstream POM as

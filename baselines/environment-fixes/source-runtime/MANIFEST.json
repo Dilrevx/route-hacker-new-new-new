@@ -1,0 +1,1265 @@
+{
+  "schema": "source-runtime-historical-publication.v1",
+  "purpose": "Historical source-inserted and base/patched-control environment recipes, not a claim of exact original-vulnerable reproduction.",
+  "automatic_execution_supported": false,
+  "source_roots": {
+    "remote_historical_root": "/data/lhq/workspace",
+    "local_supplied": "User-supplied historical assemble-knox-runtime.sh copy"
+  },
+  "case_count": 22,
+  "file_count": 41,
+  "bytes": 142479,
+  "files": [
+    {
+      "path": "files/ljl-v1-core/source-insertion/samples/apache_archiva__CVE-2021-44228__source_inserted/patch.diff",
+      "source_provenance": {
+        "archive_relative_path": "ljl-v1-core/source-insertion/samples/apache_archiva__CVE-2021-44228__source_inserted/patch.diff",
+        "case_id": "apache_archiva__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {
+          "base_commit": "2beaf864901abb337b263662800b3373326bcfd4"
+        },
+        "original_sha256": "ddcc73ecb65f7c403b03e6cb07e1d12b7268dbe9ec19d4fbacc8e3019adf43d5"
+      },
+      "source_sha256": "ddcc73ecb65f7c403b03e6cb07e1d12b7268dbe9ec19d4fbacc8e3019adf43d5",
+      "published_sha256": "ddcc73ecb65f7c403b03e6cb07e1d12b7268dbe9ec19d4fbacc8e3019adf43d5",
+      "bytes": 1274,
+      "byte_transformation": "none",
+      "asset_semantics": "synthetic_source_insertion_recipe_not_environment_only_fix",
+      "license_note": "Upstream-derived patch archived with original project names; no new license asserted.",
+      "warnings": {
+        "host_specific_paths_preserved": false,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": false,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "not_python"
+      }
+    },
+    {
+      "path": "files/ljl-v1-core/source-insertion/samples/apache_flink__CVE-2021-44228__source_inserted/patch.diff",
+      "source_provenance": {
+        "archive_relative_path": "ljl-v1-core/source-insertion/samples/apache_flink__CVE-2021-44228__source_inserted/patch.diff",
+        "case_id": "apache_flink__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {
+          "base_commit": "b464b331dbd2cbd4714c47816cb0558b14955c91"
+        },
+        "original_sha256": "01eed71ef7deb40547b009f2c542e1e62a01025a91a07263af79323286775d38"
+      },
+      "source_sha256": "01eed71ef7deb40547b009f2c542e1e62a01025a91a07263af79323286775d38",
+      "published_sha256": "01eed71ef7deb40547b009f2c542e1e62a01025a91a07263af79323286775d38",
+      "bytes": 1398,
+      "byte_transformation": "none",
+      "asset_semantics": "synthetic_source_insertion_recipe_not_environment_only_fix",
+      "license_note": "Upstream-derived patch archived with original project names; no new license asserted.",
+      "warnings": {
+        "host_specific_paths_preserved": false,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": false,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "not_python"
+      }
+    },
+    {
+      "path": "files/ljl-v1-core/source-insertion/samples/apache_hadoop__CVE-2021-44228__source_inserted/patch.diff",
+      "source_provenance": {
+        "archive_relative_path": "ljl-v1-core/source-insertion/samples/apache_hadoop__CVE-2021-44228__source_inserted/patch.diff",
+        "case_id": "apache_hadoop__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {
+          "base_commit": "4999ac9ea27d1881cac95aa8636250f1c9b1d547"
+        },
+        "original_sha256": "f71872aea0221f9756fdc37f402c40fb3771c639360acdceeaedbc3d93030631"
+      },
+      "source_sha256": "f71872aea0221f9756fdc37f402c40fb3771c639360acdceeaedbc3d93030631",
+      "published_sha256": "f71872aea0221f9756fdc37f402c40fb3771c639360acdceeaedbc3d93030631",
+      "bytes": 1818,
+      "byte_transformation": "none",
+      "asset_semantics": "synthetic_source_insertion_recipe_not_environment_only_fix",
+      "license_note": "Upstream-derived patch archived with original project names; no new license asserted.",
+      "warnings": {
+        "host_specific_paths_preserved": false,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": false,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "not_python"
+      }
+    },
+    {
+      "path": "files/ljl-v1-core/source-insertion/samples/apache_hive__CVE-2021-44228__source_inserted/patch.diff",
+      "source_provenance": {
+        "archive_relative_path": "ljl-v1-core/source-insertion/samples/apache_hive__CVE-2021-44228__source_inserted/patch.diff",
+        "case_id": "apache_hive__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {
+          "base_commit": "89ea0b1b5edb8528c3be08588017216fbcc27beb"
+        },
+        "original_sha256": "44f8956502c7cc2955325a6af9cd2d92961c699ce126446e7140cae096542b19"
+      },
+      "source_sha256": "44f8956502c7cc2955325a6af9cd2d92961c699ce126446e7140cae096542b19",
+      "published_sha256": "44f8956502c7cc2955325a6af9cd2d92961c699ce126446e7140cae096542b19",
+      "bytes": 2503,
+      "byte_transformation": "none",
+      "asset_semantics": "synthetic_source_insertion_recipe_not_environment_only_fix",
+      "license_note": "Upstream-derived patch archived with original project names; no new license asserted.",
+      "warnings": {
+        "host_specific_paths_preserved": false,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": false,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "not_python"
+      }
+    },
+    {
+      "path": "files/ljl-v1-core/source-insertion/samples/apache_ignite__CVE-2021-44228__source_inserted/patch.diff",
+      "source_provenance": {
+        "archive_relative_path": "ljl-v1-core/source-insertion/samples/apache_ignite__CVE-2021-44228__source_inserted/patch.diff",
+        "case_id": "apache_ignite__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {
+          "base_commit": "3eaca519e0cffd4b9ffa5b333161384eb3400f50"
+        },
+        "original_sha256": "554ba1f0ba13d80a30264137f62ecf7bfba5cf5858df6afc258bc9add22ec8ac"
+      },
+      "source_sha256": "554ba1f0ba13d80a30264137f62ecf7bfba5cf5858df6afc258bc9add22ec8ac",
+      "published_sha256": "554ba1f0ba13d80a30264137f62ecf7bfba5cf5858df6afc258bc9add22ec8ac",
+      "bytes": 2667,
+      "byte_transformation": "none",
+      "asset_semantics": "synthetic_source_insertion_recipe_not_environment_only_fix",
+      "license_note": "Upstream-derived patch archived with original project names; no new license asserted.",
+      "warnings": {
+        "host_specific_paths_preserved": false,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": false,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "not_python"
+      }
+    },
+    {
+      "path": "files/ljl-v1-core/source-insertion/samples/apache_kyuubi__CVE-2021-44228__source_inserted/patch.diff",
+      "source_provenance": {
+        "archive_relative_path": "ljl-v1-core/source-insertion/samples/apache_kyuubi__CVE-2021-44228__source_inserted/patch.diff",
+        "case_id": "apache_kyuubi__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {
+          "base_commit": "0783f075d7d05b7da0faaaa29282711640242bab"
+        },
+        "original_sha256": "e1af592091e137021eab8546e4ea637b5d3a31e1effeea78ac77d7269bceae62"
+      },
+      "source_sha256": "e1af592091e137021eab8546e4ea637b5d3a31e1effeea78ac77d7269bceae62",
+      "published_sha256": "e1af592091e137021eab8546e4ea637b5d3a31e1effeea78ac77d7269bceae62",
+      "bytes": 1743,
+      "byte_transformation": "none",
+      "asset_semantics": "synthetic_source_insertion_recipe_not_environment_only_fix",
+      "license_note": "Upstream-derived patch archived with original project names; no new license asserted.",
+      "warnings": {
+        "host_specific_paths_preserved": false,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": false,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "not_python"
+      }
+    },
+    {
+      "path": "files/ljl-v1-core/source-insertion/samples/apache_pulsar__CVE-2021-44228__source_inserted/patch.diff",
+      "source_provenance": {
+        "archive_relative_path": "ljl-v1-core/source-insertion/samples/apache_pulsar__CVE-2021-44228__source_inserted/patch.diff",
+        "case_id": "apache_pulsar__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {
+          "base_commit": "02ee5616866d4eda8dd94f85d9d9b71c459f248d"
+        },
+        "original_sha256": "9d2265ce0a067e4a6893f9813c0bd134a88353e076c18c453b1a73ccbb67e71d"
+      },
+      "source_sha256": "9d2265ce0a067e4a6893f9813c0bd134a88353e076c18c453b1a73ccbb67e71d",
+      "published_sha256": "9d2265ce0a067e4a6893f9813c0bd134a88353e076c18c453b1a73ccbb67e71d",
+      "bytes": 1321,
+      "byte_transformation": "none",
+      "asset_semantics": "synthetic_source_insertion_recipe_not_environment_only_fix",
+      "license_note": "Upstream-derived patch archived with original project names; no new license asserted.",
+      "warnings": {
+        "host_specific_paths_preserved": false,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": false,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "not_python"
+      }
+    },
+    {
+      "path": "files/ljl-v1-core/source-insertion/samples/apache_skywalking__CVE-2021-44228__source_inserted/patch.diff",
+      "source_provenance": {
+        "archive_relative_path": "ljl-v1-core/source-insertion/samples/apache_skywalking__CVE-2021-44228__source_inserted/patch.diff",
+        "case_id": "apache_skywalking__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {
+          "base_commit": "432d55f2a7de58d797a382e7df823edfdb745358"
+        },
+        "original_sha256": "012a329a0139a2e07c74cac40dbc3e5eee8cdff65eee538596ff5822a5a35c14"
+      },
+      "source_sha256": "012a329a0139a2e07c74cac40dbc3e5eee8cdff65eee538596ff5822a5a35c14",
+      "published_sha256": "012a329a0139a2e07c74cac40dbc3e5eee8cdff65eee538596ff5822a5a35c14",
+      "bytes": 1539,
+      "byte_transformation": "none",
+      "asset_semantics": "synthetic_source_insertion_recipe_not_environment_only_fix",
+      "license_note": "Upstream-derived patch archived with original project names; no new license asserted.",
+      "warnings": {
+        "host_specific_paths_preserved": false,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": false,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "not_python"
+      }
+    },
+    {
+      "path": "files/ljl-v1-core/source-insertion/samples/apache_spark__CVE-2021-44228__source_inserted/patch.diff",
+      "source_provenance": {
+        "archive_relative_path": "ljl-v1-core/source-insertion/samples/apache_spark__CVE-2021-44228__source_inserted/patch.diff",
+        "case_id": "apache_spark__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {
+          "base_commit": "18db204995b32e87a650f2f09f9bcf047ddafa90"
+        },
+        "original_sha256": "3067e72882b6f2de01fc8167b26891d90b5923af8a170a1114e6ad0f71201334"
+      },
+      "source_sha256": "3067e72882b6f2de01fc8167b26891d90b5923af8a170a1114e6ad0f71201334",
+      "published_sha256": "3067e72882b6f2de01fc8167b26891d90b5923af8a170a1114e6ad0f71201334",
+      "bytes": 1218,
+      "byte_transformation": "none",
+      "asset_semantics": "synthetic_source_insertion_recipe_not_environment_only_fix",
+      "license_note": "Upstream-derived patch archived with original project names; no new license asserted.",
+      "warnings": {
+        "host_specific_paths_preserved": false,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": false,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "not_python"
+      }
+    },
+    {
+      "path": "files/ljl-v1-core/source-insertion/samples/apache_storm__CVE-2021-44228__source_inserted/patch.diff",
+      "source_provenance": {
+        "archive_relative_path": "ljl-v1-core/source-insertion/samples/apache_storm__CVE-2021-44228__source_inserted/patch.diff",
+        "case_id": "apache_storm__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {
+          "base_commit": "a432e99bca526886655cc1d5b2453a09b302b5ca"
+        },
+        "original_sha256": "e19352d0098d394f880d024d7758b55cea07034d9f5c2ea9338cf1018cb439a1"
+      },
+      "source_sha256": "e19352d0098d394f880d024d7758b55cea07034d9f5c2ea9338cf1018cb439a1",
+      "published_sha256": "e19352d0098d394f880d024d7758b55cea07034d9f5c2ea9338cf1018cb439a1",
+      "bytes": 1621,
+      "byte_transformation": "none",
+      "asset_semantics": "synthetic_source_insertion_recipe_not_environment_only_fix",
+      "license_note": "Upstream-derived patch archived with original project names; no new license asserted.",
+      "warnings": {
+        "host_specific_paths_preserved": false,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": false,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "not_python"
+      }
+    },
+    {
+      "path": "files/ljl-v1-core/source-insertion/samples/apache_storm__CVE-2021-44228__source_inserted/verify_source_storm.py",
+      "source_provenance": {
+        "archive_relative_path": "ljl-v1-core/source-insertion/samples/apache_storm__CVE-2021-44228__source_inserted/verify_source_storm.py",
+        "case_id": "apache_storm__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {
+          "base_commit": "a432e99bca526886655cc1d5b2453a09b302b5ca"
+        },
+        "original_sha256": "5ac4578e8a5b69bdedf44efc0ce3ad09c3ca6a3747ff923ba1c24cd63cb52961"
+      },
+      "source_sha256": "5ac4578e8a5b69bdedf44efc0ce3ad09c3ca6a3747ff923ba1c24cd63cb52961",
+      "published_sha256": "5ac4578e8a5b69bdedf44efc0ce3ad09c3ca6a3747ff923ba1c24cd63cb52961",
+      "bytes": 12963,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_recipe_or_probe_script",
+      "license_note": "Historical recipe preserved without a new license assertion.",
+      "warnings": {
+        "host_specific_paths_preserved": true,
+        "destructive_cleanup_present": true,
+        "destructive_cleanup_lines": [
+          55,
+          61,
+          285
+        ],
+        "local_probe_or_source_insertion": true,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "syntax_ok_not_executed"
+      }
+    },
+    {
+      "path": "files/ljl-v1-core/source-insertion/samples/apache_zeppelin__CVE-2021-44228__source_inserted/patch.diff",
+      "source_provenance": {
+        "archive_relative_path": "ljl-v1-core/source-insertion/samples/apache_zeppelin__CVE-2021-44228__source_inserted/patch.diff",
+        "case_id": "apache_zeppelin__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {
+          "base_commit": "bbb7d937c8f2cdedb574f721b27bde7a19c33929"
+        },
+        "original_sha256": "9484cb7227d31232356763d98a9462b2a7823d73126d03af26c6fd3ba79d095c"
+      },
+      "source_sha256": "9484cb7227d31232356763d98a9462b2a7823d73126d03af26c6fd3ba79d095c",
+      "published_sha256": "9484cb7227d31232356763d98a9462b2a7823d73126d03af26c6fd3ba79d095c",
+      "bytes": 2059,
+      "byte_transformation": "none",
+      "asset_semantics": "synthetic_source_insertion_recipe_not_environment_only_fix",
+      "license_note": "Upstream-derived patch archived with original project names; no new license asserted.",
+      "warnings": {
+        "host_specific_paths_preserved": false,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": false,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "not_python"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/apache_archiva__CVE-2021-44228__source_inserted/evidence/build-archiva-jetty.command",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/apache_archiva__CVE-2021-44228__source_inserted/evidence/build-archiva-jetty.command",
+        "case_id": "apache_archiva__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {
+          "base_commit": "2beaf864901abb337b263662800b3373326bcfd4"
+        },
+        "original_sha256": "565cf902ac1d8648ed7f261839acb38f709db16698486d5878c01df62df205a8"
+      },
+      "source_sha256": "565cf902ac1d8648ed7f261839acb38f709db16698486d5878c01df62df205a8",
+      "published_sha256": "565cf902ac1d8648ed7f261839acb38f709db16698486d5878c01df62df205a8",
+      "bytes": 830,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_command_and_tool_version_record_not_a_shell_script",
+      "license_note": "Historical recipe preserved without a new license assertion.",
+      "warnings": {
+        "host_specific_paths_preserved": true,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": true,
+        "execution": "Data receipt, not an executable script. Manually identify and review the recorded build command before considering isolated reproduction."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "not_python"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/apache_archiva__CVE-2021-44228__source_inserted/run_archiva_source_runtime_probe.py",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/apache_archiva__CVE-2021-44228__source_inserted/run_archiva_source_runtime_probe.py",
+        "case_id": "apache_archiva__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {
+          "base_commit": "2beaf864901abb337b263662800b3373326bcfd4"
+        },
+        "original_sha256": "0d8fc720083547e73560ae940ddf4c54cbb798d06ac81d9f77166847c8ec3e1f"
+      },
+      "source_sha256": "0d8fc720083547e73560ae940ddf4c54cbb798d06ac81d9f77166847c8ec3e1f",
+      "published_sha256": "0d8fc720083547e73560ae940ddf4c54cbb798d06ac81d9f77166847c8ec3e1f",
+      "bytes": 12195,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_recipe_or_probe_script",
+      "license_note": "Historical recipe preserved without a new license assertion.",
+      "warnings": {
+        "host_specific_paths_preserved": true,
+        "destructive_cleanup_present": true,
+        "destructive_cleanup_lines": [
+          149,
+          154
+        ],
+        "local_probe_or_source_insertion": true,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "syntax_ok_not_executed"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/evidence/runtime-probe-v1/run_probe.py",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/apache_druid__CVE-2021-44228__source_inserted/evidence/runtime-probe-v1/run_probe.py",
+        "case_id": "apache_druid__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {},
+        "original_sha256": "84d5a30525e6b1b7219b261c0eebe331ac88decc70fdf54bdbf238e337df7696"
+      },
+      "source_sha256": "84d5a30525e6b1b7219b261c0eebe331ac88decc70fdf54bdbf238e337df7696",
+      "published_sha256": "84d5a30525e6b1b7219b261c0eebe331ac88decc70fdf54bdbf238e337df7696",
+      "bytes": 3182,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_recipe_or_probe_script",
+      "license_note": "Historical recipe preserved without a new license assertion.",
+      "warnings": {
+        "host_specific_paths_preserved": false,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": true,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "syntax_ok_not_executed"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/apache_iotdb__CVE-2021-42550__source_inserted/run_iotdb_source_runtime_probe.py",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/apache_iotdb__CVE-2021-42550__source_inserted/run_iotdb_source_runtime_probe.py",
+        "case_id": "apache_iotdb__CVE-2021-42550__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {},
+        "original_sha256": "6b03cf8ac2877cfd856d9a65de9dc89a8670f918c7deda0ce4357f5b027ee495"
+      },
+      "source_sha256": "6b03cf8ac2877cfd856d9a65de9dc89a8670f918c7deda0ce4357f5b027ee495",
+      "published_sha256": "6b03cf8ac2877cfd856d9a65de9dc89a8670f918c7deda0ce4357f5b027ee495",
+      "bytes": 4171,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_recipe_or_probe_script",
+      "license_note": "Historical recipe preserved without a new license assertion.",
+      "warnings": {
+        "host_specific_paths_preserved": true,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": true,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "syntax_ok_not_executed"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/apache_jmeter__CVE-2021-44228__source_inserted/run_jmeter_source_runtime_probe.py",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/apache_jmeter__CVE-2021-44228__source_inserted/run_jmeter_source_runtime_probe.py",
+        "case_id": "apache_jmeter__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {},
+        "original_sha256": "1cfe19884faf33eead5a86e5afeeb9ae547b3580d1bfddecbcf47bb134d225f5"
+      },
+      "source_sha256": "1cfe19884faf33eead5a86e5afeeb9ae547b3580d1bfddecbcf47bb134d225f5",
+      "published_sha256": "1cfe19884faf33eead5a86e5afeeb9ae547b3580d1bfddecbcf47bb134d225f5",
+      "bytes": 5328,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_recipe_or_probe_script",
+      "license_note": "Historical recipe preserved without a new license assertion.",
+      "warnings": {
+        "host_specific_paths_preserved": true,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": true,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "syntax_ok_not_executed"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/apache_jmeter__CVE-2021-44228__source_inserted/summarize_jmeter_source_runtime.py",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/apache_jmeter__CVE-2021-44228__source_inserted/summarize_jmeter_source_runtime.py",
+        "case_id": "apache_jmeter__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {},
+        "original_sha256": "6808a6006649392ce0abbe606002f08e445e1d6285962a535173dca93c847a3b"
+      },
+      "source_sha256": "6808a6006649392ce0abbe606002f08e445e1d6285962a535173dca93c847a3b",
+      "published_sha256": "6808a6006649392ce0abbe606002f08e445e1d6285962a535173dca93c847a3b",
+      "bytes": 4363,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_recipe_or_probe_script",
+      "license_note": "Historical recipe preserved without a new license assertion.",
+      "warnings": {
+        "host_specific_paths_preserved": true,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": true,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "syntax_ok_not_executed"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/apache_knox__CVE-2021-44228__source_inserted/evidence/knox-before-compat-fix.diff",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/apache_knox__CVE-2021-44228__source_inserted/evidence/knox-before-compat-fix.diff",
+        "case_id": "apache_knox__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {},
+        "original_sha256": "d0a903caedbc80d473a86796a4be989d73c271b25f7c54485221bb3d1e846ad3"
+      },
+      "source_sha256": "d0a903caedbc80d473a86796a4be989d73c271b25f7c54485221bb3d1e846ad3",
+      "published_sha256": "d0a903caedbc80d473a86796a4be989d73c271b25f7c54485221bb3d1e846ad3",
+      "bytes": 2409,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_patch_may_mix_insertion_and_compatibility",
+      "license_note": "Upstream-derived patch archived with original project names; no new license asserted.",
+      "warnings": {
+        "host_specific_paths_preserved": false,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": false,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "not_python"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/apache_knox__CVE-2021-44228__source_inserted/evidence/knox-compat-fix.diff",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/apache_knox__CVE-2021-44228__source_inserted/evidence/knox-compat-fix.diff",
+        "case_id": "apache_knox__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {},
+        "original_sha256": "5ed5dd1f5a125782774ed06314e1cabf2944a6ddffc67294504e7776d1fe408b"
+      },
+      "source_sha256": "5ed5dd1f5a125782774ed06314e1cabf2944a6ddffc67294504e7776d1fe408b",
+      "published_sha256": "5ed5dd1f5a125782774ed06314e1cabf2944a6ddffc67294504e7776d1fe408b",
+      "bytes": 2870,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_patch_may_mix_insertion_and_compatibility",
+      "license_note": "Upstream-derived patch archived with original project names; no new license asserted.",
+      "warnings": {
+        "host_specific_paths_preserved": false,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": false,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "not_python"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/apache_knox__CVE-2021-44228__source_inserted/evidence/knox-portmapping-handler-candidate.diff",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/apache_knox__CVE-2021-44228__source_inserted/evidence/knox-portmapping-handler-candidate.diff",
+        "case_id": "apache_knox__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {},
+        "original_sha256": "eb6e3ed91a8ecc63f071136d38a372f2299946d7b5c69e36094c460a87014205"
+      },
+      "source_sha256": "eb6e3ed91a8ecc63f071136d38a372f2299946d7b5c69e36094c460a87014205",
+      "published_sha256": "eb6e3ed91a8ecc63f071136d38a372f2299946d7b5c69e36094c460a87014205",
+      "bytes": 3323,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_patch_may_mix_insertion_and_compatibility",
+      "license_note": "Upstream-derived patch archived with original project names; no new license asserted.",
+      "warnings": {
+        "host_specific_paths_preserved": false,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": false,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "not_python"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/apache_knox__CVE-2021-44228__source_inserted/evidence/knox-runtime-verified-candidate.diff",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/apache_knox__CVE-2021-44228__source_inserted/evidence/knox-runtime-verified-candidate.diff",
+        "case_id": "apache_knox__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {},
+        "original_sha256": "5ed5dd1f5a125782774ed06314e1cabf2944a6ddffc67294504e7776d1fe408b"
+      },
+      "source_sha256": "5ed5dd1f5a125782774ed06314e1cabf2944a6ddffc67294504e7776d1fe408b",
+      "published_sha256": "5ed5dd1f5a125782774ed06314e1cabf2944a6ddffc67294504e7776d1fe408b",
+      "bytes": 2870,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_patch_may_mix_insertion_and_compatibility",
+      "license_note": "Upstream-derived patch archived with original project names; no new license asserted.",
+      "warnings": {
+        "host_specific_paths_preserved": false,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": false,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "not_python"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/apache_knox__CVE-2021-44228__source_inserted/evidence/knox-source.diff",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/apache_knox__CVE-2021-44228__source_inserted/evidence/knox-source.diff",
+        "case_id": "apache_knox__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {},
+        "original_sha256": "d0a903caedbc80d473a86796a4be989d73c271b25f7c54485221bb3d1e846ad3"
+      },
+      "source_sha256": "d0a903caedbc80d473a86796a4be989d73c271b25f7c54485221bb3d1e846ad3",
+      "published_sha256": "d0a903caedbc80d473a86796a4be989d73c271b25f7c54485221bb3d1e846ad3",
+      "bytes": 2409,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_patch_may_mix_insertion_and_compatibility",
+      "license_note": "Upstream-derived patch archived with original project names; no new license asserted.",
+      "warnings": {
+        "host_specific_paths_preserved": false,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": false,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "not_python"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/apache_knox__CVE-2021-44228__source_inserted/scripts/assemble-knox-runtime.sh",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/apache_knox__CVE-2021-44228__source_inserted/scripts/assemble-knox-runtime.sh",
+        "case_id": "apache_knox__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {},
+        "original_sha256": "5ab898201582140bdb649db3ea39b56b1a6dbe78c7bc8ac082f7e29476abf807"
+      },
+      "source_sha256": "5ab898201582140bdb649db3ea39b56b1a6dbe78c7bc8ac082f7e29476abf807",
+      "published_sha256": "5ab898201582140bdb649db3ea39b56b1a6dbe78c7bc8ac082f7e29476abf807",
+      "bytes": 3520,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_recipe_or_probe_script",
+      "license_note": "Historical recipe preserved without a new license assertion.",
+      "warnings": {
+        "host_specific_paths_preserved": true,
+        "destructive_cleanup_present": true,
+        "destructive_cleanup_lines": [
+          11
+        ],
+        "local_probe_or_source_insertion": true,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "not_python"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/apache_knox__CVE-2021-44228__source_inserted/scripts/run-knox-probes.sh",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/apache_knox__CVE-2021-44228__source_inserted/scripts/run-knox-probes.sh",
+        "case_id": "apache_knox__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {},
+        "original_sha256": "5e421dddf24dd52ba5a66293d19f5cbf1c5f9874497e638b588edd91337aeccb"
+      },
+      "source_sha256": "5e421dddf24dd52ba5a66293d19f5cbf1c5f9874497e638b588edd91337aeccb",
+      "published_sha256": "5e421dddf24dd52ba5a66293d19f5cbf1c5f9874497e638b588edd91337aeccb",
+      "bytes": 3044,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_recipe_or_probe_script",
+      "license_note": "Historical recipe preserved without a new license assertion.",
+      "warnings": {
+        "host_specific_paths_preserved": true,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": true,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "not_python"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/apache_kyuubi__CVE-2021-44228__source_inserted/evidence/build-maven399.command",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/apache_kyuubi__CVE-2021-44228__source_inserted/evidence/build-maven399.command",
+        "case_id": "apache_kyuubi__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {
+          "base_commit": "0783f075d7d05b7da0faaaa29282711640242bab"
+        },
+        "original_sha256": "b7e803a55707c9724d8465eeda4264420918c1714ebf7843e14b40859e1016cd"
+      },
+      "source_sha256": "b7e803a55707c9724d8465eeda4264420918c1714ebf7843e14b40859e1016cd",
+      "published_sha256": "b7e803a55707c9724d8465eeda4264420918c1714ebf7843e14b40859e1016cd",
+      "bytes": 1042,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_command_and_tool_version_record_not_a_shell_script",
+      "license_note": "Historical recipe preserved without a new license assertion.",
+      "warnings": {
+        "host_specific_paths_preserved": true,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": true,
+        "execution": "Data receipt, not an executable script. Manually identify and review the recorded build command before considering isolated reproduction."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "not_python"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/apache_kyuubi__CVE-2021-44228__source_inserted/evidence/build.command",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/apache_kyuubi__CVE-2021-44228__source_inserted/evidence/build.command",
+        "case_id": "apache_kyuubi__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {
+          "base_commit": "0783f075d7d05b7da0faaaa29282711640242bab"
+        },
+        "original_sha256": "df706450f20107e1c8f348db7c6e43fd88c55d45913a4b0e764162001af289fc"
+      },
+      "source_sha256": "df706450f20107e1c8f348db7c6e43fd88c55d45913a4b0e764162001af289fc",
+      "published_sha256": "df706450f20107e1c8f348db7c6e43fd88c55d45913a4b0e764162001af289fc",
+      "bytes": 171,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_command_and_tool_version_record_not_a_shell_script",
+      "license_note": "Historical recipe preserved without a new license assertion.",
+      "warnings": {
+        "host_specific_paths_preserved": true,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": true,
+        "execution": "Data receipt, not an executable script. Manually identify and review the recorded build command before considering isolated reproduction."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "not_python"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/apache_pulsar__CVE-2021-44228__source_inserted/evidence/runtime-probe-v2/run_probe.py",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/apache_pulsar__CVE-2021-44228__source_inserted/evidence/runtime-probe-v2/run_probe.py",
+        "case_id": "apache_pulsar__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {
+          "base_commit": "02ee5616866d4eda8dd94f85d9d9b71c459f248d"
+        },
+        "original_sha256": "b57e06176ed07ced8d2de9f609ecc353f94af770e4e2994d4b24c083541ab5ed"
+      },
+      "source_sha256": "b57e06176ed07ced8d2de9f609ecc353f94af770e4e2994d4b24c083541ab5ed",
+      "published_sha256": "b57e06176ed07ced8d2de9f609ecc353f94af770e4e2994d4b24c083541ab5ed",
+      "bytes": 3450,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_recipe_or_probe_script",
+      "license_note": "Historical recipe preserved without a new license assertion.",
+      "warnings": {
+        "host_specific_paths_preserved": false,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": true,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "syntax_ok_not_executed"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/apache_solr__CVE-2021-44228__source_inserted/evidence/build-ivy-bootstrap.command",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/apache_solr__CVE-2021-44228__source_inserted/evidence/build-ivy-bootstrap.command",
+        "case_id": "apache_solr__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {},
+        "original_sha256": "3efcdf5a7e8bdb497d1f1229b106765d004fbfd67c6432e86441d99cdc1766cf"
+      },
+      "source_sha256": "3efcdf5a7e8bdb497d1f1229b106765d004fbfd67c6432e86441d99cdc1766cf",
+      "published_sha256": "3efcdf5a7e8bdb497d1f1229b106765d004fbfd67c6432e86441d99cdc1766cf",
+      "bytes": 473,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_command_and_tool_version_record_not_a_shell_script",
+      "license_note": "Historical recipe preserved without a new license assertion.",
+      "warnings": {
+        "host_specific_paths_preserved": true,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": true,
+        "execution": "Data receipt, not an executable script. Manually identify and review the recorded build command before considering isolated reproduction."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "not_python"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/apache_solr__CVE-2021-44228__source_inserted/evidence/build-server-timeout.command",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/apache_solr__CVE-2021-44228__source_inserted/evidence/build-server-timeout.command",
+        "case_id": "apache_solr__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {},
+        "original_sha256": "5d3f8b40186d0a648e86543846091a3e117b682823d491fa3902e70f3131ceff"
+      },
+      "source_sha256": "5d3f8b40186d0a648e86543846091a3e117b682823d491fa3902e70f3131ceff",
+      "published_sha256": "5d3f8b40186d0a648e86543846091a3e117b682823d491fa3902e70f3131ceff",
+      "bytes": 567,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_command_and_tool_version_record_not_a_shell_script",
+      "license_note": "Historical recipe preserved without a new license assertion.",
+      "warnings": {
+        "host_specific_paths_preserved": true,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": true,
+        "execution": "Data receipt, not an executable script. Manually identify and review the recorded build command before considering isolated reproduction."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "not_python"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/apache_solr__CVE-2021-44228__source_inserted/evidence/build-server.command",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/apache_solr__CVE-2021-44228__source_inserted/evidence/build-server.command",
+        "case_id": "apache_solr__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {},
+        "original_sha256": "543e949509074f38dbf089d26cb02b542f62e2b8cf3907bd7c079135a1f0da82"
+      },
+      "source_sha256": "543e949509074f38dbf089d26cb02b542f62e2b8cf3907bd7c079135a1f0da82",
+      "published_sha256": "543e949509074f38dbf089d26cb02b542f62e2b8cf3907bd7c079135a1f0da82",
+      "bytes": 393,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_command_and_tool_version_record_not_a_shell_script",
+      "license_note": "Historical recipe preserved without a new license assertion.",
+      "warnings": {
+        "host_specific_paths_preserved": true,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": true,
+        "execution": "Data receipt, not an executable script. Manually identify and review the recorded build command before considering isolated reproduction."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "not_python"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/apache_solr__CVE-2021-44228__source_inserted/verify_source_solr.py",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/apache_solr__CVE-2021-44228__source_inserted/verify_source_solr.py",
+        "case_id": "apache_solr__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {},
+        "original_sha256": "8068927ad4c2029b4d92bce34e6077624e005d0db9cf90850bd3cb5cc092a5d4"
+      },
+      "source_sha256": "8068927ad4c2029b4d92bce34e6077624e005d0db9cf90850bd3cb5cc092a5d4",
+      "published_sha256": "8068927ad4c2029b4d92bce34e6077624e005d0db9cf90850bd3cb5cc092a5d4",
+      "bytes": 5630,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_recipe_or_probe_script",
+      "license_note": "Historical recipe preserved without a new license assertion.",
+      "warnings": {
+        "host_specific_paths_preserved": true,
+        "destructive_cleanup_present": true,
+        "destructive_cleanup_lines": [
+          117
+        ],
+        "local_probe_or_source_insertion": true,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "syntax_ok_not_executed"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/apache_storm__CVE-2021-44228__source_inserted/evidence/build-storm-modules.command",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/apache_storm__CVE-2021-44228__source_inserted/evidence/build-storm-modules.command",
+        "case_id": "apache_storm__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {
+          "base_commit": "a432e99bca526886655cc1d5b2453a09b302b5ca"
+        },
+        "original_sha256": "34bb55d13b9df05ef5f4e9bc88019c28f43507c79d2fbdc561b5e84fdf459916"
+      },
+      "source_sha256": "34bb55d13b9df05ef5f4e9bc88019c28f43507c79d2fbdc561b5e84fdf459916",
+      "published_sha256": "34bb55d13b9df05ef5f4e9bc88019c28f43507c79d2fbdc561b5e84fdf459916",
+      "bytes": 1029,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_command_and_tool_version_record_not_a_shell_script",
+      "license_note": "Historical recipe preserved without a new license assertion.",
+      "warnings": {
+        "host_specific_paths_preserved": true,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": true,
+        "execution": "Data receipt, not an executable script. Manually identify and review the recorded build command before considering isolated reproduction."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "not_python"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/apache_storm__CVE-2021-44228__source_inserted/verify_source_storm.py",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/apache_storm__CVE-2021-44228__source_inserted/verify_source_storm.py",
+        "case_id": "apache_storm__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {
+          "base_commit": "a432e99bca526886655cc1d5b2453a09b302b5ca"
+        },
+        "original_sha256": "5ac4578e8a5b69bdedf44efc0ce3ad09c3ca6a3747ff923ba1c24cd63cb52961"
+      },
+      "source_sha256": "5ac4578e8a5b69bdedf44efc0ce3ad09c3ca6a3747ff923ba1c24cd63cb52961",
+      "published_sha256": "5ac4578e8a5b69bdedf44efc0ce3ad09c3ca6a3747ff923ba1c24cd63cb52961",
+      "bytes": 12963,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_recipe_or_probe_script",
+      "license_note": "Historical recipe preserved without a new license assertion.",
+      "warnings": {
+        "host_specific_paths_preserved": true,
+        "destructive_cleanup_present": true,
+        "destructive_cleanup_lines": [
+          55,
+          61,
+          285
+        ],
+        "local_probe_or_source_insertion": true,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "syntax_ok_not_executed"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/apache_zeppelin__CVE-2021-44228__source_inserted/evidence/runtime-probe-v1/run_probe.py",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/apache_zeppelin__CVE-2021-44228__source_inserted/evidence/runtime-probe-v1/run_probe.py",
+        "case_id": "apache_zeppelin__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {
+          "base_commit": "bbb7d937c8f2cdedb574f721b27bde7a19c33929"
+        },
+        "original_sha256": "d6a4f63d0ead7ed462e9941b673565657c7f3bb3786dc0edf930cb830a00f4da"
+      },
+      "source_sha256": "d6a4f63d0ead7ed462e9941b673565657c7f3bb3786dc0edf930cb830a00f4da",
+      "published_sha256": "d6a4f63d0ead7ed462e9941b673565657c7f3bb3786dc0edf930cb830a00f4da",
+      "bytes": 3334,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_recipe_or_probe_script",
+      "license_note": "Historical recipe preserved without a new license assertion.",
+      "warnings": {
+        "host_specific_paths_preserved": false,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": true,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "syntax_ok_not_executed"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/promote_nifi_stateless_sample.py",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/promote_nifi_stateless_sample.py",
+        "case_id": "shared",
+        "origin_label": "shared_source_inserted_workflow",
+        "source_version_evidence": {},
+        "original_sha256": "2cb5b8e8f96e918a9524b230f7c7303c98b670990f14b714d92bbf304b851043"
+      },
+      "source_sha256": "2cb5b8e8f96e918a9524b230f7c7303c98b670990f14b714d92bbf304b851043",
+      "published_sha256": "2cb5b8e8f96e918a9524b230f7c7303c98b670990f14b714d92bbf304b851043",
+      "bytes": 6175,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_recipe_or_probe_script",
+      "license_note": "Historical recipe preserved without a new license assertion.",
+      "warnings": {
+        "host_specific_paths_preserved": true,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": true,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "syntax_ok_not_executed"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/run_nifi_stateless_source_runtime_probe.py",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/run_nifi_stateless_source_runtime_probe.py",
+        "case_id": "shared",
+        "origin_label": "shared_source_inserted_workflow",
+        "source_version_evidence": {},
+        "original_sha256": "4c872e7a0710b9a3b314c323e2487e2dea8b7304281e1f05b9b13e2c54f85af2"
+      },
+      "source_sha256": "4c872e7a0710b9a3b314c323e2487e2dea8b7304281e1f05b9b13e2c54f85af2",
+      "published_sha256": "4c872e7a0710b9a3b314c323e2487e2dea8b7304281e1f05b9b13e2c54f85af2",
+      "bytes": 9722,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_recipe_or_probe_script",
+      "license_note": "Historical recipe preserved without a new license assertion.",
+      "warnings": {
+        "host_specific_paths_preserved": true,
+        "destructive_cleanup_present": true,
+        "destructive_cleanup_lines": [
+          92,
+          146,
+          167,
+          185
+        ],
+        "local_probe_or_source_insertion": true,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "syntax_ok_not_executed"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/run_pulsar_source_runtime_probe.py",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/run_pulsar_source_runtime_probe.py",
+        "case_id": "shared",
+        "origin_label": "shared_source_inserted_workflow",
+        "source_version_evidence": {},
+        "original_sha256": "b8504a36407331b6419ec355dfabf31377c9e07a34a3d4216018948683ed6628"
+      },
+      "source_sha256": "b8504a36407331b6419ec355dfabf31377c9e07a34a3d4216018948683ed6628",
+      "published_sha256": "b8504a36407331b6419ec355dfabf31377c9e07a34a3d4216018948683ed6628",
+      "bytes": 9029,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_recipe_or_probe_script",
+      "license_note": "Historical recipe preserved without a new license assertion.",
+      "warnings": {
+        "host_specific_paths_preserved": true,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": true,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "syntax_ok_not_executed"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/superset-cve2020-14343/fixtures/build_fixture.py",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/superset-cve2020-14343/fixtures/build_fixture.py",
+        "case_id": "superset-cve2020-14343",
+        "origin_label": "superset_base_and_patched_control",
+        "source_version_evidence": {},
+        "original_sha256": "41f23281e71d76d814d0abaca16ebabb57b61c4f7c5ecf511e596842d884429f"
+      },
+      "source_sha256": "41f23281e71d76d814d0abaca16ebabb57b61c4f7c5ecf511e596842d884429f",
+      "published_sha256": "41f23281e71d76d814d0abaca16ebabb57b61c4f7c5ecf511e596842d884429f",
+      "bytes": 812,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_recipe_or_probe_script",
+      "license_note": "Historical recipe preserved without a new license assertion.",
+      "warnings": {
+        "host_specific_paths_preserved": false,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": false,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "syntax_ok_not_executed"
+      }
+    },
+    {
+      "path": "files/source-runtime-verify/superset-cve2020-14343/patch.diff",
+      "source_provenance": {
+        "archive_relative_path": "source-runtime-verify/superset-cve2020-14343/patch.diff",
+        "case_id": "superset-cve2020-14343",
+        "origin_label": "superset_base_and_patched_control",
+        "source_version_evidence": {},
+        "original_sha256": "06a2b9130fbc4a99194af0b5e7ec4b90e2a9e78224a99c1d092aa9ac9cb91acd"
+      },
+      "source_sha256": "06a2b9130fbc4a99194af0b5e7ec4b90e2a9e78224a99c1d092aa9ac9cb91acd",
+      "published_sha256": "06a2b9130fbc4a99194af0b5e7ec4b90e2a9e78224a99c1d092aa9ac9cb91acd",
+      "bytes": 1531,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_patch_may_mix_insertion_and_compatibility",
+      "license_note": "Upstream-derived patch archived with original project names; no new license asserted.",
+      "warnings": {
+        "host_specific_paths_preserved": false,
+        "destructive_cleanup_present": false,
+        "destructive_cleanup_lines": [],
+        "local_probe_or_source_insertion": false,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "not_python"
+      }
+    },
+    {
+      "path": "files/local-supplied/assemble-knox-runtime.sh",
+      "source_provenance": {
+        "archive_relative_path": "local-supplied/assemble-knox-runtime.sh",
+        "case_id": "apache_knox__CVE-2021-44228__source_inserted",
+        "origin_label": "source_inserted",
+        "source_version_evidence": {},
+        "original_sha256": "5ab898201582140bdb649db3ea39b56b1a6dbe78c7bc8ac082f7e29476abf807"
+      },
+      "source_sha256": "5ab898201582140bdb649db3ea39b56b1a6dbe78c7bc8ac082f7e29476abf807",
+      "published_sha256": "5ab898201582140bdb649db3ea39b56b1a6dbe78c7bc8ac082f7e29476abf807",
+      "bytes": 3520,
+      "byte_transformation": "none",
+      "asset_semantics": "historical_recipe_or_probe_script",
+      "license_note": "Historical recipe preserved without a new license assertion.",
+      "warnings": {
+        "host_specific_paths_preserved": true,
+        "destructive_cleanup_present": true,
+        "destructive_cleanup_lines": [
+          11
+        ],
+        "local_probe_or_source_insertion": true,
+        "execution": "Do not execute on the original workspace; review in a disposable isolated copy first."
+      },
+      "safety_review": {
+        "credential_word_matches": 0,
+        "detected_nonloopback_private_ip_or_internal_url": false,
+        "detected_credential_or_token_shape": false,
+        "python_syntax_check": "not_python"
+      }
+    }
+  ]
+}

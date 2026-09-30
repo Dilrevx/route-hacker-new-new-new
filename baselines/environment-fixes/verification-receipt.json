@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "verified_at_utc": "2026-09-30T09:19:19.527885+00:00",
+  "result": {
+    "files": 1333,
+    "bytes": 7933051,
+    "legacy_original_bytes": {
+      "files": 297,
+      "bytes": 210903
+    },
+    "legacy_support": {
+      "files": 2,
+      "bytes": 92692
+    },
+    "runtime_v2": {
+      "files": 236,
+      "bytes": 274423,
+      "historical_attempts": {
+        "passed": 143,
+        "failed": 9
+      }
+    },
+    "source_runtime": {
+      "files": 41,
+      "bytes": 142479
+    },
+    "codeql_compile": {
+      "files": 736,
+      "bytes": 5446721,
+      "fleet_historical_reviews": {
+        "accepted": 135,
+        "rejected": 2
+      }
+    },
+    "manifest_sha256": "3d9a43aac5917d6e2c6f00604b2c506639ffde7c4337418526ab3fe47b3314b8",
+    "scope": "preservation_integrity_only_no_build_or_runtime_rerun"
+  },
+  "unit_test_returncode": 0,
+  "previous_method_regression_tests": {"tests": 35, "returncode": 0},
+  "repository_commit_hook": "Hardcoded-credential hook timed out after its built-in 2-second limit; not counted as a successful credential scan. The hook was not disabled.",
+  "publication_review": {
+    "all_manifest_files_staged_and_checked": true,
+    "known_credential_pattern_hits": 0,
+    "authored_code_and_docs_whitespace_check": "passed",
+    "whole_archive_whitespace_check": "nonzero: historical original files and patch context retain whitespace; not reformatted to preserve source hashes",
+    "credential_scan_limit": "Heuristic patterns and source review, not proof of absence"
+  },
+  "unit_test_output": "..................\n----------------------------------------------------------------------\nRan 18 tests in 0.042s\n\nOK",
+  "new_builds_or_runtime_probes": false,
+  "server_files_modified_or_deleted": false,
+  "historical_outcomes_are_not_new_reproduction_results": true,
+  "private_backups_are_not_implicitly_public": true
+}
