@@ -1,0 +1,43 @@
+{
+  "schema": "hcvr-preservation-v1",
+  "collected_at_utc": "2026-10-01T07:19:30.939003+00:00",
+  "families": [
+    {
+      "family": "v8-v9",
+      "verified_original_files": 2126,
+      "verified_original_bytes": 80827117,
+      "source_manifest_sha256": "d892fb7f6b7610427c348da7141e4b4c4b90748f57911d0ce8d8ccf04a546c0c"
+    },
+    {
+      "family": "v10",
+      "verified_original_files": 4863,
+      "verified_original_bytes": 175305373,
+      "source_manifest_sha256": "f3131538fb812f8324509b4e7d431b8376d955be2a9156472c0f5d2ab4c2b815"
+    },
+    {
+      "family": "other-repairs",
+      "verified_original_files": 13,
+      "verified_original_bytes": 49550,
+      "source_manifest_sha256": "959db53a3d417884a8c7af537d8baf4442aacfda59235a382375a68b20908731"
+    }
+  ],
+  "evidence_pointers_checked": 1680,
+  "extracted_source_fields_checked": 62304,
+  "private_context_records_omitted_from_public_index": {
+    "v8-v9:private_context_or_proposal_not_public_attempt": 10692,
+    "v10:private_context_or_proposal_not_public_attempt": 33476
+  },
+  "public_record_bodies_withheld": 0,
+  "secret_scan": "heuristic_only_not_proof_of_absence",
+  "remote_files_modified_or_deleted": false,
+  "historical_commands_executed": false,
+  "not_backed_up_by_this_archive": [
+    "source trees",
+    "CodeQL database payloads",
+    "dependency caches",
+    "container images",
+    "raw build logs",
+    "model conversations"
+  ],
+  "index_only_is_not_full_environment_backup": true
+}

@@ -212,6 +212,9 @@ def verify(root):
     result["runtime_v2"] = verify_runtime(root)
     result["source_runtime"] = verify_source_runtime(root)
     result["codeql_compile"] = verify_codeql_compile(root)
+    if (root / "hcvr").exists():
+        from verify_hcvr import verify as verify_hcvr
+        result["hcvr"] = verify_hcvr(root / "hcvr")
     result["manifest_sha256"] = sha256(root / "archive-manifest.json")
     result["scope"] = "preservation_integrity_only_no_build_or_runtime_rerun"
     return result

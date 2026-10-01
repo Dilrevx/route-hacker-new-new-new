@@ -5,8 +5,8 @@
   "files": [
     {
       "path": "README.md",
-      "bytes": 13863,
-      "sha256": "80c996c837db2a4527cd1c29b52954226b5e9d658d888ef894eeff07d0f2293d"
+      "bytes": 14734,
+      "sha256": "8f090fe4b084e6e542f865b23ce764b345326da3679c55ec0d3d2ce74446634a"
     },
     {
       "path": "REGISTRY.zh-CN.md",
@@ -208,5 +208,6 @@
       "bytes": 807,
       "sha256": "ccadf5f304a67fc34b802ef0d057ef5dad2f963280f678f441d893abc542b360"
     }
-  ]
+  ],
+  "updated_at_utc": "2026-10-01T07:19:32.827231+00:00"
 }

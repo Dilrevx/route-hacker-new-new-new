@@ -15,6 +15,10 @@ images, and raw logs do not have to be uploaded alongside it. Where a note is
 incomplete, retained Dockerfiles, patches, and scripts provide supporting detail.
 No new private upload destination is required for this scope.
 
+The [HCVR historical repair index](hcvr/README.zh-CN.md) additionally groups
+early v8/v9/v10 environment-repair records by case, keeping historical commands,
+outcomes and source provenance separate from the large build workspaces.
+
 ## Keep the repair families separate
 
 | Family | Historical scope | What the evidence means |

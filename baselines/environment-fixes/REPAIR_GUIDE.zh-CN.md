@@ -8,6 +8,7 @@
 
 | 材料 | 修法在哪里 | 怎么读 |
 | --- | --- | --- |
+| [HCVR 早期修复](hcvr/README.zh-CN.md) | [按案例索引](hcvr/case-index.json)及对应案例记录 | 串起 v8、v9、v10 的修复方案、命令和历史结果；保留失败过程，不把建库和运行成功混为一谈。 |
 | [编译修复 fleet](codeql-compile/fleet-138-v1/)：137 个案例 | 每个目录的 `historical-receipt.json` 和 `Dockerfile` | `review.findings` 解释问题和修法；`recipe.build_command` 给命令；`compile_scope`、`limitations` 或 `evidence` 说明验证范围。Netty 的命令见同目录 Dockerfile。 |
 | [早期构建配方](legacy-builds/recipe-index.json)：254 份 Dockerfile、43 份短注 | `recipes/<项目>/<历史标识>/build-notes.md` 和相邻 Dockerfile | 部分短注被原样截断，不是完整教程，需要结合配方；数字目录名不应直接当成 Git commit。 |
 | [CodeQL 修复决策](codeql-compile/iris-a26/)：242 份 | `validated-decision*.json` | 查决策中的原因和实际动作，并结合该轮记录确认结果。 |

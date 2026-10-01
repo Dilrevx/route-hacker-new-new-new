@@ -11,6 +11,7 @@
 - [早期方法依赖证据](early-lineage-evidence.json)和[9 月仓库级实验协议摘录](later-research-evidence.json)：用于核对方法、数据划分和前后依赖。
 - [系统临时目录记录](SYSTEM_TMP.zh-CN.md)：issue/snippet 迁移、LoRA 修复、量化及 SVulD 支线。
 - [P3 与 P4 已保存基线](../../baselines/previous-method/README.md)和[环境修复说明](../../baselines/environment-fixes/REPAIR_GUIDE.zh-CN.md)。
+- [HCVR 早期修复记录](../../baselines/environment-fixes/hcvr/README.zh-CN.md)：补收 v8、v9、v10 的修法、真实执行记录和结果，按案例关联重复出处；不复制大体积构建现场。
 
 这里的结果均来自历史记录，本次没有重新训练、启动环境或复现漏洞。源说明中的 “current”“next”“goal” 是写作当时的状态，不是对当前工作的指令或结论。
 
@@ -81,6 +82,8 @@
 具体“为什么失败、怎么改、验证到哪一步”，直接读[中文修复说明](../../baselines/environment-fixes/REPAIR_GUIDE.zh-CN.md)。缺少原始日期的旧修法留在这条并行分支中，不强行分配到某一天。
 
 ## 保存状态和复查方式
+
+2026 年 10 月 1 日又补充整理了 HCVR 早期环境修复。原始小型控制资料在本地私有保存 7,002 份并核对哈希；共享版为 213 个历史案例建立入口，141 个案例有共 787 组去重后的执行或数据库 readiness 记录，另保存若干未完成诊断及源码恢复说明。62 个案例出现过建库修复成功记录；这不是新复现或动态漏洞确认。此前较晚的 fleet／runtime 归档对 HCVR 路径的引用不能视作对应早期目录的备份。具体保存范围和修法见[新索引](../../baselines/environment-fixes/hcvr/README.zh-CN.md)。本次补收没有删除远端任何文件。
 
 本次把 70 个临时目录全部登记，保存 30 份精选原始说明、审计与回执文件，以及支撑时间线的协议字段摘录。原文副本见 [source manifest](source-manifest.json)，新目录全部交付文件的哈希见 [delivery manifest](delivery-manifest.json)，本地完整性与链接检查见 [verification.json](verification.json)。字段摘录记录原文件 SHA；它们不冒充完整原文件。
 

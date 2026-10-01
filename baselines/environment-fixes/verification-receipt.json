@@ -118,6 +118,55 @@
         "manifest_sha256": "be7b79274bde19528d4b7ed5023d5bb8a7e3fcdad78f7c9d3798951e9a7eb1d0",
         "scope": "preservation_integrity_only_no_build_or_runtime_rerun"
       }
+    },
+    "hcvr_repairs_20261001": {
+      "verified_at_utc": "2026-10-01T07:19:32.827231+00:00",
+      "integrity_result": {
+        "files": 1557,
+        "bytes": 20901999,
+        "legacy_original_bytes": {
+          "files": 297,
+          "bytes": 210903
+        },
+        "legacy_support": {
+          "files": 2,
+          "bytes": 92692
+        },
+        "runtime_v2": {
+          "files": 236,
+          "bytes": 274423,
+          "historical_attempts": {
+            "passed": 143,
+            "failed": 9
+          }
+        },
+        "source_runtime": {
+          "files": 41,
+          "bytes": 142479
+        },
+        "codeql_compile": {
+          "files": 736,
+          "bytes": 5446721,
+          "fleet_historical_reviews": {
+            "accepted": 135,
+            "rejected": 2
+          }
+        },
+        "hcvr": {
+          "files": 219,
+          "bytes": 12910039,
+          "cases": 213,
+          "records": 787,
+          "original_sources": 7002,
+          "scope": "archive_integrity_only_no_build_or_runtime_execution"
+        },
+        "manifest_sha256": "242afb3bceefe0f1ea6357c980b151539c82dc5f76df4eeee80527d74150cd52",
+        "scope": "preservation_integrity_only_no_build_or_runtime_rerun"
+      },
+      "unit_test_output": "..........................\n----------------------------------------------------------------------\nRan 26 tests in 0.129s\n\nOK",
+      "scope": "Added historical repair knowledge; original checks above remain historical snapshots",
+      "remote_files_changed_or_deleted": false,
+      "private_originals_not_published": true
     }
   }
 }

@@ -1,0 +1,98 @@
+{
+  "scope": "Additional early diagnosis, retry protocol and source-recovery notes; not completed environment repairs.",
+  "files": [
+    {
+      "relative_path": "env-worker-v2-build-metadata-diagnosis-run-v1/worker_sandbox/worker_report.md",
+      "sha256": "d7978b251860ad387f442694f55c07ad1b45d7e53aa531bcf396a350a824a8fd",
+      "boundary": "historical_unaccepted_diagnosis"
+    },
+    {
+      "relative_path": "env-worker-v2-build-metadata-diagnosis-run-v1/worker_receipt.v2.json",
+      "sha256": "96f26e0cb587e06669bba27b06e94b6ef02c9651003c22bde59b1b9456aa8a8c",
+      "boundary": "worker_completed_pending_controller_review"
+    },
+    {
+      "relative_path": "env-worker-v2-build-metadata-diagnosis-audit-v1.json",
+      "sha256": "22103a563ead4d740f9a33265f5d1586b393076c522334d35d1ae7baa1c793eb",
+      "boundary": "passed_but_not_accepted"
+    },
+    {
+      "relative_path": "env-worker-v2-dspace-maven-timeout-diagnosis-run-v2/worker_sandbox/worker_report.md",
+      "sha256": "ef9669de8d4bb2b142c649ae282bafbc1d77707f728343cb9abd79390d4bad87",
+      "boundary": "historical_unaccepted_diagnosis"
+    },
+    {
+      "relative_path": "env-worker-v2-dspace-maven-timeout-diagnosis-run-v2/worker_receipt.v2.json",
+      "sha256": "7e2db945239a98e02192256feb5e0051b09e51c54ceea6ed4b7eb8b7d7ecd8cc",
+      "boundary": "worker_failed_pending_controller_review"
+    },
+    {
+      "relative_path": "env-worker-v2-dspace-maven-timeout-diagnosis-run-v2-audit-v1.json",
+      "sha256": "b7a1fac4a52e7c22932d9d37c77845b6b6e1e54e775778d40b61c73caf1bdcd4",
+      "boundary": "passed_but_not_accepted"
+    },
+    {
+      "relative_path": "tools/m11-exact-source-build-warm-cache-retry-protocol-v1.md",
+      "sha256": "4f7c53821a4046d5f4b8091541ca9782eb9e9dcb949cec4d1c451f4762b17d7e",
+      "boundary": "protocol_not_completion"
+    },
+    {
+      "relative_path": "m11-dspace-exact-source-build-warm-cache-retry-dry-run-v1/controller_retry_receipt.json",
+      "sha256": "1615abda04632a1413fb58be7c738f246bec3646bbc29da39e3f28c15b6b8c23",
+      "boundary": "dry_run_only"
+    },
+    {
+      "relative_path": "m11-dspace-exact-source-build-warm-cache-retry-dry-run-v1-audit.json",
+      "sha256": "e99d24e5562bc1babb072efffe668fe1269a2a2943bdeae886a6e1a8405eaf01",
+      "boundary": "dry_run_audit_only"
+    },
+    {
+      "relative_path": "m11-dspace-exact-source-build-warm-cache-retry-execute-v1/controller_retry_receipt.json",
+      "sha256": "19b5063b6e63cfc1fa888b8556ebfb65b22ac8f0a0e9f3a3d26c317dfd3c16c7",
+      "boundary": "execute_requested_but_steps_empty"
+    },
+    {
+      "relative_path": "m11-exact-database-srczip-legacy-source-recovery-v1/source_recovery_summary.json",
+      "sha256": "1640bb2bfb3d3e4184fb9d320f9bfd99064302183f2c2743a6bf53d316d6c71f",
+      "boundary": "source_recovery_only"
+    },
+    {
+      "relative_path": "m11-exact-database-srczip-legacy-source-recovery-v1/source_recovery_ledger.jsonl",
+      "sha256": "6a470eaa3de45b9bfcaffcfe61349094f8e14d00179ff6257a587c77ee8040f0",
+      "boundary": "source_recovery_only"
+    },
+    {
+      "relative_path": "m11-exact-database-srczip-legacy-source-recovery-v1/source_recovery_exclusions.jsonl",
+      "sha256": "1f764147227afe13dd8c5eeda0f78b63b44a1cfd669588641d294aedf833d641",
+      "boundary": "source_recovery_exclusions"
+    }
+  ],
+  "findings": [
+    {
+      "topic": "DSpace cold Maven cache diagnosis and bounded retry",
+      "cause": "Historical worker attributes exact-source prebuild timeout to a cold isolated Maven cache and slow dependency downloads.",
+      "action": "Proposed isolated warm-cache prefetch followed by the frozen prebuild; exact commit, JDK 8, Maven 3.5.0, source identity and cache isolation remain frozen.",
+      "command": "mvn dependency:go-offline -B -V -DskipTests -Dmaven.repo.local=<new-m2>",
+      "result_boundary": "Worker status failed_pending_controller_review; audit passed validates its own checks but explicitly does not accept repair. Dry run has no source/build execution. Execute receipt has execute_requested=true and steps=[], so completion is not proven."
+    },
+    {
+      "topic": "Legacy exact source recovery",
+      "case_id": "asf__tapestry-5_CVE-2019-0207_5.4.4",
+      "action": "Recover source only from finalized CodeQL DB src.zip whose creation SHA matches the declared buggy commit.",
+      "declared_buggy_commit": "d29cc6778eb0c75e45139274005bba1c4f58907f",
+      "historical_counts": {
+        "requested": 6,
+        "recovered": 1,
+        "excluded": 5,
+        "recovered_java_files": 2928,
+        "recovered_all_files": 3242
+      },
+      "source_identity_kind": "database_src_zip_exact_revision",
+      "result_boundary": "Source recovery, not a Git checkout and not compilation/CodeQL/PoC verification. Five exclusions are archive extraction failures. No source payload is copied here."
+    },
+    {
+      "topic": "Build metadata worker report",
+      "result_boundary": "Preserved as historical, unaccepted diagnosis only. Report contains inconsistent aggregate Maven success/failure claims and proposes tag fallback in one branch; neither is adopted as current fact or recommendation. Audit explicitly says not_accepted_by_this_audit."
+    }
+  ]
+}

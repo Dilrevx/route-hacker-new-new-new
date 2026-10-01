@@ -1,0 +1,15 @@
+{
+  "verified_at_utc": "2026-10-01T07:19:32.827231+00:00",
+  "result": {
+    "files": 219,
+    "bytes": 12910039,
+    "cases": 213,
+    "records": 787,
+    "original_sources": 7002,
+    "scope": "archive_integrity_only_no_build_or_runtime_execution"
+  },
+  "known_credential_pattern_findings": 0,
+  "scan_is_heuristic": true,
+  "new_build_or_runtime_execution": false,
+  "server_files_changed": false
+}
