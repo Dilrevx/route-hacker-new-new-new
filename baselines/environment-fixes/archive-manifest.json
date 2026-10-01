@@ -2,8 +2,8 @@
   "schema_version": 1,
   "created_at_utc": "2026-09-30T09:47:08.131833+00:00",
   "scope": "reviewed_public_environment_repair_subset",
-  "file_count": 1557,
-  "bytes": 20901999,
+  "file_count": 1565,
+  "bytes": 20952982,
   "files": [
     {
       "path": "README.md",
@@ -3712,8 +3712,8 @@
     },
     {
       "path": "hcvr/README.zh-CN.md",
-      "bytes": 6198,
-      "sha256": "ed43bca3ea803b7b2b03828d9080a0206ad6bdc9a35c5dc12f348dac5d03e837"
+      "bytes": 6572,
+      "sha256": "63aa51755ee02f23f9f09459e223f002ad1c78cdf90d1119c6d820fde9433be3"
     },
     {
       "path": "hcvr/case-index.json",
@@ -4787,13 +4787,53 @@
     },
     {
       "path": "hcvr/file-manifest.json",
-      "bytes": 42691,
-      "sha256": "385628fa56e55289da2b012a7cac906bee489a18f886aed3c24bac8db03c02bd"
+      "bytes": 44119,
+      "sha256": "0b8cd38a897531e02dd3e91f4973a4d2cce6d17854c8902c6872ec5ff4caa4bc"
     },
     {
       "path": "hcvr/preservation.json",
       "bytes": 1474,
       "sha256": "1465fbc9b13641864c9041ed9a0513afb1a43a74907ce89bf21930f206649b6a"
+    },
+    {
+      "path": "hcvr/rebuild-check-20261001/README.zh-CN.md",
+      "bytes": 6207,
+      "sha256": "920aa086e2b5209123c1375e3e259a95cfd70fc60601de6884ba8c2955f32f66"
+    },
+    {
+      "path": "hcvr/rebuild-check-20261001/cache-cleanup-summary.json",
+      "bytes": 4812,
+      "sha256": "5c59a81abfc0efe136da13ccf69be1cb102101a824adac15567e42a400b94832"
+    },
+    {
+      "path": "hcvr/rebuild-check-20261001/input-check-summary.json",
+      "bytes": 2947,
+      "sha256": "b54a520952aaa92bc66112045f875182e381e35373814f0a984c207f601d55c0"
+    },
+    {
+      "path": "hcvr/rebuild-check-20261001/post-cleanup-check.json",
+      "bytes": 2330,
+      "sha256": "2544853be41e616c27b0bf01c60b301faa42fc8524ebb6a72cd1aa25927b0bc9"
+    },
+    {
+      "path": "hcvr/rebuild-check-20261001/restore-tests.json",
+      "bytes": 584,
+      "sha256": "4cdc67cdaedfce7539a1b1ebf5c5a7a0f0e3f4baeccad63059a08b1815ae4ddd"
+    },
+    {
+      "path": "hcvr/rebuild-check-20261001/restore_cache.py",
+      "bytes": 16554,
+      "sha256": "87b0dbef842ccf5a9f9938f8248b98324f1bcdb1d2f1d0c51b9d6eb3bfb880c9"
+    },
+    {
+      "path": "hcvr/rebuild-check-20261001/sample-rebuilds.json",
+      "bytes": 4024,
+      "sha256": "30fc610304e536fcedf35e359bdc18cf6b3bbb07c4c614bf89e69d6a3f0b5ca9"
+    },
+    {
+      "path": "hcvr/rebuild-check-20261001/test_restore_cache.py",
+      "bytes": 11529,
+      "sha256": "0cf13b521dac5931adaea63003820832d8475e5413c0f42ea3fa8a3af0bd1a52"
     },
     {
       "path": "hcvr/source-provenance.json",
@@ -4807,8 +4847,8 @@
     },
     {
       "path": "hcvr/verification.json",
-      "bytes": 403,
-      "sha256": "6aab35306da02aab2a03a9cc3710f979857f5de6f89b350c7254a56936661954"
+      "bytes": 597,
+      "sha256": "7b0e81510ba9c46613cd6bf2c6b580881dc5e4e30b75c05de99f0a993483037a"
     },
     {
       "path": "legacy-builds/README.md",
@@ -7794,5 +7834,5 @@
   "supersedes_manifest_sha256": "c627299db4f09d2fb7a6e155d6882611b21c24119c15c7ffe62b79c04e7f9dae",
   "updated_on_Asia_Shanghai": "2026-10-01",
   "update_scope": "README cleanup/restore notice only; original repair artifacts unchanged.",
-  "updated_at_utc": "2026-10-01T07:19:32.827231+00:00"
+  "updated_at_utc": "2026-10-01T15:37:09.394221+00:00"
 }

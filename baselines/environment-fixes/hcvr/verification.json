@@ -1,8 +1,8 @@
 {
-  "verified_at_utc": "2026-10-01T07:19:32.827231+00:00",
+  "verified_at_utc": "2026-10-01T15:37:09.394221+00:00",
   "result": {
-    "files": 219,
-    "bytes": 12910039,
+    "files": 227,
+    "bytes": 12959400,
     "cases": 213,
     "records": 787,
     "original_sources": 7002,
@@ -10,6 +10,9 @@
   },
   "known_credential_pattern_findings": 0,
   "scan_is_heuristic": true,
-  "new_build_or_runtime_execution": false,
-  "server_files_changed": false
+  "verifier_executed_builds": false,
+  "recorded_fresh_sample_rebuilds": 2,
+  "sample_evidence": "rebuild-check-20261001/sample-rebuilds.json",
+  "cache_cleanup_evidence": "rebuild-check-20261001/cache-cleanup-summary.json",
+  "historical_case_records_unchanged": true
 }

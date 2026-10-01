@@ -1,0 +1,72 @@
+{
+  "schema": "hcvr-bounded-input-review-v1",
+  "summary": {
+    "case_count": 213,
+    "case_with_explicit_repair_attempt": 141,
+    "distinct_serialized_attempt_and_outer_status_records": 778,
+    "historical_attempt_status_counts": {
+      "repair_attempt_failed": 679,
+      "codeql_db_repaired": 99
+    },
+    "source_files_independently_rehashed": 2873,
+    "indexed_source_objects": 45848,
+    "unique_declared_paths": 1635,
+    "stat_paths": 1634,
+    "path_status_counts": {
+      "exists": 1488,
+      "missing": 146
+    },
+    "category_declaration_case_counts": {
+      "source_root": {
+        "declared": 213
+      },
+      "source_archive": {
+        "declared": 213
+      },
+      "toolchain": {
+        "declared": 138,
+        "not_declared_in_inspected_records": 75
+      },
+      "cache_seed": {
+        "declared": 93,
+        "not_declared_in_inspected_records": 120
+      },
+      "isolated_cache": {
+        "declared": 140,
+        "not_declared_in_inspected_records": 73
+      }
+    },
+    "meaning": "Current existence only, not complete closure, backup, valid toolchain, source identity revalidation or build success",
+    "remote_modified": false,
+    "builds_executed": false
+  },
+  "gaps": {
+    "schema": "hcvr-static-input-gaps-v1",
+    "checked_date": "2026-10-01",
+    "cases_with_at_least_one_existing_declared_source_root": 204,
+    "cases_with_at_least_one_existing_declared_source_archive": 204,
+    "cases_without_existing_source_root_or_archive_at_inspected_declared_paths": [
+      "akka-management_CVE-2025-46548_v1.6.0-M1",
+      "cxf_CVE-2025-23184_cxf-3.5.9",
+      "druid_CVE-2025-27888_druid-31.0.1-rc2",
+      "geoserver_CVE-2025-27505_2.26.2",
+      "geoserver_CVE-2025-30145_2.26.2",
+      "keycloak_CVE-2025-7784_26.2.5",
+      "keycloak__keycloak_CVE-2022-4137_20.0.4",
+      "s3proxy_CVE-2025-24961_s3proxy-2.5.0",
+      "wildfly-core_CVE-2025-23367_27.0.0.Beta7"
+    ],
+    "unchecked_toolchain": {
+      "case_id": "cuba_CVE-2025-32959_7.2.22",
+      "reason": "Outside narrow exact-path remote allowlist; not classified as missing."
+    },
+    "boundaries": [
+      "Missing means missing at the historical paths explicitly inspected, not proof of no alternate copy elsewhere.",
+      "Existing source/cache/toolchain paths do not prove backup coverage, exact source content, tool versions, sufficient dependencies, successful fresh builds or complete closure.",
+      "72 cases have no explicit repair_attempt in the inspected indexed originals; source receipt information was still checked for them.",
+      "Cache cleanup candidates remain conditional on independent preserved bytes, per-file equality and process-use checks; no deletion was performed by this inventory."
+    ]
+  },
+  "private_inventory_sha256": "819f3f65a2a602dcdf65a211580a99726ea1f7d04bf24125c551cab9cef77e26",
+  "receipt_bound_candidates_sha256": "0dab60e2543c9f887b288046086e6c465aab3fec542a4bde8a32bad1441a5e7d"
+}

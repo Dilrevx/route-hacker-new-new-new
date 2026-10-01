@@ -13,7 +13,7 @@
 - [P3 与 P4 已保存基线](../../baselines/previous-method/README.md)和[环境修复说明](../../baselines/environment-fixes/REPAIR_GUIDE.zh-CN.md)。
 - [HCVR 早期修复记录](../../baselines/environment-fixes/hcvr/README.zh-CN.md)：补收 v8、v9、v10 的修法、真实执行记录和结果，按案例关联重复出处；不复制大体积构建现场。
 
-这里的结果均来自历史记录，本次没有重新训练、启动环境或复现漏洞。源说明中的 “current”“next”“goal” 是写作当时的状态，不是对当前工作的指令或结论。
+主体结果来自历史记录，首次整理没有重新训练、启动环境或复现漏洞。后续 10 月 1 日对两个 HCVR 项目进行了独立编译及 CodeQL 建库验收，见[新增执行记录](../../baselines/environment-fixes/hcvr/rebuild-check-20261001/README.zh-CN.md)；它不是训练实验或漏洞动态确认。源说明中的 “current”“next”“goal” 是写作当时的状态，不是对当前工作的指令或结论。
 
 ## 日期怎么读
 
@@ -43,6 +43,7 @@
 | 9 月 27 日，目录标签 | 是不是训练预算不足 | 固定数据和主要设置，从 3 epochs／42 updates 扩到 60 epochs／840 updates。[预算诊断](later-research-evidence.json) | 验证现有配方是否欠拟合，不是模型容量上限实验 |
 | 9 月 28 日，目录标签 | 参数化、项目覆盖和成对监督哪个限制学习 | 低正则 LoRA／free-query 对照，少量新项目，单 pair／联合 pair，再做少量 project-held-out 迁移。[协议摘录](later-research-evidence.json) | 同日有多条分支；free-query 不泛化到新 guideline，新项目采样池指标不是全仓库 Recall |
 | 9 月 30 日至 10 月 1 日，整理日期 | 怎样保留已有工作且不搬整台机器 | 已有基线、环境修法与新发现的临时实验建立统一入口；保存精选说明、字段摘录和全目录登记 | 这是知识整理与来源核对，不是新实验，也不是完整环境备份 |
+| 10 月 1 日，独立构建及清理回执 | 修复记录能否支撑恢复，哪些重复数据可以清理 | Maven/JStachio 与 Ant/Tomcat 精确归档源码重新建库；其余案例检查登记输入路径；相同缓存文件保留独立恢复副本后清理。[执行记录](../../baselines/environment-fixes/hcvr/rebuild-check-20261001/README.zh-CN.md) | 验证两个样本的编译与建库流程，不泛化为全部案例或运行/PoC 复现；Tomcat 标签与源码版本差异保留 |
 
 旧共享投影探索和 P3 在研究主题上连续，但目前没有证据证明 P3 直接加载了这批早期投影权重。P3 的已知输入链来自其归档中的 M7／generic candidate 记录；不能只因时间接近就补出一条训练继承关系。
 
@@ -83,7 +84,7 @@
 
 ## 保存状态和复查方式
 
-2026 年 10 月 1 日又补充整理了 HCVR 早期环境修复。原始小型控制资料在本地私有保存 7,002 份并核对哈希；共享版为 213 个历史案例建立入口，141 个案例有共 787 组去重后的执行或数据库 readiness 记录，另保存若干未完成诊断及源码恢复说明。62 个案例出现过建库修复成功记录；这不是新复现或动态漏洞确认。此前较晚的 fleet／runtime 归档对 HCVR 路径的引用不能视作对应早期目录的备份。具体保存范围和修法见[新索引](../../baselines/environment-fixes/hcvr/README.zh-CN.md)。本次补收没有删除远端任何文件。
+2026 年 10 月 1 日又补充整理了 HCVR 早期环境修复。原始小型控制资料在本地私有保存 7,002 份并核对哈希；共享版为 213 个历史案例建立入口，141 个案例有共 787 组去重后的执行或数据库 readiness 记录，另保存若干未完成诊断及源码恢复说明。62 个案例出现过建库修复成功记录；这不是新复现或动态漏洞确认。此前较晚的 fleet／runtime 归档对 HCVR 路径的引用不能视作对应早期目录的备份。具体保存范围和修法见[新索引](../../baselines/environment-fixes/hcvr/README.zh-CN.md)。这次补收本身没有删除远端文件；随后按用户要求进行的抽样恢复验证及重复缓存清理，单独保存在[后续记录](../../baselines/environment-fixes/hcvr/rebuild-check-20261001/README.zh-CN.md)。
 
 本次把 70 个临时目录全部登记，保存 30 份精选原始说明、审计与回执文件，以及支撑时间线的协议字段摘录。原文副本见 [source manifest](source-manifest.json)，新目录全部交付文件的哈希见 [delivery manifest](delivery-manifest.json)，本地完整性与链接检查见 [verification.json](verification.json)。字段摘录记录原文件 SHA；它们不冒充完整原文件。
 

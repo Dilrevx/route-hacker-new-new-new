@@ -1,0 +1,143 @@
+{
+  "schema": "hcvr-cache-cleanup-public-summary-v1",
+  "deletion": {
+    "completed_at_utc": "2026-10-01T15:34:44.019682+00:00",
+    "plan_sha256": "4d631fdb272357fb66339215dc347894163587243fd45b70a811717829ae932c",
+    "deleted_regular_files": 535248,
+    "deleted_allocated_bytes": 75639881728,
+    "recovery_allocated_bytes": 9453604864,
+    "recovery_store_allocated_bytes_before_final_receipt": 10153037824,
+    "estimated_net_allocated_bytes_released": 65486843904,
+    "space_accounting_scope": "deleted cache file blocks minus complete retained store; excludes fresh sample builds and RUN audit copies on another filesystem",
+    "all_deleted_paths_absent": true,
+    "directories_deleted": 0,
+    "unique_files_deleted": 0,
+    "original_source_database_log_files_deleted": 0,
+    "recoverable": true,
+    "two_sample_rebuilds_required": true
+  },
+  "planning_snapshot": {
+    "schema": "hcvr-cache-retirement-plan-v1",
+    "created_at_utc": "2026-10-01T15:22:10.067403+00:00",
+    "candidates_sha256": "0dab60e2543c9f887b288046086e6c465aab3fec542a4bde8a32bad1441a5e7d",
+    "new_recovery_object_count": 66849,
+    "new_recovery_allocated_bytes": 9453604864,
+    "planned_delete_bytes": 74029946792,
+    "planned_delete_allocated_bytes": 75639881728,
+    "no_deletion_performed": true,
+    "plan_sha256": "4d631fdb272357fb66339215dc347894163587243fd45b70a811717829ae932c",
+    "compressed_plan_sha256": "c20f5085939399e9daa4ccedf8a527b3472042cfa11215f633c02224edbc2280",
+    "compressed_plan_bytes": 48044406,
+    "matching_file_count": 535248,
+    "retained_file_count": 3943,
+    "retained_reasons": {
+      "not_in_seed": 3927,
+      "empty_file_kept": 16
+    },
+    "candidate_summaries": [
+      {
+        "candidate": 0,
+        "counts": {
+          "verified_duplicate": 66906,
+          "not_in_seed": 59,
+          "empty_file_kept": 2
+        },
+        "case_id": "v8:apache__camel_CVE-2019-0194_2.21.4"
+      },
+      {
+        "candidate": 1,
+        "counts": {
+          "verified_duplicate": 66906,
+          "not_in_seed": 313,
+          "empty_file_kept": 2
+        },
+        "case_id": "v8:DSpace__DSpace_CVE-2016-10726_4.4"
+      },
+      {
+        "candidate": 2,
+        "counts": {
+          "verified_duplicate": 66906,
+          "not_in_seed": 561,
+          "empty_file_kept": 2
+        },
+        "case_id": "v8:apache__flink_CVE-2020-17519_1.11.2"
+      },
+      {
+        "candidate": 3,
+        "counts": {
+          "verified_duplicate": 66906,
+          "not_in_seed": 1724,
+          "empty_file_kept": 2
+        },
+        "case_id": "v8:apache__kylin_CVE-2024-48944_5.0.0"
+      },
+      {
+        "candidate": 4,
+        "counts": {
+          "verified_duplicate": 66906,
+          "empty_file_kept": 2
+        },
+        "case_id": "v8:nahsra__antisamy_CVE-2017-14735_1.5.6"
+      },
+      {
+        "candidate": 5,
+        "counts": {
+          "verified_duplicate": 66906,
+          "empty_file_kept": 2
+        },
+        "case_id": "v8:keycloak__keycloak_CVE-2022-4361_21.1.1"
+      },
+      {
+        "candidate": 6,
+        "counts": {
+          "verified_duplicate": 66906,
+          "not_in_seed": 1270,
+          "empty_file_kept": 2
+        },
+        "case_id": "v8:keycloak__keycloak_CVE-2022-3782_20.0.1"
+      },
+      {
+        "candidate": 7,
+        "counts": {
+          "verified_duplicate": 66906,
+          "empty_file_kept": 2
+        },
+        "case_id": "v8:mapfish__mapfish-print_CVE-2020-15231_3.22.0"
+      }
+    ],
+    "saved_historical_receipt_count": 2,
+    "restore_sample_indices": [
+      5646,
+      282711,
+      468344
+    ],
+    "restore_sample_bytes": [
+      21,
+      788,
+      760687965
+    ]
+  },
+  "restore_smoke_test": {
+    "status": "passed",
+    "mode": "indexed_test",
+    "manifest_sha256": "4d631fdb272357fb66339215dc347894163587243fd45b70a811717829ae932c",
+    "requested_indices": [
+      5646,
+      282711,
+      468344
+    ],
+    "selected_entry_count": 3,
+    "restored_file_count": 3,
+    "restored_bytes": 760688774,
+    "validation_scope": "all candidate receipt bindings; only selected entry paths and CAS objects",
+    "original_paths_modified": false,
+    "files_deleted": 0
+  },
+  "private_restore_receipt_sha256": "6890ea3a9d0a12c9f2f1e341e5345ed8fabce78f30cd33da819516385ac9f622",
+  "backup_location": "Independent remote retained store; compressed full mapping also preserved in local private archive. CAS payloads are not published to Git.",
+  "limitations": [
+    "Readable user process references and Docker mounts were checked, not protected system-process file descriptors.",
+    "Cross-case input references were checked within indexed control records, not a server-wide consumer inventory.",
+    "Source, databases, logs, shared seeds and nonmatching cache files were not deleted."
+  ]
+}

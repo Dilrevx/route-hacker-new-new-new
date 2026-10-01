@@ -1,6 +1,6 @@
 {
   "schema": "hcvr-delivery-v1",
-  "created_at_utc": "2026-10-01T07:19:32.827231+00:00",
+  "created_at_utc": "2026-10-01T15:37:09.394221+00:00",
   "files": [
     {
       "path": "CASE_INDEX.zh-CN.md",
@@ -9,8 +9,8 @@
     },
     {
       "path": "README.zh-CN.md",
-      "bytes": 6198,
-      "sha256": "ed43bca3ea803b7b2b03828d9080a0206ad6bdc9a35c5dc12f348dac5d03e837"
+      "bytes": 6572,
+      "sha256": "63aa51755ee02f23f9f09459e223f002ad1c78cdf90d1119c6d820fde9433be3"
     },
     {
       "path": "case-index.json",
@@ -1088,6 +1088,46 @@
       "sha256": "1465fbc9b13641864c9041ed9a0513afb1a43a74907ce89bf21930f206649b6a"
     },
     {
+      "path": "rebuild-check-20261001/README.zh-CN.md",
+      "bytes": 6207,
+      "sha256": "920aa086e2b5209123c1375e3e259a95cfd70fc60601de6884ba8c2955f32f66"
+    },
+    {
+      "path": "rebuild-check-20261001/cache-cleanup-summary.json",
+      "bytes": 4812,
+      "sha256": "5c59a81abfc0efe136da13ccf69be1cb102101a824adac15567e42a400b94832"
+    },
+    {
+      "path": "rebuild-check-20261001/input-check-summary.json",
+      "bytes": 2947,
+      "sha256": "b54a520952aaa92bc66112045f875182e381e35373814f0a984c207f601d55c0"
+    },
+    {
+      "path": "rebuild-check-20261001/post-cleanup-check.json",
+      "bytes": 2330,
+      "sha256": "2544853be41e616c27b0bf01c60b301faa42fc8524ebb6a72cd1aa25927b0bc9"
+    },
+    {
+      "path": "rebuild-check-20261001/restore-tests.json",
+      "bytes": 584,
+      "sha256": "4cdc67cdaedfce7539a1b1ebf5c5a7a0f0e3f4baeccad63059a08b1815ae4ddd"
+    },
+    {
+      "path": "rebuild-check-20261001/restore_cache.py",
+      "bytes": 16554,
+      "sha256": "87b0dbef842ccf5a9f9938f8248b98324f1bcdb1d2f1d0c51b9d6eb3bfb880c9"
+    },
+    {
+      "path": "rebuild-check-20261001/sample-rebuilds.json",
+      "bytes": 4024,
+      "sha256": "30fc610304e536fcedf35e359bdc18cf6b3bbb07c4c614bf89e69d6a3f0b5ca9"
+    },
+    {
+      "path": "rebuild-check-20261001/test_restore_cache.py",
+      "bytes": 11529,
+      "sha256": "0cf13b521dac5931adaea63003820832d8475e5413c0f42ea3fa8a3af0bd1a52"
+    },
+    {
       "path": "source-provenance.json",
       "bytes": 3384861,
       "sha256": "b8b0b08e36569cf47171a08a918f3eeee8119fa40ce87763f5ec43ad8cd0e550"
@@ -1098,6 +1138,6 @@
       "sha256": "302fe9a2b8bef0d27a12ddaa6d07bce51dcc7ad8946ad90382ecfd5e22aff34e"
     }
   ],
-  "file_count": 219,
-  "bytes": 12910039
+  "file_count": 227,
+  "bytes": 12959400
 }

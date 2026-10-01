@@ -167,6 +167,58 @@
       "scope": "Added historical repair knowledge; original checks above remain historical snapshots",
       "remote_files_changed_or_deleted": false,
       "private_originals_not_published": true
+    },
+    "hcvr_rebuild_cleanup_20261001": {
+      "verified_at_utc": "2026-10-01T15:37:09.394221+00:00",
+      "integrity_result": {
+        "files": 1565,
+        "bytes": 20952982,
+        "legacy_original_bytes": {
+          "files": 297,
+          "bytes": 210903
+        },
+        "legacy_support": {
+          "files": 2,
+          "bytes": 92692
+        },
+        "runtime_v2": {
+          "files": 236,
+          "bytes": 274423,
+          "historical_attempts": {
+            "passed": 143,
+            "failed": 9
+          }
+        },
+        "source_runtime": {
+          "files": 41,
+          "bytes": 142479
+        },
+        "codeql_compile": {
+          "files": 736,
+          "bytes": 5446721,
+          "fleet_historical_reviews": {
+            "accepted": 135,
+            "rejected": 2
+          }
+        },
+        "hcvr": {
+          "files": 227,
+          "bytes": 12959400,
+          "cases": 213,
+          "records": 787,
+          "original_sources": 7002,
+          "scope": "archive_integrity_only_no_build_or_runtime_execution"
+        },
+        "manifest_sha256": "8ef95a6bc3d210212316ea91e024389812a9cc87f025acdeb10af55dd65de658",
+        "scope": "preservation_integrity_only_no_build_or_runtime_rerun"
+      },
+      "unit_test_output": "..........................\n----------------------------------------------------------------------\nRan 26 tests in 0.054s\n\nOK",
+      "checked_relative_markdown_links": 271,
+      "fresh_sample_rebuilds": 2,
+      "cache_deleted_regular_files": 535248,
+      "cleanup_summary_sha256": "5c59a81abfc0efe136da13ccf69be1cb102101a824adac15567e42a400b94832",
+      "scope": "New execution is separate from untouched historical case records; no runtime or vulnerability confirmation.",
+      "private_originals_not_published": true
     }
   }
 }

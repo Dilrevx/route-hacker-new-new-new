@@ -1,0 +1,16 @@
+{
+  "schema": "restore-cache-local-fixture-tests-v1",
+  "status": "passed",
+  "tests_run": 30,
+  "failure_count": 0,
+  "error_count": 0,
+  "skip_count": 0,
+  "skipped_tests": [],
+  "fixtures_retained": true,
+  "real_remote_CAS_accessed": false,
+  "old_research_data_modified": false,
+  "failed_tests": [],
+  "execution_platform": "Linux, non-root, including the traverse-only directory fixture",
+  "test_script_sha256": "0cf13b521dac5931adaea63003820832d8475e5413c0f42ea3fa8a3af0bd1a52",
+  "restore_script_sha256": "87b0dbef842ccf5a9f9938f8248b98324f1bcdb1d2f1d0c51b9d6eb3bfb880c9"
+}

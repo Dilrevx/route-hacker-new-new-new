@@ -1,0 +1,97 @@
+{
+  "schema": "hcvr-fresh-sample-rebuilds-v1",
+  "date": "2026-10-01",
+  "successful_sample_count": 2,
+  "all_213_cases_rebuilt": false,
+  "ant": {
+    "schema_version": "ant-tomcat-independent-rebuild-summary-v1",
+    "status": "rebuilt_database_verified",
+    "case_label": "Tomcat 11.0.2",
+    "source_declared_project": "Tomcat 12.0",
+    "label_source_version_mismatch": true,
+    "exact_revision": "7d50e72fa00ad6eeab6e64ec9d34b7cc606e5a96",
+    "source_archive_sha256": "e3de5f6973027167aebb091535dea462146ff9f86e57c90cc9fea299a6905241",
+    "source_file_count": 4521,
+    "toolchains": {
+      "Ant": "1.10.14",
+      "JDK": "21.0.11-tem",
+      "CodeQL": "2.23.2"
+    },
+    "isolation": "bubblewrap, network disabled, fresh HOME/source/DB, only dedicated restore root writable",
+    "old_source_checkout_or_attempt_outputs_used": false,
+    "readonly_external_dependency_files": 11,
+    "readonly_external_dependency_bytes": 26009280,
+    "build_elapsed_seconds": 84.152,
+    "peak_observed_aggregate_rss_bytes": 1888985088,
+    "cpu_count": 2,
+    "java_relation_file_count": 96,
+    "checks": {
+      "build_exit_zero": true,
+      "resolve_exit_zero": true,
+      "resolve_json_valid": true,
+      "finalised_true": true,
+      "primary_language_java": true,
+      "java_relations_present": true,
+      "original_source_files_unchanged": true,
+      "readonly_dependencies_unchanged": true
+    },
+    "validation_cli_correction": true,
+    "build_retries": 0,
+    "limitations": [
+      "Rebuild depends on preserved external toolchain and 11 dependency files, not source alone",
+      "The source commit belongs to a source declaring Tomcat12.0 despite the historical11.0.2 label",
+      "This verifies compilation and finalized CodeQL database only, not IRIS analysis, runtime or PoC",
+      "No deletion authorization for shared dependencies, source archives or unrelated cases"
+    ]
+  },
+  "maven": {
+    "success": true,
+    "exit_code": 0,
+    "finalized": true,
+    "validation_exit_code": 0,
+    "validation_method": "codeql resolve database",
+    "java_relations": {
+      "file_count": 98,
+      "nonempty_file_count": 98,
+      "total_bytes": 2870669
+    },
+    "checks": {
+      "build_exit_zero": true,
+      "build_not_terminated": true,
+      "resolve_exit_zero": true,
+      "resolve_json_valid": true,
+      "finalised_true": true,
+      "primary_language_java": true,
+      "new_database_resolved": true,
+      "java_relations_nonempty": true,
+      "exact_source_archive_hash": true,
+      "original_receipt_unchanged": true
+    },
+    "source_archive_sha256": "bfbb9550e43dc9b849a42bf9e287e2e765dc726c8b7e54753fbdcde00b8720c7",
+    "source_revision": "9ce20009d6bf726086fc528fceb174933077bff4",
+    "limitations": [
+      "Online Maven Central dependency resolution; not an offline rebuild.",
+      "Source archive is preserved locally; toolchain payloads and downloaded dependencies are not fully backed up locally.",
+      "Existing shared JDK/Maven/CodeQL were mounted read-only; the historical JDK patch release was not pinned.",
+      "No permission to delete unique source, shared toolchains, dependency seeds, old DBs or unrelated cases is implied."
+    ],
+    "case_id": "v8:jstachio__jstachio_CVE-2023-33962_1.0.0",
+    "build_elapsed_seconds": 725.416,
+    "peak_observed_aggregate_rss_bytes": 1977024512,
+    "cold_cache": true,
+    "network_required": true,
+    "build_retries": 0,
+    "toolchains": {
+      "Maven": "3.9.8",
+      "JDK": "17.0.12+7",
+      "CodeQL": "2.23.2"
+    },
+    "initial_validation_cli_and_regex_errors_preserved": true
+  },
+  "private_evidence_sha256": {
+    "ant_receipt": "d9d1dc8a363a70da1147b814bfcceb0d82ec74c69e745f90326ef0c8fc3a9c85",
+    "maven_original_execution": "13a02c3d114766e7684b9fffcc6a5de3d1fbfbc151ca3811ad1181753307e10d",
+    "maven_final_validation": "e4a58b2dc57464ecd740cf356bc347e6d967380849c13d54ecb08b9e86fe0586"
+  },
+  "scope": "Compilation and finalized CodeQL Java databases, not runtime or vulnerability reproduction."
+}

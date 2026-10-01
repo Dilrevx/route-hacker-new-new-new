@@ -1,0 +1,76 @@
+{
+  "schema": "hcvr-post-cache-cleanup-check-v1",
+  "checked_at_utc": "2026-10-01T15:35:55.311976+00:00",
+  "status": "passed",
+  "plan_sha256": "4d631fdb272357fb66339215dc347894163587243fd45b70a811717829ae932c",
+  "deleted_paths_rechecked_absent": 535248,
+  "journal_entries_sequential": 535248,
+  "kept_paths_rechecked_present": 3943,
+  "registered_original_input_paths_present": [
+    {
+      "case_id": "v8:apache__camel_CVE-2019-0194_2.21.4",
+      "target_root": true,
+      "seed_root": true,
+      "preserve_source_root": true,
+      "preserve_database_root": true,
+      "source_receipt": true
+    },
+    {
+      "case_id": "v8:DSpace__DSpace_CVE-2016-10726_4.4",
+      "target_root": true,
+      "seed_root": true,
+      "preserve_source_root": true,
+      "preserve_database_root": true,
+      "source_receipt": true
+    },
+    {
+      "case_id": "v8:apache__flink_CVE-2020-17519_1.11.2",
+      "target_root": true,
+      "seed_root": true,
+      "preserve_source_root": true,
+      "preserve_database_root": true,
+      "source_receipt": true
+    },
+    {
+      "case_id": "v8:apache__kylin_CVE-2024-48944_5.0.0",
+      "target_root": true,
+      "seed_root": true,
+      "preserve_source_root": true,
+      "preserve_database_root": true,
+      "source_receipt": true
+    },
+    {
+      "case_id": "v8:nahsra__antisamy_CVE-2017-14735_1.5.6",
+      "target_root": true,
+      "seed_root": true,
+      "preserve_source_root": true,
+      "preserve_database_root": true,
+      "source_receipt": true
+    },
+    {
+      "case_id": "v8:keycloak__keycloak_CVE-2022-4361_21.1.1",
+      "target_root": true,
+      "seed_root": true,
+      "preserve_source_root": true,
+      "preserve_database_root": true,
+      "source_receipt": true
+    },
+    {
+      "case_id": "v8:keycloak__keycloak_CVE-2022-3782_20.0.1",
+      "target_root": true,
+      "seed_root": true,
+      "preserve_source_root": true,
+      "preserve_database_root": true,
+      "source_receipt": true
+    },
+    {
+      "case_id": "v8:mapfish__mapfish-print_CVE-2020-15231_3.22.0",
+      "target_root": true,
+      "seed_root": true,
+      "preserve_source_root": true,
+      "preserve_database_root": true,
+      "source_receipt": true
+    }
+  ],
+  "scope": "Path existence and journal/plan integrity, not source or database content rebuild verification."
+}
