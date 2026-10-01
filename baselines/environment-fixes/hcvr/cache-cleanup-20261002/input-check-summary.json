@@ -1,0 +1,103 @@
+{
+  "schema": "hcvr-v10-bounded-cache-input-check-v1",
+  "status": "checked_with_bounded_scope",
+  "candidate_cache_count": 14,
+  "historical_attempt_status_counts": {
+    "repair_attempt_failed": 9,
+    "codeql_db_repaired": 5
+  },
+  "historical_receipt_files_rehashed": 140,
+  "historical_bindings": [
+    {
+      "case_id": "v8:OpenDJ_CVE-2025-27497_4.9.2",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "8bea8b3509adfef8a413ed30ec0eacd10f23842663e4e854f543418272da0c39"
+    },
+    {
+      "case_id": "v8:opencast_CVE-2025-54380_17.5",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "8bea8b3509adfef8a413ed30ec0eacd10f23842663e4e854f543418272da0c39"
+    },
+    {
+      "case_id": "v8:payara__Payara_CVE-2022-37422_5.2022.2",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "9c8aca69e28ae036a80652448273cd3c3f45d3d64be71d5d72fbe44f2d1285e3"
+    },
+    {
+      "case_id": "v8:spring-security_CVE-2025-22228_6.3.7",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "8921269ab339661c20bfe642d00b77812a5b3bb695e6c375a03ebd4dec3e66c2"
+    },
+    {
+      "case_id": "v8:spring-framework_CVE-2025-41234_v6.2.7",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "8921269ab339661c20bfe642d00b77812a5b3bb695e6c375a03ebd4dec3e66c2"
+    },
+    {
+      "case_id": "v8:wildfly__wildfly_CVE-2018-1047_11.0.0.Final",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "be05557cde3e62e4e7f14c76c9ed4ed1e51aa8075153b2d7817d2d545f3082c4"
+    },
+    {
+      "case_id": "v8:spring-framework_CVE-2025-22233_v6.2.6",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "be05557cde3e62e4e7f14c76c9ed4ed1e51aa8075153b2d7817d2d545f3082c4"
+    },
+    {
+      "case_id": "v8:x-stream__xstream_CVE-2013-7285_1.4.6",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "d413a9b1e65ef3a6897490e27f015ddbd7650a26423bf6e1d7a697625f91ac67"
+    },
+    {
+      "case_id": "v8:xwiki__xwiki-commons_CVE-2022-24897_12.6.6",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "d413a9b1e65ef3a6897490e27f015ddbd7650a26423bf6e1d7a697625f91ac67"
+    },
+    {
+      "case_id": "v8:emissary_CVE-2025-27508_8.23.0",
+      "historical_attempt_status": "codeql_db_repaired",
+      "historical_receipt_sha256": "8bea8b3509adfef8a413ed30ec0eacd10f23842663e4e854f543418272da0c39"
+    },
+    {
+      "case_id": "v8:snowflake-jdbc_CVE-2025-27496_v3.23.0",
+      "historical_attempt_status": "codeql_db_repaired",
+      "historical_receipt_sha256": "9c8aca69e28ae036a80652448273cd3c3f45d3d64be71d5d72fbe44f2d1285e3"
+    },
+    {
+      "case_id": "v8:powsybl-core_CVE-2025-47293_v6.7.1",
+      "historical_attempt_status": "codeql_db_repaired",
+      "historical_receipt_sha256": "9c8aca69e28ae036a80652448273cd3c3f45d3d64be71d5d72fbe44f2d1285e3"
+    },
+    {
+      "case_id": "v8:powsybl-core_CVE-2025-47771_v6.7.1",
+      "historical_attempt_status": "codeql_db_repaired",
+      "historical_receipt_sha256": "9c8aca69e28ae036a80652448273cd3c3f45d3d64be71d5d72fbe44f2d1285e3"
+    },
+    {
+      "case_id": "v8:spring-cloud__spring-cloud-config_CVE-2020-5405_2.1.6.RELEASE",
+      "historical_attempt_status": "codeql_db_repaired",
+      "historical_receipt_sha256": "8921269ab339661c20bfe642d00b77812a5b3bb695e6c375a03ebd4dec3e66c2"
+    }
+  ],
+  "binding_failures": 0,
+  "excluded_prior_batch_cache_count": 8,
+  "reference_check": {
+    "status": "completed_with_bounded_scope",
+    "indexed_source_objects": 45848,
+    "cases_in_reference_index": 213,
+    "matching_reference_source_files_rehashed": 10,
+    "other_case_direct_reference_observations": 0,
+    "static_input_index_sha256": "819f3f65a2a602dcdf65a211580a99726ea1f7d04bf24125c551cab9cef77e26"
+  },
+  "all_registered_database_paths_still_present": true,
+  "scope": "Revalidated historical receipt identity and bounded declared-path references; not a fresh build, full backup, or global process visibility claim.",
+  "plan_sha256": "b781524a8dfc9b33720ef854474a1254e813608373fda37487e846a9c4ab21d8",
+  "private_input_record_sha256": {
+    "plan": "6960790c66efed6a8e4d5b879f87230ca8cea8fcfedc6d0f20e05351f15c14b6",
+    "deletion": "2dcb44b26c012add2de3974c8edf25ecb2ee841c90735d37d21d5f970249e520",
+    "restore": "9938bf0e22423e98a83b4c564db1dafcf269e1993bbc787167759c122a2aac6d",
+    "post": "1ae0490bd3cdd2ea09f9ee1cc8ac2bb3f2f5fd1c87cd0931ec3cd13b7e57d6fa",
+    "inventory": "7e96debdd8b61edef44194301f4fc0c1893a0305b817ca3983ed4e1434dde781",
+    "candidates": "5137ab99a312bc27e9b3db927bc036d0033d00a8535cd88b0022e905f4a688d2"
+  }
+}

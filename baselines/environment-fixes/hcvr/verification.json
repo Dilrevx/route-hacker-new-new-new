@@ -14,5 +14,51 @@
   "recorded_fresh_sample_rebuilds": 2,
   "sample_evidence": "rebuild-check-20261001/sample-rebuilds.json",
   "cache_cleanup_evidence": "rebuild-check-20261001/cache-cleanup-summary.json",
-  "historical_case_records_unchanged": true
+  "historical_case_records_unchanged": true,
+  "followup_checks": {
+    "hcvr_cache_cleanup_20261002": {
+      "verified_at_utc": "2026-10-01T22:40:42.711747+00:00",
+      "new_project_builds": 0,
+      "historical_sample_rebuilds_referenced": 2,
+      "prior_sample_evidence": "rebuild-check-20261001/sample-rebuilds.json",
+      "prior_samples_rebuilt_in_this_batch": false,
+      "candidate_cache_count": 14,
+      "historical_attempt_status_counts": {
+        "repair_attempt_failed": 9,
+        "codeql_db_repaired": 5
+      },
+      "cache_deleted_regular_files": 869792,
+      "retained_unique_or_unverified_files": 76183,
+      "cleanup_summary_sha256": "b67842ea3127ca29827c97496989327558860ae7c036e513917a6437a6876969",
+      "plan_sha256": "b781524a8dfc9b33720ef854474a1254e813608373fda37487e846a9c4ab21d8",
+      "private_deletion_receipt_sha256": "2dcb44b26c012add2de3974c8edf25ecb2ee841c90735d37d21d5f970249e520",
+      "deleted_allocated_bytes": 122915348480,
+      "additional_recovery_metadata_allocated_bytes": 1115463680,
+      "new_recovery_payload_allocated_bytes": 0,
+      "estimated_net_allocated_bytes_released": 121799884800,
+      "unit_tests": {
+        "tests": 26,
+        "returncode": 0,
+        "output": "Ran 26 tests; OK"
+      },
+      "checked_relative_markdown_links": 279,
+      "privacy_check": {
+        "known_credential_pattern_findings": 0,
+        "scan_is_heuristic": true,
+        "checked_files": 234
+      },
+      "historical_case_records_unchanged": true,
+      "private_originals_not_published": true,
+      "scope": "New duplicate-cache cleanup only; prior successful build receipts rechecked, no new build, runtime or vulnerability confirmation.",
+      "integrity_result": {
+        "files": 232,
+        "bytes": 12976095,
+        "cases": 213,
+        "records": 787,
+        "original_sources": 7002,
+        "scope": "archive_integrity_only_no_build_or_runtime_execution"
+      },
+      "cache_cleanup_evidence": "cache-cleanup-20261002/summary.json"
+    }
+  }
 }

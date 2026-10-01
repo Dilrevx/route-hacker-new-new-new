@@ -9,8 +9,33 @@
     },
     {
       "path": "README.zh-CN.md",
-      "bytes": 6572,
-      "sha256": "63aa51755ee02f23f9f09459e223f002ad1c78cdf90d1119c6d820fde9433be3"
+      "bytes": 6830,
+      "sha256": "421434f60b72a70f1db74efa1072feb2fb9010dbc1840b71d9bacbe851af5b8b"
+    },
+    {
+      "path": "cache-cleanup-20261002/README.md",
+      "bytes": 3492,
+      "sha256": "c2f806bec493bb55f0a0b09d4d69bdc3ddf6b4eee860b98494fabef543f6dd97"
+    },
+    {
+      "path": "cache-cleanup-20261002/input-check-summary.json",
+      "bytes": 4857,
+      "sha256": "7a21dc5aeda0735025e5e18eb7e3662e79f9c1a29878ce44ebe7f8fecfdfc014"
+    },
+    {
+      "path": "cache-cleanup-20261002/post-cleanup-check.json",
+      "bytes": 1036,
+      "sha256": "a67b5f2b9cca685b901744ee1009673112b45c35a1dac0e44a60d23c09d884ec"
+    },
+    {
+      "path": "cache-cleanup-20261002/restore-contract-check.json",
+      "bytes": 424,
+      "sha256": "cc0d0532de8a16ccfc17ca61fb3d5400a65fbb26550f0c0f389f52d11cad522f"
+    },
+    {
+      "path": "cache-cleanup-20261002/summary.json",
+      "bytes": 6628,
+      "sha256": "b67842ea3127ca29827c97496989327558860ae7c036e513917a6437a6876969"
     },
     {
       "path": "case-index.json",
@@ -1138,6 +1163,7 @@
       "sha256": "302fe9a2b8bef0d27a12ddaa6d07bce51dcc7ad8946ad90382ecfd5e22aff34e"
     }
   ],
-  "file_count": 227,
-  "bytes": 12959400
+  "file_count": 232,
+  "bytes": 12976095,
+  "updated_at_utc": "2026-10-01T22:40:42.711747+00:00"
 }
