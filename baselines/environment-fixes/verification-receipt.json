@@ -77,6 +77,47 @@
       "all_selected_bodies_match": true,
       "scope": "the previous public commit; current followup commit requires separate remote confirmation"
     },
-    "private_upload_destination": "not_required_by_clarified_repair_knowledge_scope_no_new_private_repository_created"
+    "private_upload_destination": "not_required_by_clarified_repair_knowledge_scope_no_new_private_repository_created",
+    "remote_cleanup_20261001": {
+      "scope": "Initial verification above remains historical; this is the current integrity check after adding the cleanup notice.",
+      "cleanup_record": "../../docs/research-history/remote-cleanup-20261001.json",
+      "remote_environment_files_deleted": 7,
+      "deleted_bytes": 148029444,
+      "local_private_backups_retained": true,
+      "integrity_result": {
+        "files": 1334,
+        "bytes": 7941199,
+        "legacy_original_bytes": {
+          "files": 297,
+          "bytes": 210903
+        },
+        "legacy_support": {
+          "files": 2,
+          "bytes": 92692
+        },
+        "runtime_v2": {
+          "files": 236,
+          "bytes": 274423,
+          "historical_attempts": {
+            "passed": 143,
+            "failed": 9
+          }
+        },
+        "source_runtime": {
+          "files": 41,
+          "bytes": 142479
+        },
+        "codeql_compile": {
+          "files": 736,
+          "bytes": 5446721,
+          "fleet_historical_reviews": {
+            "accepted": 135,
+            "rejected": 2
+          }
+        },
+        "manifest_sha256": "be7b79274bde19528d4b7ed5023d5bb8a7e3fcdad78f7c9d3798951e9a7eb1d0",
+        "scope": "preservation_integrity_only_no_build_or_runtime_rerun"
+      }
+    }
   }
 }

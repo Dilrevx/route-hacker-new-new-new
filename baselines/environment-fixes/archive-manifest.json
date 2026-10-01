@@ -3,12 +3,12 @@
   "created_at_utc": "2026-09-30T09:47:08.131833+00:00",
   "scope": "reviewed_public_environment_repair_subset",
   "file_count": 1334,
-  "bytes": 7940684,
+  "bytes": 7941199,
   "files": [
     {
       "path": "README.md",
-      "bytes": 5338,
-      "sha256": "fa0b5179fd28164608a432526cdbbe2e1475014c7ba8afea8e8f464663bf7a52"
+      "bytes": 5853,
+      "sha256": "c2deb911c88f1dfa490142bdbd7e5e54bc952226b38eebae6ba78c213bb3ccab"
     },
     {
       "path": "REPAIR_GUIDE.zh-CN.md",
@@ -6676,5 +6676,7 @@
       "sha256": "185ed5e3bb7820de31db35371a913cea0ddcca67b7978c41512f7e8362f6e658"
     }
   ],
-  "supersedes_manifest_sha256": "e85e58827bb8bc8c550059ebfbee8eaae5dca6230a590b0638a0ce1a65f4b845"
+  "supersedes_manifest_sha256": "c627299db4f09d2fb7a6e155d6882611b21c24119c15c7ffe62b79c04e7f9dae",
+  "updated_on_Asia_Shanghai": "2026-10-01",
+  "update_scope": "README cleanup/restore notice only; original repair artifacts unchanged."
 }

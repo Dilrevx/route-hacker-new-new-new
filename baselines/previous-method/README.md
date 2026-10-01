@@ -154,9 +154,13 @@ historical local paths. These files contain candidate locations, scores, overlap
 labels, and ranks, not source text. Their ranks were checked against the tracked
 compact tables, including every candidate and the first matching rank per case.
 
-Server originals remain untouched. See [preservation inventory](preservation-inventory.json)
-for the status of large and missing assets. A manifest alone is not a backup of
-the corresponding large file.
+The initial archive left server originals untouched. On 2026-10-01, the backed-up
+P4 candidate pool and the two fixed143 full ranking files were retired from their
+server paths after fresh size/SHA checks. Exact local copies remain; both rankings
+also retain their published gzip assets. See the [cleanup and recovery record](../../docs/research-history/remote-cleanup-20261001.json)
+before reusing those paths. The dated [preservation inventory](preservation-inventory.json)
+describes the initial archive state; a manifest alone is not a backup of an
+unpreserved large file.
 
 The recent private `embed` query-LoRA research is not silently republished here.
 Its public release scope must be decided separately from this historical archive.

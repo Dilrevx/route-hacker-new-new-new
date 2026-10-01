@@ -63,7 +63,7 @@ individual fixes.
 
 ## Preservation and publication boundaries
 
-Original server files were not changed or deleted. Exact private recovery copies
+The initial archive did not change or delete original server files. Exact private recovery copies
 are separate from this reviewed public subset. Raw databases, model transcripts,
 HTTP payloads, credentials and large source/dependency trees are not published
 wholesale. Per-family manifests distinguish exact files, edited publication
@@ -86,3 +86,10 @@ identified dependency files still only on the server, plus unpreserved directory
 contexts. These are informational backup boundaries, not outstanding uploads for
 the repair-knowledge task. Neither the public archive nor this inventory
 authorizes their deletion.
+
+On 2026-10-01, seven separately backed-up Akka input archives (148,029,444 bytes)
+were removed from their exact server paths after fresh local and remote hash
+verification. Their complete private local copies remain. The [cleanup record](../../docs/research-history/remote-cleanup-20261001.json)
+provides the exact restore mapping; restore those inputs before reusing their
+build recipes. No build context directory, recipe, running environment or
+unbacked dependency was removed by that cleanup.

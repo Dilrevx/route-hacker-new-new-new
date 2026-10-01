@@ -1,11 +1,12 @@
 {
   "assembled_on": "2026-10-01",
-  "scope": "Files delivered in docs/research-history; excludes this self-referential manifest.",
+  "updated_after_remote_cleanup": true,
+  "scope": "Files delivered in docs/research-history; excludes this self-referential manifest. Initial inventory and verification receipts remain historical snapshots; remote-cleanup-20261001.json records subsequent retirement.",
   "files": [
     {
       "path": "README.md",
-      "bytes": 13141,
-      "sha256": "4086e6466c034fe930a3eab6280710938a752305ee45baa07af44c6869c17b31"
+      "bytes": 13863,
+      "sha256": "80c996c837db2a4527cd1c29b52954226b5e9d658d888ef894eeff07d0f2293d"
     },
     {
       "path": "REGISTRY.zh-CN.md",
@@ -31,6 +32,11 @@
       "path": "later-research-evidence.json",
       "bytes": 12214,
       "sha256": "89632e1e3b80e0e9ea8cc03ecddb3c579d4fe349aed830d9cc78f1b60bf49543"
+    },
+    {
+      "path": "remote-cleanup-20261001.json",
+      "bytes": 204923,
+      "sha256": "7f48e7ec1a9b4c5ce6c6c3ab4bbef351b9ba91337a8560c18bca0fe2974ab534"
     },
     {
       "path": "source-manifest.json",
