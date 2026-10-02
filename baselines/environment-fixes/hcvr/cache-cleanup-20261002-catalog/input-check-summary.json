@@ -1,0 +1,241 @@
+{
+  "schema": "hcvr-v10-bounded-cache-input-check-v1",
+  "status": "checked_with_bounded_scope",
+  "candidate_cache_count": 35,
+  "historical_attempt_status_counts": {
+    "repair_attempt_failed": 34,
+    "codeql_db_repaired": 1
+  },
+  "historical_receipt_files_rehashed": 13,
+  "historical_bindings": [
+    {
+      "candidate": 0,
+      "case_id": "v8:apache__dolphinscheduler_CVE-2023-51770_3.2.0",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "538db1bcf20a1761084a61a24d5febf5f46678be28c3da84f0c469cac3b16589"
+    },
+    {
+      "candidate": 1,
+      "case_id": "v8:asf__james-project_CVE-2022-22931_3.6.0",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "538db1bcf20a1761084a61a24d5febf5f46678be28c3da84f0c469cac3b16589"
+    },
+    {
+      "candidate": 2,
+      "case_id": "v8:inlong_CVE-2025-27531_2.0.0-RC0",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "538db1bcf20a1761084a61a24d5febf5f46678be28c3da84f0c469cac3b16589"
+    },
+    {
+      "candidate": 3,
+      "case_id": "v8:iotdb_CVE-2025-26795_v1.3.3",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "538db1bcf20a1761084a61a24d5febf5f46678be28c3da84f0c469cac3b16589"
+    },
+    {
+      "candidate": 4,
+      "case_id": "v8:jena_CVE-2025-49656_jena-5.4.0",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "4beffb41488a749794aeefab7ee406c47d458dc12807cbea45a659b9e100cc59"
+    },
+    {
+      "candidate": 5,
+      "case_id": "v8:asf__james-project_CVE-2022-22931_3.6.0",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "0eb149784b07500bb427dea2151ba4935e9a47fa256e059d238d6818bc2d8ac1"
+    },
+    {
+      "candidate": 6,
+      "case_id": "v8:jena_CVE-2025-49656_jena-5.4.0",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "0eb149784b07500bb427dea2151ba4935e9a47fa256e059d238d6818bc2d8ac1"
+    },
+    {
+      "candidate": 7,
+      "case_id": "v8:asf__james-project_CVE-2022-22931_3.6.0",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "a4cccda868a41df38ec37de42256471e37d0e29f033b2c93a15a4d082a2e0d3b"
+    },
+    {
+      "candidate": 8,
+      "case_id": "v8:jena_CVE-2025-49656_jena-5.4.0",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "a4cccda868a41df38ec37de42256471e37d0e29f033b2c93a15a4d082a2e0d3b"
+    },
+    {
+      "candidate": 9,
+      "case_id": "v8:asf__nifi_CVE-2023-34468_1.21.0",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "811d5207981f22061b48cc07a17f5c14e01d79e8022fa62674f74d9f27b4abbf"
+    },
+    {
+      "candidate": 10,
+      "case_id": "v8:inlong_CVE-2025-27522_2.1.0-RC0",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "34077ced6c26bbc1bbbe11c588b68c254c9c487f1ae3178ddc29fa644db305f5"
+    },
+    {
+      "candidate": 11,
+      "case_id": "v8:inlong_CVE-2025-27526_2.1.0-RC0",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "34077ced6c26bbc1bbbe11c588b68c254c9c487f1ae3178ddc29fa644db305f5"
+    },
+    {
+      "candidate": 12,
+      "case_id": "v8:inlong_CVE-2025-27528_2.1.0-RC0",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "34077ced6c26bbc1bbbe11c588b68c254c9c487f1ae3178ddc29fa644db305f5"
+    },
+    {
+      "candidate": 13,
+      "case_id": "v8:iotdb_CVE-2025-26864_v1.3.3",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "34077ced6c26bbc1bbbe11c588b68c254c9c487f1ae3178ddc29fa644db305f5"
+    },
+    {
+      "candidate": 14,
+      "case_id": "v8:apache__nifi_CVE-2022-33140_1.16.2",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "e0245202074521cbbbce056d00cf37224e305f641cb56d3ebd6278fc3229407d"
+    },
+    {
+      "candidate": 15,
+      "case_id": "v8:asf__nifi_CVE-2023-34468_1.21.0",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "e0245202074521cbbbce056d00cf37224e305f641cb56d3ebd6278fc3229407d"
+    },
+    {
+      "candidate": 16,
+      "case_id": "v8:asf__nifi_CVE-2023-36542_1.22.0",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "e0245202074521cbbbce056d00cf37224e305f641cb56d3ebd6278fc3229407d"
+    },
+    {
+      "candidate": 17,
+      "case_id": "v8:apache__uima-uimaj_CVE-2022-32287_3.3.0",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "567beeeb64d37be02809dc3762ec5181ace4106bd5141f63e53b400d71f8a544"
+    },
+    {
+      "candidate": 18,
+      "case_id": "v8:asf__tapestry-5_CVE-2019-0207_5.4.4",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "567beeeb64d37be02809dc3762ec5181ace4106bd5141f63e53b400d71f8a544"
+    },
+    {
+      "candidate": 19,
+      "case_id": "v8:aws__aws-sdk-java_CVE-2022-31159_1.12.260",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "567beeeb64d37be02809dc3762ec5181ace4106bd5141f63e53b400d71f8a544"
+    },
+    {
+      "candidate": 20,
+      "case_id": "v8:tomcat_CVE-2025-52520_11.0.8",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "567beeeb64d37be02809dc3762ec5181ace4106bd5141f63e53b400d71f8a544"
+    },
+    {
+      "candidate": 21,
+      "case_id": "v8:codecentric__spring-boot-admin_CVE-2022-46166_2.6.9",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "3158aa180ae15197b2546c94ac4c474527ca7b40750b08acfe836c40063d11b5"
+    },
+    {
+      "candidate": 22,
+      "case_id": "v8:crate__crate_5.5.1_CVE-2023-51982_5.5.1",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "3158aa180ae15197b2546c94ac4c474527ca7b40750b08acfe836c40063d11b5"
+    },
+    {
+      "candidate": 23,
+      "case_id": "v8:diffplug__goomph_CVE-2022-26049_3.37.1",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "3158aa180ae15197b2546c94ac4c474527ca7b40750b08acfe836c40063d11b5"
+    },
+    {
+      "candidate": 24,
+      "case_id": "v8:DSpace_CVE-2025-53622_dspace-7.6.3",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "ff9658a8453283e62619985f24b226f71f6f3bf56fd468175fdedd3cacf5c533"
+    },
+    {
+      "candidate": 25,
+      "case_id": "v8:eclipse-ee4j__glassfish_CVE-2022-2712_6.2.5",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "ff9658a8453283e62619985f24b226f71f6f3bf56fd468175fdedd3cacf5c533"
+    },
+    {
+      "candidate": 26,
+      "case_id": "v8:DSpace_CVE-2025-53621_dspace-7.6.3",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "1c72538c5e6169cdd6825c26d841f15a134d7941e4329d1d598cfc3c4f9122e8"
+    },
+    {
+      "candidate": 27,
+      "case_id": "v8:Graylog2__graylog2-server_CVE-2023-41044_5.1.2",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "1c72538c5e6169cdd6825c26d841f15a134d7941e4329d1d598cfc3c4f9122e8"
+    },
+    {
+      "candidate": 28,
+      "case_id": "v8:para_CVE-2025-48955_v1.50.7",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "1c72538c5e6169cdd6825c26d841f15a134d7941e4329d1d598cfc3c4f9122e8"
+    },
+    {
+      "candidate": 29,
+      "case_id": "v8:para_CVE-2025-49009_v1.50.7",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "1c72538c5e6169cdd6825c26d841f15a134d7941e4329d1d598cfc3c4f9122e8"
+    },
+    {
+      "candidate": 30,
+      "case_id": "v8:console_CVE-2025-2901_v3.7.10",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "080738cc8213ef1515f04e71e2a4f173f41379d63d14bf2b4a58e3be764f9f6c"
+    },
+    {
+      "candidate": 31,
+      "case_id": "v8:hapifhir__org.hl7.fhir.core_CVE-2023-24057_5.6.91",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "b03e88408bc1abe8a0d4ac4eef7808f4d5e6c0b50b276f6efb0b8381dfd7d720"
+    },
+    {
+      "candidate": 32,
+      "case_id": "v8:jenkinsci__docker-commons-plugin_CVE-2022-20617_1.17",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "b03e88408bc1abe8a0d4ac4eef7808f4d5e6c0b50b276f6efb0b8381dfd7d720"
+    },
+    {
+      "candidate": 33,
+      "case_id": "v8:jenkinsci__git-client-plugin_CVE-2019-10392_2.8.4",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "b03e88408bc1abe8a0d4ac4eef7808f4d5e6c0b50b276f6efb0b8381dfd7d720"
+    },
+    {
+      "candidate": 34,
+      "case_id": "v8:apache__shiro_CVE-2023-46749_1.12.0",
+      "historical_attempt_status": "codeql_db_repaired",
+      "historical_receipt_sha256": "e0245202074521cbbbce056d00cf37224e305f641cb56d3ebd6278fc3229407d"
+    }
+  ],
+  "binding_failures": 0,
+  "reference_check": {
+    "status": "completed_with_bounded_scope",
+    "indexed_source_objects": 45848,
+    "cases_in_reference_index": 213,
+    "matching_reference_source_files_rehashed": 26,
+    "other_case_direct_reference_observations": 0,
+    "static_input_index_sha256": "819f3f65a2a602dcdf65a211580a99726ea1f7d04bf24125c551cab9cef77e26"
+  },
+  "all_registered_database_paths_still_present": true,
+  "scope": "Revalidated historical receipt identity and bounded declared-path references; not a fresh build, full backup, or global process visibility claim.",
+  "plan_sha256": "04972c8e20dae8638edc6acd1d97ff2808b3f718effd8cb9118ea4eebb1fb7fc",
+  "private_input_record_sha256": {
+    "plan": "9c57bd2f88b99536bde88040cdc0745a20bf92b48f61c6929034881f52fd8cc2",
+    "deletion": "0cefc27e3e19f62885875daa96c2319432852c89ebfa6aacbbe78d2e3147523f",
+    "restore": "bb2703002fbf78ab458261b36857a1489fdfeeef3d8d705ef2a71763c62bc47f",
+    "post": "dd1352574ef2b4aa9765db1083701bc6655328441eb4d86b5be4a1ff42e850ba",
+    "candidates": "e22cbad0106a551934e182c392086d4226f331d6edff9bff10e0f121c87f17e7"
+  }
+}

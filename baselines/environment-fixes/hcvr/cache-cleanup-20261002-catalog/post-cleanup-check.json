@@ -1,0 +1,19 @@
+{
+  "schema": "hcvr-v10-post-cache-cleanup-check-v1",
+  "status": "passed",
+  "deleted_paths_rechecked_absent": 1575824,
+  "journal_entries_sequential": 1575824,
+  "kept_paths_rechecked_present": 59307,
+  "preserved_candidate_count": 35,
+  "distinct_case_count": 30,
+  "all_registered_source_database_seed_receipt_paths_present": true,
+  "scope": "Path existence and journal consistency; not a new build or content revalidation of every database.",
+  "plan_sha256": "04972c8e20dae8638edc6acd1d97ff2808b3f718effd8cb9118ea4eebb1fb7fc",
+  "private_input_record_sha256": {
+    "plan": "9c57bd2f88b99536bde88040cdc0745a20bf92b48f61c6929034881f52fd8cc2",
+    "deletion": "0cefc27e3e19f62885875daa96c2319432852c89ebfa6aacbbe78d2e3147523f",
+    "restore": "bb2703002fbf78ab458261b36857a1489fdfeeef3d8d705ef2a71763c62bc47f",
+    "post": "dd1352574ef2b4aa9765db1083701bc6655328441eb4d86b5be4a1ff42e850ba",
+    "candidates": "e22cbad0106a551934e182c392086d4226f331d6edff9bff10e0f121c87f17e7"
+  }
+}

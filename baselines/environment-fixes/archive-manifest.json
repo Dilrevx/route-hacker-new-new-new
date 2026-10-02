@@ -2,8 +2,8 @@
   "schema_version": 1,
   "created_at_utc": "2026-09-30T09:47:08.131833+00:00",
   "scope": "reviewed_public_environment_repair_subset",
-  "file_count": 1570,
-  "bytes": 20972593,
+  "file_count": 1575,
+  "bytes": 21002310,
   "files": [
     {
       "path": "README.md",
@@ -3712,8 +3712,8 @@
     },
     {
       "path": "hcvr/README.zh-CN.md",
-      "bytes": 6830,
-      "sha256": "421434f60b72a70f1db74efa1072feb2fb9010dbc1840b71d9bacbe851af5b8b"
+      "bytes": 7254,
+      "sha256": "69c3dddcbf2c21172b0868b4568a8fb52d9eda2a53a75afe8fd7efe8288823b7"
     },
     {
       "path": "hcvr/cache-cleanup-20261002/README.md",
@@ -3739,6 +3739,31 @@
       "path": "hcvr/cache-cleanup-20261002/summary.json",
       "bytes": 6628,
       "sha256": "b67842ea3127ca29827c97496989327558860ae7c036e513917a6437a6876969"
+    },
+    {
+      "path": "hcvr/cache-cleanup-20261002-catalog/README.md",
+      "bytes": 2946,
+      "sha256": "66f0791b71dc07a60ac6082968d0e4682db82380897919ac8006eca9aec06f3b"
+    },
+    {
+      "path": "hcvr/cache-cleanup-20261002-catalog/input-check-summary.json",
+      "bytes": 10447,
+      "sha256": "4ecc2dad010051c231fc99d0fc3e21a0c28ebf1eb79e0c6c6869b2db968bf85d"
+    },
+    {
+      "path": "hcvr/cache-cleanup-20261002-catalog/post-cleanup-check.json",
+      "bytes": 987,
+      "sha256": "df749c38661fab9d61c2496cadb156399641dbb446a9f263511c888722ec7f75"
+    },
+    {
+      "path": "hcvr/cache-cleanup-20261002-catalog/restore-contract-check.json",
+      "bytes": 449,
+      "sha256": "e2ebad87ffaef7090f24e47f267fd1420fe60c5fc6a6766c4ad8a2150c86b9b4"
+    },
+    {
+      "path": "hcvr/cache-cleanup-20261002-catalog/summary.json",
+      "bytes": 11572,
+      "sha256": "b44e136bed35fd7c858e9d15a6152c863dd7236528d39ef084a820b3973253cb"
     },
     {
       "path": "hcvr/case-index.json",
@@ -4812,8 +4837,8 @@
     },
     {
       "path": "hcvr/file-manifest.json",
-      "bytes": 45059,
-      "sha256": "f4c21aaded8b241c220c9c3104d460b583b47246a4366ecc5b802f44a4572523"
+      "bytes": 45984,
+      "sha256": "e552eda984888a9bbab642ae1c9b9f9ddd44468fcf71e6864aba8363bd5cd632"
     },
     {
       "path": "hcvr/preservation.json",
@@ -4872,8 +4897,8 @@
     },
     {
       "path": "hcvr/verification.json",
-      "bytes": 2573,
-      "sha256": "3a85d8c02a3cab14294247a249d9e6150ea52a415f17836dd09f8f27137d4298"
+      "bytes": 4540,
+      "sha256": "d6956889f7edc428723a7a5c199a6e896a229e26da54d69fd50e4cbd2017df1b"
     },
     {
       "path": "legacy-builds/README.md",
@@ -7857,9 +7882,9 @@
     }
   ],
   "supersedes_manifest_sha256": "c627299db4f09d2fb7a6e155d6882611b21c24119c15c7ffe62b79c04e7f9dae",
-  "updated_on_Asia_Shanghai": "2026-10-02",
+  "updated_on_Asia_Shanghai": "2026-10-03",
   "update_scope": "Added completed duplicate-cache cleanup follow-up; historical repair artifacts unchanged.",
-  "updated_at_utc": "2026-10-01T22:40:42.711747+00:00",
+  "updated_at_utc": "2026-10-02T17:36:44.332398+00:00",
   "followup_seals": {
     "hcvr_cache_cleanup_20261002": {
       "summary": "hcvr/cache-cleanup-20261002/summary.json",
@@ -7867,6 +7892,13 @@
       "plan_sha256": "b781524a8dfc9b33720ef854474a1254e813608373fda37487e846a9c4ab21d8",
       "new_project_builds": 0,
       "cache_deleted_regular_files": 869792
+    },
+    "hcvr_cache_cleanup_20261002_catalog": {
+      "summary": "hcvr/cache-cleanup-20261002-catalog/summary.json",
+      "summary_sha256": "b44e136bed35fd7c858e9d15a6152c863dd7236528d39ef084a820b3973253cb",
+      "plan_sha256": "04972c8e20dae8638edc6acd1d97ff2808b3f718effd8cb9118ea4eebb1fb7fc",
+      "new_project_builds": 0,
+      "cache_deleted_regular_files": 1575824
     }
   }
 }

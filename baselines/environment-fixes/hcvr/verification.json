@@ -59,6 +59,50 @@
         "scope": "archive_integrity_only_no_build_or_runtime_execution"
       },
       "cache_cleanup_evidence": "cache-cleanup-20261002/summary.json"
+    },
+    "hcvr_cache_cleanup_20261002_catalog": {
+      "verified_at_utc": "2026-10-02T17:36:44.332398+00:00",
+      "new_project_builds": 0,
+      "historical_sample_rebuilds_referenced": 2,
+      "prior_sample_evidence": "rebuild-check-20261001/sample-rebuilds.json",
+      "prior_samples_rebuilt_in_this_batch": false,
+      "candidate_cache_count": 35,
+      "historical_attempt_status_counts": {
+        "repair_attempt_failed": 34,
+        "codeql_db_repaired": 1
+      },
+      "cache_deleted_regular_files": 1575824,
+      "retained_unique_or_unverified_files": 59307,
+      "cleanup_summary_sha256": "b44e136bed35fd7c858e9d15a6152c863dd7236528d39ef084a820b3973253cb",
+      "plan_sha256": "04972c8e20dae8638edc6acd1d97ff2808b3f718effd8cb9118ea4eebb1fb7fc",
+      "private_deletion_receipt_sha256": "0cefc27e3e19f62885875daa96c2319432852c89ebfa6aacbbe78d2e3147523f",
+      "deleted_allocated_bytes": 270840852480,
+      "additional_recovery_metadata_allocated_bytes": 2013360128,
+      "new_recovery_payload_allocated_bytes": 0,
+      "estimated_net_allocated_bytes_released": 268827492352,
+      "unit_tests": {
+        "tests": 26,
+        "returncode": 0,
+        "output": "Ran 26 tests; OK"
+      },
+      "checked_relative_markdown_links": 287,
+      "privacy_check": {
+        "known_credential_pattern_findings": 0,
+        "scan_is_heuristic": true,
+        "checked_files": 239
+      },
+      "historical_case_records_unchanged": true,
+      "private_originals_not_published": true,
+      "scope": "New duplicate-cache cleanup only; prior successful build receipts rechecked, no new build, runtime or vulnerability confirmation.",
+      "integrity_result": {
+        "files": 237,
+        "bytes": 13002920,
+        "cases": 213,
+        "records": 787,
+        "original_sources": 7002,
+        "scope": "archive_integrity_only_no_build_or_runtime_execution"
+      },
+      "cache_cleanup_evidence": "cache-cleanup-20261002-catalog/summary.json"
     }
   }
 }
