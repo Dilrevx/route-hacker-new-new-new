@@ -536,6 +536,89 @@
         "scope": "preservation_integrity_only_no_build_or_runtime_rerun"
       },
       "cache_cleanup_evidence": "hcvr/cache-cleanup-20261003-v2/summary.json"
+    },
+    "hcvr_cache_cleanup_20261003_dspace": {
+      "verified_at_utc": "2026-10-03T06:14:35.171904+00:00",
+      "new_project_builds": 0,
+      "historical_sample_rebuilds_referenced": 2,
+      "prior_sample_evidence": "hcvr/rebuild-check-20261001/sample-rebuilds.json",
+      "prior_samples_rebuilt_in_this_batch": false,
+      "candidate_cache_count": 3,
+      "distinct_case_count": 1,
+      "cleanup_completed_at_utc": "2026-10-03T06:03:03.100586+00:00",
+      "cleanup_date_Asia_Shanghai": "2026-10-03",
+      "historical_attempt_status_counts": {
+        "repair_attempt_failed": 2,
+        "codeql_db_repaired": 1
+      },
+      "cleanup_scope": "DSpace runtime caches on a separate data volume, outside HCVR v10 execution directories.",
+      "cross_reference_original_sha256": "b9dfa38f0b35c6e60fc97ba9bc6877ff54b43011c2efe615d28a485eb5f50489",
+      "cache_deleted_regular_files": 200718,
+      "retained_unique_or_unverified_files": 898,
+      "cleanup_summary_sha256": "9fbf48d08a4b8c1210fe1afc3e1ae000c8fc8439ccee9f2be6b8a28752e4b698",
+      "plan_sha256": "4598d519c4bae558bf58d59de6024facbfcf8324fc4364b577443f56b66d4adf",
+      "private_deletion_receipt_sha256": "a51d7db44913d0d57accbe3dcffd0d2b6c089723d00d005a60ff4cdac19b03d3",
+      "deleted_allocated_bytes": 28364972032,
+      "additional_recovery_metadata_allocated_bytes": 253943808,
+      "new_recovery_payload_allocated_bytes": 0,
+      "estimated_net_allocated_bytes_released": 28111028224,
+      "unit_tests": {
+        "tests": 26,
+        "returncode": 0,
+        "output": "Ran 26 tests; OK"
+      },
+      "checked_relative_markdown_links": 311,
+      "privacy_check": {
+        "known_credential_pattern_findings": 0,
+        "scan_is_heuristic": true,
+        "checked_files": 254
+      },
+      "historical_case_records_unchanged": true,
+      "private_originals_not_published": true,
+      "scope": "DSpace separate data-volume runtime-cache cleanup, outside HCVR v10 execution directories; prior sample receipts rechecked, no new build, runtime or vulnerability confirmation.",
+      "integrity_result": {
+        "files": 1590,
+        "bytes": 21051698,
+        "legacy_original_bytes": {
+          "files": 297,
+          "bytes": 210903
+        },
+        "legacy_support": {
+          "files": 2,
+          "bytes": 92692
+        },
+        "runtime_v2": {
+          "files": 236,
+          "bytes": 274423,
+          "historical_attempts": {
+            "passed": 143,
+            "failed": 9
+          }
+        },
+        "source_runtime": {
+          "files": 41,
+          "bytes": 142479
+        },
+        "codeql_compile": {
+          "files": 736,
+          "bytes": 5446721,
+          "fleet_historical_reviews": {
+            "accepted": 135,
+            "rejected": 2
+          }
+        },
+        "hcvr": {
+          "files": 252,
+          "bytes": 13043031,
+          "cases": 213,
+          "records": 787,
+          "original_sources": 7002,
+          "scope": "archive_integrity_only_no_build_or_runtime_execution"
+        },
+        "manifest_sha256": "d25b8c24f2f980c9d521eb0f37785f5c7809995f698e0668ec10e58a555ce0d4",
+        "scope": "preservation_integrity_only_no_build_or_runtime_rerun"
+      },
+      "cache_cleanup_evidence": "hcvr/cache-cleanup-20261003-dspace/summary.json"
     }
   }
 }

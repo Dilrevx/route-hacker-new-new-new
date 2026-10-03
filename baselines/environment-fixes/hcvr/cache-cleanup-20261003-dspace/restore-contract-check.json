@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "candidate_count": 3,
+  "entry_count": 200718,
+  "logical_bytes": 27761230047,
+  "all_entry_metadata_checked": true,
+  "includes_drive_prefix_and_output_prefix_collision_checks": true,
+  "payload_or_receipt_contents_verified": false,
+  "files_modified": 0,
+  "files_deleted": 0,
+  "schema": "hcvr-full-restore-contract-check-v1",
+  "manifest_sha256": "4598d519c4bae558bf58d59de6024facbfcf8324fc4364b577443f56b66d4adf"
+}

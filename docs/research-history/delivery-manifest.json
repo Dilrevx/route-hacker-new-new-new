@@ -5,8 +5,8 @@
   "files": [
     {
       "path": "README.md",
-      "bytes": 17718,
-      "sha256": "1dd79f118939c97cbff032ef2ebfaa4a9dec29410bc10ccdb6068ffed655ff6c"
+      "bytes": 18205,
+      "sha256": "7bee59a39e983395f128ee5abf9a0a544c45bd4caa40735e19bb5560b56cb5e8"
     },
     {
       "path": "REGISTRY.zh-CN.md",
@@ -209,9 +209,9 @@
       "sha256": "ccadf5f304a67fc34b802ef0d057ef5dad2f963280f678f441d893abc542b360"
     }
   ],
-  "updated_at_utc": "2026-10-03T05:49:04.382631+00:00",
+  "updated_at_utc": "2026-10-03T06:14:35.171904+00:00",
   "file_count": 41,
-  "bytes": 1037841,
+  "bytes": 1038328,
   "followup_seals": {
     "hcvr_cache_cleanup_20261002": {
       "cleanup_summary_sha256": "b67842ea3127ca29827c97496989327558860ae7c036e513917a6437a6876969",
@@ -232,6 +232,11 @@
       "cleanup_summary_sha256": "010ef513a3fd3ed57c9fbbe097d5981d9605fcd2638b21bc338e2433f6ff46c4",
       "new_project_builds": 0,
       "cache_deleted_regular_files": 328030
+    },
+    "hcvr_cache_cleanup_20261003_dspace": {
+      "cleanup_summary_sha256": "9fbf48d08a4b8c1210fe1afc3e1ae000c8fc8439ccee9f2be6b8a28752e4b698",
+      "new_project_builds": 0,
+      "cache_deleted_regular_files": 200718
     }
   }
 }

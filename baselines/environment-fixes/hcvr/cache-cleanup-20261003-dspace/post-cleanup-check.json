@@ -1,0 +1,22 @@
+{
+  "schema": "hcvr-v10-post-cache-cleanup-check-v1",
+  "status": "passed",
+  "deleted_paths_rechecked_absent": 200718,
+  "journal_entries_sequential": 200718,
+  "kept_paths_rechecked_present": 898,
+  "preserved_candidate_count": 3,
+  "distinct_case_count": 1,
+  "all_registered_source_database_seed_receipt_paths_present": true,
+  "source_archive_hash_rechecked": true,
+  "portable_cross_reference_hash_rechecked": true,
+  "scope": "DSpace runtime-cache path existence, source archive and reference hashes, and journal consistency; not a new build or database-content revalidation.",
+  "plan_sha256": "4598d519c4bae558bf58d59de6024facbfcf8324fc4364b577443f56b66d4adf",
+  "private_input_record_sha256": {
+    "plan": "864b7c1e7a99245bc33d244ad13eb2f364056e0a9ff806ac023cb6af754e9140",
+    "deletion": "a51d7db44913d0d57accbe3dcffd0d2b6c089723d00d005a60ff4cdac19b03d3",
+    "restore": "dd0c2acf39a2445e0e2f88739db073bd6d8a34140295db99f68a9ac239f1da60",
+    "post": "9d9af56f095e41d4d2ec9f3428f4e9fb1f410e7cb487f9a4f35b22acf0878259",
+    "candidates": "ee4247d18dc7718241febc337f7845936bd77aac7f5c91fa41525052b4be826c",
+    "cross": "b9dfa38f0b35c6e60fc97ba9bc6877ff54b43011c2efe615d28a485eb5f50489"
+  }
+}

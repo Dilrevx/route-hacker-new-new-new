@@ -1,0 +1,54 @@
+{
+  "schema": "hcvr-v10-bounded-cache-input-check-v1",
+  "status": "checked_with_bounded_scope",
+  "candidate_cache_count": 3,
+  "historical_attempt_status_counts": {
+    "repair_attempt_failed": 2,
+    "codeql_db_repaired": 1
+  },
+  "historical_receipt_files_rehashed": 3,
+  "historical_bindings": [
+    {
+      "candidate": 0,
+      "case_id": "v8:DSpace_CVE-2025-53621_dspace-7.6.3",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "fedd0cb9d4e66047512d3f5c1a6602ade55ce083d935f8fbdd8774068a85accd"
+    },
+    {
+      "candidate": 1,
+      "case_id": "v8:DSpace_CVE-2025-53621_dspace-7.6.3",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "59433c82bce0fbc90597439a48864602fd136472a5a87e2f18c5e040c678457b"
+    },
+    {
+      "candidate": 2,
+      "case_id": "v8:DSpace_CVE-2025-53621_dspace-7.6.3",
+      "historical_attempt_status": "codeql_db_repaired",
+      "historical_receipt_sha256": "7dbb64724fb0aaf4f111466d2084e984f97f3cfe0bcbf451c1d95d9d58af4086"
+    }
+  ],
+  "binding_failures": 0,
+  "reference_check": {
+    "status": "completed_with_bounded_scope",
+    "indexed_source_objects": 45848,
+    "cases_in_reference_index": 213,
+    "matching_reference_source_files_rehashed": 0,
+    "new_control_files_rehashed": 529,
+    "other_case_direct_reference_observations": 0,
+    "same_case_other_attempt_reference_observations": 0,
+    "unclassified_reference_observations": 0,
+    "reference_original_sha256": "b9dfa38f0b35c6e60fc97ba9bc6877ff54b43011c2efe615d28a485eb5f50489",
+    "static_input_index_sha256": "819f3f65a2a602dcdf65a211580a99726ea1f7d04bf24125c551cab9cef77e26"
+  },
+  "all_registered_database_paths_still_present": true,
+  "scope": "Frozen DSpace receipt hashes, restore bindings and passed post-check; six inputs include the exact bounded reference original. Separate data-volume runtime caches, not v10 execution. Not a new build or global consumer audit.",
+  "plan_sha256": "4598d519c4bae558bf58d59de6024facbfcf8324fc4364b577443f56b66d4adf",
+  "private_input_record_sha256": {
+    "plan": "864b7c1e7a99245bc33d244ad13eb2f364056e0a9ff806ac023cb6af754e9140",
+    "deletion": "a51d7db44913d0d57accbe3dcffd0d2b6c089723d00d005a60ff4cdac19b03d3",
+    "restore": "dd0c2acf39a2445e0e2f88739db073bd6d8a34140295db99f68a9ac239f1da60",
+    "post": "9d9af56f095e41d4d2ec9f3428f4e9fb1f410e7cb487f9a4f35b22acf0878259",
+    "candidates": "ee4247d18dc7718241febc337f7845936bd77aac7f5c91fa41525052b4be826c",
+    "cross": "b9dfa38f0b35c6e60fc97ba9bc6877ff54b43011c2efe615d28a485eb5f50489"
+  }
+}

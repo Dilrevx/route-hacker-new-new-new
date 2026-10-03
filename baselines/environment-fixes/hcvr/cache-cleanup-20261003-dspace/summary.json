@@ -1,0 +1,109 @@
+{
+  "schema": "hcvr-v10-duplicate-cache-cleanup-summary-v1",
+  "cleanup_date": "2026-10-03",
+  "cleanup_date_timezone": "Asia/Shanghai",
+  "completed_at_utc": "2026-10-03T06:03:03.100586+00:00",
+  "batch_id": "20261002-dspace-v1",
+  "status": "completed_and_independently_checked",
+  "candidate_cache_count": 3,
+  "distinct_case_count": 1,
+  "historical_attempt_status_counts": {
+    "repair_attempt_failed": 2,
+    "codeql_db_repaired": 1
+  },
+  "historical_status_interpretation": "Three historical attempts for one DSpace case: two failed and one database-repaired; these are original receipt classifications, not new builds or runtime confirmation.",
+  "cleanup_scope": "DSpace runtime caches on a separate data volume, outside HCVR v10 execution directories.",
+  "schema_compatibility_note": "The legacy v10 schema identifier is reused only for format compatibility; it does not describe this batch location.",
+  "retained_entry_count_semantics": "Retained decision records; a skipped directory is one record, not a recursive file count.",
+  "new_project_builds_in_this_batch": 0,
+  "sample_rebuild_gate": "Prior independently successful Maven and Ant receipts were rechecked; no new project rebuild is claimed.",
+  "deleted_regular_files": 200718,
+  "retained_unique_or_unverified_files": 898,
+  "retained_reasons": {
+    "not_in_seed": 892,
+    "empty_file_kept": 6
+  },
+  "per_case_counts": [
+    {
+      "candidate": 0,
+      "case_id": "v8:DSpace_CVE-2025-53621_dspace-7.6.3",
+      "historical_attempt_status": "repair_attempt_failed",
+      "verified_duplicate_files": 66906,
+      "retained_files": 10
+    },
+    {
+      "candidate": 1,
+      "case_id": "v8:DSpace_CVE-2025-53621_dspace-7.6.3",
+      "historical_attempt_status": "repair_attempt_failed",
+      "verified_duplicate_files": 66906,
+      "retained_files": 14
+    },
+    {
+      "candidate": 2,
+      "case_id": "v8:DSpace_CVE-2025-53621_dspace-7.6.3",
+      "historical_attempt_status": "codeql_db_repaired",
+      "verified_duplicate_files": 66906,
+      "retained_files": 874
+    }
+  ],
+  "space_accounting": {
+    "deleted_allocated_bytes": 28364972032,
+    "existing_recovery_store_baseline_allocated_bytes": 14510804992,
+    "recovery_store_allocated_bytes_before_final_receipt": 14764748800,
+    "additional_recovery_metadata_allocated_bytes": 253943808,
+    "new_recovery_payload_allocated_bytes": 0,
+    "estimated_net_allocated_bytes_released": 28111028224,
+    "formula": "deleted allocated bytes minus this batch additional recovery metadata; existing retained payload is not charged again",
+    "scope": "An allocation estimate, not a host-wide free-space measurement; excludes separate temporary audit copies and final receipt overhead."
+  },
+  "recovery": {
+    "existing_independent_recovery_objects_reused": 66849,
+    "new_payload_objects_created": 0,
+    "storage_requirement": "Keep the existing private retained objects and this batch recovery mapping; public summaries alone cannot restore bytes."
+  },
+  "restore_smoke_test": {
+    "status": "passed",
+    "sample_count": 3,
+    "restored_bytes": 760688774,
+    "sample_objects": [
+      {
+        "case_id": "v8:DSpace_CVE-2025-53621_dspace-7.6.3",
+        "bytes": 21,
+        "sha256": "413977a610040c1905b693ceaab3a1a3d776a8ba088b4097a7c1391db92d41ae"
+      },
+      {
+        "case_id": "v8:DSpace_CVE-2025-53621_dspace-7.6.3",
+        "bytes": 788,
+        "sha256": "5af12645806258bcea1e858f33561d0ca456a562d5dd0f46bbb33e7a7615fcd0"
+      },
+      {
+        "case_id": "v8:DSpace_CVE-2025-53621_dspace-7.6.3",
+        "bytes": 760687965,
+        "sha256": "58f0f94ad5416ff84afa43ffd709104012914266bfb9a3fef142de2055012f55"
+      }
+    ],
+    "original_paths_modified": false,
+    "scope": "Selected cache-byte restoration, not full project reproduction."
+  },
+  "preservation": {
+    "directories_deleted": 0,
+    "unique_files_deleted": 0,
+    "original_source_database_log_files_deleted": 0,
+    "all_registered_database_paths_still_present": true
+  },
+  "limitations": [
+    "Only receipt-bound duplicate cache files were in scope.",
+    "Reference checks cover captured control records, not every possible consumer.",
+    "Successful historical database repair is not a fresh runtime or vulnerability confirmation.",
+    "Preserved path existence does not establish full dependency closure or database content integrity."
+  ],
+  "plan_sha256": "4598d519c4bae558bf58d59de6024facbfcf8324fc4364b577443f56b66d4adf",
+  "private_input_record_sha256": {
+    "plan": "864b7c1e7a99245bc33d244ad13eb2f364056e0a9ff806ac023cb6af754e9140",
+    "deletion": "a51d7db44913d0d57accbe3dcffd0d2b6c089723d00d005a60ff4cdac19b03d3",
+    "restore": "dd0c2acf39a2445e0e2f88739db073bd6d8a34140295db99f68a9ac239f1da60",
+    "post": "9d9af56f095e41d4d2ec9f3428f4e9fb1f410e7cb487f9a4f35b22acf0878259",
+    "candidates": "ee4247d18dc7718241febc337f7845936bd77aac7f5c91fa41525052b4be826c",
+    "cross": "b9dfa38f0b35c6e60fc97ba9bc6877ff54b43011c2efe615d28a485eb5f50489"
+  }
+}
