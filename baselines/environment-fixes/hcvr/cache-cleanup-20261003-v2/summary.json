@@ -1,0 +1,118 @@
+{
+  "schema": "hcvr-v10-duplicate-cache-cleanup-summary-v1",
+  "cleanup_date": "2026-10-03",
+  "cleanup_date_timezone": "Asia/Shanghai",
+  "completed_at_utc": "2026-10-03T05:38:08.527746+00:00",
+  "batch_id": "20261002-v2-five",
+  "status": "completed_and_independently_checked",
+  "candidate_cache_count": 5,
+  "distinct_case_count": 4,
+  "historical_attempt_status_counts": {
+    "repair_attempt_failed": 5
+  },
+  "historical_status_interpretation": "Five failed historical attempts across four distinct cases; these are receipt classifications, not new builds. A case may have multiple distinct cache attempts.",
+  "new_project_builds_in_this_batch": 0,
+  "sample_rebuild_gate": "Prior independently successful Maven and Ant receipts were rechecked; no new project rebuild is claimed.",
+  "deleted_regular_files": 328030,
+  "retained_unique_or_unverified_files": 2248,
+  "retained_reasons": {
+    "not_in_seed": 2238,
+    "empty_file_kept": 10
+  },
+  "per_case_counts": [
+    {
+      "candidate": 0,
+      "case_id": "v8:jenkinsci__script-security-plugin_CVE-2023-24422_1228.vd93135a_2fb_25",
+      "historical_attempt_status": "repair_attempt_failed",
+      "verified_duplicate_files": 65606,
+      "retained_files": 792
+    },
+    {
+      "candidate": 1,
+      "case_id": "v8:jenkinsci__workflow-cps-plugin_CVE-2022-25173_2646.v6ed3b5b01ff1",
+      "historical_attempt_status": "repair_attempt_failed",
+      "verified_duplicate_files": 65606,
+      "retained_files": 819
+    },
+    {
+      "candidate": 2,
+      "case_id": "v8:jenkinsci__workflow-multibranch-plugin_CVE-2022-25175_706.vd43c65dec013",
+      "historical_attempt_status": "repair_attempt_failed",
+      "verified_duplicate_files": 65606,
+      "retained_files": 633
+    },
+    {
+      "candidate": 3,
+      "case_id": "v8:junit-framework_CVE-2025-53103_r5.13.1",
+      "historical_attempt_status": "repair_attempt_failed",
+      "verified_duplicate_files": 65606,
+      "retained_files": 2
+    },
+    {
+      "candidate": 4,
+      "case_id": "v8:junit-framework_CVE-2025-53103_r5.13.1",
+      "historical_attempt_status": "repair_attempt_failed",
+      "verified_duplicate_files": 65606,
+      "retained_files": 2
+    }
+  ],
+  "space_accounting": {
+    "deleted_allocated_bytes": 46914355200,
+    "existing_recovery_store_baseline_allocated_bytes": 14085791744,
+    "recovery_store_allocated_bytes_before_final_receipt": 14510800896,
+    "additional_recovery_metadata_allocated_bytes": 425009152,
+    "new_recovery_payload_allocated_bytes": 0,
+    "estimated_net_allocated_bytes_released": 46489346048,
+    "formula": "deleted allocated bytes minus this batch additional recovery metadata; existing retained payload is not charged again",
+    "scope": "An allocation estimate, not a host-wide free-space measurement; excludes separate temporary audit copies and final receipt overhead."
+  },
+  "recovery": {
+    "existing_independent_recovery_objects_reused": 65549,
+    "new_payload_objects_created": 0,
+    "storage_requirement": "Keep the existing private retained objects and this batch recovery mapping; public summaries alone cannot restore bytes."
+  },
+  "restore_smoke_test": {
+    "status": "passed",
+    "sample_count": 3,
+    "restored_bytes": 760688780,
+    "sample_objects": [
+      {
+        "case_id": "v8:jenkinsci__script-security-plugin_CVE-2023-24422_1228.vd93135a_2fb_25",
+        "bytes": 21,
+        "sha256": "413977a610040c1905b693ceaab3a1a3d776a8ba088b4097a7c1391db92d41ae"
+      },
+      {
+        "case_id": "v8:junit-framework_CVE-2025-53103_r5.13.1",
+        "bytes": 794,
+        "sha256": "9124aca11e4f077c1382355f8e10e9903436f82e66f366065ecb790c5c03c568"
+      },
+      {
+        "case_id": "v8:junit-framework_CVE-2025-53103_r5.13.1",
+        "bytes": 760687965,
+        "sha256": "58f0f94ad5416ff84afa43ffd709104012914266bfb9a3fef142de2055012f55"
+      }
+    ],
+    "original_paths_modified": false,
+    "scope": "Selected cache-byte restoration, not full project reproduction."
+  },
+  "preservation": {
+    "directories_deleted": 0,
+    "unique_files_deleted": 0,
+    "original_source_database_log_files_deleted": 0,
+    "all_registered_database_paths_still_present": true
+  },
+  "limitations": [
+    "Only receipt-bound duplicate cache files were in scope.",
+    "Reference checks cover captured control records, not every possible consumer.",
+    "Successful historical database repair is not a fresh runtime or vulnerability confirmation.",
+    "Preserved path existence does not establish full dependency closure or database content integrity."
+  ],
+  "plan_sha256": "0d38ee22bc706de082804bb6b5556b43fad48d9e65246bee87f48839a5524619",
+  "private_input_record_sha256": {
+    "plan": "48d8a462550485007e4c728e7bfa18ea234c253bdbc9905f5334c7ed3e433c87",
+    "deletion": "86fe509eff097fe55d5cbb715a03751d043f4c4424d104aa5827408aeb6ac8b4",
+    "restore": "91d2b8a0c834257cb7abb9e2102c919300db8570ae101fc3ba64b42fc050f1df",
+    "post": "0a42b51c0a2f0d238f702663308a076b064828735aeab27c87e8b61468a6f1b3",
+    "candidates": "27a66a7de78705b8216b416265618dc0c1661505fd99b5bbee2b9a63d1e02991"
+  }
+}

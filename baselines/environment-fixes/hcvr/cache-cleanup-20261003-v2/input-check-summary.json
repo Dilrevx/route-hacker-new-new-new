@@ -1,0 +1,60 @@
+{
+  "schema": "hcvr-v10-bounded-cache-input-check-v1",
+  "status": "checked_with_bounded_scope",
+  "candidate_cache_count": 5,
+  "historical_attempt_status_counts": {
+    "repair_attempt_failed": 5
+  },
+  "historical_receipt_files_rehashed": 2,
+  "historical_bindings": [
+    {
+      "candidate": 0,
+      "case_id": "v8:jenkinsci__script-security-plugin_CVE-2023-24422_1228.vd93135a_2fb_25",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "f1581c662420e2e5d05d9f8090018658147bcc74ca0fdc47ad93b94b64dadde9"
+    },
+    {
+      "candidate": 1,
+      "case_id": "v8:jenkinsci__workflow-cps-plugin_CVE-2022-25173_2646.v6ed3b5b01ff1",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "f1581c662420e2e5d05d9f8090018658147bcc74ca0fdc47ad93b94b64dadde9"
+    },
+    {
+      "candidate": 2,
+      "case_id": "v8:jenkinsci__workflow-multibranch-plugin_CVE-2022-25175_706.vd43c65dec013",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "f1581c662420e2e5d05d9f8090018658147bcc74ca0fdc47ad93b94b64dadde9"
+    },
+    {
+      "candidate": 3,
+      "case_id": "v8:junit-framework_CVE-2025-53103_r5.13.1",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "f1581c662420e2e5d05d9f8090018658147bcc74ca0fdc47ad93b94b64dadde9"
+    },
+    {
+      "candidate": 4,
+      "case_id": "v8:junit-framework_CVE-2025-53103_r5.13.1",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "f648578576595acb84b511b910ac9f7eb33c04fedd2f7b8a53f085329ce8d072"
+    }
+  ],
+  "binding_failures": 0,
+  "reference_check": {
+    "status": "completed_with_bounded_scope",
+    "indexed_source_objects": 45848,
+    "cases_in_reference_index": 213,
+    "matching_reference_source_files_rehashed": 4,
+    "other_case_direct_reference_observations": 0,
+    "static_input_index_sha256": "819f3f65a2a602dcdf65a211580a99726ea1f7d04bf24125c551cab9cef77e26"
+  },
+  "all_registered_database_paths_still_present": true,
+  "scope": "Revalidated historical receipt identity and bounded declared-path references; not a fresh build, full backup, or global process visibility claim.",
+  "plan_sha256": "0d38ee22bc706de082804bb6b5556b43fad48d9e65246bee87f48839a5524619",
+  "private_input_record_sha256": {
+    "plan": "48d8a462550485007e4c728e7bfa18ea234c253bdbc9905f5334c7ed3e433c87",
+    "deletion": "86fe509eff097fe55d5cbb715a03751d043f4c4424d104aa5827408aeb6ac8b4",
+    "restore": "91d2b8a0c834257cb7abb9e2102c919300db8570ae101fc3ba64b42fc050f1df",
+    "post": "0a42b51c0a2f0d238f702663308a076b064828735aeab27c87e8b61468a6f1b3",
+    "candidates": "27a66a7de78705b8216b416265618dc0c1661505fd99b5bbee2b9a63d1e02991"
+  }
+}
