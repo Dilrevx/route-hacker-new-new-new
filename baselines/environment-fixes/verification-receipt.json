@@ -375,6 +375,87 @@
         "scope": "preservation_integrity_only_no_build_or_runtime_rerun"
       },
       "cache_cleanup_evidence": "hcvr/cache-cleanup-20261002-catalog/summary.json"
+    },
+    "hcvr_cache_cleanup_20261003_v4_nine": {
+      "verified_at_utc": "2026-10-02T18:03:27.574019+00:00",
+      "new_project_builds": 0,
+      "historical_sample_rebuilds_referenced": 2,
+      "prior_sample_evidence": "hcvr/rebuild-check-20261001/sample-rebuilds.json",
+      "prior_samples_rebuilt_in_this_batch": false,
+      "candidate_cache_count": 9,
+      "distinct_case_count": 5,
+      "cleanup_completed_at_utc": "2026-10-02T17:52:13.247447+00:00",
+      "cleanup_date_Asia_Shanghai": "2026-10-03",
+      "historical_attempt_status_counts": {
+        "repair_attempt_failed": 8,
+        "codeql_db_repaired": 1
+      },
+      "cache_deleted_regular_files": 602096,
+      "retained_unique_or_unverified_files": 28317,
+      "cleanup_summary_sha256": "ad86de65216b5eac7a0e3c6285db1b812ecabb0bafe3317f0c91ab087b9213cb",
+      "plan_sha256": "9a00074ef0cf4bfdb72fbabaf00bf4e8d7f434b007067149653768fbd265826d",
+      "private_deletion_receipt_sha256": "65265aea4103ffc231ccfb3ae94d3d9ef0ef86de68669dcc8a59007eccf02c9b",
+      "deleted_allocated_bytes": 85094563840,
+      "additional_recovery_metadata_allocated_bytes": 803913728,
+      "new_recovery_payload_allocated_bytes": 0,
+      "estimated_net_allocated_bytes_released": 84290650112,
+      "unit_tests": {
+        "tests": 26,
+        "returncode": 0,
+        "output": "Ran 26 tests; OK"
+      },
+      "checked_relative_markdown_links": 295,
+      "privacy_check": {
+        "known_credential_pattern_findings": 0,
+        "scan_is_heuristic": true,
+        "checked_files": 244
+      },
+      "historical_case_records_unchanged": true,
+      "private_originals_not_published": true,
+      "scope": "New duplicate-cache cleanup only; prior successful build receipts rechecked, no new build, runtime or vulnerability confirmation.",
+      "integrity_result": {
+        "files": 1580,
+        "bytes": 21020472,
+        "legacy_original_bytes": {
+          "files": 297,
+          "bytes": 210903
+        },
+        "legacy_support": {
+          "files": 2,
+          "bytes": 92692
+        },
+        "runtime_v2": {
+          "files": 236,
+          "bytes": 274423,
+          "historical_attempts": {
+            "passed": 143,
+            "failed": 9
+          }
+        },
+        "source_runtime": {
+          "files": 41,
+          "bytes": 142479
+        },
+        "codeql_compile": {
+          "files": 736,
+          "bytes": 5446721,
+          "fleet_historical_reviews": {
+            "accepted": 135,
+            "rejected": 2
+          }
+        },
+        "hcvr": {
+          "files": 242,
+          "bytes": 13018076,
+          "cases": 213,
+          "records": 787,
+          "original_sources": 7002,
+          "scope": "archive_integrity_only_no_build_or_runtime_execution"
+        },
+        "manifest_sha256": "33dbf423386d2a831813c7f58b185e10dcb10532a6a1fc81a9f883ecafd473ec",
+        "scope": "preservation_integrity_only_no_build_or_runtime_rerun"
+      },
+      "cache_cleanup_evidence": "hcvr/cache-cleanup-20261003-v4/summary.json"
     }
   }
 }

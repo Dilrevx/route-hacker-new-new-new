@@ -1,0 +1,97 @@
+{
+  "schema": "hcvr-v10-bounded-cache-input-check-v1",
+  "status": "checked_with_bounded_scope",
+  "candidate_cache_count": 9,
+  "historical_attempt_status_counts": {
+    "repair_attempt_failed": 8,
+    "codeql_db_repaired": 1
+  },
+  "historical_receipt_files_rehashed": 4,
+  "historical_bindings": [
+    {
+      "candidate": 0,
+      "case_id": "v8:apache__camel_CVE-2019-0194_2.21.4",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "1c7a03317e4213ad25e221ec8cf64604fb00c2b513bf4cb9795e22484920a21e"
+    },
+    {
+      "candidate": 1,
+      "case_id": "v8:apache__flink_CVE-2020-17519_1.11.2",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "1c7a03317e4213ad25e221ec8cf64604fb00c2b513bf4cb9795e22484920a21e"
+    },
+    {
+      "candidate": 2,
+      "case_id": "v8:apache__camel_CVE-2019-0194_2.21.4",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "f07dd0b43d7cbb889afcce49182300e5d6537701bf5b9df827c0c30c3ca7e86b"
+    },
+    {
+      "candidate": 3,
+      "case_id": "v8:apache__flink_CVE-2020-17519_1.11.2",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "f07dd0b43d7cbb889afcce49182300e5d6537701bf5b9df827c0c30c3ca7e86b"
+    },
+    {
+      "candidate": 4,
+      "case_id": "v8:apache__camel_CVE-2019-0194_2.21.4",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "cbc38643a7b6212e55c9e17be9f880e50c52cc388065615b3e3847d718f0985f"
+    },
+    {
+      "candidate": 5,
+      "case_id": "v8:apache__flink_CVE-2020-17519_1.11.2",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "cbc38643a7b6212e55c9e17be9f880e50c52cc388065615b3e3847d718f0985f"
+    },
+    {
+      "candidate": 6,
+      "case_id": "v8:felix-dev_CVE-2025-25247_org.osgi.compendium-1.4.0",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "be3c0441f2f0a5a887553234716965045efef1716ee5dcc9be1f683a0c8f201c"
+    },
+    {
+      "candidate": 7,
+      "case_id": "v8:jans_CVE-2025-53003_v1.7.0",
+      "historical_attempt_status": "repair_attempt_failed",
+      "historical_receipt_sha256": "be3c0441f2f0a5a887553234716965045efef1716ee5dcc9be1f683a0c8f201c"
+    },
+    {
+      "candidate": 8,
+      "case_id": "v8:apache__kylin_CVE-2024-48944_5.0.0",
+      "historical_attempt_status": "codeql_db_repaired",
+      "historical_receipt_sha256": "1c7a03317e4213ad25e221ec8cf64604fb00c2b513bf4cb9795e22484920a21e"
+    }
+  ],
+  "binding_failures": 0,
+  "reference_check": {
+    "status": "completed_with_bounded_scope",
+    "indexed_source_objects": 45848,
+    "cases_in_reference_index": 213,
+    "source_batch_reference_checks": [
+      {
+        "candidate_batch_sha256": "da05e3bc264abb32bececd76d9f5c9b093e60b29a748e82f15e4aede87a98e39",
+        "candidate_count": 7,
+        "matching_reference_source_files_rehashed": 3
+      },
+      {
+        "candidate_batch_sha256": "158d923209a8d1b4d62f50fd9e86dc0709886e19a6588ab1c1cdbb3fbb147232",
+        "candidate_count": 2,
+        "matching_reference_source_files_rehashed": 3
+      }
+    ],
+    "source_batch_counts_may_overlap_and_are_not_summed": true,
+    "other_case_direct_reference_observations": 0,
+    "static_input_index_sha256": "819f3f65a2a602dcdf65a211580a99726ea1f7d04bf24125c551cab9cef77e26"
+  },
+  "all_registered_database_paths_still_present": true,
+  "scope": "Revalidated historical receipt identity and bounded declared-path references; not a fresh build, full backup, or global process visibility claim.",
+  "plan_sha256": "9a00074ef0cf4bfdb72fbabaf00bf4e8d7f434b007067149653768fbd265826d",
+  "private_input_record_sha256": {
+    "plan": "a53a01f063655250de08891ff2cfef748a268bbeaac3c9b71644939c81670243",
+    "deletion": "65265aea4103ffc231ccfb3ae94d3d9ef0ef86de68669dcc8a59007eccf02c9b",
+    "restore": "2935d5385dace40dfd5e178c253a5af04c00fda8d778cb75f797398d3288975d",
+    "post": "e3da53e85c342019ae2fb24d2f1299695525255846ddbc53e695e75fe46e1a80",
+    "candidates": "6bfaa82613ba49d453a3004e3b96fd795505cab9ea8d10b0e4f6af9c3b5cfe48"
+  }
+}
